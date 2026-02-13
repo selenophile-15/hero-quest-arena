@@ -1,0 +1,197 @@
+import { useState, useMemo } from 'react';
+import { Hero, STAT_COLUMNS, HERO_CLASSES, HeroClass } from '@/types/game';
+import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
+import HeroForm from './HeroForm';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Trash2, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+
+type SortDir = 'asc' | 'desc';
+
+export default function HeroList() {
+  const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
+  const [editing, setEditing] = useState<Hero | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [sortKey, setSortKey] = useState<keyof Hero>('name');
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [filterClass, setFilterClass] = useState<string>('all');
+  const [filterType, setFilterType] = useState<string>('all');
+  const [visibleCols, setVisibleCols] = useState<Set<string>>(
+    new Set(STAT_COLUMNS.map(c => c.key))
+  );
+
+  const filtered = useMemo(() => {
+    let list = [...heroes];
+    if (filterClass !== 'all') list = list.filter(h => h.heroClass === filterClass);
+    if (filterType !== 'all') list = list.filter(h => h.type === filterType);
+    list.sort((a, b) => {
+      const av = a[sortKey];
+      const bv = b[sortKey];
+      if (typeof av === 'number' && typeof bv === 'number') {
+        return sortDir === 'asc' ? av - bv : bv - av;
+      }
+      return sortDir === 'asc'
+        ? String(av).localeCompare(String(bv))
+        : String(bv).localeCompare(String(av));
+    });
+    return list;
+  }, [heroes, sortKey, sortDir, filterClass, filterType]);
+
+  const handleSort = (key: keyof Hero) => {
+    if (sortKey === key) {
+      setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
+
+  const handleSave = (hero: Hero) => {
+    const updated = editing
+      ? heroes.map(h => (h.id === hero.id ? hero : h))
+      : [...heroes, hero];
+    setHeroes(updated);
+    saveHeroes(updated);
+    setEditing(null);
+    setAdding(false);
+  };
+
+  const handleDelete = (id: string) => {
+    deleteHero(id);
+    setHeroes(prev => prev.filter(h => h.id !== id));
+  };
+
+  const toggleCol = (key: string) => {
+    setVisibleCols(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  if (adding || editing) {
+    return (
+      <HeroForm
+        hero={editing || undefined}
+        onSave={handleSave}
+        onCancel={() => { setAdding(false); setEditing(null); }}
+      />
+    );
+  }
+
+  const activeCols = STAT_COLUMNS.filter(c => visibleCols.has(c.key));
+
+  return (
+    <div className="animate-fade-in">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="font-display text-2xl text-primary">영웅 리스트</h2>
+        <Button onClick={() => setAdding(true)} className="gap-2">
+          <Plus className="w-4 h-4" /> 영웅 추가
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="card-fantasy p-4 mb-4 space-y-3">
+        <div className="flex flex-wrap gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">직업:</span>
+            <Select value={filterClass} onValueChange={setFilterClass}>
+              <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">전체</SelectItem>
+                {HERO_CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">유형:</span>
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">전체</SelectItem>
+                <SelectItem value="hero">영웅</SelectItem>
+                <SelectItem value="champion">챔피언</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <span className="text-sm text-muted-foreground">표시 항목:</span>
+          {STAT_COLUMNS.map(col => (
+            <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
+              <Checkbox
+                checked={visibleCols.has(col.key)}
+                onCheckedChange={() => toggleCol(col.key)}
+              />
+              {col.label}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="card-fantasy overflow-x-auto scrollbar-fantasy">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border">
+              {activeCols.map(col => (
+                <th
+                  key={col.key}
+                  onClick={() => handleSort(col.key as keyof Hero)}
+                  className="px-4 py-3 text-left text-muted-foreground font-medium cursor-pointer hover:text-primary transition-colors select-none"
+                >
+                  <span className="flex items-center gap-1">
+                    {col.label}
+                    {sortKey === col.key && (
+                      sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />
+                    )}
+                  </span>
+                </th>
+              ))}
+              <th className="px-4 py-3 text-right text-muted-foreground font-medium">관리</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={activeCols.length + 1} className="text-center py-12 text-muted-foreground">
+                  영웅을 추가해주세요
+                </td>
+              </tr>
+            )}
+            {filtered.map(hero => (
+              <tr key={hero.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
+                {activeCols.map(col => (
+                  <td key={col.key} className="px-4 py-3">
+                    {col.key === 'name' ? (
+                      <span className="font-medium text-foreground">{hero.name}</span>
+                    ) : col.key === 'type' ? (
+                      <span className={hero.type === 'champion' ? 'text-primary font-medium' : 'text-muted-foreground'}>
+                        {hero.type === 'champion' ? '챔피언' : '영웅'}
+                      </span>
+                    ) : (
+                      hero[col.key as keyof Hero]
+                    )}
+                  </td>
+                ))}
+                <td className="px-4 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => handleDelete(hero.id)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
