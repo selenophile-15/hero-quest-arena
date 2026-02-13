@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
-import { Hero, STAT_COLUMNS, HERO_CLASSES, HeroClass } from '@/types/game';
+import { Hero, STAT_COLUMNS, HERO_CLASS_LINES, HeroClassLine } from '@/types/game';
+import { HERO_CLASS_MAP } from '@/lib/gameData';
 import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
 import HeroForm from './HeroForm';
+import ChampionForm from './ChampionForm';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
+import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 
 type SortDir = 'asc' | 'desc';
@@ -12,7 +14,7 @@ type SortDir = 'asc' | 'desc';
 export default function HeroList() {
   const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
   const [editing, setEditing] = useState<Hero | null>(null);
-  const [adding, setAdding] = useState(false);
+  const [addingType, setAddingType] = useState<'hero' | 'champion' | null>(null);
   const [sortKey, setSortKey] = useState<keyof Hero>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [filterClass, setFilterClass] = useState<string>('all');
@@ -20,6 +22,8 @@ export default function HeroList() {
   const [visibleCols, setVisibleCols] = useState<Set<string>>(
     new Set(STAT_COLUMNS.map(c => c.key))
   );
+
+  const allJobs = Object.values(HERO_CLASS_MAP).flat();
 
   const filtered = useMemo(() => {
     let list = [...heroes];
@@ -39,12 +43,8 @@ export default function HeroList() {
   }, [heroes, sortKey, sortDir, filterClass, filterType]);
 
   const handleSort = (key: keyof Hero) => {
-    if (sortKey === key) {
-      setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortKey(key);
-      setSortDir('asc');
-    }
+    if (sortKey === key) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
+    else { setSortKey(key); setSortDir('asc'); }
   };
 
   const handleSave = (hero: Hero) => {
@@ -54,7 +54,7 @@ export default function HeroList() {
     setHeroes(updated);
     saveHeroes(updated);
     setEditing(null);
-    setAdding(false);
+    setAddingType(null);
   };
 
   const handleDelete = (id: string) => {
@@ -65,35 +65,34 @@ export default function HeroList() {
   const toggleCol = (key: string) => {
     setVisibleCols(prev => {
       const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
+      if (next.has(key)) next.delete(key); else next.add(key);
       return next;
     });
   };
 
-  if (adding || editing) {
-    return (
-      <HeroForm
-        hero={editing || undefined}
-        onSave={handleSave}
-        onCancel={() => { setAdding(false); setEditing(null); }}
-      />
-    );
+  if (addingType === 'hero' || (editing && editing.type === 'hero')) {
+    return <HeroForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); }} />;
+  }
+  if (addingType === 'champion' || (editing && editing.type === 'champion')) {
+    return <ChampionForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); }} />;
   }
 
   const activeCols = STAT_COLUMNS.filter(c => visibleCols.has(c.key));
 
   return (
     <div className="animate-fade-in">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-display text-2xl text-primary">영웅 리스트</h2>
-        <Button onClick={() => setAdding(true)} className="gap-2">
-          <Plus className="w-4 h-4" /> 영웅 추가
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setAddingType('hero')} className="gap-2">
+            <Shield className="w-4 h-4" /> 영웅 추가
+          </Button>
+          <Button onClick={() => setAddingType('champion')} variant="secondary" className="gap-2">
+            <Crown className="w-4 h-4" /> 챔피언 추가
+          </Button>
+        </div>
       </div>
 
-      {/* Filters */}
       <div className="card-fantasy p-4 mb-4 space-y-3">
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
@@ -102,7 +101,7 @@ export default function HeroList() {
               <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>
-                {HERO_CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                {allJobs.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -122,32 +121,23 @@ export default function HeroList() {
           <span className="text-sm text-muted-foreground">표시 항목:</span>
           {STAT_COLUMNS.map(col => (
             <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
-              <Checkbox
-                checked={visibleCols.has(col.key)}
-                onCheckedChange={() => toggleCol(col.key)}
-              />
+              <Checkbox checked={visibleCols.has(col.key)} onCheckedChange={() => toggleCol(col.key)} />
               {col.label}
             </label>
           ))}
         </div>
       </div>
 
-      {/* Table */}
       <div className="card-fantasy overflow-x-auto scrollbar-fantasy">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
               {activeCols.map(col => (
-                <th
-                  key={col.key}
-                  onClick={() => handleSort(col.key as keyof Hero)}
-                  className="px-4 py-3 text-left text-muted-foreground font-medium cursor-pointer hover:text-primary transition-colors select-none"
-                >
+                <th key={col.key} onClick={() => handleSort(col.key as keyof Hero)}
+                  className="px-4 py-3 text-left text-muted-foreground font-medium cursor-pointer hover:text-primary transition-colors select-none">
                   <span className="flex items-center gap-1">
                     {col.label}
-                    {sortKey === col.key && (
-                      sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />
-                    )}
+                    {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
                   </span>
                 </th>
               ))}
@@ -156,11 +146,7 @@ export default function HeroList() {
           </thead>
           <tbody>
             {filtered.length === 0 && (
-              <tr>
-                <td colSpan={activeCols.length + 1} className="text-center py-12 text-muted-foreground">
-                  영웅을 추가해주세요
-                </td>
-              </tr>
+              <tr><td colSpan={activeCols.length + 1} className="text-center py-12 text-muted-foreground">영웅을 추가해주세요</td></tr>
             )}
             {filtered.map(hero => (
               <tr key={hero.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
@@ -173,7 +159,7 @@ export default function HeroList() {
                         {hero.type === 'champion' ? '챔피언' : '영웅'}
                       </span>
                     ) : (
-                      hero[col.key as keyof Hero]
+                      String(hero[col.key as keyof Hero] ?? '')
                     )}
                   </td>
                 ))}
