@@ -1,25 +1,22 @@
 import { useState, useMemo } from 'react';
-import { SimulationResult, HERO_CLASSES } from '@/types/game';
+import { SimulationResult } from '@/types/game';
+import { HERO_CLASS_MAP } from '@/lib/gameData';
 import { getSimulations } from '@/lib/storage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Trophy, Medal, Award } from 'lucide-react';
 
 const REGIONS = ['전체', '서울', '부산', '대구', '인천', '광주', '대전', '울산'];
+const ALL_JOBS = Object.values(HERO_CLASS_MAP).flat();
 
 const MOCK_RANKINGS: SimulationResult[] = [
   { id: 'r1', questId: 'q4', questName: '마왕의 성', heroes: [
-    { id: 'h1', name: '아서', heroClass: '기사', type: 'champion', level: 45, hp: 5000, atk: 350, def: 400, spd: 80, crit: 15, createdAt: '' },
-    { id: 'h2', name: '메를린', heroClass: '마법사', type: 'hero', level: 42, hp: 2800, atk: 500, def: 150, spd: 120, crit: 25, createdAt: '' },
+    { id: 'h1', name: '아서', classLine: '전사', heroClass: '기사', type: 'champion', level: 45, hp: 5000, atk: 350, def: 400, spd: 80, crit: 15, critDmg: 200, evasion: 0, threat: 90, element: '빛', skills: [], createdAt: '' },
+    { id: 'h2', name: '메를린', classLine: '주문술사', heroClass: '마법사', type: 'hero', level: 42, hp: 2800, atk: 500, def: 150, spd: 120, crit: 25, critDmg: 200, evasion: 0, threat: 10, element: '불', skills: [], createdAt: '' },
   ], score: 135, success: true, details: '', timestamp: '2026-02-10T10:00:00Z', region: '서울' },
   { id: 'r2', questId: 'q5', questName: '심연의 균열', heroes: [
-    { id: 'h3', name: '로빈', heroClass: '궁수', type: 'hero', level: 50, hp: 3200, atk: 480, def: 200, spd: 160, crit: 35, createdAt: '' },
-    { id: 'h4', name: '프레이아', heroClass: '성직자', type: 'champion', level: 48, hp: 4000, atk: 200, def: 350, spd: 90, crit: 10, createdAt: '' },
-    { id: 'h5', name: '카인', heroClass: '도적', type: 'hero', level: 47, hp: 2600, atk: 420, def: 180, spd: 200, crit: 40, createdAt: '' },
+    { id: 'h3', name: '로빈', classLine: '전사', heroClass: '레인저', type: 'hero', level: 50, hp: 3200, atk: 480, def: 200, spd: 160, crit: 35, critDmg: 200, evasion: 20, threat: 90, element: '공기', skills: [], createdAt: '' },
   ], score: 128, success: true, details: '', timestamp: '2026-02-09T14:00:00Z', region: '부산' },
-  { id: 'r3', questId: 'q3', questName: '용의 둥지', heroes: [
-    { id: 'h6', name: '가렌', heroClass: '전사', type: 'champion', level: 35, hp: 4500, atk: 300, def: 380, spd: 70, crit: 12, createdAt: '' },
-  ], score: 142, success: true, details: '', timestamp: '2026-02-11T08:00:00Z', region: '대구' },
 ];
 
 export default function Ranking() {
@@ -49,8 +46,6 @@ export default function Ranking() {
   return (
     <div className="animate-fade-in space-y-6">
       <h2 className="font-display text-2xl text-primary">랭킹</h2>
-
-      {/* Filters */}
       <div className="card-fantasy p-4 flex flex-wrap gap-4">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">지역:</span>
@@ -68,33 +63,21 @@ export default function Ranking() {
             <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">전체</SelectItem>
-              {HERO_CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              {ALL_JOBS.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">최대 인원:</span>
-          <Input
-            type="number"
-            value={maxMembers}
-            onChange={e => setMaxMembers(e.target.value)}
-            placeholder="전체"
-            className="w-20"
-            min={1}
-          />
+          <Input type="number" value={maxMembers} onChange={e => setMaxMembers(e.target.value)} placeholder="전체" className="w-20" min={1} />
         </div>
       </div>
 
-      {/* Rankings */}
       <div className="space-y-2">
-        {filtered.length === 0 && (
-          <p className="text-center text-muted-foreground py-12">해당 조건의 결과가 없습니다</p>
-        )}
+        {filtered.length === 0 && <p className="text-center text-muted-foreground py-12">해당 조건의 결과가 없습니다</p>}
         {filtered.map((r, i) => (
           <div key={r.id} className="card-fantasy p-4 flex items-center gap-4">
-            <div className="w-8 flex justify-center">
-              <RankIcon rank={i + 1} />
-            </div>
+            <div className="w-8 flex justify-center"><RankIcon rank={i + 1} /></div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="font-display text-foreground">{r.questName}</span>
@@ -102,9 +85,7 @@ export default function Ranking() {
               </div>
               <div className="flex gap-1.5 mt-1 flex-wrap">
                 {r.heroes.map(h => (
-                  <span key={h.id} className="text-xs text-muted-foreground">
-                    {h.name}({h.heroClass})
-                  </span>
+                  <span key={h.id} className="text-xs text-muted-foreground">{h.name}({h.heroClass})</span>
                 ))}
               </div>
             </div>
