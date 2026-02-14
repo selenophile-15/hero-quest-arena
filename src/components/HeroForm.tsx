@@ -86,7 +86,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       level,
       hp, atk, def,
       spd: 0,
-      crit, critDmg, evasion, threat, element,
+      crit, critDmg,
+      critDmgActual: Math.round(atk * critDmg / 100),
+      evasion, threat, element,
+      elementValue: 0,
       skills: [uniqueSkillName, ...selectedSkills],
       createdAt: hero?.createdAt || new Date().toISOString(),
     });

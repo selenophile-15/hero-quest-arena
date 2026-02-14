@@ -9,13 +9,19 @@ import { Trophy, Medal, Award } from 'lucide-react';
 const REGIONS = ['전체', '서울', '부산', '대구', '인천', '광주', '대전', '울산'];
 const ALL_JOBS = Object.values(HERO_CLASS_MAP).flat();
 
+const makeHero = (id: string, name: string, classLine: any, heroClass: string, type: any, level: number, hp: number, atk: number, def: number, spd: number, crit: number, critDmg: number, evasion: number, threat: number, element: string) => ({
+  id, name, classLine, heroClass, type, level, hp, atk, def, spd, crit, critDmg,
+  critDmgActual: Math.round(atk * critDmg / 100),
+  evasion, threat, element, elementValue: 0, skills: [] as string[], createdAt: '',
+});
+
 const MOCK_RANKINGS: SimulationResult[] = [
   { id: 'r1', questId: 'q4', questName: '마왕의 성', heroes: [
-    { id: 'h1', name: '아서', classLine: '전사', heroClass: '기사', type: 'champion', level: 45, hp: 5000, atk: 350, def: 400, spd: 80, crit: 15, critDmg: 200, evasion: 0, threat: 90, element: '빛', skills: [], createdAt: '' },
-    { id: 'h2', name: '메를린', classLine: '주문술사', heroClass: '마법사', type: 'hero', level: 42, hp: 2800, atk: 500, def: 150, spd: 120, crit: 25, critDmg: 200, evasion: 0, threat: 10, element: '불', skills: [], createdAt: '' },
+    makeHero('h1', '아서', '전사', '기사', 'champion', 45, 5000, 350, 400, 80, 15, 200, 0, 90, '빛'),
+    makeHero('h2', '메를린', '주문술사', '마법사', 'hero', 42, 2800, 500, 150, 120, 25, 200, 0, 10, '불'),
   ], score: 135, success: true, details: '', timestamp: '2026-02-10T10:00:00Z', region: '서울' },
   { id: 'r2', questId: 'q5', questName: '심연의 균열', heroes: [
-    { id: 'h3', name: '로빈', classLine: '전사', heroClass: '레인저', type: 'hero', level: 50, hp: 3200, atk: 480, def: 200, spd: 160, crit: 35, critDmg: 200, evasion: 20, threat: 90, element: '공기', skills: [], createdAt: '' },
+    makeHero('h3', '로빈', '전사', '레인저', 'hero', 50, 3200, 480, 200, 160, 35, 200, 20, 90, '공기'),
   ], score: 128, success: true, details: '', timestamp: '2026-02-09T14:00:00Z', region: '부산' },
 ];
 

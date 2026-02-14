@@ -24,11 +24,11 @@ const Index = () => {
           </div>
 
           <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-gold-gradient mb-4 leading-tight">
-            영웅의 여정을<br />시뮬레이션하세요
+            샵타이탄<br />퀘스트 시뮬레이터
           </h1>
 
           <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed">
-            영웅과 챔피언을 관리하고, 퀘스트 던전에 보내<br className="hidden sm:block" />
+            영웅과 챔피언을 관리하고, 미리 던전에 보내<br className="hidden sm:block" />
             최적의 전략을 찾아보세요.
           </p>
 
