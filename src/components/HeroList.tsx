@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Hero, STAT_COLUMNS, HERO_CLASS_LINES, HeroClassLine, ELEMENT_ICON_MAP } from '@/types/game';
+import { Hero, STAT_COLUMNS, HERO_CLASS_LINES, HeroClassLine, ELEMENT_ICON_MAP, STAT_ICON_MAP } from '@/types/game';
 import { HERO_CLASS_MAP } from '@/lib/gameData';
 import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
 import HeroForm from './HeroForm';
@@ -21,15 +21,14 @@ const CLASS_LINE_COLORS: Record<string, string> = {
 const formatValue = (key: string, value: any): string | null => {
   if (value === undefined || value === null || value === '') return '-';
   if (key === 'crit' || key === 'evasion') return `${value}%`;
-  if (key === 'critDmg') return `${value}%`;
-  return null; // use default rendering
+  return null;
 };
 
 export default function HeroList() {
   const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
   const [editing, setEditing] = useState<Hero | null>(null);
   const [addingType, setAddingType] = useState<'hero' | 'champion' | null>(null);
-  const [sortKey, setSortKey] = useState<keyof Hero>('name');
+  const [sortKey, setSortKey] = useState<string>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [filterClass, setFilterClass] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
@@ -43,20 +42,34 @@ export default function HeroList() {
     let list = [...heroes];
     if (filterClass !== 'all') list = list.filter(h => h.heroClass === filterClass);
     if (filterType !== 'all') list = list.filter(h => h.type === filterType);
-    list.sort((a, b) => {
-      const av = a[sortKey];
-      const bv = b[sortKey];
-      if (typeof av === 'number' && typeof bv === 'number') {
-        return sortDir === 'asc' ? av - bv : bv - av;
-      }
-      return sortDir === 'asc'
-        ? String(av).localeCompare(String(bv))
-        : String(bv).localeCompare(String(av));
-    });
+
+    // Special element sorting: sort by element name first, then elementValue
+    if (sortKey === 'element') {
+      list.sort((a, b) => {
+        const elemCompare = sortDir === 'asc'
+          ? String(a.element).localeCompare(String(b.element))
+          : String(b.element).localeCompare(String(a.element));
+        if (elemCompare !== 0) return elemCompare;
+        return sortDir === 'asc'
+          ? (b.elementValue || 0) - (a.elementValue || 0)
+          : (a.elementValue || 0) - (b.elementValue || 0);
+      });
+    } else {
+      list.sort((a, b) => {
+        const av = a[sortKey as keyof Hero];
+        const bv = b[sortKey as keyof Hero];
+        if (typeof av === 'number' && typeof bv === 'number') {
+          return sortDir === 'asc' ? av - bv : bv - av;
+        }
+        return sortDir === 'asc'
+          ? String(av).localeCompare(String(bv))
+          : String(bv).localeCompare(String(av));
+      });
+    }
     return list;
   }, [heroes, sortKey, sortDir, filterClass, filterType]);
 
-  const handleSort = (key: keyof Hero) => {
+  const handleSort = (key: string) => {
     if (sortKey === key) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
     else { setSortKey(key); setSortDir('asc'); }
   };
@@ -93,6 +106,14 @@ export default function HeroList() {
 
   const activeCols = STAT_COLUMNS.filter(c => visibleCols.has(c.key));
 
+  const renderHeaderLabel = (col: typeof STAT_COLUMNS[number]) => {
+    const iconPath = STAT_ICON_MAP[col.key];
+    if (iconPath) {
+      return <img src={iconPath} alt={col.label} title={col.label} width={20} height={20} className="inline-block" />;
+    }
+    return <span>{col.label}</span>;
+  };
+
   const renderCell = (hero: Hero, colKey: string) => {
     const value = hero[colKey as keyof Hero];
 
@@ -115,7 +136,12 @@ export default function HeroList() {
       return <span>{hero.heroClass}</span>;
     }
     if (colKey === 'element') {
-      return <ElementIcon element={hero.element} size={22} />;
+      return (
+        <span className="inline-flex items-center gap-1">
+          <ElementIcon element={hero.element} size={20} />
+          <span className="text-xs text-muted-foreground">{hero.elementValue || 0}</span>
+        </span>
+      );
     }
 
     const formatted = formatValue(colKey, value);
@@ -177,10 +203,10 @@ export default function HeroList() {
           <thead>
             <tr className="border-b border-border">
               {activeCols.map(col => (
-                <th key={col.key} onClick={() => handleSort(col.key as keyof Hero)}
+                <th key={col.key} onClick={() => handleSort(col.key)}
                   className={`px-4 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-muted-foreground ${col.key === 'name' ? 'text-left' : 'text-center'}`}>
                   <span className={`flex items-center gap-1 ${col.key === 'name' ? '' : 'justify-center'}`}>
-                    {col.label}
+                    {renderHeaderLabel(col)}
                     {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
                   </span>
                 </th>

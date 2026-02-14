@@ -9,7 +9,7 @@ import { Swords, Trophy, XCircle, History } from 'lucide-react';
 function simulateQuest(heroes: Hero[], quest: Quest): Omit<SimulationResult, 'id' | 'timestamp' | 'region'> {
   const totalPower = heroes.reduce((sum, h) => {
     const classMult = h.heroClass === '전사' ? 1.2 : h.heroClass === '기사' ? 1.15 : 1.0;
-    return sum + (h.atk * 1.5 + h.def * 0.8 + h.spd * 0.5 + h.crit * 0.3 + h.hp * 0.1) * classMult * (h.level / 10);
+    return sum + (h.atk * 1.5 + h.def * 0.8 + h.crit * 0.3 + h.hp * 0.1) * classMult * (h.level / 10);
   }, 0);
 
   const ratio = totalPower / quest.enemyPower;

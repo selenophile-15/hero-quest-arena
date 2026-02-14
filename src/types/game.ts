@@ -8,13 +8,12 @@ export interface Hero {
   classLine: HeroClassLine | ''; // 계열 (챔피언은 빈값)
   heroClass: HeroClass; // 직업 (챔피언은 빈값)
   level: number;
+  power: number;       // 전투력
   hp: number;
   atk: number;
   def: number;
-  spd: number;
   crit: number;       // 치명타 확률 (%)
-  critDmg: number;    // 치명타 대미지 계수 (%)
-  critDmgActual: number; // 실제 치명타 대미지
+  critDmg: number;    // 실제 치명타 대미지
   evasion: number;    // 회피 (%)
   threat: number;     // 위협도
   element: string;    // 원소 종류
@@ -52,23 +51,32 @@ export interface SimulationResult {
 
 export const HERO_CLASS_LINES: HeroClassLine[] = ['전사', '로그', '주문술사'];
 
+export const STAT_ICON_MAP: Record<string, string> = {
+  hp: '/images/stats/health.png',
+  atk: '/images/stats/attack.png',
+  def: '/images/stats/defense.png',
+  crit: '/images/stats/critchance.png',
+  critDmg: '/images/stats/critdamage.png',
+  evasion: '/images/stats/evasion.png',
+  threat: '/images/stats/threat.png',
+  power: '/images/stats/power.png',
+};
+
 export const STAT_COLUMNS = [
   { key: 'type' as const, label: '유형' },
   { key: 'name' as const, label: '이름' },
   { key: 'classLine' as const, label: '계열' },
   { key: 'heroClass' as const, label: '직업' },
   { key: 'level' as const, label: 'LV' },
-  { key: 'hp' as const, label: 'HP' },
-  { key: 'atk' as const, label: 'ATK' },
-  { key: 'def' as const, label: 'DEF' },
-  { key: 'spd' as const, label: 'SPD' },
-  { key: 'crit' as const, label: 'CRIT.C' },
-  { key: 'critDmg' as const, label: 'CRIT.D계수' },
-  { key: 'critDmgActual' as const, label: 'CRIT.D실대미지' },
-  { key: 'evasion' as const, label: 'EVA' },
-  { key: 'threat' as const, label: 'THREAT' },
+  { key: 'power' as const, label: '전투력', icon: true },
+  { key: 'hp' as const, label: 'HP', icon: true },
+  { key: 'atk' as const, label: 'ATK', icon: true },
+  { key: 'def' as const, label: 'DEF', icon: true },
+  { key: 'crit' as const, label: 'CRIT.C', icon: true },
+  { key: 'critDmg' as const, label: 'CRIT.D', icon: true },
+  { key: 'evasion' as const, label: 'EVA', icon: true },
+  { key: 'threat' as const, label: 'THREAT', icon: true },
   { key: 'element' as const, label: '원소' },
-  { key: 'elementValue' as const, label: '원소수치' },
   { key: 'label' as const, label: '라벨' },
 ];
 
