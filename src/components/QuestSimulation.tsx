@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Hero, Quest, QUESTS, SimulationResult } from '@/types/game';
+import { formatNumber } from '@/lib/format';
 import { getHeroes, getSimulations, saveSimulation } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -17,8 +18,8 @@ function simulateQuest(heroes: Hero[], quest: Quest): Omit<SimulationResult, 'id
   const score = Math.round(Math.min(ratio * 100, 150));
 
   const details = success
-    ? `파티 전투력 ${Math.round(totalPower)} vs 적 전투력 ${quest.enemyPower}. 승리! (점수: ${score})`
-    : `파티 전투력 ${Math.round(totalPower)} vs 적 전투력 ${quest.enemyPower}. 패배... 전투력이 부족합니다.`;
+    ? `파티 전투력 ${formatNumber(Math.round(totalPower))} vs 적 전투력 ${formatNumber(quest.enemyPower)}. 승리! (점수: ${score})`
+    : `파티 전투력 ${formatNumber(Math.round(totalPower))} vs 적 전투력 ${formatNumber(quest.enemyPower)}. 패배... 전투력이 부족합니다.`;
 
   return { questId: quest.id, questName: quest.name, heroes, score, success, details };
 }
