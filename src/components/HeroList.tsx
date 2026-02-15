@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Hero, STAT_COLUMNS, HERO_CLASS_LINES, HeroClassLine, ELEMENT_ICON_MAP, STAT_ICON_MAP } from '@/types/game';
+import { formatNumber } from '@/lib/format';
 import { HERO_CLASS_MAP } from '@/lib/gameData';
 import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
 import HeroForm from './HeroForm';
@@ -20,7 +21,8 @@ const CLASS_LINE_COLORS: Record<string, string> = {
 
 const formatValue = (key: string, value: any): string | null => {
   if (value === undefined || value === null || value === '') return '-';
-  if (key === 'crit' || key === 'evasion') return `${value}%`;
+  if (key === 'crit' || key === 'evasion') return `${formatNumber(value)}%`;
+  if (typeof value === 'number') return formatNumber(value);
   return null;
 };
 
@@ -139,7 +141,7 @@ export default function HeroList() {
       return (
         <span className="inline-flex items-center gap-1">
           <ElementIcon element={hero.element} size={20} />
-          <span className="text-xs text-muted-foreground">{hero.elementValue || 0}</span>
+          <span className="text-xs text-muted-foreground">{formatNumber(hero.elementValue || 0)}</span>
         </span>
       );
     }
@@ -204,7 +206,7 @@ export default function HeroList() {
             <tr className="border-b border-border">
               {activeCols.map(col => (
                 <th key={col.key} onClick={() => handleSort(col.key)}
-                  className={`px-4 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-muted-foreground ${col.key === 'name' ? 'text-left' : 'text-center'}`}>
+                  className={`px-4 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-muted-foreground ${col.key === 'name' ? 'text-left min-w-[120px]' : 'text-center'} ${col.key === 'heroClass' || col.key === 'label' ? 'min-w-[100px]' : ''} ${col.key === 'element' ? 'min-w-[80px]' : ''}`}>
                   <span className={`flex items-center gap-1 ${col.key === 'name' ? '' : 'justify-center'}`}>
                     {renderHeaderLabel(col)}
                     {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
