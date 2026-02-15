@@ -66,6 +66,14 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [critDmg, setCritDmg] = useState(hero?.critDmg || 200);
   const [evasion, setEvasion] = useState(hero?.evasion || 0);
   const [threat, setThreat] = useState(hero?.threat || 90);
+
+  // Handle numeric input without leading zeros
+  const handleNumericChange = (setter: (v: number) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (raw === '') { setter(0); return; }
+    const parsed = parseInt(raw, 10);
+    if (!isNaN(parsed)) setter(parsed);
+  };
   const [element, setElement] = useState(hero?.element || '');
   const [selectedSkills, setSelectedSkills] = useState<string[]>(hero?.skills?.slice(1) || []);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
@@ -182,7 +190,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
             <div>
               <Label className="text-muted-foreground text-xs mb-1 block">레벨</Label>
-              <Input type="number" value={level} onChange={e => setLevel(Number(e.target.value))} min={1} max={50} className="h-9 text-sm" />
+              <Input type="number" value={level || ''} onChange={handleNumericChange(setLevel)} min={1} max={50} className="h-9 text-sm" />
             </div>
             <div>
               <Label className="text-muted-foreground text-xs mb-1 block">라벨</Label>
@@ -221,8 +229,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     <div className="flex items-center gap-1">
                       <Input
                         type="number"
-                        value={stat.value}
-                        onChange={e => stat.set(Number(e.target.value))}
+                        value={stat.value || ''}
+                        onChange={handleNumericChange(stat.set)}
                         className="h-8 text-sm flex-1"
                       />
                       {stat.suffix && <span className="text-xs text-muted-foreground">{stat.suffix}</span>}
