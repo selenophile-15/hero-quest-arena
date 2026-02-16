@@ -55,18 +55,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   };
 
   const [name, setName] = useState(hero?.name || '');
-  const [classLine, setClassLine] = useState<HeroClassLine>(hero?.classLine as HeroClassLine || '전사');
+  const [classLine, setClassLine] = useState<HeroClassLine>(hero?.classLine as HeroClassLine || '');
   const [promoted, setPromoted] = useState(getInitialPromotion());
   const [heroClass, setHeroClass] = useState(hero?.heroClass || '');
-  const [level, setLevel] = useState(hero?.level || 1);
+  const [level, setLevel] = useState(hero?.level || '');
   const [label, setLabel] = useState(hero?.label || '');
-  const [hp, setHp] = useState(hero?.hp || 0);
-  const [atk, setAtk] = useState(hero?.atk || 0);
-  const [def, setDef] = useState(hero?.def || 0);
-  const [crit, setCrit] = useState(hero?.crit || 0);
-  const [critDmg, setCritDmg] = useState(hero?.critDmg || 0;
-  const [evasion, setEvasion] = useState(hero?.evasion || 0);
-  const [threat, setThreat] = useState(hero?.threat || 0);
+  const [hp, setHp] = useState(hero?.hp || '');
+  const [atk, setAtk] = useState(hero?.atk || '');
+  const [def, setDef] = useState(hero?.def || '');
+  const [crit, setCrit] = useState(hero?.crit || '');
+  const [critDmg, setCritDmg] = useState(hero?.critDmg || '';
+  const [evasion, setEvasion] = useState(hero?.evasion || '');
+  const [threat, setThreat] = useState(hero?.threat || '');
 
   // Handle numeric input without leading zeros
   const handleNumericChange = (setter: (v: number) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,8 +194,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               <Input type="number" value={level || ''} onChange={handleNumericChange(setLevel)} min={1} max={50} className="h-9 text-sm" />
             </div>
             <div>
-              <Label className="text-muted-foreground text-xs mb-1 block">라벨</Label>
-              <Input value={label} onChange={e => setLabel(e.target.value)} placeholder="라벨" className="h-9 text-sm" />
+              <Label className="text-muted-foreground text-xs mb-1 block">상태</Label>
+              <Input value={label} onChange={e => setLabel(e.target.value)} placeholder="상태" className="h-9 text-sm" />
             </div>
           </div>
         </div>
