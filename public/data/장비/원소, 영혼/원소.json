@@ -1,0 +1,240 @@
+{
+  "4티어": {
+    "불": {
+      "이미지_기본": "assets/img/elements/fire_tier4.png",
+      "이미지_친화": "assets/img/elements/fire_tier4_on.png"
+    },
+
+    "물": {
+      "이미지_기본": "assets/img/elements/water_tier4.png",
+      "이미지_친화": "assets/img/elements/water_tier4_on.png"
+    },
+
+    "공기": {
+      "이미지_기본": "assets/img/elements/air_tier4.png",
+      "이미지_친화": "assets/img/elements/air_tier4_on.png"
+    },
+
+    "대지": {
+      "이미지_기기본": "assets/img/elements/earth_tier4.png",
+      "이미지_친화": "assets/img/elements/earth_tier4_on.png"
+    },
+
+    "빛": {
+      "이미지_기본": "assets/img/elements/light_tier4.png",
+      "이미지_친화": "assets/img/elements/light_tier4_on.png"
+    },
+
+    "어둠": {
+      "이미지_기본": "assets/img/elements/dark_tier4.png",
+      "이미지_친화": "assets/img/elements/dark_tier4_on.png"
+    }
+  },
+
+
+
+
+
+
+
+
+
+
+
+  "5티어": {
+    "골드": {
+      "이미지_기본": "assets/img/elements/gold_tier5.png",
+      "이미지_친화": "assets/img/elements/gold_tier5_on.png"
+    }
+  },
+
+
+
+
+
+
+
+
+
+
+
+  "7티어": {
+    "불": {
+      "이미지_기본": "assets/img/elements/fire_tier7.png",
+      "이미지_친화": "assets/img/elements/fire_tier7_on.png"
+    },
+
+    "물": {
+      "이미지_기본": "assets/img/elements/water_tier7.png",
+      "이미지_친화": "assets/img/elements/water_tier7_on.png"
+    },
+
+    "공기": {
+      "이미지_기본": "assets/img/elements/air_tier7.png",
+      "이미지_친화": "assets/img/elements/air_tier7_on.png"
+    },
+
+    "대지": {
+      "이미지_기본": "assets/img/elements/earth_tier7.png",
+      "이미지_친화": "assets/img/elements/earth_tier7_on.png"
+    },
+
+    "빛": {
+      "이미지_기본": "assets/img/elements/light_tier7.png",
+      "이미지_친화": "assets/img/elements/light_tier7_on.png"
+    },
+
+    "어둠": {
+      "이미지_기본": "assets/img/elements/dark_tier7.png",
+      "이미지_친화": "assets/img/elements/dark_tier7_on.png"
+    }
+  },
+
+
+
+
+
+
+
+
+
+
+
+  "9티어": {
+    "불": {
+      "이미지_기본": "assets/img/elements/fire_tier9.png",
+      "이미지_친화": "assets/img/elements/fire_tier9_on.png"
+    },
+
+    "물": {
+      "이미지_기본": "assets/img/elements/water_tier9.png",
+      "이미지_친화": "assets/img/elements/water_tier9_on.png"
+    },
+
+    "공기": {
+      "이미지_기본": "assets/img/elements/air_tier9.png",
+      "이미지_친화": "assets/img/elements/air_tier9_on.png"
+    },
+
+    "대지": {
+      "이미지_기본": "assets/img/elements/earth_tier9.png",
+      "이미지_친화": "assets/img/elements/earth_tier9_on.png"
+    },
+
+    "빛": {
+      "이미지_기본": "assets/img/elements/light_tier9.png",
+      "이미지_친화": "assets/img/elements/light_tier9_on.png"
+    },
+
+    "어둠": {
+      "이미지_기본": "assets/img/elements/dark_tier9.png",
+      "이미지_친화": "assets/img/elements/dark_tier9_on.png"
+    }
+  },
+
+
+
+
+
+
+
+
+
+
+
+  "10티어": {
+    "골드": {
+      "이미지_기본": "assets/img/elements/gold_tier10.png",
+      "이미지_친화": "assets/img/elements/gold_tier10_on.png"
+    }
+  },
+
+
+
+
+
+
+
+
+
+
+
+  "12티어": {
+    "불": {
+      "이미지_기본": "assets/img/elements/fire_tier12.png",
+      "이미지_친화": "assets/img/elements/fire_tier12_on.png"
+    },
+
+    "물": {
+      "이미지_기본": "assets/img/elements/water_tier12.png",
+      "이미지_친화": "assets/img/elements/water_tier12_on.png"
+    },
+
+    "공기": {
+      "이미지_기본": "assets/img/elements/air_tier12.png",
+      "이미지_친화": "assets/img/elements/air_tier12_on.png"
+    },
+
+    "대지": {
+      "이미지_기본": "assets/img/elements/earth_tier12.png",
+      "이미지_친화": "assets/img/elements/earth_tier12_on.png"
+    },
+
+    "빛": {
+      "이미지_기본": "assets/img/elements/light_tier12.png",
+      "이미지_친화": "assets/img/elements/light_tier12_on.png"
+    },
+
+    "어둠": {
+      "이미지_기본": "assets/img/elements/dark_tier12.png",
+      "이미지_친화": "assets/img/elements/dark_tier12_on.png"
+    }
+  },
+
+
+
+
+
+
+
+
+
+
+
+  "14티어": {
+    "불": {
+      "이미지_기본": "assets/img/elements/fire_tier14.png",
+      "이미지_친화": "assets/img/elements/fire_tier14_on.png"
+    },
+
+    "물": {
+      "이미지_기본": "assets/img/elements/water_tier14.png",
+      "이미지_친화": "assets/img/elements/water_tier14_on.png"
+    },
+
+    "공기": {
+      "이미지_기본": "assets/img/elements/air_tier14.png",
+      "이미지_친화": "assets/img/elements/air_tier14_on.png"
+    },
+
+    "대지": {
+      "이미지_기본": "assets/img/elements/earth_tier14.png",
+      "이미지_친화": "assets/img/elements/earth_tier14_on.png"
+    },
+
+    "빛": {
+      "이미지_기본": "assets/img/elements/light_tier14.png",
+      "이미지_친화": "assets/img/elements/light_tier14_on.png"
+    },
+
+    "어둠": {
+      "이미지_기본": "assets/img/elements/dark_tier14.png",
+      "이미지_친화": "assets/img/elements/dark_tier14_on.png"
+    },
+
+    "골드": {
+      "이미지_기본": "assets/img/elements/gold_tier14.png",
+      "이미지_친화": "assets/img/elements/gold_tier14_on.png"
+    }
+  }
+}
