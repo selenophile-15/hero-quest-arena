@@ -24,13 +24,12 @@ const JOB_PAIRS: Record<string, [string, string][]> = {
     ['어둠의 기사', '죽음의 기사'],
   ],
   '로그': [
-    ['도둑', '사기꾼'], ['수도승', '그랜드 마스터'], ['머스킷병', '정복자'],
-    ['방랑자', '길잡이'], ['닌자', '센세'], ['무희', '곡예가'],
-    ['경보병', '근위병'],
+    ['도둑', '사기꾼'], ['기사도', '정복자'], ['방랑자', '길잡이'],
+    ['닌자', '센세'], ['경보병', '근위병'], ['곡예사', '곡예가'],
   ],
   '주문술사': [
     ['마법사', '대마법사'], ['성직자', '비숍'], ['드루이드', '아크 드루이드'],
-    ['소서러', '워록'], ['마법검', '스펠나이트'], ['풍수사', '아스트라맨서'], ['크로노맨서', '페이트위버'],
+    ['소서러', '워록'], ['스타게이저', '아스트라맨서'], ['크로노맨서', '페이트위버'],
   ],
 };
 
@@ -40,7 +39,7 @@ function getJobsByPromotion(classLine: HeroClassLine, promoted: boolean): string
 }
 
 // Equipment slot types per index (placeholder - will be refined with actual data)
-const EQUIPMENT_SLOT_LABELS = ['1번', '2번', '3번', '4번', '5번', '6번'];
+const EQUIPMENT_SLOT_LABELS = ['무기', '방어구', '헬멧', '장갑', '신발', '악세서리'];
 
 export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   // Determine initial promotion state from hero's job
@@ -55,18 +54,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   };
 
   const [name, setName] = useState(hero?.name || '');
-  const [classLine, setClassLine] = useState<HeroClassLine>(hero?.classLine as HeroClassLine || '');
+  const [classLine, setClassLine] = useState<HeroClassLine>(hero?.classLine as HeroClassLine || '전사');
   const [promoted, setPromoted] = useState(getInitialPromotion());
   const [heroClass, setHeroClass] = useState(hero?.heroClass || '');
-  const [level, setLevel] = useState(hero?.level || '');
+  const [level, setLevel] = useState(hero?.level || 1);
   const [label, setLabel] = useState(hero?.label || '');
-  const [hp, setHp] = useState(hero?.hp || '');
-  const [atk, setAtk] = useState(hero?.atk || '');
-  const [def, setDef] = useState(hero?.def || '');
-  const [crit, setCrit] = useState(hero?.crit || '');
-  const [critDmg, setCritDmg] = useState(hero?.critDmg || '';
-  const [evasion, setEvasion] = useState(hero?.evasion || '');
-  const [threat, setThreat] = useState(hero?.threat || '');
+  const [hp, setHp] = useState(hero?.hp || 0);
+  const [atk, setAtk] = useState(hero?.atk || 0);
+  const [def, setDef] = useState(hero?.def || 0);
+  const [crit, setCrit] = useState(hero?.crit || 5);
+  const [critDmg, setCritDmg] = useState(hero?.critDmg || 200);
+  const [evasion, setEvasion] = useState(hero?.evasion || 0);
+  const [threat, setThreat] = useState(hero?.threat || 90);
 
   // Handle numeric input without leading zeros
   const handleNumericChange = (setter: (v: number) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,8 +193,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               <Input type="number" value={level || ''} onChange={handleNumericChange(setLevel)} min={1} max={50} className="h-9 text-sm" />
             </div>
             <div>
-              <Label className="text-muted-foreground text-xs mb-1 block">상태</Label>
-              <Input value={label} onChange={e => setLabel(e.target.value)} placeholder="상태" className="h-9 text-sm" />
+              <Label className="text-muted-foreground text-xs mb-1 block">라벨</Label>
+              <Input value={label} onChange={e => setLabel(e.target.value)} placeholder="라벨" className="h-9 text-sm" />
             </div>
           </div>
         </div>
