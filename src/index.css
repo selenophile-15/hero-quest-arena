@@ -103,4 +103,28 @@
     scrollbar-width: thin;
     scrollbar-color: hsl(40 85% 55% / 0.3) transparent;
   }
+
+  /* Hide number input spinners */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  /* Class line focus ring colors */
+  .ring-warrior:focus-within {
+    --tw-ring-color: hsl(0 70% 50%);
+    border-color: hsl(0 70% 50% / 0.5);
+  }
+  .ring-rogue:focus-within {
+    --tw-ring-color: hsl(120 50% 45%);
+    border-color: hsl(120 50% 45% / 0.5);
+  }
+  .ring-spellcaster:focus-within {
+    --tw-ring-color: hsl(210 70% 55%);
+    border-color: hsl(210 70% 55% / 0.5);
+  }
 }
