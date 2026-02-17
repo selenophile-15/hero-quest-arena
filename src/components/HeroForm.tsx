@@ -395,6 +395,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             <div className="space-y-1 text-xs text-muted-foreground">
               {[
                 '휴식시간', '경험치', '매 턴마다 체력 회복',
+                '체력에 따른 공격력 (50%<HP<75%)',
+                '체력에 따른 공격력 (25%<HP<50%)',
+                '체력에 따른 공격력 (HP<25%)',
                 '치명적인 공격에서 살아날 확률',
                 '첫 라운드 +공격력 (공룡)',
                 '첫 라운드 데미지',
@@ -402,9 +405,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 '적 체력 50% 미만일 때, +공격력 (상어)',
                 '적 체력 50% 미만일 때, 데미지',
                 '적 체력 50% 미만일 때, 치명타 데미지',
-                '체력에 따른 공격력 (50%<HP<75%)',
-                '체력에 따른 공격력 (25%<HP<50%)',
-                '체력에 따른 공격력 (HP<25%)',
                 '문드라 (보스 상대 +공 20%, 방 20%)',
               ].map((stat, i) => (
                 <div key={i} className="flex items-center justify-between py-0.5 border-b border-border/30">
