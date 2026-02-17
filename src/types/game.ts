@@ -8,18 +8,21 @@ export interface Hero {
   classLine: HeroClassLine | ''; // 계열 (챔피언은 빈값)
   heroClass: HeroClass; // 직업 (챔피언은 빈값)
   level: number;
-  power: number;       // 전투력
+  power: number;       // 전투력 (수동 입력)
   hp: number;
   atk: number;
   def: number;
   crit: number;       // 치명타 확률 (%)
-  critDmg: number;    // 실제 치명타 대미지
+  critDmg: number;    // 치명타 대미지 계수 (%)
   evasion: number;    // 회피 (%)
   threat: number;     // 위협도
   element: string;    // 원소 종류
   elementValue: number; // 원소 수치
   type: 'hero' | 'champion';
-  label?: string;     // 라벨
+  label?: string;     // 상태
+  position?: string;  // 포지션
+  seeds?: { hp: number; atk: number; def: number }; // 씨앗
+  equipmentElements?: Record<string, number>; // 장비 원소 수치
   // Hero-specific
   skills: string[];
   // Champion-specific
@@ -51,15 +54,21 @@ export interface SimulationResult {
 
 export const HERO_CLASS_LINES: HeroClassLine[] = ['전사', '로그', '주문술사'];
 
+export const POSITIONS = [
+  '퓨어 탱커', '서브 탱커', '딜탱', '메인 딜러', '일반 딜러', '회피 딜러', '좀비', '기타',
+] as const;
+
 export const STAT_ICON_MAP: Record<string, string> = {
   hp: '/images/stats/health.png',
   atk: '/images/stats/attack.png',
   def: '/images/stats/defense.png',
   crit: '/images/stats/critchance.png',
   critDmg: '/images/stats/critdamage.png',
+  critAttack: '/images/stats/icon_global_critattack.png',
   evasion: '/images/stats/evasion.png',
   threat: '/images/stats/threat.png',
   power: '/images/stats/power.png',
+  airshipPower: '/images/stats/icon_global_dragoninvasion_airshippower.png',
 };
 
 export const STAT_COLUMNS = [
@@ -77,7 +86,7 @@ export const STAT_COLUMNS = [
   { key: 'evasion' as const, label: 'EVA', icon: true },
   { key: 'threat' as const, label: 'THREAT', icon: true },
   { key: 'element' as const, label: '원소' },
-  { key: 'label' as const, label: '라벨' },
+  { key: 'label' as const, label: '상태' },
 ];
 
 export const ELEMENT_ICON_MAP: Record<string, string> = {

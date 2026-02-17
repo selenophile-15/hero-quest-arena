@@ -141,7 +141,7 @@ export default function HeroList() {
       return (
         <span className="inline-flex items-center gap-1">
           <ElementIcon element={hero.element} size={20} />
-          <span className="text-xs text-muted-foreground">{formatNumber(hero.elementValue || 0)}</span>
+          <span className="text-xs text-foreground tabular-nums">{formatNumber(hero.elementValue || 0)}</span>
         </span>
       );
     }
@@ -232,7 +232,7 @@ export default function HeroList() {
                     <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                       <Pencil className="w-4 h-4" />
                     </button>
-                    <button onClick={() => handleDelete(hero.id)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                    <button onClick={() => { if (window.confirm('정말 삭제하시겠습니까?')) handleDelete(hero.id); }} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>

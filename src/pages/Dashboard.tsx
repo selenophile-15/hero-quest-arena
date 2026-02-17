@@ -14,6 +14,12 @@ type TabId = typeof TABS[number]['id'];
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
+  const [listResetKey, setListResetKey] = useState(0);
+
+  const handleLogoClick = () => {
+    setActiveTab('list');
+    setListResetKey(k => k + 1); // Force HeroList to reset to list view
+  };
 
   return (
     <div className="min-h-screen bg-fantasy-gradient">
@@ -21,7 +27,7 @@ export default function Dashboard() {
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="w-full px-6 h-14 flex items-center">
           <button
-            onClick={() => setActiveTab('list')}
+            onClick={handleLogoClick}
             className="font-display text-lg text-primary tracking-wide hover:text-primary/80 transition-colors"
           >
             Quest Simulator
@@ -54,7 +60,7 @@ export default function Dashboard() {
 
       {/* Content */}
       <main className="w-full px-6 py-6">
-        {activeTab === 'list' && <HeroList />}
+        {activeTab === 'list' && <HeroList key={listResetKey} />}
         {activeTab === 'quest' && <QuestSimulation />}
         {activeTab === 'ranking' && <Ranking />}
       </main>
