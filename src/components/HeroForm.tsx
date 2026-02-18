@@ -58,6 +58,29 @@ const ELEMENT_ORDER = [
   { key: '어둠', icon: '/images/elements/dark.png' },
 ];
 
+const SEED_ICONS = [
+  { key: 'hp', icon: '/images/special/hp seed.png' },
+  { key: 'atk', icon: '/images/special/atk seed.png' },
+  { key: 'def', icon: '/images/special/def seed.png' },
+];
+
+const DETAIL_STATS = [
+  '휴식시간 감소 %',
+  '경험치 %',
+  '매 턴 체력 재생',
+  '치명적인 공격에서 살아날 확률 %',
+  '공룡 - 첫 라운드 +공격력 %',
+  '공룡 - 첫 라운드 대미지',
+  '공룡 - 첫 라운드 치명타 대미지',
+  '상어 - 적 체력 50% 미만일 때, +공격력 %',
+  '상어 - 적 체력 50% 미만일 때, 대미지',
+  '상어 - 적 체력 50% 미만일 때, 치명타 대미지',
+  '광전사 - 체력 비례 공격력 (50%<HP<75%)',
+  '광전사 - 체력 비례 공격력 (25%<HP<50%)',
+  '광전사 - 체력 비례 공격력 (HP<25%)',
+  '문드라 - 중첩량 (보스 상대 +공 20%, 방 20%)',
+];
+
 export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const getInitialPromotion = (): boolean => {
     if (!hero) return false;
@@ -77,6 +100,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [label, setLabel] = useState(hero?.label || '');
   const [position, setPosition] = useState(hero?.position || '');
   const [power, setPower] = useState<number | ''>(hero?.power || '');
+  const [powerManual, setPowerManual] = useState(true);
   const [hp, setHp] = useState(hero?.hp || 0);
   const [atk, setAtk] = useState(hero?.atk || 0);
   const [def, setDef] = useState(hero?.def || 0);
@@ -204,6 +228,24 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   // Class image path helper
   const getClassImage = (jobName: string) => `/images/classes/${jobName}.png`;
 
+  // Format power input display value
+  const formatPowerDisplay = (val: number | '') => {
+    if (val === '' || val === 0) return '';
+    return val.toLocaleString('en-US');
+  };
+
+  const handlePowerInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/,/g, '');
+    if (raw === '') { setPower(''); return; }
+    const parsed = parseInt(raw, 10);
+    if (isNaN(parsed)) return;
+    if (parsed < 0) return;
+    setPower(parsed);
+  };
+
+  const seedSetters = [setSeedHp, setSeedAtk, setSeedDef];
+  const seedValues = [seedHp, seedAtk, seedDef];
+
   return (
     <div className="animate-fade-in">
       {/* Sticky back button */}
@@ -221,11 +263,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         <div className={`card-fantasy p-4 ${ringClass}`}>
           <div className="grid grid-cols-[1.5fr_0.8fr_auto_1.5fr_0.7fr_1fr_1fr] gap-3 items-end">
             <div>
-              <Label className="text-secondary-foreground text-xs mb-1 block">이름</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block">이름</Label>
               <Input value={name} onChange={e => setName(e.target.value)} placeholder="영웅 이름" className="h-9 text-sm" />
             </div>
             <div>
-              <Label className="text-secondary-foreground text-xs mb-1 block">계열</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block">계열</Label>
               <Select value={classLine || '_empty'} onValueChange={v => setClassLine(v === '_empty' ? '' : v as HeroClassLine)}>
                 <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="선택" /></SelectTrigger>
                 <SelectContent>
@@ -235,14 +277,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               </Select>
             </div>
             <div>
-              <Label className="text-secondary-foreground text-xs mb-1 block">명인의 혼</Label>
-              <div className="flex items-center gap-2 h-9">
+              <Label className="text-foreground/80 text-xs mb-1 block">명인의 혼</Label>
+              <div className="flex items-center h-9">
                 <Switch checked={promoted} onCheckedChange={setPromoted} />
-                <span className="text-xs text-muted-foreground">{promoted ? '승급' : '기본'}</span>
               </div>
             </div>
             <div>
-              <Label className="text-secondary-foreground text-xs mb-1 block">직업</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block">직업</Label>
               <Select value={heroClass || '_empty'} onValueChange={v => v !== '_empty' && setHeroClass(v)}>
                 <SelectTrigger className="h-9 text-sm">
                   {heroClass ? (
@@ -268,11 +309,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               </Select>
             </div>
             <div>
-              <Label className="text-secondary-foreground text-xs mb-1 block">레벨</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block">레벨</Label>
               <Input type="number" value={level} onChange={handleNumericChange(setLevel as any, 50)} min={1} max={50} className="h-9 text-sm" />
             </div>
             <div>
-              <Label className="text-secondary-foreground text-xs mb-1 block">포지션</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block">포지션</Label>
               <Select value={position || '_empty'} onValueChange={v => setPosition(v === '_empty' ? '' : v)}>
                 <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="선택" /></SelectTrigger>
                 <SelectContent>
@@ -282,28 +323,70 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               </Select>
             </div>
             <div>
-              <Label className="text-secondary-foreground text-xs mb-1 block">상태</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block">상태</Label>
               <Input value={label} onChange={e => setLabel(e.target.value)} placeholder="상태" className="h-9 text-sm" />
             </div>
           </div>
         </div>
 
-        {/* ─── Row 2: Stats + Seeds + Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[200px_200px_1fr] gap-4">
-          {/* Stats Panel (Auto) */}
-          <div className="card-fantasy p-3">
-            <h3 className="text-sm font-medium text-secondary-foreground mb-2">스탯(자동)</h3>
-            <div className="space-y-1.5">
-              {/* 전투력 - manual */}
-              <div className="flex items-center gap-2 py-1">
-                <img src={STAT_ICON_MAP.power} alt="전투력" className="w-5 h-5 flex-shrink-0" />
-                <Input
-                  type="number"
-                  value={power}
-                  onChange={handleNumericChange(setPower as any)}
-                  placeholder="전투력"
-                  className="h-7 text-sm flex-1"
+        {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
+        <div className="grid grid-cols-[180px_200px_200px_1fr] gap-4">
+          {/* Job Card */}
+          <div className="card-fantasy p-3 flex flex-col items-center">
+            <div className="w-full aspect-square bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden mb-2">
+              {heroClass ? (
+                <img
+                  src={getClassImage(heroClass)}
+                  alt={heroClass}
+                  className="w-full h-full object-contain p-2"
+                  onError={e => (e.currentTarget.style.display = 'none')}
                 />
+              ) : (
+                <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
+              )}
+            </div>
+            {heroClass && (
+              <>
+                <span className="text-sm font-semibold text-foreground">{heroClass}</span>
+                <span className="text-[11px] text-muted-foreground mt-2">추천 포지션</span>
+                <span className="text-xs text-foreground/70 text-center">-</span>
+                <span className="text-[11px] text-muted-foreground mt-2">설명</span>
+                <span className="text-xs text-foreground/70 text-center leading-tight">-</span>
+              </>
+            )}
+          </div>
+
+          {/* Stats Panel */}
+          <div className="card-fantasy p-3">
+            <h3 className="text-sm font-display font-semibold text-primary mb-2">스탯(자동)</h3>
+            <div className="space-y-1.5">
+              {/* 전투력 - manual/auto toggle */}
+              <div className="flex items-center gap-1.5 py-0.5">
+                <img src={STAT_ICON_MAP.power} alt="전투력" className="w-5 h-5 flex-shrink-0" />
+                {powerManual ? (
+                  <Input
+                    type="text"
+                    value={formatPowerDisplay(power)}
+                    onChange={handlePowerInput}
+                    placeholder="전투력"
+                    className="h-7 text-sm flex-1 text-right tabular-nums"
+                  />
+                ) : (
+                  <span className="text-sm text-foreground ml-auto tabular-nums">
+                    {power ? formatNumber(Number(power)) : '-'}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setPowerManual(!powerManual)}
+                  className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
+                    powerManual
+                      ? 'border-accent/50 text-accent bg-accent/10'
+                      : 'border-border text-muted-foreground bg-secondary/30'
+                  }`}
+                >
+                  {powerManual ? '수동' : '자동'}
+                </button>
               </div>
               {/* Auto stats - read only */}
               {[
@@ -311,7 +394,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 { icon: STAT_ICON_MAP.atk, value: atk, suffix: '' },
                 { icon: STAT_ICON_MAP.def, value: def, suffix: '' },
                 { icon: STAT_ICON_MAP.crit, value: crit, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: '' },
+                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: ' %' },
                 { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
                 { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %' },
                 { icon: STAT_ICON_MAP.threat, value: threat, suffix: '' },
@@ -319,12 +402,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <div key={i} className="flex items-center gap-2 py-0.5 px-1">
                   <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
                   <span className="text-sm text-foreground ml-auto tabular-nums">
-                    {stat.value ? formatNumber(stat.value) : '-'}{stat.value ? stat.suffix : ''}
+                    {stat.value ? `${formatNumber(stat.value)}${stat.suffix}` : '-'}
                   </span>
                 </div>
               ))}
               {/* 원소 */}
-              <div className="flex items-center gap-2 py-0.5 px-1 border-t border-border pt-1.5">
+              <div className="flex items-center gap-2 py-0.5 px-1">
                 <ElementIcon element={element} size={20} />
                 <span className="text-sm text-foreground ml-auto tabular-nums">
                   {totalEquipElement ? formatNumber(totalEquipElement) : '-'}
@@ -342,21 +425,17 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           <div className="space-y-3">
             {/* Seeds */}
             <div className="card-fantasy p-3">
-              <h3 className="text-sm font-medium text-secondary-foreground mb-2">씨앗</h3>
+              <h3 className="text-sm font-display font-semibold text-primary mb-2">씨앗</h3>
               <div className="space-y-2">
-                {[
-                  { icon: STAT_ICON_MAP.hp, value: seedHp, set: setSeedHp },
-                  { icon: STAT_ICON_MAP.atk, value: seedAtk, set: setSeedAtk },
-                  { icon: STAT_ICON_MAP.def, value: seedDef, set: setSeedDef },
-                ].map((seed, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <img src={seed.icon} alt="" className="w-5 h-5 flex-shrink-0" />
+                {SEED_ICONS.map((seed, i) => (
+                  <div key={seed.key} className="flex items-center gap-2">
+                    <img src={seed.icon} alt={seed.key} className="w-5 h-5 flex-shrink-0" />
                     <Input
                       type="number"
-                      value={seed.value || ''}
-                      onChange={handleSeedChange(seed.set)}
+                      value={seedValues[i] || ''}
+                      onChange={handleSeedChange(seedSetters[i])}
                       min={0} max={80}
-                      className="h-7 text-sm flex-1"
+                      className="h-7 text-sm flex-1 text-right tabular-nums"
                       placeholder="0"
                     />
                   </div>
@@ -366,7 +445,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
             {/* Equipment Element Breakdown */}
             <div className="card-fantasy p-3">
-              <h3 className="text-sm font-medium text-secondary-foreground mb-2">원소 수치</h3>
+              <h3 className="text-sm font-display font-semibold text-primary mb-2">속성별 원소량</h3>
               <div className="space-y-1">
                 {ELEMENT_ORDER.map(el => {
                   const val = equipElements[el.key] || 0;
@@ -389,26 +468,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
           </div>
 
-          {/* Detail Stats Placeholder */}
+          {/* Detail Stats */}
           <div className="card-fantasy p-3">
-            <h3 className="text-sm font-medium text-secondary-foreground mb-2">기타 상세 스탯</h3>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              {[
-                '휴식시간', '경험치', '매 턴마다 체력 회복',
-                '체력에 따른 공격력 (50%<HP<75%)',
-                '체력에 따른 공격력 (25%<HP<50%)',
-                '체력에 따른 공격력 (HP<25%)',
-                '치명적인 공격에서 살아날 확률',
-                '첫 라운드 +공격력 (공룡)',
-                '첫 라운드 데미지',
-                '첫 라운드 치명타 데미지',
-                '적 체력 50% 미만일 때, +공격력 (상어)',
-                '적 체력 50% 미만일 때, 데미지',
-                '적 체력 50% 미만일 때, 치명타 데미지',
-                '문드라 (보스 상대 +공 20%, 방 20%)',
-              ].map((stat, i) => (
+            <h3 className="text-sm font-display font-semibold text-primary mb-2">기타 상세 스탯</h3>
+            <div className="space-y-1 text-xs">
+              {DETAIL_STATS.map((stat, i) => (
                 <div key={i} className="flex items-center justify-between py-0.5 border-b border-border/30">
-                  <span>{stat}</span>
+                  <span className="text-foreground/70">{stat}</span>
                   <span className="text-foreground tabular-nums">-</span>
                 </div>
               ))}
@@ -418,7 +484,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
         {/* ─── Row 3: Skills ─── */}
         <div className="card-fantasy p-4">
-          <h3 className="text-sm font-medium text-secondary-foreground mb-3">스킬</h3>
+          <h3 className="text-sm font-display font-semibold text-primary mb-3">스킬</h3>
 
           {/* Skill slots */}
           <div className="flex gap-2 mb-3">
@@ -477,7 +543,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
         {/* ─── Row 4: Equipment ─── */}
         <div className="card-fantasy p-4">
-          <h3 className="text-sm font-medium text-secondary-foreground mb-3">장비</h3>
+          <h3 className="text-sm font-display font-semibold text-primary mb-3">장비</h3>
           <div className="grid grid-cols-6 gap-3">
             {EQUIPMENT_SLOT_LABELS.map((slotLabel, i) => (
               <div key={i} className="flex flex-col items-center gap-1">
