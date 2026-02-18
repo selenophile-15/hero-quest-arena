@@ -286,14 +286,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               <Label className="text-foreground/80 text-xs mb-1 block">직업</Label>
               <Select value={heroClass || '_empty'} onValueChange={v => v !== '_empty' && setHeroClass(v)}>
                 <SelectTrigger className="h-9 text-sm">
-                  {heroClass ? (
-                    <span className="flex items-center gap-2">
-                      <img src={getClassImage(heroClass)} alt="" className="w-5 h-5" onError={e => (e.currentTarget.style.display = 'none')} />
-                      {heroClass}
-                    </span>
-                  ) : (
-                    <SelectValue placeholder="선택" />
-                  )}
+                  <SelectValue placeholder="선택" />
                 </SelectTrigger>
                 <SelectContent>
                   {jobs.length === 0 && <SelectItem value="_empty" disabled>계열을 먼저 선택</SelectItem>}
@@ -330,7 +323,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[180px_200px_200px_1fr] gap-4">
+        <div className="grid grid-cols-[180px_200px_200px_0.5fr] gap-4">
           {/* Job Card */}
           <div className="card-fantasy p-3 flex flex-col items-center">
             <div className="w-full aspect-square bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden mb-2">
@@ -361,8 +354,19 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             <h3 className="text-sm font-display font-semibold text-primary mb-2">스탯(자동)</h3>
             <div className="space-y-1.5">
               {/* 전투력 - manual/auto toggle */}
-              <div className="flex items-center gap-1.5 py-0.5">
+              <div className="flex items-center gap-2 py-0.5 px-1">
                 <img src={STAT_ICON_MAP.power} alt="전투력" className="w-5 h-5 flex-shrink-0" />
+                <button
+                  type="button"
+                  onClick={() => setPowerManual(!powerManual)}
+                  className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
+                    powerManual
+                      ? 'border-accent/50 text-accent bg-accent/10'
+                      : 'border-border text-muted-foreground bg-secondary/30'
+                  }`}
+                >
+                  {powerManual ? '수동' : '자동'}
+                </button>
                 {powerManual ? (
                   <Input
                     type="text"
@@ -376,17 +380,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     {power ? formatNumber(Number(power)) : '-'}
                   </span>
                 )}
-                <button
-                  type="button"
-                  onClick={() => setPowerManual(!powerManual)}
-                  className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
-                    powerManual
-                      ? 'border-accent/50 text-accent bg-accent/10'
-                      : 'border-border text-muted-foreground bg-secondary/30'
-                  }`}
-                >
-                  {powerManual ? '수동' : '자동'}
-                </button>
               </div>
               {/* Auto stats - read only */}
               {[
