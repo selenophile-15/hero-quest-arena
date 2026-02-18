@@ -330,7 +330,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[240px_200px_200px_1fr] gap-4">
+        <div className="grid grid-cols-[180px_200px_200px_1fr] gap-4">
           {/* Job Card */}
           <div className="card-fantasy p-3 flex flex-col items-center">
             <div className="w-full aspect-square bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden mb-2">
@@ -361,19 +361,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             <h3 className="text-sm font-display font-semibold text-primary mb-2">스탯(자동)</h3>
             <div className="space-y-1.5">
               {/* 전투력 - manual/auto toggle */}
-              <div className="flex items-center gap-2 py-0.5 px-1">
+              <div className="flex items-center gap-1.5 py-0.5">
                 <img src={STAT_ICON_MAP.power} alt="전투력" className="w-5 h-5 flex-shrink-0" />
-                <button
-                  type="button"
-                  onClick={() => setPowerManual(!powerManual)}
-                  className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
-                    powerManual
-                      ? 'border-accent/50 text-accent bg-accent/10'
-                      : 'border-border text-muted-foreground bg-secondary/30'
-                  }`}
-                >
-                  {powerManual ? '수동' : '자동'}
-                </button>
                 {powerManual ? (
                   <Input
                     type="text"
@@ -387,6 +376,17 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     {power ? formatNumber(Number(power)) : '-'}
                   </span>
                 )}
+                <button
+                  type="button"
+                  onClick={() => setPowerManual(!powerManual)}
+                  className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
+                    powerManual
+                      ? 'border-accent/50 text-accent bg-accent/10'
+                      : 'border-border text-muted-foreground bg-secondary/30'
+                  }`}
+                >
+                  {powerManual ? '수동' : '자동'}
+                </button>
               </div>
               {/* Auto stats - read only */}
               {[
@@ -469,8 +469,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           </div>
 
           {/* Detail Stats */}
-          <div className="card-fantasy p-3 max-h-[360px] overflow-y-auto scrollbar-fantasy">
-            <h3 className="text-sm font-display font-semibold text-primary mb-2 sticky top-0 bg-card pb-1">기타 상세 스탯</h3>
+          <div className="card-fantasy p-3">
+            <h3 className="text-sm font-display font-semibold text-primary mb-2">기타 상세 스탯</h3>
             <div className="space-y-1 text-xs">
               {DETAIL_STATS.map((stat, i) => (
                 <div key={i} className="flex items-center justify-between py-0.5 border-b border-border/30">
