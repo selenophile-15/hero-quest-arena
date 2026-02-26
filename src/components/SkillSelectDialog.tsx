@@ -13,12 +13,11 @@ import {
 interface SkillSelectDialogProps {
   open: boolean;
   onClose: () => void;
-  availableSkills: string[];           // Skills this job can learn (from SKD1)
-  selectedSkills: string[];            // Currently selected common skills
-  maxSlots: number;                    // Max selectable slots
+  availableSkills: string[];
+  selectedSkills: string[];
+  maxSlots: number;
   commonSkillsData: Record<string, any>;
   onConfirm: (skills: string[]) => void;
-  // Recommended skill sets
   recommendedSets?: Record<string, string[]>;
 }
 
@@ -48,21 +47,18 @@ export default function SkillSelectDialog({
   const [gradeFilter, setGradeFilter] = useState<string>('');
   const [statFilter, setStatFilter] = useState<string>('');
 
-  // Initialize grade cache
   useEffect(() => {
     if (commonSkillsData && Object.keys(commonSkillsData).length > 0) {
       setSkillGradeCache(commonSkillsData);
     }
   }, [commonSkillsData]);
 
-  // Reset selection when dialog opens
   useEffect(() => {
     if (open) {
       setSelected([...initialSelected]);
     }
   }, [open, initialSelected]);
 
-  // Get all stat types available in the current skill set
   const statTypes = useMemo(() => {
     const types = new Set<string>();
     for (const skillName of availableSkills) {
@@ -76,13 +72,11 @@ export default function SkillSelectDialog({
     return Array.from(types).sort();
   }, [availableSkills, commonSkillsData]);
 
-  // Group available skills by grade
   const skillsByGrade = useMemo(() => {
     const groups: Record<string, string[]> = { '일반': [], '희귀': [], '에픽': [] };
     for (const skillName of availableSkills) {
       const data = commonSkillsData[skillName];
       const grade = data?.['희귀도'] || '일반';
-      // Apply filters
       if (gradeFilter && grade !== gradeFilter) continue;
       if (statFilter) {
         const bonuses = data?.['스탯_보너스'] || {};
@@ -100,10 +94,9 @@ export default function SkillSelectDialog({
         return prev.filter(s => s !== skillName);
       }
       if (prev.length >= maxSlots) return prev;
-      // Check incompatibility
       for (const existing of prev) {
         if (areSkillsIncompatible(skillName, existing, commonSkillsData)) {
-          return prev; // Can't add
+          return prev;
         }
       }
       return [...prev, skillName];
@@ -124,8 +117,11 @@ export default function SkillSelectDialog({
     onClose();
   };
 
+  const handleReset = () => {
+    setSelected([]);
+  };
+
   const applyRecommendedSet = (setSkills: string[]) => {
-    // Only apply skills that are in available list and respect max slots
     const validSkills = setSkills.filter(s => availableSkills.includes(s)).slice(0, maxSlots);
     setSelected(validSkills);
   };
@@ -136,7 +132,7 @@ export default function SkillSelectDialog({
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-primary font-display">공용 스킬 선택</DialogTitle>
+          <DialogTitle className="text-primary font-display">스킬 선택</DialogTitle>
         </DialogHeader>
 
         {/* Selected skills preview + slots */}
@@ -153,7 +149,7 @@ export default function SkillSelectDialog({
                   skill
                     ? 'border-accent/60 bg-accent/10'
                     : 'border-border/50 bg-secondary/20'
-                } ${i >= maxSlots ? 'opacity-30' : ''}`}
+                }`}
                 title={skill || `슬롯 ${i + 1}`}
               >
                 {skill ? (
@@ -169,7 +165,7 @@ export default function SkillSelectDialog({
               </div>
             );
           })}
-          {/* Show locked slots */}
+          {/* Locked slots */}
           {Array.from({ length: Math.max(0, 4 - maxSlots) }).map((_, i) => (
             <div
               key={`locked-${i}`}
@@ -180,22 +176,24 @@ export default function SkillSelectDialog({
           ))}
 
           {/* Recommended sets */}
-          {recommendedSets && Object.keys(recommendedSets).length > 0 && (
-            <div className="ml-auto flex items-center gap-1">
-              <span className="text-xs text-foreground/60 mr-1">추천:</span>
-              {Object.entries(recommendedSets).map(([setName, skills]) => (
-                <Button
-                  key={setName}
-                  size="sm"
-                  variant="outline"
-                  className="h-7 text-xs px-2"
-                  onClick={() => applyRecommendedSet(skills)}
-                >
-                  {setName}
-                </Button>
-              ))}
-            </div>
-          )}
+          <div className="ml-auto flex items-center gap-1">
+            {recommendedSets && Object.keys(recommendedSets).length > 0 && (
+              <>
+                <span className="text-xs text-foreground/60 mr-1">추천:</span>
+                {Object.entries(recommendedSets).map(([setName, skills]) => (
+                  <Button
+                    key={setName}
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs px-2"
+                    onClick={() => applyRecommendedSet(skills)}
+                  >
+                    {setName}
+                  </Button>
+                ))}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Filters */}
@@ -243,7 +241,7 @@ export default function SkillSelectDialog({
             return (
               <div key={grade}>
                 <div className={`text-center text-sm font-semibold py-1 rounded-t ${GRADE_HEADER_COLORS[grade]}`}>
-                  {grade} ({skills.length})
+                  {grade}
                 </div>
                 <div className="grid grid-cols-7 sm:grid-cols-9 md:grid-cols-11 gap-1 p-2 border border-t-0 rounded-b border-border/30 bg-secondary/10">
                   {skills.map(skillName => {
@@ -306,6 +304,10 @@ export default function SkillSelectDialog({
 
         {/* Actions */}
         <div className="flex gap-2 pt-2 border-t border-border">
+          <Button variant="destructive" size="sm" onClick={handleReset} className="text-xs px-3">
+            초기화
+          </Button>
+          <div className="flex-1" />
           <Button onClick={handleConfirm} className="flex-1">확인</Button>
           <Button variant="outline" onClick={onClose} className="flex-1">취소</Button>
         </div>
