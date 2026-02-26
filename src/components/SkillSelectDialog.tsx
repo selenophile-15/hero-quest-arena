@@ -167,30 +167,10 @@ export default function SkillSelectDialog({
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col bg-card border-border">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-primary font-display">스킬 선택</DialogTitle>
-            {/* Recommended sets dropdown */}
-            {recommendedSets && Object.keys(recommendedSets).length > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-foreground/60">추천 스킬셋:</span>
-                <Select onValueChange={applyRecommendedSet}>
-                  <SelectTrigger className="h-7 w-32 text-xs">
-                    <SelectValue placeholder="선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.keys(recommendedSets).map(setName => (
-                      <SelectItem key={setName} value={setName}>
-                        {setName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
+          <DialogTitle className="text-primary font-display">스킬 선택</DialogTitle>
         </DialogHeader>
 
-        {/* Selected skills preview + slots */}
+        {/* Selected skills preview + slots + recommended set */}
         <div className="flex items-center gap-2 py-2 border-b border-border">
           <span className="text-sm text-foreground/70 mr-2">
             선택: {selected.length} / {maxSlots}
@@ -229,6 +209,26 @@ export default function SkillSelectDialog({
               <span className="text-[9px] text-muted-foreground">🔒</span>
             </div>
           ))}
+          {/* Recommended sets - right aligned */}
+          <div className="ml-auto flex items-center gap-1.5">
+            {recommendedSets && Object.keys(recommendedSets).length > 0 && (
+              <>
+                <span className="text-[10px] text-foreground/50">추천:</span>
+                <Select onValueChange={applyRecommendedSet}>
+                  <SelectTrigger className="h-8 w-28 text-xs">
+                    <SelectValue placeholder="불러오기" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(recommendedSets).map(setName => (
+                      <SelectItem key={setName} value={setName}>
+                        {setName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Filters */}
@@ -324,7 +324,7 @@ export default function SkillSelectDialog({
                               </span>
                             </button>
                           </TooltipTrigger>
-                          <TooltipContent side="bottom" className="p-2">
+                          <TooltipContent side="top" align="start" className="p-2 z-[100]" avoidCollisions={true} collisionPadding={10}>
                             {incompatWith && !isSelected ? (
                               <p className="text-xs text-destructive">{incompatWith}와(과) 호환 불가</p>
                             ) : (
