@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
 import { lookupHeroStats, getAvailableSkills, getUniqueSkill } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
@@ -15,6 +15,22 @@ interface HeroFormProps {
   onSave: (hero: Hero) => void;
   onCancel: () => void;
 }
+
+// Korean job name → English filename mapping
+const JOB_NAME_TO_FILE: Record<string, string> = {
+  '병사': 'soildier', '용병': 'mercenary', '야만전사': 'barbarian', '족장': 'chieftain',
+  '기사': 'knight', '군주': 'lord', '레인저': 'ranger', '관리인': 'warden',
+  '사무라이': 'samurai', '다이묘': 'daimyo', '광전사': 'berserker', '잘': 'jarl',
+  '어둠의 기사': 'darkknight', '죽음의 기사': 'deathknight',
+  '도둑': 'thief', '사기꾼': 'trickster', '수도승': 'monk', '그랜드 마스터': 'grandmaster',
+  '머스킷병': 'musketeer', '정복자': 'conquistador', '방랑자': 'wanderer', '길잡이': 'pathfinder',
+  '닌자': 'ninja', '센세': 'sensei', '무희': 'dancer', '곡예가': 'acrobat',
+  '경보병': 'velite', '근위병': 'praetorian',
+  '마법사': 'mage', '대마법사': 'archmage', '성직자': 'cleric', '비숍': 'bishop',
+  '드루이드': 'druid', '아크 드루이드': 'archdruid', '소서러': 'sorcerer', '워록': 'warlock',
+  '마법검': 'spellblade', '스펠나이트': 'spellknight', '풍수사': 'geomancer',
+  '아스트라맨서': 'astramancer', '크로노맨서': 'chronomancer', '페이트위버': 'fateweaver',
+};
 
 // Base → Promoted job pairs per classLine
 const JOB_PAIRS: Record<string, [string, string][]> = {
@@ -39,6 +55,17 @@ function getJobsByPromotion(classLine: HeroClassLine | '', promoted: boolean): s
   if (!classLine) return [];
   const pairs = JOB_PAIRS[classLine] || [];
   return pairs.map(pair => promoted ? pair[1] : pair[0]);
+}
+
+// Find the paired job (base↔promoted)
+function findPairedJob(jobName: string): string | null {
+  for (const pairs of Object.values(JOB_PAIRS)) {
+    for (const [base, prom] of pairs) {
+      if (base === jobName) return prom;
+      if (prom === jobName) return base;
+    }
+  }
+  return null;
 }
 
 const CLASS_LINE_RING: Record<string, string> = {
@@ -125,6 +152,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
   const [uniqueSkillName, setUniqueSkillName] = useState('');
 
+  // Refs for enter-key navigation
+  const formRef = useRef<HTMLDivElement>(null);
+
   const handleNumericChange = (setter: (v: number | '') => void, max?: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
     if (raw === '') { setter(''); return; }
@@ -147,9 +177,19 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
   const jobs = classLine ? getJobsByPromotion(classLine, promoted) : [];
 
-  // Reset job when classLine or promotion changes
+  // When promotion toggles, auto-switch job to paired counterpart
   useEffect(() => {
     if (!classLine) { setHeroClass(''); return; }
+    if (heroClass) {
+      const paired = findPairedJob(heroClass);
+      if (paired) {
+        const newJobs = getJobsByPromotion(classLine, promoted);
+        if (newJobs.includes(paired)) {
+          setHeroClass(paired);
+          return;
+        }
+      }
+    }
     const newJobs = getJobsByPromotion(classLine, promoted);
     if (newJobs.length > 0 && !newJobs.includes(heroClass)) {
       setHeroClass('');
@@ -218,15 +258,28 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     });
   };
 
-  // Prevent enter key from submitting
-  const preventEnter = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') e.preventDefault();
+  // Enter key moves to next input instead of submitting
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const form = formRef.current;
+      if (!form) return;
+      const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('input:not([type="hidden"]):not([disabled])'));
+      const current = document.activeElement as HTMLInputElement;
+      const idx = inputs.indexOf(current);
+      if (idx >= 0 && idx < inputs.length - 1) {
+        inputs[idx + 1].focus();
+      }
+    }
   };
 
   const ringClass = classLine ? CLASS_LINE_RING[classLine] || '' : '';
 
-  // Class image path helper
-  const getClassImage = (jobName: string) => `/images/classes/${jobName}.png`;
+  // Class image path helper - use English filename
+  const getClassImage = (jobName: string) => {
+    const eng = JOB_NAME_TO_FILE[jobName];
+    return eng ? `/images/classes/${eng}.png` : `/images/classes/${jobName}.png`;
+  };
 
   // Format power input display value
   const formatPowerDisplay = (val: number | '') => {
@@ -258,7 +311,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </button>
       </div>
 
-      <div className="space-y-4 mt-4" onKeyDown={preventEnter}>
+      <div className="space-y-4 mt-4" ref={formRef} onKeyDown={handleKeyDown}>
         {/* ─── Row 1: Basic Info ─── */}
         <div className={`card-fantasy p-4 ${ringClass}`}>
           <div className="grid grid-cols-[1.5fr_0.8fr_auto_1.5fr_0.7fr_1fr_1fr] gap-3 items-end">
@@ -277,24 +330,24 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               </Select>
             </div>
             <div>
-              <Label className="text-foreground/80 text-xs mb-1 block">명인의 혼</Label>
-              <div className="flex items-center h-9">
-                <Switch checked={promoted} onCheckedChange={setPromoted} />
+              <Label className="text-foreground/80 text-xs mb-1 block text-center">명인의 혼</Label>
+              <div className="flex items-center justify-center h-9">
+                <Switch checked={promoted} onCheckedChange={p => setPromoted(p)} />
               </div>
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">직업</Label>
               <Select value={heroClass || '_empty'} onValueChange={v => v !== '_empty' && setHeroClass(v)}>
-                <SelectTrigger className="h-9 text-sm">
+                <SelectTrigger className="h-9 text-sm [&>span]:text-foreground [&>span]:font-normal">
                   <SelectValue placeholder="선택" />
                 </SelectTrigger>
                 <SelectContent>
                   {jobs.length === 0 && <SelectItem value="_empty" disabled>계열을 먼저 선택</SelectItem>}
                   {jobs.map(j => (
                     <SelectItem key={j} value={j}>
-                      <span className={`flex items-center gap-2 ${heroClass === j ? 'font-bold text-primary' : ''}`}>
-                        <img src={getClassImage(j)} alt="" className="w-5 h-5" onError={e => (e.currentTarget.style.display = 'none')} />
-                        {j}
+                      <span className={`inline-flex items-center gap-2 ${heroClass === j ? 'font-bold text-primary' : ''}`}>
+                        <img src={getClassImage(j)} alt="" className="w-5 h-5 inline-block flex-shrink-0" onError={e => (e.currentTarget.style.display = 'none')} />
+                        <span>{j}</span>
                       </span>
                     </SelectItem>
                   ))}
@@ -323,29 +376,43 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[180px_200px_200px_0.5fr] gap-4">
-          {/* Job Card */}
-          <div className="card-fantasy p-3 flex flex-col items-center">
-            <div className="w-full aspect-square bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden mb-2">
-              {heroClass ? (
-                <img
-                  src={getClassImage(heroClass)}
-                  alt={heroClass}
-                  className="w-full h-full object-contain p-2"
-                  onError={e => (e.currentTarget.style.display = 'none')}
-                />
-              ) : (
-                <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
+        <div className="grid grid-cols-[1fr_200px_200px_0.5fr] gap-4">
+          {/* Job Card - expanded */}
+          <div className="card-fantasy p-3 flex">
+            {/* Left half: class illustration + name */}
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <div className="w-28 h-28 bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden">
+                {heroClass ? (
+                  <img
+                    src={`/images/classillust/${JOB_NAME_TO_FILE[heroClass] || heroClass}.png`}
+                    alt={heroClass}
+                    className="w-full h-full object-contain p-2"
+                    onError={e => {
+                      // fallback to class icon
+                      e.currentTarget.src = getClassImage(heroClass);
+                      e.currentTarget.onerror = () => { e.currentTarget.style.display = 'none'; };
+                    }}
+                  />
+                ) : (
+                  <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
+                )}
+              </div>
+              {heroClass && (
+                <span className="text-sm font-semibold text-foreground mt-2">{heroClass}</span>
               )}
             </div>
+            {/* Right half: recommended position + description */}
             {heroClass && (
-              <>
-                <span className="text-sm font-semibold text-foreground">{heroClass}</span>
-                <span className="text-[11px] text-muted-foreground mt-2">추천 포지션</span>
-                <span className="text-xs text-foreground/70 text-center">-</span>
-                <span className="text-[11px] text-muted-foreground mt-2">설명</span>
-                <span className="text-xs text-foreground/70 text-center leading-tight">-</span>
-              </>
+              <div className="flex-1 flex flex-col justify-center gap-2 pl-3 border-l border-border/30">
+                <div>
+                  <span className="text-sm text-foreground/70">추천 포지션</span>
+                  <p className="text-sm text-foreground">-</p>
+                </div>
+                <div>
+                  <span className="text-sm text-foreground/70">설명</span>
+                  <p className="text-sm text-foreground leading-tight">-</p>
+                </div>
+              </div>
             )}
           </div>
 
