@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
+import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { lookupHeroStats, getAvailableSkills, getCommonSkills, getUniqueSkills, lookupHeroFixedStats } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
@@ -85,21 +87,21 @@ const QUALITY_BORDER: Record<string, string> = {
   common: 'border-gray-300/50',
   uncommon: 'border-green-400/60',
   flawless: 'border-blue-400/60',
-  epic: 'border-purple-400/70',
+  epic: 'border-fuchsia-400/70',
   legendary: 'border-yellow-400/80',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
   common: 'rgba(220,220,220,0.18)',
   uncommon: 'rgba(74,222,128,0.2)',
   flawless: 'rgba(96,165,250,0.25)',
-  epic: 'rgba(192,132,252,0.3)',
+  epic: 'rgba(217,70,239,0.3)',
   legendary: 'rgba(250,204,21,0.35)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
   common: '0 0 8px rgba(220,220,220,0.4)',
   uncommon: '0 0 10px rgba(74,222,128,0.5)',
   flawless: '0 0 12px rgba(96,165,250,0.5)',
-  epic: '0 0 14px rgba(192,132,252,0.6)',
+  epic: '0 0 14px rgba(217,70,239,0.6)',
   legendary: '0 0 16px rgba(250,204,21,0.7)',
 };
 
@@ -107,6 +109,35 @@ const TYPE_IMAGE_FIX: Record<string, string> = { staves: 'staff' };
 function getTypeImgPath(typeFile: string) {
   return `/images/type/${TYPE_IMAGE_FIX[typeFile] || typeFile}.png`;
 }
+
+const ELEMENT_ENG_MAP: Record<string, string> = {
+  '불': 'fire', '물': 'water', '공기': 'air', '대지': 'earth', '빛': 'light', '어둠': 'dark',
+};
+
+const SPIRIT_NAME_MAP_LOCAL = SPIRIT_NAME_MAP;
+
+const ELEMENT_ENCHANT_OPTIONS = ['불', '물', '공기', '대지', '빛', '어둠'];
+const ELEMENT_TIERS = [4, 7, 9, 12, 14];
+
+// Spirit sorted by tier descending for picker
+const SPIRIT_TIER_MAP: Record<string, number> = {
+  '바하무트': 15, '레비아탄': 15, '그리핀': 15,
+  '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
+  '기린': 13, '크람푸스': 13, '크리스마스': 13,
+  '크라켄': 12, '키메라': 12, '카벙클': 12,
+  '타라스크': 11, '하이드라': 11, '불사조': 11,
+  '케찰코아틀': 10, '호랑이': 10,
+  '매머드': 9, '공룡': 9,
+  '사자': 8, '곰': 8,
+  '바다코끼리': 7, '상어': 7,
+  '다람쥐': 6, '하마': 6,
+  '말': 5, '도마뱀': 5,
+  '아르마딜로': 4, '부엉이': 4,
+  '졸로틀': 3, '코뿔소': 3,
+  '독수리': 2, '독사': 2, '토끼': 2,
+  '황소': 1, '늑대': 1, '양': 1, '거위': 1, '고양이': 1,
+};
+const SPIRIT_LIST_SORTED = Object.keys(SPIRIT_TIER_MAP).sort((a, b) => SPIRIT_TIER_MAP[b] - SPIRIT_TIER_MAP[a]);
 
 function formatEquipStatVal(key: string, value: number): string {
   if (key === '장비_치명타확률%' || key === '장비_회피%') return `${value} %`;
@@ -212,6 +243,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   }>>(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
   // Refs for enter-key navigation
   const formRef = useRef<HTMLDivElement>(null);
+  // Element/Spirit picker states
+  const [elementPickerSlot, setElementPickerSlot] = useState<number | null>(null);
+  const [spiritPickerSlot, setSpiritPickerSlot] = useState<number | null>(null);
 
   // Load common skills data once
   useEffect(() => {
@@ -884,7 +918,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     } : { background: 'hsl(var(--secondary) / 0.3)' }}
                   >
                     {equipItem?.relic && (
-                      <img src="/images/special/relic_mark.png" alt="유물" className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
+                      <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
                         onError={e => { e.currentTarget.style.display = 'none'; }} />
                     )}
                     {equipItem?.imagePath ? (
@@ -897,15 +931,28 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
                   {/* Element + Spirit + Type icons */}
                   <div className="grid grid-cols-3 gap-0.5 w-full">
-                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden" title="원소">
+                    <div
+                      className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
+                      title="원소 선택"
+                      onClick={(e) => { e.stopPropagation(); setElementPickerSlot(i); }}
+                    >
                       {slotData?.element ? (
-                        <img src={`/images/elements/${slotData.element.type}.png`} className="w-full h-full object-cover" alt="" />
+                        <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[slotData.element.type] || slotData.element.type}${slotData.element.tier}_${slotData.element.affinity ? '2' : '1'}.png`} className="w-full h-full object-cover" alt={slotData.element.type}
+                          onError={e => { e.currentTarget.style.display = 'none'; }} />
                       ) : <span className="text-[6px] text-muted-foreground">원소</span>}
                     </div>
-                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden" title="영혼">
-                      {slotData?.spirit ? (
-                        <span className="text-[6px] text-foreground">{slotData.spirit.name}</span>
-                      ) : <span className="text-[6px] text-muted-foreground">영혼</span>}
+                    <div
+                      className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
+                      title="영혼 선택"
+                      onClick={(e) => { e.stopPropagation(); setSpiritPickerSlot(i); }}
+                    >
+                      {slotData?.spirit ? (() => {
+                        const eng = SPIRIT_NAME_MAP_LOCAL[slotData.spirit.name];
+                        return eng ? (
+                          <img src={`/images/enchant/spirit/${eng}_${slotData.spirit.affinity ? '2' : '1'}.png`} className="w-full h-full object-cover" alt={slotData.spirit.name}
+                            onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : <span className="text-[6px] text-foreground">{slotData.spirit.name}</span>;
+                      })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
                     </div>
                     <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden" title="타입">
                       {typeFile ? (

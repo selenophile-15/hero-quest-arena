@@ -87,12 +87,13 @@ export interface EquipmentItem {
   stats: { key: string; value: number }[];
   quality: string;
   relic: boolean;
+  relicEffect: string | null;
   airshipPower: number;
   elementAffinity: string[] | null;
   spiritAffinity: string[] | null;
   uniqueElement: string[] | null;
   uniqueElementTier: number | null;
-  uniqueSpirit: string | null;
+  uniqueSpirit: string[] | null;
   judgmentTypes: string[] | null;
 }
 
@@ -169,7 +170,8 @@ export async function loadEquipmentByTypes(
             imagePath,
             stats,
             quality: 'common',
-            relic: itemData['유물'] === true,
+            relic: itemData['유물'] != null && itemData['유물'] !== false,
+            relicEffect: typeof itemData['유물'] === 'object' && itemData['유물']?.['효과'] ? itemData['유물']['효과'] : null,
             airshipPower: itemData['장비_에어쉽파워'] || 0,
             elementAffinity: itemData['원소친밀감'] || null,
             spiritAffinity: itemData['영혼친밀감'] || null,
