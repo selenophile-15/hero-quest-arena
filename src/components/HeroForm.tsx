@@ -150,6 +150,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [equipElements, setEquipElements] = useState<Record<string, number>>(
     hero?.equipmentElements || {}
   );
+  const [elementManual, setElementManual] = useState(true);
 
   const [selectedSkills, setSelectedSkills] = useState<string[]>(hero?.skills?.slice(1) || []);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
@@ -260,20 +261,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       }
     });
 
-    setSelectedSkills([]);
+    // 스킬 초기화 하지 않음 - 사용자가 직접 초기화 버튼 사용
   }, [heroClass]);
 
-  // Trim selected skills if maxSlots decreases
-  useEffect(() => {
-    if (selectedSkills.length > maxCommonSlots) {
-      setSelectedSkills(prev => prev.slice(0, maxCommonSlots));
-    }
-  }, [maxCommonSlots]);
+  // 슬롯 수가 줄어도 기존 선택은 유지 (초기화 버튼으로 직접 관리)
 
 
   // Calculated values
   const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
   const totalEquipElement = Object.values(equipElements).reduce((a, b) => a + b, 0);
+
+  // 직업 원소에 해당하는 원소량만 스킬 레벨 계산에 사용
+  const jobElementValue = element ? (equipElements[element] || 0) : 0;
 
   const handleSubmit = () => {
     if (!name.trim() || !heroClass) return;
@@ -542,16 +541,47 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
             {/* Equipment Element Breakdown */}
             <div className="card-fantasy p-3">
-              <h3 className="text-sm font-display font-semibold text-primary mb-2">속성별 원소량</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-display font-semibold text-primary">속성별 원소량</h3>
+                <button
+                  type="button"
+                  onClick={() => setElementManual(!elementManual)}
+                  className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
+                    elementManual
+                      ? 'border-accent/50 text-accent bg-accent/10'
+                      : 'border-border text-muted-foreground bg-secondary/30'
+                  }`}
+                >
+                  {elementManual ? '수동' : '자동'}
+                </button>
+              </div>
               <div className="space-y-1">
                 {ELEMENT_ORDER.map(el => {
                   const val = equipElements[el.key] || 0;
+                  const isJobElement = element === el.key;
                   return (
-                    <div key={el.key} className="flex items-center gap-2 py-0.5">
+                    <div key={el.key} className={`flex items-center gap-2 py-0.5 ${isJobElement ? 'bg-accent/10 rounded px-1 -mx-1' : ''}`}>
                       <img src={el.icon} alt={el.key} className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-sm text-foreground ml-auto tabular-nums">
-                        {val > 0 ? formatNumber(val) : ''}
-                      </span>
+                      {elementManual ? (
+                        <Input
+                          type="number"
+                          value={val || ''}
+                          onChange={e => {
+                            const v = parseInt(e.target.value, 10);
+                            setEquipElements(prev => ({
+                              ...prev,
+                              [el.key]: isNaN(v) ? 0 : Math.max(0, v),
+                            }));
+                          }}
+                          min={0}
+                          className="h-6 text-xs flex-1 text-right tabular-nums"
+                          placeholder="0"
+                        />
+                      ) : (
+                        <span className="text-sm text-foreground ml-auto tabular-nums">
+                          {val > 0 ? formatNumber(val) : ''}
+                        </span>
+                      )}
                     </div>
                   );
                 })}
@@ -561,6 +591,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     {totalEquipElement > 0 ? formatNumber(totalEquipElement) : '-'}
                   </span>
                 </div>
+                {element && (
+                  <div className="text-[10px] text-muted-foreground mt-1">
+                    직업 원소({element}): {jobElementValue} → 스킬 레벨 반영
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -619,7 +654,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
               let uniqueSkillLevelIndex = 0;
               for (let i = 0; i < thresholdValues.length; i++) {
-                if (totalEquipElement >= thresholdValues[i]) uniqueSkillLevelIndex = i;
+                if (jobElementValue >= thresholdValues[i]) uniqueSkillLevelIndex = i;
               }
 
               const baseSkillName = hasUniqueSkill
@@ -675,6 +710,17 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                                  grade === '희귀' ? 'bg-cyan-700/60 text-cyan-100' :
                                  grade === '일반' ? 'bg-amber-800/40 text-foreground' : '';
 
+              // 공용 스킬도 직업 원소 기준으로 레벨 계산
+              const commonThresholds: number[] = skillData?.['원소_기준치']?.map((v: unknown) => Number(v)).filter((v: number) => Number.isFinite(v)) || [];
+              let commonSkillLevelIndex = 0;
+              for (let t = 0; t < commonThresholds.length; t++) {
+                if (jobElementValue >= commonThresholds[t]) commonSkillLevelIndex = t;
+              }
+              const commonCurrentName = skillData?.['레벨별_스킬명']?.[commonSkillLevelIndex] || (skillName || '-');
+              const commonCurrentDesc = skillData?.['스킬_설명']?.[commonSkillLevelIndex] || '-';
+              const commonNextThreshold = commonThresholds[commonSkillLevelIndex + 1] ?? '-';
+              const commonLevel = skillName ? commonSkillLevelIndex + 1 : '-';
+
               return (
                 <div
                   key={i}
@@ -703,16 +749,16 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     {skillName || (isLocked ? '잠김' : '-')}
                   </div>
                   <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">
-                    {skillName ? '1' : '-'}
+                    {commonLevel}
                   </div>
                   <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">
-                    {skillData?.['레벨별_스킬명']?.[0] || (skillName || '-')}
+                    {commonCurrentName}
                   </div>
                   <div className="px-2 py-1.5 flex items-start text-xs text-foreground whitespace-pre-line leading-tight min-h-[2.5rem]">
-                    <span className="my-auto">{skillData?.['스킬_설명']?.[0] || '-'}</span>
+                    <span className="my-auto">{commonCurrentDesc}</span>
                   </div>
                   <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">
-                    {skillData?.['원소_기준치']?.[1] || '-'}
+                    {commonNextThreshold}
                   </div>
                 </div>
               );
