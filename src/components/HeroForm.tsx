@@ -59,9 +59,9 @@ const ELEMENT_ORDER = [
 ];
 
 const SEED_ICONS = [
-  { key: 'hp', icon: '/images/special/hp seed.png' },
-  { key: 'atk', icon: '/images/special/atk seed.png' },
-  { key: 'def', icon: '/images/special/def seed.png' },
+  { key: 'hp', icon: '/images/special/hp_seed.png' },
+  { key: 'atk', icon: '/images/special/atk_seed.png' },
+  { key: 'def', icon: '/images/special/def_seed.png' },
 ];
 
 const DETAIL_STATS = [
