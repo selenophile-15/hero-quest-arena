@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
-import { lookupHeroStats, getAvailableSkills, getUniqueSkill, getCommonSkills, getUniqueSkills } from '@/lib/gameData';
+import { lookupHeroStats, getAvailableSkills, getCommonSkills, getUniqueSkills } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
-import { getMaxCommonSkillSlots, getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
+import { getMaxCommonSkillSlots, getSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import SkillSelectDialog from '@/components/SkillSelectDialog';
 import ElementIcon from '@/components/ElementIcon';
 import { Button } from '@/components/ui/button';
@@ -55,6 +55,20 @@ function findPairedJob(jobName: string): string | null {
     }
   }
   return null;
+}
+
+function normalizeJobName(name: string): string {
+  return name.replace(/\s+/g, '').trim();
+}
+
+function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
+  const normalizedJobName = normalizeJobName(jobName);
+  return (
+    allUnique[jobName] ??
+    allUnique[normalizedJobName] ??
+    Object.entries(allUnique).find(([key]) => normalizeJobName(key) === normalizedJobName)?.[1] ??
+    null
+  );
 }
 
 const CLASS_LINE_RING: Record<string, string> = {
@@ -233,17 +247,19 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   useEffect(() => {
     if (!heroClass) return;
     getAvailableSkills(heroClass).then(setAvailableSkills);
-    // Load unique skill data for this job
+
+    // 고유 스킬은 SKD3의 '한글 직업명' 키로 직접 조회
     getUniqueSkills().then(allUnique => {
-      const skill = allUnique[heroClass];
+      const skill = findUniqueSkillByJob(allUnique, heroClass);
       if (skill) {
-        setUniqueSkillName(skill['레벨별_스킬명']?.[0] || heroClass);
+        setUniqueSkillName(skill['레벨별_스킬명']?.[0] || '-');
         setUniqueSkillData(skill);
       } else {
-        setUniqueSkillName(heroClass);
+        setUniqueSkillName('-');
         setUniqueSkillData(null);
       }
     });
+
     setSelectedSkills([]);
   }, [heroClass]);
 
@@ -596,16 +612,30 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
             {/* Unique skill row */}
             {(() => {
-              // Compute skill level based on element value vs 원소_기준치 thresholds
-              const thresholds: number[] = uniqueSkillData?.['원소_기준치'] || [];
-              let uniqueSkillLevel = 0;
-              for (let t = 0; t < thresholds.length; t++) {
-                if (totalEquipElement >= thresholds[t]) uniqueSkillLevel = t;
+              const hasUniqueSkill = Boolean(uniqueSkillData);
+              const thresholdValues = Array.isArray(uniqueSkillData?.['원소_기준치'])
+                ? uniqueSkillData['원소_기준치'].map((v: unknown) => Number(v)).filter(v => Number.isFinite(v))
+                : [];
+
+              let uniqueSkillLevelIndex = 0;
+              for (let i = 0; i < thresholdValues.length; i++) {
+                if (totalEquipElement >= thresholdValues[i]) uniqueSkillLevelIndex = i;
               }
-              const baseSkillName = uniqueSkillData?.['레벨별_스킬명']?.[0] || uniqueSkillName || '-';
-              const currentSkillName = uniqueSkillData?.['레벨별_스킬명']?.[uniqueSkillLevel] || baseSkillName;
-              const currentDescription = uniqueSkillData?.['스킬_설명']?.[uniqueSkillLevel] || '-';
-              const nextThreshold = thresholds[uniqueSkillLevel + 1] ?? null;
+
+              const baseSkillName = hasUniqueSkill
+                ? uniqueSkillData?.['레벨별_스킬명']?.[0] || '-'
+                : '-';
+              const currentSkillName = hasUniqueSkill
+                ? uniqueSkillData?.['레벨별_스킬명']?.[uniqueSkillLevelIndex] || baseSkillName
+                : '-';
+              const currentDescription = hasUniqueSkill
+                ? uniqueSkillData?.['스킬_설명']?.[uniqueSkillLevelIndex] || '-'
+                : '-';
+              const uniqueSkillLevel = hasUniqueSkill ? uniqueSkillLevelIndex + 1 : '-';
+              const nextThreshold = hasUniqueSkill
+                ? (thresholdValues[uniqueSkillLevelIndex + 1] ?? '-')
+                : '-';
+              const imagePath = hasUniqueSkill ? uniqueSkillData?.['이미지_경로'] : '';
 
               return (
                 <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/50">
@@ -613,21 +643,23 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-700/60 text-foreground">고유</span>
                   </div>
                   <div className="px-1 py-1.5 flex items-center justify-center">
-                    <img
-                      src={uniqueSkillData?.['이미지_경로'] ? `/${uniqueSkillData['이미지_경로']}` : ''}
-                      alt=""
-                      className="w-9 h-9 object-contain"
-                      onError={e => { e.currentTarget.style.display = 'none'; }}
-                    />
+                    {imagePath ? (
+                      <img
+                        src={`/${imagePath}`}
+                        alt=""
+                        className="w-9 h-9 object-contain"
+                        onError={e => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    ) : null}
                   </div>
                   <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{baseSkillName}</div>
-                  <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{uniqueSkillLevel + 1}</div>
+                  <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{uniqueSkillLevel}</div>
                   <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{currentSkillName}</div>
                   <div className="px-2 py-1.5 flex items-start text-xs text-foreground whitespace-pre-line leading-tight min-h-[2.5rem]">
                     <span className="my-auto">{currentDescription}</span>
                   </div>
                   <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">
-                    {nextThreshold !== null ? nextThreshold : '-'}
+                    {nextThreshold}
                   </div>
                 </div>
               );
