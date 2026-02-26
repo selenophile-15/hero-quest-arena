@@ -5,6 +5,7 @@ import { formatNumber } from '@/lib/format';
 import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
 import { getMaxCommonSkillSlots, getSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import SkillSelectDialog from '@/components/SkillSelectDialog';
+import EquipmentSelectDialog from '@/components/EquipmentSelectDialog';
 import ElementIcon from '@/components/ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -185,6 +186,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [recommendedSets, setRecommendedSets] = useState<Record<string, string[]>>({});
+  const [equipDialogOpen, setEquipDialogOpen] = useState(false);
+  const [equipmentSlots, setEquipmentSlots] = useState<Array<{
+    item: any | null;
+    quality: string;
+    element: any | null;
+    spirit: any | null;
+  }>>(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
   // Refs for enter-key navigation
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -449,15 +457,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
         <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
-          {/* Job Card - expanded */}
-          <div className="card-fantasy p-3 flex flex-col items-center justify-center">
-          {/* Class illustration from images/classillust - large, no bg box */}
-            <div className="w-full flex items-center justify-center overflow-hidden" style={{ minHeight: '200px' }}>
+          {/* Job Card - illustration takes 2/3, info below */}
+          <div className="card-fantasy p-3 flex flex-col items-center">
+            {/* Class illustration - 2/3 of box height, no bg frame */}
+            <div className="w-full flex items-center justify-center" style={{ minHeight: '280px', flex: '2 1 0' }}>
               {heroClass ? (
                 <img
                   src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.png`}
                   alt={heroClass}
-                  className="max-w-full max-h-[220px] object-contain"
+                  className="max-w-full max-h-[300px] object-contain drop-shadow-lg"
                   onError={e => {
                     e.currentTarget.style.display = 'none';
                   }}
@@ -466,8 +474,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
               )}
             </div>
+            {/* Position & description - 1/3 */}
             {heroClass && (
-              <div className="flex flex-col items-center mt-2 gap-1">
+              <div className="flex flex-col items-center mt-2 gap-1" style={{ flex: '1 1 0' }}>
                 <span className="text-sm text-foreground">-</span>
                 <p className="text-xs text-foreground/70 text-center leading-tight">-</p>
               </div>
@@ -819,20 +828,24 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
         {/* ─── Row 4: Equipment ─── */}
         <div className="card-fantasy p-4">
-          <h3 className="text-sm font-semibold text-primary mb-3" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h3>
+            <Button
+              size="sm"
+              className="h-7 text-xs gap-1 bg-accent hover:bg-accent/80 text-accent-foreground"
+              onClick={() => setEquipDialogOpen(true)}
+              disabled={!heroClass}
+            >
+              <Plus className="w-3 h-3" />
+              장비 선택
+            </Button>
+          </div>
           <div className="grid grid-cols-6 gap-3">
             {EQUIPMENT_SLOT_LABELS.map((slotLabel, i) => {
-              // Placeholder equipment data - will be populated when equipment selection is implemented
-              const equipItem = null as null | {
-                name: string;
-                type: string;
-                quality: string;
-                relic: boolean;
-                image: string;
-                stats: { key: string; value: number }[];
-              };
-              const quality = equipItem?.quality || '';
-              const qualityGlow = quality ? QUALITY_GLOW[quality] || '' : 'border-border';
+              const slotData = equipmentSlots[i];
+              const equipItem = slotData?.item;
+              const quality = slotData?.quality || 'common';
+              const qualityGlow = equipItem ? (QUALITY_GLOW[quality] || 'border-border') : 'border-border';
               
               return (
                 <div key={i} className="flex flex-col items-center gap-1.5">
@@ -842,7 +855,14 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   </div>
                   
                   {/* Main equipment area */}
-                  <div className={`relative w-full aspect-square rounded-lg border-2 ${qualityGlow} bg-secondary/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-all overflow-hidden`}>
+                  <div
+                    onClick={() => {
+                      if (heroClass) {
+                        setEquipDialogOpen(true);
+                      }
+                    }}
+                    className={`relative w-full aspect-square rounded-lg border-2 ${qualityGlow} bg-secondary/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-all overflow-hidden`}
+                  >
                     {/* Relic indicator */}
                     {equipItem?.relic && (
                       <img
@@ -854,8 +874,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     )}
                     
                     {/* Equipment image */}
-                    {equipItem?.image ? (
-                      <img src={equipItem.image} alt={equipItem.name} className="w-4/5 h-4/5 object-contain" />
+                    {equipItem?.imagePath ? (
+                      <img src={equipItem.imagePath} alt={equipItem.name} className="w-4/5 h-4/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                     ) : (
                       <span className="text-[10px] text-muted-foreground">비어있음</span>
                     )}
@@ -863,7 +883,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     {/* Stats display - right side */}
                     {equipItem?.stats && equipItem.stats.length > 0 && (
                       <div className="absolute right-0.5 top-1 flex flex-col gap-0.5">
-                        {equipItem.stats.slice(0, 3).map((stat, si) => (
+                        {equipItem.stats.slice(0, 3).map((stat: any, si: number) => (
                           <div key={si} className="flex items-center gap-0.5">
                             <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-3.5 h-3.5" />
                             <span className="text-[9px] text-foreground font-medium tabular-nums">
@@ -891,7 +911,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       {equipItem?.name || '-'}
                     </p>
                     <p className="text-[8px] text-muted-foreground truncate leading-tight">
-                      {equipItem?.type || ''}
+                      {equipItem?.typeKor || ''}
                     </p>
                   </div>
                 </div>
@@ -899,6 +919,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             })}
           </div>
         </div>
+
+        {/* Equipment Select Dialog */}
+        <EquipmentSelectDialog
+          open={equipDialogOpen}
+          onClose={() => setEquipDialogOpen(false)}
+          jobName={heroClass}
+          currentEquipment={equipmentSlots}
+          onConfirm={setEquipmentSlots}
+        />
 
         {/* ─── Actions ─── */}
         <div className="flex gap-3">
