@@ -341,7 +341,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     <div className="animate-fade-in">
       {/* Sticky back button */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 px-1 -mx-6 px-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-primary">
+        <h2 className="text-xl font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
           {hero ? '영웅 수정' : '새 영웅 추가'}
         </h2>
         <button onClick={onCancel} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
@@ -368,7 +368,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               </Select>
             </div>
             <div>
-              <Label className="text-foreground/80 text-xs mb-1 block text-center">명인의 혼</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block text-center">승급</Label>
               <div className="flex items-center justify-center h-9">
                 <Switch checked={promoted} onCheckedChange={p => setPromoted(p)} />
               </div>
@@ -415,45 +415,33 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
         <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
           {/* Job Card - expanded */}
-          <div className="card-fantasy p-3 flex">
-            {/* Left half: class illustration + name */}
-            <div className="flex-1 flex flex-col items-center justify-center">
-              <div className="w-28 h-28 bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden">
-                {heroClass ? (
-                  <img
-                    src={getJobIllustPath(heroClass)}
-                    alt={heroClass}
-                    className="w-full h-full object-contain p-2"
-                    onError={e => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                ) : (
-                  <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
-                )}
-              </div>
-              {heroClass && (
-                <span className="text-sm font-semibold text-foreground mt-2">{heroClass}</span>
+          <div className="card-fantasy p-3 flex flex-col items-center justify-center">
+            {/* Class illustration from images/classillust */}
+            <div className="w-28 h-28 bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden">
+              {heroClass ? (
+                <img
+                  src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.png`}
+                  alt={heroClass}
+                  className="w-full h-full object-contain p-2"
+                  onError={e => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              ) : (
+                <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
               )}
             </div>
-            {/* Right half: recommended position + description */}
             {heroClass && (
-              <div className="flex-1 flex flex-col justify-center gap-2 pl-3 border-l border-border/30">
-                <div>
-                  <span className="text-sm text-foreground/70">추천 포지션</span>
-                  <p className="text-sm text-foreground">-</p>
-                </div>
-                <div>
-                  <span className="text-sm text-foreground/70">설명</span>
-                  <p className="text-sm text-foreground leading-tight">-</p>
-                </div>
+              <div className="flex flex-col items-center mt-2 gap-1">
+                <span className="text-sm text-foreground">-</span>
+                <p className="text-xs text-foreground/70 text-center leading-tight">-</p>
               </div>
             )}
           </div>
 
           {/* Stats Panel */}
           <div className="card-fantasy p-3">
-            <h3 className="text-sm font-semibold text-primary mb-2">스탯(자동)</h3>
+            <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯(자동)</h3>
             <div className="space-y-1.5">
               {/* Job icon centered above stats */}
               {heroClass && (
@@ -471,7 +459,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <img src={STAT_ICON_MAP.power} alt="전투력" className="w-5 h-5 flex-shrink-0" />
                 <button
                   type="button"
-                  onClick={() => setPowerManual(!powerManual)}
+                  onClick={() => {
+                    if (powerManual) {
+                      // Switching to auto → reset value
+                      setPower('');
+                    }
+                    setPowerManual(!powerManual);
+                  }}
                   className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
                     powerManual
                       ? 'border-accent/50 text-accent bg-accent/10'
@@ -530,9 +524,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           {/* Seeds + Element Breakdown */}
           <div className="flex flex-col gap-3">
             {/* Seeds */}
-            <div className="card-fantasy p-3 flex-[3]">
-              <h3 className="text-sm font-semibold text-primary mb-2">씨앗</h3>
-              <div className="space-y-2">
+            <div className="card-fantasy p-3">
+              <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>씨앗</h3>
+              <div className="space-y-1.5">
                 {SEED_ICONS.map((seed, i) => (
                   <div key={seed.key} className="flex items-center gap-2">
                     <img src={seed.icon} alt={seed.key} className="w-5 h-5 flex-shrink-0" />
@@ -550,12 +544,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
 
             {/* Equipment Element Breakdown */}
-            <div className="card-fantasy p-3 flex-[7]">
+            <div className="card-fantasy p-3 flex-1">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-primary">속성별 원소량</h3>
+                <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>속성별 원소량</h3>
                 <button
                   type="button"
-                  onClick={() => setElementManual(!elementManual)}
+                  onClick={() => {
+                    if (elementManual) {
+                      // Switching to auto → reset values
+                      setEquipElements({});
+                    }
+                    setElementManual(!elementManual);
+                  }}
                   className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
                     elementManual
                       ? 'border-accent/50 text-accent bg-accent/10'
@@ -565,7 +565,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   {elementManual ? '수동' : '자동'}
                 </button>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {ELEMENT_ORDER.map(el => {
                   const val = equipElements[el.key] || 0;
                   const isJobElement = element === el.key;
@@ -607,7 +607,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
           {/* Detail Stats */}
           <div className="card-fantasy p-3">
-            <h3 className="text-sm font-semibold text-primary mb-2">기타 상세 스탯</h3>
+            <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>기타 상세 스탯</h3>
             <div className="space-y-1 text-xs">
               {DETAIL_STATS.map((stat, i) => (
                 <div key={i} className="flex items-center justify-between py-0.5 border-b border-border/30">
@@ -622,7 +622,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         {/* ─── Row 3: Skills ─── */}
         <div className="card-fantasy p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-primary">스킬</h3>
+            <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬</h3>
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
@@ -784,7 +784,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
         {/* ─── Row 4: Equipment ─── */}
         <div className="card-fantasy p-4">
-          <h3 className="text-sm font-semibold text-primary mb-3">장비</h3>
+          <h3 className="text-sm font-semibold text-primary mb-3" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h3>
           <div className="grid grid-cols-6 gap-3">
             {EQUIPMENT_SLOT_LABELS.map((slotLabel, i) => (
               <div key={i} className="flex flex-col items-center gap-1">
