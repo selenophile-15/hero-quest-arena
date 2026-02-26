@@ -101,7 +101,7 @@ export async function getCommonSkills(): Promise<Record<string, any>> {
 
 export async function getUniqueSkills(): Promise<Record<string, any>> {
   if (!uniqueSkillsCache) {
-    uniqueSkillsCache = await fetchAndParse('/data/SKD3_unique_skills.json');
+    uniqueSkillsCache = await fetchAndParse('/data/SKD3_class_skills.json');
   }
   return uniqueSkillsCache;
 }

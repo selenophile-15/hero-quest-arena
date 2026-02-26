@@ -397,7 +397,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[1fr_200px_200px_0.5fr] gap-4">
+        <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
           {/* Job Card - expanded */}
           <div className="card-fantasy p-3 flex">
             {/* Left half: class illustration + name */}
@@ -584,18 +584,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           {/* Skill table: unique + common */}
           <div className="border border-border rounded overflow-hidden">
             {/* Header */}
-            <div className="grid grid-cols-[60px_40px_0.8fr_60px_0.8fr_1.8fr_100px] gap-0 bg-secondary/40 text-xs font-semibold text-foreground border-b border-border">
+            <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 bg-secondary/40 text-xs font-semibold text-foreground border-b border-border">
               <div className="px-2 py-1.5 text-center">등급</div>
-              <div className="px-1 py-1.5 text-center">아이콘</div>
-              <div className="px-2 py-1.5 text-center">1티어 스킬명</div>
-              <div className="px-1 py-1.5 text-center">스킬 레벨</div>
-              <div className="px-2 py-1.5 text-center">해당티어 스킬명</div>
+              <div className="px-1 py-1.5 text-center"></div>
+              <div className="px-2 py-1.5 text-center">기본 스킬명</div>
+              <div className="px-1 py-1.5 text-center">레벨</div>
+              <div className="px-2 py-1.5 text-center">레벨 스킬명</div>
               <div className="px-2 py-1.5 text-center">스킬 효과</div>
               <div className="px-2 py-1.5 text-center">다음 레벨 원소량</div>
             </div>
 
             {/* Unique skill row */}
-            <div className="grid grid-cols-[60px_40px_0.8fr_60px_0.8fr_1.8fr_100px] gap-0 border-b border-border/50">
+            <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/50">
               <div className="px-2 py-1.5 flex items-center justify-center">
                 <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-700/60 text-foreground">고유</span>
               </div>
@@ -603,15 +603,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <img
                   src={getUniqueSkillImagePath(heroClass)}
                   alt=""
-                  className="w-7 h-7 object-contain"
+                  className="w-9 h-9 object-contain"
                   onError={e => { e.currentTarget.style.display = 'none'; }}
                 />
               </div>
               <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{uniqueSkillName || '-'}</div>
               <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">1</div>
               <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{uniqueSkillName || '-'}</div>
-              <div className="px-2 py-1.5 text-xs text-foreground whitespace-pre-line leading-tight">
-                {uniqueSkillData?.['스킬_설명']?.[0] || '-'}
+              <div className="px-2 py-1.5 flex items-start justify-start text-xs text-foreground whitespace-pre-line leading-tight min-h-[2.5rem]">
+                <span className="my-auto">{uniqueSkillData?.['스킬_설명']?.[0] || '-'}</span>
               </div>
               <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">
                 {uniqueSkillData?.['원소_기준치']?.[1] || '-'}
@@ -624,14 +624,14 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               const isLocked = i >= maxCommonSlots;
               const skillData = skillName ? commonSkillsData[skillName] : null;
               const grade = skillData?.['희귀도'] || '';
-              const gradeClass = grade === '에픽' ? 'bg-yellow-600/30 text-foreground' :
-                                 grade === '희귀' ? 'bg-cyan-600/30 text-foreground' :
-                                 grade === '일반' ? 'bg-amber-700/30 text-foreground' : '';
+              const gradeClass = grade === '에픽' ? 'bg-yellow-600/60 text-yellow-100' :
+                                 grade === '희귀' ? 'bg-cyan-700/60 text-cyan-100' :
+                                 grade === '일반' ? 'bg-amber-800/40 text-foreground' : '';
 
               return (
                 <div
                   key={i}
-                  className={`grid grid-cols-[60px_40px_0.8fr_60px_0.8fr_1.8fr_100px] gap-0 border-b border-border/30 ${
+                  className={`grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/30 ${
                     isLocked ? 'opacity-30 bg-secondary/10' : ''
                   }`}
                 >
@@ -647,7 +647,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       <img
                         src={getSkillImagePath(skillName)}
                         alt=""
-                        className="w-7 h-7 object-contain"
+                        className="w-9 h-9 object-contain"
                         onError={e => { e.currentTarget.style.display = 'none'; }}
                       />
                     ) : null}
@@ -661,8 +661,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">
                     {skillData?.['레벨별_스킬명']?.[0] || (skillName || '-')}
                   </div>
-                  <div className="px-2 py-1.5 text-xs text-foreground whitespace-pre-line leading-tight">
-                    {skillData?.['스킬_설명']?.[0] || '-'}
+                  <div className="px-2 py-1.5 flex items-start text-xs text-foreground whitespace-pre-line leading-tight min-h-[2.5rem]">
+                    <span className="my-auto">{skillData?.['스킬_설명']?.[0] || '-'}</span>
                   </div>
                   <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">
                     {skillData?.['원소_기준치']?.[1] || '-'}
