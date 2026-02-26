@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
-import { lookupHeroStats, getAvailableSkills, getUniqueSkill } from '@/lib/gameData';
+import { lookupHeroStats, getAvailableSkills, getUniqueSkill, getCommonSkills, getUniqueSkills } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
+import { getMaxCommonSkillSlots, getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
+import SkillSelectDialog from '@/components/SkillSelectDialog';
 import ElementIcon from '@/components/ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 
 interface HeroFormProps {
   hero?: Hero;
@@ -138,9 +140,31 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [selectedSkills, setSelectedSkills] = useState<string[]>(hero?.skills?.slice(1) || []);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
   const [uniqueSkillName, setUniqueSkillName] = useState('');
+  const [uniqueSkillData, setUniqueSkillData] = useState<any>(null);
+  const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
+  const [skillDialogOpen, setSkillDialogOpen] = useState(false);
 
   // Refs for enter-key navigation
   const formRef = useRef<HTMLDivElement>(null);
+
+  // Load common skills data once
+  useEffect(() => {
+    getCommonSkills().then(data => {
+      setCommonSkillsData(data);
+      setSkillGradeCache(data);
+    });
+  }, []);
+
+  // Preload all job class images for faster dropdown rendering
+  useEffect(() => {
+    const allJobs = Object.keys(JOB_NAME_MAP);
+    allJobs.forEach(jobKor => {
+      const img = new Image();
+      img.src = getJobImagePath(jobKor);
+      const illust = new Image();
+      illust.src = getJobIllustPath(jobKor);
+    });
+  }, []);
 
   const handleNumericChange = (setter: (v: number | '') => void, max?: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -163,6 +187,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   };
 
   const jobs = classLine ? getJobsByPromotion(classLine, promoted) : [];
+
+  // Calculate max common skill slots
+  const maxCommonSlots = heroClass && level
+    ? getMaxCommonSkillSlots(heroClass, Number(level), promoted)
+    : 0;
 
   // When promotion toggles, auto-switch job to paired counterpart
   useEffect(() => {
@@ -204,19 +233,27 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   useEffect(() => {
     if (!heroClass) return;
     getAvailableSkills(heroClass).then(setAvailableSkills);
-    getUniqueSkill(heroClass).then(skill => {
-      setUniqueSkillName(skill?.name || heroClass);
+    // Load unique skill data for this job
+    getUniqueSkills().then(allUnique => {
+      const skill = allUnique[heroClass];
+      if (skill) {
+        setUniqueSkillName(skill['레벨별_스킬명']?.[0] || heroClass);
+        setUniqueSkillData(skill);
+      } else {
+        setUniqueSkillName(heroClass);
+        setUniqueSkillData(null);
+      }
     });
     setSelectedSkills([]);
   }, [heroClass]);
 
-  const toggleSkill = (skill: string) => {
-    setSelectedSkills(prev => {
-      if (prev.includes(skill)) return prev.filter(s => s !== skill);
-      if (prev.length >= 4) return prev;
-      return [...prev, skill];
-    });
-  };
+  // Trim selected skills if maxSlots decreases
+  useEffect(() => {
+    if (selectedSkills.length > maxCommonSlots) {
+      setSelectedSkills(prev => prev.slice(0, maxCommonSlots));
+    }
+  }, [maxCommonSlots]);
+
 
   // Calculated values
   const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
@@ -528,62 +565,127 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
         {/* ─── Row 3: Skills ─── */}
         <div className="card-fantasy p-4">
-          <h3 className="text-sm font-display font-semibold text-primary mb-3">스킬</h3>
-
-          {/* Skill slots */}
-          <div className="flex gap-2 mb-3">
-            <div className="w-12 h-12 rounded border-2 border-primary/50 bg-primary/10 flex items-center justify-center overflow-hidden" title={uniqueSkillName}>
-              <span className="text-[8px] text-primary text-center leading-tight">{uniqueSkillName || '고유'}</span>
-            </div>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-12 h-12 rounded border-2 flex items-center justify-center overflow-hidden ${
-                  selectedSkills[i]
-                    ? 'border-accent/50 bg-accent/10'
-                    : 'border-border bg-secondary/30'
-                }`}
-                title={selectedSkills[i] || `슬롯 ${i + 2}`}
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-display font-semibold text-primary">스킬</h3>
+            <div className="flex items-center gap-2">
+              {/* Recommended skill sets placeholder */}
+              <span className="text-[10px] text-muted-foreground">추천 스킬셋:</span>
+              <span className="text-[10px] text-foreground/50 italic">( 미설정 )</span>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs gap-1"
+                onClick={() => setSkillDialogOpen(true)}
+                disabled={!heroClass}
               >
-                {selectedSkills[i] ? (
-                  <span className="text-[8px] text-foreground text-center leading-tight">{selectedSkills[i]}</span>
-                ) : (
-                  <span className="text-[8px] text-muted-foreground">{i + 2}</span>
-                )}
-              </div>
-            ))}
+                <Plus className="w-3 h-3" />
+                스킬 선택
+              </Button>
+            </div>
           </div>
 
-          <div className="max-h-56 overflow-y-auto scrollbar-fantasy space-y-0.5">
-            {availableSkills.length === 0 && (
-              <p className="text-xs text-muted-foreground">직업을 선택하면 스킬이 표시됩니다</p>
-            )}
-            {availableSkills.map(skill => {
-              const isSelected = selectedSkills.includes(skill);
-              const isFull = selectedSkills.length >= 4 && !isSelected;
+          {/* Skill table: unique + common */}
+          <div className="border border-border rounded overflow-hidden">
+            {/* Header */}
+            <div className="grid grid-cols-[60px_40px_1fr_60px_1fr_1.5fr_100px] gap-0 bg-secondary/40 text-[10px] font-semibold text-foreground/70 border-b border-border">
+              <div className="px-2 py-1.5 text-center">등급</div>
+              <div className="px-1 py-1.5 text-center">아이콘</div>
+              <div className="px-2 py-1.5">1티어 스킬명</div>
+              <div className="px-1 py-1.5 text-center">스킬 레벨</div>
+              <div className="px-2 py-1.5">해당티어 스킬명</div>
+              <div className="px-2 py-1.5">스킬 효과</div>
+              <div className="px-2 py-1.5 text-right">다음 레벨 원소량</div>
+            </div>
+
+            {/* Unique skill row */}
+            <div className="grid grid-cols-[60px_40px_1fr_60px_1fr_1.5fr_100px] gap-0 border-b border-border/50 bg-primary/5">
+              <div className="px-2 py-1.5 text-[10px] text-center">
+                <span className="px-1.5 py-0.5 rounded bg-primary/20 text-primary font-semibold">고유</span>
+              </div>
+              <div className="px-1 py-1.5 flex items-center justify-center">
+                <img
+                  src={getUniqueSkillImagePath(heroClass)}
+                  alt=""
+                  className="w-7 h-7 object-contain"
+                  onError={e => { e.currentTarget.style.display = 'none'; }}
+                />
+              </div>
+              <div className="px-2 py-1.5 text-sm text-foreground">{uniqueSkillName || '-'}</div>
+              <div className="px-1 py-1.5 text-sm text-foreground text-center">1</div>
+              <div className="px-2 py-1.5 text-sm text-foreground">{uniqueSkillName || '-'}</div>
+              <div className="px-2 py-1.5 text-xs text-foreground/80 whitespace-pre-line leading-tight">
+                {uniqueSkillData?.['스킬_설명']?.[0] || '-'}
+              </div>
+              <div className="px-2 py-1.5 text-sm text-foreground text-right tabular-nums">
+                {uniqueSkillData?.['원소_기준치']?.[1] || '-'}
+              </div>
+            </div>
+
+            {/* Common skill rows */}
+            {Array.from({ length: 4 }).map((_, i) => {
+              const skillName = selectedSkills[i];
+              const isLocked = i >= maxCommonSlots;
+              const skillData = skillName ? commonSkillsData[skillName] : null;
+              const grade = skillData?.['희귀도'] || '';
+              const gradeClass = grade === '에픽' ? 'bg-yellow-600/20 text-yellow-400' :
+                                 grade === '희귀' ? 'bg-cyan-600/20 text-cyan-300' :
+                                 grade === '일반' ? 'bg-amber-700/20 text-amber-300' : '';
+
               return (
-                <button
-                  key={skill}
-                  type="button"
-                  onClick={() => toggleSkill(skill)}
-                  disabled={isFull}
-                  className={`w-full flex items-center gap-2 py-1.5 px-2 rounded text-sm text-left transition-colors ${
-                    isSelected
-                      ? 'bg-accent/15 text-accent border border-accent/30'
-                      : isFull
-                        ? 'text-muted-foreground/50 cursor-not-allowed'
-                        : 'hover:bg-secondary/50 text-foreground'
+                <div
+                  key={i}
+                  className={`grid grid-cols-[60px_40px_1fr_60px_1fr_1.5fr_100px] gap-0 border-b border-border/30 ${
+                    isLocked ? 'opacity-30 bg-secondary/10' : ''
                   }`}
                 >
-                  <div className="w-7 h-7 rounded bg-secondary/50 border border-border flex-shrink-0 flex items-center justify-center">
-                    <span className="text-[7px] text-muted-foreground">img</span>
+                  <div className="px-2 py-1.5 text-[10px] text-center">
+                    {grade ? (
+                      <span className={`px-1.5 py-0.5 rounded font-semibold ${gradeClass}`}>{grade}</span>
+                    ) : (
+                      <span className="text-muted-foreground">{isLocked ? '🔒' : `-`}</span>
+                    )}
                   </div>
-                  <span>{skill}</span>
-                </button>
+                  <div className="px-1 py-1.5 flex items-center justify-center">
+                    {skillName ? (
+                      <img
+                        src={getSkillImagePath(skillName)}
+                        alt=""
+                        className="w-7 h-7 object-contain"
+                        onError={e => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    ) : null}
+                  </div>
+                  <div className="px-2 py-1.5 text-sm text-foreground">
+                    {skillName || (isLocked ? '잠김' : '-')}
+                  </div>
+                  <div className="px-1 py-1.5 text-sm text-foreground text-center">
+                    {skillName ? '1' : '-'}
+                  </div>
+                  <div className="px-2 py-1.5 text-sm text-foreground">
+                    {skillData?.['레벨별_스킬명']?.[0] || (skillName || '-')}
+                  </div>
+                  <div className="px-2 py-1.5 text-xs text-foreground/80 whitespace-pre-line leading-tight">
+                    {skillData?.['스킬_설명']?.[0] || '-'}
+                  </div>
+                  <div className="px-2 py-1.5 text-sm text-foreground text-right tabular-nums">
+                    {skillData?.['원소_기준치']?.[1] || '-'}
+                  </div>
+                </div>
               );
             })}
           </div>
         </div>
+
+        {/* Skill Select Dialog */}
+        <SkillSelectDialog
+          open={skillDialogOpen}
+          onClose={() => setSkillDialogOpen(false)}
+          availableSkills={availableSkills}
+          selectedSkills={selectedSkills}
+          maxSlots={maxCommonSlots}
+          commonSkillsData={commonSkillsData}
+          onConfirm={setSelectedSkills}
+        />
 
         {/* ─── Row 4: Equipment ─── */}
         <div className="card-fantasy p-4">
