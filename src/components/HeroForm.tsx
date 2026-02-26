@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
@@ -8,7 +8,7 @@ import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
 import { getMaxCommonSkillSlots, getSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import SkillSelectDialog from '@/components/SkillSelectDialog';
 import EquipmentSelectDialog from '@/components/EquipmentSelectDialog';
-import EnchantPickerDialog from '@/components/EnchantPickerDialog';
+import EnchantPickerDialog, { getElementValue } from '@/components/EnchantPickerDialog';
 import ElementIcon from '@/components/ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,9 +23,6 @@ interface HeroFormProps {
   onCancel: () => void;
 }
 
-// Use JOB_NAME_MAP from nameMap.ts (imported above)
-
-// Base → Promoted job pairs per classLine
 const JOB_PAIRS: Record<string, [string, string][]> = {
   '전사': [
     ['병사', '용병'], ['야만전사', '족장'], ['기사', '군주'],
@@ -50,7 +47,6 @@ function getJobsByPromotion(classLine: HeroClassLine | '', promoted: boolean): s
   return pairs.map(pair => promoted ? pair[1] : pair[0]);
 }
 
-// Find the paired job (base↔promoted)
 function findPairedJob(jobName: string): string | null {
   for (const pairs of Object.values(JOB_PAIRS)) {
     for (const [base, prom] of pairs) {
@@ -83,7 +79,6 @@ const CLASS_LINE_RING: Record<string, string> = {
 
 const EQUIPMENT_SLOT_LABELS = ['슬롯 1', '슬롯 2', '슬롯 3', '슬롯 4', '슬롯 5', '슬롯 6'];
 
-// Quality radial glow for equipment slots
 const QUALITY_BORDER: Record<string, string> = {
   common: 'border-gray-300/50',
   uncommon: 'border-green-400/60',
@@ -115,43 +110,6 @@ const ELEMENT_ENG_MAP: Record<string, string> = {
 };
 
 const SPIRIT_NAME_MAP_LOCAL = SPIRIT_NAME_MAP;
-
-const ELEMENT_ENCHANT_OPTIONS = ['불', '물', '공기', '대지', '빛', '어둠'];
-const ELEMENT_TIERS = [4, 7, 9, 12, 14];
-
-// Spirit sorted by tier descending for picker
-const SPIRIT_TIER_MAP: Record<string, number> = {
-  '바하무트': 15, '레비아탄': 15, '그리핀': 15,
-  '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
-  '기린': 13, '크람푸스': 13, '크리스마스': 13,
-  '크라켄': 12, '키메라': 12, '카벙클': 12,
-  '타라스크': 11, '하이드라': 11, '불사조': 11,
-  '케찰코아틀': 10, '호랑이': 10,
-  '매머드': 9, '공룡': 9,
-  '사자': 8, '곰': 8,
-  '바다코끼리': 7, '상어': 7,
-  '다람쥐': 6, '하마': 6,
-  '말': 5, '도마뱀': 5,
-  '아르마딜로': 4, '부엉이': 4,
-  '졸로틀': 3, '코뿔소': 3,
-  '독수리': 2, '독사': 2, '토끼': 2,
-  '황소': 1, '늑대': 1, '양': 1, '거위': 1, '고양이': 1,
-};
-const SPIRIT_LIST_SORTED = Object.keys(SPIRIT_TIER_MAP).sort((a, b) => SPIRIT_TIER_MAP[b] - SPIRIT_TIER_MAP[a]);
-
-function formatEquipStatVal(key: string, value: number): string {
-  if (key === '장비_치명타확률%' || key === '장비_회피%') return `${value} %`;
-  return formatNumber(value);
-}
-
-// Stat icons used in equipment display
-const EQUIP_STAT_ICONS: Record<string, string> = {
-  '장비_공격력': '/images/stats/attack.png',
-  '장비_방어력': '/images/stats/defense.png',
-  '장비_체력': '/images/stats/health.png',
-  '장비_치명타확률%': '/images/stats/critchance.png',
-  '장비_회피%': '/images/stats/evasion.png',
-};
 
 const ELEMENT_ORDER = [
   { key: '불', icon: '/images/elements/fire.png' },
@@ -185,6 +143,27 @@ const DETAIL_STATS = [
   '문드라 - 중첩량 (보스 상대 +공 20%, 방 20%)',
 ];
 
+const EQUIP_STAT_ICONS: Record<string, string> = {
+  '장비_공격력': '/images/stats/attack.png',
+  '장비_방어력': '/images/stats/defense.png',
+  '장비_체력': '/images/stats/health.png',
+  '장비_치명타확률%': '/images/stats/critchance.png',
+  '장비_회피%': '/images/stats/evasion.png',
+};
+
+function formatEquipStatVal(key: string, value: number): string {
+  if (key === '장비_치명타확률%' || key === '장비_회피%') return `${value} %`;
+  return formatNumber(value);
+}
+
+// Check if quiver stats should be zeroed (no bow/crossbow/gun equipped)
+function hasRangedWeapon(slots: Array<{ item: any | null }>): boolean {
+  return slots.some(s => {
+    if (!s.item) return false;
+    return ['bow', 'crossbow', 'gun'].includes(s.item.type);
+  });
+}
+
 export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const getInitialPromotion = (): boolean => {
     if (!hero) return false;
@@ -215,12 +194,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [element, setElement] = useState(hero?.element || '');
   const [elementValue, setElementValue] = useState(hero?.elementValue || 0);
 
-  // Seeds
   const [seedHp, setSeedHp] = useState(hero?.seeds?.hp || 0);
   const [seedAtk, setSeedAtk] = useState(hero?.seeds?.atk || 0);
   const [seedDef, setSeedDef] = useState(hero?.seeds?.def || 0);
 
-  // Equipment elements (placeholder)
   const [equipElements, setEquipElements] = useState<Record<string, number>>(
     hero?.equipmentElements || {}
   );
@@ -241,14 +218,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     element: any | null;
     spirit: any | null;
   }>>(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
-  // Refs for enter-key navigation
   const formRef = useRef<HTMLDivElement>(null);
-  // Element/Spirit picker states
-  const [elementPickerSlot, setElementPickerSlot] = useState<number | null>(null);
-  const [spiritPickerSlot, setSpiritPickerSlot] = useState<number | null>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
 
-  // Load common skills data once
   useEffect(() => {
     getCommonSkills().then(data => {
       setCommonSkillsData(data);
@@ -256,7 +228,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     });
   }, []);
 
-  // Preload all job class images for faster dropdown rendering
   useEffect(() => {
     const allJobs = Object.keys(JOB_NAME_MAP);
     allJobs.forEach(jobKor => {
@@ -289,12 +260,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
   const jobs = classLine ? getJobsByPromotion(classLine, promoted) : [];
 
-  // Calculate max common skill slots
   const maxCommonSlots = heroClass && level
     ? getMaxCommonSkillSlots(heroClass, Number(level), promoted)
     : 0;
 
-  // When promotion toggles, auto-switch job to paired counterpart
   useEffect(() => {
     if (!classLine) { setHeroClass(''); return; }
     if (heroClass) {
@@ -313,9 +282,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     }
   }, [classLine, promoted]);
 
-  // (Level-dependent stats are loaded in the combined effect below)
-
-  // Load fixed stats (element etc.) immediately when job changes (before level)
   useEffect(() => {
     if (!heroClass) { setElement(''); return; }
     lookupHeroFixedStats(heroClass).then(fixed => {
@@ -330,7 +296,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
     getAvailableSkills(heroClass).then(setAvailableSkills);
 
-    // 고유 스킬은 SKD3의 '한글 직업명' 키로 직접 조회
     getUniqueSkills().then(allUnique => {
       const skill = findUniqueSkillByJob(allUnique, heroClass);
       if (skill) {
@@ -342,7 +307,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       }
     });
 
-    // Load recommended skillsets
     fetch('/data/recommended_skillsets.json')
       .then(r => r.json())
       .then(data => {
@@ -356,7 +320,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     setSelectedSkills([]);
   }, [heroClass]);
 
-  // Load level-dependent stats when job+level changes
   useEffect(() => {
     if (!heroClass || !level) return;
     lookupHeroStats(heroClass, Number(level)).then(stats => {
@@ -368,17 +331,33 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     });
   }, [heroClass, level]);
 
-  // 슬롯 수가 줄어도 기존 선택은 유지 (초기화 버튼으로 직접 관리)
+  // Auto-calculate element values from enchants when not manual
+  const calculatedElements = useMemo(() => {
+    const totals: Record<string, number> = {};
+    equipmentSlots.forEach(s => {
+      if (s.element) {
+        const val = getElementValue(s.element.tier, s.element.affinity);
+        totals[s.element.type] = (totals[s.element.type] || 0) + val;
+      }
+    });
+    return totals;
+  }, [equipmentSlots]);
 
+  // Sync auto elements
+  useEffect(() => {
+    if (!elementManual) {
+      setEquipElements(calculatedElements);
+    }
+  }, [calculatedElements, elementManual]);
 
-  // Calculated values
   const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
   const totalEquipElement = Object.values(equipElements).reduce((a, b) => a + b, 0);
 
-  // 직업 원소에 해당하는 원소량만 스킬 레벨 계산에 사용
-  // 마법검/스펠나이트는 '모든 원소'이므로 총합 사용
   const isAllElement = element === '모든 원소' || heroClass === '마법검' || heroClass === '스펠나이트';
   const jobElementValue = isAllElement ? totalEquipElement : (element ? (equipElements[element] || 0) : 0);
+
+  // Quiver stat check
+  const hasRanged = useMemo(() => hasRangedWeapon(equipmentSlots), [equipmentSlots]);
 
   const handleSubmit = () => {
     if (!name.trim() || !heroClass) return;
@@ -403,7 +382,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     });
   };
 
-  // Enter key moves to next input instead of submitting
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -419,11 +397,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   };
 
   const ringClass = classLine ? CLASS_LINE_RING[classLine] || '' : '';
-
-  // Class image path helper - use English filename
   const getClassImage = (jobName: string) => getJobImagePath(jobName);
 
-  // Format power input display value
   const formatPowerDisplay = (val: number | '') => {
     if (val === '' || val === 0) return '';
     return val.toLocaleString('en-US');
@@ -518,9 +493,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
         <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
-          {/* Job Card - illustration takes 2/3, info below */}
+          {/* Job Card */}
           <div className="card-fantasy p-3 flex flex-col items-center">
-            {/* Class illustration - large, near top */}
             <div className="w-full flex items-center justify-center mt-1">
               {heroClass ? (
                 <img
@@ -534,7 +508,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
               )}
             </div>
-            {/* Position & description below */}
             <div className="flex-1" />
             {heroClass && (
               <div className="flex flex-col items-center mt-2 gap-1 pb-1">
@@ -548,52 +521,25 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯(자동)</h3>
             <div className="space-y-1.5">
-              {/* Job icon centered above stats */}
               {heroClass && (
                 <div className="flex items-center justify-center py-2 mb-1">
-                  <img
-                    src={getClassImage(heroClass)}
-                    alt={heroClass}
-                    className="w-12 h-12 object-contain"
-                    onError={e => { e.currentTarget.style.display = 'none'; }}
-                  />
+                  <img src={getClassImage(heroClass)} alt={heroClass} className="w-12 h-12 object-contain"
+                    onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
               )}
-              {/* 전투력 - manual/auto toggle */}
+              {/* 전투력 */}
               <div className="flex items-center gap-2 py-0.5 px-1">
                 <img src={STAT_ICON_MAP.power} alt="전투력" className="w-5 h-5 flex-shrink-0" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (powerManual) {
-                      // Switching to auto → reset value
-                      setPower('');
-                    }
-                    setPowerManual(!powerManual);
-                  }}
+                <button type="button" onClick={() => { if (powerManual) setPower(''); setPowerManual(!powerManual); }}
                   className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
-                    powerManual
-                      ? 'border-accent/50 text-accent bg-accent/10'
-                      : 'border-border text-muted-foreground bg-secondary/30'
-                  }`}
-                >
-                  {powerManual ? '수동' : '자동'}
-                </button>
+                    powerManual ? 'border-accent/50 text-accent bg-accent/10' : 'border-border text-muted-foreground bg-secondary/30'
+                  }`}>{powerManual ? '수동' : '자동'}</button>
                 {powerManual ? (
-                  <Input
-                    type="text"
-                    value={formatPowerDisplay(power)}
-                    onChange={handlePowerInput}
-                    placeholder="전투력"
-                    className="h-7 text-sm flex-1 text-right tabular-nums"
-                  />
+                  <Input type="text" value={formatPowerDisplay(power)} onChange={handlePowerInput} placeholder="전투력" className="h-7 text-sm flex-1 text-right tabular-nums" />
                 ) : (
-                  <span className="text-sm text-foreground ml-auto tabular-nums">
-                    {power ? formatNumber(Number(power)) : '-'}
-                  </span>
+                  <span className="text-sm text-foreground ml-auto tabular-nums">{power ? formatNumber(Number(power)) : '-'}</span>
                 )}
               </div>
-              {/* Auto stats - read only */}
               {[
                 { icon: STAT_ICON_MAP.hp, value: hp, suffix: '' },
                 { icon: STAT_ICON_MAP.atk, value: atk, suffix: '' },
@@ -611,14 +557,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   </span>
                 </div>
               ))}
-              {/* 원소 - 직업 원소만 표시 */}
               <div className="flex items-center gap-2 py-0.5 px-1">
                 <ElementIcon element={isAllElement ? '모든 원소' : element} size={20} />
                 <span className="text-sm text-foreground ml-auto tabular-nums">
                   {jobElementValue ? formatNumber(jobElementValue) : '-'}
                 </span>
               </div>
-              {/* 에어쉽 파워 */}
               <div className="flex items-center gap-2 py-0.5 px-1">
                 <img src={STAT_ICON_MAP.airshipPower} alt="에어쉽 파워" className="w-5 h-5 flex-shrink-0" />
                 <span className="text-sm text-foreground ml-auto tabular-nums">-</span>
@@ -628,46 +572,28 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
           {/* Seeds + Element Breakdown */}
           <div className="flex flex-col gap-3">
-            {/* Seeds */}
             <div className="card-fantasy p-3">
               <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>씨앗</h3>
               <div className="flex flex-col gap-[6px]">
                 {SEED_ICONS.map((seed, i) => (
                   <div key={seed.key} className="flex items-center gap-2">
                     <img src={seed.icon} alt={seed.key} className="w-5 h-5 flex-shrink-0" />
-                    <Input
-                      type="number"
-                      value={seedValues[i] || ''}
-                      onChange={handleSeedChange(seedSetters[i])}
-                      min={0} max={80}
-                      className="h-7 text-sm flex-1 text-right tabular-nums"
-                      placeholder="0"
-                    />
+                    <Input type="number" value={seedValues[i] || ''} onChange={handleSeedChange(seedSetters[i])} min={0} max={80} className="h-7 text-sm flex-1 text-right tabular-nums" placeholder="0" />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Equipment Element Breakdown */}
             <div className="card-fantasy p-3 flex-1">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>속성별 원소량</h3>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (elementManual) {
-                      setEquipElements({});
-                    }
-                    setElementManual(!elementManual);
-                  }}
+                <button type="button" onClick={() => {
+                  if (elementManual) setEquipElements({});
+                  setElementManual(!elementManual);
+                }}
                   className={`text-[9px] px-1.5 py-0.5 rounded border flex-shrink-0 ${
-                    elementManual
-                      ? 'border-accent/50 text-accent bg-accent/10'
-                      : 'border-border text-muted-foreground bg-secondary/30'
-                  }`}
-                >
-                  {elementManual ? '수동' : '자동'}
-                </button>
+                    elementManual ? 'border-accent/50 text-accent bg-accent/10' : 'border-border text-muted-foreground bg-secondary/30'
+                  }`}>{elementManual ? '수동' : '자동'}</button>
               </div>
               <div className="flex flex-col gap-[6px]">
                 {ELEMENT_ORDER.map(el => {
@@ -677,24 +603,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     <div key={el.key} className={`flex items-center gap-2 py-0.5 ${isJobElement ? 'bg-accent/10 rounded px-1 -mx-1' : ''}`}>
                       <img src={el.icon} alt={el.key} className="w-5 h-5 flex-shrink-0" />
                       {elementManual ? (
-                        <Input
-                          type="number"
-                          value={val || ''}
-                          onChange={e => {
-                            const v = parseInt(e.target.value, 10);
-                            setEquipElements(prev => ({
-                              ...prev,
-                              [el.key]: isNaN(v) ? 0 : Math.max(0, v),
-                            }));
-                          }}
-                          min={0}
-                          className="h-6 text-xs flex-1 text-right tabular-nums"
-                          placeholder="0"
-                        />
+                        <Input type="number" value={val || ''} onChange={e => {
+                          const v = parseInt(e.target.value, 10);
+                          setEquipElements(prev => ({ ...prev, [el.key]: isNaN(v) ? 0 : Math.max(0, v) }));
+                        }} min={0} className="h-6 text-xs flex-1 text-right tabular-nums" placeholder="0" />
                       ) : (
-                        <span className="text-sm text-foreground ml-auto tabular-nums">
-                          {val > 0 ? formatNumber(val) : ''}
-                        </span>
+                        <span className="text-sm text-foreground ml-auto tabular-nums">{val > 0 ? formatNumber(val) : ''}</span>
                       )}
                     </div>
                   );
@@ -728,21 +642,14 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬</h3>
             <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                className="h-7 text-xs gap-1 bg-accent hover:bg-accent/80 text-accent-foreground"
-                onClick={() => setSkillDialogOpen(true)}
-                disabled={!heroClass}
-              >
-                <Plus className="w-3 h-3" />
-                스킬 선택
+              <Button size="sm" className="h-7 text-xs gap-1 bg-accent hover:bg-accent/80 text-accent-foreground"
+                onClick={() => setSkillDialogOpen(true)} disabled={!heroClass}>
+                <Plus className="w-3 h-3" />스킬 선택
               </Button>
             </div>
           </div>
 
-          {/* Skill table: unique + common */}
           <div className="border border-border rounded overflow-hidden">
-            {/* Header */}
             <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 bg-secondary/40 text-xs font-semibold text-foreground border-b border-border">
               <div className="px-2 py-1.5 text-center">등급</div>
               <div className="px-1 py-1.5 text-center"></div>
@@ -757,7 +664,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             {(() => {
               const hasUniqueSkill = Boolean(uniqueSkillData);
               const thresholdValues = Array.isArray(uniqueSkillData?.['원소_기준치'])
-                ? uniqueSkillData['원소_기준치'].map((v: unknown) => Number(v)).filter(v => Number.isFinite(v))
+                ? uniqueSkillData['원소_기준치'].map((v: unknown) => Number(v)).filter((v: number) => Number.isFinite(v))
                 : [];
 
               let uniqueSkillLevelIndex = 0;
@@ -765,19 +672,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 if (jobElementValue >= thresholdValues[i]) uniqueSkillLevelIndex = i;
               }
 
-              const baseSkillName = hasUniqueSkill
-                ? uniqueSkillData?.['레벨별_스킬명']?.[0] || '-'
-                : '-';
-              const currentSkillName = hasUniqueSkill
-                ? uniqueSkillData?.['레벨별_스킬명']?.[uniqueSkillLevelIndex] || baseSkillName
-                : '-';
-              const currentDescription = hasUniqueSkill
-                ? uniqueSkillData?.['스킬_설명']?.[uniqueSkillLevelIndex] || '-'
-                : '-';
+              const baseSkillName = hasUniqueSkill ? uniqueSkillData?.['레벨별_스킬명']?.[0] || '-' : '-';
+              const currentSkillName = hasUniqueSkill ? uniqueSkillData?.['레벨별_스킬명']?.[uniqueSkillLevelIndex] || baseSkillName : '-';
+              const currentDescription = hasUniqueSkill ? uniqueSkillData?.['스킬_설명']?.[uniqueSkillLevelIndex] || '-' : '-';
               const uniqueSkillLevel = hasUniqueSkill ? uniqueSkillLevelIndex + 1 : '-';
-              const nextThreshold = hasUniqueSkill
-                ? (thresholdValues[uniqueSkillLevelIndex + 1] ?? '-')
-                : '-';
+              const nextThreshold = hasUniqueSkill ? (thresholdValues[uniqueSkillLevelIndex + 1] ?? '-') : '-';
               const imagePath = hasUniqueSkill ? uniqueSkillData?.['이미지_경로'] : '';
 
               return (
@@ -786,14 +685,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-700/60 text-foreground">고유</span>
                   </div>
                   <div className="px-1 py-1.5 flex items-center justify-center">
-                    {imagePath ? (
-                      <img
-                        src={`/${imagePath}`}
-                        alt=""
-                        className="w-9 h-9 object-contain"
-                        onError={e => { e.currentTarget.style.display = 'none'; }}
-                      />
-                    ) : null}
+                    {imagePath ? <img src={`/${imagePath}`} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                   </div>
                   <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{baseSkillName}</div>
                   <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{uniqueSkillLevel}</div>
@@ -801,9 +693,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   <div className="px-2 py-1.5 flex items-start text-xs text-foreground whitespace-pre-line leading-tight min-h-[2.5rem]">
                     <span className="my-auto">{currentDescription}</span>
                   </div>
-                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">
-                    {nextThreshold}
-                  </div>
+                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">{nextThreshold}</div>
                 </div>
               );
             })()}
@@ -818,7 +708,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                                  grade === '희귀' ? 'bg-cyan-700/60 text-cyan-100' :
                                  grade === '일반' ? 'bg-amber-800/40 text-foreground' : '';
 
-              // 공용 스킬도 직업 원소 기준으로 레벨 계산
               const commonThresholds: number[] = skillData?.['원소_기준치']?.map((v: unknown) => Number(v)).filter((v: number) => Number.isFinite(v)) || [];
               let commonSkillLevelIndex = 0;
               for (let t = 0; t < commonThresholds.length; t++) {
@@ -830,44 +719,20 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               const commonLevel = skillName ? commonSkillLevelIndex + 1 : '-';
 
               return (
-                <div
-                  key={i}
-                  className={`grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/30 ${
-                    isLocked ? 'opacity-30 bg-secondary/10' : ''
-                  }`}
-                >
+                <div key={i} className={`grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/30 ${isLocked ? 'opacity-30 bg-secondary/10' : ''}`}>
                   <div className="px-2 py-1.5 flex items-center justify-center">
-                    {grade ? (
-                      <span className={`px-1.5 py-0.5 rounded text-xs font-semibold ${gradeClass}`}>{grade}</span>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">{isLocked ? '🔒' : `-`}</span>
-                    )}
+                    {grade ? <span className={`px-1.5 py-0.5 rounded text-xs font-semibold ${gradeClass}`}>{grade}</span> : <span className="text-xs text-muted-foreground">{isLocked ? '🔒' : `-`}</span>}
                   </div>
                   <div className="px-1 py-1.5 flex items-center justify-center">
-                    {skillName ? (
-                      <img
-                        src={getSkillImagePath(skillName)}
-                        alt=""
-                        className="w-9 h-9 object-contain"
-                        onError={e => { e.currentTarget.style.display = 'none'; }}
-                      />
-                    ) : null}
+                    {skillName ? <img src={getSkillImagePath(skillName)} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                   </div>
-                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">
-                    {skillName || (isLocked ? '잠김' : '-')}
-                  </div>
-                  <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">
-                    {commonLevel}
-                  </div>
-                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">
-                    {commonCurrentName}
-                  </div>
+                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{skillName || (isLocked ? '잠김' : '-')}</div>
+                  <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{commonLevel}</div>
+                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{commonCurrentName}</div>
                   <div className="px-2 py-1.5 flex items-start text-xs text-foreground whitespace-pre-line leading-tight min-h-[2.5rem]">
                     <span className="my-auto">{commonCurrentDesc}</span>
                   </div>
-                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">
-                    {commonNextThreshold}
-                  </div>
+                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">{commonNextThreshold}</div>
                 </div>
               );
             })}
@@ -896,23 +761,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               const equipItem = slotData?.item;
               const quality = slotData?.quality || 'common';
               const typeFile = equipItem?.type || '';
+              const isQuiverZero = equipItem?.type === 'quiver' && !hasRanged;
+
+              // Determine element/spirit to show (either from enchant or unique)
+              const displayElement = slotData?.element || (equipItem?.uniqueElement?.length ? { type: equipItem.uniqueElement[0], tier: equipItem.uniqueElementTier || 1, affinity: true } : null);
+              const displaySpirit = slotData?.spirit || (equipItem?.uniqueSpirit?.length ? { name: equipItem.uniqueSpirit[0], affinity: true } : null);
 
               return (
                 <div
                   key={i}
                   className="flex flex-col items-center gap-1 cursor-pointer"
                   onClick={() => {
-                    if (equipItem) {
-                      // Click to unequip
-                      const newSlots = [...equipmentSlots];
-                      newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
-                      setEquipmentSlots(newSlots);
-                    } else if (heroClass) {
-                      setEquipInitialSlot(i);
-                      setEquipDialogOpen(true);
-                    }
-                  }}
-                  onDoubleClick={() => {
+                    // Click on table slot = open equipment dialog
                     if (heroClass) {
                       setEquipInitialSlot(i);
                       setEquipDialogOpen(true);
@@ -923,75 +783,89 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     {slotLabel}
                   </div>
 
-                  {/* Item box with radial glow */}
+                  {/* Unified box with glow covering item + element/spirit/type */}
                   <div
-                    className={`relative w-full aspect-square rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex items-center justify-center hover:border-primary/50 transition-all overflow-hidden`}
+                    className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
                     style={equipItem ? {
                       background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`,
                       boxShadow: QUALITY_SHADOW_COLOR[quality],
                     } : { background: 'hsl(var(--secondary) / 0.3)' }}
                   >
-                    {equipItem?.relic && (
-                      <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
-                        onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    )}
-                    {equipItem?.imagePath ? (
-                      <img src={equipItem.imagePath} alt={equipItem.name} className="w-4/5 h-4/5 object-contain"
-                        onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    ) : (
-                      <span className="text-[10px] text-muted-foreground">비어있음</span>
-                    )}
-                  </div>
-
-                  {/* Element + Spirit + Type icons */}
-                  <div className="grid grid-cols-3 gap-0.5 w-full">
-                    <div
-                      className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
-                      title="원소 선택"
-                      onClick={(e) => { e.stopPropagation(); setElementPickerSlot(i); }}
-                    >
-                      {slotData?.element ? (
-                        <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[slotData.element.type] || slotData.element.type}${slotData.element.tier}_${slotData.element.affinity ? '2' : '1'}.png`} className="w-full h-full object-cover" alt={slotData.element.type}
+                    {/* Item image area */}
+                    <div className="w-full aspect-square flex items-center justify-center relative">
+                      {equipItem?.relic && (
+                        <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
-                      ) : <span className="text-[6px] text-muted-foreground">원소</span>}
+                      )}
+                      {equipItem?.imagePath ? (
+                        <img src={equipItem.imagePath} alt={equipItem.name} className="w-4/5 h-4/5 object-contain"
+                          onError={e => { e.currentTarget.style.display = 'none'; }} />
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">비어있음</span>
+                      )}
                     </div>
-                    <div
-                      className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
-                      title="영혼 선택"
-                      onClick={(e) => { e.stopPropagation(); setSpiritPickerSlot(i); }}
-                    >
-                      {slotData?.spirit ? (() => {
-                        const eng = SPIRIT_NAME_MAP_LOCAL[slotData.spirit.name];
-                        return eng ? (
-                          <img src={`/images/enchant/spirit/${eng}_${slotData.spirit.affinity ? '2' : '1'}.png`} className="w-full h-full object-cover" alt={slotData.spirit.name}
+
+                    {/* Element + Spirit + Type row inside the glow box */}
+                    <div className="grid grid-cols-3 gap-0.5 w-full p-0.5">
+                      <div
+                        className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
+                        title="원소 선택"
+                        onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}
+                      >
+                        {displayElement ? (
+                          <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-[85%] h-[85%] object-cover" alt={displayElement.type}
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        ) : <span className="text-[6px] text-foreground">{slotData.spirit.name}</span>;
-                      })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
-                    </div>
-                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden" title="타입">
-                      {typeFile ? (
-                        <img src={getTypeImgPath(typeFile)} className="w-full h-full object-contain p-0.5" alt=""
-                          onError={e => { e.currentTarget.style.display = 'none'; }} />
-                      ) : <span className="text-[6px] text-muted-foreground">타입</span>}
+                        ) : <span className="text-[6px] text-muted-foreground">원소</span>}
+                      </div>
+                      <div
+                        className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
+                        title="영혼 선택"
+                        onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}
+                      >
+                        {displaySpirit ? (() => {
+                          const eng = SPIRIT_NAME_MAP_LOCAL[displaySpirit.name];
+                          if (displaySpirit.name === '문드라') {
+                            return <img src="/images/enchant/spirit/mundra.png" className="w-[85%] h-[85%] object-cover" alt="문드라" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                          }
+                          return eng ? (
+                            <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-[85%] h-[85%] object-cover" alt={displaySpirit.name}
+                              onError={e => { e.currentTarget.style.display = 'none'; }} />
+                          ) : <span className="text-[6px] text-foreground">{displaySpirit.name}</span>;
+                        })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
+                      </div>
+                      <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden" title="타입">
+                        {typeFile ? (
+                          <img src={getTypeImgPath(typeFile)} className="w-[85%] h-[85%] object-contain" alt=""
+                            onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : <span className="text-[6px] text-muted-foreground">타입</span>}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Stats line */}
+                  {/* Stats line below the box */}
                   {equipItem?.stats && equipItem.stats.length > 0 && (
-                    <div className="flex gap-1 justify-center w-full">
-                      {equipItem.stats.slice(0, 3).map((stat: any, si: number) => (
-                        <div key={si} className="flex items-center gap-0.5">
-                          <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                          <span className="text-[11px] text-foreground font-semibold tabular-nums">
-                            {formatEquipStatVal(stat.key, stat.value)}
-                          </span>
-                        </div>
-                      ))}
+                    <div className="flex gap-1 justify-center w-full mt-0.5">
+                      {equipItem.stats.slice(0, 3).map((stat: any, si: number) => {
+                        const statVal = isQuiverZero ? 0 : stat.value;
+                        return (
+                          <div key={si} className="flex items-center gap-0.5">
+                            <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
+                            <span className={`text-xs text-foreground font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : ''}`}>
+                              {formatEquipStatVal(stat.key, statVal)}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
 
-                  {/* Item name */}
-                  <p className="text-sm text-foreground truncate w-full text-center leading-tight font-medium">
+                  {/* Quiver warning */}
+                  {isQuiverZero && (
+                    <span className="text-[8px] text-red-400">활/크로스보우/총 필요</span>
+                  )}
+
+                  {/* Item name below stats */}
+                  <p className="text-sm text-foreground truncate w-full text-center leading-tight font-medium mt-0.5">
                     {equipItem?.name || '-'}
                   </p>
                 </div>
@@ -1010,32 +884,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               ))}
             </div>
           )}
-
-          {/* Open equipment dialog button */}
-          <div className="mt-3 flex justify-center gap-2">
-            <Button
-              size="sm"
-              className="h-7 text-xs gap-1"
-              onClick={() => {
-                if (heroClass) {
-                  setEquipInitialSlot(0);
-                  setEquipDialogOpen(true);
-                }
-              }}
-              disabled={!heroClass}
-            >
-              장비 선택
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 text-xs gap-1"
-              onClick={() => setEnchantDialogOpen(true)}
-              disabled={!heroClass || !equipmentSlots.some(s => s.item)}
-            >
-              원소/영혼 인챈트
-            </Button>
-          </div>
         </div>
 
         {/* Equipment Select Dialog */}
@@ -1062,6 +910,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             uniqueElementTier: s.item.uniqueElementTier,
             uniqueSpirit: s.item.uniqueSpirit,
           } : null)}
+          itemNames={equipmentSlots.map(s => s.item?.name || '')}
           onConfirm={(enchantSlots) => {
             const newSlots = equipmentSlots.map((s, i) => ({
               ...s,
