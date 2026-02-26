@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
 import { lookupHeroStats, getAvailableSkills, getUniqueSkill } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
+import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
 import ElementIcon from '@/components/ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,21 +17,7 @@ interface HeroFormProps {
   onCancel: () => void;
 }
 
-// Korean job name → English filename mapping
-const JOB_NAME_TO_FILE: Record<string, string> = {
-  '병사': 'soildier', '용병': 'mercenary', '야만전사': 'barbarian', '족장': 'chieftain',
-  '기사': 'knight', '군주': 'lord', '레인저': 'ranger', '관리인': 'warden',
-  '사무라이': 'samurai', '다이묘': 'daimyo', '광전사': 'berserker', '잘': 'jarl',
-  '어둠의 기사': 'darkknight', '죽음의 기사': 'deathknight',
-  '도둑': 'thief', '사기꾼': 'trickster', '수도승': 'monk', '그랜드 마스터': 'grandmaster',
-  '머스킷병': 'musketeer', '정복자': 'conquistador', '방랑자': 'wanderer', '길잡이': 'pathfinder',
-  '닌자': 'ninja', '센세': 'sensei', '무희': 'dancer', '곡예가': 'acrobat',
-  '경보병': 'velite', '근위병': 'praetorian',
-  '마법사': 'mage', '대마법사': 'archmage', '성직자': 'cleric', '비숍': 'bishop',
-  '드루이드': 'druid', '아크 드루이드': 'archdruid', '소서러': 'sorcerer', '워록': 'warlock',
-  '마법검': 'spellblade', '스펠나이트': 'spellknight', '풍수사': 'geomancer',
-  '아스트라맨서': 'astramancer', '크로노맨서': 'chronomancer', '페이트위버': 'fateweaver',
-};
+// Use JOB_NAME_MAP from nameMap.ts (imported above)
 
 // Base → Promoted job pairs per classLine
 const JOB_PAIRS: Record<string, [string, string][]> = {
@@ -276,10 +263,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const ringClass = classLine ? CLASS_LINE_RING[classLine] || '' : '';
 
   // Class image path helper - use English filename
-  const getClassImage = (jobName: string) => {
-    const eng = JOB_NAME_TO_FILE[jobName];
-    return eng ? `/images/classes/${eng}.png` : `/images/classes/${jobName}.png`;
-  };
+  const getClassImage = (jobName: string) => getJobImagePath(jobName);
 
   // Format power input display value
   const formatPowerDisplay = (val: number | '') => {
@@ -384,7 +368,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               <div className="w-28 h-28 bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden">
                 {heroClass ? (
                   <img
-                    src={`/images/classillust/${JOB_NAME_TO_FILE[heroClass] || heroClass}.png`}
+                    src={getJobIllustPath(heroClass)}
                     alt={heroClass}
                     className="w-full h-full object-contain p-2"
                     onError={e => {
