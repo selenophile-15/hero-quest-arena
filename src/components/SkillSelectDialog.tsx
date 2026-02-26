@@ -1,14 +1,26 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { SKILL_NAME_MAP } from '@/lib/nameMap';
 import {
   getSkillImagePath,
   getSkillGrade,
   areSkillsIncompatible,
-  STAT_BONUS_LABELS,
+  STAT_FILTER_OPTIONS,
   setSkillGradeCache,
 } from '@/lib/skillUtils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface SkillSelectDialogProps {
   open: boolean;
@@ -59,19 +71,6 @@ export default function SkillSelectDialog({
     }
   }, [open, initialSelected]);
 
-  const statTypes = useMemo(() => {
-    const types = new Set<string>();
-    for (const skillName of availableSkills) {
-      const data = commonSkillsData[skillName];
-      if (data?.['스탯_보너스']) {
-        for (const key of Object.keys(data['스탯_보너스'])) {
-          types.add(key);
-        }
-      }
-    }
-    return Array.from(types).sort();
-  }, [availableSkills, commonSkillsData]);
-
   const skillsByGrade = useMemo(() => {
     const groups: Record<string, string[]> = { '일반': [], '희귀': [], '에픽': [] };
     for (const skillName of availableSkills) {
@@ -79,8 +78,13 @@ export default function SkillSelectDialog({
       const grade = data?.['희귀도'] || '일반';
       if (gradeFilter && grade !== gradeFilter) continue;
       if (statFilter) {
-        const bonuses = data?.['스탯_보너스'] || {};
-        if (!Object.keys(bonuses).includes(statFilter)) continue;
+        const filterOption = STAT_FILTER_OPTIONS.find(o => o.label === statFilter);
+        if (filterOption) {
+          const bonuses = data?.['스탯_보너스'] || {};
+          const bonusKeys = Object.keys(bonuses);
+          const hasMatch = filterOption.keys.some(k => bonusKeys.includes(k));
+          if (!hasMatch) continue;
+        }
       }
       if (!groups[grade]) groups[grade] = [];
       groups[grade].push(skillName);
@@ -112,6 +116,34 @@ export default function SkillSelectDialog({
     return null;
   };
 
+  const getSkillTooltipContent = (skillName: string) => {
+    const data = commonSkillsData[skillName];
+    if (!data) return null;
+    const desc = data['스킬_설명']?.[0] || '';
+    const bonuses = data['스탯_보너스'] || {};
+    const bonusEntries = Object.entries(bonuses);
+    return (
+      <div className="max-w-xs space-y-1.5">
+        <p className="font-semibold text-sm">{skillName}</p>
+        <p className="text-xs text-foreground/80 whitespace-pre-line">{desc}</p>
+        {bonusEntries.length > 0 && (
+          <div className="text-xs space-y-0.5 border-t border-border/30 pt-1">
+            {bonusEntries.map(([key, vals]) => {
+              const label = key.replace('스킬_', '').replace('%', ' %');
+              const val = Array.isArray(vals) ? vals[0] : vals;
+              return val ? (
+                <div key={key} className="flex justify-between gap-2">
+                  <span className="text-foreground/60">{label}</span>
+                  <span className="text-foreground">{typeof val === 'number' && val > 0 ? `+${val}` : val}</span>
+                </div>
+              ) : null;
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const handleConfirm = () => {
     onConfirm(selected);
     onClose();
@@ -121,8 +153,11 @@ export default function SkillSelectDialog({
     setSelected([]);
   };
 
-  const applyRecommendedSet = (setSkills: string[]) => {
-    const validSkills = setSkills.filter(s => availableSkills.includes(s)).slice(0, maxSlots);
+  const applyRecommendedSet = (setName: string) => {
+    if (!recommendedSets || setName === '_none') return;
+    const skills = recommendedSets[setName];
+    if (!skills) return;
+    const validSkills = skills.filter(s => availableSkills.includes(s)).slice(0, maxSlots);
     setSelected(validSkills);
   };
 
@@ -132,7 +167,27 @@ export default function SkillSelectDialog({
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-primary font-display">스킬 선택</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-primary font-display">스킬 선택</DialogTitle>
+            {/* Recommended sets dropdown */}
+            {recommendedSets && Object.keys(recommendedSets).length > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-foreground/60">추천 스킬셋:</span>
+                <Select onValueChange={applyRecommendedSet}>
+                  <SelectTrigger className="h-7 w-32 text-xs">
+                    <SelectValue placeholder="선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(recommendedSets).map(setName => (
+                      <SelectItem key={setName} value={setName}>
+                        {setName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
         </DialogHeader>
 
         {/* Selected skills preview + slots */}
@@ -174,26 +229,6 @@ export default function SkillSelectDialog({
               <span className="text-[9px] text-muted-foreground">🔒</span>
             </div>
           ))}
-
-          {/* Recommended sets */}
-          <div className="ml-auto flex items-center gap-1">
-            {recommendedSets && Object.keys(recommendedSets).length > 0 && (
-              <>
-                <span className="text-xs text-foreground/60 mr-1">추천:</span>
-                {Object.entries(recommendedSets).map(([setName, skills]) => (
-                  <Button
-                    key={setName}
-                    size="sm"
-                    variant="outline"
-                    className="h-7 text-xs px-2"
-                    onClick={() => applyRecommendedSet(skills)}
-                  >
-                    {setName}
-                  </Button>
-                ))}
-              </>
-            )}
-          </div>
         </div>
 
         {/* Filters */}
@@ -225,82 +260,89 @@ export default function SkillSelectDialog({
             onChange={e => setStatFilter(e.target.value)}
           >
             <option value="">전체</option>
-            {statTypes.map(st => (
-              <option key={st} value={st}>
-                {STAT_BONUS_LABELS[st] || st.replace('스킬_', '')}
+            {STAT_FILTER_OPTIONS.map(opt => (
+              <option key={opt.label} value={opt.label}>
+                {opt.label}
               </option>
             ))}
           </select>
         </div>
 
         {/* Skill grid by grade */}
-        <div className="flex-1 overflow-y-auto scrollbar-fantasy space-y-4 pr-1">
-          {gradeOrder.map(grade => {
-            const skills = skillsByGrade[grade] || [];
-            if (skills.length === 0) return null;
-            return (
-              <div key={grade}>
-                <div className={`text-center text-sm font-semibold py-1 rounded-t ${GRADE_HEADER_COLORS[grade]}`}>
-                  {grade}
-                </div>
-                <div className="grid grid-cols-7 sm:grid-cols-9 md:grid-cols-11 gap-1 p-2 border border-t-0 rounded-b border-border/30 bg-secondary/10">
-                  {skills.map(skillName => {
-                    const isSelected = selected.includes(skillName);
-                    const isFull = selected.length >= maxSlots && !isSelected;
-                    const incompatWith = isIncompatibleWithSelected(skillName);
-                    const disabled = isFull || (!!incompatWith && !isSelected);
+        <TooltipProvider delayDuration={200}>
+          <div className="flex-1 overflow-y-auto scrollbar-fantasy space-y-4 pr-1">
+            {gradeOrder.map(grade => {
+              const skills = skillsByGrade[grade] || [];
+              if (skills.length === 0) return null;
+              return (
+                <div key={grade}>
+                  <div className={`text-center text-sm font-semibold py-1 rounded-t ${GRADE_HEADER_COLORS[grade]}`}>
+                    {grade}
+                  </div>
+                  <div className="grid grid-cols-7 sm:grid-cols-9 md:grid-cols-11 gap-1 p-2 border border-t-0 rounded-b border-border/30 bg-secondary/10">
+                    {skills.map(skillName => {
+                      const isSelected = selected.includes(skillName);
+                      const isFull = selected.length >= maxSlots && !isSelected;
+                      const incompatWith = isIncompatibleWithSelected(skillName);
+                      const disabled = isFull || (!!incompatWith && !isSelected);
 
-                    return (
-                      <button
-                        key={skillName}
-                        type="button"
-                        onClick={() => !disabled && toggleSkill(skillName)}
-                        disabled={disabled}
-                        className={`flex flex-col items-center gap-0.5 p-1 rounded transition-all ${
-                          isSelected
-                            ? 'ring-2 ring-accent bg-accent/15 scale-105'
-                            : disabled
-                              ? 'opacity-30 cursor-not-allowed'
-                              : 'hover:bg-secondary/40 cursor-pointer'
-                        }`}
-                        title={
-                          incompatWith && !isSelected
-                            ? `${incompatWith}와(과) 호환 불가`
-                            : skillName
-                        }
-                      >
-                        <div className={`w-10 h-10 rounded border ${GRADE_COLORS[grade]} flex items-center justify-center overflow-hidden`}>
-                          <img
-                            src={getSkillImagePath(skillName)}
-                            alt={skillName}
-                            className="w-9 h-9 object-contain"
-                            onError={e => {
-                              const target = e.currentTarget;
-                              target.style.display = 'none';
-                              const parent = target.parentElement;
-                              if (parent && !parent.querySelector('.fallback-text')) {
-                                const span = document.createElement('span');
-                                span.className = 'fallback-text text-[6px] text-muted-foreground text-center';
-                                span.textContent = skillName.slice(0, 4);
-                                parent.appendChild(span);
-                              }
-                            }}
-                          />
-                        </div>
-                        <span className="text-[9px] text-foreground leading-tight text-center w-full truncate">
-                          {skillName}
-                        </span>
-                      </button>
-                    );
-                  })}
+                      return (
+                        <Tooltip key={skillName}>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              onClick={() => !disabled && toggleSkill(skillName)}
+                              disabled={disabled}
+                              className={`flex flex-col items-center gap-0.5 p-1 rounded transition-all ${
+                                isSelected
+                                  ? 'ring-2 ring-accent bg-accent/15 scale-105'
+                                  : disabled
+                                    ? 'opacity-30 cursor-not-allowed'
+                                    : 'hover:bg-secondary/40 cursor-pointer'
+                              }`}
+                            >
+                              <div className={`w-10 h-10 rounded border ${GRADE_COLORS[grade]} flex items-center justify-center overflow-hidden`}>
+                                <img
+                                  src={getSkillImagePath(skillName)}
+                                  alt={skillName}
+                                  className="w-9 h-9 object-contain"
+                                  onError={e => {
+                                    const target = e.currentTarget;
+                                    target.style.display = 'none';
+                                    const parent = target.parentElement;
+                                    if (parent && !parent.querySelector('.fallback-text')) {
+                                      const span = document.createElement('span');
+                                      span.className = 'fallback-text text-[6px] text-muted-foreground text-center';
+                                      span.textContent = skillName.slice(0, 4);
+                                      parent.appendChild(span);
+                                    }
+                                  }}
+                                />
+                              </div>
+                              <span className="text-[9px] text-foreground leading-tight text-center w-full truncate">
+                                {skillName}
+                              </span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" className="p-2">
+                            {incompatWith && !isSelected ? (
+                              <p className="text-xs text-destructive">{incompatWith}와(과) 호환 불가</p>
+                            ) : (
+                              getSkillTooltipContent(skillName)
+                            )}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-          {availableSkills.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-8">직업을 먼저 선택하세요</p>
-          )}
-        </div>
+              );
+            })}
+            {availableSkills.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-8">직업을 먼저 선택하세요</p>
+            )}
+          </div>
+        </TooltipProvider>
 
         {/* Actions */}
         <div className="flex gap-2 pt-2 border-t border-border">
