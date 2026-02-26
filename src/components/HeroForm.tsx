@@ -601,7 +601,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               </div>
               <div className="px-1 py-1.5 flex items-center justify-center">
                 <img
-                  src={getUniqueSkillImagePath(heroClass)}
+                  src={uniqueSkillData?.['이미지_경로'] ? `/${uniqueSkillData['이미지_경로']}` : ''}
                   alt=""
                   className="w-9 h-9 object-contain"
                   onError={e => { e.currentTarget.style.display = 'none'; }}
