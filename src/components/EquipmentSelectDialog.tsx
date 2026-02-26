@@ -36,7 +36,7 @@ interface EquipmentSelectDialogProps {
 const QUALITY_OPTIONS = [
   { value: 'common', label: '일반', color: 'text-gray-300' },
   { value: 'uncommon', label: '고급', color: 'text-green-400' },
-  { value: 'flawless', label: '최고급', color: 'text-blue-400' },
+  { value: 'flawless', label: '최고급', color: 'text-cyan-300' },
   { value: 'epic', label: '에픽', color: 'text-fuchsia-400' },
   { value: 'legendary', label: '전설', color: 'text-yellow-400' },
 ];
@@ -44,7 +44,7 @@ const QUALITY_OPTIONS = [
 const QUALITY_BORDER: Record<string, string> = {
   common: 'border-gray-300/50',
   uncommon: 'border-green-400/60',
-  flawless: 'border-blue-400/60',
+  flawless: 'border-cyan-300/60',
   epic: 'border-fuchsia-400/70',
   legendary: 'border-yellow-400/80',
 };
@@ -52,7 +52,7 @@ const QUALITY_BORDER: Record<string, string> = {
 const QUALITY_RADIAL: Record<string, string> = {
   common: 'rgba(220,220,220,0.18)',
   uncommon: 'rgba(74,222,128,0.2)',
-  flawless: 'rgba(96,165,250,0.25)',
+  flawless: 'rgba(103,232,249,0.25)',
   epic: 'rgba(217,70,239,0.3)',
   legendary: 'rgba(250,204,21,0.35)',
 };
@@ -60,7 +60,7 @@ const QUALITY_RADIAL: Record<string, string> = {
 const QUALITY_SHADOW: Record<string, string> = {
   common: '0 0 8px rgba(220,220,220,0.4)',
   uncommon: '0 0 10px rgba(74,222,128,0.5)',
-  flawless: '0 0 12px rgba(96,165,250,0.5)',
+  flawless: '0 0 12px rgba(103,232,249,0.5)',
   epic: '0 0 14px rgba(217,70,239,0.6)',
   legendary: '0 0 16px rgba(250,204,21,0.7)',
 };
@@ -73,7 +73,6 @@ const STAT_FILTER_OPTIONS = [
   { value: '장비_회피%', label: '회피' },
 ];
 
-// Stat label colors (no icons in tooltip)
 const STAT_COLOR: Record<string, string> = {
   '장비_공격력': 'text-red-400',
   '장비_방어력': 'text-blue-400',
@@ -84,12 +83,13 @@ const STAT_COLOR: Record<string, string> = {
 
 const ELEMENT_COLORS: Record<string, string> = {
   '불': 'text-red-400', '물': 'text-blue-400', '공기': 'text-cyan-300',
-  '대지': 'text-amber-600', '빛': 'text-yellow-300', '어둠': 'text-purple-400',
+  '대지': 'text-lime-400', '빛': 'text-amber-200', '어둠': 'text-purple-400',
   '모든 원소': 'text-white', '골드': 'text-yellow-500',
 };
 
 const ELEMENT_ENG: Record<string, string> = {
   '불': 'fire', '물': 'water', '공기': 'air', '대지': 'earth', '빛': 'light', '어둠': 'dark',
+  '모든 원소': 'all', '골드': 'gold',
 };
 
 const ELEMENT_FILTER_OPTIONS = [
@@ -99,26 +99,19 @@ const ELEMENT_FILTER_OPTIONS = [
   { value: '대지', label: '대지' },
   { value: '빛', label: '빛' },
   { value: '어둠', label: '어둠' },
+  { value: '골드', label: '골드' },
 ];
 
-// Spirit tier ordering (descending)
+// Spirit tier from spirit.json data
 const SPIRIT_TIER: Record<string, number> = {
-  '바하무트': 15, '레비아탄': 15, '그리핀': 15,
-  '명인': 14, '조상': 14,
-  '베히모스': 14, '우로보로스': 14,
-  '기린': 13, '크람푸스': 13, '크리스마스': 13,
-  '크라켄': 12, '키메라': 12, '카벙클': 12,
-  '타라스크': 11, '하이드라': 11, '불사조': 11,
-  '케찰코아틀': 10, '호랑이': 10,
-  '매머드': 9, '공룡': 9,
-  '사자': 8, '곰': 8,
-  '바다코끼리': 7, '상어': 7,
-  '다람쥐': 6, '하마': 6,
-  '말': 5, '도마뱀': 5,
-  '아르마딜로': 4, '부엉이': 4,
-  '졸로틀': 3, '코뿔소': 3,
-  '독수리': 2, '독사': 2, '토끼': 2,
-  '황소': 1, '늑대': 1, '양': 1, '거위': 1, '고양이': 1,
+  '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
+  '기린': 12, '크람푸스': 12, '크리스마스': 12,
+  '크라켄': 12, '키메라': 12, '카벙클': 12, '타라스크': 12, '하이드라': 12, '불사조': 12,
+  '케찰코아틀': 10,
+  '호랑이': 9, '매머드': 9, '공룡': 9, '사자': 9, '곰': 9, '바다코끼리': 9, '상어': 9,
+  '다람쥐': 7, '하마': 7, '말': 7, '도마뱀': 7, '아르마딜로': 7, '부엉이': 7, '코뿔소': 7,
+  '졸로틀': 5,
+  '독수리': 4, '황소': 4, '양': 4, '늑대': 4, '고양이': 4, '거위': 4, '독사': 4, '토끼': 4,
 };
 
 function getSpiritTier(name: string): number {
@@ -154,7 +147,6 @@ export default function EquipmentSelectDialog({
   const [filterSpirit, setFilterSpirit] = useState<string>('_all');
   const [slotQuality, setSlotQuality] = useState<string>('common');
 
-  // Check if any slot already has a relic
   const hasRelicEquipped = useMemo(() => {
     return slots.some((s, i) => i !== activeSlot && s.item?.relic);
   }, [slots, activeSlot]);
@@ -167,11 +159,9 @@ export default function EquipmentSelectDialog({
       item.spiritAffinity?.forEach(s => set.add(s));
       if (item.uniqueSpirit) item.uniqueSpirit.forEach(s => set.add(s));
     });
-    // Sort by tier descending
     return Array.from(set).sort((a, b) => getSpiritTier(b) - getSpiritTier(a));
   }, [allItems]);
 
-  // Group spirits by tier for rendering with dividers
   const spiritGroups = useMemo(() => {
     const groups: { tier: number; spirits: string[] }[] = [];
     let lastTier = -1;
@@ -187,7 +177,6 @@ export default function EquipmentSelectDialog({
     return groups;
   }, [spiritNames]);
 
-  // Load data
   useEffect(() => {
     if (!open || !jobName) return;
     const load = async () => {
@@ -224,7 +213,6 @@ export default function EquipmentSelectDialog({
       setFilterTierMax(mt);
       setFilterTierMin(Math.max(1, mt - 2));
       setSlotQuality(currentEquipment[initialSlot]?.quality || 'common');
-      // Reset filters
       setFilterType('_all');
       setFilterStat('_all');
       setFilterElement('_all');
@@ -258,7 +246,6 @@ export default function EquipmentSelectDialog({
         if (!item.judgmentTypes || item.judgmentTypes.length === 0) return false;
         const hasMatch = item.judgmentTypes.some(jt => allowedWeaponKorTypes.has(jt));
         if (!hasMatch) return false;
-        // Dual wield only shows when filter is 쌍수 or _all
         if (filterType !== '_all' && filterType !== '쌍수') return false;
       } else {
         if (!allowedFileTypes.has(item.type)) return false;
@@ -276,7 +263,8 @@ export default function EquipmentSelectDialog({
       if (filterElement !== '_all') {
         const hasAffinity = item.elementAffinity?.includes(filterElement);
         const hasUnique = item.uniqueElement?.includes(filterElement);
-        if (!hasAffinity && !hasUnique) return false;
+        const hasAll = item.elementAffinity?.includes('모든 원소');
+        if (!hasAffinity && !hasUnique && !hasAll) return false;
       }
 
       if (filterSpirit !== '_all') {
@@ -295,7 +283,6 @@ export default function EquipmentSelectDialog({
       handleClearSlot();
       return;
     }
-    // Block if relic and already have one in another slot
     if (item.relic && hasRelicEquipped) return;
     const newSlots = [...slots];
     newSlots[activeSlot] = { ...newSlots[activeSlot], item: { ...item }, quality: slotQuality };
@@ -331,6 +318,13 @@ export default function EquipmentSelectDialog({
     : currentAllowedTypes;
 
   const currentSlotItem = slots[activeSlot]?.item;
+
+  // Helper to get element icon path for affinity display
+  function getElementIconPath(el: string): string {
+    if (el === '모든 원소') return '/images/elements/all.png';
+    const eng = ELEMENT_ENG[el];
+    return eng ? `/images/elements/${eng}.png` : '';
+  }
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
@@ -440,10 +434,10 @@ export default function EquipmentSelectDialog({
               <SelectItem value="_all">전체</SelectItem>
               {spiritGroups.map((group, gi) => (
                 <div key={gi}>
-                  {gi > 0 && <div className="border-t border-border/30 my-0.5" />}
+                  {gi > 0 && <div className="border-t border-border/30 my-1" />}
                   {group.spirits.map(sp => (
                     <SelectItem key={sp} value={sp}>
-                      <span className="text-muted-foreground text-[10px] mr-1">T{group.tier}</span>{sp}
+                      <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
                     </SelectItem>
                   ))}
                 </div>
@@ -467,7 +461,7 @@ export default function EquipmentSelectDialog({
           </Button>
         </div>
 
-        {/* Item grid - single content area, no Tabs re-rendering */}
+        {/* Item grid */}
         <div className="flex-1 min-h-0 mt-1">
           <div className="overflow-y-auto h-full border border-border rounded p-3">
             {loading ? (
@@ -482,12 +476,12 @@ export default function EquipmentSelectDialog({
                     const quality = slots[activeSlot]?.quality || 'common';
                     const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
 
-                    // Element/spirit affinity icons for card
-                    const elemIcons = item.elementAffinity?.filter(e => e !== '모든 원소') || [];
+                    // Element icons: show actual element icons, not all.png
+                    const elemAffs = item.elementAffinity || [];
                     const uniqueElems = item.uniqueElement || [];
                     const spiritAffs = item.spiritAffinity || [];
-                    const uniqueSp = item.uniqueSpirit;
-                    const hasAffinityIcons = elemIcons.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || (uniqueSp && uniqueSp.length > 0);
+                    const uniqueSp = item.uniqueSpirit || [];
+                    const hasIcons = elemAffs.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || uniqueSp.length > 0;
 
                     return (
                       <Tooltip key={`${item.name}-${item.tier}-${idx}`}>
@@ -495,7 +489,7 @@ export default function EquipmentSelectDialog({
                           <button
                             onClick={() => !isRelicBlocked && handleSelectItem(item)}
                             disabled={isRelicBlocked}
-                            className={`relative flex flex-col items-center p-2 rounded-lg border-2 transition-all cursor-pointer ${
+                            className={`relative flex flex-col items-center p-2 rounded-lg border-2 transition-all cursor-pointer aspect-square ${
                               isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
                               isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                             }`}
@@ -521,9 +515,9 @@ export default function EquipmentSelectDialog({
                             )}
 
                             {/* Item image */}
-                            <div className="w-16 h-16 flex items-center justify-center my-1">
+                            <div className="w-14 h-14 flex items-center justify-center mt-3">
                               {item.imagePath ? (
-                                <img src={item.imagePath} alt={item.name} className="w-14 h-14 object-contain"
+                                <img src={item.imagePath} alt={item.name} className="w-12 h-12 object-contain"
                                   onError={e => {
                                     e.currentTarget.style.display = 'none';
                                     const p = e.currentTarget.parentElement;
@@ -534,49 +528,58 @@ export default function EquipmentSelectDialog({
                               )}
                             </div>
 
-                            {/* Affinity icons row below image */}
-                            {hasAffinityIcons && (
-                              <div className="flex items-center gap-0.5 mt-0.5">
-                                {elemIcons.map(el => (
-                                  <img key={el} src="/images/elements/all.png" alt={el} className="w-3.5 h-3.5" title={`친밀 원소: ${el}`}
-                                    onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                ))}
-                                {uniqueElems.map(el => {
-                                  const eng = ELEMENT_ENG[el];
-                                  const tier = item.uniqueElementTier || 1;
-                                  return (
-                                    <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.png` : ''} alt={el} className="w-3.5 h-3.5" title={`고유 원소: ${el} T${tier}`}
-                                      onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                  );
-                                })}
-                                {spiritAffs.map(sp => {
-                                  const eng = SPIRIT_NAME_MAP[sp];
-                                  return (
-                                    <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.png` : ''} alt={sp} className="w-3.5 h-3.5" title={`친밀 영혼: ${sp}`}
-                                      onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                  );
-                                })}
-                                {uniqueSp && uniqueSp.map(sp => {
-                                  const eng = SPIRIT_NAME_MAP[sp];
-                                  return (
-                                    <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.png` : ''} alt={sp} className="w-3.5 h-3.5" title={`고유 영혼: ${sp}`}
-                                      onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                  );
-                                })}
-                              </div>
-                            )}
-
                             {/* Item name */}
-                            <p className="text-[10px] text-foreground/80 truncate w-full text-center mt-0.5 leading-tight font-medium">
+                            <p className="text-[11px] text-foreground/90 truncate w-full text-center mt-1 leading-tight font-semibold">
                               {item.name}
                             </p>
+
+                            {/* Affinity icons row */}
+                            {hasIcons && (
+                              <div className="flex items-center justify-center gap-1.5 mt-auto">
+                                {/* Element affinities */}
+                                <div className="flex items-center gap-0.5">
+                                  {elemAffs.map(el => (
+                                    <img key={el} src={getElementIconPath(el)} alt={el} className="w-4 h-4" title={`친밀 원소: ${el}`}
+                                      onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                  ))}
+                                  {uniqueElems.map(el => {
+                                    const eng = ELEMENT_ENG[el];
+                                    const tier = item.uniqueElementTier || 1;
+                                    return (
+                                      <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.png` : ''} alt={el} className="w-4 h-4" title={`고유 원소: ${el} T${tier}`}
+                                        onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    );
+                                  })}
+                                </div>
+                                {/* Spirit affinities - separated */}
+                                {(spiritAffs.length > 0 || uniqueSp.length > 0) && (elemAffs.length > 0 || uniqueElems.length > 0) && (
+                                  <div className="w-px h-3 bg-border/50" />
+                                )}
+                                <div className="flex items-center gap-0.5">
+                                  {spiritAffs.map(sp => {
+                                    const eng = SPIRIT_NAME_MAP[sp];
+                                    return (
+                                      <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.png` : ''} alt={sp} className="w-4 h-4" title={`친밀 영혼: ${sp}`}
+                                        onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    );
+                                  })}
+                                  {uniqueSp.map(sp => {
+                                    const eng = SPIRIT_NAME_MAP[sp];
+                                    return (
+                                      <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.png` : ''} alt={sp} className="w-4 h-4" title={`고유 영혼: ${sp}`}
+                                        onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
                           </button>
                         </TooltipTrigger>
                         <TooltipContent side="right" className="max-w-xs p-3 space-y-1.5">
                           <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor})</span></p>
                           {item.relic && <p className="text-xs text-yellow-400 font-semibold">⭐ 유물</p>}
 
-                          {/* Stats - colored text, no icons */}
+                          {/* Stats - colored text */}
                           {item.stats.length > 0 && (
                             <div className="space-y-0.5">
                               {item.stats.map((s, si) => (
@@ -590,7 +593,7 @@ export default function EquipmentSelectDialog({
                             </div>
                           )}
 
-                          {/* Element affinity - text only with color */}
+                          {/* Element affinity - text with color */}
                           {item.elementAffinity && item.elementAffinity.length > 0 && (
                             <div className="text-xs">
                               <span className="text-muted-foreground">친밀 원소: </span>
@@ -602,24 +605,19 @@ export default function EquipmentSelectDialog({
                             </div>
                           )}
 
-                          {/* Unique element - icon */}
+                          {/* Unique element - text only (no icon) */}
                           {item.uniqueElement && item.uniqueElement.length > 0 && (
-                            <div className="flex items-center gap-1 text-xs">
-                              <span className="text-muted-foreground">고유 원소:</span>
-                              {item.uniqueElement.map(el => {
-                                const eng = ELEMENT_ENG[el];
-                                const tier = item.uniqueElementTier || 1;
-                                return (
-                                  <span key={el} className="flex items-center gap-0.5">
-                                    <img src={eng ? `/images/enchant/element/${eng}${tier}_2.png` : ''} alt={el} className="w-3.5 h-3.5" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                    <span className={ELEMENT_COLORS[el] || ''}>{el} T{tier}</span>
-                                  </span>
-                                );
-                              })}
+                            <div className="text-xs">
+                              <span className="text-muted-foreground">고유 원소: </span>
+                              {item.uniqueElement.map((el, i) => (
+                                <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
+                                  {el} T{item.uniqueElementTier || 1}{i < item.uniqueElement!.length - 1 ? ', ' : ''}
+                                </span>
+                              ))}
                             </div>
                           )}
 
-                          {/* Spirit affinity - text only */}
+                          {/* Spirit affinity - text */}
                           {item.spiritAffinity && item.spiritAffinity.length > 0 && (
                             <div className="text-xs">
                               <span className="text-muted-foreground">친밀 영혼: </span>
@@ -646,6 +644,13 @@ export default function EquipmentSelectDialog({
                             <div className="text-xs border-t border-border/50 pt-1 mt-1">
                               <span className="text-yellow-400 font-semibold">유물 효과:</span>
                               <p className="text-foreground/80 whitespace-pre-line mt-0.5">{item.relicEffect}</p>
+                            </div>
+                          )}
+
+                          {/* Relic blocked warning */}
+                          {isRelicBlocked && (
+                            <div className="text-xs text-red-400 border-t border-border/50 pt-1 mt-1">
+                              ⚠ 유물 중복 — 유물은 1개만 사용이 가능합니다.
                             </div>
                           )}
 
