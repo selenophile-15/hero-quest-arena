@@ -208,25 +208,25 @@ export default function SkillSelectDialog({
               <span className="text-[9px] text-muted-foreground">🔒</span>
             </div>
           ))}
-          {/* Recommended sets - right aligned */}
+          {/* Recommended sets - always visible, right aligned */}
           <div className="ml-auto flex items-center gap-1.5">
-            {recommendedSets && Object.keys(recommendedSets).length > 0 && (
-              <>
-                <span className="text-[10px] text-foreground/50">추천:</span>
-                <Select onValueChange={applyRecommendedSet}>
-                  <SelectTrigger className="h-8 w-28 text-xs">
-                    <SelectValue placeholder="불러오기" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.keys(recommendedSets).map(setName => (
-                      <SelectItem key={setName} value={setName}>
-                        {setName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </>
-            )}
+            <span className="text-[10px] text-foreground/50">추천:</span>
+            <Select onValueChange={applyRecommendedSet}>
+              <SelectTrigger className="h-8 w-28 text-xs">
+                <SelectValue placeholder="불러오기" />
+              </SelectTrigger>
+              <SelectContent>
+                {recommendedSets && Object.keys(recommendedSets).length > 0 ? (
+                  Object.keys(recommendedSets).map(setName => (
+                    <SelectItem key={setName} value={setName}>
+                      {setName}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="_none" disabled>데이터 없음</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

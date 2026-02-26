@@ -451,13 +451,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
           {/* Job Card - expanded */}
           <div className="card-fantasy p-3 flex flex-col items-center justify-center">
-            {/* Class illustration from images/classillust */}
-            <div className="w-40 h-40 bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden">
+          {/* Class illustration from images/classillust - large, no bg box */}
+            <div className="w-full flex items-center justify-center overflow-hidden" style={{ minHeight: '200px' }}>
               {heroClass ? (
                 <img
                   src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.png`}
                   alt={heroClass}
-                  className="w-full h-full object-contain"
+                  className="max-w-full max-h-[220px] object-contain"
                   onError={e => {
                     e.currentTarget.style.display = 'none';
                   }}
