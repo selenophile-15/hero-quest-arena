@@ -80,22 +80,38 @@ const CLASS_LINE_RING: Record<string, string> = {
 
 const EQUIPMENT_SLOT_LABELS = ['슬롯 1', '슬롯 2', '슬롯 3', '슬롯 4', '슬롯 5', '슬롯 6'];
 
-// Quality/grade glow colors for equipment borders
-const QUALITY_GLOW: Record<string, string> = {
-  common: 'border-gray-400/50 shadow-[0_0_6px_rgba(156,163,175,0.3)]',
-  uncommon: 'border-green-400/60 shadow-[0_0_8px_rgba(74,222,128,0.4)]',
-  flawless: 'border-blue-400/60 shadow-[0_0_10px_rgba(96,165,250,0.5)]',
-  epic: 'border-purple-400/70 shadow-[0_0_12px_rgba(192,132,252,0.6)]',
-  legendary: 'border-yellow-400/80 shadow-[0_0_14px_rgba(250,204,21,0.7)]',
+// Quality radial glow for equipment slots
+const QUALITY_BORDER: Record<string, string> = {
+  common: 'border-gray-300/50',
+  uncommon: 'border-green-400/60',
+  flawless: 'border-blue-400/60',
+  epic: 'border-purple-400/70',
+  legendary: 'border-yellow-400/80',
+};
+const QUALITY_RADIAL_COLOR: Record<string, string> = {
+  common: 'rgba(220,220,220,0.18)',
+  uncommon: 'rgba(74,222,128,0.2)',
+  flawless: 'rgba(96,165,250,0.25)',
+  epic: 'rgba(192,132,252,0.3)',
+  legendary: 'rgba(250,204,21,0.35)',
+};
+const QUALITY_SHADOW_COLOR: Record<string, string> = {
+  common: '0 0 8px rgba(220,220,220,0.4)',
+  uncommon: '0 0 10px rgba(74,222,128,0.5)',
+  flawless: '0 0 12px rgba(96,165,250,0.5)',
+  epic: '0 0 14px rgba(192,132,252,0.6)',
+  legendary: '0 0 16px rgba(250,204,21,0.7)',
 };
 
-const QUALITY_BG_GLOW: Record<string, string> = {
-  common: '',
-  uncommon: 'bg-gradient-radial from-green-500/10 to-transparent',
-  flawless: 'bg-gradient-radial from-blue-500/15 to-transparent',
-  epic: 'bg-gradient-radial from-purple-500/20 to-transparent',
-  legendary: 'bg-gradient-radial from-yellow-500/25 to-transparent',
-};
+const TYPE_IMAGE_FIX: Record<string, string> = { staves: 'staff' };
+function getTypeImgPath(typeFile: string) {
+  return `/images/type/${TYPE_IMAGE_FIX[typeFile] || typeFile}.png`;
+}
+
+function formatEquipStatVal(key: string, value: number): string {
+  if (key === '장비_치명타확률%' || key === '장비_회피%') return `${value} %`;
+  return formatNumber(value);
+}
 
 // Stat icons used in equipment display
 const EQUIP_STAT_ICONS: Record<string, string> = {
@@ -187,6 +203,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [recommendedSets, setRecommendedSets] = useState<Record<string, string[]>>({});
   const [equipDialogOpen, setEquipDialogOpen] = useState(false);
+  const [equipInitialSlot, setEquipInitialSlot] = useState(0);
   const [equipmentSlots, setEquipmentSlots] = useState<Array<{
     item: any | null;
     quality: string;
@@ -305,6 +322,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         setRecommendedSets(sets);
       })
       .catch(() => setRecommendedSets({}));
+
+    // Reset equipment on job change
+    setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
   }, [heroClass]);
 
   // 슬롯 수가 줄어도 기존 선택은 유지 (초기화 버튼으로 직접 관리)
@@ -459,24 +479,24 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
           {/* Job Card - illustration takes 2/3, info below */}
           <div className="card-fantasy p-3 flex flex-col items-center">
-            {/* Class illustration - 2/3 of box height, no bg frame */}
-            <div className="w-full flex items-center justify-center" style={{ minHeight: '280px', flex: '2 1 0' }}>
+            {/* Spacer to push illustration down */}
+            <div className="flex-1" />
+            {/* Class illustration */}
+            <div className="w-full flex items-center justify-center">
               {heroClass ? (
                 <img
                   src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.png`}
                   alt={heroClass}
-                  className="max-w-full max-h-[300px] object-contain drop-shadow-lg"
-                  onError={e => {
-                    e.currentTarget.style.display = 'none';
-                  }}
+                  className="max-w-full max-h-[280px] object-contain drop-shadow-lg"
+                  onError={e => { e.currentTarget.style.display = 'none'; }}
                 />
               ) : (
                 <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
               )}
             </div>
-            {/* Position & description - 1/3 */}
+            {/* Position & description below */}
             {heroClass && (
-              <div className="flex flex-col items-center mt-2 gap-1" style={{ flex: '1 1 0' }}>
+              <div className="flex flex-col items-center mt-3 gap-1 pb-1">
                 <span className="text-sm text-foreground">-</span>
                 <p className="text-xs text-foreground/70 text-center leading-tight">-</p>
               </div>
@@ -828,92 +848,87 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
         {/* ─── Row 4: Equipment ─── */}
         <div className="card-fantasy p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h3>
-            <Button
-              size="sm"
-              className="h-7 text-xs gap-1 bg-accent hover:bg-accent/80 text-accent-foreground"
-              onClick={() => setEquipDialogOpen(true)}
-              disabled={!heroClass}
-            >
-              <Plus className="w-3 h-3" />
-              장비 선택
-            </Button>
-          </div>
+          <h3 className="text-sm font-semibold text-primary mb-3" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h3>
           <div className="grid grid-cols-6 gap-3">
             {EQUIPMENT_SLOT_LABELS.map((slotLabel, i) => {
               const slotData = equipmentSlots[i];
               const equipItem = slotData?.item;
               const quality = slotData?.quality || 'common';
-              const qualityGlow = equipItem ? (QUALITY_GLOW[quality] || 'border-border') : 'border-border';
-              
+              const typeFile = equipItem?.type || '';
+
               return (
-                <div key={i} className="flex flex-col items-center gap-1.5">
-                  {/* Slot header */}
+                <div
+                  key={i}
+                  className="flex flex-col items-center gap-1 cursor-pointer"
+                  onClick={() => {
+                    if (heroClass) {
+                      setEquipInitialSlot(i);
+                      setEquipDialogOpen(true);
+                    }
+                  }}
+                >
                   <div className="text-[10px] font-semibold text-primary/80 bg-primary/10 w-full text-center rounded-t py-0.5">
                     {slotLabel}
                   </div>
-                  
-                  {/* Main equipment area */}
+
+                  {/* Item box with radial glow */}
                   <div
-                    onClick={() => {
-                      if (heroClass) {
-                        setEquipDialogOpen(true);
-                      }
-                    }}
-                    className={`relative w-full aspect-square rounded-lg border-2 ${qualityGlow} bg-secondary/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-all overflow-hidden`}
+                    className={`relative w-full aspect-square rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex items-center justify-center hover:border-primary/50 transition-all overflow-hidden`}
+                    style={equipItem ? {
+                      background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`,
+                      boxShadow: QUALITY_SHADOW_COLOR[quality],
+                    } : { background: 'hsl(var(--secondary) / 0.3)' }}
                   >
-                    {/* Relic indicator */}
                     {equipItem?.relic && (
-                      <img
-                        src="/images/special/relic_mark.png"
-                        alt="유물"
-                        className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
-                        onError={e => { e.currentTarget.style.display = 'none'; }}
-                      />
+                      <img src="/images/special/relic_mark.png" alt="유물" className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
+                        onError={e => { e.currentTarget.style.display = 'none'; }} />
                     )}
-                    
-                    {/* Equipment image */}
                     {equipItem?.imagePath ? (
-                      <img src={equipItem.imagePath} alt={equipItem.name} className="w-4/5 h-4/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                      <img src={equipItem.imagePath} alt={equipItem.name} className="w-4/5 h-4/5 object-contain"
+                        onError={e => { e.currentTarget.style.display = 'none'; }} />
                     ) : (
                       <span className="text-[10px] text-muted-foreground">비어있음</span>
                     )}
-                    
-                    {/* Stats display - right side */}
-                    {equipItem?.stats && equipItem.stats.length > 0 && (
-                      <div className="absolute right-0.5 top-1 flex flex-col gap-0.5">
-                        {equipItem.stats.slice(0, 3).map((stat: any, si: number) => (
-                          <div key={si} className="flex items-center gap-0.5">
-                            <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-3.5 h-3.5" />
-                            <span className="text-[9px] text-foreground font-medium tabular-nums">
-                              {formatNumber(stat.value)}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
-                  
-                  {/* Enchantment slots: Element + Soul */}
-                  <div className="flex gap-1 w-full justify-center">
-                    <div className="w-7 h-7 rounded border border-border bg-secondary/20 flex items-center justify-center cursor-pointer hover:border-accent/50 transition-colors" title="원소 마법부여">
-                      <span className="text-[6px] text-muted-foreground">원소</span>
+
+                  {/* Element + Spirit + Type icons */}
+                  <div className="grid grid-cols-3 gap-0.5 w-full">
+                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center" title="원소">
+                      {slotData?.element ? (
+                        <img src={`/images/elements/${slotData.element.type}.png`} className="w-4 h-4" alt="" />
+                      ) : <span className="text-[6px] text-muted-foreground">원소</span>}
                     </div>
-                    <div className="w-7 h-7 rounded border border-border bg-secondary/20 flex items-center justify-center cursor-pointer hover:border-accent/50 transition-colors" title="영혼 마법부여">
-                      <span className="text-[6px] text-muted-foreground">영혼</span>
+                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center" title="영혼">
+                      {slotData?.spirit ? (
+                        <span className="text-[6px] text-foreground">{slotData.spirit.name}</span>
+                      ) : <span className="text-[6px] text-muted-foreground">영혼</span>}
+                    </div>
+                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center" title="타입">
+                      {typeFile ? (
+                        <img src={getTypeImgPath(typeFile)} className="w-4 h-4 object-contain" alt=""
+                          onError={e => { e.currentTarget.style.display = 'none'; }} />
+                      ) : <span className="text-[6px] text-muted-foreground">타입</span>}
                     </div>
                   </div>
-                  
-                  {/* Equipment name & type */}
-                  <div className="text-center w-full">
-                    <p className="text-[9px] text-foreground truncate leading-tight">
-                      {equipItem?.name || '-'}
-                    </p>
-                    <p className="text-[8px] text-muted-foreground truncate leading-tight">
-                      {equipItem?.typeKor || ''}
-                    </p>
-                  </div>
+
+                  {/* Stats line */}
+                  {equipItem?.stats && equipItem.stats.length > 0 && (
+                    <div className="flex gap-1 justify-center w-full">
+                      {equipItem.stats.slice(0, 3).map((stat: any, si: number) => (
+                        <div key={si} className="flex items-center gap-0.5">
+                          <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
+                          <span className="text-[10px] text-foreground font-medium tabular-nums">
+                            {formatEquipStatVal(stat.key, stat.value)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Item name */}
+                  <p className="text-xs text-foreground truncate w-full text-center leading-tight">
+                    {equipItem?.name || '-'}
+                  </p>
                 </div>
               );
             })}
@@ -925,6 +940,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           open={equipDialogOpen}
           onClose={() => setEquipDialogOpen(false)}
           jobName={heroClass}
+          heroLevel={Number(level) || 1}
+          initialSlot={equipInitialSlot}
           currentEquipment={equipmentSlots}
           onConfirm={setEquipmentSlots}
         />

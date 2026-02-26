@@ -77,22 +77,42 @@ export function getEquipImagePath(korName: string, typeFile: string, category: s
 
 // Equipment item with metadata
 export interface EquipmentItem {
-  name: string; // Korean name
+  name: string;
   engName: string;
-  type: string; // file type (e.g. 'sword')
-  typeKor: string; // Korean type (e.g. '검')
-  category: string; // 'weapon' | 'armor' | 'accessory'
+  type: string;
+  typeKor: string;
+  category: string;
   tier: number;
   imagePath: string;
   stats: { key: string; value: number }[];
-  quality: string; // will be set by user
+  quality: string;
   relic: boolean;
   airshipPower: number;
-  elementAffinity: string | null;
-  spiritAffinity: string | null;
+  elementAffinity: string[] | null;
+  spiritAffinity: string[] | null;
   uniqueElement: string[] | null;
   uniqueElementTier: number | null;
   uniqueSpirit: string | null;
+  judgmentTypes: string[] | null;
+}
+
+// Level → max equippable tier
+export function getMaxTierForLevel(level: number): number {
+  if (level >= 38) return 15;
+  if (level >= 36) return 14;
+  if (level >= 34) return 13;
+  if (level >= 32) return 12;
+  if (level >= 29) return 11;
+  if (level >= 27) return 10;
+  if (level >= 25) return 9;
+  if (level >= 22) return 8;
+  if (level >= 19) return 7;
+  if (level >= 16) return 6;
+  if (level >= 12) return 5;
+  if (level >= 9) return 4;
+  if (level >= 6) return 3;
+  if (level >= 3) return 2;
+  return 1;
 }
 
 // Cached equipment data by type
@@ -148,7 +168,7 @@ export async function loadEquipmentByTypes(
             tier,
             imagePath,
             stats,
-            quality: 'common', // default
+            quality: 'common',
             relic: itemData['유물'] === true,
             airshipPower: itemData['장비_에어쉽파워'] || 0,
             elementAffinity: itemData['원소친밀감'] || null,
@@ -156,6 +176,7 @@ export async function loadEquipmentByTypes(
             uniqueElement: itemData['고유원소종류'] || null,
             uniqueElementTier: itemData['고유원소티어'] || null,
             uniqueSpirit: itemData['고유영혼'] || null,
+            judgmentTypes: itemData['판정타입'] || null,
           });
         }
       }
