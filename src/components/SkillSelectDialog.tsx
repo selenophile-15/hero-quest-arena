@@ -31,6 +31,7 @@ interface SkillSelectDialogProps {
   commonSkillsData: Record<string, any>;
   onConfirm: (skills: string[]) => void;
   recommendedSets?: Record<string, string[]>;
+  jobElementValue?: number;
 }
 
 const GRADE_COLORS: Record<string, string> = {
@@ -54,6 +55,7 @@ export default function SkillSelectDialog({
   commonSkillsData,
   onConfirm,
   recommendedSets,
+  jobElementValue = 0,
 }: SkillSelectDialogProps) {
   const [selected, setSelected] = useState<string[]>([]);
   const [gradeFilter, setGradeFilter] = useState<string>('');
@@ -119,18 +121,31 @@ export default function SkillSelectDialog({
   const getSkillTooltipContent = (skillName: string) => {
     const data = commonSkillsData[skillName];
     if (!data) return null;
-    const desc = data['스킬_설명']?.[0] || '';
+
+    // Calculate level based on jobElementValue
+    const thresholds: number[] = (data['원소_기준치'] || []).map((v: unknown) => Number(v)).filter((v: number) => Number.isFinite(v));
+    let levelIndex = 0;
+    for (let t = 0; t < thresholds.length; t++) {
+      if (jobElementValue >= thresholds[t]) levelIndex = t;
+    }
+    const currentLevel = levelIndex + 1;
+
+    const desc = data['스킬_설명']?.[levelIndex] || data['스킬_설명']?.[0] || '';
+    const levelName = data['레벨별_스킬명']?.[levelIndex] || skillName;
     const bonuses = data['스탯_보너스'] || {};
     const bonusEntries = Object.entries(bonuses);
     return (
       <div className="max-w-xs space-y-1.5">
-        <p className="font-semibold text-sm">{skillName}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="font-semibold text-sm">{levelName}</p>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">Lv.{currentLevel}</span>
+        </div>
         <p className="text-xs text-foreground/80 whitespace-pre-line">{desc}</p>
         {bonusEntries.length > 0 && (
           <div className="text-xs space-y-0.5 border-t border-border/30 pt-1">
             {bonusEntries.map(([key, vals]) => {
               const label = key.replace('스킬_', '').replace('%', ' %');
-              const val = Array.isArray(vals) ? vals[0] : vals;
+              const val = Array.isArray(vals) ? vals[levelIndex] ?? vals[0] : vals;
               return val ? (
                 <div key={key} className="flex justify-between gap-2">
                   <span className="text-foreground/60">{label}</span>
