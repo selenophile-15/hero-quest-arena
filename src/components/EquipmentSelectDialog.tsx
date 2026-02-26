@@ -131,7 +131,6 @@ export default function EquipmentSelectDialog({
   const [filterSpirit, setFilterSpirit] = useState<string>('_all');
   const [slotQuality, setSlotQuality] = useState<string>('common');
 
-  // Collect unique spirit names for filter
   const spiritNames = useMemo(() => {
     const set = new Set<string>();
     allItems.forEach(item => {
@@ -158,7 +157,6 @@ export default function EquipmentSelectDialog({
           if (EQUIP_TYPE_MAP[t]?.category === 'weapon') hasWeapon = true;
         });
       }
-      // Always load dual_wield if any weapon type present
       if (hasWeapon && !allTypeSet.has('쌍수')) {
         allTypeSet.add('쌍수');
       }
@@ -182,12 +180,10 @@ export default function EquipmentSelectDialog({
     }
   }, [open, currentEquipment, initialSlot, heroLevel]);
 
-  // Sync quality when switching slot
   useEffect(() => {
     setSlotQuality(slots[activeSlot]?.quality || 'common');
   }, [activeSlot]);
 
-  // Filtered items for current slot
   const filteredItems = useMemo(() => {
     const allowedTypes = slotAllowedTypes[activeSlot] || [];
     if (allowedTypes.length === 0) return [];
@@ -201,25 +197,22 @@ export default function EquipmentSelectDialog({
         if (info.category === 'weapon') allowedWeaponKorTypes.add(typeKor);
       }
     }
-    // Also allow dual_wield if weapon types exist
     if (allowedWeaponKorTypes.size > 0) {
       allowedFileTypes.add('dual_wield');
     }
 
     return allItems.filter(item => {
-      // Dual wield special: check 판정타입
       if (item.type === 'dual_wield') {
         if (!item.judgmentTypes || item.judgmentTypes.length === 0) return false;
         const hasMatch = item.judgmentTypes.some(jt => allowedWeaponKorTypes.has(jt));
         if (!hasMatch) return false;
-        // User type filter for dual_wield
         if (filterType !== '_all' && filterType !== '쌍수') {
           if (!item.judgmentTypes.includes(filterType)) return false;
         }
       } else {
         if (!allowedFileTypes.has(item.type)) return false;
         if (filterType !== '_all') {
-          if (filterType === '쌍수') return false; // only dual_wield
+          if (filterType === '쌍수') return false;
           const filterInfo = EQUIP_TYPE_MAP[filterType];
           if (filterInfo && item.type !== filterInfo.file) return false;
         }
@@ -229,14 +222,12 @@ export default function EquipmentSelectDialog({
       if (item.tier < filterTierMin || item.tier > filterTierMax) return false;
       if (item.tier > maxTier) return false;
 
-      // Element affinity filter
       if (filterElement !== '_all') {
         const hasAffinity = item.elementAffinity?.includes(filterElement);
         const hasUnique = item.uniqueElement?.includes(filterElement);
         if (!hasAffinity && !hasUnique) return false;
       }
 
-      // Spirit affinity filter
       if (filterSpirit !== '_all') {
         const hasAffinity = item.spiritAffinity?.includes(filterSpirit);
         const hasUnique = item.uniqueSpirit === filterSpirit;
@@ -249,7 +240,6 @@ export default function EquipmentSelectDialog({
 
   const handleSelectItem = (item: EquipmentItem) => {
     const currentItem = slots[activeSlot]?.item;
-    // Toggle: if same item selected, deselect
     if (currentItem?.name === item.name && currentItem?.tier === item.tier) {
       handleClearSlot();
       return;
@@ -282,7 +272,6 @@ export default function EquipmentSelectDialog({
   };
 
   const currentAllowedTypes = slotAllowedTypes[activeSlot] || [];
-  // Add 쌍수 to filter options if any weapon type
   const hasWeaponInSlot = currentAllowedTypes.some(t => EQUIP_TYPE_MAP[t]?.category === 'weapon');
   const filterTypeOptions = hasWeaponInSlot
     ? [...currentAllowedTypes, ...(currentAllowedTypes.includes('쌍수') ? [] : ['쌍수'])]
@@ -292,47 +281,47 @@ export default function EquipmentSelectDialog({
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-6xl h-[85vh] overflow-hidden flex flex-col p-5">
+      <DialogContent className="max-w-6xl h-[90vh] overflow-hidden flex flex-col p-5">
         <DialogHeader>
           <DialogTitle style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
           <DialogDescription className="sr-only">슬롯별 장비를 선택하세요</DialogDescription>
         </DialogHeader>
 
-        {/* Selected item preview */}
-        <div
-          className={`flex items-center gap-4 p-3 rounded-lg border min-h-[72px] mb-2 ${
-            currentSlotItem ? 'cursor-pointer hover:bg-secondary/40' : ''
-          } ${currentSlotItem ? QUALITY_BORDER[slots[activeSlot]?.quality || 'common'] : 'border-border/50'}`}
-          style={currentSlotItem ? {
-            background: `radial-gradient(circle at center, ${QUALITY_RADIAL[slots[activeSlot]?.quality || 'common']} 0%, transparent 70%)`,
-            boxShadow: QUALITY_SHADOW[slots[activeSlot]?.quality || 'common'],
-          } : {}}
-          onClick={() => currentSlotItem && handleClearSlot()}
-        >
-          {currentSlotItem ? (
-            <>
-              {currentSlotItem.imagePath ? (
-                <img src={currentSlotItem.imagePath} alt="" className="w-14 h-14 object-contain flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
-              ) : (
-                <div className="w-14 h-14 flex items-center justify-center text-sm text-muted-foreground">{currentSlotItem.name.slice(0, 4)}</div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">{currentSlotItem.name}</p>
-                <p className="text-xs text-muted-foreground">{currentSlotItem.typeKor} · T{currentSlotItem.tier}</p>
-              </div>
-              <div className="flex gap-3 items-center flex-shrink-0">
-                {currentSlotItem.stats.map((s, i) => (
-                  <div key={i} className="flex items-center gap-1">
-                    <img src={STAT_ICONS[s.key] || ''} alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    <span className="text-sm font-medium tabular-nums">{formatEquipStat(s.key, s.value)}</span>
-                  </div>
-                ))}
-              </div>
-              <span className="text-xs text-destructive/70 flex-shrink-0 ml-2">클릭하여 해제</span>
-            </>
-          ) : (
-            <span className="text-sm text-muted-foreground">장비를 선택하세요</span>
-          )}
+        {/* Top: Slot summary + confirm/cancel */}
+        <div className="flex items-center gap-2 pb-2 border-b border-border">
+          <div className="flex gap-1 flex-1 overflow-x-auto">
+            {slots.map((s, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveSlot(i)}
+                className={`flex flex-col items-center p-1.5 rounded border min-w-[64px] transition-all ${
+                  activeSlot === i ? 'border-primary ring-1 ring-primary/30' : ''
+                } ${s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-50'}`}
+                style={s.item ? {
+                  background: `radial-gradient(circle, ${QUALITY_RADIAL[s.quality]} 0%, transparent 70%)`,
+                  boxShadow: QUALITY_SHADOW[s.quality],
+                } : {}}
+              >
+                <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>슬롯 {i + 1}</span>
+                {s.item ? (
+                  <>
+                    {s.item.imagePath ? (
+                      <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                    ) : (
+                      <span className="text-[8px] text-foreground w-9 h-9 flex items-center justify-center">{s.item.name.slice(0, 4)}</span>
+                    )}
+                    <span className="text-[8px] text-foreground truncate max-w-[58px]">{s.item.name}</span>
+                  </>
+                ) : (
+                  <span className="text-[9px] text-muted-foreground w-9 h-9 flex items-center justify-center">-</span>
+                )}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            <Button variant="outline" size="sm" onClick={onClose}>취소</Button>
+            <Button size="sm" onClick={handleConfirm}>확인</Button>
+          </div>
         </div>
 
         <Tabs value={`slot-${activeSlot}`} onValueChange={v => setActiveSlot(parseInt(v.replace('slot-', ''), 10))} className="flex flex-col flex-1 min-h-0">
@@ -379,12 +368,7 @@ export default function EquipmentSelectDialog({
               <SelectContent>
                 <SelectItem value="_all">전체</SelectItem>
                 {ELEMENT_FILTER_OPTIONS.map(e => (
-                  <SelectItem key={e.value} value={e.value}>
-                    <span className="flex items-center gap-1">
-                      <img src={ELEMENT_ICONS[e.value]} className="w-3.5 h-3.5" alt="" />
-                      {e.label}
-                    </span>
-                  </SelectItem>
+                  <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -414,7 +398,7 @@ export default function EquipmentSelectDialog({
             </Button>
           </div>
 
-          {/* Item grid */}
+          {/* Item grid - fills all remaining space */}
           {Array.from({ length: slotCount }).map((_, slotIdx) => (
             <TabsContent key={slotIdx} value={`slot-${slotIdx}`} className="mt-0 flex-1 min-h-0">
               <div className="overflow-y-auto h-full border border-border rounded p-3">
@@ -441,18 +425,15 @@ export default function EquipmentSelectDialog({
                           } : {}}
                           title={`${item.name} (${item.typeKor} T${item.tier})`}
                         >
-                          {/* Tier badge */}
                           <span className="absolute top-1 left-1 text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-1">
                             T{item.tier}
                           </span>
 
-                          {/* Relic */}
                           {item.relic && (
                             <img src="/images/special/relic_mark.png" alt="유물" className="absolute top-1 right-1 w-4 h-4"
                               onError={e => { e.currentTarget.style.display = 'none'; }} />
                           )}
 
-                          {/* Image */}
                           <div className="w-16 h-16 flex items-center justify-center my-1">
                             {item.imagePath ? (
                               <img src={item.imagePath} alt={item.name} className="w-14 h-14 object-contain"
@@ -466,7 +447,7 @@ export default function EquipmentSelectDialog({
                             )}
                           </div>
 
-                          {/* Affinity icons row */}
+                          {/* Affinity icons */}
                           <div className="flex gap-0.5 items-center justify-center min-h-[16px] my-0.5">
                             {item.elementAffinity?.map(el => (
                               <img key={el} src={ELEMENT_ICONS[el] || ''} alt={el} title={`원소 친밀: ${el}`} className="w-3.5 h-3.5"
@@ -489,7 +470,7 @@ export default function EquipmentSelectDialog({
                             )}
                           </div>
 
-                          {/* Stats row */}
+                          {/* Stats */}
                           <div className="flex gap-1 items-center justify-center">
                             {item.stats.slice(0, 3).map((s, si) => (
                               <div key={si} className="flex items-center gap-0.5">
@@ -499,7 +480,6 @@ export default function EquipmentSelectDialog({
                             ))}
                           </div>
 
-                          {/* Name */}
                           <p className="text-[10px] text-foreground/80 truncate w-full text-center mt-0.5 leading-tight font-medium">
                             {item.name}
                           </p>
@@ -512,43 +492,6 @@ export default function EquipmentSelectDialog({
             </TabsContent>
           ))}
         </Tabs>
-
-        {/* Bottom summary */}
-        <div className="flex items-center gap-2 pt-2 border-t border-border mt-2">
-          <div className="flex gap-1 flex-1 overflow-x-auto">
-            {slots.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveSlot(i)}
-                className={`flex flex-col items-center p-1.5 rounded border min-w-[64px] transition-all ${
-                  activeSlot === i ? 'border-primary ring-1 ring-primary/30' : ''
-                } ${s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-50'}`}
-                style={s.item ? {
-                  background: `radial-gradient(circle, ${QUALITY_RADIAL[s.quality]} 0%, transparent 70%)`,
-                  boxShadow: QUALITY_SHADOW[s.quality],
-                } : {}}
-              >
-                <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>슬롯 {i + 1}</span>
-                {s.item ? (
-                  <>
-                    {s.item.imagePath ? (
-                      <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    ) : (
-                      <span className="text-[8px] text-foreground w-9 h-9 flex items-center justify-center">{s.item.name.slice(0, 4)}</span>
-                    )}
-                    <span className="text-[8px] text-foreground truncate max-w-[58px]">{s.item.name}</span>
-                  </>
-                ) : (
-                  <span className="text-[9px] text-muted-foreground w-9 h-9 flex items-center justify-center">-</span>
-                )}
-              </button>
-            ))}
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <Button variant="outline" size="sm" onClick={onClose}>취소</Button>
-            <Button size="sm" onClick={handleConfirm}>확인</Button>
-          </div>
-        </div>
       </DialogContent>
     </Dialog>
   );
