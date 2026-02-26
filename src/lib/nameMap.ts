@@ -41,6 +41,7 @@ export const SKILL_NAME_MAP: Record<string, string> = {
   // Normal
   '곡예': 'acrobatics',
   '아케인 블래스트': 'arcane_blast',
+  '아케인 블라스트': 'arcane_blast',
   '뒤에서 찌르기': 'backstab',
   '쪼개기': 'cleave',
   '독수리의 눈': 'eagle_eyes',
@@ -97,7 +98,8 @@ export const SKILL_NAME_MAP: Record<string, string> = {
   '드래곤 브레스': 'dragon_breath',
   '붕괴': 'disintegrate',
   // Epic
-  '대마법사(스킬)': 'adept', // 직업명과 구분
+  '대마법사(스킬)': 'adept', // 직업명과 구분 (nameMap용)
+  '대마법사': 'adept', // SKD2에서 사용하는 키
   '초 천재': 'super_genius',
   '완벽한 형태': 'perfect_form',
   '더블 캐스팅': 'double_cast',

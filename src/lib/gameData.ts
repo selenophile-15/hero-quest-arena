@@ -187,6 +187,31 @@ export async function lookupHeroStats(jobName: string, level: number): Promise<{
   return null;
 }
 
+// Load only fixed stats (element, crit, etc.) without needing level
+export async function lookupHeroFixedStats(jobName: string): Promise<HeroFixedStats | null> {
+  const data = await getHeroStats();
+  for (const gyeyeolKey of Object.keys(data)) {
+    const gyeyeol = data[gyeyeolKey];
+    for (const groupKey of Object.keys(gyeyeol)) {
+      const group = gyeyeol[groupKey];
+      const jobData = group['기본_직업']?.['직업명'] === jobName ? group['기본_직업']
+        : group['승급_직업']?.['직업명'] === jobName ? group['승급_직업']
+        : null;
+      if (jobData) {
+        const fixed = jobData['고정_능력치'] || {};
+        return {
+          evasion: fixed['기본_회피%'] || 0,
+          critRate: fixed['기본_치명타확률%'] || 5,
+          critDmg: fixed['기본_치명타데미지%'] || 200,
+          threat: fixed['기본_위협도'] || 90,
+          element: fixed['직업_원소'] || '',
+        };
+      }
+    }
+  }
+  return null;
+}
+
 function extractStats(jobData: any, level: number): { level: HeroLevelStats; fixed: HeroFixedStats } | null {
   const fixed = jobData['고정_능력치'] || {};
   const levelData = (jobData['레벨별_능력치'] || []).find((l: any) => l['레벨'] === level);

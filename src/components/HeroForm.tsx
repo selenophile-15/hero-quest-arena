@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
-import { lookupHeroStats, getAvailableSkills, getCommonSkills, getUniqueSkills } from '@/lib/gameData';
+import { lookupHeroStats, getAvailableSkills, getCommonSkills, getUniqueSkills, lookupHeroFixedStats } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
 import { getMaxCommonSkillSlots, getSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
@@ -278,26 +278,21 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     }
   }, [classLine, promoted]);
 
-  // Load stats when job+level changes
+  // (Level-dependent stats are loaded in the combined effect below)
+
+  // Load fixed stats (element etc.) immediately when job changes (before level)
   useEffect(() => {
-    if (!heroClass || !level) return;
-    lookupHeroStats(heroClass, Number(level)).then(stats => {
-      if (stats) {
-        setHp(stats.level.hp);
-        setAtk(stats.level.atk);
-        setDef(stats.level.def);
-        setCrit(stats.fixed.critRate);
-        setCritDmg(stats.fixed.critDmg);
-        setEvasion(stats.fixed.evasion);
-        setThreat(stats.fixed.threat);
-        setElement(stats.fixed.element);
+    if (!heroClass) { setElement(''); return; }
+    lookupHeroFixedStats(heroClass).then(fixed => {
+      if (fixed) {
+        setElement(fixed.element);
+        setCrit(fixed.critRate);
+        setCritDmg(fixed.critDmg);
+        setEvasion(fixed.evasion);
+        setThreat(fixed.threat);
       }
     });
-  }, [heroClass, level]);
 
-  // Load skills when job changes
-  useEffect(() => {
-    if (!heroClass) return;
     getAvailableSkills(heroClass).then(setAvailableSkills);
 
     // 고유 스킬은 SKD3의 '한글 직업명' 키로 직접 조회
@@ -312,8 +307,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       }
     });
 
-    // 스킬 초기화 하지 않음 - 사용자가 직접 초기화 버튼 사용
-
     // Load recommended skillsets
     fetch('/data/recommended_skillsets.json')
       .then(r => r.json())
@@ -326,6 +319,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     // Reset equipment on job change
     setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
   }, [heroClass]);
+
+  // Load level-dependent stats when job+level changes
+  useEffect(() => {
+    if (!heroClass || !level) return;
+    lookupHeroStats(heroClass, Number(level)).then(stats => {
+      if (stats) {
+        setHp(stats.level.hp);
+        setAtk(stats.level.atk);
+        setDef(stats.level.def);
+      }
+    });
+  }, [heroClass, level]);
 
   // 슬롯 수가 줄어도 기존 선택은 유지 (초기화 버튼으로 직접 관리)
 
@@ -479,15 +484,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
           {/* Job Card - illustration takes 2/3, info below */}
           <div className="card-fantasy p-3 flex flex-col items-center">
-            {/* Spacer to push illustration down */}
-            <div className="flex-1" />
-            {/* Class illustration */}
-            <div className="w-full flex items-center justify-center">
+            {/* Class illustration - large, near top */}
+            <div className="w-full flex items-center justify-center mt-1">
               {heroClass ? (
                 <img
                   src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.png`}
                   alt={heroClass}
-                  className="max-w-full max-h-[280px] object-contain drop-shadow-lg"
+                  className="max-w-full max-h-[360px] object-contain drop-shadow-lg"
                   onError={e => { e.currentTarget.style.display = 'none'; }}
                 />
               ) : (
@@ -495,8 +498,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               )}
             </div>
             {/* Position & description below */}
+            <div className="flex-1" />
             {heroClass && (
-              <div className="flex flex-col items-center mt-3 gap-1 pb-1">
+              <div className="flex flex-col items-center mt-2 gap-1 pb-1">
                 <span className="text-sm text-foreground">-</span>
                 <p className="text-xs text-foreground/70 text-center leading-tight">-</p>
               </div>
@@ -893,19 +897,19 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
                   {/* Element + Spirit + Type icons */}
                   <div className="grid grid-cols-3 gap-0.5 w-full">
-                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center" title="원소">
+                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden" title="원소">
                       {slotData?.element ? (
-                        <img src={`/images/elements/${slotData.element.type}.png`} className="w-4 h-4" alt="" />
+                        <img src={`/images/elements/${slotData.element.type}.png`} className="w-full h-full object-cover" alt="" />
                       ) : <span className="text-[6px] text-muted-foreground">원소</span>}
                     </div>
-                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center" title="영혼">
+                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden" title="영혼">
                       {slotData?.spirit ? (
                         <span className="text-[6px] text-foreground">{slotData.spirit.name}</span>
                       ) : <span className="text-[6px] text-muted-foreground">영혼</span>}
                     </div>
-                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center" title="타입">
+                    <div className="aspect-square rounded border border-border bg-secondary/20 flex items-center justify-center overflow-hidden" title="타입">
                       {typeFile ? (
-                        <img src={getTypeImgPath(typeFile)} className="w-4 h-4 object-contain" alt=""
+                        <img src={getTypeImgPath(typeFile)} className="w-full h-full object-contain p-0.5" alt=""
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                       ) : <span className="text-[6px] text-muted-foreground">타입</span>}
                     </div>
