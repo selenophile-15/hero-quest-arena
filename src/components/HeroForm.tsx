@@ -77,7 +77,33 @@ const CLASS_LINE_RING: Record<string, string> = {
   '주문술사': 'ring-spellcaster',
 };
 
-const EQUIPMENT_SLOT_LABELS = ['무기', '방어구', '헬멧', '장갑', '신발', '악세서리'];
+const EQUIPMENT_SLOT_LABELS = ['슬롯 1', '슬롯 2', '슬롯 3', '슬롯 4', '슬롯 5', '슬롯 6'];
+
+// Quality/grade glow colors for equipment borders
+const QUALITY_GLOW: Record<string, string> = {
+  common: 'border-gray-400/50 shadow-[0_0_6px_rgba(156,163,175,0.3)]',
+  uncommon: 'border-green-400/60 shadow-[0_0_8px_rgba(74,222,128,0.4)]',
+  flawless: 'border-blue-400/60 shadow-[0_0_10px_rgba(96,165,250,0.5)]',
+  epic: 'border-purple-400/70 shadow-[0_0_12px_rgba(192,132,252,0.6)]',
+  legendary: 'border-yellow-400/80 shadow-[0_0_14px_rgba(250,204,21,0.7)]',
+};
+
+const QUALITY_BG_GLOW: Record<string, string> = {
+  common: '',
+  uncommon: 'bg-gradient-radial from-green-500/10 to-transparent',
+  flawless: 'bg-gradient-radial from-blue-500/15 to-transparent',
+  epic: 'bg-gradient-radial from-purple-500/20 to-transparent',
+  legendary: 'bg-gradient-radial from-yellow-500/25 to-transparent',
+};
+
+// Stat icons used in equipment display
+const EQUIP_STAT_ICONS: Record<string, string> = {
+  '장비_공격력': '/images/stats/attack.png',
+  '장비_방어력': '/images/stats/defense.png',
+  '장비_체력': '/images/stats/health.png',
+  '장비_치명타확률%': '/images/stats/critchance.png',
+  '장비_회피%': '/images/stats/evasion.png',
+};
 
 const ELEMENT_ORDER = [
   { key: '불', icon: '/images/elements/fire.png' },
@@ -158,7 +184,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [uniqueSkillData, setUniqueSkillData] = useState<any>(null);
   const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
-
+  const [recommendedSets, setRecommendedSets] = useState<Record<string, string[]>>({});
   // Refs for enter-key navigation
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -262,6 +288,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     });
 
     // 스킬 초기화 하지 않음 - 사용자가 직접 초기화 버튼 사용
+
+    // Load recommended skillsets
+    fetch('/data/recommended_skillsets.json')
+      .then(r => r.json())
+      .then(data => {
+        const sets = data[heroClass] || {};
+        setRecommendedSets(sets);
+      })
+      .catch(() => setRecommendedSets({}));
   }, [heroClass]);
 
   // 슬롯 수가 줄어도 기존 선택은 유지 (초기화 버튼으로 직접 관리)
@@ -368,7 +403,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               </Select>
             </div>
             <div>
-              <Label className="text-foreground/80 text-xs mb-1 block text-center">승급</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block text-center">&nbsp;</Label>
               <div className="flex items-center justify-center h-9">
                 <Switch checked={promoted} onCheckedChange={p => setPromoted(p)} />
               </div>
@@ -417,12 +452,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           {/* Job Card - expanded */}
           <div className="card-fantasy p-3 flex flex-col items-center justify-center">
             {/* Class illustration from images/classillust */}
-            <div className="w-28 h-28 bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden">
+            <div className="w-40 h-40 bg-secondary/30 rounded-lg flex items-center justify-center overflow-hidden">
               {heroClass ? (
                 <img
                   src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.png`}
                   alt={heroClass}
-                  className="w-full h-full object-contain p-2"
+                  className="w-full h-full object-contain"
                   onError={e => {
                     e.currentTarget.style.display = 'none';
                   }}
@@ -526,7 +561,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             {/* Seeds */}
             <div className="card-fantasy p-3">
               <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>씨앗</h3>
-              <div className="space-y-1.5">
+              <div className="flex flex-col gap-[6px]">
                 {SEED_ICONS.map((seed, i) => (
                   <div key={seed.key} className="flex items-center gap-2">
                     <img src={seed.icon} alt={seed.key} className="w-5 h-5 flex-shrink-0" />
@@ -551,7 +586,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   type="button"
                   onClick={() => {
                     if (elementManual) {
-                      // Switching to auto → reset values
                       setEquipElements({});
                     }
                     setElementManual(!elementManual);
@@ -565,7 +599,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   {elementManual ? '수동' : '자동'}
                 </button>
               </div>
-              <div className="space-y-1.5">
+              <div className="flex flex-col gap-[6px]">
                 {ELEMENT_ORDER.map(el => {
                   const val = equipElements[el.key] || 0;
                   const isJobElement = element === el.key;
@@ -780,28 +814,89 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           commonSkillsData={commonSkillsData}
           onConfirm={setSelectedSkills}
           jobElementValue={jobElementValue}
+          recommendedSets={Object.keys(recommendedSets).length > 0 ? recommendedSets : undefined}
         />
 
         {/* ─── Row 4: Equipment ─── */}
         <div className="card-fantasy p-4">
           <h3 className="text-sm font-semibold text-primary mb-3" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h3>
           <div className="grid grid-cols-6 gap-3">
-            {EQUIPMENT_SLOT_LABELS.map((slotLabel, i) => (
-              <div key={i} className="flex flex-col items-center gap-1">
-                <div className="w-16 h-16 rounded-lg border-2 border-border bg-secondary/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-                  <span className="text-xs text-muted-foreground">{slotLabel}</span>
-                </div>
-                {/* Enchantment slots: Element + Soul */}
-                <div className="flex gap-1">
-                  <div className="w-8 h-8 rounded border border-border bg-secondary/20 flex items-center justify-center cursor-pointer hover:border-accent/50 transition-colors" title="원소 마법부여">
-                    <span className="text-[7px] text-muted-foreground">원소</span>
+            {EQUIPMENT_SLOT_LABELS.map((slotLabel, i) => {
+              // Placeholder equipment data - will be populated when equipment selection is implemented
+              const equipItem = null as null | {
+                name: string;
+                type: string;
+                quality: string;
+                relic: boolean;
+                image: string;
+                stats: { key: string; value: number }[];
+              };
+              const quality = equipItem?.quality || '';
+              const qualityGlow = quality ? QUALITY_GLOW[quality] || '' : 'border-border';
+              
+              return (
+                <div key={i} className="flex flex-col items-center gap-1.5">
+                  {/* Slot header */}
+                  <div className="text-[10px] font-semibold text-primary/80 bg-primary/10 w-full text-center rounded-t py-0.5">
+                    {slotLabel}
                   </div>
-                  <div className="w-8 h-8 rounded border border-border bg-secondary/20 flex items-center justify-center cursor-pointer hover:border-accent/50 transition-colors" title="영혼 마법부여">
-                    <span className="text-[7px] text-muted-foreground">영혼</span>
+                  
+                  {/* Main equipment area */}
+                  <div className={`relative w-full aspect-square rounded-lg border-2 ${qualityGlow} bg-secondary/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-all overflow-hidden`}>
+                    {/* Relic indicator */}
+                    {equipItem?.relic && (
+                      <img
+                        src="/images/special/relic_mark.png"
+                        alt="유물"
+                        className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
+                        onError={e => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    )}
+                    
+                    {/* Equipment image */}
+                    {equipItem?.image ? (
+                      <img src={equipItem.image} alt={equipItem.name} className="w-4/5 h-4/5 object-contain" />
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground">비어있음</span>
+                    )}
+                    
+                    {/* Stats display - right side */}
+                    {equipItem?.stats && equipItem.stats.length > 0 && (
+                      <div className="absolute right-0.5 top-1 flex flex-col gap-0.5">
+                        {equipItem.stats.slice(0, 3).map((stat, si) => (
+                          <div key={si} className="flex items-center gap-0.5">
+                            <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-3.5 h-3.5" />
+                            <span className="text-[9px] text-foreground font-medium tabular-nums">
+                              {formatNumber(stat.value)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Enchantment slots: Element + Soul */}
+                  <div className="flex gap-1 w-full justify-center">
+                    <div className="w-7 h-7 rounded border border-border bg-secondary/20 flex items-center justify-center cursor-pointer hover:border-accent/50 transition-colors" title="원소 마법부여">
+                      <span className="text-[6px] text-muted-foreground">원소</span>
+                    </div>
+                    <div className="w-7 h-7 rounded border border-border bg-secondary/20 flex items-center justify-center cursor-pointer hover:border-accent/50 transition-colors" title="영혼 마법부여">
+                      <span className="text-[6px] text-muted-foreground">영혼</span>
+                    </div>
+                  </div>
+                  
+                  {/* Equipment name & type */}
+                  <div className="text-center w-full">
+                    <p className="text-[9px] text-foreground truncate leading-tight">
+                      {equipItem?.name || '-'}
+                    </p>
+                    <p className="text-[8px] text-muted-foreground truncate leading-tight">
+                      {equipItem?.type || ''}
+                    </p>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
