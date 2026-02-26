@@ -4,6 +4,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { formatNumber } from '@/lib/format';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import {
   EquipmentItem,
   loadEquipmentByTypes,
@@ -88,6 +90,11 @@ const ELEMENT_ICONS: Record<string, string> = {
   '빛': '/images/elements/light.png',
   '어둠': '/images/elements/dark.png',
 };
+
+const SPIRIT_ICONS: Record<string, string> = {};
+for (const [kor, eng] of Object.entries(SPIRIT_NAME_MAP)) {
+  SPIRIT_ICONS[kor] = `/images/enchant/spirit/${eng}_1.png`;
+}
 
 const ELEMENT_ENG: Record<string, string> = {
   '불': 'fire', '물': 'water', '공기': 'air', '대지': 'earth', '빛': 'light', '어둠': 'dark',
@@ -413,77 +420,116 @@ export default function EquipmentSelectDialog({
                       const quality = slots[activeSlot]?.quality || 'common';
 
                       return (
-                        <button
-                          key={`${item.name}-${item.tier}-${idx}`}
-                          onClick={() => handleSelectItem(item)}
-                          className={`relative flex flex-col items-center p-2 rounded-lg border-2 transition-all hover:border-primary/50 cursor-pointer ${
-                            isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20'
-                          }`}
-                          style={isSelected ? {
-                            background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 70%)`,
-                            boxShadow: QUALITY_SHADOW[quality],
-                          } : {}}
-                          title={`${item.name} (${item.typeKor} T${item.tier})`}
-                        >
-                          <span className="absolute top-1 left-1 text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-1">
-                            T{item.tier}
-                          </span>
+                        <TooltipProvider delayDuration={200}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                key={`${item.name}-${item.tier}-${idx}`}
+                                onClick={() => handleSelectItem(item)}
+                                className={`relative flex flex-col items-center p-2 rounded-lg border-2 transition-all hover:border-primary/50 cursor-pointer ${
+                                  isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20'
+                                }`}
+                                style={isSelected ? {
+                                  background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 70%)`,
+                                  boxShadow: QUALITY_SHADOW[quality],
+                                } : {}}
+                              >
+                                <span className="absolute top-1 left-1 text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-1">
+                                  T{item.tier}
+                                </span>
 
-                          {item.relic && (
-                            <img src="/images/special/relic_mark.png" alt="유물" className="absolute top-1 right-1 w-4 h-4"
-                              onError={e => { e.currentTarget.style.display = 'none'; }} />
-                          )}
+                                {item.relic && (
+                                  <img src="/images/special/relic_mark.png" alt="유물" className="absolute top-1 right-1 w-4 h-4"
+                                    onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                )}
 
-                          <div className="w-16 h-16 flex items-center justify-center my-1">
-                            {item.imagePath ? (
-                              <img src={item.imagePath} alt={item.name} className="w-14 h-14 object-contain"
-                                onError={e => {
-                                  e.currentTarget.style.display = 'none';
-                                  const p = e.currentTarget.parentElement;
-                                  if (p) { const s = document.createElement('span'); s.className = 'text-[9px] text-muted-foreground text-center'; s.textContent = item.name.slice(0, 6); p.appendChild(s); }
-                                }} />
-                            ) : (
-                              <span className="text-[9px] text-muted-foreground text-center leading-tight">{item.name.slice(0, 8)}</span>
-                            )}
-                          </div>
+                                <div className="w-16 h-16 flex items-center justify-center my-1">
+                                  {item.imagePath ? (
+                                    <img src={item.imagePath} alt={item.name} className="w-14 h-14 object-contain"
+                                      onError={e => {
+                                        e.currentTarget.style.display = 'none';
+                                        const p = e.currentTarget.parentElement;
+                                        if (p) { const s = document.createElement('span'); s.className = 'text-[9px] text-muted-foreground text-center'; s.textContent = item.name.slice(0, 6); p.appendChild(s); }
+                                      }} />
+                                  ) : (
+                                    <span className="text-[9px] text-muted-foreground text-center leading-tight">{item.name.slice(0, 8)}</span>
+                                  )}
+                                </div>
 
-                          {/* Affinity icons */}
-                          <div className="flex gap-0.5 items-center justify-center min-h-[16px] my-0.5">
-                            {item.elementAffinity?.map(el => (
-                              <img key={el} src={ELEMENT_ICONS[el] || ''} alt={el} title={`원소 친밀: ${el}`} className="w-3.5 h-3.5"
-                                onError={e => { e.currentTarget.style.display = 'none'; }} />
-                            ))}
-                            {item.uniqueElement?.map(el => {
-                              const eng = ELEMENT_ENG[el];
-                              const tier = item.uniqueElementTier || 1;
-                              return (
-                                <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.png` : ''} alt={el}
-                                  title={`고유 원소: ${el} T${tier}`} className="w-3.5 h-3.5"
-                                  onError={e => { e.currentTarget.style.display = 'none'; }} />
-                              );
-                            })}
-                            {item.spiritAffinity?.map(sp => (
-                              <span key={sp} className="text-[7px] text-muted-foreground bg-secondary/50 rounded px-0.5" title={`영혼 친밀: ${sp}`}>{sp}</span>
-                            ))}
-                            {item.uniqueSpirit && (
-                              <span className="text-[7px] text-accent bg-accent/10 rounded px-0.5" title={`고유 영혼: ${item.uniqueSpirit}`}>{item.uniqueSpirit}</span>
-                            )}
-                          </div>
-
-                          {/* Stats */}
-                          <div className="flex gap-1 items-center justify-center">
-                            {item.stats.slice(0, 3).map((s, si) => (
-                              <div key={si} className="flex items-center gap-0.5">
-                                <img src={STAT_ICONS[s.key] || ''} alt="" className="w-3.5 h-3.5" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                <span className="text-[9px] tabular-nums">{formatEquipStat(s.key, s.value)}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          <p className="text-[10px] text-foreground/80 truncate w-full text-center mt-0.5 leading-tight font-medium">
-                            {item.name}
-                          </p>
-                        </button>
+                                <p className="text-[10px] text-foreground/80 truncate w-full text-center mt-0.5 leading-tight font-medium">
+                                  {item.name}
+                                </p>
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right" className="max-w-xs p-3 space-y-1.5">
+                              <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">T{item.tier} {item.typeKor}</span></p>
+                              {item.relic && <p className="text-xs text-yellow-400 font-semibold">⭐ 유물</p>}
+                              {/* Stats */}
+                              {item.stats.length > 0 && (
+                                <div className="space-y-0.5">
+                                  {item.stats.map((s, si) => (
+                                    <div key={si} className="flex items-center gap-1 text-xs">
+                                      <img src={STAT_ICONS[s.key] || ''} alt="" className="w-3.5 h-3.5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                      <span className="text-muted-foreground">{STAT_FILTER_OPTIONS.find(o => o.value === s.key)?.label || s.key}:</span>
+                                      <span className="tabular-nums">{formatEquipStat(s.key, s.value)}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {/* Element affinity */}
+                              {item.elementAffinity && item.elementAffinity.length > 0 && (
+                                <div className="flex items-center gap-1 text-xs">
+                                  <span className="text-muted-foreground">친밀 원소:</span>
+                                  {item.elementAffinity.map(el => (
+                                    <span key={el} className="flex items-center gap-0.5">
+                                      <img src={ELEMENT_ICONS[el] || ''} alt={el} className="w-3.5 h-3.5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                      {el}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {/* Unique element */}
+                              {item.uniqueElement && item.uniqueElement.length > 0 && (
+                                <div className="flex items-center gap-1 text-xs">
+                                  <span className="text-muted-foreground">고유 원소:</span>
+                                  {item.uniqueElement.map(el => {
+                                    const eng = ELEMENT_ENG[el];
+                                    const tier = item.uniqueElementTier || 1;
+                                    return (
+                                      <span key={el} className="flex items-center gap-0.5">
+                                        <img src={eng ? `/images/enchant/element/${eng}${tier}_2.png` : ''} alt={el} className="w-3.5 h-3.5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                        {el} T{tier}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                              {/* Spirit affinity */}
+                              {item.spiritAffinity && item.spiritAffinity.length > 0 && (
+                                <div className="flex items-center gap-1 text-xs">
+                                  <span className="text-muted-foreground">친밀 영혼:</span>
+                                  {item.spiritAffinity.map(sp => (
+                                    <span key={sp} className="flex items-center gap-0.5">
+                                      <img src={SPIRIT_ICONS[sp] || ''} alt={sp} className="w-3.5 h-3.5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                      {sp}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {/* Unique spirit */}
+                              {item.uniqueSpirit && (
+                                <div className="flex items-center gap-1 text-xs">
+                                  <span className="text-muted-foreground">고유 영혼:</span>
+                                  <img src={SPIRIT_ICONS[item.uniqueSpirit] || ''} alt={item.uniqueSpirit} className="w-3.5 h-3.5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                  {item.uniqueSpirit}
+                                </div>
+                              )}
+                              {item.airshipPower > 0 && (
+                                <p className="text-xs text-muted-foreground">에어쉽파워: {formatNumber(item.airshipPower)}</p>
+                              )}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       );
                     })}
                   </div>
