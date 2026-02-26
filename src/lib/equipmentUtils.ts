@@ -11,7 +11,7 @@ export const EQUIP_TYPE_MAP: Record<string, { file: string; category: string }> 
   '활': { file: 'bow', category: 'weapon' },
   '크로스보우': { file: 'crossbow', category: 'weapon' },
   '총': { file: 'gun', category: 'weapon' },
-  '지팡이': { file: 'staves', category: 'weapon' },
+  '지팡이': { file: 'staff', category: 'weapon' },
   '마법봉': { file: 'wand', category: 'weapon' },
   '악기': { file: 'instrument', category: 'weapon' },
   '촉매': { file: 'catalyst', category: 'weapon' },

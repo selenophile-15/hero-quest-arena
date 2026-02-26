@@ -8,6 +8,7 @@ import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
 import { getMaxCommonSkillSlots, getSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import SkillSelectDialog from '@/components/SkillSelectDialog';
 import EquipmentSelectDialog from '@/components/EquipmentSelectDialog';
+import EnchantPickerDialog from '@/components/EnchantPickerDialog';
 import ElementIcon from '@/components/ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -86,28 +87,27 @@ const EQUIPMENT_SLOT_LABELS = ['슬롯 1', '슬롯 2', '슬롯 3', '슬롯 4', '
 const QUALITY_BORDER: Record<string, string> = {
   common: 'border-gray-300/50',
   uncommon: 'border-green-400/60',
-  flawless: 'border-blue-400/60',
+  flawless: 'border-cyan-300/60',
   epic: 'border-fuchsia-400/70',
   legendary: 'border-yellow-400/80',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
   common: 'rgba(220,220,220,0.18)',
   uncommon: 'rgba(74,222,128,0.2)',
-  flawless: 'rgba(96,165,250,0.25)',
+  flawless: 'rgba(103,232,249,0.25)',
   epic: 'rgba(217,70,239,0.3)',
   legendary: 'rgba(250,204,21,0.35)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
   common: '0 0 8px rgba(220,220,220,0.4)',
   uncommon: '0 0 10px rgba(74,222,128,0.5)',
-  flawless: '0 0 12px rgba(96,165,250,0.5)',
+  flawless: '0 0 12px rgba(103,232,249,0.5)',
   epic: '0 0 14px rgba(217,70,239,0.6)',
   legendary: '0 0 16px rgba(250,204,21,0.7)',
 };
 
-const TYPE_IMAGE_FIX: Record<string, string> = { staves: 'staff' };
 function getTypeImgPath(typeFile: string) {
-  return `/images/type/${TYPE_IMAGE_FIX[typeFile] || typeFile}.png`;
+  return `/images/type/${typeFile}.png`;
 }
 
 const ELEMENT_ENG_MAP: Record<string, string> = {
@@ -246,6 +246,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   // Element/Spirit picker states
   const [elementPickerSlot, setElementPickerSlot] = useState<number | null>(null);
   const [spiritPickerSlot, setSpiritPickerSlot] = useState<number | null>(null);
+  const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
 
   // Load common skills data once
   useEffect(() => {
@@ -350,8 +351,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       })
       .catch(() => setRecommendedSets({}));
 
-    // Reset equipment on job change
+    // Reset equipment and skills on job change
     setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+    setSelectedSkills([]);
   }, [heroClass]);
 
   // Load level-dependent stats when job+level changes
@@ -522,6 +524,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             <div className="w-full flex items-center justify-center mt-1">
               {heroClass ? (
                 <img
+                  key={heroClass}
                   src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.png`}
                   alt={heroClass}
                   className="max-w-full max-h-[360px] object-contain drop-shadow-lg"
@@ -899,6 +902,17 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   key={i}
                   className="flex flex-col items-center gap-1 cursor-pointer"
                   onClick={() => {
+                    if (equipItem) {
+                      // Click to unequip
+                      const newSlots = [...equipmentSlots];
+                      newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                      setEquipmentSlots(newSlots);
+                    } else if (heroClass) {
+                      setEquipInitialSlot(i);
+                      setEquipDialogOpen(true);
+                    }
+                  }}
+                  onDoubleClick={() => {
                     if (heroClass) {
                       setEquipInitialSlot(i);
                       setEquipDialogOpen(true);
@@ -968,7 +982,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       {equipItem.stats.slice(0, 3).map((stat: any, si: number) => (
                         <div key={si} className="flex items-center gap-0.5">
                           <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                          <span className="text-[10px] text-foreground font-medium tabular-nums">
+                          <span className="text-[11px] text-foreground font-semibold tabular-nums">
                             {formatEquipStatVal(stat.key, stat.value)}
                           </span>
                         </div>
@@ -977,12 +991,50 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   )}
 
                   {/* Item name */}
-                  <p className="text-xs text-foreground truncate w-full text-center leading-tight">
+                  <p className="text-sm text-foreground truncate w-full text-center leading-tight font-medium">
                     {equipItem?.name || '-'}
                   </p>
                 </div>
               );
             })}
+          </div>
+
+          {/* Relic effect display */}
+          {equipmentSlots.some(s => s.item?.relic && s.item?.relicEffect) && (
+            <div className="mt-3 p-2 border border-yellow-400/30 rounded bg-yellow-400/5">
+              <p className="text-xs font-semibold text-yellow-400 mb-1">⭐ 유물 효과</p>
+              {equipmentSlots.filter(s => s.item?.relic && s.item?.relicEffect).map((s, i) => (
+                <p key={i} className="text-xs text-foreground/80">
+                  <span className="font-medium text-foreground">{s.item!.name}:</span> {s.item!.relicEffect}
+                </p>
+              ))}
+            </div>
+          )}
+
+          {/* Open equipment dialog button */}
+          <div className="mt-3 flex justify-center gap-2">
+            <Button
+              size="sm"
+              className="h-7 text-xs gap-1"
+              onClick={() => {
+                if (heroClass) {
+                  setEquipInitialSlot(0);
+                  setEquipDialogOpen(true);
+                }
+              }}
+              disabled={!heroClass}
+            >
+              장비 선택
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-xs gap-1"
+              onClick={() => setEnchantDialogOpen(true)}
+              disabled={!heroClass || !equipmentSlots.some(s => s.item)}
+            >
+              원소/영혼 인챈트
+            </Button>
           </div>
         </div>
 
@@ -995,6 +1047,29 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           initialSlot={equipInitialSlot}
           currentEquipment={equipmentSlots}
           onConfirm={setEquipmentSlots}
+        />
+
+        {/* Enchant Picker Dialog */}
+        <EnchantPickerDialog
+          open={enchantDialogOpen}
+          onClose={() => setEnchantDialogOpen(false)}
+          slotCount={6}
+          slots={equipmentSlots.map(s => ({ element: s.element, spirit: s.spirit }))}
+          itemInfoPerSlot={equipmentSlots.map(s => s.item ? {
+            elementAffinity: s.item.elementAffinity,
+            spiritAffinity: s.item.spiritAffinity,
+            uniqueElement: s.item.uniqueElement,
+            uniqueElementTier: s.item.uniqueElementTier,
+            uniqueSpirit: s.item.uniqueSpirit,
+          } : null)}
+          onConfirm={(enchantSlots) => {
+            const newSlots = equipmentSlots.map((s, i) => ({
+              ...s,
+              element: enchantSlots[i].element,
+              spirit: enchantSlots[i].spirit,
+            }));
+            setEquipmentSlots(newSlots);
+          }}
         />
 
         {/* ─── Actions ─── */}
