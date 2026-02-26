@@ -595,28 +595,43 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
 
             {/* Unique skill row */}
-            <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/50">
-              <div className="px-2 py-1.5 flex items-center justify-center">
-                <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-700/60 text-foreground">고유</span>
-              </div>
-              <div className="px-1 py-1.5 flex items-center justify-center">
-                <img
-                  src={uniqueSkillData?.['이미지_경로'] ? `/${uniqueSkillData['이미지_경로']}` : ''}
-                  alt=""
-                  className="w-9 h-9 object-contain"
-                  onError={e => { e.currentTarget.style.display = 'none'; }}
-                />
-              </div>
-              <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{uniqueSkillName || '-'}</div>
-              <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">1</div>
-              <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{uniqueSkillName || '-'}</div>
-              <div className="px-2 py-1.5 flex items-start justify-start text-xs text-foreground whitespace-pre-line leading-tight min-h-[2.5rem]">
-                <span className="my-auto">{uniqueSkillData?.['스킬_설명']?.[0] || '-'}</span>
-              </div>
-              <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">
-                {uniqueSkillData?.['원소_기준치']?.[1] || '-'}
-              </div>
-            </div>
+            {(() => {
+              // Compute skill level based on element value vs 원소_기준치 thresholds
+              const thresholds: number[] = uniqueSkillData?.['원소_기준치'] || [];
+              let uniqueSkillLevel = 0;
+              for (let t = 0; t < thresholds.length; t++) {
+                if (totalEquipElement >= thresholds[t]) uniqueSkillLevel = t;
+              }
+              const baseSkillName = uniqueSkillData?.['레벨별_스킬명']?.[0] || uniqueSkillName || '-';
+              const currentSkillName = uniqueSkillData?.['레벨별_스킬명']?.[uniqueSkillLevel] || baseSkillName;
+              const currentDescription = uniqueSkillData?.['스킬_설명']?.[uniqueSkillLevel] || '-';
+              const nextThreshold = thresholds[uniqueSkillLevel + 1] ?? null;
+
+              return (
+                <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/50">
+                  <div className="px-2 py-1.5 flex items-center justify-center">
+                    <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-700/60 text-foreground">고유</span>
+                  </div>
+                  <div className="px-1 py-1.5 flex items-center justify-center">
+                    <img
+                      src={uniqueSkillData?.['이미지_경로'] ? `/${uniqueSkillData['이미지_경로']}` : ''}
+                      alt=""
+                      className="w-9 h-9 object-contain"
+                      onError={e => { e.currentTarget.style.display = 'none'; }}
+                    />
+                  </div>
+                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{baseSkillName}</div>
+                  <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{uniqueSkillLevel + 1}</div>
+                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground">{currentSkillName}</div>
+                  <div className="px-2 py-1.5 flex items-start text-xs text-foreground whitespace-pre-line leading-tight min-h-[2.5rem]">
+                    <span className="my-auto">{currentDescription}</span>
+                  </div>
+                  <div className="px-2 py-1.5 flex items-center justify-center text-xs text-foreground tabular-nums">
+                    {nextThreshold !== null ? nextThreshold : '-'}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Common skill rows */}
             {Array.from({ length: 4 }).map((_, i) => {
