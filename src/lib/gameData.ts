@@ -71,6 +71,18 @@ async function fetchAndParse(path: string): Promise<Record<string, any>> {
   return parseMultiJson(text);
 }
 
+async function fetchJsonFirst(path: string): Promise<Record<string, any>> {
+  const resp = await fetch(path);
+  const text = await resp.text();
+
+  try {
+    const parsed = JSON.parse(text);
+    return typeof parsed === 'object' && parsed !== null ? parsed : {};
+  } catch {
+    return parseMultiJson(text);
+  }
+}
+
 export async function getHeroStats(): Promise<Record<string, any>> {
   if (!heroStatsCache) {
     heroStatsCache = await fetchAndParse('/data/STD1_hero_stats.json');
@@ -101,7 +113,7 @@ export async function getCommonSkills(): Promise<Record<string, any>> {
 
 export async function getUniqueSkills(): Promise<Record<string, any>> {
   if (!uniqueSkillsCache) {
-    uniqueSkillsCache = await fetchAndParse('/data/SKD3_class_skills.json');
+    uniqueSkillsCache = await fetchJsonFirst('/data/SKD3_class_skills.json');
   }
   return uniqueSkillsCache;
 }
