@@ -763,7 +763,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               const typeFile = equipItem?.type || '';
               const isQuiverZero = equipItem?.type === 'quiver' && !hasRanged;
 
-              // Determine element/spirit to show (either from enchant or unique)
               const displayElement = slotData?.element || (equipItem?.uniqueElement?.length ? { type: equipItem.uniqueElement[0], tier: equipItem.uniqueElementTier || 1, affinity: true } : null);
               const displaySpirit = slotData?.spirit || (equipItem?.uniqueSpirit?.length ? { name: equipItem.uniqueSpirit[0], affinity: true } : null);
 
@@ -772,7 +771,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   key={i}
                   className="flex flex-col items-center gap-1 cursor-pointer"
                   onClick={() => {
-                    // Click on table slot = open equipment dialog
                     if (heroClass) {
                       setEquipInitialSlot(i);
                       setEquipDialogOpen(true);
@@ -783,7 +781,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     {slotLabel}
                   </div>
 
-                  {/* Unified box with glow covering item + element/spirit/type */}
                   <div
                     className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
                     style={equipItem ? {
@@ -792,7 +789,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     } : { background: 'hsl(var(--secondary) / 0.3)' }}
                   >
                     {/* Item image area */}
-                    <div className="w-full aspect-square flex items-center justify-center relative">
+                    <div className="w-full flex items-center justify-center relative" style={{ aspectRatio: '1' }}>
                       {equipItem?.relic && (
                         <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
@@ -805,15 +802,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       )}
                     </div>
 
-                    {/* Element + Spirit + Type row inside the glow box */}
-                    <div className="grid grid-cols-3 gap-0.5 w-full p-0.5">
+                    {/* Element + Spirit + Type row */}
+                    <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5">
                       <div
                         className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
                         title="원소 선택"
                         onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}
                       >
                         {displayElement ? (
-                          <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-[85%] h-[85%] object-cover" alt={displayElement.type}
+                          <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-[80%] h-[80%] object-cover" alt={displayElement.type}
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : <span className="text-[6px] text-muted-foreground">원소</span>}
                       </div>
@@ -825,46 +822,46 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                         {displaySpirit ? (() => {
                           const eng = SPIRIT_NAME_MAP_LOCAL[displaySpirit.name];
                           if (displaySpirit.name === '문드라') {
-                            return <img src="/images/enchant/spirit/mundra.png" className="w-[85%] h-[85%] object-cover" alt="문드라" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                            return <img src="/images/enchant/spirit/mundra.png" className="w-[80%] h-[80%] object-cover" alt="문드라" onError={e => { e.currentTarget.style.display = 'none'; }} />;
                           }
                           return eng ? (
-                            <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-[85%] h-[85%] object-cover" alt={displaySpirit.name}
+                            <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-[80%] h-[80%] object-cover" alt={displaySpirit.name}
                               onError={e => { e.currentTarget.style.display = 'none'; }} />
                           ) : <span className="text-[6px] text-foreground">{displaySpirit.name}</span>;
                         })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
                       </div>
                       <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden" title="타입">
                         {typeFile ? (
-                          <img src={getTypeImgPath(typeFile)} className="w-[85%] h-[85%] object-contain" alt=""
+                          <img src={getTypeImgPath(typeFile)} className="w-[80%] h-[80%] object-contain" alt=""
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : <span className="text-[6px] text-muted-foreground">타입</span>}
                       </div>
                     </div>
                   </div>
 
-                  {/* Stats line below the box */}
+                  {/* Stats + name below glow box */}
                   {equipItem?.stats && equipItem.stats.length > 0 && (
-                    <div className="flex gap-1 justify-center w-full mt-0.5">
-                      {equipItem.stats.slice(0, 3).map((stat: any, si: number) => {
-                        const statVal = isQuiverZero ? 0 : stat.value;
-                        return (
-                          <div key={si} className="flex items-center gap-0.5">
-                            <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                            <span className={`text-xs text-foreground font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : ''}`}>
-                              {formatEquipStatVal(stat.key, statVal)}
-                            </span>
-                          </div>
-                        );
-                      })}
+                    <div className="flex items-center justify-center w-full mt-0.5">
+                      <div className="flex gap-1.5">
+                        {equipItem.stats.slice(0, 3).map((stat: any, si: number) => {
+                          const statVal = isQuiverZero ? 0 : stat.value;
+                          return (
+                            <div key={si} className="flex items-center gap-0.5">
+                              <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
+                              <span className={`text-xs text-foreground font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : ''}`}>
+                                {formatEquipStatVal(stat.key, statVal)}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
 
-                  {/* Quiver warning */}
                   {isQuiverZero && (
                     <span className="text-[8px] text-red-400">활/크로스보우/총 필요</span>
                   )}
 
-                  {/* Item name below stats */}
                   <p className="text-sm text-foreground truncate w-full text-center leading-tight font-medium mt-0.5">
                     {equipItem?.name || '-'}
                   </p>

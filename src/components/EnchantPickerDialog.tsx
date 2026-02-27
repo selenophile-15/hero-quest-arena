@@ -58,7 +58,7 @@ function getElementValue(tier: number, affinity: boolean): number {
   return affinity ? entry.affinity : entry.normal;
 }
 
-// Spirit tier from data - accurate
+// Spirit tier from data
 const SPIRIT_TIER: Record<string, number> = {
   '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
   '기린': 12, '크람푸스': 12, '크리스마스': 12,
@@ -70,54 +70,8 @@ const SPIRIT_TIER: Record<string, number> = {
   '독수리': 4, '황소': 4, '양': 4, '늑대': 4, '고양이': 4, '거위': 4, '독사': 4, '토끼': 4,
 };
 
-// Spirit skill descriptions (placeholder - user can fill in later)
-const SPIRIT_SKILLS: Record<string, string> = {
-  '바하무트': '보스 상대 공격력 +20%, 방어력 +20%',
-  '레비아탄': '보스 상대 공격력 +20%, 방어력 +20%',
-  '그리핀': '보스 상대 공격력 +20%, 방어력 +20%',
-  '명인': '체력 증가 (1개만 효과 적용)',
-  '조상': '경험치 보너스',
-  '베히모스': '보스 상대 공격력 +20%, 방어력 +20%',
-  '우로보로스': '보스 상대 공격력 +20%, 방어력 +20%',
-  '기린': '특수 효과',
-  '크람푸스': '특수 효과',
-  '크리스마스': '특수 효과',
-  '크라켄': '특수 효과',
-  '키메라': '특수 효과',
-  '카벙클': '특수 효과',
-  '타라스크': '특수 효과',
-  '하이드라': '특수 효과',
-  '불사조': '특수 효과',
-  '케찰코아틀': '특수 효과',
-  '호랑이': '특수 효과',
-  '매머드': '특수 효과',
-  '공룡': '첫 라운드 공격력/대미지/치명타 대미지 보너스',
-  '사자': '특수 효과',
-  '곰': '특수 효과',
-  '바다코끼리': '특수 효과',
-  '상어': '적 체력 50% 미만일 때 공격력/대미지/치명타 보너스',
-  '다람쥐': '특수 효과',
-  '하마': '특수 효과',
-  '말': '특수 효과',
-  '도마뱀': '특수 효과',
-  '아르마딜로': '특수 효과',
-  '부엉이': '특수 효과',
-  '코뿔소': '특수 효과',
-  '졸로틀': '특수 효과',
-  '독수리': '특수 효과',
-  '황소': '특수 효과',
-  '양': '특수 효과',
-  '늑대': '특수 효과',
-  '고양이': '특수 효과',
-  '거위': '특수 효과',
-  '독사': '특수 효과',
-  '토끼': '특수 효과',
-  '문드라': '중첩량 (보스 상대 +공 20%, 방 20%)',
-};
-
 const SPIRIT_LIST = Object.keys(SPIRIT_TIER).sort((a, b) => SPIRIT_TIER[b] - SPIRIT_TIER[a]);
 
-// Group spirits by tier for dividers
 function getSpiritGroups(): { tier: number; spirits: string[] }[] {
   const groups: { tier: number; spirits: string[] }[] = [];
   let lastTier = -1;
@@ -134,6 +88,33 @@ function getSpiritGroups(): { tier: number; spirits: string[] }[] {
 }
 
 const SPIRIT_GROUPS = getSpiritGroups();
+
+// Load spirit effects from JSON
+let spiritDataCache: Record<string, any> | null = null;
+
+async function loadSpiritData(): Promise<Record<string, any>> {
+  if (spiritDataCache) return spiritDataCache;
+  try {
+    const resp = await fetch('/data/equipment/enchantment/spirit.json');
+    spiritDataCache = await resp.json();
+    return spiritDataCache!;
+  } catch {
+    return {};
+  }
+}
+
+function getSpiritEffectFromData(data: Record<string, any>, spiritName: string, affinity: boolean): string {
+  for (const [, tierSpirits] of Object.entries(data)) {
+    if (typeof tierSpirits !== 'object') continue;
+    const spiritEntry = tierSpirits[spiritName];
+    if (spiritEntry) {
+      const key = affinity ? 'O' : 'X';
+      const variant = spiritEntry[key];
+      if (variant?.['효과']) return variant['효과'];
+    }
+  }
+  return '';
+}
 
 function hasElementAffinity(info: ItemAffinityInfo | null, elType: string): boolean {
   if (!info) return false;
@@ -154,8 +135,12 @@ export default function EnchantPickerDialog({
   const [bulkElement, setBulkElement] = useState<string>('');
   const [bulkElementTier, setBulkElementTier] = useState<number>(14);
   const [bulkSpirit, setBulkSpirit] = useState<string>('');
+  const [spiritData, setSpiritData] = useState<Record<string, any>>({});
 
-  // Reset on open
+  useEffect(() => {
+    loadSpiritData().then(setSpiritData);
+  }, []);
+
   useEffect(() => {
     if (open) {
       setLocalSlots([...slots]);
@@ -220,12 +205,10 @@ export default function EnchantPickerDialog({
     setLocalSlots(newSlots);
   };
 
-  // Count titan spirits for warning
   const titanCount = useMemo(() => {
     return localSlots.filter(s => s.spirit?.name === '명인').length;
   }, [localSlots]);
 
-  // Calculate element totals per type
   const elementTotals = useMemo(() => {
     const totals: Record<string, number> = {};
     localSlots.forEach((s) => {
@@ -240,19 +223,14 @@ export default function EnchantPickerDialog({
   const handleConfirm = () => {
     const finalSlots = localSlots.map((s, i) => {
       const info = itemInfoPerSlot[i];
+      let result = { ...s };
       if (info?.uniqueElement && info.uniqueElement.length > 0) {
-        return {
-          ...s,
-          element: { type: info.uniqueElement[0], tier: info.uniqueElementTier || 1, affinity: true },
-        };
+        result.element = { type: info.uniqueElement[0], tier: info.uniqueElementTier || 1, affinity: true };
       }
       if (info?.uniqueSpirit && info.uniqueSpirit.length > 0) {
-        return {
-          ...s,
-          spirit: { name: info.uniqueSpirit[0], affinity: true },
-        };
+        result.spirit = { name: info.uniqueSpirit[0], affinity: true };
       }
-      return s;
+      return result;
     });
     onConfirm(finalSlots);
     onClose();
@@ -260,7 +238,7 @@ export default function EnchantPickerDialog({
 
   const renderSpiritSelect = (value: string, onChange: (v: string) => void, className?: string) => (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className={`h-8 text-sm ${className || 'w-40'}`}><SelectValue placeholder="영혼" /></SelectTrigger>
+      <SelectTrigger className={`h-9 text-sm ${className || 'w-48'}`}><SelectValue placeholder="영혼" /></SelectTrigger>
       <SelectContent>
         <SelectItem value="_none">없음</SelectItem>
         {SPIRIT_GROUPS.map((group, gi) => (
@@ -290,8 +268,14 @@ export default function EnchantPickerDialog({
 
         <Tabs defaultValue="element" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="element" className="text-sm">🔥 원소 인챈트</TabsTrigger>
-            <TabsTrigger value="spirit" className="text-sm">👻 영혼 인챈트</TabsTrigger>
+            <TabsTrigger value="element" className="text-sm gap-2">
+              <img src="/images/type/element.png" alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+              원소 인챈트
+            </TabsTrigger>
+            <TabsTrigger value="spirit" className="text-sm gap-2">
+              <img src="/images/type/spirit.png" alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+              영혼 인챈트
+            </TabsTrigger>
           </TabsList>
 
           {/* ─── Element Tab ─── */}
@@ -300,7 +284,7 @@ export default function EnchantPickerDialog({
             <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded border border-border">
               <span className="text-sm font-semibold text-primary">일괄 적용</span>
               <Select value={bulkElement || '_none'} onValueChange={v => setBulkElement(v === '_none' ? '' : v)}>
-                <SelectTrigger className="h-8 w-24 text-sm"><SelectValue placeholder="원소" /></SelectTrigger>
+                <SelectTrigger className="h-9 w-28 text-sm"><SelectValue placeholder="원소" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="_none">없음</SelectItem>
                   {ELEMENT_OPTIONS.map(el => (
@@ -309,12 +293,12 @@ export default function EnchantPickerDialog({
                 </SelectContent>
               </Select>
               <Select value={String(bulkElementTier)} onValueChange={v => setBulkElementTier(Number(v))}>
-                <SelectTrigger className="h-8 w-20 text-sm"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9 w-20 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {ELEMENT_TIERS.map(t => <SelectItem key={t} value={String(t)}>T{t}</SelectItem>)}
                 </SelectContent>
               </Select>
-              <Button size="sm" variant="outline" className="h-8 text-sm" onClick={handleBulkElement}>적용</Button>
+              <Button size="sm" variant="outline" className="h-9 text-sm" onClick={handleBulkElement}>적용</Button>
             </div>
 
             {/* Element totals */}
@@ -338,18 +322,15 @@ export default function EnchantPickerDialog({
                 const slot = localSlots[i];
                 const hasUniqueEl = info?.uniqueElement && info.uniqueElement.length > 0;
                 const hasItem = !!info;
-                const elAffText = info?.elementAffinity?.join(', ') || '없음';
                 const elValue = slot?.element ? getElementValue(slot.element.tier, slot.element.affinity) : 0;
 
                 return (
-                  <div key={i} className={`grid grid-cols-[80px_1fr_200px_60px_80px] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
-                    {/* Slot label + item name */}
+                  <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_80px] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
                     <div className="text-center">
                       <span className="text-sm font-bold text-primary">슬롯 {i + 1}</span>
-                      <p className="text-xs text-foreground/70 truncate">{itemNames[i] || '-'}</p>
+                      <p className="text-xs text-foreground truncate">{itemNames[i] || '-'}</p>
                     </div>
 
-                    {/* Affinity info */}
                     <div className="text-sm text-foreground">
                       <span className="text-foreground/70">친밀 원소: </span>
                       {info?.elementAffinity?.map((el, ei) => (
@@ -359,7 +340,6 @@ export default function EnchantPickerDialog({
                       )) || <span className="text-muted-foreground">없음</span>}
                     </div>
 
-                    {/* Element picker */}
                     <div className="flex items-center gap-2 justify-center">
                       {hasUniqueEl ? (
                         <div className="flex items-center gap-2">
@@ -370,12 +350,12 @@ export default function EnchantPickerDialog({
                           </span>
                         </div>
                       ) : hasItem ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 justify-center">
                           <Select value={slot?.element?.type || '_none'} onValueChange={v => {
                             if (v === '_none') handleClearElement(i);
                             else handleElementChange(i, v, slot?.element?.tier || 14);
                           }}>
-                            <SelectTrigger className="h-8 w-24 text-sm"><SelectValue placeholder="원소" /></SelectTrigger>
+                            <SelectTrigger className="h-9 w-24 text-sm"><SelectValue placeholder="원소" /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="_none">없음</SelectItem>
                               {ELEMENT_OPTIONS.map(el => (
@@ -385,7 +365,7 @@ export default function EnchantPickerDialog({
                           </Select>
                           {slot?.element && (
                             <Select value={String(slot.element.tier)} onValueChange={v => handleElementChange(i, slot.element!.type, Number(v))}>
-                              <SelectTrigger className="h-8 w-20 text-sm"><SelectValue /></SelectTrigger>
+                              <SelectTrigger className="h-9 w-20 text-sm"><SelectValue /></SelectTrigger>
                               <SelectContent>
                                 {ELEMENT_TIERS.map(t => <SelectItem key={t} value={String(t)}>T{t}</SelectItem>)}
                               </SelectContent>
@@ -395,7 +375,6 @@ export default function EnchantPickerDialog({
                       ) : <span className="text-sm text-muted-foreground">장비 없음</span>}
                     </div>
 
-                    {/* Preview icon */}
                     <div className="flex items-center justify-center">
                       {slot?.element && (
                         <img
@@ -405,7 +384,6 @@ export default function EnchantPickerDialog({
                       )}
                     </div>
 
-                    {/* Element value */}
                     <div className="text-center">
                       {elValue > 0 && (
                         <span className={`text-sm font-bold tabular-nums ${slot?.element?.affinity ? 'text-green-400' : 'text-foreground'}`}>
@@ -421,40 +399,35 @@ export default function EnchantPickerDialog({
 
           {/* ─── Spirit Tab ─── */}
           <TabsContent value="spirit" className="space-y-3 mt-3">
-            {/* Bulk apply */}
             <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded border border-border">
               <span className="text-sm font-semibold text-primary">일괄 적용</span>
-              {renderSpiritSelect(bulkSpirit || '_none', v => setBulkSpirit(v === '_none' ? '' : v), 'w-44')}
-              <Button size="sm" variant="outline" className="h-8 text-sm" onClick={handleBulkSpirit}>적용</Button>
+              {renderSpiritSelect(bulkSpirit || '_none', v => setBulkSpirit(v === '_none' ? '' : v), 'w-48')}
+              <Button size="sm" variant="outline" className="h-9 text-sm" onClick={handleBulkSpirit}>적용</Button>
             </div>
 
-            {/* Titan warning */}
             {titanCount >= 2 && (
               <div className="p-2 bg-yellow-400/10 border border-yellow-400/30 rounded text-sm text-yellow-400">
                 ⚠ 명인 영혼이 {titanCount}개 장착됨 — 명인 스킬 효과(체력 증가)는 1개만 적용됩니다.
               </div>
             )}
 
-            {/* Per-slot spirit */}
             <div className="space-y-2">
               {Array.from({ length: slotCount }).map((_, i) => {
                 const info = itemInfoPerSlot[i];
                 const slot = localSlots[i];
                 const hasItem = !!info;
                 const hasUniqueSp = info?.uniqueSpirit && info.uniqueSpirit.length > 0;
-                const spAffText = info?.spiritAffinity?.join(', ') || '없음';
                 const spiritName = slot?.spirit?.name || (hasUniqueSp ? info!.uniqueSpirit![0] : '');
-                const spiritSkill = spiritName ? (SPIRIT_SKILLS[spiritName] || '') : '';
+                const spiritAffinity = slot?.spirit?.affinity || (hasUniqueSp ? true : false);
+                const spiritEffect = spiritName ? getSpiritEffectFromData(spiritData, spiritName, spiritAffinity) : '';
 
                 return (
-                  <div key={i} className={`grid grid-cols-[80px_1fr_200px_60px_1fr] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
-                    {/* Slot label */}
+                  <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_1fr] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
                     <div className="text-center">
                       <span className="text-sm font-bold text-primary">슬롯 {i + 1}</span>
-                      <p className="text-xs text-foreground/70 truncate">{itemNames[i] || '-'}</p>
+                      <p className="text-xs text-foreground truncate">{itemNames[i] || '-'}</p>
                     </div>
 
-                    {/* Affinity info */}
                     <div className="text-sm text-foreground">
                       <span className="text-foreground/70">친밀 영혼: </span>
                       {info?.spiritAffinity?.map((sp, si) => (
@@ -464,7 +437,6 @@ export default function EnchantPickerDialog({
                       )) || <span className="text-muted-foreground">없음</span>}
                     </div>
 
-                    {/* Spirit picker */}
                     <div className="flex items-center gap-2 justify-center">
                       {hasUniqueSp ? (
                         <div className="flex items-center gap-2">
@@ -480,11 +452,10 @@ export default function EnchantPickerDialog({
                         renderSpiritSelect(slot?.spirit?.name || '_none', v => {
                           if (v === '_none') handleClearSpirit(i);
                           else handleSpiritChange(i, v);
-                        }, 'w-44')
+                        }, 'w-48')
                       ) : <span className="text-sm text-muted-foreground">장비 없음</span>}
                     </div>
 
-                    {/* Preview icon */}
                     <div className="flex items-center justify-center">
                       {slot?.spirit && (() => {
                         const eng = SPIRIT_NAME_MAP[slot.spirit.name];
@@ -495,11 +466,10 @@ export default function EnchantPickerDialog({
                       })()}
                     </div>
 
-                    {/* Spirit skill effect */}
-                    <div className="text-xs text-foreground/70 min-h-[24px] flex items-center">
-                      {spiritSkill && (
+                    <div className="text-xs text-foreground/80 min-h-[32px] min-w-[200px] flex items-center whitespace-pre-line leading-relaxed">
+                      {spiritEffect && (
                         <span className={spiritName === '명인' && titanCount >= 2 ? 'text-yellow-400' : ''}>
-                          {spiritSkill}
+                          {spiritEffect}
                         </span>
                       )}
                     </div>

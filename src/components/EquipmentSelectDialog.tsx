@@ -152,7 +152,6 @@ export default function EquipmentSelectDialog({
   const [filterSpirit, setFilterSpirit] = useState<string>('_all');
   const [slotQuality, setSlotQuality] = useState<string>('common');
 
-  // Track which slots have been visited to keep their images cached
   const visitedSlots = useRef<Set<number>>(new Set());
 
   const hasRelicEquipped = useMemo(() => {
@@ -212,7 +211,6 @@ export default function EquipmentSelectDialog({
     load();
   }, [open, jobName, slotCount]);
 
-  // Reset filters + state on open
   useEffect(() => {
     if (open) {
       setSlots([...currentEquipment]);
@@ -295,7 +293,6 @@ export default function EquipmentSelectDialog({
     }
     if (item.relic && hasRelicEquipped) return;
     const newSlots = [...slots];
-    // Preserve element/spirit if unique
     const existingElement = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[activeSlot]?.element;
     const existingSpirit = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[activeSlot]?.spirit;
     newSlots[activeSlot] = { ...newSlots[activeSlot], item: { ...item }, quality: slotQuality, element: existingElement || null, spirit: existingSpirit || null };
@@ -340,7 +337,7 @@ export default function EquipmentSelectDialog({
           <DialogDescription className="sr-only">슬롯별 장비를 선택하세요</DialogDescription>
         </DialogHeader>
 
-        {/* Top: Slot summary + confirm/cancel */}
+        {/* Top: Slot summary */}
         <div className="flex items-center gap-2 pb-2 border-b border-border">
           <div className="flex gap-1 flex-1 overflow-x-auto">
             {slots.map((s, i) => (
@@ -348,7 +345,6 @@ export default function EquipmentSelectDialog({
                 key={i}
                 onClick={() => {
                   if (s.item) {
-                    // Click on equipped slot in summary = unequip
                     const newSlots = [...slots];
                     newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
                     setSlots(newSlots);
@@ -495,7 +491,7 @@ export default function EquipmentSelectDialog({
                     const uniqueElems = item.uniqueElement || [];
                     const spiritAffs = item.spiritAffinity || [];
                     const uniqueSp = item.uniqueSpirit || [];
-                    const hasIcons = elemAffs.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || uniqueSp.length > 0;
+                    const hasAffinityIcons = elemAffs.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || uniqueSp.length > 0;
 
                     return (
                       <Tooltip key={`${item.name}-${item.tier}-${idx}`}>
@@ -503,7 +499,7 @@ export default function EquipmentSelectDialog({
                           <button
                             onClick={() => !isRelicBlocked && handleSelectItem(item)}
                             disabled={isRelicBlocked}
-                            className={`relative flex flex-col items-center rounded-lg border-2 transition-all cursor-pointer aspect-square ${
+                            className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
                               isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
                               isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                             }`}
@@ -512,27 +508,27 @@ export default function EquipmentSelectDialog({
                               boxShadow: QUALITY_SHADOW[quality],
                             } : {}}
                           >
-                            {/* Top 2/3: Tier + Image + Name */}
-                            <div className="flex flex-col items-center justify-center flex-[2] w-full pt-1">
+                            {/* Top 3/4: Tier + Image + Name at fixed 75% */}
+                            <div className="flex flex-col items-center w-full relative" style={{ height: '75%' }}>
                               {/* Tier badge */}
-                              <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1">
+                              <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">
                                 T{item.tier}
                               </span>
 
                               {/* Relic icon */}
                               {item.relic && (
-                                <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-1 right-1 w-4 h-4"
+                                <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-1 right-1 w-4 h-4 z-10"
                                   onError={e => { e.currentTarget.style.display = 'none'; }} />
                               )}
 
                               {isRelicBlocked && (
-                                <span className="absolute top-5 right-0 text-[7px] text-red-400 bg-background/80 rounded px-0.5">유물 중복</span>
+                                <span className="absolute top-5 right-0 text-[7px] text-red-400 bg-background/80 rounded px-0.5 z-10">유물 중복</span>
                               )}
 
-                              {/* Item image - bigger */}
-                              <div className="w-16 h-16 flex items-center justify-center">
+                              {/* Item image - large, centered */}
+                              <div className="flex-1 w-full flex items-center justify-center pt-3">
                                 {item.imagePath ? (
-                                  <img src={item.imagePath} alt={item.name} className="w-14 h-14 object-contain"
+                                  <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain"
                                     onError={e => {
                                       e.currentTarget.style.display = 'none';
                                       const p = e.currentTarget.parentElement;
@@ -543,56 +539,65 @@ export default function EquipmentSelectDialog({
                                 )}
                               </div>
 
-                              {/* Item name - bigger */}
-                              <p className="text-xs text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1">
+                              {/* Item name at bottom of top section */}
+                              <p className="text-[11px] text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1 pb-0.5">
                                 {item.name}
                               </p>
                             </div>
 
-                            {/* Bottom 1/3: Element + Spirit icons */}
-                            {hasIcons && (
-                              <div className="flex items-center justify-center gap-2 flex-1 w-full pb-1">
-                                {/* Element affinities */}
-                                <div className="flex items-center gap-0.5">
-                                  {elemAffs.map(el => (
-                                    <img key={el} src={getElementIconPath(el)} alt={el} className="w-5 h-5" title={`친밀 원소: ${el}`}
-                                      onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                  ))}
-                                  {uniqueElems.map(el => {
-                                    const eng = ELEMENT_ENG[el];
-                                    const tier = item.uniqueElementTier || 1;
-                                    return (
-                                      <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.png` : ''} alt={el} className="w-5 h-5" title={`고유 원소: ${el} T${tier}`}
+                            {/* Bottom 1/4: Element + Spirit icons - always positioned here */}
+                            <div className="flex items-center justify-center gap-2 w-full" style={{ height: '25%' }}>
+                              {hasAffinityIcons ? (
+                                <>
+                                  <div className="flex items-center gap-0.5">
+                                    {elemAffs.map(el => (
+                                      <img key={el} src={getElementIconPath(el)} alt={el} className="w-6 h-6" title={`친밀 원소: ${el}`}
                                         onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                    );
-                                  })}
-                                </div>
-                                {/* Divider */}
-                                {(spiritAffs.length > 0 || uniqueSp.length > 0) && (elemAffs.length > 0 || uniqueElems.length > 0) && (
-                                  <div className="w-px h-4 bg-border/50" />
-                                )}
-                                {/* Spirit affinities */}
-                                <div className="flex items-center gap-0.5">
-                                  {spiritAffs.map(sp => {
-                                    const eng = SPIRIT_NAME_MAP[sp];
-                                    return (
-                                      <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.png` : ''} alt={sp} className="w-5 h-5" title={`친밀 영혼: ${sp}`}
-                                        onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                    );
-                                  })}
-                                  {uniqueSp.map(sp => {
-                                    const eng = SPIRIT_NAME_MAP[sp];
-                                    return (
-                                      <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.png` : ''} alt={sp} className="w-5 h-5" title={`고유 영혼: ${sp}`}
-                                        onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            )}
+                                    ))}
+                                    {uniqueElems.map(el => {
+                                      const eng = ELEMENT_ENG[el];
+                                      const tier = item.uniqueElementTier || 1;
+                                      return (
+                                        <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.png` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
+                                          onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                      );
+                                    })}
+                                  </div>
+                                  {(spiritAffs.length > 0 || uniqueSp.length > 0) && (elemAffs.length > 0 || uniqueElems.length > 0) && (
+                                    <div className="w-px h-5 bg-border/50" />
+                                  )}
+                                  <div className="flex items-center gap-0.5">
+                                    {spiritAffs.map(sp => {
+                                      const eng = SPIRIT_NAME_MAP[sp];
+                                      return (
+                                        <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.png` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
+                                          onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                      );
+                                    })}
+                                    {uniqueSp.map(sp => {
+                                      const eng = SPIRIT_NAME_MAP[sp];
+                                      return (
+                                        <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.png` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
+                                          onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                      );
+                                    })}
+                                  </div>
+                                </>
+                              ) : (
+                                /* Empty space to keep consistent layout */
+                                <span className="text-[7px] text-muted-foreground/30">-</span>
+                              )}
+                            </div>
                           </button>
                         </TooltipTrigger>
-                        <TooltipContent side="bottom" align="center" sideOffset={8} className="max-w-xs p-3 space-y-1.5 z-50">
+                        <TooltipContent
+                          side="bottom"
+                          align="center"
+                          sideOffset={8}
+                          avoidCollisions={true}
+                          collisionPadding={16}
+                          className="max-w-xs p-3 space-y-1.5 z-50"
+                        >
                           <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor})</span></p>
                           {item.relic && <p className="text-xs text-yellow-400 font-semibold">⭐ 유물</p>}
 
