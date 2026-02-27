@@ -11,7 +11,7 @@ export const CLASS_LINE_MAP: Record<string, string> = {
 // ===== Job Classes =====
 export const JOB_NAME_MAP: Record<string, string> = {
   // 전사
-  '병사': 'soildier', '용병': 'mercenary',
+  '병사': 'soldier', '용병': 'mercenary',
   '야만전사': 'barbarian', '족장': 'chieftain',
   '기사': 'knight', '군주': 'lord',
   '레인저': 'ranger', '관리인': 'warden',

@@ -110,7 +110,7 @@ export function getSkillGrade(skillNameKor: string): string {
 export function getUniqueSkillImagePath(jobName: string): string {
   // sk_class images are named as base_promoted pairs
   const JOB_PAIR_FILES: Record<string, string> = {
-    '병사': 'soildier_mercenary', '용병': 'soildier_mercenary',
+    '병사': 'soldier_mercenary', '용병': 'soldier_mercenary',
     '야만전사': 'barbarian_chieftain', '족장': 'barbarian_chieftain',
     '기사': 'knight_lord', '군주': 'knight_lord',
     '레인저': 'ranger_warden', '관리인': 'ranger_warden',

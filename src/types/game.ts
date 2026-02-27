@@ -29,6 +29,13 @@ export interface Hero {
   championName?: string;
   rank?: number;
   createdAt: string;
+  // Equipment persistence
+  equipmentSlots?: Array<{
+    item: any | null;
+    quality: string;
+    element: any | null;
+    spirit: any | null;
+  }>;
 }
 
 export interface Quest {
@@ -81,9 +88,9 @@ export const HERO_STAT_COLUMNS = [
   { key: 'power' as const, label: '전투력', icon: true },
   { key: 'hp' as const, label: 'HP', icon: true },
   { key: 'atk' as const, label: 'ATK', icon: true },
+  { key: 'critDmg' as const, label: 'CRIT.D', icon: true },
   { key: 'def' as const, label: 'DEF', icon: true },
   { key: 'crit' as const, label: 'CRIT.C', icon: true },
-  { key: 'critDmg' as const, label: 'CRIT.D', icon: true },
   { key: 'critAttack' as const, label: 'CRIT.A', icon: true },
   { key: 'evasion' as const, label: 'EVA', icon: true },
   { key: 'threat' as const, label: 'THREAT', icon: true },
@@ -91,7 +98,6 @@ export const HERO_STAT_COLUMNS = [
   { key: 'seeds' as const, label: '씨앗' },
   { key: 'airshipPower' as const, label: 'ASP', icon: true },
   { key: 'label' as const, label: '상태' },
-  { key: 'type' as const, label: '유형' },
 ];
 
 export const CHAMPION_STAT_COLUMNS = [

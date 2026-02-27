@@ -217,7 +217,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     quality: string;
     element: any | null;
     spirit: any | null;
-  }>>(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+  }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
   const formRef = useRef<HTMLDivElement>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
 
@@ -315,9 +315,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       })
       .catch(() => setRecommendedSets({}));
 
-    // Reset equipment and skills on job change
-    setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
-    setSelectedSkills([]);
+    // Reset equipment and skills on job change (only for new heroes)
+    if (!hero) {
+      setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+      setSelectedSkills([]);
+    }
   }, [heroClass]);
 
   useEffect(() => {
@@ -378,6 +380,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       position,
       seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
       equipmentElements: equipElements,
+      equipmentSlots,
       createdAt: hero?.createdAt || new Date().toISOString(),
     });
   };
