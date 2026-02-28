@@ -79,6 +79,7 @@ export const STAT_ICON_MAP: Record<string, string> = {
 };
 
 export const HERO_STAT_COLUMNS = [
+  { key: 'type' as const, label: '유형' },
   { key: 'classLine' as const, label: '계열' },
   { key: 'heroClass' as const, label: '직업' },
   { key: 'name' as const, label: '이름' },
@@ -86,38 +87,40 @@ export const HERO_STAT_COLUMNS = [
   { key: 'element' as const, label: '원소' },
   { key: 'skills' as const, label: '스킬셋' },
   { key: 'power' as const, label: '전투력', icon: true },
+  { key: 'airshipPower' as const, label: '에어쉽', icon: true },
   { key: 'hp' as const, label: 'HP', icon: true },
   { key: 'atk' as const, label: 'ATK', icon: true },
-  { key: 'critDmg' as const, label: 'CRIT.D', icon: true },
   { key: 'def' as const, label: 'DEF', icon: true },
   { key: 'crit' as const, label: 'CRIT.C', icon: true },
+  { key: 'critDmg' as const, label: 'CRIT.D', icon: true },
   { key: 'critAttack' as const, label: 'CRIT.A', icon: true },
   { key: 'evasion' as const, label: 'EVA', icon: true },
   { key: 'threat' as const, label: 'THREAT', icon: true },
   { key: 'position' as const, label: '포지션' },
   { key: 'seeds' as const, label: '씨앗' },
-  { key: 'airshipPower' as const, label: 'ASP', icon: true },
   { key: 'label' as const, label: '상태' },
 ];
 
 export const CHAMPION_STAT_COLUMNS = [
+  { key: 'type' as const, label: '유형' },
   { key: 'championName' as const, label: '챔피언' },
   { key: 'name' as const, label: '이름' },
   { key: 'level' as const, label: 'LV' },
   { key: 'element' as const, label: '원소' },
   { key: 'skills' as const, label: '스킬셋' },
   { key: 'power' as const, label: '전투력', icon: true },
+  { key: 'airshipPower' as const, label: '에어쉽', icon: true },
   { key: 'hp' as const, label: 'HP', icon: true },
   { key: 'atk' as const, label: 'ATK', icon: true },
   { key: 'def' as const, label: 'DEF', icon: true },
   { key: 'crit' as const, label: 'CRIT.C', icon: true },
   { key: 'critDmg' as const, label: 'CRIT.D', icon: true },
+  { key: 'critAttack' as const, label: 'CRIT.A', icon: true },
   { key: 'evasion' as const, label: 'EVA', icon: true },
   { key: 'threat' as const, label: 'THREAT', icon: true },
   { key: 'position' as const, label: '포지션' },
   { key: 'seeds' as const, label: '씨앗' },
   { key: 'label' as const, label: '상태' },
-  { key: 'type' as const, label: '유형' },
 ];
 
 // Backwards compat

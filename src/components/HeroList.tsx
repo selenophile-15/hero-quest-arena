@@ -10,11 +10,14 @@ import ChampionForm from './ChampionForm';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown, LayoutGrid, Table2 } from 'lucide-react';
+import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown, LayoutGrid, Table2, Filter, ArrowUpDown } from 'lucide-react';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 
 type SortDir = 'asc' | 'desc';
 type ViewMode = 'table' | 'album';
@@ -74,14 +77,6 @@ const ELEMENT_ENG_MAP: Record<string, string> = {
   '불': 'fire', '물': 'water', '공기': 'air', '대지': 'earth', '빛': 'light', '어둠': 'dark',
 };
 
-const EQUIP_STAT_ICONS: Record<string, string> = {
-  '장비_공격력': '/images/stats/attack.png',
-  '장비_방어력': '/images/stats/defense.png',
-  '장비_체력': '/images/stats/health.png',
-  '장비_치명타확률%': '/images/stats/critchance.png',
-  '장비_회피%': '/images/stats/evasion.png',
-};
-
 const QUALITY_BORDER: Record<string, string> = {
   common: 'border-gray-300/50',
   uncommon: 'border-green-400/60',
@@ -118,21 +113,34 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
   );
 }
 
+// Default hidden columns
+const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type'];
+
 export default function HeroList() {
   const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
   const [editing, setEditing] = useState<Hero | null>(null);
   const [addingType, setAddingType] = useState<'hero' | 'champion' | null>(null);
   const [sortKey, setSortKey] = useState<string>('heroClass');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
-  const [visibleCols, setVisibleCols] = useState<Set<string>>(
-    new Set(HERO_STAT_COLUMNS.map(c => c.key))
-  );
+  const [visibleCols, setVisibleCols] = useState<Set<string>>(() => {
+    const allCols = [...HERO_STAT_COLUMNS, ...CHAMPION_STAT_COLUMNS];
+    const all = new Set<string>(allCols.map(c => c.key));
+    DEFAULT_HIDDEN_COLS.forEach(k => all.delete(k));
+    return all;
+  });
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [listTab, setListTab] = useState<ListTab>('hero');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Hero | null>(null);
   const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
   const [uniqueSkillsData, setUniqueSkillsData] = useState<Record<string, any>>({});
+
+  // Album filters/sort
+  const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
+  const [albumSortDir, setAlbumSortDir] = useState<SortDir>('asc');
+  const [albumFilterClassLine, setAlbumFilterClassLine] = useState<string>('all');
+  const [albumFilterElement, setAlbumFilterElement] = useState<string>('all');
+  const [albumFilterJob, setAlbumFilterJob] = useState<string>('all');
 
   useEffect(() => {
     getCommonSkills().then(data => {
@@ -180,6 +188,37 @@ export default function HeroList() {
     return list;
   }, [activeList, sortKey, sortDir]);
 
+  // Album filtered list
+  const albumFiltered = useMemo(() => {
+    let list = [...activeList];
+    if (albumFilterClassLine !== 'all') list = list.filter(h => h.classLine === albumFilterClassLine);
+    if (albumFilterElement !== 'all') list = list.filter(h => h.element === albumFilterElement);
+    if (albumFilterJob !== 'all') list = list.filter(h => h.heroClass === albumFilterJob);
+
+    if (albumSortKey === 'heroClass' || albumSortKey === 'classLine') {
+      list.sort((a, b) => {
+        const aKey = getJobSortKey(a);
+        const bKey = getJobSortKey(b);
+        return albumSortDir === 'asc' ? aKey - bKey : bKey - aKey;
+      });
+    } else if (albumSortKey === 'level') {
+      list.sort((a, b) => albumSortDir === 'asc' ? a.level - b.level : b.level - a.level);
+    } else if (albumSortKey === 'element') {
+      list.sort((a, b) => {
+        const c = String(a.element).localeCompare(String(b.element));
+        return albumSortDir === 'asc' ? c : -c;
+      });
+    } else {
+      list.sort((a, b) => {
+        const av = a[albumSortKey as keyof Hero];
+        const bv = b[albumSortKey as keyof Hero];
+        if (typeof av === 'number' && typeof bv === 'number') return albumSortDir === 'asc' ? av - bv : bv - av;
+        return albumSortDir === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+      });
+    }
+    return list;
+  }, [activeList, albumSortKey, albumSortDir, albumFilterClassLine, albumFilterElement, albumFilterJob]);
+
   const handleSort = (key: string) => {
     if (sortKey === key) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
     else { setSortKey(key); setSortDir('asc'); }
@@ -218,6 +257,10 @@ export default function HeroList() {
     });
   };
 
+  // Unique elements for album filters (must be before early returns)
+  const uniqueElements = useMemo(() => [...new Set(activeList.map(h => h.element).filter(Boolean))], [activeList]);
+  const uniqueJobs = useMemo(() => [...new Set(activeList.map(h => h.heroClass).filter(Boolean))], [activeList]);
+
   if (addingType === 'hero' || (editing && editing.type === 'hero')) {
     return <HeroForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); }} />;
   }
@@ -226,6 +269,9 @@ export default function HeroList() {
   }
 
   const activeCols = activeColumns.filter(c => visibleCols.has(c.key));
+
+  // Columns to keep visible when expanded
+  const EXPANDED_VISIBLE_KEYS = new Set(['heroClass', 'championName', 'name', 'level', 'position', 'label']);
 
   const renderHeaderLabel = (col: { key: string; label: string; icon?: boolean }) => {
     const iconPath = STAT_ICON_MAP[col.key as keyof typeof STAT_ICON_MAP];
@@ -284,26 +330,23 @@ export default function HeroList() {
       );
     }
     if (colKey === 'skills') {
-      // Show unique skill + 4 common slots (always 5 spaces)
       const uniqueImgPath = hero.heroClass ? getUniqueSkillImagePath(hero.heroClass) : '';
       const commonSkills = hero.skills?.slice(1) || [];
       return (
         <div className="flex items-center gap-0.5 justify-center">
-          {/* Unique skill */}
-          <div className="w-5 h-5 flex-shrink-0">
+          <div className="w-7 h-7 flex-shrink-0">
             {uniqueImgPath && (
-              <img src={uniqueImgPath} alt="고유" className="w-5 h-5" title={hero.skills?.[0] || '고유 스킬'}
+              <img src={uniqueImgPath} alt="고유" className="w-7 h-7" title={hero.skills?.[0] || '고유 스킬'}
                 onError={e => { e.currentTarget.style.display = 'none'; }} />
             )}
           </div>
-          <div className="w-px h-4 bg-border/50 mx-0.5" />
-          {/* 4 common slots */}
+          <div className="w-px h-5 bg-border/50 mx-0.5" />
           {Array.from({ length: 4 }).map((_, i) => {
             const sk = commonSkills[i];
             return (
-              <div key={i} className="w-5 h-5 flex-shrink-0">
+              <div key={i} className="w-7 h-7 flex-shrink-0">
                 {sk ? (
-                  <img src={getSkillImagePath(sk)} alt={sk} className="w-5 h-5" title={sk}
+                  <img src={getSkillImagePath(sk)} alt={sk} className="w-7 h-7" title={sk}
                     onError={e => { e.currentTarget.style.display = 'none'; }} />
                 ) : null}
               </div>
@@ -343,7 +386,6 @@ export default function HeroList() {
     const critAttack = hero.atk && hero.critDmg ? Math.floor(hero.atk * hero.critDmg / 100) : 0;
     const isAllElement = hero.element === '모든 원소' || hero.heroClass === '마법검' || hero.heroClass === '스펠나이트';
 
-    // Compute unique skill level
     let uniqueLevelIdx = 0;
     const uThresholds = uniqueSkill?.['원소_기준치']?.map(Number).filter(Number.isFinite) || [];
     for (let i = 0; i < uThresholds.length; i++) {
@@ -352,13 +394,16 @@ export default function HeroList() {
 
     const equipSlots = hero.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null }));
 
+    // Columns to show in the expanded header row
+    const expandedHeaderCols = activeCols.filter(c => EXPANDED_VISIBLE_KEYS.has(c.key));
+
     return (
       <tr className="bg-secondary/20">
         <td colSpan={activeCols.length + 1} className="px-4 py-4">
-          <div className="flex gap-4">
-            {/* Stats - matches HeroForm auto stats box */}
-            <div className="card-fantasy p-3 min-w-[180px]">
-              <h4 className="text-xs font-semibold text-primary mb-2">스탯(자동)</h4>
+          <div className="flex gap-4" style={{ height: '340px' }}>
+            {/* Stats Box */}
+            <div className="card-fantasy p-3 w-[200px] flex-shrink-0 overflow-y-auto">
+              <h4 className="text-xs font-semibold text-primary mb-2 font-[\'Noto_Sans_KR\']">스탯(자동)</h4>
               {hero.heroClass && (
                 <div className="flex items-center justify-center py-1 mb-1">
                   <img src={getJobImagePath(hero.heroClass)} alt="" className="w-10 h-10 object-contain"
@@ -393,7 +438,7 @@ export default function HeroList() {
               </div>
               {hero.seeds && (
                 <div className="mt-2 pt-2 border-t border-border/30">
-                  <h4 className="text-xs font-semibold text-primary mb-1">씨앗</h4>
+                  <h4 className="text-xs font-semibold text-primary mb-1 font-[\'Noto_Sans_KR\']">씨앗</h4>
                   <div className="flex gap-2">
                     {SEED_ICONS.map(s => (
                       <span key={s.key} className="inline-flex items-center gap-0.5">
@@ -406,27 +451,27 @@ export default function HeroList() {
               )}
             </div>
 
-            {/* Skills - with icons, names, levels, effects */}
-            <div className="card-fantasy p-3 flex-1 min-w-[320px]">
-              <h4 className="text-xs font-semibold text-primary mb-2">스킬셋</h4>
+            {/* Skills Box - same width as equipment */}
+            <div className="card-fantasy p-3 flex-1 overflow-y-auto">
+              <h4 className="text-xs font-semibold text-primary mb-2 font-[\'Noto_Sans_KR\']">스킬셋</h4>
               <div className="space-y-2">
                 {/* Unique skill */}
                 {(() => {
                   const baseName = uniqueSkill?.['레벨별_스킬명']?.[0] || hero.skills?.[0] || '-';
                   const currentName = uniqueSkill?.['레벨별_스킬명']?.[uniqueLevelIdx] || baseName;
                   const desc = uniqueSkill?.['스킬_설명']?.[uniqueLevelIdx] || '-';
-                  const imgPath = uniqueSkill?.['이미지_경로'];
+                  const imgPath = hero.heroClass ? getUniqueSkillImagePath(hero.heroClass) : '';
                   return (
                     <div className="flex items-start gap-2 min-h-[48px]">
-                      <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">
-                        {imgPath ? <img src={`/${imgPath}`} alt="" className="w-8 h-8 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
+                      <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
+                        {imgPath ? <img src={imgPath} alt="" className="w-10 h-10 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1">
-                          <span className="text-xs font-medium text-foreground">{baseName}</span>
+                          <span className="text-sm font-medium text-foreground">{baseName}</span>
                           {currentName !== baseName && <span className="text-xs text-muted-foreground">({currentName})</span>}
                         </div>
-                        <p className="text-[10px] text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
+                        <p className="text-xs text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
                       </div>
                     </div>
                   );
@@ -449,17 +494,17 @@ export default function HeroList() {
 
                   return (
                     <div key={i} className="flex items-start gap-2 min-h-[48px]">
-                      <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">
-                        {sk ? <img src={getSkillImagePath(sk)} alt="" className="w-8 h-8 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
+                      <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
+                        {sk ? <img src={getSkillImagePath(sk)} alt="" className="w-10 h-10 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                       </div>
                       <div className="flex-1 min-w-0">
                         {sk ? (
                           <>
                             <div className="flex items-center gap-1">
-                              <span className="text-xs font-medium text-foreground">{baseName}</span>
+                              <span className="text-sm font-medium text-foreground">{baseName}</span>
                               {currentName !== baseName && <span className="text-xs text-muted-foreground">({currentName})</span>}
                             </div>
-                            <p className="text-[10px] text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
+                            <p className="text-xs text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
                           </>
                         ) : (
                           <span className="text-xs text-muted-foreground">-</span>
@@ -471,15 +516,16 @@ export default function HeroList() {
               </div>
             </div>
 
-            {/* Equipment 3x2 grid */}
-            <div className="card-fantasy p-3 min-w-[320px]">
-              <h4 className="text-xs font-semibold text-primary mb-2">장비</h4>
+            {/* Equipment 3x2 grid - same width as skills */}
+            <div className="card-fantasy p-3 flex-1 overflow-y-auto">
+              <h4 className="text-xs font-semibold text-primary mb-2 font-[\'Noto_Sans_KR\']">장비</h4>
               <div className="grid grid-cols-3 gap-2">
-                {equipSlots.map((slot, i) => {
+                {equipSlots.map((slot: any, i: number) => {
                   const item = slot.item;
                   const quality = slot.quality || 'common';
                   const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
                   const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
+                  const itemType = item?.type || '';
 
                   return (
                     <div key={i} className="flex flex-col items-center">
@@ -491,33 +537,36 @@ export default function HeroList() {
                         } : { background: 'hsl(var(--secondary) / 0.3)' }}
                       >
                         {item?.relic && (
-                          <img src="/images/special/icon_global_artifact.png" alt="" className="absolute top-0.5 left-0.5 w-3 h-3 z-10"
+                          <img src="/images/special/icon_global_artifact.png" alt="" className="absolute top-0.5 left-0.5 w-3.5 h-3.5 z-10"
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         )}
                         {item?.imagePath ? (
-                          <img src={item.imagePath} alt={item.name} className="w-3/4 h-3/4 object-contain"
+                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain"
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : (
-                          <span className="text-[8px] text-muted-foreground">비어있음</span>
+                          <span className="text-[9px] text-muted-foreground">비어있음</span>
                         )}
-                        {/* Enchant icons at bottom */}
+                        {/* Enchant row at bottom */}
                         {item && (
-                          <div className="absolute bottom-0.5 left-0.5 right-0.5 flex justify-center gap-0.5">
+                          <div className="absolute bottom-0.5 left-0.5 right-0.5 flex items-center justify-center gap-1">
                             {displayElement && (
                               <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`}
-                                className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
                             )}
                             {displaySpirit && (() => {
                               const eng = SPIRIT_NAME_MAP[displaySpirit.name];
                               if (displaySpirit.name === '문드라') {
-                                return <img src="/images/enchant/spirit/mundra.png" className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                                return <img src="/images/enchant/spirit/mundra.png" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
                               }
-                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                             })()}
+                            {itemType && (
+                              <img src={`/images/type/${itemType}.png`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                            )}
                           </div>
                         )}
                       </div>
-                      <p className="text-[9px] text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
+                      <p className="text-xs text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
                     </div>
                   );
                 })}
@@ -535,11 +584,12 @@ export default function HeroList() {
     const illustPath = hero.type === 'champion' && hero.championName
       ? getChampionImagePath(hero.championName)
       : hero.heroClass ? getJobIllustPath(hero.heroClass) : '';
+    const equipSlots = hero.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null }));
 
     return (
       <div
         key={hero.id}
-        className={`card-fantasy p-3 border-2 rounded-xl ${borderClass} flex flex-col items-center gap-2 cursor-pointer hover:scale-[1.02] transition-all`}
+        className={`card-fantasy p-3 border-2 rounded-xl ${borderClass} flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-all`}
         onClick={() => setEditing(hero)}
       >
         <div className="w-full aspect-[3/4] flex items-center justify-center overflow-hidden rounded-lg bg-secondary/20">
@@ -552,7 +602,8 @@ export default function HeroList() {
         </div>
         <div className="text-center w-full">
           <p className="text-sm font-bold text-foreground truncate">{hero.name}</p>
-          <p className="text-xs text-muted-foreground">Lv.{hero.level}</p>
+          {hero.heroClass && <p className="text-xs text-muted-foreground truncate">{hero.heroClass}</p>}
+          <p className="text-xs text-foreground/70">Lv.{hero.level}</p>
         </div>
         <div className="flex items-center gap-1">
           <ElementIcon element={hero.element} size={16} />
@@ -560,16 +611,39 @@ export default function HeroList() {
         </div>
         {hero.skills && hero.skills.length > 0 && (
           <div className="flex items-center gap-0.5 flex-wrap justify-center">
-            {hero.skills.slice(0, 5).map((sk, i) => (
-              <img key={i} src={i === 0 ? getUniqueSkillImagePath(hero.heroClass) : getSkillImagePath(sk)} alt={sk} className="w-5 h-5" title={sk}
+            {hero.heroClass && (
+              <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-7 h-7" title={hero.skills?.[0]}
+                onError={e => { e.currentTarget.style.display = 'none'; }} />
+            )}
+            {hero.skills.slice(1, 5).map((sk, i) => (
+              <img key={i} src={getSkillImagePath(sk)} alt={sk} className="w-7 h-7" title={sk}
                 onError={e => { e.currentTarget.style.display = 'none'; }} />
             ))}
           </div>
         )}
+        {/* Equipment 3x2 */}
+        <div className="grid grid-cols-3 gap-1 w-full">
+          {equipSlots.map((slot: any, i: number) => {
+            const item = slot.item;
+            const quality = slot.quality || 'common';
+            return (
+              <div key={i}
+                className={`aspect-square rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex items-center justify-center overflow-hidden`}
+                style={item ? {
+                  background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`,
+                  boxShadow: QUALITY_SHADOW_COLOR[quality],
+                } : { background: 'hsl(var(--secondary) / 0.2)' }}
+              >
+                {item?.imagePath ? (
+                  <img src={item.imagePath} alt="" className="w-3/4 h-3/4 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                ) : (
+                  <span className="text-[6px] text-muted-foreground/50">-</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
         <div className="flex items-center gap-1 mt-auto">
-          <button onClick={(e) => { e.stopPropagation(); setEditing(hero); }} className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
-            <Pencil className="w-3.5 h-3.5" />
-          </button>
           <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -578,17 +652,20 @@ export default function HeroList() {
     );
   };
 
+
+
+
   return (
     <div className="animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-2xl text-primary">영웅 &amp; 챔피언 리스트</h2>
         <div className="flex gap-2">
-          <Button onClick={() => setAddingType('hero')} className="gap-2">
-            <Shield className="w-4 h-4" /> 영웅 추가
+          <Button onClick={() => setAddingType('hero')} className="gap-2 font-display">
+            <Shield className="w-4 h-4" /> 새 영웅 추가
           </Button>
-          <Button onClick={() => setAddingType('champion')} variant="secondary" className="gap-2">
-            <Crown className="w-4 h-4" /> 챔피언 추가
+          <Button onClick={() => setAddingType('champion')} variant="secondary" className="gap-2 font-display">
+            <Crown className="w-4 h-4" /> 새 챔피언 추가
           </Button>
         </div>
       </div>
@@ -623,81 +700,146 @@ export default function HeroList() {
         </div>
       </div>
 
-      {/* Column visibility */}
-      <div className="card-fantasy p-3 mb-3">
-        <div className="flex flex-wrap gap-3">
-          <span className="text-sm text-muted-foreground">표시 항목:</span>
-          {activeColumns.map(col => (
-            <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
-              <Checkbox checked={visibleCols.has(col.key)} onCheckedChange={() => toggleCol(col.key)} />
-              {col.label}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Album View */}
-      {viewMode === 'album' ? (
-        <div className="grid grid-cols-6 gap-3">
-          {filtered.length === 0 ? (
-            <div className="col-span-6 text-center py-12 text-muted-foreground">
-              {listTab === 'hero' ? '영웅을 추가해주세요' : '챔피언을 추가해주세요'}
-            </div>
-          ) : (
-            filtered.map(hero => renderAlbumCard(hero))
-          )}
-        </div>
-      ) : (
-        /* Table View */
-        <div className="card-fantasy overflow-x-auto scrollbar-fantasy">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                {activeCols.map(col => (
-                  <th key={col.key} onClick={() => handleSort(col.key)}
-                    className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-muted-foreground text-center ${
-                      col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
-                    } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? 'min-w-[140px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''}`}>
-                    <span className="flex items-center gap-1 justify-center">
-                      {renderHeaderLabel(col)}
-                      {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
-                    </span>
-                  </th>
-                ))}
-                <th className="px-3 py-3 text-center text-muted-foreground font-medium">관리</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 && (
-                <tr><td colSpan={activeCols.length + 1} className="text-center py-12 text-muted-foreground">
-                  {listTab === 'hero' ? '영웅을 추가해주세요' : '챔피언을 추가해주세요'}
-                </td></tr>
-              )}
-              {filtered.map(hero => (
-                <>
-                  <tr key={hero.id} className={`border-b border-border/50 hover:bg-secondary/30 transition-colors ${expandedId === hero.id ? 'bg-secondary/20' : ''}`}>
-                    {activeCols.map(col => (
-                      <td key={col.key} className="px-3 py-3 text-center">
-                        {renderCell(hero, col.key)}
-                      </td>
-                    ))}
-                    <td className="px-3 py-3 text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  {expandedId === hero.id && renderExpandedRow(hero)}
-                </>
+      {viewMode === 'table' ? (
+        <>
+          {/* Column visibility - table only */}
+          <div className="card-fantasy p-3 mb-3">
+            <div className="flex flex-wrap gap-3">
+              <span className="text-sm text-muted-foreground">표시 항목:</span>
+              {activeColumns.map(col => (
+                <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
+                  <Checkbox checked={visibleCols.has(col.key)} onCheckedChange={() => toggleCol(col.key)} />
+                  {col.label}
+                </label>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          </div>
+
+          {/* Table View */}
+          <div className="card-fantasy overflow-x-auto scrollbar-fantasy">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  {activeCols.map(col => (
+                    <th key={col.key} onClick={() => handleSort(col.key)}
+                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-muted-foreground text-center ${
+                        col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
+                      } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? 'min-w-[170px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''}`}>
+                      <span className="flex items-center gap-1 justify-center">
+                        {renderHeaderLabel(col)}
+                        {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
+                      </span>
+                    </th>
+                  ))}
+                  <th className="px-3 py-3 text-center text-muted-foreground font-medium">관리</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.length === 0 && (
+                  <tr><td colSpan={activeCols.length + 1} className="text-center py-12 text-muted-foreground">
+                    {listTab === 'hero' ? '영웅을 추가해주세요' : '챔피언을 추가해주세요'}
+                  </td></tr>
+                )}
+                {filtered.map(hero => {
+                  const isExpanded = expandedId === hero.id;
+                  return (
+                    <>
+                      <tr key={hero.id} className={`border-b border-border/50 hover:bg-secondary/30 transition-colors ${isExpanded ? 'bg-secondary/20' : ''}`}>
+                        {activeCols.map(col => {
+                          // When expanded, hide non-essential columns
+                          if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
+                            return <td key={col.key} className="px-3 py-3 text-center" />;
+                          }
+                          return (
+                            <td key={col.key} className="px-3 py-3 text-center">
+                              {renderCell(hero, col.key)}
+                            </td>
+                          );
+                        })}
+                        <td className="px-3 py-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      {isExpanded && renderExpandedRow(hero)}
+                    </>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Album controls: sort + filter */}
+          <div className="card-fantasy p-3 mb-3 flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">정렬:</span>
+              <Select value={albumSortKey} onValueChange={setAlbumSortKey}>
+                <SelectTrigger className="w-[120px] h-8 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="heroClass">직업</SelectItem>
+                  <SelectItem value="classLine">계열</SelectItem>
+                  <SelectItem value="level">레벨</SelectItem>
+                  <SelectItem value="element">속성</SelectItem>
+                </SelectContent>
+              </Select>
+              <button onClick={() => setAlbumSortDir(d => d === 'asc' ? 'desc' : 'asc')} className="p-1 rounded hover:bg-secondary">
+                {albumSortDir === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+            </div>
+            <div className="w-px h-6 bg-border/50" />
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">필터:</span>
+              {listTab === 'hero' && (
+                <Select value={albumFilterClassLine} onValueChange={setAlbumFilterClassLine}>
+                  <SelectTrigger className="w-[100px] h-8 text-xs"><SelectValue placeholder="계열" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">전체</SelectItem>
+                    <SelectItem value="전사">전사</SelectItem>
+                    <SelectItem value="로그">로그</SelectItem>
+                    <SelectItem value="주문술사">주문술사</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+              <Select value={albumFilterElement} onValueChange={setAlbumFilterElement}>
+                <SelectTrigger className="w-[90px] h-8 text-xs"><SelectValue placeholder="속성" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">전체</SelectItem>
+                  {uniqueElements.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              {listTab === 'hero' && uniqueJobs.length > 0 && (
+                <Select value={albumFilterJob} onValueChange={setAlbumFilterJob}>
+                  <SelectTrigger className="w-[120px] h-8 text-xs"><SelectValue placeholder="직업" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">전체</SelectItem>
+                    {uniqueJobs.map(j => <SelectItem key={j} value={j}>{j}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </div>
+
+          {/* Album Grid */}
+          <div className="grid grid-cols-6 gap-3">
+            {albumFiltered.length === 0 ? (
+              <div className="col-span-6 text-center py-12 text-muted-foreground">
+                {listTab === 'hero' ? '영웅을 추가해주세요' : '챔피언을 추가해주세요'}
+              </div>
+            ) : (
+              albumFiltered.map(hero => renderAlbumCard(hero))
+            )}
+          </div>
+        </>
       )}
 
       {/* Delete confirmation dialog */}
