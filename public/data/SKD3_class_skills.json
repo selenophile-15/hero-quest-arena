@@ -1,7 +1,7 @@
 {
   "병사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/soildier_mercenary.png",
+    "이미지_경로": "images/skills/sk_class/soldier_mercenary.png",
 
     "원소_기준치": [0, 10, 40],
 
@@ -34,7 +34,7 @@
   
   "용병": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/soildier_mercenary.png",
+    "이미지_경로": "images/skills/sk_class/soldier_mercenary.png",
 
     "원소_기준치": [0, 30, 50, 150],
 
