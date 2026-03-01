@@ -264,6 +264,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     ? getMaxCommonSkillSlots(heroClass, Number(level), promoted)
     : 0;
 
+  // Trim skills when slots decrease (promotion change / level change)
+  useEffect(() => {
+    if (selectedSkills.length > maxCommonSlots) {
+      setSelectedSkills(prev => prev.slice(0, maxCommonSlots));
+    }
+  }, [maxCommonSlots]);
+
   useEffect(() => {
     if (!classLine) { setHeroClass(''); return; }
     if (heroClass) {
@@ -315,10 +322,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       })
       .catch(() => setRecommendedSets({}));
 
-    // Reset equipment and skills on job change (only for new heroes)
+    // Reset skills on job change (always - both new and edit)
+    setSelectedSkills([]);
     if (!hero) {
       setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
-      setSelectedSkills([]);
     }
   }, [heroClass]);
 
