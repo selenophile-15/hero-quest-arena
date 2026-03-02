@@ -179,12 +179,13 @@ export default function SkillSelectDialog({
             return (
               <div
                 key={i}
-                className={`w-11 h-11 rounded border-2 flex items-center justify-center overflow-hidden transition-all ${
+                className={`w-11 h-11 rounded border-2 flex items-center justify-center overflow-hidden transition-all cursor-pointer ${
                   skill
-                    ? 'border-accent/60 bg-accent/10'
+                    ? 'border-accent/60 bg-accent/10 hover:border-red-400/60'
                     : 'border-border/50 bg-secondary/20'
                 }`}
-                title={skill || `슬롯 ${i + 1}`}
+                title={skill ? `${skill} (클릭하여 해제)` : `슬롯 ${i + 1}`}
+                onClick={() => { if (skill) toggleSkill(skill); }}
               >
                 {skill ? (
                   <img
