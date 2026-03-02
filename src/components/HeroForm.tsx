@@ -765,6 +765,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         {/* ─── Row 4: Equipment ─── */}
         <div className="card-fantasy p-4">
           <h3 className="text-sm font-semibold text-primary mb-3" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h3>
+          {/* Quiver warning */}
+          {equipmentSlots.some(s => s.item?.type === 'quiver') && !hasRanged && (
+            <div className="mb-3 p-2 border border-red-400/50 rounded bg-red-400/10">
+              <p className="text-sm font-bold text-red-400">⚠ 화살통 경고: 활/크로스보우/총이 장착되지 않아 화살통 스탯이 0으로 처리됩니다.</p>
+            </div>
+          )}
           <div className="grid grid-cols-6 gap-3">
             {EQUIPMENT_SLOT_LABELS.map((slotLabel, i) => {
               const slotData = equipmentSlots[i];
@@ -800,8 +806,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   >
                     {/* Item image area */}
                     <div className="w-full flex items-center justify-center relative" style={{ aspectRatio: '1' }}>
+                      {/* Tier badge top-left */}
+                      {equipItem && (
+                        <span className="absolute top-0.5 left-0.5 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">
+                          T{equipItem.tier}
+                        </span>
+                      )}
+                      {/* Relic icon top-right, bigger */}
                       {equipItem?.relic && (
-                        <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-0.5 left-0.5 w-4 h-4 z-10"
+                        <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-0.5 right-0.5 w-5 h-5 z-10"
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                       )}
                       {equipItem?.imagePath ? (
@@ -847,34 +860,33 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                         ) : <span className="text-[6px] text-muted-foreground">타입</span>}
                       </div>
                     </div>
+
+                    {/* Stats inside the glow box */}
+                    {equipItem?.stats && equipItem.stats.length > 0 && (
+                      <div className="w-full px-1 pb-1 border-t border-border/20 mt-0.5">
+                        <div className="flex items-center justify-center gap-1.5 pt-0.5">
+                          {equipItem.stats.slice(0, 3).map((stat: any, si: number) => {
+                            const statVal = isQuiverZero ? 0 : stat.value;
+                            return (
+                              <div key={si} className="flex items-center gap-0.5">
+                                <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
+                                <span className={`text-xs font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : 'text-foreground'}`}>
+                                  {formatEquipStatVal(stat.key, statVal)}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Stats + name below glow box */}
-                  {equipItem?.stats && equipItem.stats.length > 0 && (
-                    <div className="flex items-center justify-center w-full mt-0.5">
-                      <div className="flex gap-1.5">
-                        {equipItem.stats.slice(0, 3).map((stat: any, si: number) => {
-                          const statVal = isQuiverZero ? 0 : stat.value;
-                          return (
-                            <div key={si} className="flex items-center gap-0.5">
-                              <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                              <span className={`text-xs text-foreground font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : ''}`}>
-                                {formatEquipStatVal(stat.key, statVal)}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {isQuiverZero && (
-                    <span className="text-[8px] text-red-400">활/크로스보우/총 필요</span>
-                  )}
-
-                  <p className="text-sm text-foreground truncate w-full text-center leading-tight font-medium mt-0.5">
-                    {equipItem?.name || '-'}
-                  </p>
+                  {/* Item name below with accent background */}
+                  <div className={`w-full text-center rounded-b ${equipItem ? 'bg-primary/10' : ''}`}>
+                    <p className={`text-sm truncate leading-tight font-medium px-0.5 py-0.5 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {equipItem?.name || '-'}
+                    </p>
+                  </div>
                 </div>
               );
             })}
