@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Hero, HERO_STAT_COLUMNS, CHAMPION_STAT_COLUMNS, STAT_ICON_MAP, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { HERO_CLASS_MAP, getCommonSkills, getUniqueSkills } from '@/lib/gameData';
+import { HERO_CLASS_MAP, getCommonSkills, getUniqueSkills, getChampionSkillsData } from '@/lib/gameData';
 import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
 import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_MAP, JOB_NAME_MAP, SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
+import { getAurasongSkillIconPath } from '@/lib/championEquipUtils';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
 import ElementIcon from './ElementIcon';
@@ -114,7 +115,7 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
 }
 
 // Default hidden columns
-const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type'];
+const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg'];
 
 export default function HeroList() {
   const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
@@ -134,6 +135,7 @@ export default function HeroList() {
   const [deleteTarget, setDeleteTarget] = useState<Hero | null>(null);
   const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
   const [uniqueSkillsData, setUniqueSkillsData] = useState<Record<string, any>>({});
+  const [championSkillsData, setChampionSkillsData] = useState<Record<string, any>>({});
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
@@ -148,6 +150,7 @@ export default function HeroList() {
       setSkillGradeCache(data);
     });
     getUniqueSkills().then(setUniqueSkillsData);
+    getChampionSkillsData().then(setChampionSkillsData);
   }, []);
 
   const heroList = useMemo(() => heroes.filter(h => h.type === 'hero'), [heroes]);
@@ -232,6 +235,9 @@ export default function HeroList() {
     saveHeroes(updated);
     setEditing(null);
     setAddingType(null);
+    setExpandedId(null);
+    setSortKey('heroClass');
+    setSortDir('asc');
   };
 
   const handleConfirmDelete = () => {
@@ -280,10 +286,10 @@ export default function HeroList() {
   }, [activeList]);
 
   if (addingType === 'hero' || (editing && editing.type === 'hero')) {
-    return <HeroForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); }} />;
+    return <HeroForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); setExpandedId(null); setSortKey('heroClass'); setSortDir('asc'); }} />;
   }
   if (addingType === 'champion' || (editing && editing.type === 'champion')) {
-    return <ChampionForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); }} />;
+    return <ChampionForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); setExpandedId(null); setSortKey('heroClass'); setSortDir('asc'); }} />;
   }
 
   const activeCols = activeColumns.filter(c => visibleCols.has(c.key));
@@ -340,10 +346,12 @@ export default function HeroList() {
       );
     }
     if (colKey === 'element') {
+      const elVal = hero.elementValue || 0;
+      const isDimEl = elVal === 0;
       return (
-        <span className="inline-flex items-center gap-1">
+        <span className={`inline-flex items-center gap-1 ${isDimEl ? 'opacity-20' : ''}`}>
           <ElementIcon element={hero.element} size={20} />
-          <span className="text-xs text-foreground tabular-nums">{formatNumber(hero.elementValue || 0)}</span>
+          <span className={`text-xs tabular-nums ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
       );
     }
@@ -381,12 +389,16 @@ export default function HeroList() {
       if (!hero.seeds) return <span className="text-muted-foreground">-</span>;
       return (
         <div className="flex items-center gap-1 justify-center">
-          {SEED_ICONS.map(s => (
-            <span key={s.key} className="inline-flex items-center gap-0.5">
-              <img src={s.icon} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
-              <span className="text-xs tabular-nums">{hero.seeds?.[s.key as keyof typeof hero.seeds] || 0}</span>
-            </span>
-          ))}
+          {SEED_ICONS.map(s => {
+            const seedVal = hero.seeds?.[s.key as keyof typeof hero.seeds] || 0;
+            const isMaxSeed = seedVal === 40 || seedVal === 80;
+            return (
+              <span key={s.key} className="inline-flex items-center gap-0.5">
+                <img src={s.icon} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                <span className={`text-xs tabular-nums ${isMaxSeed ? 'text-emerald-400 font-semibold' : ''}`}>{seedVal}</span>
+              </span>
+            );
+          })}
         </div>
       );
     }
@@ -463,12 +475,16 @@ export default function HeroList() {
                 <div className="mt-2 pt-2 border-t border-border/30">
                   <h4 className="text-xs font-semibold text-primary mb-1" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>씨앗</h4>
                   <div className="flex gap-2">
-                    {SEED_ICONS.map(s => (
-                      <span key={s.key} className="inline-flex items-center gap-0.5">
-                        <img src={s.icon} alt="" className="w-4 h-4" />
-                        <span className="text-xs tabular-nums">{hero.seeds?.[s.key as keyof typeof hero.seeds] || 0}</span>
-                      </span>
-                    ))}
+                    {SEED_ICONS.map(s => {
+                      const seedVal = hero.seeds?.[s.key as keyof typeof hero.seeds] || 0;
+                      const isMaxSeed = seedVal === 40 || seedVal === 80;
+                      return (
+                        <span key={s.key} className="inline-flex items-center gap-0.5">
+                          <img src={s.icon} alt="" className="w-4 h-4" />
+                          <span className={`text-xs tabular-nums ${isMaxSeed ? 'text-emerald-400 font-semibold' : ''}`}>{seedVal}</span>
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -617,7 +633,28 @@ export default function HeroList() {
     const illustPath = hero.type === 'champion' && hero.championName
       ? getChampionImagePath(hero.championName)
       : hero.heroClass ? getJobIllustPath(hero.heroClass) : '';
-    const equipSlots = hero.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null }));
+    const isChampion = hero.type === 'champion';
+    const equipSlots = hero.equipmentSlots || Array.from({ length: isChampion ? 2 : 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null }));
+
+    // Champion leader skill + aura icons
+    let leaderSkillIcon = '';
+    let aurasongIcon = '';
+    if (isChampion && hero.championName) {
+      const champEng = CHAMPION_NAME_MAP[hero.championName] || '';
+      const champSkillData = championSkillsData[hero.championName];
+      let leaderTier = 1;
+      if (champSkillData) {
+        for (let t = 4; t >= 1; t--) {
+          const tierData = champSkillData[`${t}티어`];
+          if (tierData && (hero.rank || 1) >= (tierData['챔피언_랭크'] || 0)) { leaderTier = t; break; }
+        }
+      }
+      leaderSkillIcon = champEng ? `/images/skills/sk_champion/${champEng}_${leaderTier}.png` : '';
+      const aurasongItem = equipSlots[1]?.item;
+      if (aurasongItem) {
+        aurasongIcon = getAurasongSkillIconPath(aurasongItem.name);
+      }
+    }
 
     return (
       <div
@@ -625,7 +662,8 @@ export default function HeroList() {
         className={`card-fantasy p-3 border-2 rounded-xl ${borderClass} flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-all`}
         onClick={() => setEditing(hero)}
       >
-        <div className="w-full aspect-[4/5] flex items-center justify-center overflow-hidden rounded-lg bg-secondary/20">
+        {/* Square illustration */}
+        <div className="w-full aspect-square flex items-center justify-center overflow-hidden rounded-lg bg-secondary/20">
           {illustPath ? (
             <img src={illustPath} alt={hero.name} className="w-full h-full object-cover"
               onError={e => { e.currentTarget.style.display = 'none'; }} />
@@ -643,62 +681,89 @@ export default function HeroList() {
           <ElementIcon element={hero.element} size={16} />
           <span className="text-xs text-foreground tabular-nums">{hero.elementValue || 0}</span>
         </div>
-        {hero.skills && hero.skills.length > 0 && (
-          <div className="flex items-center gap-0.5 flex-wrap justify-center">
-            {hero.heroClass && (
-              <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-9 h-9" title={hero.skills?.[0]}
-                onError={e => { e.currentTarget.style.display = 'none'; }} />
-            )}
-            {hero.skills.slice(1, 5).map((sk, i) => (
-              <img key={i} src={getSkillImagePath(sk)} alt={sk} className="w-9 h-9" title={sk}
-                onError={e => { e.currentTarget.style.display = 'none'; }} />
-            ))}
+
+        {/* Skills */}
+        {isChampion ? (
+          <div className="flex items-center gap-1 justify-center">
+            {leaderSkillIcon && <img src={leaderSkillIcon} alt="리더" className="w-9 h-9" title="리더 스킬" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+            {aurasongIcon && <img src={aurasongIcon} alt="오라" className="w-9 h-9" title="오라의 노래" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+          </div>
+        ) : (
+          hero.skills && hero.skills.length > 0 && (
+            <div className="flex items-center gap-0.5 flex-wrap justify-center">
+              {hero.heroClass && (
+                <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-9 h-9" title={hero.skills?.[0]}
+                  onError={e => { e.currentTarget.style.display = 'none'; }} />
+              )}
+              {hero.skills.slice(1, 5).map((sk, i) => (
+                <img key={i} src={getSkillImagePath(sk)} alt={sk} className="w-9 h-9" title={sk}
+                  onError={e => { e.currentTarget.style.display = 'none'; }} />
+              ))}
+            </div>
+          )
+        )}
+
+        {/* Equipment */}
+        {isChampion ? (
+          <div className="flex gap-2 justify-center w-full">
+            {equipSlots.slice(0, 2).map((slot: any, i: number) => {
+              const item = slot.item;
+              const quality = slot.quality || 'common';
+              const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
+              const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
+              const itemType = item?.type || '';
+              return (
+                <div key={i}
+                  className={`relative w-16 aspect-square rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center justify-center overflow-hidden`}
+                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
+                  {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
+                  {item?.imagePath ? <img src={item.imagePath} alt="" className="w-3/5 h-3/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
+                  {item && (
+                    <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-0.5">
+                      {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {displaySpirit && (() => {
+                        const eng = SPIRIT_NAME_MAP[displaySpirit.name];
+                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.png" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                      })()}
+                      {itemType && <img src={`/images/type/${itemType}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-1 w-full">
+            {equipSlots.map((slot: any, i: number) => {
+              const item = slot.item;
+              const quality = slot.quality || 'common';
+              const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
+              const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
+              const itemType = item?.type || '';
+              return (
+                <div key={i}
+                  className={`relative aspect-square rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center justify-center overflow-hidden`}
+                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
+                  {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
+                  {item?.imagePath ? <img src={item.imagePath} alt="" className="w-3/5 h-3/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
+                  {item && (
+                    <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-0.5">
+                      {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {displaySpirit && (() => {
+                        const eng = SPIRIT_NAME_MAP[displaySpirit.name];
+                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.png" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                      })()}
+                      {itemType && <img src={`/images/type/${itemType}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
-        {/* Equipment 3x2 with tier + enchants */}
-        <div className="grid grid-cols-3 gap-1 w-full">
-          {equipSlots.map((slot: any, i: number) => {
-            const item = slot.item;
-            const quality = slot.quality || 'common';
-            const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
-            const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
-            const itemType = item?.type || '';
-            return (
-              <div key={i}
-                className={`relative aspect-square rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center justify-center overflow-hidden`}
-                style={item ? {
-                  background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`,
-                  boxShadow: QUALITY_SHADOW_COLOR[quality],
-                } : { background: 'hsl(var(--secondary) / 0.2)' }}
-              >
-                {item && (
-                  <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">
-                    T{item.tier}
-                  </span>
-                )}
-                {item?.imagePath ? (
-                  <img src={item.imagePath} alt="" className="w-3/5 h-3/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                ) : (
-                  <span className="text-[6px] text-muted-foreground/50">-</span>
-                )}
-                {item && (
-                  <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-0.5">
-                    {displayElement && (
-                      <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`}
-                        className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    )}
-                    {displaySpirit && (() => {
-                      const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                      if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.png" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                      return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
-                    })()}
-                    {itemType && <img src={`/images/type/${itemType}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+
         <div className="flex items-center gap-1 mt-auto">
           <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
             <Trash2 className="w-3.5 h-3.5" />
@@ -717,10 +782,10 @@ export default function HeroList() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-2xl text-primary">영웅 &amp; 챔피언 리스트</h2>
         <div className="flex gap-2">
-          <Button onClick={() => setAddingType('hero')} className="gap-2 font-display">
+          <Button onClick={() => setAddingType('hero')} className="gap-2 text-sm font-medium">
             <Shield className="w-4 h-4" /> 새 영웅 추가
           </Button>
-          <Button onClick={() => setAddingType('champion')} variant="secondary" className="gap-2 font-display">
+          <Button onClick={() => setAddingType('champion')} variant="secondary" className="gap-2 text-sm font-medium">
             <Crown className="w-4 h-4" /> 새 챔피언 추가
           </Button>
         </div>

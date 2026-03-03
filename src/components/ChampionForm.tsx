@@ -84,6 +84,22 @@ function formatEquipStatVal(key: string, value: number): string {
   return formatNumber(value);
 }
 
+const STAT_FILTER_OPTIONS = [
+  { value: '장비_공격력', label: '공격력' },
+  { value: '장비_방어력', label: '방어력' },
+  { value: '장비_체력', label: '체력' },
+  { value: '장비_치명타확률%', label: '치명타 확률' },
+  { value: '장비_회피%', label: '회피' },
+];
+
+const STAT_COLOR: Record<string, string> = {
+  '장비_공격력': 'text-red-400',
+  '장비_방어력': 'text-blue-400',
+  '장비_체력': 'text-orange-400',
+  '장비_치명타확률%': 'text-yellow-400',
+  '장비_회피%': 'text-teal-400',
+};
+
 function formatRank(rank: number): string {
   if (rank <= 11) return String(rank);
   return `11(+${rank - 11})`;
@@ -125,7 +141,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [seedAtk, setSeedAtk] = useState(hero?.seeds?.atk || 0);
   const [seedDef, setSeedDef] = useState(hero?.seeds?.def || 0);
   const [equipElements, setEquipElements] = useState<Record<string, number>>(hero?.equipmentElements || {});
-  const [elementManual, setElementManual] = useState(true);
+  const [elementManual, setElementManual] = useState(false);
 
   // Equipment: 2 slots - familiar (0) and aurasong (1)
   const [equipmentSlots, setEquipmentSlots] = useState<Array<{
@@ -173,6 +189,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
   const calculatedElements = useMemo(() => {
     const totals: Record<string, number> = {};
+    // Add rank-based element value to the champion's element
+    if (element && elementValue) {
+      totals[element] = (totals[element] || 0) + elementValue;
+    }
     equipmentSlots.forEach(s => {
       if (s.element) {
         const val = getElementValue(s.element.tier, s.element.affinity);
@@ -180,7 +200,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       }
     });
     return totals;
-  }, [equipmentSlots]);
+  }, [equipmentSlots, element, elementValue]);
 
   useEffect(() => {
     if (!elementManual) setEquipElements(calculatedElements);
@@ -446,12 +466,15 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom" align="center" sideOffset={8} avoidCollisions={true} collisionPadding={16} className="max-w-xs p-3 space-y-1.5 z-50">
-                      <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier})</span></p>
+                      <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor || item.type})</span></p>
                       {item.stats.length > 0 && (
                         <div className="space-y-0.5">
-                          {item.stats.map((s, si) => (
+                          {item.stats.map((s: any, si: number) => (
                             <div key={si} className="flex items-center gap-1 text-xs">
-                              <span className="font-medium">{formatEquipStatVal(s.key, s.value)}</span>
+                              <span className={`font-medium ${STAT_COLOR[s.key] || 'text-foreground'}`}>
+                                {STAT_FILTER_OPTIONS.find(o => o.value === s.key)?.label || s.key}:
+                              </span>
+                              <span className="tabular-nums">{formatEquipStatVal(s.key, s.value)}</span>
                             </div>
                           ))}
                         </div>
@@ -486,7 +509,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     <div className="animate-fade-in">
       {/* Sticky back button */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 px-1 -mx-6 px-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
+        <h2 className="font-display text-xl text-primary tracking-wide">
           {hero ? '챔피언 수정' : '새 챔피언 추가'}
         </h2>
         <button onClick={onCancel} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
@@ -588,6 +611,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 <ElementIcon element={element || '모든 원소'} size={20} />
                 <span className="text-sm text-foreground ml-auto tabular-nums">{elementValue ? formatNumber(elementValue) : '-'}</span>
               </div>
+              <div className="flex items-center gap-2 py-0.5 px-1">
+                <img src={STAT_ICON_MAP.airshipPower} alt="에어쉽 파워" className="w-5 h-5 flex-shrink-0" />
+                <span className="text-sm text-foreground ml-auto tabular-nums">-</span>
+              </div>
             </div>
           </div>
 
@@ -645,16 +672,14 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               <div className="space-y-3">
                 {/* Leader Skill */}
                 <div className="border border-border rounded overflow-hidden">
-                  <div className="grid grid-cols-[50px_44px_1fr_40px_1fr_2fr] gap-0 bg-secondary/40 text-xs font-semibold text-foreground border-b border-border">
+                  <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0 bg-secondary/40 text-xs font-semibold text-foreground border-b border-border">
                     <div className="px-1 py-1 text-center">타입</div>
                     <div className="px-1 py-1 text-center"></div>
-                    <div className="px-1 py-1 text-center">기본 스킬명</div>
-                    <div className="px-1 py-1 text-center">티어</div>
-                    <div className="px-1 py-1 text-center">티어 스킬명</div>
+                    <div className="px-1 py-1 text-center">스킬명</div>
                     <div className="px-1 py-1 text-center">스킬 효과</div>
                   </div>
                   {/* Leader skill row */}
-                  <div className="grid grid-cols-[50px_44px_1fr_40px_1fr_2fr] gap-0 border-b border-border/50">
+                  <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0 border-b border-border/50">
                     <div className="px-1 py-1.5 flex items-center justify-center">
                       <span className="px-1 py-0.5 rounded text-[10px] font-semibold bg-yellow-600/60 text-foreground">챔피언</span>
                     </div>
@@ -662,15 +687,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       <img src={`/images/skills/sk_champion/${champEng}_${leaderSkillTier}.png`} alt="" className="w-9 h-9 object-contain"
                         onError={e => { e.currentTarget.style.display = 'none'; }} />
                     </div>
-                    <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{championName} 리더스킬</div>
-                    <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{leaderSkillTier}</div>
-                    <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{championName} T{leaderSkillTier}</div>
-                    <div className="px-1 py-1.5 text-xs text-foreground whitespace-pre-line leading-tight">
+                    <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{championName} (T{leaderSkillTier})</div>
+                    <div className="px-1 py-1.5 flex items-center text-xs text-foreground whitespace-pre-line leading-tight">
                       {leaderSkillEffect}
                     </div>
                   </div>
                   {/* Aura Song skill row */}
-                  <div className="grid grid-cols-[50px_44px_1fr_40px_1fr_2fr] gap-0">
+                  <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0">
                     <div className="px-1 py-1.5 flex items-center justify-center">
                       <span className="px-1 py-0.5 rounded text-[10px] font-semibold bg-cyan-700/60 text-foreground">오라</span>
                     </div>
@@ -682,9 +705,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                     <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">
                       {aurasongItem?.name || '-'}
                     </div>
-                    <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">-</div>
-                    <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{aurasongItem?.name || '-'}</div>
-                    <div className="px-1 py-1.5 text-xs text-foreground whitespace-pre-line leading-tight">
+                    <div className="px-1 py-1.5 flex items-center text-xs text-foreground whitespace-pre-line leading-tight">
                       {aurasongSkillEffect || '-'}
                     </div>
                   </div>
