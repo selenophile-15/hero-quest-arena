@@ -146,8 +146,8 @@ export default function EquipmentSelectDialog({
   const maxTier = getMaxTierForLevel(heroLevel || 1);
   const [filterType, setFilterType] = useState<string>('_all');
   const [filterStat, setFilterStat] = useState<string>('_all');
-  const [filterTierMin, setFilterTierMin] = useState<number>(Math.max(1, maxTier - 2));
-  const [filterTierMax, setFilterTierMax] = useState<number>(maxTier);
+  const [filterTierMin, setFilterTierMin] = useState<number | ''>(Math.max(1, maxTier - 2));
+  const [filterTierMax, setFilterTierMax] = useState<number | ''>(maxTier);
   const [filterElement, setFilterElement] = useState<string>('_all');
   const [filterSpirit, setFilterSpirit] = useState<string>('_all');
   const [slotQuality, setSlotQuality] = useState<string>('common');
@@ -265,7 +265,7 @@ export default function EquipmentSelectDialog({
       }
 
       if (filterStat !== '_all' && !item.stats.some(s => s.key === filterStat)) return false;
-      if (item.tier < filterTierMin || item.tier > filterTierMax) return false;
+      if (item.tier < (filterTierMin || 1) || item.tier > (filterTierMax || maxTier)) return false;
       if (item.tier > maxTier) return false;
 
       if (filterElement !== '_all') {
@@ -420,11 +420,21 @@ export default function EquipmentSelectDialog({
 
           <span className="text-muted-foreground">티어:</span>
           <input type="number" min={1} max={maxTier} value={filterTierMin}
-            onChange={e => setFilterTierMin(Math.max(1, Math.min(maxTier, parseInt(e.target.value) || 1)))}
+            onChange={e => {
+              const raw = e.target.value;
+              if (raw === '') { setFilterTierMin(''); return; }
+              const v = parseInt(raw, 10);
+              if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
+            }}
             className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
           <span className="text-muted-foreground">~</span>
           <input type="number" min={1} max={maxTier} value={filterTierMax}
-            onChange={e => setFilterTierMax(Math.min(maxTier, parseInt(e.target.value) || maxTier))}
+            onChange={e => {
+              const raw = e.target.value;
+              if (raw === '') { setFilterTierMax(''); return; }
+              const v = parseInt(raw, 10);
+              if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
+            }}
             className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
 
           <span className="text-muted-foreground">원소:</span>

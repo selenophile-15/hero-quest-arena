@@ -201,7 +201,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [equipElements, setEquipElements] = useState<Record<string, number>>(
     hero?.equipmentElements || {}
   );
-  const [elementManual, setElementManual] = useState(true);
+  const [elementManual, setElementManual] = useState(false);
 
   const [selectedSkills, setSelectedSkills] = useState<string[]>(hero?.skills?.slice(1) || []);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
@@ -218,6 +218,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     element: any | null;
     spirit: any | null;
   }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+  const isInitialHeroClass = useRef(!!hero);
   const formRef = useRef<HTMLDivElement>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
 
@@ -322,10 +323,14 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       })
       .catch(() => setRecommendedSets({}));
 
-    // Reset skills on job change (always - both new and edit)
-    setSelectedSkills([]);
-    if (!hero) {
-      setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+    // Reset skills on job change, but not on initial mount when editing
+    if (isInitialHeroClass.current) {
+      isInitialHeroClass.current = false;
+    } else {
+      setSelectedSkills([]);
+      if (!hero) {
+        setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+      }
     }
   }, [heroClass]);
 
@@ -430,7 +435,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     <div className="animate-fade-in">
       {/* Sticky back button */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 px-1 -mx-6 px-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
+        <h2 className="font-display text-xl text-primary tracking-wide">
           {hero ? '영웅 수정' : '새 영웅 추가'}
         </h2>
         <button onClick={onCancel} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
