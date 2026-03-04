@@ -4,7 +4,7 @@ import { CHAMPION_NAMES, lookupChampionStats, getChampionSkillsData } from '@/li
 import { CHAMPION_NAME_MAP, getChampionImagePath, SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { formatNumber } from '@/lib/format';
 import { getElementValue } from '@/components/EnchantPickerDialog';
-import { loadFamiliars, loadAurasongs, getAurasongSkillEffect, getAurasongSkillIconPath, ensureAurasongDataLoaded, getFamiliarImagePath, getAurasongImagePath } from '@/lib/championEquipUtils';
+import { loadFamiliars, loadAurasongs, getAurasongSkillEffect, getAurasongSkillIconPath, ensureAurasongDataLoaded, getFamiliarImagePath, getAurasongImagePath, getLeaderSkillTierName } from '@/lib/championEquipUtils';
 import ElementIcon from './ElementIcon';
 import EnchantPickerDialog from './EnchantPickerDialog';
 import { Button } from '@/components/ui/button';
@@ -480,7 +480,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                         </div>
                       )}
                       {item.elementAffinity && item.elementAffinity.length > 0 && (
-                        <div className="text-xs"><span className="text-muted-foreground">친밀 원소: </span>{item.elementAffinity.join(', ')}</div>
+                        <div className="text-xs">
+                          <span className="text-muted-foreground">친밀 원소: </span>
+                          {item.elementAffinity.map((el: string, ei: number) => {
+                            const EC: Record<string, string> = { '불': 'text-red-400', '물': 'text-blue-400', '공기': 'text-teal-300', '대지': 'text-lime-400', '빛': 'text-yellow-200', '어둠': 'text-purple-400' };
+                            return <span key={ei}>{ei > 0 ? ', ' : ''}<span className={EC[el] || 'text-foreground'}>{el}</span></span>;
+                          })}
+                        </div>
                       )}
                       {item.spiritAffinity && item.spiritAffinity.length > 0 && (
                         <div className="text-xs"><span className="text-muted-foreground">친밀 영혼: </span>{item.spiritAffinity.join(', ')}</div>
@@ -609,7 +615,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               ))}
               <div className="flex items-center gap-2 py-0.5 px-1">
                 <ElementIcon element={element || '모든 원소'} size={20} />
-                <span className="text-sm text-foreground ml-auto tabular-nums">{elementValue ? formatNumber(elementValue) : '-'}</span>
+                <span className="text-sm text-foreground ml-auto tabular-nums">{totalEquipElement > 0 ? formatNumber(totalEquipElement) : (elementValue ? formatNumber(elementValue) : '-')}</span>
               </div>
               <div className="flex items-center gap-2 py-0.5 px-1">
                 <img src={STAT_ICON_MAP.airshipPower} alt="에어쉽 파워" className="w-5 h-5 flex-shrink-0" />
@@ -687,7 +693,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       <img src={`/images/skills/sk_champion/${champEng}_${leaderSkillTier}.png`} alt="" className="w-9 h-9 object-contain"
                         onError={e => { e.currentTarget.style.display = 'none'; }} />
                     </div>
-                    <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{championName} (T{leaderSkillTier})</div>
+                    <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{getLeaderSkillTierName(championName, leaderSkillTier)}</div>
                     <div className="px-1 py-1.5 flex items-center text-xs text-foreground whitespace-pre-line leading-tight">
                       {leaderSkillEffect}
                     </div>
@@ -716,7 +722,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             {/* Equipment */}
             <div className="card-fantasy p-3">
               <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 max-w-[280px]">
                 {renderEquipSlot(0)}
                 {renderEquipSlot(1)}
               </div>

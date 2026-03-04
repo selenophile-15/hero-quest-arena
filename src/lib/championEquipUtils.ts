@@ -202,3 +202,24 @@ export async function ensureAurasongDataLoaded(): Promise<void> {
     await loadAurasongs();
   }
 }
+
+export const LEADER_SKILL_TIER_NAMES: Record<string, string[]> = {
+  '아르곤': ['용기의 오라', '결의의 오라', '영웅의 오오라', '성전사의 오라'],
+  '릴루': ['상처의 치료', '성스러운 힘', '활력화', '성스러운 영역'],
+  '시아': ['전리품을 찾는 눈', '숙련된 눈', '스타일을 보는 눈', '장인의 눈'],
+  '야미': ['기습', '협동 기습', '에테르 기습', '완벽한 기습'],
+  '루도': ['루도 블릿츠', '고집 센 공격', '광전사의 광란', '완전한 파괴'],
+  '폴로니아': ['해적의 임무', '데이비 존스의 약탈', '사나운 바다의 날강도', '선장의 몫'],
+  '도노반': ['연금술사 토닉', '변화의 정수', '변이의 마스터', '현자의 돌'],
+  '헴마': ['강화 흡수', '섬뜩한 일격', '강령술 창', '정수 소모'],
+  '애쉴리': ['아이주쓰 전술', '애쉴리의 한 수', '위대한 적 격퇴', '부시도의 힘'],
+  '비외른': ['더블 트러블', '섬광 공격팀', '본 투 비 와일드', '엄니 듀오'],
+  '라인홀드': ['라인홀드의 산책', '왕에게 걸맞은 여정', '돈을 부르는 돈', '세상의 부'],
+  '타마스': ['가죽의 각성', '가죽의 힘', '가죽의 수준', '궁극의 가죽 작업자'],
+};
+
+export function getLeaderSkillTierName(championName: string, tier: number): string {
+  const names = LEADER_SKILL_TIER_NAMES[championName];
+  if (!names || tier < 1 || tier > 4) return `${tier}티어`;
+  return names[tier - 1];
+}
