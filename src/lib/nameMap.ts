@@ -198,7 +198,7 @@ export function getSkillImagePath(korName: string): string {
 
 export function getChampionImagePath(korName: string): string {
   const eng = CHAMPION_NAME_MAP[korName];
-  return `/images/champion/${eng || korName}.png`;
+  return `/images/champion/${eng || korName}.webp`;
 }
 
 export function getChampionSkillImagePath(korName: string, rank: number): string {
