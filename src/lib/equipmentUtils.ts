@@ -72,7 +72,7 @@ export function getEquipImagePath(korName: string, typeFile: string, category: s
   if (!typeMap) return '';
   const engName = typeMap[korName];
   if (!engName) return '';
-  return `/images/equipment/${category}/${typeFile}/${engName}.png`;
+  return `/images/equipment/${category}/${typeFile}/${engName}.webp`;
 }
 
 // Equipment item with metadata
@@ -151,7 +151,7 @@ export async function loadEquipmentByTypes(
 
         for (const [korName, itemData] of Object.entries(tierItems as Record<string, any>)) {
           const engName = nameMap[file]?.[korName] || '';
-          const imagePath = engName ? `/images/equipment/${category}/${file}/${engName}.png` : '';
+          const imagePath = engName ? `/images/equipment/${category}/${file}/${engName}.webp` : '';
 
           const stats: { key: string; value: number }[] = [];
           if (itemData['장비_공격력']) stats.push({ key: '장비_공격력', value: itemData['장비_공격력'] });
