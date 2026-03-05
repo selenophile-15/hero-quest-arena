@@ -1,7 +1,7 @@
 {
   "병사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/soldier_mercenary.png",
+    "이미지_경로": "images/skills/sk_class/soldier_mercenary.webp",
 
     "원소_기준치": [0, 10, 40],
 
@@ -34,7 +34,7 @@
   
   "용병": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/soldier_mercenary.png",
+    "이미지_경로": "images/skills/sk_class/soldier_mercenary.webp",
 
     "원소_기준치": [0, 30, 50, 150],
 
@@ -70,7 +70,7 @@
   
   "야만전사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/barbarian_chieftain.png",
+    "이미지_경로": "images/skills/sk_class/barbarian_chieftain.webp",
 
     "원소_기준치": [0, 15, 60],
 
@@ -104,7 +104,7 @@
   
   "족장": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/barbarian_chieftain.png",
+    "이미지_경로": "images/skills/sk_class/barbarian_chieftain.webp",
 
     "원소_기준치": [0, 30, 80, 150],
 
@@ -141,7 +141,7 @@
   
   "기사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/knight_lord.png",
+    "이미지_경로": "images/skills/sk_class/knight_lord.webp",
 
     "원소_기준치": [0, 20, 70],
 
@@ -174,7 +174,7 @@
   
   "군주": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/knight_lord.png",
+    "이미지_경로": "images/skills/sk_class/knight_lord.webp",
 
     "원소_기준치": [0, 20, 70, 150],
 
@@ -210,7 +210,7 @@
   
   "레인저": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/ranger_warden.png",
+    "이미지_경로": "images/skills/sk_class/ranger_warden.webp",
 
     "원소_기준치": [0, 25, 80],
 
@@ -244,7 +244,7 @@
   
   "관리인": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/ranger_warden.png",
+    "이미지_경로": "images/skills/sk_class/ranger_warden.webp",
 
     "원소_기준치": [0, 25, 80, 150],
 
@@ -281,7 +281,7 @@
   
   "사무라이": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/samurai_daimyo.png",
+    "이미지_경로": "images/skills/sk_class/samurai_daimyo.webp",
 
     "원소_기준치": [0, 30, 90],
 
@@ -314,7 +314,7 @@
   
   "다이묘": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/samurai_daimyo.png",
+    "이미지_경로": "images/skills/sk_class/samurai_daimyo.webp",
 
     "원소_기준치": [0, 30, 90, 160],
 
@@ -350,7 +350,7 @@
   
   "광전사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/berserker_jarl.png",
+    "이미지_경로": "images/skills/sk_class/berserker_jarl.webp",
 
     "원소_기준치": [0, 40, 90],
 
@@ -384,7 +384,7 @@
   
   "잘": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/berserker_jarl.png",
+    "이미지_경로": "images/skills/sk_class/berserker_jarl.webp",
 
     "원소_기준치": [0, 40, 90, 170],
 
@@ -421,7 +421,7 @@
   
   "어둠의 기사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/darkknight_deathknight.png",
+    "이미지_경로": "images/skills/sk_class/darkknight_deathknight.webp",
 
     "원소_기준치": [0, 50, 100],
 
@@ -455,7 +455,7 @@
   
   "죽음의 기사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/darkknight_deathknight.png",
+    "이미지_경로": "images/skills/sk_class/darkknight_deathknight.webp",
 
     "원소_기준치": [0, 50, 100, 180],
 
@@ -513,7 +513,7 @@
   
   "도둑": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/thief_trickster.png",
+    "이미지_경로": "images/skills/sk_class/thief_trickster.webp",
 
     "원소_기준치": [0, 10, 40],
 
@@ -547,7 +547,7 @@
   
   "사기꾼": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/thief_trickster.png",
+    "이미지_경로": "images/skills/sk_class/thief_trickster.webp",
 
     "원소_기준치": [0, 50, 80, 150],
 
@@ -584,7 +584,7 @@
   
   "수도승": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/monk_grandmaster.png",
+    "이미지_경로": "images/skills/sk_class/monk_grandmaster.webp",
 
     "원소_기준치": [0, 15, 60],
 
@@ -618,7 +618,7 @@
   
   "그랜드 마스터": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/monk_grandmaster.png",
+    "이미지_경로": "images/skills/sk_class/monk_grandmaster.webp",
 
     "원소_기준치": [0, 15, 60, 150],
 
@@ -655,7 +655,7 @@
   
   "머스킷병": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/musketeer_conquistador.png",
+    "이미지_경로": "images/skills/sk_class/musketeer_conquistador.webp",
 
     "원소_기준치": [0, 20, 70],
 
@@ -689,7 +689,7 @@
   
   "정복자": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/musketeer_conquistador.png",
+    "이미지_경로": "images/skills/sk_class/musketeer_conquistador.webp",
 
     "원소_기준치": [0, 20, 70, 150],
 
@@ -726,7 +726,7 @@
   
   "방랑자": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/wanderer_pathfinder.png",
+    "이미지_경로": "images/skills/sk_class/wanderer_pathfinder.webp",
 
     "원소_기준치": [0, 25, 80],
 
@@ -759,7 +759,7 @@
   
   "길잡이": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/wanderer_pathfinder.png",
+    "이미지_경로": "images/skills/sk_class/wanderer_pathfinder.webp",
 
     "원소_기준치": [0, 25, 80, 150],
 
@@ -795,7 +795,7 @@
   
   "닌자": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/ninja_sensei.png",
+    "이미지_경로": "images/skills/sk_class/ninja_sensei.webp",
 
     "원소_기준치": [0, 30, 90],
 
@@ -829,7 +829,7 @@
   
   "센세": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/ninja_sensei.png",
+    "이미지_경로": "images/skills/sk_class/ninja_sensei.webp",
 
     "원소_기준치": [0, 30, 90, 160],
 
@@ -866,7 +866,7 @@
   
   "무희": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/dancer_acrobat.png",
+    "이미지_경로": "images/skills/sk_class/dancer_acrobat.webp",
 
     "원소_기준치": [0, 40, 90],
 
@@ -899,7 +899,7 @@
   
   "곡예가": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/dancer_acrobat.png",
+    "이미지_경로": "images/skills/sk_class/dancer_acrobat.webp",
 
     "원소_기준치": [0, 40, 90, 170],
 
@@ -935,7 +935,7 @@
   
   "경보병": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/velite_praetorian.png",
+    "이미지_경로": "images/skills/sk_class/velite_praetorian.webp",
 
     "원소_기준치": [0, 50, 100],
 
@@ -969,7 +969,7 @@
   
   "근위병": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/velite_praetorian.png",
+    "이미지_경로": "images/skills/sk_class/velite_praetorian.webp",
 
     "원소_기준치": [0, 50, 100, 180],
 
@@ -1025,7 +1025,7 @@
   
   "마법사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/mage_archmage.png",
+    "이미지_경로": "images/skills/sk_class/mage_archmage.webp",
 
     "원소_기준치": [0, 10, 40],
 
@@ -1059,7 +1059,7 @@
   
   "대마법사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/mage_archmage.png",
+    "이미지_경로": "images/skills/sk_class/mage_archmage.webp",
 
     "원소_기준치": [0, 20, 60, 150],
 
@@ -1096,7 +1096,7 @@
   
   "성직자": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/cleric_bishop.png",
+    "이미지_경로": "images/skills/sk_class/cleric_bishop.webp",
 
     "원소_기준치": [0, 15, 60],
 
@@ -1130,7 +1130,7 @@
   
   "비숍": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/cleric_bishop.png",
+    "이미지_경로": "images/skills/sk_class/cleric_bishop.webp",
 
     "원소_기준치": [0, 30, 70, 150],
 
@@ -1168,7 +1168,7 @@
   
   "드루이드": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/druid_archdruid.png",
+    "이미지_경로": "images/skills/sk_class/druid_archdruid.webp",
 
     "원소_기준치": [0, 20, 70],
 
@@ -1201,7 +1201,7 @@
   
   "아크 드루이드": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/druid_archdruid.png",
+    "이미지_경로": "images/skills/sk_class/druid_archdruid.webp",
 
     "원소_기준치": [0, 20, 70, 150],
 
@@ -1237,7 +1237,7 @@
   
   "소서러": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/sorcerer_warlock.png",
+    "이미지_경로": "images/skills/sk_class/sorcerer_warlock.webp",
 
     "원소_기준치": [0, 25, 80],
 
@@ -1270,7 +1270,7 @@
   
   "워록": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/sorcerer_warlock.png",
+    "이미지_경로": "images/skills/sk_class/sorcerer_warlock.webp",
 
     "원소_기준치": [0, 25, 80, 150],
 
@@ -1306,7 +1306,7 @@
   
   "마법검": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/spellblade_spellknight.png",
+    "이미지_경로": "images/skills/sk_class/spellblade_spellknight.webp",
 
     "원소_기준치": [0, 30, 90],
 
@@ -1339,7 +1339,7 @@
   
   "스펠나이트": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/spellblade_spellknight.png",
+    "이미지_경로": "images/skills/sk_class/spellblade_spellknight.webp",
 
     "원소_기준치": [0, 30, 90, 160],
 
@@ -1375,7 +1375,7 @@
   
   "풍수사": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/geomancer_astramancer.png",
+    "이미지_경로": "images/skills/sk_class/geomancer_astramancer.webp",
 
     "원소_기준치": [0, 40, 90],
 
@@ -1408,7 +1408,7 @@
   
   "아스트라맨서": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/geomancer_astramancer.png",
+    "이미지_경로": "images/skills/sk_class/geomancer_astramancer.webp",
 
     "원소_기준치": [0, 40, 90, 170],
 
@@ -1444,7 +1444,7 @@
   
   "크로노맨서": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/chronomancer_fateweaver.png",
+    "이미지_경로": "images/skills/sk_class/chronomancer_fateweaver.webp",
 
     "원소_기준치": [0, 50, 100],
 
@@ -1478,7 +1478,7 @@
   
   "페이트위버": {
     "희귀도": "고유",
-    "이미지_경로": "images/skills/sk_class/chronomancer_fateweaver.png",
+    "이미지_경로": "images/skills/sk_class/chronomancer_fateweaver.webp",
 
     "원소_기준치": [0, 60, 110, 180],
 
@@ -1509,4 +1509,5 @@
     ]
   }
 }
+
 
