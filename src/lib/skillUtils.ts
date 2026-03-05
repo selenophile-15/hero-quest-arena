@@ -79,7 +79,7 @@ export function getSkillImagePath(skillNameKor: string): string {
   // Determine grade folder
   const grade = getSkillGrade(skillNameKor);
   const folder = grade === '희귀' ? 'rare' : grade === '에픽' ? 'epic' : 'normal';
-  return `/images/skills/sk_hero/${folder}/${eng}.png`;
+  return `/images/skills/sk_hero/${folder}/${eng}.webp`;
 }
 
 // Reverse lookup for grade from SKILL_NAME_MAP keys grouped by grade
@@ -134,7 +134,7 @@ export function getUniqueSkillImagePath(jobName: string): string {
   };
   const file = JOB_PAIR_FILES[jobName];
   if (!file) return '';
-  return `/images/skills/sk_class/${file}.png`;
+  return `/images/skills/sk_class/${file}.webp`;
 }
 
 /**
