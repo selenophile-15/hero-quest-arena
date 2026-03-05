@@ -102,7 +102,7 @@ const QUALITY_SHADOW_COLOR: Record<string, string> = {
 };
 
 function getTypeImgPath(typeFile: string) {
-  return `/images/type/${typeFile}.png`;
+  return `/images/type/${typeFile}.webp`;
 }
 
 const ELEMENT_ENG_MAP: Record<string, string> = {
@@ -112,18 +112,18 @@ const ELEMENT_ENG_MAP: Record<string, string> = {
 const SPIRIT_NAME_MAP_LOCAL = SPIRIT_NAME_MAP;
 
 const ELEMENT_ORDER = [
-  { key: '불', icon: '/images/elements/fire.png' },
-  { key: '물', icon: '/images/elements/water.png' },
-  { key: '공기', icon: '/images/elements/air.png' },
-  { key: '대지', icon: '/images/elements/earth.png' },
-  { key: '빛', icon: '/images/elements/light.png' },
-  { key: '어둠', icon: '/images/elements/dark.png' },
+  { key: '불', icon: '/images/elements/fire.webp' },
+  { key: '물', icon: '/images/elements/water.webp' },
+  { key: '공기', icon: '/images/elements/air.webp' },
+  { key: '대지', icon: '/images/elements/earth.webp' },
+  { key: '빛', icon: '/images/elements/light.webp' },
+  { key: '어둠', icon: '/images/elements/dark.webp' },
 ];
 
 const SEED_ICONS = [
-  { key: 'hp', icon: '/images/special/hp_seed.png' },
-  { key: 'atk', icon: '/images/special/atk_seed.png' },
-  { key: 'def', icon: '/images/special/def_seed.png' },
+  { key: 'hp', icon: '/images/special/hp_seed.webp' },
+  { key: 'atk', icon: '/images/special/atk_seed.webp' },
+  { key: 'def', icon: '/images/special/def_seed.webp' },
 ];
 
 const DETAIL_STATS = [
@@ -144,11 +144,11 @@ const DETAIL_STATS = [
 ];
 
 const EQUIP_STAT_ICONS: Record<string, string> = {
-  '장비_공격력': '/images/stats/attack.png',
-  '장비_방어력': '/images/stats/defense.png',
-  '장비_체력': '/images/stats/health.png',
-  '장비_치명타확률%': '/images/stats/critchance.png',
-  '장비_회피%': '/images/stats/evasion.png',
+  '장비_공격력': '/images/stats/attack.webp',
+  '장비_방어력': '/images/stats/defense.webp',
+  '장비_체력': '/images/stats/health.webp',
+  '장비_치명타확률%': '/images/stats/critchance.webp',
+  '장비_회피%': '/images/stats/evasion.webp',
 };
 
 function formatEquipStatVal(key: string, value: number): string {
@@ -514,7 +514,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               {heroClass ? (
                 <img
                   key={heroClass}
-                  src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.png`}
+                  src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.webp`}
                   alt={heroClass}
                   className="max-w-full max-h-[360px] object-contain drop-shadow-lg"
                   onError={e => { e.currentTarget.style.display = 'none'; }}
@@ -629,7 +629,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   );
                 })}
                 <div className="border-t border-border pt-1 mt-1 flex items-center gap-2">
-                  <img src="/images/elements/all.png" alt="합산" className="w-5 h-5 flex-shrink-0" />
+                  <img src="/images/elements/all.webp" alt="합산" className="w-5 h-5 flex-shrink-0" />
                   <span className="text-sm font-medium text-foreground ml-auto tabular-nums">
                     {totalEquipElement > 0 ? formatNumber(totalEquipElement) : '-'}
                   </span>
@@ -819,7 +819,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       )}
                       {/* Relic icon top-right, bigger */}
                       {equipItem?.relic && (
-                        <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-0.5 right-0.5 w-5 h-5 z-10"
+                        <img src="/images/special/icon_global_artifact.webp" alt="유물" className="absolute top-0.5 right-0.5 w-5 h-5 z-10"
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                       )}
                       {equipItem?.imagePath ? (
@@ -838,7 +838,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                         onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}
                       >
                         {displayElement ? (
-                          <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-[80%] h-[80%] object-cover" alt={displayElement.type}
+                          <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-[80%] h-[80%] object-cover" alt={displayElement.type}
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : <span className="text-[6px] text-muted-foreground">원소</span>}
                       </div>
@@ -850,10 +850,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                         {displaySpirit ? (() => {
                           const eng = SPIRIT_NAME_MAP_LOCAL[displaySpirit.name];
                           if (displaySpirit.name === '문드라') {
-                            return <img src="/images/enchant/spirit/mundra.png" className="w-[80%] h-[80%] object-cover" alt="문드라" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                            return <img src="/images/enchant/spirit/mundra.webp" className="w-[80%] h-[80%] object-cover" alt="문드라" onError={e => { e.currentTarget.style.display = 'none'; }} />;
                           }
                           return eng ? (
-                            <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-[80%] h-[80%] object-cover" alt={displaySpirit.name}
+                            <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-[80%] h-[80%] object-cover" alt={displaySpirit.name}
                               onError={e => { e.currentTarget.style.display = 'none'; }} />
                           ) : <span className="text-[6px] text-foreground">{displaySpirit.name}</span>;
                         })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
