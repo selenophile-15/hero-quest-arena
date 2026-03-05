@@ -183,17 +183,17 @@ export const CHAMPION_NAME_REVERSE = reverseMap(CHAMPION_NAME_MAP);
 // ===== Path helpers =====
 export function getJobImagePath(korName: string): string {
   const eng = JOB_NAME_MAP[korName];
-  return `/images/classes/${eng || korName}.png`;
+  return `/images/classes/${eng || korName}.webp`;
 }
 
 export function getJobIllustPath(korName: string): string {
   const eng = JOB_NAME_MAP[korName];
-  return `/images/classillust/${eng || korName}.png`;
+  return `/images/classillust/${eng || korName}.webp`;
 }
 
 export function getSkillImagePath(korName: string): string {
   const eng = SKILL_NAME_MAP[korName];
-  return `/images/skills/sk_hero/${eng || korName}.png`;
+  return `/images/skills/sk_hero/${eng || korName}.webp`;
 }
 
 export function getChampionImagePath(korName: string): string {
@@ -203,7 +203,7 @@ export function getChampionImagePath(korName: string): string {
 
 export function getChampionSkillImagePath(korName: string, rank: number): string {
   const eng = CHAMPION_NAME_MAP[korName];
-  return `/images/skills/sk_champion/${eng || korName}_${rank}.png`;
+  return `/images/skills/sk_champion/${eng || korName}_${rank}.webp`;
 }
 
 /**
@@ -215,7 +215,7 @@ export function getChampionSkillImagePath(korName: string, rank: number): string
 export function getElementEnchantPath(elementKor: string, tier: number, affinity: boolean): string {
   const eng = ELEMENT_NAME_MAP[elementKor];
   const suffix = affinity ? '2' : '1';
-  return `/images/enchant/element/${eng || elementKor}${tier}_${suffix}.png`;
+  return `/images/enchant/element/${eng || elementKor}${tier}_${suffix}.webp`;
 }
 
 /**
@@ -226,5 +226,5 @@ export function getElementEnchantPath(elementKor: string, tier: number, affinity
 export function getSpiritEnchantPath(spiritKor: string, affinity: boolean): string {
   const eng = SPIRIT_NAME_MAP[spiritKor];
   const suffix = affinity ? '2' : '1';
-  return `/images/enchant/spirit/${eng || spiritKor}_${suffix}.png`;
+  return `/images/enchant/spirit/${eng || spiritKor}_${suffix}.webp`;
 }
