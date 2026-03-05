@@ -69,9 +69,9 @@ const formatValue = (key: string, value: any): string | null => {
 };
 
 const SEED_ICONS = [
-  { key: 'hp', icon: '/images/special/hp_seed.png', label: 'HP' },
-  { key: 'atk', icon: '/images/special/atk_seed.png', label: 'ATK' },
-  { key: 'def', icon: '/images/special/def_seed.png', label: 'DEF' },
+  { key: 'hp', icon: '/images/special/hp_seed.webp', label: 'HP' },
+  { key: 'atk', icon: '/images/special/atk_seed.webp', label: 'ATK' },
+  { key: 'def', icon: '/images/special/def_seed.webp', label: 'DEF' },
 ];
 
 const ELEMENT_ENG_MAP: Record<string, string> = {
@@ -375,7 +375,7 @@ export default function HeroList() {
             if (td && (hero.rank || 1) >= (td['챔피언_랭크'] || 0)) { leaderTier = t; break; }
           }
         }
-        const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${leaderTier}.png` : '';
+        const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${leaderTier}.webp` : '';
         const aurasongItem = hero.equipmentSlots?.[1]?.item;
         const auraIcon = aurasongItem ? getAurasongSkillIconPath(aurasongItem.name) : '';
         return (
@@ -499,7 +499,7 @@ export default function HeroList() {
         leaderSkillEffect = cls?.['효과'] || '-';
       }
       leaderSkillName = getLeaderSkillTierName(hero.championName, leaderSkillTier);
-      leaderSkillIcon = champEng ? `/images/skills/sk_champion/${champEng}_${leaderSkillTier}.png` : '';
+      leaderSkillIcon = champEng ? `/images/skills/sk_champion/${champEng}_${leaderSkillTier}.webp` : '';
       const aurasongItem = equipSlots[1]?.item;
       if (aurasongItem) {
         aurasongSkillEffect = getAurasongSkillEffect(aurasongItem.name);
@@ -682,7 +682,7 @@ export default function HeroList() {
                     <h4 className="text-xs font-semibold text-primary mb-1" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>유물 효과</h4>
                     {relicEffects.map((r, i) => (
                       <div key={i} className="flex items-start gap-1 text-xs mb-1">
-                        <img src="/images/special/icon_global_artifact.png" alt="" className="w-4 h-4 flex-shrink-0" />
+                        <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4 flex-shrink-0" />
                         <span className="text-foreground/80"><span className="font-medium text-foreground">{r.name}:</span> {r.effect}</span>
                       </div>
                     ))}
@@ -714,7 +714,7 @@ export default function HeroList() {
                           <span className="absolute top-0.5 left-0.5 text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5 z-10">T{item.tier}</span>
                         )}
                         {item?.relic && (
-                          <img src="/images/special/icon_global_artifact.png" alt="" className="absolute top-0.5 right-0.5 w-4 h-4 z-10"
+                          <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0.5 right-0.5 w-4 h-4 z-10"
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         )}
                         {item?.imagePath ? (
@@ -726,15 +726,15 @@ export default function HeroList() {
                         {item && (
                           <div className="absolute bottom-0.5 left-0.5 right-0.5 flex items-center justify-center gap-1">
                             {displayElement && (
-                              <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`}
+                              <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
                                 className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
                             )}
                             {displaySpirit && (() => {
                               const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.png" className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                             })()}
-                            {itemType && <img src={`/images/type/${itemType}.png`} className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                           </div>
                         )}
                       </div>
@@ -772,7 +772,7 @@ export default function HeroList() {
           if (tierData && (hero.rank || 1) >= (tierData['챔피언_랭크'] || 0)) { leaderTier = t; break; }
         }
       }
-      leaderSkillIcon = champEng ? `/images/skills/sk_champion/${champEng}_${leaderTier}.png` : '';
+      leaderSkillIcon = champEng ? `/images/skills/sk_champion/${champEng}_${leaderTier}.webp` : '';
       const aurasongItem = equipSlots[1]?.item;
       if (aurasongItem) {
         aurasongIcon = getAurasongSkillIconPath(aurasongItem.name);
@@ -842,17 +842,17 @@ export default function HeroList() {
                   className={`relative w-16 aspect-square rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center justify-center overflow-hidden`}
                   style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
                   {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
-                  {item?.relic && <img src="/images/special/icon_global_artifact.png" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                  {item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                   {item?.imagePath ? <img src={item.imagePath} alt="" className="w-3/5 h-3/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
                   {item && (
                     <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-0.5">
-                      {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                       {displaySpirit && (() => {
                         const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.png" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                       })()}
-                      {itemType && <img src={`/images/type/${itemType}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                     </div>
                   )}
                 </div>
@@ -872,17 +872,17 @@ export default function HeroList() {
                   className={`relative aspect-square rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center justify-center overflow-hidden`}
                   style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
                   {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
-                  {item?.relic && <img src="/images/special/icon_global_artifact.png" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                  {item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                   {item?.imagePath ? <img src={item.imagePath} alt="" className="w-3/5 h-3/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
                   {item && (
                     <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-0.5">
-                      {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                       {displaySpirit && (() => {
                         const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.png" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                       })()}
-                      {itemType && <img src={`/images/type/${itemType}.png`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                     </div>
                   )}
                 </div>
