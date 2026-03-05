@@ -1,154 +1,154 @@
 {
   "4티어": {
     "불": {
-      "이미지_기본": "/images/enchant/element/fire4_1.png",
-      "이미지_친화": "/images/enchant/element/fire4_2.png"
+      "이미지_기본": "/images/enchant/element/fire4_1.webp",
+      "이미지_친화": "/images/enchant/element/fire4_2.webp"
     },
     "물": {
-      "이미지_기본": "/images/enchant/element/water4_1.png",
-      "이미지_친화": "/images/enchant/element/water4_2.png"
+      "이미지_기본": "/images/enchant/element/water4_1.webp",
+      "이미지_친화": "/images/enchant/element/water4_2.webp"
     },
     "공기": {
-      "이미지_기본": "/images/enchant/element/air4_1.png",
-      "이미지_친화": "/images/enchant/element/air4_2.png"
+      "이미지_기본": "/images/enchant/element/air4_1.webp",
+      "이미지_친화": "/images/enchant/element/air4_2.webp"
     },
     "대지": {
-      "이미지_기본": "/images/enchant/element/earth4_1.png",
-      "이미지_친화": "/images/enchant/element/earth4_2.png"
+      "이미지_기본": "/images/enchant/element/earth4_1.webp",
+      "이미지_친화": "/images/enchant/element/earth4_2.webp"
     },
     "빛": {
-      "이미지_기본": "/images/enchant/element/light4_1.png",
-      "이미지_친화": "/images/enchant/element/light4_2.png"
+      "이미지_기본": "/images/enchant/element/light4_1.webp",
+      "이미지_친화": "/images/enchant/element/light4_2.webp"
     },
     "어둠": {
-      "이미지_기본": "/images/enchant/element/dark4_1.png",
-      "이미지_친화": "/images/enchant/element/dark4_2.png"
+      "이미지_기본": "/images/enchant/element/dark4_1.webp",
+      "이미지_친화": "/images/enchant/element/dark4_2.webp"
     }
   },
 
   "5티어": {
     "골드": {
-      "이미지_기본": "/images/enchant/element/gold5_1.png",
-      "이미지_친화": "/images/enchant/element/gold5_2.png"
+      "이미지_기본": "/images/enchant/element/gold5_1.webp",
+      "이미지_친화": "/images/enchant/element/gold5_2.webp"
     }
   },
 
   "7티어": {
     "불": {
-      "이미지_기본": "/images/enchant/element/fire7_1.png",
-      "이미지_친화": "/images/enchant/element/fire7_2.png"
+      "이미지_기본": "/images/enchant/element/fire7_1.webp",
+      "이미지_친화": "/images/enchant/element/fire7_2.webp"
     },
     "물": {
-      "이미지_기본": "/images/enchant/element/water7_1.png",
-      "이미지_친화": "/images/enchant/element/water7_2.png"
+      "이미지_기본": "/images/enchant/element/water7_1.webp",
+      "이미지_친화": "/images/enchant/element/water7_2.webp"
     },
     "공기": {
-      "이미지_기본": "/images/enchant/element/air7_1.png",
-      "이미지_친화": "/images/enchant/element/air7_2.png"
+      "이미지_기본": "/images/enchant/element/air7_1.webp",
+      "이미지_친화": "/images/enchant/element/air7_2.webp"
     },
     "대지": {
-      "이미지_기본": "/images/enchant/element/earth7_1.png",
-      "이미지_친화": "/images/enchant/element/earth7_2.png"
+      "이미지_기본": "/images/enchant/element/earth7_1.webp",
+      "이미지_친화": "/images/enchant/element/earth7_2.webp"
     },
     "빛": {
-      "이미지_기본": "/images/enchant/element/light7_1.png",
-      "이미지_친화": "/images/enchant/element/light7_2.png"
+      "이미지_기본": "/images/enchant/element/light7_1.webp",
+      "이미지_친화": "/images/enchant/element/light7_2.webp"
     },
     "어둠": {
-      "이미지_기본": "/images/enchant/element/dark7_1.png",
-      "이미지_친화": "/images/enchant/element/dark7_2.png"
+      "이미지_기본": "/images/enchant/element/dark7_1.webp",
+      "이미지_친화": "/images/enchant/element/dark7_2.webp"
     }
   },
 
   "9티어": {
     "불": {
-      "이미지_기본": "/images/enchant/element/fire9_1.png",
-      "이미지_친화": "/images/enchant/element/fire9_2.png"
+      "이미지_기본": "/images/enchant/element/fire9_1.webp",
+      "이미지_친화": "/images/enchant/element/fire9_2.webp"
     },
     "물": {
-      "이미지_기본": "/images/enchant/element/water9_1.png",
-      "이미지_친화": "/images/enchant/element/water9_2.png"
+      "이미지_기본": "/images/enchant/element/water9_1.webp",
+      "이미지_친화": "/images/enchant/element/water9_2.webp"
     },
     "공기": {
-      "이미지_기본": "/images/enchant/element/air9_1.png",
-      "이미지_친화": "/images/enchant/element/air9_2.png"
+      "이미지_기본": "/images/enchant/element/air9_1.webp",
+      "이미지_친화": "/images/enchant/element/air9_2.webp"
     },
     "대지": {
-      "이미지_기본": "/images/enchant/element/earth9_1.png",
-      "이미지_친화": "/images/enchant/element/earth9_2.png"
+      "이미지_기본": "/images/enchant/element/earth9_1.webp",
+      "이미지_친화": "/images/enchant/element/earth9_2.webp"
     },
     "빛": {
-      "이미지_기본": "/images/enchant/element/light9_1.png",
-      "이미지_친화": "/images/enchant/element/light9_2.png"
+      "이미지_기본": "/images/enchant/element/light9_1.webp",
+      "이미지_친화": "/images/enchant/element/light9_2.webp"
     },
     "어둠": {
-      "이미지_기본": "/images/enchant/element/dark9_1.png",
-      "이미지_친화": "/images/enchant/element/dark9_2.png"
+      "이미지_기본": "/images/enchant/element/dark9_1.webp",
+      "이미지_친화": "/images/enchant/element/dark9_2.webp"
     }
   },
 
   "10티어": {
     "골드": {
-      "이미지_기본": "/images/enchant/element/gold10_1.png",
-      "이미지_친화": "/images/enchant/element/gold10_2.png"
+      "이미지_기본": "/images/enchant/element/gold10_1.webp",
+      "이미지_친화": "/images/enchant/element/gold10_2.webp"
     }
   },
 
   "12티어": {
     "불": {
-      "이미지_기본": "/images/enchant/element/fire12_1.png",
-      "이미지_친화": "/images/enchant/element/fire12_2.png"
+      "이미지_기본": "/images/enchant/element/fire12_1.webp",
+      "이미지_친화": "/images/enchant/element/fire12_2.webp"
     },
     "물": {
-      "이미지_기본": "/images/enchant/element/water12_1.png",
-      "이미지_친화": "/images/enchant/element/water12_2.png"
+      "이미지_기본": "/images/enchant/element/water12_1.webp",
+      "이미지_친화": "/images/enchant/element/water12_2.webp"
     },
     "공기": {
-      "이미지_기본": "/images/enchant/element/air12_1.png",
-      "이미지_친화": "/images/enchant/element/air12_2.png"
+      "이미지_기본": "/images/enchant/element/air12_1.webp",
+      "이미지_친화": "/images/enchant/element/air12_2.webp"
     },
     "대지": {
-      "이미지_기본": "/images/enchant/element/earth12_1.png",
-      "이미지_친화": "/images/enchant/element/earth12_2.png"
+      "이미지_기본": "/images/enchant/element/earth12_1.webp",
+      "이미지_친화": "/images/enchant/element/earth12_2.webp"
     },
     "빛": {
-      "이미지_기본": "/images/enchant/element/light12_1.png",
-      "이미지_친화": "/images/enchant/element/light12_2.png"
+      "이미지_기본": "/images/enchant/element/light12_1.webp",
+      "이미지_친화": "/images/enchant/element/light12_2.webp"
     },
     "어둠": {
-      "이미지_기본": "/images/enchant/element/dark12_1.png",
-      "이미지_친화": "/images/enchant/element/dark12_2.png"
+      "이미지_기본": "/images/enchant/element/dark12_1.webp",
+      "이미지_친화": "/images/enchant/element/dark12_2.webp"
     }
   },
 
   "14티어": {
     "불": {
-      "이미지_기본": "/images/enchant/element/fire14_1.png",
-      "이미지_친화": "/images/enchant/element/fire14_2.png"
+      "이미지_기본": "/images/enchant/element/fire14_1.webp",
+      "이미지_친화": "/images/enchant/element/fire14_2.webp"
     },
     "물": {
-      "이미지_기본": "/images/enchant/element/water14_1.png",
-      "이미지_친화": "/images/enchant/element/water14_2.png"
+      "이미지_기본": "/images/enchant/element/water14_1.webp",
+      "이미지_친화": "/images/enchant/element/water14_2.webp"
     },
     "공기": {
-      "이미지_기본": "/images/enchant/element/air14_1.png",
-      "이미지_친화": "/images/enchant/element/air14_2.png"
+      "이미지_기본": "/images/enchant/element/air14_1.webp",
+      "이미지_친화": "/images/enchant/element/air14_2.webp"
     },
     "대지": {
-      "이미지_기본": "/images/enchant/element/earth14_1.png",
-      "이미지_친화": "/images/enchant/element/earth14_2.png"
+      "이미지_기본": "/images/enchant/element/earth14_1.webp",
+      "이미지_친화": "/images/enchant/element/earth14_2.webp"
     },
     "빛": {
-      "이미지_기본": "/images/enchant/element/light14_1.png",
-      "이미지_친화": "/images/enchant/element/light14_2.png"
+      "이미지_기본": "/images/enchant/element/light14_1.webp",
+      "이미지_친화": "/images/enchant/element/light14_2.webp"
     },
     "어둠": {
-      "이미지_기본": "/images/enchant/element/dark14_1.png",
-      "이미지_친화": "/images/enchant/element/dark14_2.png"
+      "이미지_기본": "/images/enchant/element/dark14_1.webp",
+      "이미지_친화": "/images/enchant/element/dark14_2.webp"
     },
     "골드": {
-      "이미지_기본": "/images/enchant/element/gold14_1.png",
-      "이미지_친화": "/images/enchant/element/gold14_2.png"
+      "이미지_기본": "/images/enchant/element/gold14_1.webp",
+      "이미지_친화": "/images/enchant/element/gold14_2.webp"
     }
   }
 }
