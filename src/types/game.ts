@@ -102,7 +102,6 @@ export const HERO_STAT_COLUMNS = [
 ];
 
 export const CHAMPION_STAT_COLUMNS = [
-  { key: 'type' as const, label: '유형' },
   { key: 'name' as const, label: '이름' },
   { key: 'level' as const, label: 'LV' },
   { key: 'rank' as const, label: '랭크' },
