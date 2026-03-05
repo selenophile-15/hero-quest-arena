@@ -673,7 +673,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           {/* Skills + Equipment */}
           <div className="flex flex-col gap-3">
             {/* Skills */}
-            <div className="card-fantasy p-3" style={{ minHeight: '50%' }}>
+            <div className="card-fantasy p-3">
               <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬</h3>
               <div className="space-y-3">
                 {/* Leader Skill */}
