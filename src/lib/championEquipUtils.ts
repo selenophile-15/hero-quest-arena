@@ -72,17 +72,17 @@ export const AURASONG_SKILL_ICON_MAP: Record<string, string> = {
 
 export function getFamiliarImagePath(korName: string): string {
   const eng = FAMILIAR_NAME_MAP[korName];
-  return eng ? `/images/equipment/champion/familiar/${eng}.png` : '';
+  return eng ? `/images/equipment/champion/familiar/${eng}.webp` : '';
 }
 
 export function getAurasongImagePath(korName: string): string {
   const eng = AURASONG_NAME_MAP[korName];
-  return eng ? `/images/equipment/champion/aurasong/${eng}.png` : '';
+  return eng ? `/images/equipment/champion/aurasong/${eng}.webp` : '';
 }
 
 export function getAurasongSkillIconPath(korName: string): string {
   const eng = AURASONG_SKILL_ICON_MAP[korName];
-  return eng ? `/images/skills/sk_aurasong/${eng}.png` : '';
+  return eng ? `/images/skills/sk_aurasong/${eng}.webp` : '';
 }
 
 // Cached data
