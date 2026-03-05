@@ -23,18 +23,18 @@ interface ChampionFormProps {
 }
 
 const ELEMENT_ORDER = [
-  { key: '불', icon: '/images/elements/fire.png' },
-  { key: '물', icon: '/images/elements/water.png' },
-  { key: '공기', icon: '/images/elements/air.png' },
-  { key: '대지', icon: '/images/elements/earth.png' },
-  { key: '빛', icon: '/images/elements/light.png' },
-  { key: '어둠', icon: '/images/elements/dark.png' },
+  { key: '불', icon: '/images/elements/fire.webp' },
+  { key: '물', icon: '/images/elements/water.webp' },
+  { key: '공기', icon: '/images/elements/air.webp' },
+  { key: '대지', icon: '/images/elements/earth.webp' },
+  { key: '빛', icon: '/images/elements/light.webp' },
+  { key: '어둠', icon: '/images/elements/dark.webp' },
 ];
 
 const SEED_ICONS = [
-  { key: 'hp', icon: '/images/special/hp_seed.png' },
-  { key: 'atk', icon: '/images/special/atk_seed.png' },
-  { key: 'def', icon: '/images/special/def_seed.png' },
+  { key: 'hp', icon: '/images/special/hp_seed.webp' },
+  { key: 'atk', icon: '/images/special/atk_seed.webp' },
+  { key: 'def', icon: '/images/special/def_seed.webp' },
 ];
 
 const ELEMENT_ENG_MAP: Record<string, string> = {
@@ -72,11 +72,11 @@ const QUALITY_OPTIONS = [
 ];
 
 const EQUIP_STAT_ICONS: Record<string, string> = {
-  '장비_공격력': '/images/stats/attack.png',
-  '장비_방어력': '/images/stats/defense.png',
-  '장비_체력': '/images/stats/health.png',
-  '장비_치명타확률%': '/images/stats/critchance.png',
-  '장비_회피%': '/images/stats/evasion.png',
+  '장비_공격력': '/images/stats/attack.webp',
+  '장비_방어력': '/images/stats/defense.webp',
+  '장비_체력': '/images/stats/health.webp',
+  '장비_치명타확률%': '/images/stats/critchance.webp',
+  '장비_회피%': '/images/stats/evasion.webp',
 };
 
 function formatEquipStatVal(key: string, value: number): string {
@@ -345,7 +345,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
               onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}>
               {displayElement ? (
-                <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.png`} className="w-[80%] h-[80%] object-cover" alt=""
+                <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-[80%] h-[80%] object-cover" alt=""
                   onError={e => { e.currentTarget.style.display = 'none'; }} />
               ) : <span className="text-[6px] text-muted-foreground">원소</span>}
             </div>
@@ -353,12 +353,12 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}>
               {displaySpirit ? (() => {
                 const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.png" className="w-[80%] h-[80%] object-cover" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.png`} className="w-[80%] h-[80%] object-cover" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-foreground">{displaySpirit.name}</span>;
+                if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-[80%] h-[80%] object-cover" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-[80%] h-[80%] object-cover" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-foreground">{displaySpirit.name}</span>;
               })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
             </div>
             <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden">
-              {typeFile ? <img src={`/images/type/${typeFile}.png`} className="w-[80%] h-[80%] object-contain" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground">타입</span>}
+              {typeFile ? <img src={`/images/type/${typeFile}.webp`} className="w-[80%] h-[80%] object-contain" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground">타입</span>}
             </div>
           </div>
         </div>
@@ -455,11 +455,11 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                         </div>
                         <div className="flex items-center justify-center gap-1 w-full" style={{ height: '25%' }}>
                           {item.elementAffinity?.map(el => (
-                            <img key={el} src={`/images/elements/${ELEMENT_ENG_MAP[el] || el}.png`} alt={el} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                            <img key={el} src={`/images/elements/${ELEMENT_ENG_MAP[el] || el}.webp`} alt={el} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
                           ))}
                           {item.spiritAffinity?.map(sp => {
                             const eng = SPIRIT_NAME_MAP[sp];
-                            return eng ? <img key={sp} src={`/images/enchant/spirit/${eng}_1.png`} alt={sp} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                            return eng ? <img key={sp} src={`/images/enchant/spirit/${eng}_1.webp`} alt={sp} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                           })}
                           {!item.elementAffinity?.length && !item.spiritAffinity?.length && <span className="text-[7px] text-muted-foreground/30">-</span>}
                         </div>
@@ -663,7 +663,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   );
                 })}
                 <div className="border-t border-border pt-1 mt-1 flex items-center gap-2">
-                  <img src="/images/elements/all.png" alt="합산" className="w-5 h-5 flex-shrink-0" />
+                  <img src="/images/elements/all.webp" alt="합산" className="w-5 h-5 flex-shrink-0" />
                   <span className="text-sm font-medium text-foreground ml-auto tabular-nums">{totalEquipElement > 0 ? formatNumber(totalEquipElement) : '-'}</span>
                 </div>
               </div>
@@ -690,7 +690,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       <span className="px-1 py-0.5 rounded text-[10px] font-semibold bg-yellow-600/60 text-foreground">챔피언</span>
                     </div>
                     <div className="px-1 py-1.5 flex items-center justify-center">
-                      <img src={`/images/skills/sk_champion/${champEng}_${leaderSkillTier}.png`} alt="" className="w-9 h-9 object-contain"
+                      <img src={`/images/skills/sk_champion/${champEng}_${leaderSkillTier}.webp`} alt="" className="w-9 h-9 object-contain"
                         onError={e => { e.currentTarget.style.display = 'none'; }} />
                     </div>
                     <div className="px-1 py-1.5 flex items-center justify-center text-xs text-foreground">{getLeaderSkillTierName(championName, leaderSkillTier)}</div>
