@@ -66,16 +66,16 @@ export const POSITIONS = [
 ] as const;
 
 export const STAT_ICON_MAP: Record<string, string> = {
-  hp: '/images/stats/health.png',
-  atk: '/images/stats/attack.png',
-  def: '/images/stats/defense.png',
-  crit: '/images/stats/critchance.png',
-  critDmg: '/images/stats/critdamage.png',
-  critAttack: '/images/stats/icon_global_critattack.png',
-  evasion: '/images/stats/evasion.png',
-  threat: '/images/stats/threat.png',
-  power: '/images/stats/power.png',
-  airshipPower: '/images/stats/icon_global_dragoninvasion_airshippower.png',
+  hp: '/images/stats/health.webp',
+  atk: '/images/stats/attack.webp',
+  def: '/images/stats/defense.webp',
+  crit: '/images/stats/critchance.webp',
+  critDmg: '/images/stats/critdamage.webp',
+  critAttack: '/images/stats/icon_global_critattack.webp',
+  evasion: '/images/stats/evasion.webp',
+  threat: '/images/stats/threat.webp',
+  power: '/images/stats/power.webp',
+  airshipPower: '/images/stats/icon_global_dragoninvasion_airshippower.webp',
 };
 
 export const HERO_STAT_COLUMNS = [
@@ -127,21 +127,21 @@ export const CHAMPION_STAT_COLUMNS = [
 export const STAT_COLUMNS = HERO_STAT_COLUMNS;
 
 export const ELEMENT_ICON_MAP: Record<string, string> = {
-  '불': '/images/elements/fire.png',
-  '화': '/images/elements/fire.png',
-  '물': '/images/elements/water.png',
-  '수': '/images/elements/water.png',
-  '공기': '/images/elements/air.png',
-  '풍': '/images/elements/air.png',
-  '대지': '/images/elements/earth.png',
-  '지': '/images/elements/earth.png',
-  '빛': '/images/elements/light.png',
-  '광': '/images/elements/light.png',
-  '어둠': '/images/elements/dark.png',
-  '암': '/images/elements/dark.png',
-  '골드': '/images/elements/gold.png',
-  '모든 원소': '/images/elements/all.png',
-  '전체': '/images/elements/all.png',
+  '불': '/images/elements/fire.webp',
+  '화': '/images/elements/fire.webp',
+  '물': '/images/elements/water.webp',
+  '수': '/images/elements/water.webp',
+  '공기': '/images/elements/air.webp',
+  '풍': '/images/elements/air.webp',
+  '대지': '/images/elements/earth.webp',
+  '지': '/images/elements/earth.webp',
+  '빛': '/images/elements/light.webp',
+  '광': '/images/elements/light.webp',
+  '어둠': '/images/elements/dark.webp',
+  '암': '/images/elements/dark.webp',
+  '골드': '/images/elements/gold.webp',
+  '모든 원소': '/images/elements/all.webp',
+  '전체': '/images/elements/all.webp',
 };
 
 export const QUESTS: Quest[] = [
