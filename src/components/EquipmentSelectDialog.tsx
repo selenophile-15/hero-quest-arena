@@ -119,7 +119,7 @@ function getSpiritTier(name: string): number {
 
 const TYPE_IMAGE_FIX: Record<string, string> = { staves: 'staff' };
 function getTypeImagePath(typeFile: string) {
-  return `/images/type/${TYPE_IMAGE_FIX[typeFile] || typeFile}.png`;
+  return `/images/type/${TYPE_IMAGE_FIX[typeFile] || typeFile}.webp`;
 }
 
 function formatEquipStat(key: string, value: number): string {
@@ -128,9 +128,9 @@ function formatEquipStat(key: string, value: number): string {
 }
 
 function getElementIconPath(el: string): string {
-  if (el === '모든 원소') return '/images/elements/all.png';
+  if (el === '모든 원소') return '/images/elements/all.webp';
   const eng = ELEMENT_ENG[el];
-  return eng ? `/images/elements/${eng}.png` : '';
+  return eng ? `/images/elements/${eng}.webp` : '';
 }
 
 export default function EquipmentSelectDialog({
@@ -363,7 +363,7 @@ export default function EquipmentSelectDialog({
                 <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>슬롯 {i + 1}</span>
                 {s.item ? (
                   <>
-                    {s.item.relic && <img src="/images/special/icon_global_artifact.png" alt="유물" className="w-3 h-3" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                    {s.item.relic && <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-3 h-3" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                     {s.item.imagePath ? (
                       <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                     ) : (
@@ -527,7 +527,7 @@ export default function EquipmentSelectDialog({
 
                               {/* Relic icon */}
                               {item.relic && (
-                                <img src="/images/special/icon_global_artifact.png" alt="유물" className="absolute top-1 right-1 w-4 h-4 z-10"
+                                <img src="/images/special/icon_global_artifact.webp" alt="유물" className="absolute top-1 right-1 w-4 h-4 z-10"
                                   onError={e => { e.currentTarget.style.display = 'none'; }} />
                               )}
 
@@ -568,7 +568,7 @@ export default function EquipmentSelectDialog({
                                       const eng = ELEMENT_ENG[el];
                                       const tier = item.uniqueElementTier || 1;
                                       return (
-                                        <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.png` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
+                                        <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
                                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                                       );
                                     })}
@@ -580,14 +580,14 @@ export default function EquipmentSelectDialog({
                                     {spiritAffs.map(sp => {
                                       const eng = SPIRIT_NAME_MAP[sp];
                                       return (
-                                        <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.png` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
+                                        <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.webp` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
                                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                                       );
                                     })}
                                     {uniqueSp.map(sp => {
                                       const eng = SPIRIT_NAME_MAP[sp];
                                       return (
-                                        <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.png` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
+                                        <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
                                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                                       );
                                     })}
