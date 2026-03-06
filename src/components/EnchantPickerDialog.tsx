@@ -26,6 +26,7 @@ interface EnchantPickerDialogProps {
   itemInfoPerSlot: (ItemAffinityInfo | null)[];
   itemNames: string[];
   onConfirm: (slots: EnchantSlotData[]) => void;
+  initialTab?: 'element' | 'spirit';
 }
 
 const ELEMENT_OPTIONS = ['불', '물', '공기', '대지', '빛', '어둠'];
@@ -129,7 +130,7 @@ function hasSpiritAffinity(info: ItemAffinityInfo | null, spName: string): boole
 }
 
 export default function EnchantPickerDialog({
-  open, onClose, slotCount, slots, itemInfoPerSlot, itemNames, onConfirm,
+  open, onClose, slotCount, slots, itemInfoPerSlot, itemNames, onConfirm, initialTab,
 }: EnchantPickerDialogProps) {
   const [localSlots, setLocalSlots] = useState<EnchantSlotData[]>([...slots]);
   const [bulkElement, setBulkElement] = useState<string>('');
@@ -266,7 +267,7 @@ export default function EnchantPickerDialog({
           <DialogDescription className="sr-only">각 슬롯의 원소와 영혼을 선택하세요</DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="element" className="w-full">
+        <Tabs defaultValue={initialTab || 'element'} key={initialTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="element" className="text-sm gap-2">
               <img src="/images/type/element.webp" alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
