@@ -647,14 +647,15 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
   return (
     <div className="animate-fade-in">
-      {/* Sticky back button */}
-      <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 px-1 -mx-6 px-6 flex items-center justify-between">
+      {/* Sticky top bar with title + save/cancel */}
+      <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
         <h2 className="font-display text-xl text-primary tracking-wide">
           {hero ? '챔피언 수정' : '새 챔피언 추가'}
         </h2>
-        <button onClick={onCancel} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-          <ArrowLeft className="w-4 h-4" /><span>돌아가기</span>
-        </button>
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
+          <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
+        </div>
       </div>
 
       <div className="space-y-4 mt-4" ref={formRef} onKeyDown={handleKeyDown}>
