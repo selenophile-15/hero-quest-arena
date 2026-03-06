@@ -853,7 +853,7 @@ export default function HeroList() {
               return (
                 <div key={i}
                   className={`relative w-16 aspect-square rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center justify-center overflow-hidden`}
-                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
+                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
                   {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
                   {item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                   {item?.imagePath ? <img src={item.imagePath} alt="" className="w-3/5 h-3/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
@@ -883,7 +883,7 @@ export default function HeroList() {
               return (
                 <div key={i}
                   className={`relative aspect-square rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center justify-center overflow-hidden`}
-                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
+                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
                   {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
                   {item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                   {item?.imagePath ? <img src={item.imagePath} alt="" className="w-3/5 h-3/5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
@@ -985,7 +985,7 @@ export default function HeroList() {
                     <th key={col.key} onClick={() => handleSort(col.key)}
                       className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-muted-foreground text-center ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
-                      } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? 'min-w-[170px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''}`}>
+                      } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[100px]' : 'min-w-[170px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
                         {renderHeaderLabel(col)}
                         {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
@@ -1046,10 +1046,19 @@ export default function HeroList() {
               <Select value={albumSortKey} onValueChange={setAlbumSortKey}>
                 <SelectTrigger className="w-[120px] h-8 text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="heroClass">직업</SelectItem>
-                  <SelectItem value="classLine">계열</SelectItem>
-                  <SelectItem value="level">레벨</SelectItem>
-                  <SelectItem value="element">속성</SelectItem>
+                  {listTab === 'hero' ? (
+                    <>
+                      <SelectItem value="heroClass">직업</SelectItem>
+                      <SelectItem value="classLine">계열</SelectItem>
+                      <SelectItem value="level">레벨</SelectItem>
+                      <SelectItem value="element">속성</SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="name">이름</SelectItem>
+                      <SelectItem value="element">속성</SelectItem>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
               <button onClick={() => setAlbumSortDir(d => d === 'asc' ? 'desc' : 'asc')} className="p-1 rounded hover:bg-secondary">
