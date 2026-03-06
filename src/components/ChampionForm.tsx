@@ -359,10 +359,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         </div>
         <div
           className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
-                    style={equipItem ? {
-                      background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
-                      boxShadow: QUALITY_SHADOW_COLOR[quality],
-                    } : { background: 'hsl(var(--secondary) / 0.3)' }}
+          style={equipItem ? {
+            background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
             boxShadow: QUALITY_SHADOW_COLOR[quality],
           } : { background: 'hsl(var(--secondary) / 0.3)' }}
         >
