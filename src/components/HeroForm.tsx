@@ -87,18 +87,18 @@ const QUALITY_BORDER: Record<string, string> = {
   legendary: 'border-yellow-400/80',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.18)',
-  uncommon: 'rgba(74,222,128,0.2)',
-  flawless: 'rgba(103,232,249,0.25)',
-  epic: 'rgba(217,70,239,0.3)',
-  legendary: 'rgba(250,204,21,0.35)',
+  common: 'rgba(220,220,220,0.28)',
+  uncommon: 'rgba(74,222,128,0.32)',
+  flawless: 'rgba(103,232,249,0.38)',
+  epic: 'rgba(217,70,239,0.42)',
+  legendary: 'rgba(250,204,21,0.5)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
-  common: '0 0 8px rgba(220,220,220,0.4)',
-  uncommon: '0 0 10px rgba(74,222,128,0.5)',
-  flawless: '0 0 12px rgba(103,232,249,0.5)',
-  epic: '0 0 14px rgba(217,70,239,0.6)',
-  legendary: '0 0 16px rgba(250,204,21,0.7)',
+  common: '0 0 10px rgba(220,220,220,0.5)',
+  uncommon: '0 0 12px rgba(74,222,128,0.6)',
+  flawless: '0 0 14px rgba(103,232,249,0.6)',
+  epic: '0 0 16px rgba(217,70,239,0.7)',
+  legendary: '0 0 18px rgba(250,204,21,0.8)',
 };
 
 function getTypeImgPath(typeFile: string) {
@@ -219,8 +219,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     spirit: any | null;
   }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
   const isInitialHeroClass = useRef(!!hero);
-  const formRef = useRef<HTMLDivElement>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
+  const [enchantInitialTab, setEnchantInitialTab] = useState<'element' | 'spirit'>('element');
+  const [nameError, setNameError] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     getCommonSkills().then(data => {
@@ -323,14 +325,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       })
       .catch(() => setRecommendedSets({}));
 
-    // Reset skills on job change, but not on initial mount when editing
+    // Reset skills and equipment on job change, but not on initial mount when editing
     if (isInitialHeroClass.current) {
       isInitialHeroClass.current = false;
     } else {
       setSelectedSkills([]);
-      if (!hero) {
-        setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
-      }
+      setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
     }
   }, [heroClass]);
 
@@ -374,13 +374,21 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const hasRanged = useMemo(() => hasRangedWeapon(equipmentSlots), [equipmentSlots]);
 
   const handleSubmit = () => {
-    if (!name.trim() || !heroClass) return;
+    if (!name.trim()) {
+      setNameError(true);
+      nameInputRef.current?.focus();
+      nameInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (!heroClass) return;
+    setNameError(false);
     onSave({
       id: hero?.id || crypto.randomUUID(),
       name: name.trim(),
       classLine: classLine as HeroClassLine,
       heroClass,
       type: 'hero',
+      promoted,
       level: Number(level) || 1,
       power: Number(power) || 0,
       hp, atk, def,
@@ -433,14 +441,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
   return (
     <div className="animate-fade-in">
-      {/* Sticky back button */}
-      <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 px-1 -mx-6 px-6 flex items-center justify-between">
+      {/* Sticky top bar with title + save/cancel */}
+      <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
         <h2 className="font-display text-xl text-primary tracking-wide">
           {hero ? '영웅 수정' : '새 영웅 추가'}
         </h2>
-        <button onClick={onCancel} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-          <ArrowLeft className="w-4 h-4" /><span>돌아가기</span>
-        </button>
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
+          <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
+        </div>
       </div>
 
       <div className="space-y-4 mt-4" ref={formRef} onKeyDown={handleKeyDown}>
@@ -449,7 +458,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           <div className="grid grid-cols-[1.5fr_0.8fr_auto_1.5fr_0.7fr_1fr_1fr] gap-3 items-end">
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">이름</Label>
-              <Input value={name} onChange={e => setName(e.target.value)} placeholder="영웅 이름" className="h-9 text-sm" />
+              <Input ref={nameInputRef} value={name} onChange={e => { setName(e.target.value); setNameError(false); }} placeholder="영웅 이름" className={`h-9 text-sm ${nameError ? 'border-red-500 ring-1 ring-red-500' : ''}`} />
+              {nameError && <p className="text-red-500 text-xs mt-0.5">이름을 입력해주세요</p>}
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">계열</Label>
@@ -805,7 +815,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   <div
                     className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
                     style={equipItem ? {
-                      background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`,
+                      background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                       boxShadow: QUALITY_SHADOW_COLOR[quality],
                     } : { background: 'hsl(var(--secondary) / 0.3)' }}
                   >
@@ -835,7 +845,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       <div
                         className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
                         title="원소 선택"
-                        onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}
+                        onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
                       >
                         {displayElement ? (
                           <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-[80%] h-[80%] object-cover" alt={displayElement.type}
@@ -845,7 +855,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       <div
                         className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
                         title="영혼 선택"
-                        onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}
+                        onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }}
                       >
                         {displaySpirit ? (() => {
                           const eng = SPIRIT_NAME_MAP_LOCAL[displaySpirit.name];
