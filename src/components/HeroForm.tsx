@@ -913,9 +913,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             <div className="mt-3 p-2 border border-yellow-400/30 rounded bg-yellow-400/5">
               <p className="text-xs font-semibold text-yellow-400 mb-1">⭐ 유물 효과</p>
               {equipmentSlots.filter(s => s.item?.relic && s.item?.relicEffect).map((s, i) => (
-                <p key={i} className="text-xs text-foreground/80">
-                  <span className="font-medium text-foreground">{s.item!.name}:</span> {s.item!.relicEffect}
-                </p>
+                <div key={i} className="text-xs text-foreground/80">
+                  <span className="font-medium text-foreground">{s.item!.name}:</span>{' '}
+                  {s.item!.relicEffect.split('\\n').map((line: string, li: number) => (
+                    <span key={li}>{li > 0 && <br />}{line}</span>
+                  ))}
+                </div>
               ))}
             </div>
           )}
@@ -936,6 +939,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         <EnchantPickerDialog
           open={enchantDialogOpen}
           onClose={() => setEnchantDialogOpen(false)}
+          initialTab={enchantInitialTab}
           slotCount={6}
           slots={equipmentSlots.map(s => ({ element: s.element, spirit: s.spirit }))}
           itemInfoPerSlot={equipmentSlots.map(s => s.item ? {
@@ -956,10 +960,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           }}
         />
 
-        {/* ─── Actions ─── */}
-        <div className="flex gap-3">
-          <Button type="button" onClick={handleSubmit} className="flex-1">저장</Button>
-          <Button type="button" variant="outline" onClick={onCancel} className="flex-1">취소</Button>
+      </div>
+    </div>
         </div>
       </div>
     </div>
