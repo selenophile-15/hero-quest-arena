@@ -101,6 +101,27 @@ const STAT_COLOR: Record<string, string> = {
   '장비_회피%': 'text-teal-400',
 };
 
+const SPIRIT_TIER: Record<string, number> = {
+  '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
+  '기린': 12, '크람푸스': 12, '크리스마스': 12,
+  '크라켄': 12, '키메라': 12, '카벙클': 12, '타라스크': 12, '하이드라': 12, '불사조': 12,
+  '케찰코아틀': 10,
+  '호랑이': 9, '매머드': 9, '공룡': 9, '사자': 9, '곰': 9, '바다코끼리': 9, '상어': 9,
+  '다람쥐': 7, '하마': 7, '말': 7, '도마뱀': 7, '아르마딜로': 7, '부엉이': 7, '코뿔소': 7,
+  '졸로틀': 5,
+  '독수리': 4, '황소': 4, '양': 4, '늑대': 4, '고양이': 4, '거위': 4, '독사': 4, '토끼': 4,
+};
+
+function getSpiritTier(name: string): number {
+  return SPIRIT_TIER[name] || 0;
+}
+
+const ELEMENT_COLORS: Record<string, string> = {
+  '불': 'text-red-400', '물': 'text-blue-400', '공기': 'text-cyan-300',
+  '대지': 'text-lime-400', '빛': 'text-yellow-200', '어둠': 'text-purple-400',
+  '모든 원소': 'text-white',
+};
+
 function formatRank(rank: number): string {
   if (rank <= 11) return String(rank);
   return `11(+${rank - 11})`;
@@ -157,6 +178,11 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [aurasongItems, setAurasongItems] = useState<EquipmentItem[]>([]);
   const [equipDialogType, setEquipDialogType] = useState<'familiar' | 'aurasong' | null>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
+  const [enchantInitialTab, setEnchantInitialTab] = useState<'element' | 'spirit'>('element');
+  const [nameError, setNameError] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const [equipFilterStat, setEquipFilterStat] = useState<string>('_all');
+  const [equipSlotQuality, setEquipSlotQuality] = useState<string>('common');
 
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -265,13 +291,20 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   };
 
   const handleSubmit = () => {
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      setNameError(true);
+      nameInputRef.current?.focus();
+      nameInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    setNameError(false);
     onSave({
       id: hero?.id || crypto.randomUUID(),
       name: name.trim(),
       classLine: '',
       heroClass: '',
       type: 'champion',
+      promoted,
       level: Number(level) || 1,
       rank: Number(rank) || 1,
       championName,
