@@ -359,8 +359,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         </div>
         <div
           className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
-          style={equipItem ? {
-            background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`,
+                    style={equipItem ? {
+                      background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
+                      boxShadow: QUALITY_SHADOW_COLOR[quality],
+                    } : { background: 'hsl(var(--secondary) / 0.3)' }}
             boxShadow: QUALITY_SHADOW_COLOR[quality],
           } : { background: 'hsl(var(--secondary) / 0.3)' }}
         >
@@ -377,14 +379,14 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           </div>
           <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5">
             <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
-              onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}>
+              onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}>
               {displayElement ? (
                 <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-[80%] h-[80%] object-cover" alt=""
                   onError={e => { e.currentTarget.style.display = 'none'; }} />
               ) : <span className="text-[6px] text-muted-foreground">원소</span>}
             </div>
             <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
-              onClick={(e) => { e.stopPropagation(); setEnchantDialogOpen(true); }}>
+              onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }}>
               {displaySpirit ? (() => {
                 const eng = SPIRIT_NAME_MAP[displaySpirit.name];
                 if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-[80%] h-[80%] object-cover" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
