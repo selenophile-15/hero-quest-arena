@@ -19,6 +19,7 @@ export interface Hero {
   element: string;    // 원소 종류
   elementValue: number; // 원소 수치
   type: 'hero' | 'champion';
+  promoted?: boolean;
   label?: string;     // 상태
   position?: string;  // 포지션
   seeds?: { hp: number; atk: number; def: number }; // 씨앗
@@ -62,7 +63,7 @@ export interface SimulationResult {
 export const HERO_CLASS_LINES: HeroClassLine[] = ['전사', '로그', '주문술사'];
 
 export const POSITIONS = [
-  '퓨어 탱커', '서브 탱커', '딜탱', '메인 딜러', '일반 딜러', '회피 딜러', '좀비', '기타',
+  '퓨어 탱커', '회피 탱커', '딜탱', '치명 딜러', '일반 딜러', '회피 딜러', '좀비', '기타',
 ] as const;
 
 export const STAT_ICON_MAP: Record<string, string> = {
@@ -118,7 +119,7 @@ export const CHAMPION_STAT_COLUMNS = [
   { key: 'critDmg' as const, label: 'CRIT.D', icon: true },
   { key: 'evasion' as const, label: 'EVA', icon: true },
   { key: 'threat' as const, label: 'THREAT', icon: true },
-  { key: 'position' as const, label: '포지션' },
+  { key: 'promoted' as const, label: '승급' },
   { key: 'seeds' as const, label: '씨앗' },
   { key: 'label' as const, label: '상태' },
 ];
