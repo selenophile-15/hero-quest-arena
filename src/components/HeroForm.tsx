@@ -962,8 +962,5 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
       </div>
     </div>
-        </div>
-      </div>
-    </div>
   );
 }
