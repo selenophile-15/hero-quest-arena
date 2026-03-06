@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Hero, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
 import { CHAMPION_NAMES, lookupChampionStats, getChampionSkillsData } from '@/lib/gameData';
 import { CHAMPION_NAME_MAP, getChampionImagePath, SPIRIT_NAME_MAP } from '@/lib/nameMap';
@@ -13,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import type { EquipmentItem } from '@/lib/equipmentUtils';
 
 interface ChampionFormProps {
@@ -49,18 +50,18 @@ const QUALITY_BORDER: Record<string, string> = {
   legendary: 'border-yellow-400/80',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.18)',
-  uncommon: 'rgba(74,222,128,0.2)',
-  flawless: 'rgba(103,232,249,0.25)',
-  epic: 'rgba(217,70,239,0.3)',
-  legendary: 'rgba(250,204,21,0.35)',
+  common: 'rgba(220,220,220,0.28)',
+  uncommon: 'rgba(74,222,128,0.32)',
+  flawless: 'rgba(103,232,249,0.38)',
+  epic: 'rgba(217,70,239,0.42)',
+  legendary: 'rgba(250,204,21,0.5)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
-  common: '0 0 8px rgba(220,220,220,0.4)',
-  uncommon: '0 0 10px rgba(74,222,128,0.5)',
-  flawless: '0 0 12px rgba(103,232,249,0.5)',
-  epic: '0 0 14px rgba(217,70,239,0.6)',
-  legendary: '0 0 16px rgba(250,204,21,0.7)',
+  common: '0 0 10px rgba(220,220,220,0.5)',
+  uncommon: '0 0 12px rgba(74,222,128,0.6)',
+  flawless: '0 0 14px rgba(103,232,249,0.6)',
+  epic: '0 0 16px rgba(217,70,239,0.7)',
+  legendary: '0 0 18px rgba(250,204,21,0.8)',
 };
 
 const QUALITY_OPTIONS = [
