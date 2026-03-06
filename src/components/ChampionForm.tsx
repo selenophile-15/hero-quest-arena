@@ -413,29 +413,101 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     );
   };
 
-  // Equipment selection dialog (simple inline for now)
+  // Equipment selection dialog (Dialog format matching hero)
   const renderEquipDialog = () => {
     if (!equipDialogType) return null;
     const items = equipDialogType === 'familiar' ? familiarItems : aurasongItems;
     const slotIdx = equipDialogType === 'familiar' ? 0 : 1;
     const currentItem = equipmentSlots[slotIdx]?.item;
 
+    const filteredItems = items.filter(item => {
+      if (equipFilterStat !== '_all' && !item.stats.some(s => s.key === equipFilterStat)) return false;
+      return true;
+    });
+
     return (
-      <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setEquipDialogType(null)}>
-        <div className="bg-card border border-border rounded-xl p-5 max-w-4xl max-h-[80vh] overflow-y-auto w-full mx-4" onClick={e => e.stopPropagation()}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
-              {equipDialogType === 'familiar' ? '퍼밀리어 선택' : '오라의 노래 선택'}
-            </h3>
-            <div className="flex gap-2">
+      <Dialog open={!!equipDialogType} onOpenChange={v => !v && setEquipDialogType(null)}>
+        <DialogContent className="max-w-5xl h-[85vh] overflow-hidden flex flex-col p-5">
+          <DialogHeader>
+            <DialogTitle style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
+            <DialogDescription className="sr-only">퍼밀리어 또는 오라의 노래를 선택하세요</DialogDescription>
+          </DialogHeader>
+
+          {/* Top: Selected items */}
+          <div className="flex items-center gap-2 pb-2 border-b border-border">
+            <div className="flex gap-1 flex-1">
+              {[0, 1].map(i => {
+                const s = equipmentSlots[i];
+                return (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      if (s.item) {
+                        const newSlots = [...equipmentSlots];
+                        newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                        setEquipmentSlots(newSlots);
+                      } else {
+                        setEquipDialogType(i === 0 ? 'familiar' : 'aurasong');
+                      }
+                    }}
+                    className={`flex flex-col items-center p-1.5 rounded border min-w-[64px] transition-all ${
+                      (i === 0 && equipDialogType === 'familiar') || (i === 1 && equipDialogType === 'aurasong') ? 'border-primary ring-1 ring-primary/30' : ''
+                    } ${s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-50'}`}
+                    style={s.item ? {
+                      background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[s.quality]} 0%, transparent 85%)`,
+                      boxShadow: QUALITY_SHADOW_COLOR[s.quality],
+                    } : {}}
+                  >
+                    <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>{i === 0 ? '퍼밀리어' : '오라의 노래'}</span>
+                    {s.item ? (
+                      <>
+                        {s.item.imagePath ? (
+                          <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : (
+                          <span className="text-[8px] text-foreground w-9 h-9 flex items-center justify-center">{s.item.name.slice(0, 4)}</span>
+                        )}
+                        <span className="text-[8px] text-foreground truncate max-w-[58px]">{s.item.name}</span>
+                      </>
+                    ) : (
+                      <span className="text-[9px] text-muted-foreground w-9 h-9 flex items-center justify-center">-</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
               <Button variant="outline" size="sm" onClick={() => setEquipDialogType(null)}>닫기</Button>
             </div>
           </div>
 
-          {/* Quality selector */}
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm text-muted-foreground">등급:</span>
-            <Select value={equipmentSlots[slotIdx]?.quality || 'common'} onValueChange={q => {
+          {/* Tabs: familiar / aurasong */}
+          <div className="flex items-center gap-1 my-1">
+            <button
+              onClick={() => setEquipDialogType('familiar')}
+              className={`flex-1 text-xs py-1.5 rounded transition-all ${equipDialogType === 'familiar' ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'} ${equipmentSlots[0]?.item ? 'text-accent font-bold' : ''}`}
+            >퍼밀리어</button>
+            <button
+              onClick={() => setEquipDialogType('aurasong')}
+              className={`flex-1 text-xs py-1.5 rounded transition-all ${equipDialogType === 'aurasong' ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'} ${equipmentSlots[1]?.item ? 'text-accent font-bold' : ''}`}
+            >오라의 노래</button>
+          </div>
+
+          {/* Filters */}
+          <div className="flex items-center gap-2 px-1 flex-wrap text-xs">
+            <span className="text-muted-foreground">스탯:</span>
+            <Select value={equipFilterStat} onValueChange={setEquipFilterStat}>
+              <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="_all">전체</SelectItem>
+                {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+
+            <div className="flex-1" />
+
+            <span className="text-muted-foreground">아이템 등급:</span>
+            <Select value={equipSlotQuality} onValueChange={q => {
+              setEquipSlotQuality(q);
               const newSlots = [...equipmentSlots];
               newSlots[slotIdx] = { ...newSlots[slotIdx], quality: q };
               setEquipmentSlots(newSlots);
@@ -445,103 +517,131 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
               </SelectContent>
             </Select>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => {
+              setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
+            }}>
+              일괄 적용
+            </Button>
           </div>
 
-          <TooltipProvider delayDuration={200}>
-            <div className="grid grid-cols-6 gap-3">
-              {items.map((item, idx) => {
-                const isSelected = currentItem?.name === item.name && currentItem?.tier === item.tier;
-                const quality = equipmentSlots[slotIdx]?.quality || 'common';
-                return (
-                  <Tooltip key={`${item.name}-${item.tier}-${idx}`}>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => {
-                          const newSlots = [...equipmentSlots];
-                          if (isSelected) {
-                            newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
-                          } else {
-                            const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
-                            const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
-                            newSlots[slotIdx] = { item: { ...item }, quality, element: existingEl || null, spirit: existingSp || null };
-                          }
-                          setEquipmentSlots(newSlots);
-                          setEquipDialogType(null);
-                        }}
-                        className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
-                          isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
-                        }`}
-                        style={isSelected ? {
-                          background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`,
-                          boxShadow: QUALITY_SHADOW_COLOR[quality],
-                        } : {}}
-                      >
-                        <div className="flex flex-col items-center w-full relative" style={{ height: '75%' }}>
-                          <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">T{item.tier}</span>
-                          <div className="flex-1 w-full flex items-center justify-center pt-3">
-                            {item.imagePath ? (
-                              <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                            ) : (
-                              <span className="text-[9px] text-muted-foreground text-center">{item.name.slice(0, 8)}</span>
-                            )}
-                          </div>
-                          <p className="text-[11px] text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1 pb-0.5">{item.name}</p>
-                        </div>
-                        <div className="flex items-center justify-center gap-1 w-full" style={{ height: '25%' }}>
-                          {item.elementAffinity?.map(el => (
-                            <img key={el} src={`/images/elements/${ELEMENT_ENG_MAP[el] || el}.webp`} alt={el} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                          ))}
-                          {item.spiritAffinity?.map(sp => {
-                            const eng = SPIRIT_NAME_MAP[sp];
-                            return eng ? <img key={sp} src={`/images/enchant/spirit/${eng}_1.webp`} alt={sp} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
-                          })}
-                          {!item.elementAffinity?.length && !item.spiritAffinity?.length && <span className="text-[7px] text-muted-foreground/30">-</span>}
-                        </div>
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" align="center" sideOffset={8} avoidCollisions={true} collisionPadding={16} className="max-w-xs p-3 space-y-1.5 z-50">
-                      <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor || item.type})</span></p>
-                      {item.stats.length > 0 && (
-                        <div className="space-y-0.5">
-                          {item.stats.map((s: any, si: number) => (
-                            <div key={si} className="flex items-center gap-1 text-xs">
-                              <span className={`font-medium ${STAT_COLOR[s.key] || 'text-foreground'}`}>
-                                {STAT_FILTER_OPTIONS.find(o => o.value === s.key)?.label || s.key}:
-                              </span>
-                              <span className="tabular-nums">{formatEquipStatVal(s.key, s.value)}</span>
+          {/* Item grid */}
+          <div className="flex-1 min-h-0 mt-1">
+            <div className="overflow-y-auto h-full border border-border rounded p-3">
+              <TooltipProvider delayDuration={200}>
+                <div className="grid grid-cols-6 gap-3">
+                  {filteredItems.map((item, idx) => {
+                    const isSelected = currentItem?.name === item.name && currentItem?.tier === item.tier;
+                    const quality = equipmentSlots[slotIdx]?.quality || 'common';
+                    const elemAffs = item.elementAffinity || [];
+                    const spiritAffs = item.spiritAffinity || [];
+                    const uniqueElems = item.uniqueElement || [];
+                    const uniqueSp = item.uniqueSpirit || [];
+                    const hasAffinityIcons = elemAffs.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || uniqueSp.length > 0;
+                    return (
+                      <Tooltip key={`${item.name}-${item.tier}-${idx}`}>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              const newSlots = [...equipmentSlots];
+                              if (isSelected) {
+                                newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
+                              } else {
+                                const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
+                                const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
+                                newSlots[slotIdx] = { item: { ...item }, quality, element: existingEl || null, spirit: existingSp || null };
+                              }
+                              setEquipmentSlots(newSlots);
+                            }}
+                            className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
+                              isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
+                            }`}
+                            style={isSelected ? {
+                              background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
+                              boxShadow: QUALITY_SHADOW_COLOR[quality],
+                            } : {}}
+                          >
+                            <div className="flex flex-col items-center w-full relative" style={{ height: '75%' }}>
+                              <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">T{item.tier}</span>
+                              <div className="flex-1 w-full flex items-center justify-center pt-3">
+                                {item.imagePath ? (
+                                  <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                ) : (
+                                  <span className="text-[9px] text-muted-foreground text-center">{item.name.slice(0, 8)}</span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1 pb-0.5">{item.name}</p>
                             </div>
-                          ))}
-                        </div>
-                      )}
-                      {item.elementAffinity && item.elementAffinity.length > 0 && (
-                        <div className="text-xs">
-                          <span className="text-muted-foreground">친밀 원소: </span>
-                          {item.elementAffinity.map((el: string, ei: number) => {
-                            const EC: Record<string, string> = { '불': 'text-red-400', '물': 'text-blue-400', '공기': 'text-teal-300', '대지': 'text-lime-400', '빛': 'text-yellow-200', '어둠': 'text-purple-400' };
-                            return <span key={ei}>{ei > 0 ? ', ' : ''}<span className={EC[el] || 'text-foreground'}>{el}</span></span>;
-                          })}
-                        </div>
-                      )}
-                      {item.spiritAffinity && item.spiritAffinity.length > 0 && (
-                        <div className="text-xs"><span className="text-muted-foreground">친밀 영혼: </span>{item.spiritAffinity.join(', ')}</div>
-                      )}
-                      {equipDialogType === 'aurasong' && (() => {
-                        const effect = getAurasongSkillEffect(item.name);
-                        return effect ? (
-                          <div className="text-xs border-t border-border/50 pt-1 mt-1">
-                            <span className="text-primary font-semibold">오라의 노래 스킬:</span>
-                            <p className="text-foreground/80 whitespace-pre-line mt-0.5">{effect}</p>
-                          </div>
-                        ) : null;
-                      })()}
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
+                            <div className="flex items-center justify-center gap-1 w-full" style={{ height: '25%' }}>
+                              {hasAffinityIcons ? (
+                                <>
+                                  <div className="flex items-center gap-0.5">
+                                    {elemAffs.map(el => (
+                                      <img key={el} src={`/images/elements/${ELEMENT_ENG_MAP[el] || el}.webp`} alt={el} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    ))}
+                                  </div>
+                                  {spiritAffs.length > 0 && elemAffs.length > 0 && <div className="w-px h-4 bg-border/50" />}
+                                  <div className="flex items-center gap-0.5">
+                                    {spiritAffs.map(sp => {
+                                      const eng = SPIRIT_NAME_MAP[sp];
+                                      return eng ? <img key={sp} src={`/images/enchant/spirit/${eng}_1.webp`} alt={sp} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                                    })}
+                                  </div>
+                                </>
+                              ) : (
+                                <span className="text-[7px] text-muted-foreground/30">-</span>
+                              )}
+                            </div>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" align="center" sideOffset={8} avoidCollisions={true} collisionPadding={16} className="max-w-xs p-3 space-y-1.5 z-50">
+                          <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor || item.type})</span></p>
+                          {item.stats.length > 0 && (
+                            <div className="space-y-0.5">
+                              {item.stats.map((s: any, si: number) => (
+                                <div key={si} className="flex items-center gap-1 text-xs">
+                                  <span className={`font-medium ${STAT_COLOR[s.key] || 'text-foreground'}`}>
+                                    {STAT_FILTER_OPTIONS.find(o => o.value === s.key)?.label || s.key}:
+                                  </span>
+                                  <span className="tabular-nums">{formatEquipStatVal(s.key, s.value)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {item.elementAffinity && item.elementAffinity.length > 0 && (
+                            <div className="text-xs">
+                              <span className="text-muted-foreground">친밀 원소: </span>
+                              {item.elementAffinity.map((el: string, ei: number) => (
+                                <span key={ei}>{ei > 0 ? ', ' : ''}<span className={ELEMENT_COLORS[el] || 'text-foreground'}>{el}</span></span>
+                              ))}
+                            </div>
+                          )}
+                          {item.spiritAffinity && item.spiritAffinity.length > 0 && (
+                            <div className="text-xs">
+                              <span className="text-muted-foreground">친밀 영혼: </span>
+                              {item.spiritAffinity.map((sp: string, si: number) => (
+                                <span key={si}>{si > 0 ? ', ' : ''}{sp} (T{getSpiritTier(sp)})</span>
+                              ))}
+                            </div>
+                          )}
+                          {equipDialogType === 'aurasong' && (() => {
+                            const effect = getAurasongSkillEffect(item.name);
+                            return effect ? (
+                              <div className="text-xs border-t border-border/50 pt-1 mt-1">
+                                <span className="text-primary font-semibold">오라의 노래 스킬:</span>
+                                <p className="text-foreground/80 whitespace-pre-line mt-0.5">{effect}</p>
+                              </div>
+                            ) : null;
+                          })()}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              </TooltipProvider>
             </div>
-          </TooltipProvider>
-        </div>
-      </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     );
   };
 
