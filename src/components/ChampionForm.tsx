@@ -668,12 +668,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {CHAMPION_NAMES.map(c => (
-                    <SelectItem key={c} value={c}>
-                      <span className="inline-flex items-center gap-2">
-                        <img src={getChampionImagePath(c)} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        {c}
-                      </span>
-                    </SelectItem>
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -872,6 +867,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         <EnchantPickerDialog
           open={enchantDialogOpen}
           onClose={() => setEnchantDialogOpen(false)}
+          initialTab={enchantInitialTab}
           slotCount={2}
           slots={equipmentSlots.map(s => ({ element: s.element, spirit: s.spirit }))}
           itemInfoPerSlot={equipmentSlots.map(s => s.item ? {
@@ -892,11 +888,6 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           }}
         />
 
-        {/* ─── Actions ─── */}
-        <div className="flex gap-3">
-          <Button type="button" onClick={handleSubmit} className="flex-1">저장</Button>
-          <Button type="button" variant="outline" onClick={onCancel} className="flex-1">취소</Button>
-        </div>
       </div>
     </div>
   );
