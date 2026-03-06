@@ -86,18 +86,18 @@ const QUALITY_BORDER: Record<string, string> = {
   legendary: 'border-yellow-400/80',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.18)',
-  uncommon: 'rgba(74,222,128,0.2)',
-  flawless: 'rgba(103,232,249,0.25)',
-  epic: 'rgba(217,70,239,0.3)',
-  legendary: 'rgba(250,204,21,0.35)',
+  common: 'rgba(220,220,220,0.28)',
+  uncommon: 'rgba(74,222,128,0.32)',
+  flawless: 'rgba(103,232,249,0.38)',
+  epic: 'rgba(217,70,239,0.42)',
+  legendary: 'rgba(250,204,21,0.5)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
-  common: '0 0 8px rgba(220,220,220,0.4)',
-  uncommon: '0 0 10px rgba(74,222,128,0.5)',
-  flawless: '0 0 12px rgba(103,232,249,0.5)',
-  epic: '0 0 14px rgba(217,70,239,0.6)',
-  legendary: '0 0 16px rgba(250,204,21,0.7)',
+  common: '0 0 10px rgba(220,220,220,0.5)',
+  uncommon: '0 0 12px rgba(74,222,128,0.6)',
+  flawless: '0 0 14px rgba(103,232,249,0.6)',
+  epic: '0 0 16px rgba(217,70,239,0.7)',
+  legendary: '0 0 18px rgba(250,204,21,0.8)',
 };
 
 function normalizeJobName(name: string): string {
@@ -238,6 +238,7 @@ export default function HeroList() {
     setExpandedId(null);
     setSortKey('heroClass');
     setSortDir('asc');
+    setListTab(hero.type === 'champion' ? 'champion' : 'hero');
   };
 
   const handleConfirmDelete = () => {
@@ -295,7 +296,7 @@ export default function HeroList() {
   const activeCols = activeColumns.filter(c => visibleCols.has(c.key));
 
   // Columns to keep visible when expanded
-  const EXPANDED_VISIBLE_KEYS = new Set(['heroClass', 'championName', 'name', 'level', 'rank', 'position', 'label']);
+  const EXPANDED_VISIBLE_KEYS = new Set(['heroClass', 'championName', 'name', 'level', 'rank', 'position', 'label', 'promoted']);
 
   const renderHeaderLabel = (col: { key: string; label: string; icon?: boolean }) => {
     const iconPath = STAT_ICON_MAP[col.key as keyof typeof STAT_ICON_MAP];
@@ -445,6 +446,12 @@ export default function HeroList() {
       );
     }
     if (colKey === 'position') return <span>{hero.position || '-'}</span>;
+    if (colKey === 'promoted') {
+      const isPromoted = hero.promoted || false;
+      return <span className={isPromoted ? 'text-foreground font-medium' : 'text-foreground/20'}>
+        {isPromoted ? 'O' : 'X'}
+      </span>;
+    }
     if (colKey === 'airshipPower') return <span className="text-foreground/20">-</span>;
     const value = hero[colKey as keyof Hero];
     const formatted = formatValue(colKey, value);
@@ -682,8 +689,13 @@ export default function HeroList() {
                     <h4 className="text-xs font-semibold text-primary mb-1" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>유물 효과</h4>
                     {relicEffects.map((r, i) => (
                       <div key={i} className="flex items-start gap-1 text-xs mb-1">
-                        <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4 flex-shrink-0" />
-                        <span className="text-foreground/80"><span className="font-medium text-foreground">{r.name}:</span> {r.effect}</span>
+                        <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                        <div className="text-foreground/80">
+                          <span className="font-medium text-foreground">{r.name}:</span>{' '}
+                          {r.effect.split('\\n').map((line: string, li: number) => (
+                            <span key={li}>{li > 0 && <br />}{line}</span>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -698,6 +710,7 @@ export default function HeroList() {
                 {equipSlots.slice(0, isChampion ? 2 : 6).map((slot: any, i: number) => {
                   const item = slot.item;
                   const quality = slot.quality || 'common';
+                  const radialStop = '85%';
                   const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
                   const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
                   const itemType = item?.type || '';
@@ -706,7 +719,7 @@ export default function HeroList() {
                       <div
                         className={`relative w-full aspect-square rounded-lg border-2 ${item ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center justify-center overflow-hidden`}
                         style={item ? {
-                          background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 70%)`,
+                          background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent ${radialStop})`,
                           boxShadow: QUALITY_SHADOW_COLOR[quality],
                         } : { background: 'hsl(var(--secondary) / 0.3)' }}
                       >
@@ -804,7 +817,7 @@ export default function HeroList() {
         </div>
         <div className="flex items-center gap-1">
           <ElementIcon element={hero.element} size={16} />
-          <span className="text-xs text-foreground tabular-nums">{hero.elementValue || 0}</span>
+          <span className={`text-xs tabular-nums ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
         </div>
 
         {/* Skills */}
