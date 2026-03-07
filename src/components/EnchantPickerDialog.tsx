@@ -240,7 +240,7 @@ export default function EnchantPickerDialog({
   const renderSpiritSelect = (value: string, onChange: (v: string) => void, className?: string) => (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className={`h-9 text-sm ${className || 'w-48'}`}><SelectValue placeholder="영혼" /></SelectTrigger>
-      <SelectContent>
+      <SelectContent position="popper" side="bottom" align="start" sideOffset={4} className="max-h-[240px] overflow-y-auto z-[100]">
         <SelectItem value="_none">없음</SelectItem>
         {SPIRIT_GROUPS.map((group, gi) => (
           <div key={gi}>
