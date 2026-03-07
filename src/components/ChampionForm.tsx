@@ -40,6 +40,7 @@ const SEED_ICONS = [
 
 const ELEMENT_ENG_MAP: Record<string, string> = {
   '불': 'fire', '물': 'water', '공기': 'air', '대지': 'earth', '빛': 'light', '어둠': 'dark',
+  '모든 원소': 'all', '골드': 'gold',
 };
 
 const QUALITY_BORDER: Record<string, string> = {
@@ -182,6 +183,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [nameError, setNameError] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const [equipFilterStat, setEquipFilterStat] = useState<string>('_all');
+  const [equipFilterElement, setEquipFilterElement] = useState<string>('_all');
+  const [equipFilterSpirit, setEquipFilterSpirit] = useState<string>('_all');
   const [equipSlotQuality, setEquipSlotQuality] = useState<string>('common');
 
   const formRef = useRef<HTMLDivElement>(null);
@@ -422,6 +425,17 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
     const filteredItems = items.filter(item => {
       if (equipFilterStat !== '_all' && !item.stats.some(s => s.key === equipFilterStat)) return false;
+      if (equipFilterElement !== '_all') {
+        const hasAffinity = item.elementAffinity?.includes(equipFilterElement);
+        const hasUnique = item.uniqueElement?.includes(equipFilterElement);
+        const hasAll = item.elementAffinity?.includes('모든 원소');
+        if (!hasAffinity && !hasUnique && !hasAll) return false;
+      }
+      if (equipFilterSpirit !== '_all') {
+        const hasAffinity = item.spiritAffinity?.includes(equipFilterSpirit);
+        const hasUnique = item.uniqueSpirit?.includes(equipFilterSpirit);
+        if (!hasAffinity && !hasUnique) return false;
+      }
       return true;
     });
 
@@ -500,6 +514,30 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               <SelectContent>
                 <SelectItem value="_all">전체</SelectItem>
                 {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+
+            <span className="text-muted-foreground">원소:</span>
+            <Select value={equipFilterElement} onValueChange={setEquipFilterElement}>
+              <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="_all">전체</SelectItem>
+                {['불', '물', '공기', '대지', '빛', '어둠', '골드'].map(el => (
+                  <SelectItem key={el} value={el}>{el}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <span className="text-muted-foreground">영혼:</span>
+            <Select value={equipFilterSpirit} onValueChange={setEquipFilterSpirit}>
+              <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="_all">전체</SelectItem>
+                {Object.entries(SPIRIT_TIER).sort(([,a], [,b]) => b - a).map(([sp, tier]) => (
+                  <SelectItem key={sp} value={sp}>
+                    <span className="text-muted-foreground text-[10px] mr-1">T{tier})</span>{sp}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 

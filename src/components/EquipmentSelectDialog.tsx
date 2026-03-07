@@ -669,7 +669,9 @@ export default function EquipmentSelectDialog({
                           {item.relic && item.relicEffect && (
                             <div className="text-xs border-t border-border/50 pt-1 mt-1">
                               <span className="text-yellow-400 font-semibold">유물 효과:</span>
-                              <p className="text-foreground/80 whitespace-pre-line mt-0.5">{item.relicEffect}</p>
+                              <p className="text-foreground/80 mt-0.5">{item.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (
+                                <span key={li}>{li > 0 && <br />}{line}</span>
+                              ))}</p>
                             </div>
                           )}
 

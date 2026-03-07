@@ -219,6 +219,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     spirit: any | null;
   }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
   const isInitialHeroClass = useRef(!!hero);
+  const isPromotionToggle = useRef(false);
+  const previousJobRef = useRef(heroClass);
   const formRef = useRef<HTMLDivElement>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
   const [enchantInitialTab, setEnchantInitialTab] = useState<'element' | 'spirit'>('element');
@@ -282,6 +284,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       if (paired) {
         const newJobs = getJobsByPromotion(classLine, promoted);
         if (newJobs.includes(paired)) {
+          isPromotionToggle.current = true;
           setHeroClass(paired);
           return;
         }
@@ -326,10 +329,44 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       })
       .catch(() => setRecommendedSets({}));
 
-    // Reset skills and equipment on job change, but not on initial mount when editing
+    // Reset logic depends on context
     if (isInitialHeroClass.current) {
       isInitialHeroClass.current = false;
+      previousJobRef.current = heroClass;
+    } else if (isPromotionToggle.current) {
+      // Promotion toggle within same pair: preserve skills, selectively reset incompatible equipment
+      isPromotionToggle.current = false;
+      previousJobRef.current = heroClass;
+      // Skills are preserved (maxCommonSlots trimming is handled by the separate effect)
+      // Check equipment compatibility asynchronously
+      import('@/lib/equipmentUtils').then(({ loadSID, getSlotTypes, EQUIP_TYPE_MAP }) => {
+        loadSID().then(sid => {
+          setEquipmentSlots(prev => {
+            const newSlots = [...prev];
+            for (let i = 0; i < 6; i++) {
+              const item = newSlots[i]?.item;
+              if (!item) continue;
+              const allowedTypes = getSlotTypes(sid, heroClass, i);
+              const allowedFileTypes = new Set<string>();
+              for (const typeKor of allowedTypes) {
+                const info = EQUIP_TYPE_MAP[typeKor];
+                if (info) allowedFileTypes.add(info.file);
+              }
+              // Also allow dual_wield if any weapon type is allowed
+              if (allowedTypes.some(t => EQUIP_TYPE_MAP[t]?.category === 'weapon')) {
+                allowedFileTypes.add('dual_wield');
+              }
+              if (!allowedFileTypes.has(item.type)) {
+                newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+              }
+            }
+            return newSlots;
+          });
+        });
+      });
     } else {
+      // Full job change: reset everything
+      previousJobRef.current = heroClass;
       setSelectedSkills([]);
       setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
     }
@@ -915,7 +952,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               {equipmentSlots.filter(s => s.item?.relic && s.item?.relicEffect).map((s, i) => (
                 <div key={i} className="text-xs text-foreground/80">
                   <span className="font-medium text-foreground">{s.item!.name}:</span>{' '}
-                  {s.item!.relicEffect.split('\\n').map((line: string, li: number) => (
+                  {s.item!.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (
                     <span key={li}>{li > 0 && <br />}{line}</span>
                   ))}
                 </div>
