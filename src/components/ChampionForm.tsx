@@ -425,6 +425,17 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
     const filteredItems = items.filter(item => {
       if (equipFilterStat !== '_all' && !item.stats.some(s => s.key === equipFilterStat)) return false;
+      if (equipFilterElement !== '_all') {
+        const hasAffinity = item.elementAffinity?.includes(equipFilterElement);
+        const hasUnique = item.uniqueElement?.includes(equipFilterElement);
+        const hasAll = item.elementAffinity?.includes('모든 원소');
+        if (!hasAffinity && !hasUnique && !hasAll) return false;
+      }
+      if (equipFilterSpirit !== '_all') {
+        const hasAffinity = item.spiritAffinity?.includes(equipFilterSpirit);
+        const hasUnique = item.uniqueSpirit?.includes(equipFilterSpirit);
+        if (!hasAffinity && !hasUnique) return false;
+      }
       return true;
     });
 
