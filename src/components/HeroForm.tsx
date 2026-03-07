@@ -329,10 +329,44 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       })
       .catch(() => setRecommendedSets({}));
 
-    // Reset skills and equipment on job change, but not on initial mount when editing
+    // Reset logic depends on context
     if (isInitialHeroClass.current) {
       isInitialHeroClass.current = false;
+      previousJobRef.current = heroClass;
+    } else if (isPromotionToggle.current) {
+      // Promotion toggle within same pair: preserve skills, selectively reset incompatible equipment
+      isPromotionToggle.current = false;
+      previousJobRef.current = heroClass;
+      // Skills are preserved (maxCommonSlots trimming is handled by the separate effect)
+      // Check equipment compatibility asynchronously
+      import('@/lib/equipmentUtils').then(({ loadSID, getSlotTypes, EQUIP_TYPE_MAP }) => {
+        loadSID().then(sid => {
+          setEquipmentSlots(prev => {
+            const newSlots = [...prev];
+            for (let i = 0; i < 6; i++) {
+              const item = newSlots[i]?.item;
+              if (!item) continue;
+              const allowedTypes = getSlotTypes(sid, heroClass, i);
+              const allowedFileTypes = new Set<string>();
+              for (const typeKor of allowedTypes) {
+                const info = EQUIP_TYPE_MAP[typeKor];
+                if (info) allowedFileTypes.add(info.file);
+              }
+              // Also allow dual_wield if any weapon type is allowed
+              if (allowedTypes.some(t => EQUIP_TYPE_MAP[t]?.category === 'weapon')) {
+                allowedFileTypes.add('dual_wield');
+              }
+              if (!allowedFileTypes.has(item.type)) {
+                newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+              }
+            }
+            return newSlots;
+          });
+        });
+      });
     } else {
+      // Full job change: reset everything
+      previousJobRef.current = heroClass;
       setSelectedSkills([]);
       setEquipmentSlots(Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
     }
