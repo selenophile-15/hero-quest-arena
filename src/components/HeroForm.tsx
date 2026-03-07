@@ -219,6 +219,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     spirit: any | null;
   }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
   const isInitialHeroClass = useRef(!!hero);
+  const isPromotionToggle = useRef(false);
+  const previousJobRef = useRef(heroClass);
   const formRef = useRef<HTMLDivElement>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
   const [enchantInitialTab, setEnchantInitialTab] = useState<'element' | 'spirit'>('element');
