@@ -915,7 +915,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               {equipmentSlots.filter(s => s.item?.relic && s.item?.relicEffect).map((s, i) => (
                 <div key={i} className="text-xs text-foreground/80">
                   <span className="font-medium text-foreground">{s.item!.name}:</span>{' '}
-                  {s.item!.relicEffect.split('\\n').map((line: string, li: number) => (
+                  {s.item!.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (
                     <span key={li}>{li > 0 && <br />}{line}</span>
                   ))}
                 </div>

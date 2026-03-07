@@ -692,7 +692,7 @@ export default function HeroList() {
                         <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4 flex-shrink-0 mt-0.5" />
                         <div className="text-foreground/80">
                           <span className="font-medium text-foreground">{r.name}:</span>{' '}
-                          {r.effect.split('\\n').map((line: string, li: number) => (
+                          {r.effect.split(/\\n|\n/).map((line: string, li: number) => (
                             <span key={li}>{li > 0 && <br />}{line}</span>
                           ))}
                         </div>
