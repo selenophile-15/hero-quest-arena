@@ -284,6 +284,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       if (paired) {
         const newJobs = getJobsByPromotion(classLine, promoted);
         if (newJobs.includes(paired)) {
+          isPromotionToggle.current = true;
           setHeroClass(paired);
           return;
         }
