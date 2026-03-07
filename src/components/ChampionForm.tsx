@@ -40,6 +40,7 @@ const SEED_ICONS = [
 
 const ELEMENT_ENG_MAP: Record<string, string> = {
   '불': 'fire', '물': 'water', '공기': 'air', '대지': 'earth', '빛': 'light', '어둠': 'dark',
+  '모든 원소': 'all', '골드': 'gold',
 };
 
 const QUALITY_BORDER: Record<string, string> = {
@@ -182,6 +183,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [nameError, setNameError] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const [equipFilterStat, setEquipFilterStat] = useState<string>('_all');
+  const [equipFilterElement, setEquipFilterElement] = useState<string>('_all');
+  const [equipFilterSpirit, setEquipFilterSpirit] = useState<string>('_all');
   const [equipSlotQuality, setEquipSlotQuality] = useState<string>('common');
 
   const formRef = useRef<HTMLDivElement>(null);
