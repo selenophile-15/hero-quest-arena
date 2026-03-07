@@ -517,6 +517,30 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               </SelectContent>
             </Select>
 
+            <span className="text-muted-foreground">원소:</span>
+            <Select value={equipFilterElement} onValueChange={setEquipFilterElement}>
+              <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="_all">전체</SelectItem>
+                {['불', '물', '공기', '대지', '빛', '어둠', '골드'].map(el => (
+                  <SelectItem key={el} value={el}>{el}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <span className="text-muted-foreground">영혼:</span>
+            <Select value={equipFilterSpirit} onValueChange={setEquipFilterSpirit}>
+              <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="_all">전체</SelectItem>
+                {Object.entries(SPIRIT_TIER).sort(([,a], [,b]) => b - a).map(([sp, tier]) => (
+                  <SelectItem key={sp} value={sp}>
+                    <span className="text-muted-foreground text-[10px] mr-1">T{tier})</span>{sp}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <div className="flex-1" />
 
             <span className="text-muted-foreground">아이템 등급:</span>
