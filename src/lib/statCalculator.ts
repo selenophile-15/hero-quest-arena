@@ -226,23 +226,13 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     });
   }
 
-  // Final formula: (base + seed + Σequip + flat) × (1 + pct/100)
-  const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
-  const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
-  const totalHp = Math.floor((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp) * (1 + bonusSummary.pctHp / 100));
+  // Compute threat first (족장 needs it for ATK calculation)
+  const totalThreat = baseThreat + bonusSummary.threat;
 
-  // Additive stats
-  let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate;
-  let totalCritDmg = baseCritDmg + bonusSummary.critDmg;
-  let totalEvasion = baseEvasion + equipResult.totalEvasion + bonusSummary.evasion;
-  let totalThreat = baseThreat + bonusSummary.threat;
-
-  // 족장: final threat × 40% → added to common ATK % (must be computed after threat is finalized)
+  // 족장: final threat × 40% → added to common ATK %
   const isChieftain = jobName === '족장';
   if (isChieftain && totalThreat > 0) {
-    const threatAtkPct = Math.floor(totalThreat * 0.4 * 10) / 10; // threat × 40%
-    // Need to recompute totalAtk with this additional %
-    // This is applied as a post-calculation adjustment
+    const threatAtkPct = Math.floor(totalThreat * 0.4 * 10) / 10;
     bonusSummary.pctAtk += threatAtkPct;
     bonusSummary.sources.push({
       name: `위협도 ${totalThreat}의 40% → +${threatAtkPct}%`,
@@ -252,6 +242,16 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
       critRate: 0, critDmg: 0, evasion: 0, threat: 0,
     });
   }
+
+  // Final formula: (base + seed + Σequip + flat) × (1 + pct/100)
+  const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
+  const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
+  const totalHp = Math.floor((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp) * (1 + bonusSummary.pctHp / 100));
+
+  // Additive stats
+  let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate;
+  let totalCritDmg = baseCritDmg + bonusSummary.critDmg;
+  let totalEvasion = baseEvasion + equipResult.totalEvasion + bonusSummary.evasion;
 
   // Store pre-relic values for display
   const preRelicCrit = totalCrit;
