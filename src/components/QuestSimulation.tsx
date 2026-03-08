@@ -680,7 +680,7 @@ export default function QuestSimulation() {
                 <div className="pt-2 border-t border-border/30">
                   <div className="flex items-center gap-1.5 mb-3 px-1">
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-xs text-foreground font-medium">방어력 기준치 (데미지 감소율)</span>
+                    <span className="text-xs text-foreground font-medium">방어력 기준치 (대미지 감소율)</span>
                   </div>
                   {(() => {
                     // Map defense value to bar % using threshold interpolation
