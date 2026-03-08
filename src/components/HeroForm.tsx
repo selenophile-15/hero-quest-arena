@@ -490,23 +490,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
   return (
     <div className="animate-fade-in relative">
-      {/* Floating tab trigger for stat breakdown */}
-      {calcStats && (
-        <button
-          type="button"
-          onClick={() => setBreakdownOpen(true)}
-          className="fixed right-0 top-1/3 z-30 bg-accent text-accent-foreground px-2 py-6 rounded-l-xl shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:px-3 transition-all border-l-2 border-y-2 border-accent/60"
-          style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
-        >
-          <span className="text-sm font-bold tracking-widest">📊 스탯 계산표</span>
-        </button>
-      )}
       {/* Sticky top bar with title + save/cancel */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
         <h2 className="font-display text-xl text-primary tracking-wide">
           {hero ? '영웅 수정' : '새 영웅 추가'}
         </h2>
-        <div className="flex gap-2">
+         <div className="flex gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!calcStats}>📊 스탯 계산표</Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
           <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
         </div>
@@ -722,56 +712,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           </div>
         </div>
 
-        {/* ─── Calculated Stats Panel ─── */}
-        {calcStats && (
-          <div className="card-fantasy p-4 border-2 border-accent/30">
-            <h3 className="text-sm font-semibold text-accent mb-3" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
-              📊 계산된 스탯 <span className="text-[10px] text-muted-foreground font-normal ml-2">(기본 + 씨앗 — 장비·스킬 미반영)</span>
-            </h3>
-            <div className="grid grid-cols-4 gap-3">
-              {[
-                { icon: STAT_ICON_MAP.hp, label: 'HP', base: calcStats.baseHp, seed: calcStats.seedHp, total: calcStats.totalHp, color: 'text-orange-400' },
-                { icon: STAT_ICON_MAP.atk, label: 'ATK', base: calcStats.baseAtk, seed: calcStats.seedAtk, total: calcStats.totalAtk, color: 'text-red-400' },
-                { icon: STAT_ICON_MAP.def, label: 'DEF', base: calcStats.baseDef, seed: calcStats.seedDef, total: calcStats.totalDef, color: 'text-blue-400' },
-                { icon: STAT_ICON_MAP.critAttack, label: 'CRIT.A', base: null, seed: null, total: calcStats.totalCritAttack, color: 'text-amber-400' },
-              ].map((s, i) => (
-                <div key={i} className="flex flex-col items-center gap-1 bg-secondary/20 rounded-lg p-2">
-                  <div className="flex items-center gap-1.5">
-                    <img src={s.icon} alt="" className="w-5 h-5" />
-                    <span className="text-[10px] text-muted-foreground">{s.label}</span>
-                  </div>
-                  <span className={`text-lg font-bold tabular-nums ${s.color}`}>
-                    {formatNumber(s.total)}
-                  </span>
-                  {s.base !== null && (
-                    <div className="text-[9px] text-muted-foreground tabular-nums">
-                      기본 {formatNumber(s.base)} {s.seed! > 0 && <span className="text-green-400">+ 씨앗 {formatNumber(s.seed!)}</span>}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-4 gap-3 mt-2">
-              {[
-                { icon: STAT_ICON_MAP.crit, label: 'CRIT.C', total: calcStats.totalCrit, suffix: '%', color: 'text-yellow-400' },
-                { icon: STAT_ICON_MAP.critDmg, label: 'CRIT.D', total: calcStats.totalCritDmg, suffix: '%', color: 'text-yellow-500' },
-                { icon: STAT_ICON_MAP.evasion, label: 'EVA', total: calcStats.totalEvasion, suffix: '%', color: 'text-teal-400' },
-                { icon: STAT_ICON_MAP.threat, label: 'THREAT', total: calcStats.totalThreat, suffix: '', color: 'text-foreground' },
-              ].map((s, i) => (
-                <div key={i} className="flex flex-col items-center gap-1 bg-secondary/20 rounded-lg p-2">
-                  <div className="flex items-center gap-1.5">
-                    <img src={s.icon} alt="" className="w-5 h-5" />
-                    <span className="text-[10px] text-muted-foreground">{s.label}</span>
-                  </div>
-                  <span className={`text-lg font-bold tabular-nums ${s.color}`}>
-                    {s.total}{s.suffix}
-                  </span>
-                  <div className="text-[9px] text-muted-foreground tabular-nums">고정값</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
 
         <div className="card-fantasy p-4">
