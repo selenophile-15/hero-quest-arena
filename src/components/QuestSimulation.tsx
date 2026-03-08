@@ -1054,14 +1054,9 @@ export default function QuestSimulation() {
                                   <span>
                                     {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
                                   </span>
-                                  {barrierOriginal > 0 && (
-                                    <span className="text-[9px] text-muted-foreground leading-tight">({formatNumber(barrierOriginal)})</span>
-                                  )}
-                                  {delta > 0 && !barrierOriginal && (
-                                    <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
-                                  )}
-                                  {delta < 0 && !barrierOriginal && (
-                                    <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
+                                  {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
+                                  {critCapNote && <span className="text-[9px] text-muted-foreground">{critCapNote}</span>}
+                                </div>
                                   )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
                                   {critCapNote && <span className="text-[9px] text-muted-foreground">{critCapNote}</span>}
