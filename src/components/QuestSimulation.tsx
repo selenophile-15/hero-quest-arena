@@ -484,34 +484,46 @@ export default function QuestSimulation() {
                           </div>
                         </div>
 
-                        {/* Hero labels via SVG - angled lines from dot position */}
+                        {/* Hero labels via SVG - lines start past defense values */}
                         {selectedHeroes.length > 0 && (
-                          <svg className="absolute top-0 left-0 w-full h-64 pointer-events-none" style={{ overflow: 'visible' }}>
-                            {selectedHeroes.map((h, hi) => {
-                              const heroDef = h.def || 0;
-                              const pct = defToBarPct(heroDef);
-                              let pinColor = '#ef4444';
-                              for (const t of defThresholds) {
-                                if (heroDef >= t.value) pinColor = t.color;
-                              }
-                              // Dot x is at left(8 w-8) + gap(8) + center of bar(6) = ~46px
-                              const dotX = 46;
-                              const dotY = barH - (pct / 100) * barH;
-                              // Angled line: fixed length, stagger angle per hero
-                              const lineLen = 70;
-                              const angle = -(10 + hi * 12); // degrees upward
-                              const rad = (angle * Math.PI) / 180;
-                              const endX = dotX + lineLen * Math.cos(rad);
-                              const endY = dotY + lineLen * Math.sin(rad);
-                              return (
-                                <g key={h.id}>
-                                  <line x1={dotX} y1={dotY} x2={endX} y2={endY} stroke={pinColor} strokeWidth="1" opacity="0.6" />
-                                  <text x={endX + 4} y={endY + 3} fill={pinColor} fontSize="9" fontFamily="monospace">
-                                    {h.name} ({formatNumber(heroDef)})
-                                  </text>
-                                </g>
-                              );
-                            })}
+                          <svg className="absolute top-0 left-0 pointer-events-none" style={{ overflow: 'visible', width: '100%', height: `${barH}px` }}>
+                            {(() => {
+                              // Sort heroes by def descending so highest is at top
+                              const sorted = selectedHeroes
+                                .map((h, hi) => ({ h, hi, def: h.def || 0 }))
+                                .sort((a, b) => b.def - a.def);
+                              // Line starts after defense value column: left(32 w-8) + gap(8) + bar(12) + gap(8) + defValues(~55) = ~115px
+                              const startX = 115;
+                              const lineLen = 50;
+                              // Distribute labels evenly across the bar height to avoid overlap
+                              const labelH = 14; // approx text height
+                              const totalSlots = sorted.length;
+                              
+                              return sorted.map((item, sortIdx) => {
+                                const pct = defToBarPct(item.def);
+                                let pinColor = '#ef4444';
+                                for (const t of defThresholds) {
+                                  if (item.def >= t.value) pinColor = t.color;
+                                }
+                                const dotY = barH - (pct / 100) * barH;
+                                // Evenly space label Y positions across available height
+                                const labelY = totalSlots > 1
+                                  ? (sortIdx / (totalSlots - 1)) * (barH - labelH) + labelH / 2
+                                  : dotY;
+                                const endX = startX + lineLen;
+                                return (
+                                  <g key={item.h.id}>
+                                    {/* Horizontal line from after def values to label */}
+                                    <line x1={startX} y1={dotY} x2={startX + 10} y2={dotY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
+                                    <line x1={startX + 10} y1={dotY} x2={endX} y2={labelY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
+                                    <line x1={endX} y1={labelY} x2={endX + 8} y2={labelY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
+                                    <text x={endX + 12} y={labelY + 3} fill={pinColor} fontSize="9" fontFamily="monospace">
+                                      {item.h.name} ({formatNumber(item.def)})
+                                    </text>
+                                  </g>
+                                );
+                              });
+                            })()}
                           </svg>
                         )}
                       </div>
