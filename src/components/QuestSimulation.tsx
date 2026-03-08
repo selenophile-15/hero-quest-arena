@@ -218,7 +218,7 @@ export default function QuestSimulation() {
         <h2 className="font-display text-2xl text-primary">퀘스트 시뮬레이션</h2>
       </div>
 
-      {/* Step 1: Quest Type */}
+      {/* Quest Type - always on top */}
       <div className="card-fantasy p-4">
         <label className="text-sm text-muted-foreground block mb-2">퀘스트 종류</label>
         <div className="flex gap-2 flex-wrap">
@@ -242,375 +242,376 @@ export default function QuestSimulation() {
         </div>
       </div>
 
-      {/* Step 2: Region Select */}
-      {currentQuestData && (
-        <div className="card-fantasy p-4">
-          <label className="text-sm text-muted-foreground block mb-3">
-            지역 선택
-            {selectedRegionIdx >= 0 && (
-              <button onClick={resetSelection} className="ml-2 text-xs text-primary hover:underline">
-                초기화
-              </button>
-            )}
-          </label>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-            {currentQuestData.regions.map((region, idx) => (
-              <button
-                key={`${region.key}-${idx}`}
-                onClick={() => { setSelectedRegionIdx(idx); setSelectedSubAreaIdx(-1); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
-                className={`relative rounded-lg overflow-hidden border transition-all group ${
-                  selectedRegionIdx === idx
-                    ? 'border-primary ring-1 ring-primary/30'
-                    : 'border-border hover:border-primary/40'
-                }`}
-              >
-                <div className="bg-secondary/30 flex items-center justify-center p-2">
-                  <img
-                    src={region.areaImage}
-                    alt={region.name}
-                    className="w-full h-auto object-contain"
-                    onError={e => { e.currentTarget.style.display = 'none'; }}
-                  />
+      {/* Left-Right Split Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-4">
+        {/* LEFT: Selection Panel */}
+        <div className="space-y-4">
+          {/* Region Select */}
+          {currentQuestData && (
+            <div className="card-fantasy p-4">
+              <label className="text-sm text-muted-foreground block mb-3">
+                지역 선택
+                {selectedRegionIdx >= 0 && (
+                  <button onClick={resetSelection} className="ml-2 text-xs text-primary hover:underline">
+                    초기화
+                  </button>
+                )}
+              </label>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                {currentQuestData.regions.map((region, idx) => (
+                  <button
+                    key={`${region.key}-${idx}`}
+                    onClick={() => { setSelectedRegionIdx(idx); setSelectedSubAreaIdx(-1); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                    className={`relative rounded-lg overflow-hidden border transition-all group ${
+                      selectedRegionIdx === idx
+                        ? 'border-primary ring-1 ring-primary/30'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                  >
+                    <div className="bg-secondary/30 flex items-center justify-center p-2">
+                      <img
+                        src={region.areaImage}
+                        alt={region.name}
+                        className="w-full h-auto object-contain"
+                        onError={e => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    </div>
+                    <div className="p-1.5 text-center">
+                      <span className="text-xs font-medium text-foreground">{region.name}</span>
+                      <div className="flex items-center justify-center gap-1 mt-0.5">
+                        <Users className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[10px] text-muted-foreground">{region.maxMembers}명</span>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Sub-area Select */}
+          {currentRegion && hasSubAreas && (
+            <div className="card-fantasy p-4">
+              <label className="text-sm text-muted-foreground block mb-3">세부 지역 선택</label>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {currentRegion.subAreas.map((sub, idx) => (
+                  <button
+                    key={sub.key}
+                    onClick={() => { setSelectedSubAreaIdx(idx); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                    className={`rounded-lg border overflow-hidden transition-all ${
+                      selectedSubAreaIdx === idx
+                        ? 'border-primary ring-1 ring-primary/30'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                  >
+                    <div className="bg-secondary/30 flex items-center justify-center p-1.5">
+                      <img src={sub.image} alt={sub.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                    </div>
+                    <div className="p-1.5 text-center">
+                      <span className="text-xs font-medium text-foreground">{sub.name}</span>
+                    </div>
+                  </button>
+                ))}
+                {/* Boss option */}
+                {currentRegion.boss && (
+                  <button
+                    onClick={() => { setSelectedSubAreaIdx(99); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                    className={`rounded-lg border overflow-hidden transition-all ${
+                      selectedSubAreaIdx === 99
+                        ? 'border-primary ring-1 ring-primary/30'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                  >
+                    <div className="bg-red-500/10 flex items-center justify-center p-1.5">
+                      <img src={currentRegion.boss.image} alt={currentRegion.boss.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                    </div>
+                    <div className="p-1.5 text-center">
+                      <span className="text-xs font-medium text-red-400 flex items-center justify-center gap-1">
+                        <Crown className="w-3 h-3" /> {currentRegion.boss.name}
+                      </span>
+                    </div>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Difficulty Select */}
+          {currentRegion && (!hasSubAreas || selectedSubAreaIdx >= 0) && (
+            <div className="card-fantasy p-4">
+              <div className="flex items-center gap-3 mb-3">
+                {hasSubAreas && selectedSubAreaIdx === 99 && currentRegion.boss ? (
+                  <img src={currentRegion.boss.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                ) : hasSubAreas && selectedSubArea ? (
+                  <img src={selectedSubArea.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                ) : currentRegion.boss ? (
+                  <img src={currentRegion.boss.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                ) : null}
+                <div>
+                  <h3 className="font-display text-lg text-foreground">
+                    {currentRegion.name}
+                    {hasSubAreas && selectedSubAreaIdx === 99 && currentRegion.boss ? ` - ${currentRegion.boss.name}` : ''}
+                    {hasSubAreas && selectedSubArea ? ` - ${selectedSubArea.name}` : ''}
+                  </h3>
+                  <span className="text-xs text-muted-foreground">최대 {currentRegion.maxMembers}명 파티</span>
                 </div>
-                <div className="p-1.5 text-center">
-                  <span className="text-xs font-medium text-foreground">{region.name}</span>
-                  <div className="flex items-center justify-center gap-1 mt-0.5">
-                    <Users className="w-3 h-3 text-muted-foreground" />
-                    <span className="text-[10px] text-muted-foreground">{region.maxMembers}명</span>
+              </div>
+
+              {((!hasSubAreas || (selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99)) && questGroups.normal.length > 0) && (
+                <div className="mb-3">
+                  <span className="text-xs text-muted-foreground mb-1.5 block">일반</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {questGroups.normal.map(q => (
+                      <button
+                        key={q.originalIdx}
+                        onClick={() => { setSelectedQuestIdx(q.originalIdx); setSelectedHeroIds(new Set()); }}
+                        className={`p-2.5 rounded-lg border text-left transition-all ${
+                          selectedQuestIdx === q.originalIdx
+                            ? 'border-primary bg-primary/10'
+                            : getDifficultyBorder(q.difficulty)
+                        }`}
+                      >
+                        <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
+                          {q.stage ? `${q.stage}단계` : q.difficulty}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5">
+                          최소 {formatNumber(q.minPower)}
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+              )}
 
-      {/* Step 3: Sub-area Select (for regions with multiple sub-areas) */}
-      {currentRegion && hasSubAreas && (
-        <div className="card-fantasy p-4">
-          <label className="text-sm text-muted-foreground block mb-3">세부 지역 선택</label>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-            {currentRegion.subAreas.map((sub, idx) => (
-              <button
-                key={sub.key}
-                onClick={() => { setSelectedSubAreaIdx(idx); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
-                className={`rounded-lg border overflow-hidden transition-all ${
-                  selectedSubAreaIdx === idx
-                    ? 'border-primary ring-1 ring-primary/30'
-                    : 'border-border hover:border-primary/40'
-                }`}
-              >
-                <div className="bg-secondary/30 flex items-center justify-center p-1.5">
-                  <img src={sub.image} alt={sub.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                </div>
-                <div className="p-1.5 text-center">
-                  <span className="text-xs font-medium text-foreground">{sub.name}</span>
-                </div>
-              </button>
-            ))}
-            {/* Boss option */}
-            {currentRegion.boss && (
-              <button
-                onClick={() => { setSelectedSubAreaIdx(99); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
-                className={`rounded-lg border overflow-hidden transition-all ${
-                  selectedSubAreaIdx === 99
-                    ? 'border-primary ring-1 ring-primary/30'
-                    : 'border-border hover:border-primary/40'
-                }`}
-              >
-                <div className="bg-red-500/10 flex items-center justify-center p-1.5">
-                  <img src={currentRegion.boss.image} alt={currentRegion.boss.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                </div>
-                <div className="p-1.5 text-center">
-                  <span className="text-xs font-medium text-red-400 flex items-center justify-center gap-1">
-                    <Crown className="w-3 h-3" /> {currentRegion.boss.name}
+              {((!hasSubAreas || selectedSubAreaIdx === 99) && questGroups.boss.length > 0) && (
+                <div>
+                  <span className="text-xs text-muted-foreground mb-1.5 block flex items-center gap-1">
+                    <Crown className="w-3 h-3" /> 보스
                   </span>
-                </div>
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Step 4: Quest/Difficulty Select */}
-      {currentRegion && (!hasSubAreas || selectedSubAreaIdx >= 0) && (
-        <div className="card-fantasy p-4">
-          <div className="flex items-center gap-3 mb-3">
-            {hasSubAreas && selectedSubAreaIdx === 99 && currentRegion.boss ? (
-              <img src={currentRegion.boss.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-            ) : hasSubAreas && selectedSubArea ? (
-              <img src={selectedSubArea.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-            ) : currentRegion.boss ? (
-              <img src={currentRegion.boss.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-            ) : null}
-            <div>
-              <h3 className="font-display text-lg text-foreground">
-                {currentRegion.name}
-                {hasSubAreas && selectedSubAreaIdx === 99 && currentRegion.boss ? ` - ${currentRegion.boss.name}` : ''}
-                {hasSubAreas && selectedSubArea ? ` - ${selectedSubArea.name}` : ''}
-              </h3>
-              <span className="text-xs text-muted-foreground">최대 {currentRegion.maxMembers}명 파티</span>
-            </div>
-          </div>
-
-          {/* Show normal quests only for sub-areas (not boss), or when no sub-area system */}
-          {((!hasSubAreas || (selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99)) && questGroups.normal.length > 0) && (
-            <div className="mb-3">
-              <span className="text-xs text-muted-foreground mb-1.5 block">일반</span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {questGroups.normal.map(q => (
-                  <button
-                    key={q.originalIdx}
-                    onClick={() => { setSelectedQuestIdx(q.originalIdx); setSelectedHeroIds(new Set()); }}
-                    className={`p-2.5 rounded-lg border text-left transition-all ${
-                      selectedQuestIdx === q.originalIdx
-                        ? 'border-primary bg-primary/10'
-                        : getDifficultyBorder(q.difficulty)
-                    }`}
-                  >
-                    <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
-                      {q.stage ? `${q.stage}단계` : q.difficulty}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5">
-                      권장 {formatNumber(q.minPower)}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Boss quests - show for boss sub-area selection or when no sub-area system */}
-          {((!hasSubAreas || selectedSubAreaIdx === 99) && questGroups.boss.length > 0) && (
-            <div>
-              <span className="text-xs text-muted-foreground mb-1.5 block flex items-center gap-1">
-                <Crown className="w-3 h-3" /> 보스
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {questGroups.boss.map(q => (
-                  <button
-                    key={q.originalIdx}
-                    onClick={() => { setSelectedQuestIdx(q.originalIdx); setSelectedHeroIds(new Set()); }}
-                    className={`p-2.5 rounded-lg border text-left transition-all ${
-                      selectedQuestIdx === q.originalIdx
-                        ? 'border-primary bg-primary/10'
-                        : getDifficultyBorder(q.difficulty)
-                    }`}
-                  >
-                    <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
-                      {q.stage ? `${q.stage}단계` : q.difficulty}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5">
-                      권장 {formatNumber(q.minPower)}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Step 4: Monster Info */}
-      {currentQuest && (
-        <div className="card-fantasy p-4">
-          <h3 className="font-display text-base text-foreground mb-3 flex items-center gap-2">
-            <Swords className="w-4 h-4 text-primary" />
-            몬스터 정보
-            {currentQuest.isBoss && <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">BOSS</span>}
-            {currentQuest.difficulty !== '없음' && (() => {
-              const diffColors: Record<string, string> = {
-                '쉬움': 'bg-green-500/20 text-green-400',
-                '보통': 'bg-blue-500/20 text-blue-400',
-                '어려움': 'bg-orange-500/20 text-orange-400',
-                '익스트림': 'bg-purple-500/20 text-purple-400',
-              };
-              return <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[currentQuest.difficulty] || 'bg-secondary text-muted-foreground'}`}>{currentQuest.difficulty}</span>;
-            })()}
-          </h3>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {/* HP */}
-            <div className="bg-secondary/30 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Heart className="w-3.5 h-3.5 text-red-400" />
-                <span className="text-xs text-muted-foreground">HP</span>
-              </div>
-              <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.hp)}</span>
-            </div>
-
-            {/* ATK */}
-            <div className="bg-secondary/30 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Swords className="w-3.5 h-3.5 text-orange-400" />
-                <span className="text-xs text-muted-foreground">공격력</span>
-              </div>
-              <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.atk)}</span>
-            </div>
-
-            {/* AOE */}
-            <div className="bg-secondary/30 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                <span className="text-xs text-muted-foreground">광역 ({currentQuest.aoeChance}%)</span>
-              </div>
-              <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.aoe)}</span>
-            </div>
-
-            {/* Min Power */}
-            <div className="bg-secondary/30 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Shield className="w-3.5 h-3.5 text-blue-400" />
-                <span className="text-xs text-muted-foreground">최소 전투력</span>
-              </div>
-              <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.minPower)}</span>
-            </div>
-          </div>
-
-          {/* Defense thresholds */}
-          <div className="mt-3 bg-secondary/20 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 mb-2">
-              <Shield className="w-3.5 h-3.5 text-blue-400" />
-              <span className="text-xs text-muted-foreground font-medium">방어력 임계값</span>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="w-3 h-3 text-muted-foreground" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">대미지 감소율에 따른 필요 방어력</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <div className="grid grid-cols-4 gap-2 text-center">
-              {(['r0', 'r50', 'r70', 'r75'] as const).map(key => {
-                const labels: Record<string, string> = { r0: '0%', r50: '50%', r70: '70%', r75: '75%' };
-                return (
-                  <div key={key}>
-                    <span className="text-[10px] text-muted-foreground block">{labels[key]}</span>
-                    <span className="text-xs font-mono font-bold text-foreground">{formatNumber(currentQuest.def[key])}</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {questGroups.boss.map(q => (
+                      <button
+                        key={q.originalIdx}
+                        onClick={() => { setSelectedQuestIdx(q.originalIdx); setSelectedHeroIds(new Set()); }}
+                        className={`p-2.5 rounded-lg border text-left transition-all ${
+                          selectedQuestIdx === q.originalIdx
+                            ? 'border-primary bg-primary/10'
+                            : getDifficultyBorder(q.difficulty)
+                        }`}
+                      >
+                        <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
+                          {q.stage ? `${q.stage}단계` : q.difficulty}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5">
+                          최소 {formatNumber(q.minPower)}
+                        </div>
+                      </button>
+                    ))}
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Element Barrier */}
-          {currentQuest.barrier && (() => {
-            const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-              ? getSubAreaBarrierElement(currentQuest.barrier)
-              : null;
-            // For sub-area mode, show only the relevant element; for boss/no-sub-area, show all unique
-            const rawElements = barrierElement
-              ? [barrierElement]
-              : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
-            const elements = [...new Set(rawElements)];
-            if (elements.length === 0) return null;
-            return (
-              <div className="mt-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <span className="text-xs font-medium text-purple-300">속성 장벽</span>
-                  <span className="text-xs text-purple-400">HP: {currentQuest.barrier.hp}</span>
                 </div>
-                <div className="flex gap-2">
-                  {elements.map((el, i) => {
-                    if (!el) return null;
-                    const iconPath = commonData?.elementalBarriers?.[el]?.image;
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT: Monster Info + Party */}
+        <div className="space-y-4">
+          {/* Monster Info */}
+          {currentQuest ? (
+            <div className="card-fantasy p-4">
+              <h3 className="font-display text-base text-foreground mb-3 flex items-center gap-2">
+                <Swords className="w-4 h-4 text-primary" />
+                몬스터 정보
+                {currentQuest.isBoss && <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">BOSS</span>}
+                {currentQuest.difficulty !== '없음' && (() => {
+                  const diffColors: Record<string, string> = {
+                    '쉬움': 'bg-green-500/20 text-green-400',
+                    '보통': 'bg-blue-500/20 text-blue-400',
+                    '어려움': 'bg-orange-500/20 text-orange-400',
+                    '익스트림': 'bg-purple-500/20 text-purple-400',
+                  };
+                  return <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[currentQuest.difficulty] || 'bg-secondary text-muted-foreground'}`}>{currentQuest.difficulty}</span>;
+                })()}
+              </h3>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-secondary/30 rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Heart className="w-3.5 h-3.5 text-red-400" />
+                    <span className="text-xs text-muted-foreground">HP</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.hp)}</span>
+                </div>
+                <div className="bg-secondary/30 rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Swords className="w-3.5 h-3.5 text-orange-400" />
+                    <span className="text-xs text-muted-foreground">공격력</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.atk)}</span>
+                </div>
+                <div className="bg-secondary/30 rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                    <span className="text-xs text-muted-foreground">광역 ({currentQuest.aoeChance}%)</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.aoe)}</span>
+                </div>
+                <div className="bg-secondary/30 rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Shield className="w-3.5 h-3.5 text-blue-400" />
+                    <span className="text-xs text-muted-foreground">최소 전투력</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.minPower)}</span>
+                </div>
+              </div>
+
+              {/* Defense thresholds */}
+              <div className="mt-3 bg-secondary/20 rounded-lg p-3">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Shield className="w-3.5 h-3.5 text-blue-400" />
+                  <span className="text-xs text-muted-foreground font-medium">방어력 임계값</span>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">대미지 감소율에 따른 필요 방어력</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                <div className="grid grid-cols-4 gap-2 text-center">
+                  {(['r0', 'r50', 'r70', 'r75'] as const).map(key => {
+                    const labels: Record<string, string> = { r0: '0%', r50: '50%', r70: '70%', r75: '75%' };
                     return (
-                      <div key={i} className="flex items-center gap-1 bg-secondary/40 rounded px-2 py-1">
-                        {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                        <span className="text-xs text-foreground">{el}</span>
+                      <div key={key}>
+                        <span className="text-[10px] text-muted-foreground block">{labels[key]}</span>
+                        <span className="text-xs font-mono font-bold text-foreground">{formatNumber(currentQuest.def[key])}</span>
                       </div>
                     );
                   })}
                 </div>
               </div>
-            );
-          })()}
 
-          {/* Time info */}
-          <div className="mt-3 bg-secondary/20 rounded-lg p-3">
-            <span className="text-xs text-muted-foreground font-medium mb-2 block">시간 정보</span>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center">
-              {[
-                { label: '기본', value: currentQuest.time.base },
-                { label: '추가', value: currentQuest.time.additional },
-                { label: '인당', value: currentQuest.time.perMember },
-                { label: '총합', value: currentQuest.time.total },
-                { label: '휴식', value: currentQuest.time.rest },
-                { label: '회복', value: currentQuest.time.recovery },
-              ].map(t => (
-                <div key={t.label}>
-                  <span className="text-[10px] text-muted-foreground block">{t.label}</span>
-                  <span className="text-xs font-mono text-foreground">{formatTime(t.value)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Step 5: Hero Selection */}
-      {currentQuest && currentRegion && (
-        <div className="card-fantasy p-4">
-          <label className="text-sm text-muted-foreground block mb-3">
-            파티 구성 ({selectedHeroIds.size} / {currentRegion.maxMembers}명)
-          </label>
-          <ScrollArea className="max-h-[300px]">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-              {allHeroes.map(hero => {
-                const isSelected = selectedHeroIds.has(hero.id);
-                const isFull = selectedHeroIds.size >= currentRegion.maxMembers && !isSelected;
+              {/* Element Barrier */}
+              {currentQuest.barrier && (() => {
+                const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                  ? getSubAreaBarrierElement(currentQuest.barrier)
+                  : null;
+                const rawElements = barrierElement
+                  ? [barrierElement]
+                  : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
+                const elements = [...new Set(rawElements)];
+                if (elements.length === 0) return null;
                 return (
-                  <label
-                    key={hero.id}
-                    className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all border ${
-                      isSelected
-                        ? 'border-primary/50 bg-primary/5'
-                        : isFull
-                        ? 'border-border/30 opacity-40 cursor-not-allowed'
-                        : 'border-border hover:border-primary/20'
-                    }`}
-                  >
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={() => !isFull && toggleHero(hero.id)}
-                      disabled={isFull}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-foreground truncate">{hero.name}</span>
-                        <span className={`text-[10px] px-1 py-0.5 rounded ${hero.type === 'champion' ? 'bg-accent/20 text-accent' : 'bg-primary/20 text-primary'}`}>
-                          {hero.type === 'champion' ? '챔피언' : '영웅'}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        {hero.heroClass && <span className="text-xs text-muted-foreground">{hero.heroClass}</span>}
-                        <span className="text-xs text-muted-foreground">Lv.{hero.level}</span>
-                        {hero.power > 0 && (
-                          <span className="text-xs text-yellow-400">⚔ {formatNumber(hero.power)}</span>
-                        )}
-                      </div>
+                  <div className="mt-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <span className="text-xs font-medium text-purple-300">속성 장벽</span>
+                      <span className="text-xs text-purple-400">HP: {currentQuest.barrier.hp}</span>
                     </div>
-                  </label>
+                    <div className="flex gap-2">
+                      {elements.map((el, i) => {
+                        if (!el) return null;
+                        const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                        return (
+                          <div key={i} className="flex items-center gap-1 bg-secondary/40 rounded px-2 py-1">
+                            {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            <span className="text-xs text-foreground">{el}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 );
-              })}
-            </div>
-          </ScrollArea>
+              })()}
 
-          {/* Run button */}
-          <Button
-            onClick={() => {
-              // Placeholder - simulation logic will be added later
-              alert('시뮬레이션 로직은 추후 구현 예정입니다.');
-            }}
-            disabled={selectedHeroIds.size === 0}
-            className="w-full mt-4 gap-2"
-            size="lg"
-          >
-            <Play className="w-4 h-4" /> 시뮬레이션 실행
-          </Button>
+              {/* Time info */}
+              <div className="mt-3 bg-secondary/20 rounded-lg p-3">
+                <span className="text-xs text-muted-foreground font-medium mb-2 block">시간 정보</span>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  {[
+                    { label: '기본', value: currentQuest.time.base },
+                    { label: '추가', value: currentQuest.time.additional },
+                    { label: '인당', value: currentQuest.time.perMember },
+                    { label: '총합', value: currentQuest.time.total },
+                    { label: '휴식', value: currentQuest.time.rest },
+                    { label: '회복', value: currentQuest.time.recovery },
+                  ].map(t => (
+                    <div key={t.label}>
+                      <span className="text-[10px] text-muted-foreground block">{t.label}</span>
+                      <span className="text-xs font-mono text-foreground">{formatTime(t.value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : currentQuestData ? (
+            <div className="card-fantasy p-4 flex items-center justify-center text-muted-foreground text-sm min-h-[200px]">
+              ← 왼쪽에서 지역과 난이도를 선택하세요
+            </div>
+          ) : null}
+
+          {/* Party Selection */}
+          {currentQuest && currentRegion && (
+            <div className="card-fantasy p-4">
+              <label className="text-sm text-muted-foreground block mb-3">
+                파티 구성 ({selectedHeroIds.size} / {currentRegion.maxMembers}명)
+              </label>
+              <ScrollArea className="max-h-[300px]">
+                <div className="grid grid-cols-1 gap-2">
+                  {allHeroes.map(hero => {
+                    const isSelected = selectedHeroIds.has(hero.id);
+                    const isFull = selectedHeroIds.size >= currentRegion.maxMembers && !isSelected;
+                    return (
+                      <label
+                        key={hero.id}
+                        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all border ${
+                          isSelected
+                            ? 'border-primary/50 bg-primary/5'
+                            : isFull
+                            ? 'border-border/30 opacity-40 cursor-not-allowed'
+                            : 'border-border hover:border-primary/20'
+                        }`}
+                      >
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={() => !isFull && toggleHero(hero.id)}
+                          disabled={isFull}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm text-foreground truncate">{hero.name}</span>
+                            <span className={`text-[10px] px-1 py-0.5 rounded ${hero.type === 'champion' ? 'bg-accent/20 text-accent' : 'bg-primary/20 text-primary'}`}>
+                              {hero.type === 'champion' ? '챔피언' : '영웅'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            {hero.heroClass && <span className="text-xs text-muted-foreground">{hero.heroClass}</span>}
+                            <span className="text-xs text-muted-foreground">Lv.{hero.level}</span>
+                            {hero.power > 0 && (
+                              <span className="text-xs text-yellow-400">⚔ {formatNumber(hero.power)}</span>
+                            )}
+                          </div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+
+              <Button
+                onClick={() => {
+                  alert('시뮬레이션 로직은 추후 구현 예정입니다.');
+                }}
+                disabled={selectedHeroIds.size === 0}
+                className="w-full mt-4 gap-2"
+                size="lg"
+              >
+                <Play className="w-4 h-4" /> 시뮬레이션 실행
+              </Button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
