@@ -381,17 +381,18 @@ export async function calculateEquipmentStats(
     const spiritCapDef = capEnchant(spiritRaw.def, baseDef);
     const spiritCapHp = capEnchant(spiritRaw.hp, baseHp);
 
-    // Pre-bonus stats
-    let preBonusAtk = qualityAtk + elementCapAtk + spiritCapAtk;
-    let preBonusDef = qualityDef + elementCapDef + spiritCapDef;
-    let preBonusHp = qualityHp + elementCapHp + spiritCapHp;
+    // Pre-bonus stats (before spellknight multiplier)
+    const preBonusAtk = qualityAtk + elementCapAtk + spiritCapAtk;
+    const preBonusDef = qualityDef + elementCapDef + spiritCapDef;
+    const preBonusHp = qualityHp + elementCapHp + spiritCapHp;
 
-    // 스펠나이트: equipment with unique element gets ×1.5 multiplier before bonus
-    if (isSpellknight && (item.uniqueElement?.length > 0)) {
-      preBonusAtk = Math.floor(preBonusAtk * 1.5);
-      preBonusDef = Math.floor(preBonusDef * 1.5);
-      preBonusHp = Math.floor(preBonusHp * 1.5);
-    }
+    // 스펠나이트 계수: equipment with unique element gets ×1.5
+    const spellknightMult = (isSpellknight && item.uniqueElement?.length > 0) ? 1.5 : 1.0;
+    const afterSpellknight = {
+      atk: Math.floor(preBonusAtk * spellknightMult),
+      def: Math.floor(preBonusDef * spellknightMult),
+      hp: Math.floor(preBonusHp * spellknightMult),
+    };
 
     // Calculate skill bonus % for this slot
     const typeKor = item.typeKor || '';
