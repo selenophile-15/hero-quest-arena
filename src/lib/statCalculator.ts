@@ -50,9 +50,6 @@ export interface CalculatedStats {
   preRelicCrit: number;
   preRelicEvasion: number;
 
-  // Relic bonus additions to general stats
-  relicBonusFlat: { atk: number; def: number; hp: number; crit: number; critDmg: number; evasion: number; threat: number };
-  relicBonusPct: { atk: number; def: number; hp: number };
 
   // Metadata
   jobName: string;
