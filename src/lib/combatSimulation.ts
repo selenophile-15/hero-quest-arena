@@ -29,7 +29,7 @@ export interface QuestMonster {
   barrierElement: string | null; // Resolved barrier element for this sub-area
 }
 
-export type MiniBossType = 'none' | 'agile' | 'dire' | 'huge' | 'legendary';
+export type MiniBossType = 'none' | 'agile' | 'dire' | 'huge' | 'wealthy' | 'legendary';
 
 export interface BoosterType {
   type: 'none' | 'normal' | 'super' | 'mega';
