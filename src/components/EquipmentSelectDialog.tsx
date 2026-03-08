@@ -188,10 +188,15 @@ export default function EquipmentSelectDialog({
     return groups;
   }, [spiritNames]);
 
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingTotal, setLoadingTotal] = useState(0);
+
   useEffect(() => {
     if (!open || !jobName) return;
     const load = async () => {
       setLoading(true);
+      setLoadingProgress(0);
+      setLoadingTotal(0);
       const [sid, nameMap] = await Promise.all([loadSID(), loadEquipNameMap()]);
       const allowedPerSlot: string[][] = [];
       const allTypeSet = new Set<string>();
@@ -208,7 +213,11 @@ export default function EquipmentSelectDialog({
         allTypeSet.add('쌍수');
       }
       setSlotAllowedTypes(allowedPerSlot);
-      const items = await loadEquipmentByTypes(Array.from(allTypeSet), nameMap);
+      const typeArr = Array.from(allTypeSet);
+      setLoadingTotal(typeArr.length);
+      const items = await loadEquipmentByTypes(typeArr, nameMap, (loaded) => {
+        setLoadingProgress(loaded);
+      });
       setAllItems(items);
       setLoading(false);
     };
