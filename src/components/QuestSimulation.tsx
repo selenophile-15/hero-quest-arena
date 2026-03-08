@@ -1030,6 +1030,15 @@ export default function QuestSimulation() {
         minPower={currentQuest?.minPower || 0}
         onSelect={toggleHero}
       />
+
+      {/* Party Buff Breakdown Drawer */}
+      <PartyBuffBreakdownDrawer
+        open={buffBreakdownOpen}
+        onOpenChange={setBuffBreakdownOpen}
+        heroes={selectedHeroes}
+        buffSummary={buffSummary}
+        buffedStats={buffedStats}
+      />
     </div>
   );
 }
