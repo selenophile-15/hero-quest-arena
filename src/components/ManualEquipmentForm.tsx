@@ -14,6 +14,13 @@ const ALL_TYPES = Object.entries(EQUIP_TYPE_MAP)
   .filter(([, v]) => v.file !== 'dual_wield')
   .map(([k]) => k);
 
+function getAllowedTypesForSlot(allowedTypes?: string[]) {
+  if (!allowedTypes || allowedTypes.length === 0) return ALL_TYPES;
+  const hasWeapon = allowedTypes.some(t => EQUIP_TYPE_MAP[t]?.category === 'weapon');
+  const base = allowedTypes.filter(t => t !== '쌍수');
+  return hasWeapon ? [...base, '쌍수'] : base;
+}
+
 const ELEMENT_OPTIONS = ['불', '물', '공기', '대지', '빛', '어둠', '골드', '모든 원소'];
 
 const SPIRIT_OPTIONS = [
@@ -73,6 +80,7 @@ export interface ManualEquipmentData {
 
 interface ManualEquipmentFormProps {
   initialData?: ManualEquipmentData | null;
+  allowedTypes?: string[];
   onConfirm: (item: EquipmentItem, manualData: ManualEquipmentData) => void;
   onCancel: () => void;
 }
@@ -94,8 +102,9 @@ function emptyData(): ManualEquipmentData {
   };
 }
 
-export default function ManualEquipmentForm({ initialData, onConfirm, onCancel }: ManualEquipmentFormProps) {
+export default function ManualEquipmentForm({ initialData, allowedTypes, onConfirm, onCancel }: ManualEquipmentFormProps) {
   const [data, setData] = useState<ManualEquipmentData>(initialData || emptyData());
+  const typeOptions = getAllowedTypesForSlot(allowedTypes);
 
   useEffect(() => {
     if (initialData) setData(initialData);
@@ -198,8 +207,7 @@ export default function ManualEquipmentForm({ initialData, onConfirm, onCancel }
         <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
           <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="선택" /></SelectTrigger>
           <SelectContent className="max-h-[240px]">
-            {ALL_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-            <SelectItem value="쌍수">쌍수</SelectItem>
+          {typeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
@@ -231,20 +239,23 @@ export default function ManualEquipmentForm({ initialData, onConfirm, onCancel }
       <div className="text-[10px] text-muted-foreground">일반 등급 기준 스탯</div>
       <div className="grid grid-cols-5 gap-2 text-xs">
         {[
-          { key: 'atk' as const, label: '공격력' },
-          { key: 'def' as const, label: '방어력' },
-          { key: 'hp' as const, label: '체력' },
-          { key: 'crit' as const, label: '치명타%' },
-          { key: 'evasion' as const, label: '회피%' },
+          { key: 'atk' as const, label: '공격력', suffix: '' },
+          { key: 'def' as const, label: '방어력', suffix: '' },
+          { key: 'hp' as const, label: '체력', suffix: '' },
+          { key: 'crit' as const, label: '치명타 확률', suffix: '%' },
+          { key: 'evasion' as const, label: '회피', suffix: '%' },
         ].map(s => (
           <div key={s.key} className="flex flex-col items-center gap-0.5">
             <span className="text-muted-foreground text-[10px]">{s.label}</span>
-            <Input
-              type="number"
-              className="h-7 text-xs text-center"
-              value={data[s.key] || ''}
-              onChange={e => update(s.key, parseFloat(e.target.value) || 0)}
-            />
+            <div className="relative">
+              <Input
+                type="number"
+                className={`h-7 text-xs text-center ${s.suffix ? 'pr-4' : ''}`}
+                value={data[s.key] === 0 ? '0' : (data[s.key] || '')}
+                onChange={e => update(s.key, parseFloat(e.target.value) || 0)}
+              />
+              {s.suffix && <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none">{s.suffix}</span>}
+            </div>
           </div>
         ))}
       </div>
@@ -310,7 +321,7 @@ export default function ManualEquipmentForm({ initialData, onConfirm, onCancel }
               <Input
                 type="number"
                 className="h-7 text-[10px] w-20 text-center"
-                value={b.value || ''}
+                value={b.value === 0 ? '0' : (b.value || '')}
                 onChange={e => updateBonus(i, 'value', parseFloat(e.target.value) || 0)}
               />
               <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => removeRelicBonus(i)}>
