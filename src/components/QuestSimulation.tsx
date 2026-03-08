@@ -257,7 +257,7 @@ export default function QuestSimulation() {
             {currentQuestData.regions.map((region, idx) => (
               <button
                 key={`${region.key}-${idx}`}
-                onClick={() => { setSelectedRegionIdx(idx); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                onClick={() => { setSelectedRegionIdx(idx); setSelectedSubAreaIdx(-1); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
                 className={`relative rounded-lg overflow-hidden border transition-all group ${
                   selectedRegionIdx === idx
                     ? 'border-primary ring-1 ring-primary/30'
