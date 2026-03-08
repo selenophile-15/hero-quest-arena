@@ -338,7 +338,7 @@ export default function EquipmentSelectDialog({
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-6xl h-[90vh] overflow-hidden flex flex-col p-5">
         <DialogHeader>
-          <DialogTitle style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
+          <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
           <DialogDescription className="sr-only">슬롯별 장비를 선택하세요</DialogDescription>
         </DialogHeader>
 
