@@ -84,17 +84,25 @@ const RELIC_STAT_OPTIONS = [
 ];
 
 const AURA_STAT_OPTIONS = [
-  { value: '오라_공격력%', label: '공격력%' },
-  { value: '오라_방어력%', label: '방어력%' },
-  { value: '오라_체력%', label: '체력%' },
-  { value: '오라_깡체력', label: '체력(깡)' },
-  { value: '오라_치명타확률%', label: '치명타 확률%' },
-  { value: '오라_치명타데미지%', label: '치명타 대미지%' },
-  { value: '오라_회피%', label: '회피%' },
-  { value: '오라_경험치%', label: '경험치%' },
-  { value: '오라_매턴체력회복', label: '매턴 체력 회복' },
-  { value: '오라_퀘스트시간감소%', label: '퀘스트 시간 감소%' },
-  { value: '오라_휴식시간감소%', label: '휴식 시간 감소%' },
+  { value: '깡공격력', label: '공격력', pct: false },
+  { value: '공격력%', label: '공격력%', pct: true },
+  { value: '해당장비공격력%', label: '해당 장비 공격력%', pct: true },
+  { value: '깡방어력', label: '방어력', pct: false },
+  { value: '방어력%', label: '방어력%', pct: true },
+  { value: '해당장비방어력%', label: '해당 장비 방어력%', pct: true },
+  { value: '깡체력', label: '체력', pct: false },
+  { value: '체력%', label: '체력%', pct: true },
+  { value: '해당장비전체%', label: '해당 장비 전체%', pct: true },
+  { value: '모든장비보너스%', label: '모든 장비 보너스%', pct: true },
+  { value: '치명타확률%', label: '치명타 확률%', pct: true },
+  { value: '치명타데미지%', label: '치명타 데미지%', pct: true },
+  { value: '치명타생존%', label: '치명타 생존%', pct: true },
+  { value: '회피%', label: '회피%', pct: true },
+  { value: '위협도', label: '위협도', pct: false },
+  { value: '경험치%', label: '경험치%', pct: true },
+  { value: '매턴체력회복', label: '매턴 체력 회복', pct: false },
+  { value: '퀘스트시간감소%', label: '퀘스트 시간 감소%', pct: true },
+  { value: '휴식시간감소%', label: '휴식 시간 감소%', pct: true },
 ];
 
 const RELIC_OP_OPTIONS = [
