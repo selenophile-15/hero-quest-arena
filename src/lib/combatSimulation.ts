@@ -438,6 +438,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
       break;
   }
+  // Stack extra bonuses (e.g., Fateweaver retry Normal booster: +20%/+20%)
+  if (booster.extraAtkBonus) boosterAtkBonus += booster.extraAtkBonus;
+  if (booster.extraDefBonus) boosterDefBonus += booster.extraDefBonus;
+  if (booster.extraCritChance) {
+    for (let i = 0; i < numHeroes; i++) heroCritChance[i] += booster.extraCritChance;
+  }
+  if (booster.extraCritMult) {
+    for (let i = 0; i < numHeroes; i++) heroCritMult[i] += booster.extraCritMult;
+  }
 
   // ─── Apply champion + booster to base stats ───
   // Per Korean doc: final = base × (1 + (champ + aurasong) × mercMult + booster)
