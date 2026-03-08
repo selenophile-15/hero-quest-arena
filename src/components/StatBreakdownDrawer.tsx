@@ -424,15 +424,15 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     if (statType === 'other') {
       return (
         <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-3 py-12">
-          <div className="text-4xl">🔧</div>
+          <Settings className="w-10 h-10" />
           <p className="text-sm">준비 중입니다</p>
           <p className="text-xs text-muted-foreground/70">매턴 체력 회복, 기타 특수 효과 등이 추가될 예정입니다.</p>
         </div>
       );
     }
 
-    // Crit tab shows both crit rate and crit damage
     const isCrit = statType === 'crit';
+    const isEvasion = statType === 'evasion';
 
     // Base values
     const baseVal = calcStats
@@ -466,6 +466,12 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const totalCritDmg = calcStats?.totalCritDmg || 0;
     const totalCritAttack = calcStats?.totalCritAttack || 0;
 
+    // Evasion cap logic
+    const isPathfinder = calcStats?.jobName === '길잡이' || calcStats?.jobName === '방랑자';
+    const evasionCap = isPathfinder ? 78 : 75;
+    const cappedEvasion = isEvasion && totalVal > evasionCap ? evasionCap : totalVal;
+    const isEvasionCapped = isEvasion && totalVal > evasionCap;
+
     // Unit
     const unit = statType === 'threat' ? '' : '%';
 
@@ -476,6 +482,214 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
       return val !== 0 || critDmg !== 0;
     });
 
+    // For crit: separate sources for rate vs dmg
+    const critRateSources = isCrit ? allSources.filter(src => getAddBonusField(src, 'crit') !== 0) : [];
+    const critDmgSources = isCrit ? allSources.filter(src => getCritDmgField(src) !== 0) : [];
+
+    // ===== CRIT: Left = rate, Right = dmg =====
+    if (isCrit) {
+      return (
+        <div className="grid grid-cols-[1fr_1fr] gap-4 h-full">
+          {/* Left: Crit Rate */}
+          <div className="space-y-3 overflow-y-auto">
+            <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+              <h4 className="text-sm font-bold text-foreground">치명타 확률</h4>
+            </div>
+
+            <div className="px-3">
+              <table className="w-full text-xs">
+                <tbody>
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-foreground/70">기본 치명타 확률</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseVal}%</td>
+                  </tr>
+                  {slotStatKey && (
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-foreground/70">장비 치명타 확률 합</td>
+                      <td className="py-1.5 text-right tabular-nums font-bold text-foreground">{equipCrit}%</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Per-slot crit */}
+            {slotStatKey && (
+              <div className="px-3">
+                <h5 className="text-xs font-semibold text-primary mb-1">장비별 치명타 확률</h5>
+                <table className="w-full text-xs">
+                  <tbody>
+                    {equipSlots.map((slot, i) => {
+                      const val = getSlotStatDirect(slot, slotStatKey as keyof EquipSlotCalc);
+                      return (
+                        <tr key={i} className="border-b border-border/20">
+                          <td className="py-1 text-foreground/70">
+                            장비 {i + 1}
+                            {slot.itemName && <span className="text-foreground/50 ml-1 text-[10px]">({slot.itemName})</span>}
+                          </td>
+                          <td className={`py-1 text-right tabular-nums ${val ? 'text-foreground' : 'text-muted-foreground'}`}>
+                            {val ? `+${val}%` : '-'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Skill/Soul bonuses for rate */}
+            <div className="px-3">
+              <h5 className="text-xs font-semibold text-primary mb-1">스킬 & 영혼 보너스 (확률)</h5>
+              <table className="w-full text-xs">
+                <tbody>
+                  {critRateSources.length === 0 ? (
+                    <tr className="border-b border-border/20">
+                      <td colSpan={2} className="py-1 text-center text-muted-foreground">보너스 없음</td>
+                    </tr>
+                  ) : critRateSources.map((src, i) => {
+                    const val = getAddBonusField(src, 'crit');
+                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
+                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
+                    return (
+                      <tr key={i} className="border-b border-border/20">
+                        <td className="py-1 text-foreground/70">
+                          <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
+                          {src.name}
+                        </td>
+                        <td className="py-1 text-right tabular-nums text-foreground">+{val}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Final crit rate summary */}
+            <div className={`mx-0 rounded ${config.headerBg} overflow-hidden`}>
+              <div className="px-3 py-2">
+                <h5 className="text-xs font-bold text-foreground mb-2">최종 계산식</h5>
+                <table className="w-full text-xs">
+                  <tbody>
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-foreground/80">기본 치명타 확률</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">{baseVal}%</td>
+                    </tr>
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-foreground/80">장비 합</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">+{equipCrit}%</td>
+                    </tr>
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusVal}%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
+                <span className="text-sm font-bold text-foreground">최종 치명타 확률</span>
+                <span className={`text-xl font-bold tabular-nums ${config.color}`}>
+                  {totalVal}%
+                </span>
+              </div>
+            </div>
+
+            <div className="px-3 pb-3">
+              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+                ※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스
+              </p>
+            </div>
+          </div>
+
+          {/* Right: Crit Damage */}
+          <div className="space-y-3 overflow-y-auto">
+            <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+              <h4 className="text-sm font-bold text-foreground">치명타 대미지</h4>
+            </div>
+
+            <div className="px-3">
+              <table className="w-full text-xs">
+                <tbody>
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-foreground/70">기본 치명타 대미지</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseCritDmgVal}%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Skill/Soul bonuses for dmg */}
+            <div className="px-3">
+              <h5 className="text-xs font-semibold text-primary mb-1">스킬 & 영혼 보너스 (대미지)</h5>
+              <table className="w-full text-xs">
+                <tbody>
+                  {critDmgSources.length === 0 ? (
+                    <tr className="border-b border-border/20">
+                      <td colSpan={2} className="py-1 text-center text-muted-foreground">보너스 없음</td>
+                    </tr>
+                  ) : critDmgSources.map((src, i) => {
+                    const val = getCritDmgField(src);
+                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
+                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
+                    return (
+                      <tr key={i} className="border-b border-border/20">
+                        <td className="py-1 text-foreground/70">
+                          <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
+                          {src.name}
+                        </td>
+                        <td className="py-1 text-right tabular-nums text-foreground">+{val}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Final crit damage summary */}
+            <div className={`mx-0 rounded ${config.headerBg} overflow-hidden`}>
+              <div className="px-3 py-2">
+                <h5 className="text-xs font-bold text-foreground mb-2">최종 계산식</h5>
+                <table className="w-full text-xs">
+                  <tbody>
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-foreground/80">기본 치명타 대미지</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">{baseCritDmgVal}%</td>
+                    </tr>
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusCritDmg}%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
+                <span className="text-sm font-bold text-foreground">최종 치명타 대미지</span>
+                <span className={`text-xl font-bold tabular-nums ${config.color}`}>
+                  {totalCritDmg}%
+                </span>
+              </div>
+              <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
+                <span className="text-sm font-bold text-foreground">치명타 공격력</span>
+                <span className="text-xl font-bold tabular-nums text-red-400">
+                  {formatNumber(totalCritAttack)}
+                </span>
+              </div>
+            </div>
+
+            <div className="px-3 pb-3">
+              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+                ※ 치명타 대미지 = 기본 + 스킬/영혼 보너스
+              </p>
+              <p className="text-[10px] text-muted-foreground text-center leading-relaxed mt-1">
+                ※ 치명타 공격력 = 최종 공격력 × 치명타 대미지% / 100
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ===== EVASION / THREAT =====
     return (
       <div className="grid grid-cols-[1fr_1fr] gap-4 h-full">
         {/* Left: Breakdown */}
@@ -484,23 +698,16 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <h4 className="text-sm font-bold text-foreground">{config.label} 상세</h4>
           </div>
 
-          {/* Base stat */}
           <div className="px-3">
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">기본 {isCrit ? '치명타 확률' : config.label}</td>
+                  <td className="py-1.5 text-foreground/70">기본 {config.label}</td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseVal}{unit}</td>
                 </tr>
-                {isCrit && (
-                  <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/70">기본 치명타 대미지</td>
-                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseCritDmgVal}%</td>
-                  </tr>
-                )}
                 {slotStatKey && (
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/70">장비 {isCrit ? '치명타 확률' : config.label} 합</td>
+                    <td className="py-1.5 text-foreground/70">장비 {config.label} 합</td>
                     <td className="py-1.5 text-right tabular-nums font-bold text-foreground">
                       {statType === 'crit' ? equipCrit : equipEvasion}{unit}
                     </td>
@@ -513,7 +720,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
           {/* Per-slot equipment breakdown */}
           {slotStatKey && (
             <div className="px-3">
-              <h5 className="text-xs font-semibold text-primary mb-1">장비별 {isCrit ? '치명타 확률' : config.label}</h5>
+              <h5 className="text-xs font-semibold text-primary mb-1">장비별 {config.label}</h5>
               <table className="w-full text-xs">
                 <tbody>
                   {equipSlots.map((slot, i) => {
@@ -542,18 +749,16 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               <thead>
                 <tr className="border-b border-border/50">
                   <th className="py-1 text-left text-foreground/60">스킬/영혼명</th>
-                  <th className="py-1 text-right text-foreground/60">{isCrit ? '확률' : config.label}</th>
-                  {isCrit && <th className="py-1 text-right text-foreground/60">대미지</th>}
+                  <th className="py-1 text-right text-foreground/60">{config.label}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredSources.length === 0 ? (
                   <tr className="border-b border-border/20">
-                    <td colSpan={isCrit ? 3 : 2} className="py-1 text-center text-muted-foreground">보너스 없음</td>
+                    <td colSpan={2} className="py-1 text-center text-muted-foreground">보너스 없음</td>
                   </tr>
                 ) : filteredSources.map((src, i) => {
                   const val = getAddBonusField(src, statType);
-                  const critDmg = isCrit ? getCritDmgField(src) : 0;
                   const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
                   const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
                   return (
@@ -565,11 +770,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       <td className={`py-1 text-right tabular-nums ${val ? 'text-foreground' : 'text-muted-foreground'}`}>
                         {val ? `+${val}${unit}` : '-'}
                       </td>
-                      {isCrit && (
-                        <td className={`py-1 text-right tabular-nums ${critDmg ? 'text-foreground' : 'text-muted-foreground'}`}>
-                          {critDmg ? `+${critDmg}%` : '-'}
-                        </td>
-                      )}
                     </tr>
                   );
                 })}
@@ -588,19 +788,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">총 {isCrit ? '치명타 확률' : config.label} 보너스</td>
+                  <td className="py-1.5 text-foreground/70">총 {config.label} 보너스</td>
                   <td className={`py-1.5 text-right tabular-nums font-medium ${bonusVal ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {bonusVal ? `+${bonusVal}${unit}` : `0${unit}`}
                   </td>
                 </tr>
-                {isCrit && (
-                  <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/70">총 치명타 대미지 보너스</td>
-                    <td className={`py-1.5 text-right tabular-nums font-medium ${bonusCritDmg ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {bonusCritDmg ? `+${bonusCritDmg}%` : '0%'}
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
@@ -612,14 +804,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               <table className="w-full text-xs">
                 <tbody>
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/80">기본 {isCrit ? '치명타 확률' : config.label}</td>
+                    <td className="py-1.5 text-foreground/80">기본 {config.label}</td>
                     <td className="py-1.5 text-right tabular-nums text-foreground">{baseVal}{unit}</td>
                   </tr>
                   {slotStatKey && (
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 text-foreground/80">장비 합</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground">
-                        +{statType === 'crit' ? equipCrit : equipEvasion}{unit}
+                        +{statType === 'evasion' ? equipEvasion : 0}{unit}
                       </td>
                     </tr>
                   )}
@@ -631,56 +823,40 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               </table>
             </div>
             <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
-              <span className="text-sm font-bold text-foreground">최종 {isCrit ? '치명타 확률' : config.label}</span>
-              <span className={`text-xl font-bold tabular-nums ${config.color}`}>
-                {totalVal}{unit}
-              </span>
+              <span className="text-sm font-bold text-foreground">최종 {config.label}</span>
+              {isEvasion ? (
+                <span className={`text-xl font-bold tabular-nums ${config.color}`}>
+                  {cappedEvasion}%
+                  {isEvasionCapped && (
+                    <span className="text-sm font-normal text-muted-foreground ml-1">({totalVal}%)</span>
+                  )}
+                </span>
+              ) : (
+                <span className={`text-xl font-bold tabular-nums ${config.color}`}>
+                  {totalVal}{unit}
+                </span>
+              )}
             </div>
-            {isCrit && (
-              <>
-                <div className="px-3 py-2 border-t border-border/40">
-                  <table className="w-full text-xs">
-                    <tbody>
-                      <tr className="border-b border-border/30">
-                        <td className="py-1.5 text-foreground/80">기본 치명타 대미지</td>
-                        <td className="py-1.5 text-right tabular-nums text-foreground">{baseCritDmgVal}%</td>
-                      </tr>
-                      <tr className="border-b border-border/30">
-                        <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
-                        <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusCritDmg}%</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
-                  <span className="text-sm font-bold text-foreground">최종 치명타 대미지</span>
-                  <span className={`text-xl font-bold tabular-nums ${config.color}`}>
-                    {totalCritDmg}%
-                  </span>
-                </div>
-                <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
-                  <span className="text-sm font-bold text-foreground">치명타 공격력</span>
-                  <span className="text-xl font-bold tabular-nums text-red-400">
-                    {formatNumber(totalCritAttack)}
-                  </span>
-                </div>
-              </>
-            )}
           </div>
+
+          {isEvasion && (
+            <div className="px-3">
+              <div className="rounded bg-teal-900/20 border border-teal-500/20 px-3 py-2">
+                <p className="text-[10px] text-teal-300/80 leading-relaxed">
+                  ⚠️ 던전에서 회피율은 최대 <span className="font-bold text-teal-200">{evasionCap}%</span>까지만 적용됩니다.
+                  {isPathfinder && ' (길잡이/방랑자는 78%까지 적용)'}
+                  {!isPathfinder && ' (길잡이/방랑자만 78%까지 적용 가능)'}
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="px-3 pb-3">
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              {isCrit
-                ? '※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산)'
-                : statType === 'evasion'
-                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산)'
-                  : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
+              {isEvasion
+                ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75%/78%)'
+                : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
             </p>
-            {isCrit && (
-              <p className="text-[10px] text-muted-foreground text-center leading-relaxed mt-1">
-                ※ 치명타 공격력 = 최종 공격력 × 치명타 대미지% / 100
-              </p>
-            )}
           </div>
         </div>
       </div>
