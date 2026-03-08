@@ -260,7 +260,9 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
   // Aura song skill from equipped aurasong
   const aurasongItem = equipmentSlots[1]?.item;
-  const aurasongSkillEffect = aurasongItem ? getAurasongSkillEffect(aurasongItem.name) : '';
+  const aurasongSkillEffect = aurasongItem
+    ? (getAurasongSkillEffect(aurasongItem.name) || (aurasongItem.manual ? aurasongItem.relicEffect || '' : ''))
+    : '';
   const aurasongSkillIcon = aurasongItem ? getAurasongSkillIconPath(aurasongItem.name) : '';
 
   const handleNumericChange = (setter: (v: number | '') => void, max?: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
