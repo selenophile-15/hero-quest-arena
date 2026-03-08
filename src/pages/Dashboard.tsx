@@ -60,9 +60,15 @@ export default function Dashboard() {
 
       {/* Content */}
       <main className="w-full px-6 py-6">
-        {activeTab === 'list' && <HeroList key={listResetKey} />}
-        {activeTab === 'quest' && <QuestSimulation />}
-        {activeTab === 'ranking' && <Ranking />}
+        <div style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
+          <HeroList key={listResetKey} />
+        </div>
+        <div style={{ display: activeTab === 'quest' ? 'block' : 'none' }}>
+          <QuestSimulation />
+        </div>
+        <div style={{ display: activeTab === 'ranking' ? 'block' : 'none' }}>
+          <Ranking />
+        </div>
       </main>
     </div>
   );
