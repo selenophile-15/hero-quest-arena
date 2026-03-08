@@ -84,30 +84,21 @@ async function loadSpiritStats(): Promise<Record<string, any>> {
   }
 }
 
-const SPIRIT_TIER: Record<string, number> = {
-  '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
-  '기린': 12, '크람푸스': 12, '크리스마스': 12,
-  '유니콘': 10, '피닉스': 10, '히드라': 10,
-  '드래곤': 9,
-  '곰': 7, '상어': 7, '공룡': 7, '거북이': 7, '해파리': 7,
-  '늑대': 4, '양': 4, '독수리': 4, '황소': 4, '독사': 4, '고양이': 4, '토끼': 4, '문드라': 4,
-};
-
 function getSpiritBonusStats(
   spiritData: Record<string, any>,
   spiritName: string,
   affinity: boolean
 ): Record<string, number> {
-  const tier = SPIRIT_TIER[spiritName];
-  if (!tier) return {};
-  const tierKey = `${tier}티어`;
-  const tierGroup = spiritData[tierKey];
-  if (!tierGroup) return {};
-  const spiritEntry = tierGroup[spiritName];
-  if (!spiritEntry) return {};
-  const sub = affinity ? spiritEntry['O'] : spiritEntry['X'];
-  if (!sub) return {};
-  return sub['스탯_보너스'] || {};
+  // Iterate through all tiers to find the spirit (no hardcoded tier map needed)
+  for (const [, tierGroup] of Object.entries(spiritData)) {
+    if (typeof tierGroup !== 'object' || tierGroup === null) continue;
+    const spiritEntry = tierGroup[spiritName];
+    if (!spiritEntry) continue;
+    const sub = affinity ? spiritEntry['O'] : spiritEntry['X'];
+    if (!sub) continue;
+    return sub['스탯_보너스'] || {};
+  }
+  return {};
 }
 
 /**

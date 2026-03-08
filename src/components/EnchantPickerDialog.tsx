@@ -25,6 +25,7 @@ interface EnchantPickerDialogProps {
   slots: EnchantSlotData[];
   itemInfoPerSlot: (ItemAffinityInfo | null)[];
   itemNames: string[];
+  itemTypes?: string[];  // item type per slot (e.g. 'idol' for 우상)
   onConfirm: (slots: EnchantSlotData[]) => void;
   initialTab?: 'element' | 'spirit';
 }
