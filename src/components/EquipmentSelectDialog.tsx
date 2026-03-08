@@ -403,88 +403,102 @@ export default function EquipmentSelectDialog({
           ))}
         </div>
 
-        {/* Filters */}
+        {/* Manual mode toggle + Filters */}
         <div className="flex items-center gap-2 px-1 flex-wrap text-xs">
-          <span className="text-muted-foreground">타입:</span>
-          <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">전체</SelectItem>
-              {filterTypeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-            </SelectContent>
-          </Select>
-
-          <span className="text-muted-foreground">스탯:</span>
-          <Select value={filterStat} onValueChange={setFilterStat}>
-            <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">전체</SelectItem>
-              {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
-
-          <span className="text-muted-foreground">티어:</span>
-          <input type="number" min={1} max={maxTier} value={filterTierMin}
-            onChange={e => {
-              const raw = e.target.value;
-              if (raw === '') { setFilterTierMin(''); return; }
-              const v = parseInt(raw, 10);
-              if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
-            }}
-            className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-          <span className="text-muted-foreground">~</span>
-          <input type="number" min={1} max={maxTier} value={filterTierMax}
-            onChange={e => {
-              const raw = e.target.value;
-              if (raw === '') { setFilterTierMax(''); return; }
-              const v = parseInt(raw, 10);
-              if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
-            }}
-            className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-
-          <span className="text-muted-foreground">원소:</span>
-          <Select value={filterElement} onValueChange={setFilterElement}>
-            <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">전체</SelectItem>
-              {ELEMENT_FILTER_OPTIONS.map(e => (
-                <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <span className="text-muted-foreground">영혼:</span>
-          <Select value={filterSpirit} onValueChange={setFilterSpirit}>
-            <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">전체</SelectItem>
-              {spiritGroups.map((group, gi) => (
-                <div key={gi}>
-                  {gi > 0 && <div className="border-t border-border/30 my-1" />}
-                  {group.spirits.map(sp => (
-                    <SelectItem key={sp} value={sp}>
-                      <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
-                    </SelectItem>
-                  ))}
-                </div>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="flex-1" />
-
-          <span className="text-muted-foreground">아이템 등급:</span>
-          <Select value={slotQuality} onValueChange={handleQualityChange}>
-            <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {QUALITY_OPTIONS.map(q => (
-                <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
-            일괄 적용
+          <Button
+            variant={manualMode ? 'default' : 'outline'}
+            size="sm"
+            className="h-7 text-xs gap-1"
+            onClick={() => setManualMode(prev => !prev)}
+          >
+            <Wrench className="w-3 h-3" />
+            수동
           </Button>
+
+          {!manualMode && (
+            <>
+              <span className="text-muted-foreground">타입:</span>
+              <Select value={filterType} onValueChange={setFilterType}>
+                <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_all">전체</SelectItem>
+                  {filterTypeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+
+              <span className="text-muted-foreground">스탯:</span>
+              <Select value={filterStat} onValueChange={setFilterStat}>
+                <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_all">전체</SelectItem>
+                  {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+
+              <span className="text-muted-foreground">티어:</span>
+              <input type="number" min={1} max={maxTier} value={filterTierMin}
+                onChange={e => {
+                  const raw = e.target.value;
+                  if (raw === '') { setFilterTierMin(''); return; }
+                  const v = parseInt(raw, 10);
+                  if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
+                }}
+                className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+              <span className="text-muted-foreground">~</span>
+              <input type="number" min={1} max={maxTier} value={filterTierMax}
+                onChange={e => {
+                  const raw = e.target.value;
+                  if (raw === '') { setFilterTierMax(''); return; }
+                  const v = parseInt(raw, 10);
+                  if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
+                }}
+                className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+
+              <span className="text-muted-foreground">원소:</span>
+              <Select value={filterElement} onValueChange={setFilterElement}>
+                <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_all">전체</SelectItem>
+                  {ELEMENT_FILTER_OPTIONS.map(e => (
+                    <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <span className="text-muted-foreground">영혼:</span>
+              <Select value={filterSpirit} onValueChange={setFilterSpirit}>
+                <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_all">전체</SelectItem>
+                  {spiritGroups.map((group, gi) => (
+                    <div key={gi}>
+                      {gi > 0 && <div className="border-t border-border/30 my-1" />}
+                      {group.spirits.map(sp => (
+                        <SelectItem key={sp} value={sp}>
+                          <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
+                        </SelectItem>
+                      ))}
+                    </div>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex-1" />
+
+              <span className="text-muted-foreground">아이템 등급:</span>
+              <Select value={slotQuality} onValueChange={handleQualityChange}>
+                <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {QUALITY_OPTIONS.map(q => (
+                    <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
+                일괄 적용
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Item grid */}
