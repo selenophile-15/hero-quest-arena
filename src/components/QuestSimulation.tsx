@@ -1286,35 +1286,19 @@ export default function QuestSimulation() {
             </div>
           </div>
 
-          {/* Combat Log */}
+          {/* Combat Battlefield */}
           {showCombatLog && combatLog && (
             <div className="mt-4 border-t border-border/30 pt-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-foreground">🎲 1회 전투 로그</span>
+                <span className="text-xs font-medium text-foreground">🎲 1회 전투 시각화</span>
                 <button onClick={() => setShowCombatLog(false)} className="text-[10px] text-muted-foreground hover:text-foreground">닫기 ✕</button>
               </div>
-              <ScrollArea className="h-64 rounded border border-border/30 bg-secondary/20 p-2">
-                <div className="space-y-0.5 text-[11px] font-mono">
-                  {combatLog.map((entry, idx) => {
-                    let color = 'text-muted-foreground';
-                    let icon = '';
-                    if (entry.type === 'monster_attack') { color = 'text-red-400'; icon = '⚔️'; }
-                    else if (entry.type === 'hero_attack') { color = 'text-blue-400'; icon = '🗡️'; }
-                    else if (entry.type === 'heal') { color = 'text-green-400'; icon = '💚'; }
-                    else if (entry.type === 'result') { color = entry.detail.includes('승리') ? 'text-green-400' : 'text-red-400'; icon = '🏁'; }
-                    else { color = 'text-yellow-400'; icon = '⚡'; }
-                    return (
-                      <div key={idx} className={`${color} leading-relaxed`}>
-                        <span className="text-muted-foreground/50 mr-1">[R{entry.round}]</span>
-                        <span className="mr-1">{icon}</span>
-                        <span className="text-foreground/80 font-semibold mr-1">{entry.actor}</span>
-                        {entry.target && <span className="text-muted-foreground mr-1">→ {entry.target}</span>}
-                        <span>{entry.detail}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </ScrollArea>
+              <CombatBattlefield
+                log={combatLog}
+                heroes={selectedHeroes}
+                monsterHp={currentQuest?.hp || 0}
+                monsterName={locationName}
+              />
             </div>
           )}
         </div>
