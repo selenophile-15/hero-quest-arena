@@ -6,7 +6,7 @@ import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, Clock, Coffee, Loader2 } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -255,6 +255,51 @@ export default function QuestSimulation() {
         setBuffSummary(summary);
       });
   }, [heroIdKey, isBossQuest, isFlashQuest, selectedBooster]);
+
+  // Auto-run simulation when party or booster changes
+  useEffect(() => {
+    if (!currentQuest || !currentRegion || selectedHeroes.length === 0) {
+      setSimResult(null);
+      return;
+    }
+    setSimRunning(true);
+    const timer = setTimeout(() => {
+      const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
+      const bElements = currentQuest?.barrier ? (() => {
+        const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+        const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+          ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
+          : null;
+        const rawElements = barrierElement2
+          ? [barrierElement2]
+          : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+        return [...new Set(rawElements)] as string[];
+      })() : [];
+      const questMonster: QuestMonster = {
+        hp: currentQuest.hp,
+        atk: currentQuest.atk,
+        aoe: currentQuest.aoe,
+        aoeChance: currentQuest.aoeChance,
+        def: currentQuest.def,
+        isBoss: currentQuest.isBoss,
+        isExtreme: currentQuest.isExtreme,
+        barrier: currentQuest.barrier,
+        barrierElement: bElements[0] || null,
+      };
+      const result = runCombatSimulation({
+        heroes: selectedHeroes,
+        monster: questMonster,
+        miniBoss: 'none' as MiniBossType,
+        booster: { type: selectedBooster },
+        questTypeKey: selectedQuestType,
+        regionName: currentRegion.name,
+        isTerrorTower,
+      });
+      setSimResult(result);
+      setSimRunning(false);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
@@ -914,9 +959,10 @@ export default function QuestSimulation() {
                               if (val < 0) displayColor = 'text-purple-400';
                             }
 
-                            // Crit chance cap at 100%
-                            if (stat.key === 'crit') {
-                              if (val > 100) val = 100;
+                            // Crit chance: show raw value, note capped at 100%
+                            let critCapNote = '';
+                            if (stat.key === 'crit' && val > 100) {
+                              critCapNote = `(판정: 100%)`;
                             }
 
                             // Barrier not broken: ATK and CRIT.DMG show 20% values
@@ -941,6 +987,7 @@ export default function QuestSimulation() {
                                     <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
+                                  {critCapNote && <span className="text-[9px] text-muted-foreground">{critCapNote}</span>}
                                 </div>
                               </td>
                             );
@@ -974,47 +1021,11 @@ export default function QuestSimulation() {
             </table>
             {currentQuest && selectedHeroes.length > 0 && (
               <div className="mt-3 space-y-3">
-                <Button
-                  onClick={() => {
-                    if (simRunning || !currentQuest || !currentRegion) return;
-                    setSimRunning(true);
-                    setSimResult(null);
-                    const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
-                    const questMonster: QuestMonster = {
-                      hp: currentQuest.hp,
-                      atk: currentQuest.atk,
-                      aoe: currentQuest.aoe,
-                      aoeChance: currentQuest.aoeChance,
-                      def: currentQuest.def,
-                      isBoss: currentQuest.isBoss,
-                      isExtreme: currentQuest.isExtreme,
-                      barrier: currentQuest.barrier,
-                      barrierElement: barrierElements[0] || null,
-                    };
-                    setTimeout(() => {
-                      const result = runCombatSimulation({
-                        heroes: selectedHeroes,
-                        monster: questMonster,
-                        miniBoss: 'none' as MiniBossType,
-                        booster: { type: selectedBooster },
-                        questTypeKey: selectedQuestType,
-                        regionName: currentRegion!.name,
-                        isTerrorTower,
-                      });
-                      setSimResult(result);
-                      setSimRunning(false);
-                    }, 50);
-                  }}
-                  className="w-full gap-2"
-                  size="sm"
-                  disabled={simRunning}
-                >
-                  {simRunning ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> 시뮬레이션 진행 중...</>
-                  ) : (
-                    <><Play className="w-4 h-4" /> 시뮬레이션 실행</>
-                  )}
-                </Button>
+                {simRunning && (
+                  <div className="flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground">
+                    <Loader2 className="w-4 h-4 animate-spin" /> 시뮬레이션 진행 중...
+                  </div>
+                )}
 
                 {/* Simulation Results */}
                 {simResult && (
