@@ -71,6 +71,7 @@ export interface CalcInput {
     spirit: { name: string; affinity: boolean } | null;
   }>;
   hasRangedWeapon: boolean;
+  totalElementPoints: number; // 풍수사: total element points for atk% bonus
   // Skill data for equipment bonuses + general bonuses
   skillBonusInputs: Array<{
     bonusData: Record<string, number | number[]>;
@@ -82,13 +83,17 @@ export interface CalcInput {
 }
 
 export async function calculateHeroStats(input: CalcInput): Promise<CalculatedStats | null> {
-  const { jobName, level, seeds, equipmentSlots, hasRangedWeapon, skillBonusInputs, skillInputs } = input;
+  const { jobName, level, seeds, equipmentSlots, hasRangedWeapon, totalElementPoints, skillBonusInputs, skillInputs } = input;
   if (!jobName || !level) return null;
 
   const statsData = await lookupHeroStats(jobName, level);
   if (!statsData) return null;
 
   const { level: levelStats, fixed } = statsData;
+
+  // Jobs that don't use weapons (수도승/그랜드마스터, 경보병/근위병)
+  const WEAPONLESS_JOBS = new Set(['수도승', '그랜드 마스터', '경보병', '근위병']);
+  const isWeaponlessJob = WEAPONLESS_JOBS.has(jobName);
 
   // Base stats
   const baseHp = levelStats.hp;
@@ -106,7 +111,8 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
 
   // Equipment calculation (includes equipment-specific skill bonuses)
   const equipBonuses = parseEquipSkillBonuses(skillBonusInputs);
-  const equipResult = await calculateEquipmentStats(equipmentSlots, equipBonuses, hasRangedWeapon);
+  const isSpellknight = jobName === '스펠나이트';
+  const equipResult = await calculateEquipmentStats(equipmentSlots, equipBonuses, hasRangedWeapon, isSpellknight, isWeaponlessJob);
 
   // Parse general skill bonuses (flat + %)
   const skillResult = parseSkillBonuses(skillInputs);
@@ -183,6 +189,60 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     }
   }
 
+  // === Special job mechanics ===
+
+  // 경보병/근위병: shield's final defense → added to flat ATK
+  const isPraetorian = jobName === '경보병' || jobName === '근위병';
+  let shieldDefToAtk = 0;
+  if (isPraetorian) {
+    for (const slot of equipResult.slots) {
+      if (slot.itemType === 'shield') {
+        shieldDefToAtk += slot.finalDef;
+      }
+    }
+    if (shieldDefToAtk > 0) {
+      bonusSummary.flatAtk += shieldDefToAtk;
+      bonusSummary.sources.push({
+        name: `방패 방어력→공격력 (${jobName})`,
+        type: 'job' as const,
+        flatAtk: shieldDefToAtk, flatDef: 0, flatHp: 0,
+        pctAtk: 0, pctDef: 0, pctHp: 0,
+        critRate: 0, critDmg: 0, evasion: 0, threat: 0,
+      });
+    }
+  }
+
+  // 풍수사/아스트라맨서: total element points × 1% added to common ATK %
+  const isGeomancer = jobName === '풍수사' || jobName === '아스트라맨서';
+  if (isGeomancer && totalElementPoints > 0) {
+    const elementAtkPct = totalElementPoints; // 1% per point
+    bonusSummary.pctAtk += elementAtkPct;
+    bonusSummary.sources.push({
+      name: `원소 포인트 ${totalElementPoints}pt → +${elementAtkPct}%`,
+      type: 'job' as const,
+      flatAtk: 0, flatDef: 0, flatHp: 0,
+      pctAtk: elementAtkPct, pctDef: 0, pctHp: 0,
+      critRate: 0, critDmg: 0, evasion: 0, threat: 0,
+    });
+  }
+
+  // Compute threat first (족장 needs it for ATK calculation)
+  const totalThreat = baseThreat + bonusSummary.threat;
+
+  // 족장: final threat × 40% → added to common ATK %
+  const isChieftain = jobName === '족장';
+  if (isChieftain && totalThreat > 0) {
+    const threatAtkPct = Math.floor(totalThreat * 0.4 * 10) / 10;
+    bonusSummary.pctAtk += threatAtkPct;
+    bonusSummary.sources.push({
+      name: `위협도 ${totalThreat}의 40% → +${threatAtkPct}%`,
+      type: 'job' as const,
+      flatAtk: 0, flatDef: 0, flatHp: 0,
+      pctAtk: threatAtkPct, pctDef: 0, pctHp: 0,
+      critRate: 0, critDmg: 0, evasion: 0, threat: 0,
+    });
+  }
+
   // Final formula: (base + seed + Σequip + flat) × (1 + pct/100)
   const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
   const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
@@ -192,7 +252,6 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate;
   let totalCritDmg = baseCritDmg + bonusSummary.critDmg;
   let totalEvasion = baseEvasion + equipResult.totalEvasion + bonusSummary.evasion;
-  const totalThreat = baseThreat + bonusSummary.threat;
 
   // Store pre-relic values for display
   const preRelicCrit = totalCrit;

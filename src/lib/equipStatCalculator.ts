@@ -283,6 +283,8 @@ export async function calculateEquipmentStats(
   slots: SlotInput[],
   skillBonuses: SkillBonuses,
   hasRangedWeapon: boolean,
+  isSpellknight: boolean = false,
+  isWeaponlessJob: boolean = false,
 ): Promise<EquipCalcResult> {
   const [elementData, spiritData] = await Promise.all([
     loadElementStats(),
@@ -293,7 +295,8 @@ export async function calculateEquipmentStats(
   const relicEffects: RelicEffect[] = [];
 
   // First pass: detect relics and their effects
-  const hasWeaponNullify = slots.some(s => s?.item?.name === '평화의 목걸이');
+  // 평화의 목걸이 weapon nullify doesn't apply to weaponless jobs
+  const hasWeaponNullify = !isWeaponlessJob && slots.some(s => s?.item?.name === '평화의 목걸이');
   
   for (let i = 0; i < 6; i++) {
     const slot = slots[i];
@@ -376,9 +379,16 @@ export async function calculateEquipmentStats(
     const spiritCapHp = capEnchant(spiritRaw.hp, baseHp);
 
     // Pre-bonus stats
-    const preBonusAtk = qualityAtk + elementCapAtk + spiritCapAtk;
-    const preBonusDef = qualityDef + elementCapDef + spiritCapDef;
-    const preBonusHp = qualityHp + elementCapHp + spiritCapHp;
+    let preBonusAtk = qualityAtk + elementCapAtk + spiritCapAtk;
+    let preBonusDef = qualityDef + elementCapDef + spiritCapDef;
+    let preBonusHp = qualityHp + elementCapHp + spiritCapHp;
+
+    // 스펠나이트: equipment with unique element gets ×1.5 multiplier before bonus
+    if (isSpellknight && (item.uniqueElement?.length > 0)) {
+      preBonusAtk = Math.floor(preBonusAtk * 1.5);
+      preBonusDef = Math.floor(preBonusDef * 1.5);
+      preBonusHp = Math.floor(preBonusHp * 1.5);
+    }
 
     // Calculate skill bonus % for this slot
     const typeKor = item.typeKor || '';

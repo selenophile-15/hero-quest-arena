@@ -504,6 +504,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
       equipmentSlots,
       hasRangedWeapon: hasRanged,
+      totalElementPoints: totalEquipElement,
       skillBonusInputs,
       skillInputs,
     }).then(result => {
