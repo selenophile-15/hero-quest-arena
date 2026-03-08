@@ -360,10 +360,12 @@ export default function EquipmentSelectDialog({
                   boxShadow: QUALITY_SHADOW[s.quality],
                 } : {}}
               >
-                <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>슬롯 {i + 1}</span>
+                <span className={`text-[8px] flex items-center gap-1 ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>
+                  슬롯 {i + 1}
+                  {s.item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-3 h-3 inline" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                </span>
                 {s.item ? (
                   <>
-                    {s.item.relic && <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-3 h-3" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                     {s.item.imagePath ? (
                       <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                     ) : (
@@ -486,7 +488,10 @@ export default function EquipmentSelectDialog({
         <div className="flex-1 min-h-0 mt-1">
           <div className="overflow-y-auto h-full border border-border rounded p-3">
             {loading ? (
-              <div className="flex items-center justify-center py-16 text-muted-foreground">로딩 중...</div>
+              <div className="flex flex-col items-center justify-center py-16 gap-3">
+                <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+                <span className="text-muted-foreground text-sm">장비 데이터 로딩 중...</span>
+              </div>
             ) : filteredItems.length === 0 ? (
               <div className="flex items-center justify-center py-16 text-muted-foreground">장착 가능한 장비가 없습니다</div>
             ) : (

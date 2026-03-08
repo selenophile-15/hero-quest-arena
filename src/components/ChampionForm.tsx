@@ -145,6 +145,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [name, setName] = useState(hero?.name || '');
   const [promoted, setPromoted] = useState(false);
   const [rank, setRank] = useState<number | ''>(hero?.rank || 1);
+  const [cardLevel, setCardLevel] = useState<number>(hero?.cardLevel || 1);
   const [level, setLevel] = useState<number | ''>(hero?.level || 1);
   const [label, setLabel] = useState(hero?.label || '');
   const [position, setPosition] = useState(hero?.position || '');
@@ -311,6 +312,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       level: Number(level) || 1,
       rank: Number(rank) || 1,
       championName,
+      cardLevel,
       power: Number(power) || 0,
       hp, atk, def,
       crit, critDmg,
@@ -699,7 +701,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       <div className="space-y-4 mt-4" ref={formRef} onKeyDown={handleKeyDown}>
         {/* ─── Row 1: Basic Info ─── */}
         <div className="card-fantasy p-4">
-          <div className="grid grid-cols-[1.5fr_auto_0.8fr_0.7fr_1fr_1fr] gap-3 items-end">
+          <div className="grid grid-cols-[1.5fr_auto_0.8fr_0.5fr_0.7fr_1fr_1fr] gap-3 items-end">
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">이름</Label>
               <Select value={championName} onValueChange={v => { setChampionName(v); if (!hero) setName(v); }}>
@@ -720,6 +722,17 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">랭크 ({formatRank(Number(rank) || 1)})</Label>
               <Input type="number" value={rank} onChange={handleNumericChange(setRank as any, 60)} min={1} max={60} className="h-9 text-sm" />
+            </div>
+            <div>
+              <Label className="text-foreground/80 text-xs mb-1 block">카드 LV</Label>
+              <Select value={String(cardLevel)} onValueChange={v => setCardLevel(Number(v))}>
+                <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">레벨</Label>
