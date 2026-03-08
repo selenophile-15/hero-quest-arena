@@ -63,23 +63,26 @@ function getSummaryField(summary: SkillBonusSummary, statType: MultStatType, fie
 function getEquipBonusForStat(equipBonuses: SkillBonuses, statType: MultStatType): {
   해당장비: Record<string, number>;
   모든장비: number;
+  해당Sources: EquipBonusSource[];
+  모든Sources: EquipBonusSource[];
 } {
-  if (statType === 'atk') {
-    const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비공격력)) merged[k] = (merged[k] || 0) + v;
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
-    return { 해당장비: merged, 모든장비: equipBonuses.모든장비공격력 + equipBonuses.모든장비전체 };
-  } else if (statType === 'def') {
-    const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비방어력)) merged[k] = (merged[k] || 0) + v;
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
-    return { 해당장비: merged, 모든장비: equipBonuses.모든장비방어력 + equipBonuses.모든장비전체 };
-  } else {
-    const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비체력)) merged[k] = (merged[k] || 0) + v;
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
-    return { 해당장비: merged, 모든장비: equipBonuses.모든장비체력 + equipBonuses.모든장비전체 };
-  }
+  const statSuffix = statType === 'atk' ? '공격력' : statType === 'def' ? '방어력' : '체력';
+  const 해당Key = `해당장비${statSuffix}` as const;
+  const 모든Key = `모든장비${statSuffix}` as const;
+
+  // Merge stat-specific + 전체 for totals
+  const merged: Record<string, number> = {};
+  for (const [k, v] of Object.entries(equipBonuses[해당Key])) merged[k] = (merged[k] || 0) + v;
+  for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
+  const 모든장비 = equipBonuses[모든Key] + equipBonuses.모든장비전체;
+
+  // Filter sources relevant to this stat type
+  const relevantKeys = new Set([해당Key, '해당장비전체']);
+  const 해당Sources = equipBonuses.sources.filter(s => relevantKeys.has(s.bonusKey));
+  const 모든Keys = new Set([모든Key, '모든장비전체']);
+  const 모든Sources = equipBonuses.sources.filter(s => 모든Keys.has(s.bonusKey));
+
+  return { 해당장비: merged, 모든장비, 해당Sources, 모든Sources };
 }
 
 export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: StatBreakdownDrawerProps) {
