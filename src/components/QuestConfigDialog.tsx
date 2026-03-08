@@ -202,18 +202,18 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
 
         {/* Step: Sub-area */}
         {step === 'subarea' && region && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-6 gap-2">
             {region.subAreas.map((sub, idx) => (
               <button
                 key={sub.key}
                 onClick={() => { setSelSubAreaIdx(idx); setStep('difficulty'); }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all"
               >
-                <div className="bg-secondary/30 flex items-center justify-center p-2">
+                <div className="bg-secondary/30 flex items-center justify-center p-1.5">
                   <img src={sub.image} alt={sub.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
-                <div className="p-2 text-center">
-                  <span className="text-xs font-medium text-foreground">{sub.name}</span>
+                <div className="p-1 text-center">
+                  <span className="text-[10px] font-medium text-foreground leading-tight block">{sub.name}</span>
                 </div>
               </button>
             ))}
@@ -222,12 +222,12 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 onClick={() => { setSelSubAreaIdx(99); setStep('difficulty'); }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all"
               >
-                <div className="bg-red-500/10 flex items-center justify-center p-2">
+                <div className="bg-red-500/10 flex items-center justify-center p-1.5">
                   <img src={region.boss.image} alt={region.boss.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
-                <div className="p-2 text-center">
-                  <span className="text-xs font-medium text-red-400 flex items-center justify-center gap-1">
-                    <Crown className="w-3 h-3" /> {region.boss.name}
+                <div className="p-1 text-center">
+                  <span className="text-[10px] font-medium text-red-400 flex items-center justify-center gap-0.5">
+                    <Crown className="w-2.5 h-2.5" /> {region.boss.name}
                   </span>
                 </div>
               </button>
