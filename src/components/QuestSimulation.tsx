@@ -164,7 +164,7 @@ export default function QuestSimulation() {
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
   const [selectedBooster, setSelectedBooster] = useState<'none' | 'normal' | 'super' | 'mega'>('none');
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
-  const [showCombatLog, setShowCombatLog] = useState(false);
+  const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>('none');
 
   // Load quest data
