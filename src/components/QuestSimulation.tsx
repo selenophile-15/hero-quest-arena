@@ -157,6 +157,14 @@ export default function QuestSimulation() {
           map[f.key] = questResults[i];
         });
         setQuestDataMap(map);
+        // Preload all region/sub-area images
+        Object.values(map).forEach((qd: QuestData) => {
+          qd.regions.forEach(r => {
+            if (r.areaImage) { const img = new Image(); img.src = r.areaImage; }
+            r.subAreas.forEach(s => { if (s.image) { const img = new Image(); img.src = s.image; } });
+            if (r.boss?.image) { const img = new Image(); img.src = r.boss.image; }
+          });
+        });
       } catch (e) {
         console.error('Failed to load quest data', e);
       } finally {
