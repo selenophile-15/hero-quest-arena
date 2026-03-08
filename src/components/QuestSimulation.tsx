@@ -1312,7 +1312,6 @@ export default function QuestSimulation() {
           )}
         </DialogContent>
       </Dialog>
-      )}
 
       {/* Config Dialog */}
       <QuestConfigDialog
