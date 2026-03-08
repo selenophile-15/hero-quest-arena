@@ -299,9 +299,32 @@ export default function EquipmentSelectDialog({
     }
     if (item.relic && hasRelicEquipped) return;
     const newSlots = [...slots];
-    const existingElement = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[activeSlot]?.element;
-    const existingSpirit = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[activeSlot]?.spirit;
-    newSlots[activeSlot] = { ...newSlots[activeSlot], item: { ...item }, quality: slotQuality, element: existingElement || null, spirit: existingSpirit || null };
+    const prevItem = newSlots[activeSlot]?.item;
+    const prevHadUniqueElement = prevItem?.uniqueElement?.length > 0;
+    const prevHadUniqueSpirit = prevItem?.uniqueSpirit?.length > 0;
+
+    let newElement: EquipmentSlotData['element'];
+    if (item.uniqueElement?.length) {
+      // New item has unique element → use it
+      newElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true };
+    } else if (prevHadUniqueElement) {
+      // Previous item had unique element but new one doesn't → clear it
+      newElement = null;
+    } else {
+      // Preserve existing element
+      newElement = newSlots[activeSlot]?.element || null;
+    }
+
+    let newSpirit: EquipmentSlotData['spirit'];
+    if (item.uniqueSpirit?.length) {
+      newSpirit = { name: item.uniqueSpirit[0], affinity: true };
+    } else if (prevHadUniqueSpirit) {
+      newSpirit = null;
+    } else {
+      newSpirit = newSlots[activeSlot]?.spirit || null;
+    }
+
+    newSlots[activeSlot] = { ...newSlots[activeSlot], item: { ...item }, quality: slotQuality, element: newElement, spirit: newSpirit };
     setSlots(newSlots);
   }, [slots, activeSlot, slotQuality, hasRelicEquipped]);
 

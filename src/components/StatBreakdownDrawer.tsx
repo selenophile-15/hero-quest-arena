@@ -115,7 +115,18 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const skillSources = bonus?.sources.filter(s => s.type === 'unique' || s.type === 'common') || [];
     const soulSources = bonus?.sources.filter(s => s.type === 'soul') || [];
 
-    const equipBonusData = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0, 해당Sources: [], 모든Sources: [] };
+    // Get equipped item types to filter 해당 장비 bonuses
+    const equippedItemTypes = new Set(
+      (calcStats?.equipResult?.slots || [])
+        .filter(s => s.itemName)
+        .map(s => s.itemTypeKor)
+    );
+    const equipBonusDataRaw = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0, 해당Sources: [], 모든Sources: [] };
+    // Only show 해당 장비 sources for equipment types that are actually equipped
+    const equipBonusData = {
+      ...equipBonusDataRaw,
+      해당Sources: equipBonusDataRaw.해당Sources.filter(s => !s.equipType || equippedItemTypes.has(s.equipType)),
+    };
     
 
     const baseKey = statType === 'atk' ? 'baseAtk' : statType === 'def' ? 'baseDef' : 'baseHp';
