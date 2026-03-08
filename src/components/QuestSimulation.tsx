@@ -398,41 +398,69 @@ export default function QuestSimulation() {
                   </div>
                 </div>
 
-                {/* Defense Reference - vertical */}
+                {/* Defense Reference - vertical bar */}
                 <div className="pt-2 border-t border-border/30">
-                  <div className="flex items-center gap-1.5 mb-2 px-1">
+                  <div className="flex items-center gap-1.5 mb-3 px-1">
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
                     <span className="text-xs text-muted-foreground font-medium">방어력 기준치</span>
                   </div>
-                  <div className="space-y-1">
-                    {defThresholds.map(t => {
-                      const defVal = currentQuest.def[t.key];
-                      // Show hero indicators for this threshold
-                      const heroesAbove = selectedHeroes.filter(h => (h.def || 0) >= defVal);
-                      return (
-                        <div key={t.key} className="flex items-center gap-2 px-1">
-                          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: t.color }} />
-                          <span className={`text-xs w-8 ${t.textClass}`}>{t.label}</span>
-                          <span className="text-xs font-mono text-muted-foreground flex-1">{formatNumber(defVal)}</span>
-                          {selectedHeroes.length > 0 && (
-                            <div className="flex -space-x-1">
-                              {selectedHeroes.map(h => (
-                                <Tooltip key={h.id}>
-                                  <TooltipTrigger asChild>
-                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                                      (h.def || 0) >= defVal ? 'border-green-500/60 bg-green-500/20' : 'border-red-500/40 bg-red-500/10'
-                                    }`}>
-                                      <Shield className={`w-2.5 h-2.5 ${(h.def || 0) >= defVal ? 'text-green-400' : 'text-red-400/50'}`} />
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent><p className="text-xs">{h.name}: {formatNumber(h.def || 0)}</p></TooltipContent>
-                                </Tooltip>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <div className="flex gap-2 px-1">
+                    {/* Left: labels */}
+                    <div className="flex flex-col justify-between h-48 text-right shrink-0">
+                      {[...defThresholds].reverse().map(t => (
+                        <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{t.label}</span>
+                      ))}
+                    </div>
+                    {/* Center: vertical bar with hero pins */}
+                    <div className="relative w-8 h-48 flex-shrink-0">
+                      {/* Bar background - gradient from red(bottom) to white(top) */}
+                      <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                      {/* Threshold markers */}
+                      {[...defThresholds].reverse().map((t, i) => {
+                        const pct = (i / (defThresholds.length - 1)) * 100;
+                        return (
+                          <div key={t.key} className="absolute left-0 right-0 flex items-center justify-center" style={{ bottom: `${pct}%`, transform: 'translateY(50%)' }}>
+                            <div className="w-full h-px" style={{ backgroundColor: t.color, opacity: 0.4 }} />
+                          </div>
+                        );
+                      })}
+                      {/* Hero pins */}
+                      {selectedHeroes.map((h, hi) => {
+                        const heroDef = h.def || 0;
+                        const maxDef = defThresholds[defThresholds.length - 1].value;
+                        const minDef = 0;
+                        const pct = maxDef > minDef ? Math.min(100, Math.max(0, ((heroDef - minDef) / (maxDef - minDef)) * 100)) : 0;
+                        // Find which threshold range the hero is in
+                        let pinColor = '#ef4444';
+                        for (const t of defThresholds) {
+                          if (heroDef >= t.value) pinColor = t.color;
+                        }
+                        return (
+                          <Tooltip key={h.id}>
+                            <TooltipTrigger asChild>
+                              <div
+                                className="absolute flex items-center"
+                                style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}
+                              >
+                                <div
+                                  className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[8px] font-bold shadow-md cursor-pointer"
+                                  style={{ borderColor: pinColor, backgroundColor: `${pinColor}33`, color: pinColor }}
+                                >
+                                  {hi + 1}
+                                </div>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent><p className="text-xs">{h.name}: {formatNumber(heroDef)}</p></TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                    {/* Right: defense values */}
+                    <div className="flex flex-col justify-between h-48 shrink-0">
+                      {[...defThresholds].reverse().map(t => (
+                        <span key={t.key} className="text-[10px] font-mono text-muted-foreground">{formatNumber(t.value)}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
