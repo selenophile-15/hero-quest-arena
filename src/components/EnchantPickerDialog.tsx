@@ -25,6 +25,7 @@ interface EnchantPickerDialogProps {
   slots: EnchantSlotData[];
   itemInfoPerSlot: (ItemAffinityInfo | null)[];
   itemNames: string[];
+  itemTypes?: string[];  // item type per slot (e.g. 'idol' for 우상)
   onConfirm: (slots: EnchantSlotData[]) => void;
   initialTab?: 'element' | 'spirit';
 }
@@ -130,7 +131,7 @@ function hasSpiritAffinity(info: ItemAffinityInfo | null, spName: string): boole
 }
 
 export default function EnchantPickerDialog({
-  open, onClose, slotCount, slots, itemInfoPerSlot, itemNames, onConfirm, initialTab,
+  open, onClose, slotCount, slots, itemInfoPerSlot, itemNames, itemTypes, onConfirm, initialTab,
 }: EnchantPickerDialogProps) {
   const [localSlots, setLocalSlots] = useState<EnchantSlotData[]>([...slots]);
   const [bulkElement, setBulkElement] = useState<string>('');
@@ -429,6 +430,12 @@ export default function EnchantPickerDialog({
                 const spiritName = slot?.spirit?.name || (hasUniqueSp ? info!.uniqueSpirit![0] : '');
                 const spiritAffinity = slot?.spirit?.affinity || (hasUniqueSp ? true : false);
                 const spiritEffect = spiritName ? getSpiritEffectFromData(spiritData, spiritName, spiritAffinity) : '';
+                const isIdolSlot = itemTypes?.[i] === 'idol' || itemTypes?.[i] === '우상';
+
+                // For idol slots, double the numeric values in the effect text
+                const displayEffect = spiritEffect && isIdolSlot
+                  ? spiritEffect.replace(/([+-]?\d+(?:\.\d+)?)/g, (_, num) => String(Number(num) * 2))
+                  : spiritEffect;
 
                 return (
                   <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_1fr] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
@@ -476,9 +483,10 @@ export default function EnchantPickerDialog({
                     </div>
 
                     <div className="text-xs text-foreground/80 min-h-[32px] min-w-[200px] flex items-center whitespace-pre-line leading-relaxed">
-                      {spiritEffect && (
+                      {displayEffect && (
                         <span className={spiritName === '명인' && titanCount >= 2 ? 'text-yellow-400' : ''}>
-                          {spiritEffect}
+                          {isIdolSlot && <span className="text-accent font-semibold mr-1">×2</span>}
+                          {displayEffect}
                         </span>
                       )}
                     </div>
