@@ -1096,9 +1096,14 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
           log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `회피 성공!` });
           continue;
         }
-        const dmg = calcDamageTaken(heroDefVal[i], Math.ceil(mobDamage * mobAoeDmgRatio), mobCap);
+        // Negative evasion → increased monster crit chance
+        const negEvaBonus = (heroEva[i] < 0 && isExtreme) ? -0.25 * heroEva[i] : 0;
+        const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
+        const aoeDmg = Math.ceil(mobDamage * mobAoeDmgRatio);
+        const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmg, mobCap);
+        const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmg) : normalDmg;
         heroHp[i] -= dmg;
-        log.push({ round, type: 'monster_attack', actor: '몬스터', target: activeHeroes[i].name, detail: `${formatNum(dmg)} 피해 (잔여 HP: ${formatNum(Math.max(0, heroHp[i]))})` });
+        log.push({ round, type: 'monster_attack', actor: '몬스터', target: activeHeroes[i].name, detail: `${isCrit ? '치명타! ' : ''}${formatNum(dmg)} 피해 (잔여 HP: ${formatNum(Math.max(0, heroHp[i]))})` });
         if (heroHp[i] <= 0) { heroesAlive--; log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `사망!` }); }
       }
     } else {
