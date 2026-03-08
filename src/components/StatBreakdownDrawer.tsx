@@ -11,63 +11,72 @@ interface StatBreakdownDrawerProps {
   calcStats: CalculatedStats | null;
 }
 
-type StatType = 'atk' | 'def' | 'hp';
+type MultStatType = 'atk' | 'def' | 'hp';
+type AddStatType = 'crit' | 'evasion' | 'threat' | 'other';
+type StatType = MultStatType | AddStatType;
 
-const TAB_CONFIG: { key: StatType; label: string; icon: string; color: string; headerBg: string }[] = [
+const MULT_TABS: { key: MultStatType; label: string; icon: string; color: string; headerBg: string }[] = [
   { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-900/60' },
   { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-900/60' },
   { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#ff7f00]/40' },
 ];
 
+const ADD_TABS: { key: AddStatType; label: string; icon: string; color: string; headerBg: string }[] = [
+  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-400', headerBg: 'bg-yellow-900/60' },
+  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-green-400', headerBg: 'bg-green-900/60' },
+  { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-purple-400', headerBg: 'bg-purple-900/60' },
+  { key: 'other', label: '기타', icon: STAT_ICON_MAP.hp, color: 'text-gray-400', headerBg: 'bg-gray-700/60' },
+];
+
+const ALL_TABS = [...MULT_TABS, ...ADD_TABS];
+
 function getSlotStatDirect(slot: EquipSlotCalc, key: keyof EquipSlotCalc): number {
   return (slot[key] as number) || 0;
 }
 
-function getBonusField(source: SkillBonusSource, statType: StatType, field: 'flat' | 'pct'): number {
+function getBonusField(source: SkillBonusSource, statType: MultStatType, field: 'flat' | 'pct'): number {
   if (field === 'flat') {
     return statType === 'atk' ? source.flatAtk : statType === 'def' ? source.flatDef : source.flatHp;
   }
   return statType === 'atk' ? source.pctAtk : statType === 'def' ? source.pctDef : source.pctHp;
 }
 
-function getSummaryField(summary: SkillBonusSummary, statType: StatType, field: 'flat' | 'pct'): number {
+function getAddBonusField(source: SkillBonusSource, statType: AddStatType): number {
+  if (statType === 'crit') return source.critRate;
+  if (statType === 'evasion') return source.evasion;
+  if (statType === 'threat') return source.threat;
+  return 0;
+}
+
+function getCritDmgField(source: SkillBonusSource): number {
+  return source.critDmg;
+}
+
+function getSummaryField(summary: SkillBonusSummary, statType: MultStatType, field: 'flat' | 'pct'): number {
   if (field === 'flat') {
     return statType === 'atk' ? summary.flatAtk : statType === 'def' ? summary.flatDef : summary.flatHp;
   }
   return statType === 'atk' ? summary.pctAtk : statType === 'def' ? summary.pctDef : summary.pctHp;
 }
 
-function getEquipBonusForStat(equipBonuses: SkillBonuses, statType: StatType): {
+function getEquipBonusForStat(equipBonuses: SkillBonuses, statType: MultStatType): {
   해당장비: Record<string, number>;
   모든장비: number;
 } {
   if (statType === 'atk') {
-    // 해당장비공격력 + 해당장비전체
     const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비공격력)) {
-      merged[k] = (merged[k] || 0) + v;
-    }
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) {
-      merged[k] = (merged[k] || 0) + v;
-    }
+    for (const [k, v] of Object.entries(equipBonuses.해당장비공격력)) merged[k] = (merged[k] || 0) + v;
+    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
     return { 해당장비: merged, 모든장비: equipBonuses.모든장비공격력 + equipBonuses.모든장비전체 };
   } else if (statType === 'def') {
     const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비방어력)) {
-      merged[k] = (merged[k] || 0) + v;
-    }
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) {
-      merged[k] = (merged[k] || 0) + v;
-    }
+    for (const [k, v] of Object.entries(equipBonuses.해당장비방어력)) merged[k] = (merged[k] || 0) + v;
+    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
     return { 해당장비: merged, 모든장비: equipBonuses.모든장비방어력 + equipBonuses.모든장비전체 };
   } else {
     const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비체력)) {
-      merged[k] = (merged[k] || 0) + v;
-    }
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) {
-      merged[k] = (merged[k] || 0) + v;
-    }
+    for (const [k, v] of Object.entries(equipBonuses.해당장비체력)) merged[k] = (merged[k] || 0) + v;
+    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
     return { 해당장비: merged, 모든장비: equipBonuses.모든장비체력 + equipBonuses.모든장비전체 };
   }
 }
@@ -75,8 +84,9 @@ function getEquipBonusForStat(equipBonuses: SkillBonuses, statType: StatType): {
 export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: StatBreakdownDrawerProps) {
   const [activeTab, setActiveTab] = useState<StatType>('atk');
 
-  const renderBreakdownTable = (statType: StatType) => {
-    const config = TAB_CONFIG.find(t => t.key === statType)!;
+  // ========== Multiplicative stat breakdown (ATK/DEF/HP) ==========
+  const renderMultBreakdown = (statType: MultStatType) => {
+    const config = MULT_TABS.find(t => t.key === statType)!;
     const baseStat = calcStats
       ? statType === 'atk' ? calcStats.baseAtk : statType === 'def' ? calcStats.baseDef : calcStats.baseHp
       : 0;
@@ -95,15 +105,12 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const flatBonus = bonus ? getSummaryField(bonus, statType, 'flat') : 0;
     const pctBonus = bonus ? getSummaryField(bonus, statType, 'pct') : 0;
 
-    // Sources breakdown
     const skillSources = bonus?.sources.filter(s => s.type === 'unique' || s.type === 'common') || [];
     const soulSources = bonus?.sources.filter(s => s.type === 'soul') || [];
 
-    // Equipment bonuses
     const equipBonusData = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0 };
     const 해당장비Entries = Object.entries(equipBonusData.해당장비).filter(([, v]) => v !== 0);
 
-    // Field keys for equipment slots
     const baseKey = statType === 'atk' ? 'baseAtk' : statType === 'def' ? 'baseDef' : 'baseHp';
     const qualityKey = statType === 'atk' ? 'qualityAtk' : statType === 'def' ? 'qualityDef' : 'qualityHp';
     const elementRawKey = statType === 'atk' ? 'elementRawAtk' : statType === 'def' ? 'elementRawDef' : 'elementRawHp';
@@ -141,7 +148,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </table>
           </div>
 
-          {/* Skill & Soul bonuses combined */}
           <div className="px-3">
             <h5 className="text-xs font-semibold text-primary mb-1">스킬 보너스 ({config.label})</h5>
             <table className="w-full text-xs">
@@ -175,9 +181,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     return (
                       <tr key={i} className="border-b border-border/20">
                         <td className="py-1 text-foreground/70">
-                          <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>
-                            {tagLabel}
-                          </span>
+                          <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
                         <td className={`py-1 text-center tabular-nums ${flat ? 'text-foreground' : 'text-muted-foreground'}`}>
@@ -194,19 +198,15 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </table>
           </div>
 
-          {/* Equipment-specific bonuses */}
           <div className="px-3">
             <h5 className="text-xs font-semibold text-primary mb-1">장비 보너스 스킬 ({config.label})</h5>
-            {/* 해당 장비 보너스 */}
             {(() => {
-              // Filter to only show equipment types that match currently equipped items
               const equippedTypes = new Set(
                 (calcStats?.equipResult?.slots || [])
                   .filter(s => s.itemName)
                   .map(s => s.itemTypeKor || s.itemType)
               );
               const matchedEntries = 해당장비Entries.filter(([equipType]) => equippedTypes.has(equipType));
-              
               return (
                 <table className="w-full text-xs mb-2">
                   <thead>
@@ -233,7 +233,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 </table>
               );
             })()}
-            {/* 모든 장비 보너스 */}
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border/50">
@@ -259,7 +258,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </table>
           </div>
 
-          {/* Summary */}
           <div className="px-3">
             <h5 className="text-xs font-semibold text-primary mb-1">통합 보너스 요약</h5>
             <table className="w-full text-xs">
@@ -291,7 +289,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             {Array.from({ length: 6 }).map((_, i) => {
               const slot = equipSlots[i] || null;
               const hasItem = slot && slot.itemName;
-
               return (
                 <div key={i} className="border border-border/40 rounded overflow-hidden">
                   <div className="bg-yellow-900/50 px-2 py-1 flex items-center justify-between border-b border-yellow-700/30">
@@ -416,12 +413,285 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     );
   };
 
+  // ========== Additive stat breakdown (Crit, Evasion, Threat) ==========
+  const renderAddBreakdown = (statType: AddStatType) => {
+    const config = ADD_TABS.find(t => t.key === statType)!;
+    const bonus = calcStats?.bonusSummary;
+    const equipSlots = calcStats?.equipResult?.slots || [];
+    const allSources = bonus?.sources || [];
+
+    if (statType === 'other') {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-3 py-12">
+          <div className="text-4xl">🔧</div>
+          <p className="text-sm">준비 중입니다</p>
+          <p className="text-xs text-muted-foreground/70">매턴 체력 회복, 기타 특수 효과 등이 추가될 예정입니다.</p>
+        </div>
+      );
+    }
+
+    // Crit tab shows both crit rate and crit damage
+    const isCrit = statType === 'crit';
+
+    // Base values
+    const baseVal = calcStats
+      ? statType === 'crit' ? calcStats.baseCrit
+        : statType === 'evasion' ? calcStats.baseEvasion
+          : calcStats.baseThreat
+      : 0;
+    const baseCritDmgVal = calcStats?.baseCritDmg || 0;
+
+    // Equipment contributions
+    const equipCrit = calcStats?.equipResult?.totalCrit || 0;
+    const equipEvasion = calcStats?.equipResult?.totalEvasion || 0;
+
+    // Per-slot equipment contributions
+    const slotStatKey = statType === 'crit' ? 'finalCrit' : statType === 'evasion' ? 'finalEvasion' : null;
+
+    // Bonus totals
+    const bonusVal = bonus
+      ? statType === 'crit' ? bonus.critRate
+        : statType === 'evasion' ? bonus.evasion
+          : bonus.threat
+      : 0;
+    const bonusCritDmg = bonus?.critDmg || 0;
+
+    // Final totals
+    const totalVal = calcStats
+      ? statType === 'crit' ? calcStats.totalCrit
+        : statType === 'evasion' ? calcStats.totalEvasion
+          : calcStats.totalThreat
+      : 0;
+    const totalCritDmg = calcStats?.totalCritDmg || 0;
+    const totalCritAttack = calcStats?.totalCritAttack || 0;
+
+    // Unit
+    const unit = statType === 'threat' ? '' : '%';
+
+    // Filter sources with relevant bonuses
+    const filteredSources = allSources.filter(src => {
+      const val = getAddBonusField(src, statType);
+      const critDmg = isCrit ? getCritDmgField(src) : 0;
+      return val !== 0 || critDmg !== 0;
+    });
+
+    return (
+      <div className="grid grid-cols-[1fr_1fr] gap-4 h-full">
+        {/* Left: Breakdown */}
+        <div className="space-y-3 overflow-y-auto">
+          <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+            <h4 className="text-sm font-bold text-foreground">{config.label} 상세</h4>
+          </div>
+
+          {/* Base stat */}
+          <div className="px-3">
+            <table className="w-full text-xs">
+              <tbody>
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground/70">기본 {isCrit ? '치명타 확률' : config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseVal}{unit}</td>
+                </tr>
+                {isCrit && (
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-foreground/70">기본 치명타 대미지</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseCritDmgVal}%</td>
+                  </tr>
+                )}
+                {slotStatKey && (
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-foreground/70">장비 {isCrit ? '치명타 확률' : config.label} 합</td>
+                    <td className="py-1.5 text-right tabular-nums font-bold text-foreground">
+                      {statType === 'crit' ? equipCrit : equipEvasion}{unit}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Per-slot equipment breakdown */}
+          {slotStatKey && (
+            <div className="px-3">
+              <h5 className="text-xs font-semibold text-primary mb-1">장비별 {isCrit ? '치명타 확률' : config.label}</h5>
+              <table className="w-full text-xs">
+                <tbody>
+                  {equipSlots.map((slot, i) => {
+                    const val = getSlotStatDirect(slot, slotStatKey as keyof EquipSlotCalc);
+                    return (
+                      <tr key={i} className="border-b border-border/20">
+                        <td className="py-1 text-foreground/70">
+                          장비 {i + 1}
+                          {slot.itemName && <span className="text-foreground/50 ml-1 text-[10px]">({slot.itemName})</span>}
+                        </td>
+                        <td className={`py-1 text-right tabular-nums ${val ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          {val ? `+${val}${unit}` : '-'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Skill & Soul bonuses */}
+          <div className="px-3">
+            <h5 className="text-xs font-semibold text-primary mb-1">스킬 & 영혼 보너스</h5>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="py-1 text-left text-foreground/60">스킬/영혼명</th>
+                  <th className="py-1 text-right text-foreground/60">{isCrit ? '확률' : config.label}</th>
+                  {isCrit && <th className="py-1 text-right text-foreground/60">대미지</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSources.length === 0 ? (
+                  <tr className="border-b border-border/20">
+                    <td colSpan={isCrit ? 3 : 2} className="py-1 text-center text-muted-foreground">보너스 없음</td>
+                  </tr>
+                ) : filteredSources.map((src, i) => {
+                  const val = getAddBonusField(src, statType);
+                  const critDmg = isCrit ? getCritDmgField(src) : 0;
+                  const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
+                  const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
+                  return (
+                    <tr key={i} className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">
+                        <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
+                        {src.name}
+                      </td>
+                      <td className={`py-1 text-right tabular-nums ${val ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {val ? `+${val}${unit}` : '-'}
+                      </td>
+                      {isCrit && (
+                        <td className={`py-1 text-right tabular-nums ${critDmg ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          {critDmg ? `+${critDmg}%` : '-'}
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Right: Summary */}
+        <div className="space-y-3 overflow-y-auto">
+          <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+            <h4 className="text-sm font-bold text-foreground">보너스 합산</h4>
+          </div>
+
+          <div className="px-3">
+            <table className="w-full text-xs">
+              <tbody>
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground/70">총 {isCrit ? '치명타 확률' : config.label} 보너스</td>
+                  <td className={`py-1.5 text-right tabular-nums font-medium ${bonusVal ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {bonusVal ? `+${bonusVal}${unit}` : `0${unit}`}
+                  </td>
+                </tr>
+                {isCrit && (
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-foreground/70">총 치명타 대미지 보너스</td>
+                    <td className={`py-1.5 text-right tabular-nums font-medium ${bonusCritDmg ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {bonusCritDmg ? `+${bonusCritDmg}%` : '0%'}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Final summary box */}
+          <div className={`mx-0 rounded ${config.headerBg} overflow-hidden`}>
+            <div className="px-3 py-2">
+              <h5 className="text-xs font-bold text-foreground mb-2">최종 계산식</h5>
+              <table className="w-full text-xs">
+                <tbody>
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-foreground/80">기본 {isCrit ? '치명타 확률' : config.label}</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground">{baseVal}{unit}</td>
+                  </tr>
+                  {slotStatKey && (
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-foreground/80">장비 합</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">
+                        +{statType === 'crit' ? equipCrit : equipEvasion}{unit}
+                      </td>
+                    </tr>
+                  )}
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusVal}{unit}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
+              <span className="text-sm font-bold text-foreground">최종 {isCrit ? '치명타 확률' : config.label}</span>
+              <span className={`text-xl font-bold tabular-nums ${config.color}`}>
+                {totalVal}{unit}
+              </span>
+            </div>
+            {isCrit && (
+              <>
+                <div className="px-3 py-2 border-t border-border/40">
+                  <table className="w-full text-xs">
+                    <tbody>
+                      <tr className="border-b border-border/30">
+                        <td className="py-1.5 text-foreground/80">기본 치명타 대미지</td>
+                        <td className="py-1.5 text-right tabular-nums text-foreground">{baseCritDmgVal}%</td>
+                      </tr>
+                      <tr className="border-b border-border/30">
+                        <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
+                        <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusCritDmg}%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
+                  <span className="text-sm font-bold text-foreground">최종 치명타 대미지</span>
+                  <span className={`text-xl font-bold tabular-nums ${config.color}`}>
+                    {totalCritDmg}%
+                  </span>
+                </div>
+                <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
+                  <span className="text-sm font-bold text-foreground">치명타 공격력</span>
+                  <span className="text-xl font-bold tabular-nums text-red-400">
+                    {formatNumber(totalCritAttack)}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="px-3 pb-3">
+            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+              {isCrit
+                ? '※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산)'
+                : statType === 'evasion'
+                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산)'
+                  : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
+            </p>
+            {isCrit && (
+              <p className="text-[10px] text-muted-foreground text-center leading-relaxed mt-1">
+                ※ 치명타 공격력 = 최종 공격력 × 치명타 대미지% / 100
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right-wide" className="p-0 flex flex-col overflow-hidden">
         <SheetHeader className="px-4 pt-4 pb-2 border-b border-border flex-shrink-0">
           <SheetTitle className="text-lg font-display text-primary">
-            공격력, 방어력, 체력 상세 수치 및 계산 방식
+            스탯 상세 계산표
           </SheetTitle>
           <SheetDescription className="text-xs text-muted-foreground">
             각 스탯의 구성 요소와 계산 과정을 확인할 수 있습니다
@@ -430,18 +700,23 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
         <div className="flex-1 overflow-hidden p-4">
           <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatType)} className="h-full flex flex-col">
-            <TabsList className="w-full grid grid-cols-3 mb-3 flex-shrink-0">
-              {TAB_CONFIG.map(tab => (
-                <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1.5 text-sm">
-                  <img src={tab.icon} alt="" className="w-4 h-4" />
+            <TabsList className="w-full grid grid-cols-7 mb-3 flex-shrink-0">
+              {ALL_TABS.map(tab => (
+                <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1 text-xs px-1.5">
+                  <img src={tab.icon} alt="" className="w-3.5 h-3.5" />
                   {tab.label}
                 </TabsTrigger>
               ))}
             </TabsList>
 
-            {TAB_CONFIG.map(tab => (
+            {MULT_TABS.map(tab => (
               <TabsContent key={tab.key} value={tab.key} className="flex-1 overflow-y-auto mt-0">
-                {renderBreakdownTable(tab.key)}
+                {renderMultBreakdown(tab.key)}
+              </TabsContent>
+            ))}
+            {ADD_TABS.map(tab => (
+              <TabsContent key={tab.key} value={tab.key} className="flex-1 overflow-y-auto mt-0">
+                {renderAddBreakdown(tab.key)}
               </TabsContent>
             ))}
           </Tabs>
