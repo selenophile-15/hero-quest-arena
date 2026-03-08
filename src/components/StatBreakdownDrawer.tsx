@@ -993,7 +993,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               {isEvasion && hasEvasionFixed
                 ? `※ ${hasEvasionFixed.itemName}: 회피 ${hasEvasionFixed.fixedValue}%로 고정`
                 : isEvasion
-                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75%/78%)'
+                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75% / 길잡이 78%)'
                   : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
             </p>
           </div>
