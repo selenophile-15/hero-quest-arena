@@ -469,6 +469,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const bonus = calcStats?.bonusSummary;
     const equipSlots = calcStats?.equipResult?.slots || [];
     const allSources = bonus?.sources || [];
+    const relicEffects = calcStats?.relicEffects || [];
+    const relicFlat = calcStats?.relicBonusFlat;
 
     if (statType === 'other') {
       return (
@@ -482,6 +484,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
     const isCrit = statType === 'crit';
     const isEvasion = statType === 'evasion';
+
+    // Relic effects for this stat
+    const hasCritFixed = relicEffects.find(e => e.type === 'crit_fixed');
+    const hasEvasionFixed = relicEffects.find(e => e.type === 'evasion_fixed');
+    const relicCritBonus = relicFlat?.crit || 0;
+    const relicCritDmgBonus = relicFlat?.critDmg || 0;
+    const relicEvasionBonus = relicFlat?.evasion || 0;
+    const relicThreatBonus = relicFlat?.threat || 0;
 
     // Base values
     const baseVal = calcStats
@@ -512,6 +522,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
         : statType === 'evasion' ? calcStats.totalEvasion
           : calcStats.totalThreat
       : 0;
+    const preRelicCrit = calcStats?.preRelicCrit || 0;
+    const preRelicEvasion = calcStats?.preRelicEvasion || 0;
     const totalCritDmg = calcStats?.totalCritDmg || 0;
     const totalCritAttack = calcStats?.totalCritAttack || 0;
 
