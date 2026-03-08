@@ -229,6 +229,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [nameError, setNameError] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const [calcStats, setCalcStats] = useState<CalculatedStats | null>(null);
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
 
   useEffect(() => {
     getCommonSkills().then(data => {
