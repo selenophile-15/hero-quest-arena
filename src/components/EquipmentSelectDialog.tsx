@@ -576,9 +576,25 @@ export default function EquipmentSelectDialog({
                 onCancel={() => setManualMode(false)}
               />
             ) : loading ? (
-              <div className="flex flex-col items-center justify-center py-16 gap-3">
-                <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+              <div className="flex flex-col items-center justify-center py-16 gap-4">
+                <div className="relative w-12 h-12">
+                  <div className="absolute inset-0 border-[3px] border-dashed border-primary/30 rounded-full animate-spin" style={{ animationDuration: '2s' }} />
+                  <div className="absolute inset-1 border-[3px] border-transparent border-t-primary rounded-full animate-spin" style={{ animationDuration: '0.8s' }} />
+                </div>
                 <span className="text-muted-foreground text-sm">장비 데이터 로딩 중...</span>
+                {loadingTotal > 0 && (
+                  <div className="flex flex-col items-center gap-1.5 w-48">
+                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-300"
+                        style={{ width: `${Math.round((loadingProgress / loadingTotal) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                      {loadingProgress} / {loadingTotal} 타입 로드 완료
+                    </span>
+                  </div>
+                )}
               </div>
             ) : filteredItems.length === 0 ? (
               <div className="flex items-center justify-center py-16 text-muted-foreground">장착 가능한 장비가 없습니다</div>
