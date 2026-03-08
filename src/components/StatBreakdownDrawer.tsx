@@ -567,8 +567,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const totalCritDmg = calcStats?.totalCritDmg || 0;
     const totalCritAttack = calcStats?.totalCritAttack || 0;
 
-    // Evasion cap logic
-    const isPathfinder = calcStats?.jobName === '길잡이' || calcStats?.jobName === '방랑자';
+    // Evasion cap logic (only 길잡이 gets 78%, all others including 방랑자 get 75%)
+    const isPathfinder = calcStats?.jobName === '길잡이';
     const evasionCap = isPathfinder ? 78 : 75;
     const cappedEvasion = isEvasion && totalVal > evasionCap ? evasionCap : totalVal;
     const isEvasionCapped = isEvasion && totalVal > evasionCap;
