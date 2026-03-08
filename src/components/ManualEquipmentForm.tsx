@@ -568,20 +568,6 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                   </Button>
                 </div>
               ))}
-              {data.relicBonuses.length > 0 && (
-                <div className="text-[10px] text-primary/80 bg-primary/5 rounded p-1.5 mt-1">
-                  {(() => {
-                    const parts = data.relicBonuses.map(b => {
-                      const opt = AURA_STAT_OPTIONS.find(o => o.value === b.stat);
-                      const name = opt ? opt.label.replace(/%$/, '') : b.stat;
-                      const sign = b.op === '감소' ? '-' : '+';
-                      const suffix = opt?.pct ? '%' : '';
-                      return `${sign}${name} ${b.value || 0}${suffix}`;
-                    });
-                    return `파티에 ${parts.join(', ')} 보너스를 부여`;
-                  })()}
-                </div>
-              )}
             </div>
           ) : (
           <div className="space-y-2">
