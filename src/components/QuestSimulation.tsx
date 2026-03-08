@@ -564,7 +564,7 @@ export default function QuestSimulation() {
             <div className="mb-3">
               <div className="flex items-center gap-1.5 mb-2">
                 <Clock className="w-3.5 h-3.5 text-yellow-400" />
-                <span className="text-xs font-medium text-foreground">퀘스트 소요 시간 감소</span>
+                <span className="text-xs font-medium text-foreground">퀘스트 시간 감소</span>
               </div>
               <div className="space-y-1">
                 {questTimeSettings.map(item => (
