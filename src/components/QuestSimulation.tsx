@@ -301,10 +301,6 @@ export default function QuestSimulation() {
         regionName: currentRegion.name,
         isTerrorTower,
       });
-        questTypeKey: selectedQuestType,
-        regionName: currentRegion.name,
-        isTerrorTower,
-      });
       setSimResult(result);
       setSimRunning(false);
     }, 100);
