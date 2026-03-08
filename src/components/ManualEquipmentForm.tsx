@@ -35,13 +35,13 @@ const SPIRIT_OPTIONS = [
 
 const RELIC_STAT_OPTIONS = [
   { value: '깡공격력', label: '공격력' },
-  { value: '깡방어력', label: '방어력' },
-  { value: '깡체력', label: '체력' },
   { value: '공격력%', label: '공격력%' },
-  { value: '방어력%', label: '방어력%' },
-  { value: '체력%', label: '체력%' },
   { value: '해당장비공격력%', label: '해당 장비 공격력%' },
+  { value: '깡방어력', label: '방어력' },
+  { value: '방어력%', label: '방어력%' },
   { value: '해당장비방어력%', label: '해당 장비 방어력%' },
+  { value: '깡체력', label: '체력' },
+  { value: '체력%', label: '체력%' },
   { value: '해당장비전체%', label: '해당 장비 전체%' },
   { value: '모든장비보너스%', label: '모든 장비 보너스%' },
   { value: '치명타확률%', label: '치명타 확률%' },
