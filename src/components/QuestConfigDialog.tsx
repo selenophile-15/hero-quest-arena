@@ -101,14 +101,14 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
   const [selSubAreaIdx, setSelSubAreaIdx] = useState(initialState?.subAreaIdx ?? -1);
 
   // Sync initial state when dialog opens
-  useState(() => {
+  useEffect(() => {
     if (open && initialStep && initialState) {
       setStep(initialStep);
       setSelType(initialState.questTypeKey);
       setSelRegionIdx(initialState.regionIdx);
       setSelSubAreaIdx(initialState.subAreaIdx);
     }
-  });
+  }, [open, initialStep, initialState]);
 
   const questData = selType ? questDataMap[selType] : null;
   const region = questData && selRegionIdx >= 0 ? questData.regions[selRegionIdx] : null;
