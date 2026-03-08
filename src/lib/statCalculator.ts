@@ -56,7 +56,7 @@ export interface CalculatedStats {
   jobElement: string;
 }
 
-export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect };
+export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect, EquipBonusSource };
 
 const SEED_MULTIPLIER = { hp: 1, atk: 4, def: 4 };
 
