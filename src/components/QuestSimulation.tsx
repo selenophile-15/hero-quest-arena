@@ -1272,8 +1272,8 @@ export default function QuestSimulation() {
                   <tr className="text-muted-foreground border-b border-border/30">
                     <th className="text-left py-1 px-1">영웅</th>
                     <th className="text-center py-1">생존률</th>
-                    <th className="text-center py-1">평균 데미지</th>
-                    <th className="text-center py-1">최대 데미지</th>
+                     <th className="text-center py-1">평균 대미지</th>
+                     <th className="text-center py-1">최대 대미지</th>
                   </tr>
                 </thead>
                 <tbody>
