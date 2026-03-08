@@ -514,12 +514,15 @@ export default function EquipmentSelectDialog({
                 onConfirm={(item) => {
                   const newSlots = [...slots];
                   const existingSlot = newSlots[activeSlot];
-                  const slotElement = item.uniqueElement?.length
-                    ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true }
-                    : existingSlot?.element || null;
-                  const slotSpirit = item.uniqueSpirit?.length
-                    ? { name: item.uniqueSpirit[0], affinity: true }
-                    : existingSlot?.spirit || null;
+                  let slotElement = existingSlot?.element || null;
+                  let slotSpirit = existingSlot?.spirit || null;
+                  if (item.manual) {
+                    slotElement = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true } : null;
+                    slotSpirit = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null;
+                  } else {
+                    if (item.uniqueElement?.length) slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
+                    if (item.uniqueSpirit?.length) slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
+                  }
                   newSlots[activeSlot] = {
                     item: { ...item },
                     quality: existingSlot?.quality || slotQuality,
