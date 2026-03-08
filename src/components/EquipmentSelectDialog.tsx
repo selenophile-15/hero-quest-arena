@@ -417,9 +417,14 @@ export default function EquipmentSelectDialog({
           >
             <Wrench className="w-3 h-3" />
             수동
-          </Button>
+           </Button>
 
-          {!manualMode && (
+          {manualMode && (
+            <div className="flex items-center gap-1.5 ml-auto">
+              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setManualMode(false)}>취소</Button>
+              <Button size="sm" className="h-7 text-xs" onClick={() => manualFormRef.current?.triggerConfirm()}>적용</Button>
+            </div>
+          )}
             <>
               <span className="text-muted-foreground">타입:</span>
               <Select value={filterType} onValueChange={setFilterType}>
