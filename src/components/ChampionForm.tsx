@@ -8,13 +8,14 @@ import { getElementValue } from '@/components/EnchantPickerDialog';
 import { loadFamiliars, loadAurasongs, getAurasongSkillEffect, getAurasongSkillIconPath, ensureAurasongDataLoaded, getFamiliarImagePath, getAurasongImagePath, getLeaderSkillTierName } from '@/lib/championEquipUtils';
 import ElementIcon from './ElementIcon';
 import EnchantPickerDialog from './EnchantPickerDialog';
+import ManualEquipmentForm from './ManualEquipmentForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Plus } from 'lucide-react';
+import { Plus, Wrench } from 'lucide-react';
 import type { EquipmentItem } from '@/lib/equipmentUtils';
 
 interface ChampionFormProps {
@@ -187,6 +188,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [equipFilterElement, setEquipFilterElement] = useState<string>('_all');
   const [equipFilterSpirit, setEquipFilterSpirit] = useState<string>('_all');
   const [equipSlotQuality, setEquipSlotQuality] = useState<string>('common');
+  const [championManualMode, setChampionManualMode] = useState(false);
 
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -445,7 +447,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       <Dialog open={!!equipDialogType} onOpenChange={v => !v && setEquipDialogType(null)}>
         <DialogContent className="max-w-5xl h-[85vh] overflow-hidden flex flex-col p-5">
           <DialogHeader>
-            <DialogTitle style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
+            <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
             <DialogDescription className="sr-only">퍼밀리어 또는 오라의 노래를 선택하세요</DialogDescription>
           </DialogHeader>
 
@@ -474,7 +476,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       boxShadow: QUALITY_SHADOW_COLOR[s.quality],
                     } : {}}
                   >
-                    <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>{i === 0 ? '퍼밀리어' : '오라의 노래'}</span>
+                    <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>
+                      {i === 0 ? '퍼밀리어' : '오라의 노래'}
+                      {s.item?.manual && <Wrench className="w-2.5 h-2.5 inline ml-0.5 text-muted-foreground" />}
+                    </span>
                     {s.item ? (
                       <>
                         {s.item.imagePath ? (
@@ -499,74 +504,112 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           {/* Tabs: familiar / aurasong */}
           <div className="flex items-center gap-1 my-1">
             <button
-              onClick={() => setEquipDialogType('familiar')}
+              onClick={() => { setEquipDialogType('familiar'); setChampionManualMode(!!equipmentSlots[0]?.item?.manual); }}
               className={`flex-1 text-xs py-1.5 rounded transition-all ${equipDialogType === 'familiar' ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'} ${equipmentSlots[0]?.item ? 'text-accent font-bold' : ''}`}
             >퍼밀리어</button>
             <button
-              onClick={() => setEquipDialogType('aurasong')}
+              onClick={() => { setEquipDialogType('aurasong'); setChampionManualMode(!!equipmentSlots[1]?.item?.manual); }}
               className={`flex-1 text-xs py-1.5 rounded transition-all ${equipDialogType === 'aurasong' ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'} ${equipmentSlots[1]?.item ? 'text-accent font-bold' : ''}`}
             >오라의 노래</button>
           </div>
 
-          {/* Filters */}
+          {/* Manual mode toggle + Filters */}
           <div className="flex items-center gap-2 px-1 flex-wrap text-xs">
-            <span className="text-muted-foreground">스탯:</span>
-            <Select value={equipFilterStat} onValueChange={setEquipFilterStat}>
-              <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="_all">전체</SelectItem>
-                {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-
-            <span className="text-muted-foreground">원소:</span>
-            <Select value={equipFilterElement} onValueChange={setEquipFilterElement}>
-              <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="_all">전체</SelectItem>
-                {['불', '물', '공기', '대지', '빛', '어둠', '골드'].map(el => (
-                  <SelectItem key={el} value={el}>{el}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <span className="text-muted-foreground">영혼:</span>
-            <Select value={equipFilterSpirit} onValueChange={setEquipFilterSpirit}>
-              <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="_all">전체</SelectItem>
-                {Object.entries(SPIRIT_TIER).sort(([,a], [,b]) => b - a).map(([sp, tier]) => (
-                  <SelectItem key={sp} value={sp}>
-                    <span className="text-muted-foreground text-[10px] mr-1">T{tier})</span>{sp}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <div className="flex-1" />
-
-            <span className="text-muted-foreground">아이템 등급:</span>
-            <Select value={equipSlotQuality} onValueChange={q => {
-              setEquipSlotQuality(q);
-              const newSlots = [...equipmentSlots];
-              newSlots[slotIdx] = { ...newSlots[slotIdx], quality: q };
-              setEquipmentSlots(newSlots);
-            }}>
-              <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => {
-              setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
-            }}>
-              일괄 적용
+            <Button
+              variant={championManualMode ? 'default' : 'outline'}
+              size="sm"
+              className="h-7 text-xs gap-1"
+              onClick={() => setChampionManualMode(prev => !prev)}
+            >
+              <Wrench className="w-3 h-3" />
+              수동
             </Button>
+
+            {!championManualMode && (
+              <>
+                <span className="text-muted-foreground">스탯:</span>
+                <Select value={equipFilterStat} onValueChange={setEquipFilterStat}>
+                  <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="_all">전체</SelectItem>
+                    {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+
+                <span className="text-muted-foreground">원소:</span>
+                <Select value={equipFilterElement} onValueChange={setEquipFilterElement}>
+                  <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="_all">전체</SelectItem>
+                    {['불', '물', '공기', '대지', '빛', '어둠', '골드'].map(el => (
+                      <SelectItem key={el} value={el}>{el}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <span className="text-muted-foreground">영혼:</span>
+                <Select value={equipFilterSpirit} onValueChange={setEquipFilterSpirit}>
+                  <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="_all">전체</SelectItem>
+                    {Object.entries(SPIRIT_TIER).sort(([,a], [,b]) => b - a).map(([sp, tier]) => (
+                      <SelectItem key={sp} value={sp}>
+                        <span className="text-muted-foreground text-[10px] mr-1">T{tier})</span>{sp}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <div className="flex-1" />
+
+                <span className="text-muted-foreground">아이템 등급:</span>
+                <Select value={equipSlotQuality} onValueChange={q => {
+                  setEquipSlotQuality(q);
+                  const newSlots = [...equipmentSlots];
+                  newSlots[slotIdx] = { ...newSlots[slotIdx], quality: q };
+                  setEquipmentSlots(newSlots);
+                }}>
+                  <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => {
+                  setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
+                }}>
+                  일괄 적용
+                </Button>
+              </>
+            )}
           </div>
 
-          {/* Item grid */}
+          {/* Item grid or Manual form */}
           <div className="flex-1 min-h-0 mt-1">
             <div className="overflow-y-auto h-full border border-border rounded p-3">
+              {championManualMode ? (
+                <ManualEquipmentForm
+                  initialData={equipmentSlots[slotIdx]?.item?.manualData || null}
+                  onConfirm={(item) => {
+                    const newSlots = [...equipmentSlots];
+                    const existingSlot = newSlots[slotIdx];
+                    let slotElement = existingSlot?.element || null;
+                    let slotSpirit = existingSlot?.spirit || null;
+                    if (item.manual) {
+                      slotElement = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true } : null;
+                      slotSpirit = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null;
+                    }
+                    newSlots[slotIdx] = {
+                      item: { ...item },
+                      quality: existingSlot?.quality || equipSlotQuality,
+                      element: slotElement,
+                      spirit: slotSpirit,
+                    };
+                    setEquipmentSlots(newSlots);
+                    setChampionManualMode(false);
+                  }}
+                  onCancel={() => setChampionManualMode(false)}
+                />
+              ) : (
               <TooltipProvider delayDuration={200}>
                 <div className="grid grid-cols-6 gap-3">
                   {filteredItems.map((item, idx) => {
@@ -678,6 +721,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   })}
                 </div>
               </TooltipProvider>
+              )}
             </div>
           </div>
         </DialogContent>
