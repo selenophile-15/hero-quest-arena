@@ -214,10 +214,47 @@ export default function QuestSimulation() {
     if (heroes.length === 0) return;
     calculatePartyBuffs({ heroes, isBoss: isBossQuest, isFlashQuest })
       .then(({ summary, buffedStats: bs }) => {
+        // Apply booster on top of party buffs
+        if (selectedBooster !== 'none') {
+          const boosterAtkPct = selectedBooster === 'mega' ? 0.8 : selectedBooster === 'super' ? 0.4 : 0.2;
+          const boosterDefPct = boosterAtkPct;
+          const boosterCrit = selectedBooster === 'mega' ? 25 : selectedBooster === 'super' ? 10 : 0;
+          const boosterCritDmg = selectedBooster === 'mega' ? 50 : 0;
+          
+          bs.forEach((stat, i) => {
+            const hero = heroes[i];
+            const atkAdd = Math.floor((hero.atk || 0) * boosterAtkPct);
+            const defAdd = Math.floor((hero.def || 0) * boosterDefPct);
+            stat.atk += atkAdd;
+            stat.deltaAtk += atkAdd;
+            stat.def += defAdd;
+            stat.deltaDef += defAdd;
+            stat.crit += boosterCrit;
+            stat.deltaCrit += boosterCrit;
+            stat.critDmg += boosterCritDmg;
+            stat.deltaCritDmg += boosterCritDmg;
+          });
+          
+          const boosterNames: Record<string, string> = {
+            normal: '전투력 부스터',
+            super: '슈퍼 전투력 부스터',
+            mega: '메가 전투력 부스터',
+          };
+          summary.sources.push({
+            name: boosterNames[selectedBooster],
+            type: 'aurasong',
+            atkPct: boosterAtkPct * 100,
+            defPct: boosterDefPct * 100,
+            critPct: boosterCrit || undefined,
+            critDmgPct: boosterCritDmg || undefined,
+            note: '부스터',
+          });
+        }
+        
         setBuffedStats(bs);
         setBuffSummary(summary);
       });
-  }, [heroIdKey, isBossQuest, isFlashQuest]);
+  }, [heroIdKey, isBossQuest, isFlashQuest, selectedBooster]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
