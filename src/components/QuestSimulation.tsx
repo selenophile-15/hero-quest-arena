@@ -228,35 +228,76 @@ export default function QuestSimulation() {
         <div className="flex gap-4 flex-col lg:flex-row">
           {/* Left: Monster Info */}
           <div className="flex-1 min-w-0">
-            <div className="card-fantasy p-4">
+            <div className="card-fantasy p-4 relative">
+              {/* Region icon - top left corner */}
+              {currentRegion && (
+                <div className="absolute top-3 left-3 w-12 h-12 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10">
+                  <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+              )}
+
               {/* Quest select button centered at top */}
-              <div className="flex justify-center mb-4">
+              <div className="flex justify-center mb-3">
                 <button
                   onClick={() => setConfigOpen(true)}
-                  className={`relative w-16 h-16 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
+                  className={`relative w-24 h-24 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
                     currentQuest
                       ? 'border-primary/60 glow-gold'
                       : 'border-dashed border-muted-foreground/40 hover:border-primary/50'
                   }`}
                 >
-                  {currentQuest && getQuestSlotImage() ? (
+                  {currentQuest ? (
                     <>
-                      <img src={getQuestSlotImage()!} alt="" className="w-full h-full object-cover" />
+                      {(() => {
+                        // Show sub-area or boss image in center, fallback to region
+                        const centerImage = selectedSubAreaIdx === 99 && currentRegion?.boss
+                          ? currentRegion.boss.image
+                          : selectedSubArea
+                          ? selectedSubArea.image
+                          : currentRegion?.areaImage;
+                        return centerImage ? (
+                          <img src={centerImage} alt="" className="w-full h-full object-cover" />
+                        ) : null;
+                      })()}
                       <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <span className="text-[10px] text-foreground font-medium">변경</span>
                       </div>
                     </>
                   ) : (
-                    <Plus className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <Plus className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
                   )}
                 </button>
               </div>
 
               {currentQuest ? (
                 <>
-                  {/* Quest label + clear */}
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <span className="text-sm text-foreground font-medium">{getQuestSlotLabel()}</span>
+                  {/* Quest info line: barrier name - boss name / difficulty / time */}
+                  <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
+                    {/* Barrier type name if exists */}
+                    {currentQuest.barrier && (() => {
+                      const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                        ? getSubAreaBarrierElement(currentQuest.barrier) : null;
+                      const rawElements = barrierElement
+                        ? [barrierElement]
+                        : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
+                      const elements = [...new Set(rawElements)] as string[];
+                      if (elements.length === 0) return null;
+                      return (
+                        <span className="text-xs text-purple-300">
+                          {elements.join(' ')}장벽
+                        </span>
+                      );
+                    })()}
+                    {currentQuest.barrier && <span className="text-xs text-muted-foreground/40">-</span>}
+                    {/* Sub-area / boss name */}
+                    <span className="text-sm text-foreground font-medium">
+                      {selectedSubAreaIdx === 99 && currentRegion?.boss
+                        ? currentRegion.boss.name
+                        : selectedSubArea
+                        ? selectedSubArea.name
+                        : currentRegion?.name}
+                    </span>
+                    {/* Difficulty + Boss tag */}
                     {currentQuest.difficulty !== '없음' && (() => {
                       const diffColors: Record<string, string> = {
                         '쉬움': 'bg-green-500/20 text-green-400',
@@ -267,13 +308,14 @@ export default function QuestSimulation() {
                       return <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[currentQuest.difficulty] || 'bg-secondary text-muted-foreground'}`}>{currentQuest.difficulty}</span>;
                     })()}
                     {currentQuest.isBoss && <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">보스</span>}
-                    <span className="text-xs text-muted-foreground">⏱ {formatTime(currentQuest.time.total)}</span>
+                    {/* Time - white */}
+                    <span className="text-xs text-foreground">⏱ {formatTime(currentQuest.time.total)}</span>
                     <button onClick={clearQuest} className="ml-1">
                       <X className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive transition-colors" />
                     </button>
                   </div>
 
-                  {/* Barrier info - compact, below label */}
+                  {/* Element Barrier with hero sums */}
                   {currentQuest.barrier && (() => {
                     const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
                       ? getSubAreaBarrierElement(currentQuest.barrier) : null;
@@ -283,7 +325,6 @@ export default function QuestSimulation() {
                     const elements = [...new Set(rawElements)] as string[];
                     if (elements.length === 0) return null;
 
-                    // Sum selected heroes' matching element values
                     const heroElementSums: Record<string, number> = {};
                     elements.forEach(el => {
                       heroElementSums[el] = selectedHeroes.reduce((sum, h) => {
@@ -308,6 +349,9 @@ export default function QuestSimulation() {
                             </div>
                           );
                         })}
+                      </div>
+                    );
+                  })()}
                       </div>
                     );
                   })()}
