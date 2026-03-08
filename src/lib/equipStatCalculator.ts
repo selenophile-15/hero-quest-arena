@@ -322,6 +322,9 @@ export async function calculateEquipmentStats(
   // 평화의 목걸이 weapon nullify doesn't apply to weaponless jobs
   const hasWeaponNullify = !isWeaponlessJob && slots.some(s => s?.item?.name === '평화의 목걸이');
   
+  // 화살통 보너스: 활/크로스보우/총에 30% 보너스 적용
+  const hasQuiver = slots.some(s => s?.item?.type === 'quiver');
+  
   for (let i = 0; i < 6; i++) {
     const slot = slots[i];
     const item = slot?.item;
