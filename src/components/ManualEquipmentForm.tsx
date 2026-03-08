@@ -95,7 +95,7 @@ const AURA_STAT_OPTIONS = [
   { value: '해당장비전체%', label: '해당 장비 전체%', pct: true },
   { value: '모든장비보너스%', label: '모든 장비 보너스%', pct: true },
   { value: '치명타확률%', label: '치명타 확률%', pct: true },
-  { value: '치명타데미지%', label: '치명타 데미지%', pct: true },
+  { value: '치명타데미지%', label: '치명타 대미지%', pct: true },
   { value: '치명타생존%', label: '치명타 생존%', pct: true },
   { value: '회피%', label: '회피%', pct: true },
   { value: '위협도', label: '위협도', pct: false },

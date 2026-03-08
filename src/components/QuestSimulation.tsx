@@ -674,6 +674,37 @@ export default function QuestSimulation() {
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
                   </div>
+                  {/* Monster Crit Chance */}
+                  {(() => {
+                    const baseCrit = 10;
+                    const critMod = selectedMiniBoss === 'dire' ? 3 : selectedMiniBoss === 'legendary' ? 1.5 : 1;
+                    const finalCrit = Math.round(baseCrit * critMod);
+                    return (
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <img src="/images/stats/critchance.webp" alt="" className="w-3.5 h-3.5" />
+                          <span className="text-xs text-foreground">치명타 확률</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${critMod > 1 ? 'text-red-400' : 'text-foreground'}`}>
+                          {finalCrit}%
+                          {critMod > 1 && <span className="text-[9px] text-muted-foreground ml-1">(기본 {baseCrit}% × {critMod})</span>}
+                        </span>
+                      </div>
+                    );
+                  })()}
+                  {/* Monster Evasion */}
+                  {(() => {
+                    const mobEva = selectedMiniBoss === 'agile' ? 40 : selectedMiniBoss === 'legendary' ? 10 : 0;
+                    return mobEva > 0 ? (
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <img src="/images/stats/evasion.webp" alt="" className="w-3.5 h-3.5" />
+                          <span className="text-xs text-foreground">회피</span>
+                        </div>
+                        <span className="text-sm font-bold font-mono text-blue-400">{mobEva}%</span>
+                      </div>
+                    ) : null;
+                  })()}
                 </div>
 
                 {/* Defense Reference - vertical bar */}
