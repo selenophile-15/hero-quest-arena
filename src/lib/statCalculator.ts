@@ -7,7 +7,7 @@
  */
 
 import { lookupHeroStats } from './gameData';
-import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc } from './equipStatCalculator';
+import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc, SkillBonuses } from './equipStatCalculator';
 import { parseSkillBonuses, parseSoulBonuses, combineBonuses, SkillBonusSummary, SkillBonusInput, SoulBonusInput, SkillBonusSource } from './skillBonusParser';
 
 export interface CalculatedStats {
@@ -28,6 +28,9 @@ export interface CalculatedStats {
   // Equipment totals
   equipResult: EquipCalcResult;
 
+  // Equipment-specific skill bonuses (해당장비/모든장비)
+  equipBonuses: SkillBonuses;
+
   // Skill & Soul bonuses
   bonusSummary: SkillBonusSummary;
 
@@ -45,7 +48,7 @@ export interface CalculatedStats {
   jobElement: string;
 }
 
-export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource };
+export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses };
 
 const SEED_MULTIPLIER = { hp: 1, atk: 4, def: 4 };
 
