@@ -799,9 +799,10 @@ export default function QuestSimulation() {
                       }`}>
                         {simResult.winRate.toFixed(1)}%
                       </div>
-                      {simResult.winRate !== simResult.rawWinRate && (
-                        <div className="text-[9px] text-muted-foreground">
-                          (운명직공 보정 전: {simResult.rawWinRate.toFixed(1)}%)
+                      {simResult.retryWinRate !== undefined && (
+                        <div className="text-[9px] text-muted-foreground space-y-0.5 mt-1">
+                          <div>1차 시도: <span className="text-foreground">{simResult.rawWinRate.toFixed(1)}%</span></div>
+                          <div>2차 시도 (부스터 적용): <span className="text-foreground">{simResult.retryWinRate.toFixed(1)}%</span></div>
                         </div>
                       )}
                     </div>
