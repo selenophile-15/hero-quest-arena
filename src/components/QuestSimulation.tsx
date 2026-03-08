@@ -497,9 +497,9 @@ export default function QuestSimulation() {
                               // Dot x is at left(8 w-8) + gap(8) + center of bar(6) = ~46px
                               const dotX = 46;
                               const dotY = barH - (pct / 100) * barH;
-                              // Angled line: go right and up, stagger angle per hero
-                              const lineLen = 30 + hi * 18;
-                              const angle = -(15 + hi * 10); // degrees upward
+                              // Angled line: fixed length, stagger angle per hero
+                              const lineLen = 35;
+                              const angle = -(10 + hi * 12); // degrees upward
                               const rad = (angle * Math.PI) / 180;
                               const endX = dotX + lineLen * Math.cos(rad);
                               const endY = dotY + lineLen * Math.sin(rad);
