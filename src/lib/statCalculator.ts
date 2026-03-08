@@ -111,7 +111,7 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
 
   // Equipment calculation (includes equipment-specific skill bonuses)
   const equipBonuses = parseEquipSkillBonuses(skillBonusInputs);
-  const isSpellknight = jobName === '스펠나이트';
+  const isSpellknight = jobName === '스펠나이트' || jobName === '마법검';
   const equipResult = await calculateEquipmentStats(equipmentSlots, equipBonuses, hasRangedWeapon, isSpellknight, isWeaponlessJob);
 
   // Parse general skill bonuses (flat + %)
