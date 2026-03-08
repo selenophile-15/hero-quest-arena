@@ -33,6 +33,11 @@ export type MiniBossType = 'none' | 'agile' | 'dire' | 'huge' | 'legendary';
 
 export interface BoosterType {
   type: 'none' | 'normal' | 'super' | 'mega';
+  // Extra flat bonuses stacked on top (e.g., Fateweaver retry adds +20%/+20%)
+  extraAtkBonus?: number;
+  extraDefBonus?: number;
+  extraCritChance?: number;
+  extraCritMult?: number;
 }
 
 export interface SimulationConfig {
@@ -432,6 +437,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         heroCritMult[i] += 0.5;
       }
       break;
+  }
+  // Stack extra bonuses (e.g., Fateweaver retry Normal booster: +20%/+20%)
+  if (booster.extraAtkBonus) boosterAtkBonus += booster.extraAtkBonus;
+  if (booster.extraDefBonus) boosterDefBonus += booster.extraDefBonus;
+  if (booster.extraCritChance) {
+    for (let i = 0; i < numHeroes; i++) heroCritChance[i] += booster.extraCritChance;
+  }
+  if (booster.extraCritMult) {
+    for (let i = 0; i < numHeroes; i++) heroCritMult[i] += booster.extraCritMult;
   }
 
   // ─── Apply champion + booster to base stats ───
@@ -955,19 +969,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   };
 }
 
-/** Get the booster config for Fateweaver retry (stack Normal on top) */
+/** Get the booster config for Fateweaver retry: original booster + Normal booster stacked */
 function getRetryBooster(original: BoosterType): BoosterType {
-  // Retry adds a Normal Power Booster (+20% atk/def) on top
-  // The actual stacking: if no booster → normal, if normal → super-equivalent, etc.
-  // But per the game docs, it literally adds Normal booster stats on top
-  // So we just need to track the original + extra 20%/20%
-  // We'll handle this by creating a synthetic booster level
-  switch (original.type) {
-    case 'none': return { type: 'normal' };  // 0 + 20% = normal equivalent
-    case 'normal': return { type: 'super' }; // This isn't exact but approximates
-    case 'super': return { type: 'mega' };   // Approximation
-    case 'mega': return { type: 'mega' };    // Already max; the +20% is on top but we cap at mega
-  }
+  // Normal booster = +20% atk, +20% def. Just add these on top of whatever was used.
+  return {
+    ...original,
+    extraAtkBonus: (original.extraAtkBonus || 0) + 0.2,
+    extraDefBonus: (original.extraDefBonus || 0) + 0.2,
+  };
 }
 
 
