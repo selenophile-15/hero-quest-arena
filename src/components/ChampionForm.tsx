@@ -588,6 +588,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             <div className="overflow-y-auto h-full border border-border rounded p-3">
               {championManualMode ? (
                 <ManualEquipmentForm
+                  isAurasong={equipDialogType === 'aurasong'}
                   initialData={equipmentSlots[slotIdx]?.item?.manualData || null}
                   onConfirm={(item) => {
                     const newSlots = [...equipmentSlots];

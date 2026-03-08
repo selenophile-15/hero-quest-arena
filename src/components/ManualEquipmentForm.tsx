@@ -83,6 +83,20 @@ const RELIC_STAT_OPTIONS = [
   { value: '위협도', label: '위협도' },
 ];
 
+const AURA_STAT_OPTIONS = [
+  { value: '오라_공격력%', label: '공격력%' },
+  { value: '오라_방어력%', label: '방어력%' },
+  { value: '오라_체력%', label: '체력%' },
+  { value: '오라_깡체력', label: '체력(깡)' },
+  { value: '오라_치명타확률%', label: '치명타 확률%' },
+  { value: '오라_치명타데미지%', label: '치명타 대미지%' },
+  { value: '오라_회피%', label: '회피%' },
+  { value: '오라_경험치%', label: '경험치%' },
+  { value: '오라_매턴체력회복', label: '매턴 체력 회복' },
+  { value: '오라_퀘스트시간감소%', label: '퀘스트 시간 감소%' },
+  { value: '오라_휴식시간감소%', label: '휴식 시간 감소%' },
+];
+
 const RELIC_OP_OPTIONS = [
   { value: '증가', label: '증가' },
   { value: '감소', label: '감소' },
@@ -118,6 +132,7 @@ export interface ManualEquipmentData {
 interface ManualEquipmentFormProps {
   initialData?: ManualEquipmentData | null;
   allowedTypes?: string[];
+  isAurasong?: boolean;
   onConfirm: (item: EquipmentItem, manualData: ManualEquipmentData) => void;
   onCancel: () => void;
 }
@@ -159,8 +174,12 @@ function migrateData(d: any): ManualEquipmentData {
   };
 }
 
-export default function ManualEquipmentForm({ initialData, allowedTypes, onConfirm, onCancel }: ManualEquipmentFormProps) {
-  const [data, setData] = useState<ManualEquipmentData>(initialData ? migrateData(initialData) : emptyData());
+export default function ManualEquipmentForm({ initialData, allowedTypes, isAurasong, onConfirm, onCancel }: ManualEquipmentFormProps) {
+  const [data, setData] = useState<ManualEquipmentData>(() => {
+    const d = initialData ? migrateData(initialData) : emptyData();
+    if (isAurasong && !d.type) d.type = '오라의 노래';
+    return d;
+  });
   const [rawStats, setRawStats] = useState<Record<string, string>>({});
   const [rawRelicValues, setRawRelicValues] = useState<Record<number, string>>({});
   const typeOptions = getAllowedTypesForSlot(allowedTypes);
@@ -190,7 +209,8 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
 
   const addRelicBonus = () => {
     if (data.relicBonuses.length >= 3) return;
-    update('relicBonuses', [...data.relicBonuses, { stat: '깡공격력', op: '증가', value: 0 }]);
+    const defaultStat = isAurasong ? '오라_공격력%' : '깡공격력';
+    update('relicBonuses', [...data.relicBonuses, { stat: defaultStat, op: '증가', value: 0 }]);
   };
 
   const removeRelicBonus = (i: number) => {
@@ -204,11 +224,12 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
   };
 
   const handleConfirm = () => {
-    if (!data.name.trim() || !data.type) return;
+    if (!data.name.trim() || (!isAurasong && !data.type)) return;
 
-    const typeInfo = EQUIP_TYPE_MAP[data.type];
-    const fileType = typeInfo?.file || 'unknown';
-    const category = typeInfo?.category || 'unknown';
+    const effectiveType = isAurasong ? '오라의 노래' : data.type;
+    const typeInfo = EQUIP_TYPE_MAP[effectiveType];
+    const fileType = isAurasong ? 'aurasong' : (typeInfo?.file || 'unknown');
+    const category = isAurasong ? 'champion' : (typeInfo?.category || 'unknown');
 
     const stats: { key: string; value: number }[] = [];
     if (data.atk) stats.push({ key: '장비_공격력', value: data.atk });
@@ -218,7 +239,14 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
     if (data.evasion) stats.push({ key: '장비_회피%', value: data.evasion });
 
     let relicEffect: string | null = null;
-    if (data.isRelic && data.relicBonuses.length > 0) {
+    if (isAurasong && data.relicBonuses.length > 0) {
+      // Generate aura song skill description
+      const parts = data.relicBonuses.map(b => {
+        const label = AURA_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
+        return `${label} ${b.op === '감소' ? '-' : '+'}${b.value}`;
+      });
+      relicEffect = `+파티에 ${parts.join(', ')} 보너스를 부여`;
+    } else if (!isAurasong && data.isRelic && data.relicBonuses.length > 0) {
       relicEffect = data.relicBonuses.map(b => {
         const label = RELIC_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
         if (b.op === '고정') return `${label} ${b.value}으로 고정`;
@@ -236,13 +264,13 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
       name: data.name.trim(),
       engName: '',
       type: isDualWield ? 'dual_wield' : fileType,
-      typeKor: data.type,
+      typeKor: effectiveType,
       category,
       tier: 0,
       imagePath: '',
       stats,
       quality: 'common',
-      relic: data.isRelic,
+      relic: isAurasong ? false : data.isRelic,
       relicEffect,
       airshipPower: 0,
       elementAffinity,
@@ -252,8 +280,8 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
       uniqueSpirit,
       judgmentTypes: isDualWield ? data.dualWieldTypes : null,
       manual: true,
-      manualData: data,
-      relicStatBonuses: data.isRelic ? data.relicBonuses : undefined,
+      manualData: { ...data, type: effectiveType },
+      relicStatBonuses: (isAurasong || data.isRelic) ? data.relicBonuses : undefined,
     };
 
     onConfirm(item, data);
@@ -284,6 +312,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
           </div>
 
           {/* Type */}
+          {!isAurasong && (
           <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs">
             <span className="text-foreground">타입</span>
             <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
@@ -293,6 +322,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
               </SelectContent>
             </Select>
           </div>
+          )}
 
           {/* Dual wield sub-types */}
           {isDualWield && (
@@ -477,7 +507,59 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
             )}
           </div>
 
-          {/* Relic */}
+          {/* Relic / Aura Song Skills */}
+          {isAurasong ? (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
+                {data.relicBonuses.length < 3 && (
+                  <Button variant="ghost" size="sm" className="h-5 text-[10px] px-1.5" onClick={addRelicBonus}>
+                    <Plus className="w-3 h-3 mr-0.5" />추가
+                  </Button>
+                )}
+              </div>
+              {data.relicBonuses.map((b, i) => (
+                <div key={i} className="flex items-center gap-1.5 flex-wrap">
+                  <Select value={b.stat} onValueChange={v => updateBonus(i, 'stat', v)}>
+                    <SelectTrigger className="h-7 text-[10px] w-[160px]"><SelectValue /></SelectTrigger>
+                    <SelectContent className="max-h-[200px]">
+                      {AURA_STAT_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
+                    <SelectTrigger className="h-7 text-[10px] w-[72px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    type="number"
+                    className="h-7 text-[10px] w-16 text-center"
+                    value={rawRelicValues[i] ?? (b.value === 0 ? '' : String(b.value))}
+                    onChange={e => {
+                      const v = e.target.value;
+                      setRawRelicValues(prev => ({ ...prev, [i]: v }));
+                      updateBonus(i, 'value', v === '' ? 0 : (parseFloat(v) || 0));
+                    }}
+                  />
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => removeRelicBonus(i)}>
+                    <Trash2 className="w-3 h-3 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+              {data.relicBonuses.length > 0 && (
+                <div className="text-[10px] text-primary/80 bg-primary/5 rounded p-1.5 mt-1">
+                  {(() => {
+                    const parts = data.relicBonuses.map(b => {
+                      const label = AURA_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
+                      return `${label} ${b.op === '감소' ? '-' : '+'}${b.value || 0}`;
+                    });
+                    return `+파티에 ${parts.join(', ')} 보너스를 부여`;
+                  })()}
+                </div>
+              )}
+            </div>
+          ) : (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs">
               <Checkbox
@@ -507,7 +589,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
                       </SelectContent>
                     </Select>
                     <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
-                      <SelectTrigger className="h-7 text-[10px] w-[52px]"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-7 text-[10px] w-[72px]"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
                       </SelectContent>
@@ -530,6 +612,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
               </div>
             )}
           </div>
+          )}
         </div>
       </div>
 
