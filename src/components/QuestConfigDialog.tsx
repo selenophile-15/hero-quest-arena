@@ -94,7 +94,7 @@ const getDifficultyBorder = (diff: string) => {
   }
 };
 
-
+export default function QuestConfigDialog({ open, onOpenChange, questDataMap, questFiles, onSelect, initialStep, initialState }: Props) {
   const [step, setStep] = useState<'type' | 'region' | 'subarea' | 'difficulty'>(initialStep || 'type');
   const [selType, setSelType] = useState(initialState?.questTypeKey || '');
   const [selRegionIdx, setSelRegionIdx] = useState(initialState?.regionIdx ?? -1);
