@@ -412,81 +412,111 @@ export default function QuestSimulation() {
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
                     <span className="text-xs text-foreground font-medium">방어력 기준치</span>
                   </div>
-                  <div className="relative px-1">
-                    <div className="flex gap-2">
-                      {/* Left: % labels */}
-                      <div className="flex flex-col justify-between h-64 text-right shrink-0 w-8">
-                        {[...defThresholds].reverse().map(t => (
-                          <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{t.label}</span>
-                        ))}
+                  {(() => {
+                    // Map defense value to bar % using threshold interpolation
+                    const defToBarPct = (def: number) => {
+                      // thresholds are at evenly spaced visual positions: 0%, 25%, 50%, 75%, 100%
+                      for (let i = defThresholds.length - 1; i >= 1; i--) {
+                        const upper = defThresholds[i];
+                        const lower = defThresholds[i - 1];
+                        if (def >= lower.value) {
+                          const segPct = upper.value > lower.value
+                            ? (def - lower.value) / (upper.value - lower.value)
+                            : 0;
+                          const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
+                          const upperPos = (i / (defThresholds.length - 1)) * 100;
+                          return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
+                        }
+                      }
+                      return 0;
+                    };
+
+                    const barH = 256; // h-64 = 16rem = 256px
+
+                    return (
+                      <div className="relative px-1">
+                        <div className="flex gap-2">
+                          {/* Left: % labels */}
+                          <div className="flex flex-col justify-between h-64 text-right shrink-0 w-8">
+                            {[...defThresholds].reverse().map(t => (
+                              <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{t.label}</span>
+                            ))}
+                          </div>
+                          {/* Center: vertical bar */}
+                          <div className="relative w-3 h-64 flex-shrink-0">
+                            <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                            {/* Threshold markers */}
+                            {[...defThresholds].reverse().map((t, i) => {
+                              const pct = (i / (defThresholds.length - 1)) * 100;
+                              return (
+                                <div key={t.key} className="absolute left-0 right-0" style={{ bottom: `${pct}%`, transform: 'translateY(50%)' }}>
+                                  <div className="w-full h-px" style={{ backgroundColor: t.color, opacity: 0.5 }} />
+                                </div>
+                              );
+                            })}
+                            {/* Hero pins as dots on the bar */}
+                            {selectedHeroes.map((h) => {
+                              const heroDef = h.def || 0;
+                              const pct = defToBarPct(heroDef);
+                              let pinColor = '#ef4444';
+                              for (const t of defThresholds) {
+                                if (heroDef >= t.value) pinColor = t.color;
+                              }
+                              return (
+                                <div
+                                  key={h.id}
+                                  className="absolute"
+                                  style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}
+                                >
+                                  <div
+                                    className="w-3 h-3 rounded-full border shadow-md"
+                                    style={{ borderColor: pinColor, backgroundColor: pinColor }}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                          {/* Right: defense values */}
+                          <div className="flex flex-col justify-between h-64 shrink-0">
+                            {[...defThresholds].reverse().map(t => (
+                              <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Hero labels via SVG - angled lines from dot position */}
+                        {selectedHeroes.length > 0 && (
+                          <svg className="absolute top-0 left-0 w-full h-64 pointer-events-none" style={{ overflow: 'visible' }}>
+                            {selectedHeroes.map((h, hi) => {
+                              const heroDef = h.def || 0;
+                              const pct = defToBarPct(heroDef);
+                              let pinColor = '#ef4444';
+                              for (const t of defThresholds) {
+                                if (heroDef >= t.value) pinColor = t.color;
+                              }
+                              // Dot x is at left(8 w-8) + gap(8) + center of bar(6) = ~46px
+                              const dotX = 46;
+                              const dotY = barH - (pct / 100) * barH;
+                              // Angled line: go right and up, stagger angle per hero
+                              const lineLen = 30 + hi * 18;
+                              const angle = -(15 + hi * 10); // degrees upward
+                              const rad = (angle * Math.PI) / 180;
+                              const endX = dotX + lineLen * Math.cos(rad);
+                              const endY = dotY + lineLen * Math.sin(rad);
+                              return (
+                                <g key={h.id}>
+                                  <line x1={dotX} y1={dotY} x2={endX} y2={endY} stroke={pinColor} strokeWidth="1" opacity="0.6" />
+                                  <text x={endX + 4} y={endY + 3} fill={pinColor} fontSize="9" fontFamily="monospace">
+                                    {h.name} ({formatNumber(heroDef)})
+                                  </text>
+                                </g>
+                              );
+                            })}
+                          </svg>
+                        )}
                       </div>
-                      {/* Center: vertical bar */}
-                      <div className="relative w-3 h-64 flex-shrink-0">
-                        <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
-                        {/* Threshold markers */}
-                        {[...defThresholds].reverse().map((t, i) => {
-                          const pct = (i / (defThresholds.length - 1)) * 100;
-                          return (
-                            <div key={t.key} className="absolute left-0 right-0" style={{ bottom: `${pct}%`, transform: 'translateY(50%)' }}>
-                              <div className="w-full h-px" style={{ backgroundColor: t.color, opacity: 0.5 }} />
-                            </div>
-                          );
-                        })}
-                        {/* Hero pins as dots on the bar */}
-                        {selectedHeroes.map((h, hi) => {
-                          const heroDef = h.def || 0;
-                          const maxDef = defThresholds[defThresholds.length - 1].value;
-                          const pct = maxDef > 0 ? Math.min(100, Math.max(0, (heroDef / maxDef) * 100)) : 0;
-                          let pinColor = '#ef4444';
-                          for (const t of defThresholds) {
-                            if (heroDef >= t.value) pinColor = t.color;
-                          }
-                          return (
-                            <div
-                              key={h.id}
-                              className="absolute"
-                              style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}
-                            >
-                              <div
-                                className="w-2.5 h-2.5 rounded-full border shadow-md"
-                                style={{ borderColor: pinColor, backgroundColor: pinColor }}
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {/* Right: defense values + hero name lines */}
-                      <div className="relative flex flex-col justify-between h-64 shrink-0 flex-1 min-w-0">
-                        {/* Defense values at threshold positions */}
-                        {[...defThresholds].reverse().map(t => (
-                          <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
-                        ))}
-                        {/* Hero pin labels - extending right from dot with staggered line lengths */}
-                        {selectedHeroes.map((h, hi) => {
-                          const heroDef = h.def || 0;
-                          const maxDef = defThresholds[defThresholds.length - 1].value;
-                          const pct = maxDef > 0 ? Math.min(100, Math.max(0, (heroDef / maxDef) * 100)) : 0;
-                          let pinColor = '#ef4444';
-                          for (const t of defThresholds) {
-                            if (heroDef >= t.value) pinColor = t.color;
-                          }
-                          const lineWidth = 16 + (hi % 4) * 14;
-                          return (
-                            <div
-                              key={h.id}
-                              className="absolute flex items-center gap-1 pointer-events-none"
-                              style={{ bottom: `${pct}%`, left: '0', transform: 'translateY(50%)' }}
-                            >
-                              <div className="h-px shrink-0" style={{ width: `${lineWidth}px`, backgroundColor: pinColor, opacity: 0.6 }} />
-                              <span className="text-[9px] font-mono whitespace-nowrap" style={{ color: pinColor }}>
-                                {h.name} ({formatNumber(heroDef)})
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
+                    );
+                  })()}
                 </div>
               </div>
             ) : (
