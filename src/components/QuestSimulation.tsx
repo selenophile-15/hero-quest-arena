@@ -676,7 +676,7 @@ export default function QuestSimulation() {
                                     <line x1={startX + 10} y1={dotY} x2={endX} y2={labelY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
                                     <line x1={endX} y1={labelY} x2={endX + 8} y2={labelY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
                                     <text x={endX + 12} y={labelY + 3} fill={pinColor} fontSize="9" fontFamily="monospace">
-                                      {item.h.name} ({formatNumber(item.def)})
+                                      {item.h.name} ({formatNumber(item.def)}) {Math.round(100 - getDamageReductionForDef(item.def))}%
                                     </text>
                                   </g>
                                 );
