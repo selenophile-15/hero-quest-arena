@@ -690,7 +690,9 @@ export default function QuestSimulation() {
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
                             if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
-                            const val = (hero as any)[stat.key] || 0;
+                            const val = (stat as any).computed
+                              ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
+                              : (hero as any)[stat.key] || 0;
                             return (
                               <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${stat.color}`}>
                                 {stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}
