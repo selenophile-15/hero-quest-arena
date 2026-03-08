@@ -555,12 +555,16 @@ export default function QuestSimulation() {
                 {/* Line 2: Difficulty */}
                 {currentQuest.difficulty !== '없음' && (
                   <div className="text-center text-sm">
-                    <span className={`font-medium ${
-                      currentQuest.difficulty === '쉬움' ? 'text-green-400' :
-                      currentQuest.difficulty === '보통' ? 'text-blue-400' :
-                      currentQuest.difficulty === '어려움' ? 'text-orange-400' :
-                      currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
-                    }`}>{currentQuest.difficulty}</span>
+                    <button
+                      onClick={() => openConfigAtStep('difficulty')}
+                      className={`font-medium cursor-pointer hover:underline ${
+                        currentQuest.difficulty === '쉬움' ? 'text-green-400' :
+                        currentQuest.difficulty === '보통' ? 'text-blue-400' :
+                        currentQuest.difficulty === '어려움' ? 'text-orange-400' :
+                        currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
+                      }`}
+                      title="난이도 변경"
+                    >{currentQuest.difficulty}</button>
                   </div>
                 )}
 
