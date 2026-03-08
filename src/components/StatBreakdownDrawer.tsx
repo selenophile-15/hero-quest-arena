@@ -105,10 +105,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const bonus = calcStats?.bonusSummary;
     const flatBonus = bonus ? getSummaryField(bonus, statType, 'flat') : 0;
     const pctBonus = bonus ? getSummaryField(bonus, statType, 'pct') : 0;
-    const relicFlat = calcStats?.relicBonusFlat;
-    const relicPct = calcStats?.relicBonusPct;
-    const relicFlatVal = relicFlat ? (statType === 'atk' ? relicFlat.atk : statType === 'def' ? relicFlat.def : relicFlat.hp) : 0;
-    const relicPctVal = relicPct ? (statType === 'atk' ? relicPct.atk : statType === 'def' ? relicPct.def : relicPct.hp) : 0;
 
     const relicEffects = calcStats?.relicEffects || [];
     const hasWeaponNullify = relicEffects.some(e => e.type === 'weapon_nullify');
