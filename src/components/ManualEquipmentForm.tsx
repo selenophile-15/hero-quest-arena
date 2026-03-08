@@ -507,7 +507,59 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
             )}
           </div>
 
-          {/* Relic */}
+          {/* Relic / Aura Song Skills */}
+          {isAurasong ? (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
+                {data.relicBonuses.length < 3 && (
+                  <Button variant="ghost" size="sm" className="h-5 text-[10px] px-1.5" onClick={addRelicBonus}>
+                    <Plus className="w-3 h-3 mr-0.5" />추가
+                  </Button>
+                )}
+              </div>
+              {data.relicBonuses.map((b, i) => (
+                <div key={i} className="flex items-center gap-1.5 flex-wrap">
+                  <Select value={b.stat} onValueChange={v => updateBonus(i, 'stat', v)}>
+                    <SelectTrigger className="h-7 text-[10px] w-[160px]"><SelectValue /></SelectTrigger>
+                    <SelectContent className="max-h-[200px]">
+                      {AURA_STAT_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
+                    <SelectTrigger className="h-7 text-[10px] w-[72px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    type="number"
+                    className="h-7 text-[10px] w-16 text-center"
+                    value={rawRelicValues[i] ?? (b.value === 0 ? '' : String(b.value))}
+                    onChange={e => {
+                      const v = e.target.value;
+                      setRawRelicValues(prev => ({ ...prev, [i]: v }));
+                      updateBonus(i, 'value', v === '' ? 0 : (parseFloat(v) || 0));
+                    }}
+                  />
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => removeRelicBonus(i)}>
+                    <Trash2 className="w-3 h-3 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+              {data.relicBonuses.length > 0 && (
+                <div className="text-[10px] text-primary/80 bg-primary/5 rounded p-1.5 mt-1">
+                  {(() => {
+                    const parts = data.relicBonuses.map(b => {
+                      const label = AURA_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
+                      return `${label} ${b.op === '감소' ? '-' : '+'}${b.value || 0}`;
+                    });
+                    return `+파티에 ${parts.join(', ')} 보너스를 부여`;
+                  })()}
+                </div>
+              )}
+            </div>
+          ) : (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs">
               <Checkbox
@@ -537,7 +589,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
                       </SelectContent>
                     </Select>
                     <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
-                      <SelectTrigger className="h-7 text-[10px] w-[52px]"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-7 text-[10px] w-[72px]"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
                       </SelectContent>
@@ -560,6 +612,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
               </div>
             )}
           </div>
+          )}
         </div>
       </div>
 
