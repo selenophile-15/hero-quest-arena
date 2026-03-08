@@ -77,7 +77,7 @@ const RELIC_STAT_OPTIONS = [
   { value: '해당장비전체%', label: '해당 장비 전체%' },
   { value: '모든장비보너스%', label: '모든 장비 보너스%' },
   { value: '치명타확률%', label: '치명타 확률%' },
-  { value: '치명타데미지%', label: '치명타 데미지%' },
+  { value: '치명타데미지%', label: '치명타 대미지%' },
   { value: '치명타생존%', label: '치명타 생존%' },
   { value: '회피%', label: '회피%' },
   { value: '위협도', label: '위협도' },
