@@ -1010,6 +1010,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
           )}
 
+          <div className="px-3 pb-3">
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
               {isEvasion && hasEvasionFixed
                 ? `※ ${hasEvasionFixed.itemName}: 회피 ${hasEvasionFixed.fixedValue}%로 고정`
