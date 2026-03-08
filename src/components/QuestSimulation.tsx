@@ -1220,7 +1220,7 @@ export default function QuestSimulation() {
                   };
                   const entries = runSingleCombatLog({
                     heroes: selectedHeroes, monster: questMonster,
-                    miniBoss: 'none' as MiniBossType, booster: { type: selectedBooster },
+                    miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
                     questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
                   });
                   setCombatLog(entries);

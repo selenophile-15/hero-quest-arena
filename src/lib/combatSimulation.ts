@@ -138,13 +138,17 @@ const BJORN_DOUBLE_ZONES = [
 
 function calcDamageTaken(heroDef: number, mobDamage: number, mobCap: number): number {
   // Piecewise linear damage reduction based on defense vs cap
+  // Cap at 75% reduction (0.25x damage minimum)
+  let dmg: number;
   if (heroDef <= mobCap / 6) {
-    return Math.round(1.5 * mobDamage + ((heroDef - 0) / (mobCap / 6 - 0)) * (0.5 * mobDamage - 1.5 * mobDamage));
+    dmg = Math.round(1.5 * mobDamage + ((heroDef - 0) / (mobCap / 6 - 0)) * (0.5 * mobDamage - 1.5 * mobDamage));
   } else if (heroDef <= mobCap / 3) {
-    return Math.round(0.5 * mobDamage + ((heroDef - mobCap / 6) / (mobCap / 3 - mobCap / 6)) * (0.3 * mobDamage - 0.5 * mobDamage));
+    dmg = Math.round(0.5 * mobDamage + ((heroDef - mobCap / 6) / (mobCap / 3 - mobCap / 6)) * (0.3 * mobDamage - 0.5 * mobDamage));
   } else {
-    return Math.round(0.3 * mobDamage + ((heroDef - mobCap / 3) / (mobCap - mobCap / 3)) * (0.25 * mobDamage - 0.3 * mobDamage));
+    dmg = Math.round(0.3 * mobDamage + ((heroDef - mobCap / 3) / (mobCap - mobCap / 3)) * (0.25 * mobDamage - 0.3 * mobDamage));
   }
+  // Floor at 25% of mob damage (75% max reduction)
+  return Math.max(dmg, Math.round(0.25 * mobDamage));
 }
 
 function calcCritDamageTaken(normalDmg: number, mobDamage: number): number {
