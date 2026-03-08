@@ -104,10 +104,16 @@ function emptyData(): ManualEquipmentData {
 
 export default function ManualEquipmentForm({ initialData, allowedTypes, onConfirm, onCancel }: ManualEquipmentFormProps) {
   const [data, setData] = useState<ManualEquipmentData>(initialData || emptyData());
+  const [rawStats, setRawStats] = useState<Record<string, string>>({});
+  const [rawRelicValues, setRawRelicValues] = useState<Record<number, string>>({});
   const typeOptions = getAllowedTypesForSlot(allowedTypes);
 
   useEffect(() => {
-    if (initialData) setData(initialData);
+    if (initialData) {
+      setData(initialData);
+      setRawStats({});
+      setRawRelicValues({});
+    }
   }, [initialData]);
 
   const update = <K extends keyof ManualEquipmentData>(key: K, val: ManualEquipmentData[K]) => {
@@ -197,13 +203,13 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
 
       {/* Name */}
       <div className="grid grid-cols-[80px_1fr] gap-2 items-center text-xs">
-        <span className="text-foreground/70">이름</span>
+        <span className="text-foreground">이름</span>
         <Input className="h-7 text-xs" value={data.name} onChange={e => update('name', e.target.value)} placeholder="장비 이름" />
       </div>
 
       {/* Type */}
       <div className="grid grid-cols-[80px_1fr] gap-2 items-center text-xs">
-        <span className="text-foreground/70">타입</span>
+        <span className="text-foreground">타입</span>
         <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
           <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="선택" /></SelectTrigger>
           <SelectContent className="max-h-[240px]">
@@ -215,7 +221,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
       {/* Dual wield sub-types */}
       {isDualWield && (
         <div className="grid grid-cols-[80px_1fr] gap-2 items-start text-xs">
-          <span className="text-foreground/70">쌍수 타입</span>
+          <span className="text-foreground">쌍수 타입</span>
           <div className="flex flex-wrap gap-1">
             {WEAPON_TYPES.map(t => (
               <button
@@ -236,7 +242,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
       )}
 
       {/* Stats (일반 등급 기준) */}
-      <div className="text-[10px] text-foreground/70">일반 등급 기준 스탯</div>
+      <div className="text-[10px] text-foreground">일반 등급 기준 스탯</div>
       <div className="grid grid-cols-5 gap-2 text-xs">
         {[
           { key: 'atk' as const, label: '공격력', suffix: '' },
@@ -246,14 +252,15 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
           { key: 'evasion' as const, label: '회피', suffix: '%' },
         ].map(s => (
           <div key={s.key} className="flex flex-col items-center gap-0.5">
-            <span className="text-foreground/70 text-[10px]">{s.label}</span>
+            <span className="text-foreground text-[10px]">{s.label}</span>
             <div className="relative">
               <Input
                 type="number"
                 className={`h-7 text-xs text-center ${s.suffix ? 'pr-4' : ''}`}
-                value={data[s.key] === 0 ? '' : (data[s.key] || '')}
+                value={rawStats[s.key] ?? (data[s.key] === 0 ? '' : String(data[s.key]))}
                 onChange={e => {
                   const v = e.target.value;
+                  setRawStats(prev => ({ ...prev, [s.key]: v }));
                   update(s.key, v === '' ? 0 : (parseFloat(v) || 0));
                 }}
               />
@@ -266,7 +273,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
       {/* Affinity */}
       <div className="grid grid-cols-2 gap-3 text-xs">
         <div className="flex flex-col gap-1">
-          <span className="text-foreground/70 text-[10px]">친밀/고유 원소</span>
+          <span className="text-foreground text-[10px]">친밀/고유 원소</span>
           <Select value={data.affinityElement || '_none'} onValueChange={v => update('affinityElement', v === '_none' ? '' : v)}>
             <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="없음" /></SelectTrigger>
             <SelectContent>
@@ -276,7 +283,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
           </Select>
         </div>
         <div className="flex flex-col gap-1">
-          <span className="text-foreground/70 text-[10px]">친밀/고유 영혼</span>
+          <span className="text-foreground text-[10px]">친밀/고유 영혼</span>
           <Select value={data.affinitySpirit || '_none'} onValueChange={v => update('affinitySpirit', v === '_none' ? '' : v)}>
             <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="없음" /></SelectTrigger>
             <SelectContent className="max-h-[200px]">
@@ -294,7 +301,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
           onCheckedChange={v => update('isRelic', !!v)}
           id="manual-relic"
         />
-        <label htmlFor="manual-relic" className="text-foreground/70 cursor-pointer">유물</label>
+        <label htmlFor="manual-relic" className="text-foreground cursor-pointer">유물</label>
       </div>
 
       {data.isRelic && (
