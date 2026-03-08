@@ -99,6 +99,7 @@ export default function QuestSimulation() {
   // Selection state
   const [selectedQuestType, setSelectedQuestType] = useState<string>('');
   const [selectedRegionIdx, setSelectedRegionIdx] = useState<number>(-1);
+  const [selectedSubAreaIdx, setSelectedSubAreaIdx] = useState<number>(-1);
   const [selectedQuestIdx, setSelectedQuestIdx] = useState<number>(-1);
   const [selectedHeroIds, setSelectedHeroIds] = useState<Set<string>>(new Set());
   const [showHistory, setShowHistory] = useState(false);
