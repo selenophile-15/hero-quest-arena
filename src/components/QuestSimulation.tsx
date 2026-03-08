@@ -336,17 +336,25 @@ export default function QuestSimulation() {
       {currentRegion && (!hasSubAreas || selectedSubAreaIdx >= 0) && (
         <div className="card-fantasy p-4">
           <div className="flex items-center gap-3 mb-3">
-            {currentRegion.boss && (
+            {hasSubAreas && selectedSubAreaIdx === 99 && currentRegion.boss ? (
               <img src={currentRegion.boss.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-            )}
+            ) : hasSubAreas && selectedSubArea ? (
+              <img src={selectedSubArea.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+            ) : currentRegion.boss ? (
+              <img src={currentRegion.boss.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+            ) : null}
             <div>
-              <h3 className="font-display text-lg text-foreground">{currentRegion.name}</h3>
+              <h3 className="font-display text-lg text-foreground">
+                {currentRegion.name}
+                {hasSubAreas && selectedSubAreaIdx === 99 && currentRegion.boss ? ` - ${currentRegion.boss.name}` : ''}
+                {hasSubAreas && selectedSubArea ? ` - ${selectedSubArea.name}` : ''}
+              </h3>
               <span className="text-xs text-muted-foreground">최대 {currentRegion.maxMembers}명 파티</span>
             </div>
           </div>
 
-          {/* Normal quests */}
-          {questGroups.normal.length > 0 && (
+          {/* Show normal quests only for sub-areas (not boss), or when no sub-area system */}
+          {((!hasSubAreas || (selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99)) && questGroups.normal.length > 0) && (
             <div className="mb-3">
               <span className="text-xs text-muted-foreground mb-1.5 block">일반</span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
