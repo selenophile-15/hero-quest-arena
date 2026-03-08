@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Settings } from 'lucide-react';
 import { STAT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { CalculatedStats, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect } from '@/lib/statCalculator';
+import { CalculatedStats, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect, EquipBonusSource } from '@/lib/statCalculator';
 
 interface StatBreakdownDrawerProps {
   open: boolean;
