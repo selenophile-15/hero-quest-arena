@@ -501,10 +501,27 @@ export default function EquipmentSelectDialog({
           )}
         </div>
 
-        {/* Item grid */}
+        {/* Item grid or Manual form */}
         <div className="flex-1 min-h-0 mt-1">
           <div className="overflow-y-auto h-full border border-border rounded p-3">
-            {loading ? (
+            {manualMode ? (
+              <ManualEquipmentForm
+                initialData={slots[activeSlot]?.item?.manualData || null}
+                onConfirm={(item, manualData) => {
+                  const newSlots = [...slots];
+                  const existingSlot = newSlots[activeSlot];
+                  newSlots[activeSlot] = {
+                    item: { ...item },
+                    quality: existingSlot?.quality || slotQuality,
+                    element: existingSlot?.element || null,
+                    spirit: existingSlot?.spirit || null,
+                  };
+                  setSlots(newSlots);
+                  setManualMode(false);
+                }}
+                onCancel={() => setManualMode(false)}
+              />
+            ) : loading ? (
               <div className="flex flex-col items-center justify-center py-16 gap-3">
                 <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
                 <span className="text-muted-foreground text-sm">장비 데이터 로딩 중...</span>
