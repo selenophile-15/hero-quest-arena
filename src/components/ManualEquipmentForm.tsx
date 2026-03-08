@@ -376,7 +376,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
                   <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="고유 원소 선택" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="_none">선택 안 함</SelectItem>
-                    {ELEMENT_OPTIONS.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                    {UNIQUE_ELEMENT_OPTIONS.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <div className="flex items-center gap-2">
