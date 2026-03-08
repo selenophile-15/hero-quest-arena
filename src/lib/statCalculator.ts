@@ -125,6 +125,7 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
       slotIndex: i,
       spiritName: slot.spirit?.name || '',
       affinity: slot.spirit?.affinity || false,
+      isIdol: slot.item?.type === '우상' || slot.item?.type === 'idol' || slot.item?.manualData?.type === '우상',
     }))
     .filter(s => s.spiritName);
 
