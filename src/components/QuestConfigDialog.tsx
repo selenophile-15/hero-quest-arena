@@ -112,14 +112,25 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
   }, [region]);
 
   const reset = () => {
-    setStep('type');
-    setSelType('');
-    setSelRegionIdx(-1);
-    setSelSubAreaIdx(-1);
+    setStep(initialStep || 'type');
+    setSelType(initialState?.questTypeKey || '');
+    setSelRegionIdx(initialState?.regionIdx ?? -1);
+    setSelSubAreaIdx(initialState?.subAreaIdx ?? -1);
   };
 
   const handleOpen = (isOpen: boolean) => {
-    if (!isOpen) reset();
+    if (!isOpen) {
+      // Reset to defaults
+      setStep('type');
+      setSelType('');
+      setSelRegionIdx(-1);
+      setSelSubAreaIdx(-1);
+    } else if (initialStep && initialState) {
+      setStep(initialStep);
+      setSelType(initialState.questTypeKey);
+      setSelRegionIdx(initialState.regionIdx);
+      setSelSubAreaIdx(initialState.subAreaIdx);
+    }
     onOpenChange(isOpen);
   };
 
