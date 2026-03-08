@@ -198,16 +198,18 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const pct = getBonusField(src, statType, 'pct');
                     const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
                     const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
+                    const isIdolSrc = !!(src as any).isIdol;
+                    const valColor = isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground';
                     return (
                       <tr key={i} className="border-b border-border/20">
                         <td className="py-1 text-foreground/70">
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className={`py-1 text-center tabular-nums ${flat ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        <td className={`py-1 text-center tabular-nums ${flat ? valColor : 'text-muted-foreground'}`}>
                           {flat ? `+${formatNumber(flat)}` : '-'}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${pct ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        <td className={`py-1 text-right tabular-nums ${pct ? valColor : 'text-muted-foreground'}`}>
                           {pct ? `+${pct}%` : '-'}
                         </td>
                       </tr>
@@ -618,13 +620,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const val = getAddBonusField(src, 'crit');
                     const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
                     const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
+                    const isIdolSrc = !!(src as any).isIdol;
                     return (
                       <tr key={i} className="border-b border-border/20">
                         <td className="py-1 text-foreground/70">
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className="py-1 text-right tabular-nums text-foreground">+{val}%</td>
+                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+{val}%</td>
                       </tr>
                     );
                   })}
@@ -709,13 +712,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const val = getCritDmgField(src);
                     const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
                     const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
+                    const isIdolSrc = !!(src as any).isIdol;
                     return (
                       <tr key={i} className="border-b border-border/20">
                         <td className="py-1 text-foreground/70">
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className="py-1 text-right tabular-nums text-foreground">+{val}%</td>
+                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+{val}%</td>
                       </tr>
                     );
                   })}
@@ -839,13 +843,15 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   const val = getAddBonusField(src, statType);
                   const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
                   const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
+                  const isIdolSrc = !!(src as any).isIdol;
+                  const valColor = isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground';
                   return (
                     <tr key={i} className="border-b border-border/20">
                       <td className="py-1 text-foreground/70">
                         <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                         {src.name}
                       </td>
-                      <td className={`py-1 text-right tabular-nums ${val ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      <td className={`py-1 text-right tabular-nums ${val ? valColor : 'text-muted-foreground'}`}>
                         {val ? `+${val}${unit}` : '-'}
                       </td>
                     </tr>

@@ -35,6 +35,7 @@ export interface SkillBonusSummary {
 export interface SkillBonusSource {
   name: string;        // skill or soul name
   type: 'unique' | 'common' | 'soul' | 'relic' | 'job';
+  isIdol?: boolean;    // 우상 장비로 인한 2배 적용 여부
   flatAtk: number;
   flatDef: number;
   flatHp: number;
@@ -160,7 +161,8 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     const mult = soul.isIdol ? 2 : 1;
     const src = emptySource(soul.spiritName, 'soul');
     if (soul.isIdol) {
-      src.name = `${soul.spiritName} (우상 ×2)`;
+      src.name = `${soul.spiritName} (우상)`;
+      src.isIdol = true;
     }
 
     for (const [key, val] of Object.entries(bonusStats)) {
