@@ -248,10 +248,12 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
 
     let relicEffect: string | null = null;
     if (isAurasong && data.relicBonuses.length > 0) {
-      // Generate aura song skill description
       const parts = data.relicBonuses.map(b => {
-        const label = AURA_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
-        return `${label} ${b.op === '감소' ? '-' : '+'}${b.value}`;
+        const opt = AURA_STAT_OPTIONS.find(o => o.value === b.stat);
+        const name = opt ? opt.label.replace(/%$/, '') : b.stat;
+        const sign = b.op === '감소' ? '-' : '+';
+        const suffix = opt?.pct ? '%' : '';
+        return `${sign}${name} ${b.value}${suffix}`;
       });
       relicEffect = `+파티에 ${parts.join(', ')} 보너스를 부여`;
     } else if (!isAurasong && data.isRelic && data.relicBonuses.length > 0) {
@@ -559,8 +561,11 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
                 <div className="text-[10px] text-primary/80 bg-primary/5 rounded p-1.5 mt-1">
                   {(() => {
                     const parts = data.relicBonuses.map(b => {
-                      const label = AURA_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
-                      return `${label} ${b.op === '감소' ? '-' : '+'}${b.value || 0}`;
+                      const opt = AURA_STAT_OPTIONS.find(o => o.value === b.stat);
+                      const name = opt ? opt.label.replace(/%$/, '') : b.stat;
+                      const sign = b.op === '감소' ? '-' : '+';
+                      const suffix = opt?.pct ? '%' : '';
+                      return `${sign}${name} ${b.value || 0}${suffix}`;
                     });
                     return `+파티에 ${parts.join(', ')} 보너스를 부여`;
                   })()}
