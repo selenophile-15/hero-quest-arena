@@ -840,6 +840,15 @@ export default function QuestSimulation() {
                     (selectedQuestType === 'tot' && currentRegion?.name === '공포')
                   );
 
+                  // Check if barrier is broken
+                  const barrierBroken = (() => {
+                    if (!currentQuest?.barrier || barrierElements.length === 0) return true;
+                    const heroSum = selectedHeroes.reduce((sum, h) => {
+                      return sum + barrierElements.reduce((s, el) => s + (h.equipmentElements?.[el] || 0), 0);
+                    }, 0);
+                    return heroSum >= currentQuest.barrier.hp;
+                  })();
+
                   const statRows = [
                     { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-400' },
                     { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400' },
