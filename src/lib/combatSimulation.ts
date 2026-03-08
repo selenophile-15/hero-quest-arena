@@ -44,6 +44,7 @@ export interface SimulationConfig {
   regionName: string;        // e.g. '공포'
   isTerrorTower: boolean;    // 공포의 탑 (5% damage)
   simulationCount?: number;  // Default 50000
+  _isRetry?: boolean;        // Internal: prevents Fateweaver recursion
 }
 
 export interface HeroSimResult {
@@ -58,14 +59,16 @@ export interface HeroSimResult {
 }
 
 export interface SimulationResult {
-  winRate: number;           // % (after Fateweaver correction if applicable)
-  rawWinRate: number;        // % (before Fateweaver)
+  winRate: number;           // % (after Fateweaver retry if applicable)
+  rawWinRate: number;        // % (first attempt, before retry)
+  retryWinRate?: number;     // % (second attempt with booster, if Fateweaver)
   avgRounds: number;
   minRounds: number;
   maxRounds: number;
   heroResults: HeroSimResult[];
   roundLimitRate: number;    // % of sims hitting 499 round limit
   totalSimulations: number;
+  retrySimulations?: number; // Number of retry sims (if Fateweaver)
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
@@ -907,8 +910,24 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // ─── Compute results ───
   const rawWinRate = (timesQuestWon / actualSimCount) * 100;
   let winRate = rawWinRate;
-  if (fateweaverPresent) {
-    winRate = (1 - Math.pow(1 - rawWinRate / 100, 2)) * 100;
+  let retryWinRate: number | undefined;
+  let retrySimulations: number | undefined;
+
+  // Fateweaver/Chronomancer retry: re-run simulation with added Normal booster
+  if (fateweaverPresent && rawWinRate < 100 && !config._isRetry) {
+    const retryResult = runCombatSimulation({
+      ...config,
+      booster: getRetryBooster(booster),
+      simulationCount: Math.min(actualSimCount, 25000),
+      _isRetry: true,
+    });
+
+    retryWinRate = retryResult.rawWinRate;
+    retrySimulations = retryResult.totalSimulations;
+
+    // Combined win rate: win on first try OR (lose first try AND win on retry)
+    // P(win) = P1 + (1 - P1) × P2
+    winRate = rawWinRate + (100 - rawWinRate) * (retryWinRate / 100);
   }
 
   const heroResults: HeroSimResult[] = activeHeroes.map((h, i) => ({
@@ -925,14 +944,33 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   return {
     winRate: Math.round(winRate * 100) / 100,
     rawWinRate: Math.round(rawWinRate * 100) / 100,
+    retryWinRate: retryWinRate !== undefined ? Math.round(retryWinRate * 100) / 100 : undefined,
     avgRounds: timesQuestWon > 0 ? Math.round((roundsAvg / timesQuestWon) * 100) / 100 : 0,
     minRounds: roundsMin >= 1000 ? 0 : roundsMin,
     maxRounds: roundsMax,
     heroResults,
     roundLimitRate: (roundLimitTimes / actualSimCount) * 100,
     totalSimulations: actualSimCount,
+    retrySimulations,
   };
 }
+
+/** Get the booster config for Fateweaver retry (stack Normal on top) */
+function getRetryBooster(original: BoosterType): BoosterType {
+  // Retry adds a Normal Power Booster (+20% atk/def) on top
+  // The actual stacking: if no booster → normal, if normal → super-equivalent, etc.
+  // But per the game docs, it literally adds Normal booster stats on top
+  // So we just need to track the original + extra 20%/20%
+  // We'll handle this by creating a synthetic booster level
+  switch (original.type) {
+    case 'none': return { type: 'normal' };  // 0 + 20% = normal equivalent
+    case 'normal': return { type: 'super' }; // This isn't exact but approximates
+    case 'super': return { type: 'mega' };   // Approximation
+    case 'mega': return { type: 'mega' };    // Already max; the +20% is on top but we cap at mega
+  }
+}
+
+
 
 function emptyResult(simCount: number): SimulationResult {
   return {
