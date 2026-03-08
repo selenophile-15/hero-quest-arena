@@ -709,7 +709,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   <tr className="border-b border-border/30">
                     <td className="py-1.5 text-foreground/70">장비 {config.label} 합</td>
                     <td className="py-1.5 text-right tabular-nums font-bold text-foreground">
-                      {statType === 'crit' ? equipCrit : equipEvasion}{unit}
+                      {equipEvasion}{unit}
                     </td>
                   </tr>
                 )}
