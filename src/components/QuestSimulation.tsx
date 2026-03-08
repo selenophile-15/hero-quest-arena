@@ -582,14 +582,20 @@ export default function QuestSimulation() {
                       <PopoverTrigger asChild>
                         <button className={`text-xs px-2 py-0.5 rounded border transition-all ${
                           selectedMiniBoss !== 'none'
-                            ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
+                            ? selectedMiniBoss === 'huge' ? 'border-green-500/40 bg-green-500/10 text-green-400' :
+                              selectedMiniBoss === 'agile' ? 'border-blue-500/40 bg-blue-500/10 text-blue-400' :
+                              selectedMiniBoss === 'dire' ? 'border-red-500/40 bg-red-500/10 text-red-400' :
+                              selectedMiniBoss === 'wealthy' ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400' :
+                              selectedMiniBoss === 'legendary' ? 'border-purple-500/40 bg-purple-500/10 text-purple-400' :
+                              'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
                             : 'border-border/40 text-muted-foreground hover:border-primary/40'
                         }`}>
                           {selectedMiniBoss === 'none' ? '미니보스 없음' :
-                           selectedMiniBoss === 'huge' ? '🟡 거대한' :
-                           selectedMiniBoss === 'agile' ? '🟢 민첩한' :
-                           selectedMiniBoss === 'dire' ? '🔴 흉포한' :
-                           selectedMiniBoss === 'legendary' ? '🟣 전설의' : '미니보스'}
+                           selectedMiniBoss === 'huge' ? '거대한' :
+                           selectedMiniBoss === 'agile' ? '민첩한' :
+                           selectedMiniBoss === 'dire' ? '흉포한' :
+                           selectedMiniBoss === 'wealthy' ? '부유한' :
+                           selectedMiniBoss === 'legendary' ? '전설의' : '미니보스'}
                         </button>
                       </PopoverTrigger>
                       <PopoverContent className="w-48 p-2" align="center">
@@ -597,9 +603,10 @@ export default function QuestSimulation() {
                         <div className="space-y-1">
                           {([
                             { id: 'none', label: '없음', desc: '일반 몬스터', color: '' },
-                            { id: 'huge', label: '거대한', desc: 'HP 2배, 광역 2배', color: 'text-yellow-400' },
-                            { id: 'agile', label: '민첩한', desc: '회피 +40%', color: 'text-green-400' },
+                            { id: 'huge', label: '거대한', desc: 'HP 2배, 전체 공격 2배', color: 'text-green-400' },
+                            { id: 'agile', label: '민첩한', desc: '회피 +40%', color: 'text-blue-400' },
                             { id: 'dire', label: '흉포한', desc: 'HP 1.5배, 치확 3배', color: 'text-red-400' },
+                            { id: 'wealthy', label: '부유한', desc: '보상 증가', color: 'text-yellow-400' },
                             { id: 'legendary', label: '전설의', desc: 'HP 1.5배, ATK 1.25배, 치확 1.5배, 회피 10%', color: 'text-purple-400' },
                           ] as const).map(mb => (
                             <button
