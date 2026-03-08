@@ -675,7 +675,7 @@ export default function QuestSimulation() {
                   const statRows = [
                     { label: 'HP', key: 'hp', color: 'text-orange-400' },
                     { label: 'ATK', key: 'atk', color: 'text-red-400' },
-                    { label: 'CRIT.DMG', key: 'critDmg', color: 'text-yellow-400', suffix: '%' },
+                    { label: 'CRIT.DMG', key: 'critAttack', color: 'text-yellow-400', computed: true },
                     { label: 'DEF', key: 'def', color: 'text-blue-400' },
                     { label: 'CRIT.C', key: 'crit', color: 'text-yellow-400', suffix: '%' },
                     { label: 'EVA', key: 'evasion', color: 'text-teal-400', suffix: '%' },
@@ -690,7 +690,9 @@ export default function QuestSimulation() {
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
                             if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
-                            const val = (hero as any)[stat.key] || 0;
+                            const val = (stat as any).computed
+                              ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
+                              : (hero as any)[stat.key] || 0;
                             return (
                               <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${stat.color}`}>
                                 {stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}
