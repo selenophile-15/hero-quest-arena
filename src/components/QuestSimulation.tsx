@@ -652,58 +652,74 @@ export default function QuestSimulation() {
                 )}
 
                 {/* Stats: vertical list */}
-                <div className="space-y-1.5 pt-2 border-t border-border/30">
-                  <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-1.5">
-                      <Heart className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs text-foreground">체력</span>
-                    </div>
-                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.hp)}</span>
-                  </div>
-                  <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-1.5">
-                      <Swords className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs text-foreground">공격력</span>
-                    </div>
-                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.atk)}</span>
-                  </div>
-                  <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                      <span className="text-xs text-foreground">광역 공격 ({currentQuest.aoeChance}%)</span>
-                    </div>
-                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
-                  </div>
-                  {/* Monster Crit Chance */}
-                  {(() => {
-                    const finalCrit = selectedMiniBoss === 'dire' ? 30 : selectedMiniBoss === 'legendary' ? 15 : 10;
-                    const isModified = selectedMiniBoss === 'dire' || selectedMiniBoss === 'legendary';
-                    return (
+                {(() => {
+                  // Calculate modified values based on mini-boss
+                  const hpMod = selectedMiniBoss === 'huge' ? 2.0 : selectedMiniBoss === 'dire' ? 1.5 : selectedMiniBoss === 'legendary' ? 1.5 : 1.0;
+                  const atkMod = selectedMiniBoss === 'legendary' ? 1.25 : 1.0;
+                  const aoeMod = selectedMiniBoss === 'huge' ? 2.0 : 1.0;
+                  const displayHp = Math.round(currentQuest.hp * hpMod);
+                  const displayAtk = Math.round(currentQuest.atk * atkMod);
+                  const displayAoeChance = Math.min(currentQuest.aoeChance * aoeMod, 100);
+                  const displayAoe = Math.round(currentQuest.aoe * atkMod);
+                  const finalCrit = selectedMiniBoss === 'dire' ? 30 : selectedMiniBoss === 'legendary' ? 15 : 10;
+                  const mobEva = selectedMiniBoss === 'agile' ? 40 : selectedMiniBoss === 'legendary' ? 10 : 0;
+                  const isHpMod = hpMod !== 1.0;
+                  const isAtkMod = atkMod !== 1.0;
+                  const isAoeMod = aoeMod !== 1.0;
+                  const isCritMod = selectedMiniBoss === 'dire' || selectedMiniBoss === 'legendary';
+                  return (
+                    <div className="space-y-1.5 pt-2 border-t border-border/30">
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Heart className="w-3.5 h-3.5 text-red-400" />
+                          <span className="text-xs text-foreground">체력</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-green-400' : 'text-foreground'}`}>
+                          {formatNumber(displayHp)}
+                          {isHpMod && <span className="text-[10px] text-muted-foreground ml-1">(×{hpMod})</span>}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Swords className="w-3.5 h-3.5 text-red-400" />
+                          <span className="text-xs text-foreground">공격력</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
+                          {formatNumber(displayAtk)}
+                          {isAtkMod && <span className="text-[10px] text-muted-foreground ml-1">(×{atkMod})</span>}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                          <span className="text-xs text-foreground">광역 공격 ({displayAoeChance}%)</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${isAoeMod || isAtkMod ? 'text-yellow-400' : 'text-foreground'}`}>
+                          {formatNumber(displayAoe)}
+                          {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(확률 ×{aoeMod})</span>}
+                        </span>
+                      </div>
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <img src="/images/stats/critchance.webp" alt="" className="w-3.5 h-3.5" />
                           <span className="text-xs text-foreground">치명타 확률</span>
                         </div>
-                        <span className={`text-sm font-bold font-mono ${isModified ? 'text-red-400' : 'text-foreground'}`}>
+                        <span className={`text-sm font-bold font-mono ${isCritMod ? 'text-red-400' : 'text-foreground'}`}>
                           {finalCrit}%
                         </span>
                       </div>
-                    );
-                  })()}
-                  {/* Monster Evasion */}
-                  {(() => {
-                    const mobEva = selectedMiniBoss === 'agile' ? 40 : selectedMiniBoss === 'legendary' ? 10 : 0;
-                    return mobEva > 0 ? (
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <img src="/images/stats/evasion.webp" alt="" className="w-3.5 h-3.5" />
-                          <span className="text-xs text-foreground">회피</span>
+                      {mobEva > 0 && (
+                        <div className="flex items-center justify-between px-1">
+                          <div className="flex items-center gap-1.5">
+                            <img src="/images/stats/evasion.webp" alt="" className="w-3.5 h-3.5" />
+                            <span className="text-xs text-foreground">회피</span>
+                          </div>
+                          <span className="text-sm font-bold font-mono text-blue-400">{mobEva}%</span>
                         </div>
-                        <span className="text-sm font-bold font-mono text-blue-400">{mobEva}%</span>
-                      </div>
-                    ) : null;
-                  })()}
-                </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* Defense Reference - vertical bar */}
                 <div className="pt-2 border-t border-border/30">
