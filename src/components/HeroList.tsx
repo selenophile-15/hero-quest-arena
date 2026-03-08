@@ -453,6 +453,13 @@ export default function HeroList() {
       </span>;
     }
     if (colKey === 'airshipPower') return <span className="text-foreground/20">-</span>;
+    if (colKey === 'evasion') {
+      const ev = typeof hero.evasion === 'number' ? hero.evasion : 0;
+      const cap = hero.heroClass === '길잡이' ? 78 : 75;
+      const isDim = ev === 0;
+      if (ev > cap) return <span>{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
+      return <span className={isDim ? 'text-foreground/20' : ''}>{formatNumber(ev)} %</span>;
+    }
     const value = hero[colKey as keyof Hero];
     const formatted = formatValue(colKey, value);
     if (formatted !== null) {
