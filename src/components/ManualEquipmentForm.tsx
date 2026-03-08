@@ -331,9 +331,10 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
               <Input
                 type="number"
                 className="h-7 text-[10px] w-20 text-center"
-                value={b.value === 0 ? '' : (b.value || '')}
+                value={rawRelicValues[i] ?? (b.value === 0 ? '' : String(b.value))}
                 onChange={e => {
                   const v = e.target.value;
+                  setRawRelicValues(prev => ({ ...prev, [i]: v }));
                   updateBonus(i, 'value', v === '' ? 0 : (parseFloat(v) || 0));
                 }}
               />
