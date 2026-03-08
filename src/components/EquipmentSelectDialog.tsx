@@ -424,7 +424,9 @@ export default function EquipmentSelectDialog({
               <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setManualMode(false)}>취소</Button>
               <Button size="sm" className="h-7 text-xs" onClick={() => manualFormRef.current?.triggerConfirm()}>적용</Button>
             </div>
-          )}
+           )}
+
+          {!manualMode && (
             <>
               <span className="text-muted-foreground">타입:</span>
               <Select value={filterType} onValueChange={setFilterType}>
