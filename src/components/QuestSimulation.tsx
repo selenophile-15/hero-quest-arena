@@ -461,7 +461,7 @@ export default function QuestSimulation() {
                         {[...defThresholds].reverse().map(t => (
                           <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
                         ))}
-                        {/* Hero pin labels - extending right from dot */}
+                        {/* Hero pin labels - extending right from dot with staggered line lengths */}
                         {selectedHeroes.map((h, hi) => {
                           const heroDef = h.def || 0;
                           const maxDef = defThresholds[defThresholds.length - 1].value;
@@ -470,13 +470,14 @@ export default function QuestSimulation() {
                           for (const t of defThresholds) {
                             if (heroDef >= t.value) pinColor = t.color;
                           }
+                          const lineWidth = 16 + (hi % 4) * 14;
                           return (
                             <div
                               key={h.id}
                               className="absolute flex items-center gap-1 pointer-events-none"
                               style={{ bottom: `${pct}%`, left: '0', transform: 'translateY(50%)' }}
                             >
-                              <div className="w-6 h-px" style={{ backgroundColor: pinColor, opacity: 0.6 }} />
+                              <div className="h-px shrink-0" style={{ width: `${lineWidth}px`, backgroundColor: pinColor, opacity: 0.6 }} />
                               <span className="text-[9px] font-mono whitespace-nowrap" style={{ color: pinColor }}>
                                 {h.name} ({formatNumber(heroDef)})
                               </span>
