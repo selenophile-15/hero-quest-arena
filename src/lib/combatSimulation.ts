@@ -915,29 +915,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   // Fateweaver/Chronomancer retry: re-run simulation with added Normal booster
   if (fateweaverPresent && rawWinRate < 100 && !config._isRetry) {
-    // Determine retry booster: current booster + Normal booster stacked
-    const retryBoosterType: BoosterType['type'] = (() => {
-      // Stack Normal booster on top of existing booster
-      // The retry gives a free Normal Power Booster (+20% atk/def)
-      // If already using a booster, the bonuses add together
-      return booster.type; // We pass the same booster; the extra Normal is handled below
-    })();
-
-    // Run second simulation with boosted stats
-    // Add Normal booster bonus on top: +20% atk, +20% def
-    const retryConfig: SimulationConfig = {
-      ...config,
-      booster: booster, // Keep original booster
-      simulationCount: Math.min(actualSimCount, 25000), // Slightly fewer for speed
-    };
-
-    // Instead of re-calling the full function (which would recurse), we calculate
-    // the retry booster effect: extra +20% atk/def on top of current booster
-    const retryResult = runCombatSimulationInternal({
+    const retryResult = runCombatSimulation({
       ...config,
       booster: getRetryBooster(booster),
       simulationCount: Math.min(actualSimCount, 25000),
-      _isRetry: true, // Prevent infinite recursion
+      _isRetry: true,
     });
 
     retryWinRate = retryResult.rawWinRate;
