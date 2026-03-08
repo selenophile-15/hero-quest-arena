@@ -83,13 +83,17 @@ export interface CalcInput {
 }
 
 export async function calculateHeroStats(input: CalcInput): Promise<CalculatedStats | null> {
-  const { jobName, level, seeds, equipmentSlots, hasRangedWeapon, skillBonusInputs, skillInputs } = input;
+  const { jobName, level, seeds, equipmentSlots, hasRangedWeapon, totalElementPoints, skillBonusInputs, skillInputs } = input;
   if (!jobName || !level) return null;
 
   const statsData = await lookupHeroStats(jobName, level);
   if (!statsData) return null;
 
   const { level: levelStats, fixed } = statsData;
+
+  // Jobs that don't use weapons (수도승/그랜드마스터, 경보병/근위병)
+  const WEAPONLESS_JOBS = new Set(['수도승', '그랜드 마스터', '경보병', '근위병']);
+  const isWeaponlessJob = WEAPONLESS_JOBS.has(jobName);
 
   // Base stats
   const baseHp = levelStats.hp;
@@ -107,7 +111,8 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
 
   // Equipment calculation (includes equipment-specific skill bonuses)
   const equipBonuses = parseEquipSkillBonuses(skillBonusInputs);
-  const equipResult = await calculateEquipmentStats(equipmentSlots, equipBonuses, hasRangedWeapon);
+  const isSpellknight = jobName === '스펠나이트';
+  const equipResult = await calculateEquipmentStats(equipmentSlots, equipBonuses, hasRangedWeapon, isSpellknight, isWeaponlessJob);
 
   // Parse general skill bonuses (flat + %)
   const skillResult = parseSkillBonuses(skillInputs);
