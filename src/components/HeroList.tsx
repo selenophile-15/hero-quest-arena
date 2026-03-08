@@ -510,6 +510,10 @@ export default function HeroList() {
       const aurasongItem = equipSlots[1]?.item;
       if (aurasongItem) {
         aurasongSkillEffect = getAurasongSkillEffect(aurasongItem.name);
+        // For manual items, use relicEffect as skill description
+        if (!aurasongSkillEffect && aurasongItem.manual && aurasongItem.relicEffect) {
+          aurasongSkillEffect = aurasongItem.relicEffect;
+        }
         aurasongSkillIcon = getAurasongSkillIconPath(aurasongItem.name);
         aurasongItemName = aurasongItem.name;
       }
