@@ -124,7 +124,6 @@ export interface SkillBonuses {
   // Source tracking for UI display
   sources: EquipBonusSource[];
 }
-}
 
 // Cached data
 let elementStatsCache: Record<string, any> | null = null;
