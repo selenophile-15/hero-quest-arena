@@ -314,11 +314,11 @@ export default function QuestSimulation() {
                   </div>
                 </div>
 
-                {/* Defense thresholds */}
+                {/* Defense thresholds - bar style */}
                 <div className="bg-secondary/20 rounded-lg p-3 mb-3">
                   <div className="flex items-center gap-1.5 mb-2">
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-xs text-muted-foreground font-medium">방어력 임계값</span>
+                    <span className="text-xs text-muted-foreground font-medium">방어력 기준치</span>
                     <Tooltip>
                       <TooltipTrigger>
                         <Info className="w-3 h-3 text-muted-foreground" />
@@ -328,17 +328,69 @@ export default function QuestSimulation() {
                       </TooltipContent>
                     </Tooltip>
                   </div>
-                  <div className="grid grid-cols-4 gap-2 text-center">
-                    {(['r0', 'r50', 'r70', 'r75'] as const).map(key => {
-                      const labels: Record<string, string> = { r0: '0%', r50: '50%', r70: '70%', r75: '75%' };
-                      return (
-                        <div key={key}>
-                          <span className="text-[10px] text-muted-foreground block">{labels[key]}</span>
-                          <span className="text-xs font-mono font-bold text-foreground">{formatNumber(currentQuest.def[key])}</span>
+                  {(() => {
+                    const thresholds = [
+                      { key: 'r0' as const, label: '0%', color: 'bg-red-500', textColor: 'text-red-400' },
+                      { key: 'r50' as const, label: '50%', color: 'bg-yellow-500', textColor: 'text-yellow-400' },
+                      { key: 'r70' as const, label: '70%', color: 'bg-lime-500', textColor: 'text-lime-400' },
+                      { key: 'r75' as const, label: '75%', color: 'bg-white', textColor: 'text-white' },
+                    ];
+                    const maxDef = currentQuest.def.r75;
+                    // Calculate selected heroes' average defense
+                    const heroAvgDef = selectedHeroes.length > 0
+                      ? Math.round(selectedHeroes.reduce((sum, h) => sum + (h.def || 0), 0) / selectedHeroes.length)
+                      : null;
+                    const heroPercent = heroAvgDef !== null && maxDef > 0 ? Math.min((heroAvgDef / maxDef) * 100, 100) : null;
+
+                    return (
+                      <div className="space-y-1.5">
+                        {/* Bar */}
+                        <div className="relative h-6 bg-secondary/40 rounded-full overflow-hidden">
+                          {thresholds.map((t, i) => {
+                            const percent = maxDef > 0 ? (currentQuest.def[t.key] / maxDef) * 100 : 0;
+                            return (
+                              <div
+                                key={t.key}
+                                className={`absolute top-0 bottom-0 w-0.5 ${t.color}`}
+                                style={{ left: `${percent}%` }}
+                              >
+                                <div className={`absolute -top-0.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full ${t.color}`} />
+                              </div>
+                            );
+                          })}
+                          {/* Hero indicator */}
+                          {heroPercent !== null && (
+                            <div
+                              className="absolute top-0 bottom-0 flex flex-col items-center z-10"
+                              style={{ left: `${heroPercent}%` }}
+                            >
+                              <div className="w-0.5 h-full bg-primary" />
+                              <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                                <Shield className="w-4 h-4 text-primary drop-shadow-md" />
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      );
-                    })}
-                  </div>
+                        {/* Labels */}
+                        <div className="flex justify-between text-center px-1">
+                          {thresholds.map(t => {
+                            const percent = maxDef > 0 ? (currentQuest.def[t.key] / maxDef) * 100 : 0;
+                            return (
+                              <div key={t.key} className="flex flex-col items-center" style={{ position: 'relative', left: `${percent * 0.15}%` }}>
+                                <span className={`text-[10px] font-medium ${t.textColor}`}>{t.label}</span>
+                                <span className="text-[10px] font-mono text-muted-foreground">{formatNumber(currentQuest.def[t.key])}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {heroAvgDef !== null && (
+                          <div className="text-center mt-1">
+                            <span className="text-[10px] text-primary">영웅 평균 방어력: {formatNumber(heroAvgDef)}</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Element Barrier */}
