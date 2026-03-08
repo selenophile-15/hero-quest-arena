@@ -737,6 +737,12 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusCritDmg}%</td>
                     </tr>
+                    {relicCritDmgBonus !== 0 && (
+                      <tr className="border-b border-border/30">
+                        <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
+                        <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicCritDmgBonus}%</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
