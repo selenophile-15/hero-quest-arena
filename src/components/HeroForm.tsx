@@ -495,7 +495,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         <h2 className="font-display text-xl text-primary tracking-wide">
           {hero ? '영웅 수정' : '새 영웅 추가'}
         </h2>
-        <div className="flex gap-2">
+         <div className="flex gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!calcStats}>📊 스탯 계산표</Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
           <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
         </div>
