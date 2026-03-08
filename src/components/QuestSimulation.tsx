@@ -701,12 +701,21 @@ export default function QuestSimulation() {
         {/* CENTER: Hero Slots */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-3">
+            {currentQuest && selectedHeroes.length > 0 && (
+              <Button
+                onClick={() => setBuffBreakdownOpen(true)}
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+              >
+                📊 스탯 계산표
+              </Button>
+            )}
             <Users className="w-5 h-5 text-primary" />
             <h3 className="font-display text-lg text-foreground">파티 구성</h3>
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
           </div>
           <div className="card-fantasy p-4 overflow-x-auto">
-            {/* Unified table: visual rows (element, face, hero circle, name, class) + stat rows */}
             <table className="w-full text-xs">
               <colgroup>
                 <col className="w-20" />
@@ -715,29 +724,6 @@ export default function QuestSimulation() {
                 ))}
               </colgroup>
               <tbody>
-                {/* Party buff summary row - above element row */}
-                {(() => {
-                  const hasBuffs = buffSummary && buffSummary.sources.length > 0;
-                  if (!hasBuffs || selectedHeroes.length === 0) return null;
-                  return (
-                    <tr className="border-b border-border/30 bg-primary/5">
-                      <td colSpan={maxMembers + 1} className="py-2 px-2">
-                        <div className="flex flex-wrap items-center gap-2 text-[10px]">
-                          <span className="text-primary font-bold text-[11px]">📊 파티 버프</span>
-                          {buffSummary!.sources.map((src, i) => (
-                            <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary/10 text-primary/90">
-                              <span className={src.type === 'champion' ? 'text-yellow-400' : 'text-purple-400'}>
-                                {src.type === 'champion' ? '👑' : '🎵'}
-                              </span>
-                              <span className="font-medium">{src.name}</span>
-                              {src.note && <span className="text-muted-foreground">({src.note})</span>}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })()}
                 {/* Row: Element barrier icons */}
                 {barrierElements.length > 0 && (
                   <tr>
