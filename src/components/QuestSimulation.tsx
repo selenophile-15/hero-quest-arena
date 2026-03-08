@@ -491,10 +491,11 @@ export default function QuestSimulation() {
             const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
               ? getSubAreaBarrierElement(currentQuest.barrier)
               : null;
-            // For sub-area mode, show only the relevant element; for boss/no-sub-area, show all
-            const elements = barrierElement
+            // For sub-area mode, show only the relevant element; for boss/no-sub-area, show all unique
+            const rawElements = barrierElement
               ? [barrierElement]
               : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
+            const elements = [...new Set(rawElements)];
             if (elements.length === 0) return null;
             return (
               <div className="mt-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
