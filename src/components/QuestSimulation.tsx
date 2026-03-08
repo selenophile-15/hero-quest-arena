@@ -1383,7 +1383,12 @@ export default function QuestSimulation() {
         selectedIds={selectedHeroIds}
         maxMembers={maxMembers}
         minPower={currentQuest?.minPower || 0}
-        onSelect={toggleHero}
+        onConfirm={(ids) => {
+          setSelectedHeroIds(ids);
+          setHeroSelectOpen(false);
+          setEditingSlotIdx(null);
+        }}
+        editingSlotIdx={editingSlotIdx}
       />
 
       {/* Party Buff Breakdown Drawer */}
