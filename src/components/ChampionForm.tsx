@@ -189,6 +189,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [equipFilterSpirit, setEquipFilterSpirit] = useState<string>('_all');
   const [equipSlotQuality, setEquipSlotQuality] = useState<string>('common');
   const [championManualMode, setChampionManualMode] = useState(false);
+  const championManualFormRef = useRef<ManualEquipmentFormRef>(null);
 
   const formRef = useRef<HTMLDivElement>(null);
 

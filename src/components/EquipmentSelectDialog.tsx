@@ -145,6 +145,7 @@ export default function EquipmentSelectDialog({
   const [slotAllowedTypes, setSlotAllowedTypes] = useState<string[][]>([]);
   const [loading, setLoading] = useState(false);
   const [manualMode, setManualMode] = useState(false);
+  const manualFormRef = useRef<ManualEquipmentFormRef>(null);
 
   const maxTier = getMaxTierForLevel(heroLevel || 1);
   const [filterType, setFilterType] = useState<string>('_all');
