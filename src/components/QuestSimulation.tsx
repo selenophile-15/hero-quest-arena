@@ -701,21 +701,23 @@ export default function QuestSimulation() {
         {/* CENTER: Hero Slots */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-3">
-            {currentQuest && selectedHeroes.length > 0 && (
-              <Button
-                onClick={() => setBuffBreakdownOpen(true)}
-                variant="outline"
-                size="sm"
-                className="gap-1.5"
-              >
-                📊 스탯 계산표
-              </Button>
-            )}
             <Users className="w-5 h-5 text-primary" />
             <h3 className="font-display text-lg text-foreground">파티 구성</h3>
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
           </div>
           <div className="card-fantasy p-4 overflow-x-auto">
+            {currentQuest && selectedHeroes.length > 0 && (
+              <div className="mb-3">
+                <Button
+                  onClick={() => setBuffBreakdownOpen(true)}
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5"
+                >
+                  📊 스탯 계산표
+                </Button>
+              </div>
+            )}
             <table className="w-full text-xs">
               <colgroup>
                 <col className="w-20" />
