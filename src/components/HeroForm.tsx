@@ -4,6 +4,7 @@ import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMEN
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { lookupHeroStats, getAvailableSkills, getCommonSkills, getUniqueSkills, lookupHeroFixedStats } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
+import { calculateHeroStats, CalculatedStats } from '@/lib/statCalculator';
 import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
 import { getMaxCommonSkillSlots, getSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import SkillSelectDialog from '@/components/SkillSelectDialog';
