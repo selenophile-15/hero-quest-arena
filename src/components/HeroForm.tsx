@@ -506,7 +506,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       hasRangedWeapon: hasRanged,
       skillBonusInputs,
       skillInputs,
-    }).then(result => setCalcStats(result));
+    }).then(result => {
+      setCalcStats(result);
+      if (result) {
+        setHp(result.totalHp);
+        setAtk(result.totalAtk);
+        setDef(result.totalDef);
+        setCrit(result.totalCrit);
+        setCritDmg(result.totalCritDmg);
+        setEvasion(result.totalEvasion);
+        setThreat(result.totalThreat);
+      }
+    });
   }, [heroClass, level, seedHp, seedAtk, seedDef, equipmentSlots, hasRanged, skillBonusInputs, skillInputs]);
 
   const handleSubmit = () => {
