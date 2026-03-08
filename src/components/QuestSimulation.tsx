@@ -574,7 +574,7 @@ export default function QuestSimulation() {
                     }`}>
                       {item.enabled && <span className="text-primary text-[10px]">✓</span>}
                     </div>
-                    <span className={`flex-1 ${item.color || 'text-muted-foreground'}`}>{item.label}</span>
+                    <span className={`flex-1 ${item.color || 'text-foreground/80'}`}>{item.label}</span>
                     <span className="text-muted-foreground/50 text-[10px]">-</span>
                   </div>
                 ))}
@@ -595,7 +595,7 @@ export default function QuestSimulation() {
                     }`}>
                       {item.enabled && <span className="text-primary text-[10px]">✓</span>}
                     </div>
-                    <span className={`flex-1 ${item.color || 'text-muted-foreground'}`}>{item.label}</span>
+                    <span className={`flex-1 ${item.color || 'text-foreground/80'}`}>{item.label}</span>
                     <span className="text-muted-foreground/50 text-[10px]">-</span>
                   </div>
                 ))}
