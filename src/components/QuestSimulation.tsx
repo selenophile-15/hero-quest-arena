@@ -506,8 +506,9 @@ export default function QuestSimulation() {
                               );
                             })}
                             {/* Hero pins as dots on the bar */}
-                            {selectedHeroes.map((h) => {
-                              const heroDef = h.def || 0;
+                            {selectedHeroes.map((h, hi) => {
+                              const bs = buffedStats[hi];
+                              const heroDef = bs ? bs.def : (h.def || 0);
                               const pct = defToBarPct(heroDef);
                               let pinColor = '#ef4444';
                               for (const t of defThresholds) {
