@@ -99,6 +99,7 @@ export default function QuestSimulation() {
   // Selection state
   const [selectedQuestType, setSelectedQuestType] = useState<string>('');
   const [selectedRegionIdx, setSelectedRegionIdx] = useState<number>(-1);
+  const [selectedSubAreaIdx, setSelectedSubAreaIdx] = useState<number>(-1);
   const [selectedQuestIdx, setSelectedQuestIdx] = useState<number>(-1);
   const [selectedHeroIds, setSelectedHeroIds] = useState<Set<string>>(new Set());
   const [showHistory, setShowHistory] = useState(false);
@@ -154,8 +155,22 @@ export default function QuestSimulation() {
 
   const resetSelection = () => {
     setSelectedRegionIdx(-1);
+    setSelectedSubAreaIdx(-1);
     setSelectedQuestIdx(-1);
     setSelectedHeroIds(new Set());
+  };
+
+  // Whether this quest type has meaningful sub-areas (normal quests have 3 sub-areas per region)
+  const hasSubAreas = currentRegion && currentRegion.subAreas.length > 1;
+  const selectedSubArea = currentRegion && selectedSubAreaIdx >= 0 ? currentRegion.subAreas[selectedSubAreaIdx] : null;
+
+  // Get the barrier element for the selected sub-area
+  const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
+    if (!barrier) return null;
+    if (selectedSubAreaIdx === 0) return barrier.sub1;
+    if (selectedSubAreaIdx === 1) return barrier.sub2;
+    if (selectedSubAreaIdx === 2) return barrier.sub3;
+    return barrier.sub1; // fallback
   };
 
   const getDifficultyColor = (diff: string) => {
@@ -242,7 +257,7 @@ export default function QuestSimulation() {
             {currentQuestData.regions.map((region, idx) => (
               <button
                 key={`${region.key}-${idx}`}
-                onClick={() => { setSelectedRegionIdx(idx); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                onClick={() => { setSelectedRegionIdx(idx); setSelectedSubAreaIdx(-1); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
                 className={`relative rounded-lg overflow-hidden border transition-all group ${
                   selectedRegionIdx === idx
                     ? 'border-primary ring-1 ring-primary/30'
@@ -270,21 +285,76 @@ export default function QuestSimulation() {
         </div>
       )}
 
-      {/* Step 3: Quest/Difficulty Select */}
-      {currentRegion && (
+      {/* Step 3: Sub-area Select (for regions with multiple sub-areas) */}
+      {currentRegion && hasSubAreas && (
+        <div className="card-fantasy p-4">
+          <label className="text-sm text-muted-foreground block mb-3">세부 지역 선택</label>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {currentRegion.subAreas.map((sub, idx) => (
+              <button
+                key={sub.key}
+                onClick={() => { setSelectedSubAreaIdx(idx); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                className={`rounded-lg border overflow-hidden transition-all ${
+                  selectedSubAreaIdx === idx
+                    ? 'border-primary ring-1 ring-primary/30'
+                    : 'border-border hover:border-primary/40'
+                }`}
+              >
+                <div className="bg-secondary/30 flex items-center justify-center p-1.5">
+                  <img src={sub.image} alt={sub.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                <div className="p-1.5 text-center">
+                  <span className="text-xs font-medium text-foreground">{sub.name}</span>
+                </div>
+              </button>
+            ))}
+            {/* Boss option */}
+            {currentRegion.boss && (
+              <button
+                onClick={() => { setSelectedSubAreaIdx(99); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                className={`rounded-lg border overflow-hidden transition-all ${
+                  selectedSubAreaIdx === 99
+                    ? 'border-primary ring-1 ring-primary/30'
+                    : 'border-border hover:border-primary/40'
+                }`}
+              >
+                <div className="bg-red-500/10 flex items-center justify-center p-1.5">
+                  <img src={currentRegion.boss.image} alt={currentRegion.boss.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                <div className="p-1.5 text-center">
+                  <span className="text-xs font-medium text-red-400 flex items-center justify-center gap-1">
+                    <Crown className="w-3 h-3" /> {currentRegion.boss.name}
+                  </span>
+                </div>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Step 4: Quest/Difficulty Select */}
+      {currentRegion && (!hasSubAreas || selectedSubAreaIdx >= 0) && (
         <div className="card-fantasy p-4">
           <div className="flex items-center gap-3 mb-3">
-            {currentRegion.boss && (
+            {hasSubAreas && selectedSubAreaIdx === 99 && currentRegion.boss ? (
               <img src={currentRegion.boss.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-            )}
+            ) : hasSubAreas && selectedSubArea ? (
+              <img src={selectedSubArea.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+            ) : currentRegion.boss ? (
+              <img src={currentRegion.boss.image} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+            ) : null}
             <div>
-              <h3 className="font-display text-lg text-foreground">{currentRegion.name}</h3>
+              <h3 className="font-display text-lg text-foreground">
+                {currentRegion.name}
+                {hasSubAreas && selectedSubAreaIdx === 99 && currentRegion.boss ? ` - ${currentRegion.boss.name}` : ''}
+                {hasSubAreas && selectedSubArea ? ` - ${selectedSubArea.name}` : ''}
+              </h3>
               <span className="text-xs text-muted-foreground">최대 {currentRegion.maxMembers}명 파티</span>
             </div>
           </div>
 
-          {/* Normal quests */}
-          {questGroups.normal.length > 0 && (
+          {/* Show normal quests only for sub-areas (not boss), or when no sub-area system */}
+          {((!hasSubAreas || (selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99)) && questGroups.normal.length > 0) && (
             <div className="mb-3">
               <span className="text-xs text-muted-foreground mb-1.5 block">일반</span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -310,8 +380,8 @@ export default function QuestSimulation() {
             </div>
           )}
 
-          {/* Boss quests */}
-          {questGroups.boss.length > 0 && (
+          {/* Boss quests - show for boss sub-area selection or when no sub-area system */}
+          {((!hasSubAreas || selectedSubAreaIdx === 99) && questGroups.boss.length > 0) && (
             <div>
               <span className="text-xs text-muted-foreground mb-1.5 block flex items-center gap-1">
                 <Crown className="w-3 h-3" /> 보스
@@ -417,26 +487,36 @@ export default function QuestSimulation() {
           </div>
 
           {/* Element Barrier */}
-          {currentQuest.barrier && (
-            <div className="mt-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className="text-xs font-medium text-purple-300">속성 장벽</span>
-                <span className="text-xs text-purple-400">HP: {currentQuest.barrier.hp}</span>
+          {currentQuest.barrier && (() => {
+            const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+              ? getSubAreaBarrierElement(currentQuest.barrier)
+              : null;
+            // For sub-area mode, show only the relevant element; for boss/no-sub-area, show all
+            const elements = barrierElement
+              ? [barrierElement]
+              : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
+            if (elements.length === 0) return null;
+            return (
+              <div className="mt-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <span className="text-xs font-medium text-purple-300">속성 장벽</span>
+                  <span className="text-xs text-purple-400">HP: {currentQuest.barrier.hp}</span>
+                </div>
+                <div className="flex gap-2">
+                  {elements.map((el, i) => {
+                    if (!el) return null;
+                    const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                    return (
+                      <div key={i} className="flex items-center gap-1 bg-secondary/40 rounded px-2 py-1">
+                        {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                        <span className="text-xs text-foreground">{el}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="flex gap-2">
-                {[currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].map((el, i) => {
-                  if (!el) return null;
-                  const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                  return (
-                    <div key={i} className="flex items-center gap-1 bg-secondary/40 rounded px-2 py-1">
-                      {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                      <span className="text-xs text-foreground">{el}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Time info */}
           <div className="mt-3 bg-secondary/20 rounded-lg p-3">
