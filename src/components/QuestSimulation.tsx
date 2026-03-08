@@ -501,7 +501,7 @@ export default function QuestSimulation() {
                         {/* Future: face icon here */}
                         <span className="text-lg">⚔</span>
                         <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                          <X className="w-4 h-4 text-destructive-foreground" />
+                          <span className="text-destructive-foreground text-xs font-bold">✕</span>
                         </div>
                       </button>
                       <span className="text-[10px] text-foreground font-medium truncate max-w-[56px]">{hero.name}</span>
