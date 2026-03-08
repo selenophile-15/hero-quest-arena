@@ -752,7 +752,7 @@ export default function QuestSimulation() {
           </div>
           <div className="card-fantasy p-4 overflow-x-auto">
             {currentQuest && selectedHeroes.length > 0 && (
-              <div className="mb-3">
+              <div className="mb-3 flex items-center gap-3">
                 <Button
                   onClick={() => setBuffBreakdownOpen(true)}
                   variant="outline"
@@ -761,6 +761,31 @@ export default function QuestSimulation() {
                 >
                   📊 스탯 계산표
                 </Button>
+              </div>
+            )}
+            {/* Win Rate - between stat button and element row */}
+            {currentQuest && selectedHeroes.length > 0 && simResult && (
+              <div className="mb-3 text-center">
+                <div className="text-[10px] text-muted-foreground mb-0.5">승률</div>
+                <div className={`text-2xl font-bold font-mono ${
+                  simResult.winRate >= 90 ? 'text-green-400' :
+                  simResult.winRate >= 70 ? 'text-lime-400' :
+                  simResult.winRate >= 50 ? 'text-yellow-400' :
+                  simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400'
+                }`}>
+                  {simResult.winRate.toFixed(1)}%
+                </div>
+                {simResult.retryWinRate !== undefined && (
+                  <div className="text-[9px] text-muted-foreground space-y-0.5 mt-1">
+                    <div>1차 시도: <span className="text-foreground">{simResult.rawWinRate.toFixed(1)}%</span></div>
+                    <div>2차 시도 (부스터 적용): <span className="text-foreground">{simResult.retryWinRate.toFixed(1)}%</span></div>
+                  </div>
+                )}
+                {simRunning && (
+                  <div className="flex items-center justify-center gap-2 mt-1 text-xs text-muted-foreground">
+                    <Loader2 className="w-3 h-3 animate-spin" /> 계산 중...
+                  </div>
+                )}
               </div>
             )}
             <table className="w-full text-xs">
