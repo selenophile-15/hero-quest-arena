@@ -354,6 +354,7 @@ export default function QuestSimulation() {
     setSelectedSubAreaIdx(-1);
     setSelectedQuestIdx(-1);
     setSelectedHeroIds(new Set());
+    setSelectedMiniBoss('none');
   };
 
   const handleQuestSelect = (sel: { questTypeKey: string; regionIdx: number; subAreaIdx: number; questIdx: number }) => {
@@ -362,6 +363,17 @@ export default function QuestSimulation() {
     setSelectedSubAreaIdx(sel.subAreaIdx);
     setSelectedQuestIdx(sel.questIdx);
     setSelectedHeroIds(new Set());
+    setSelectedMiniBoss('none');
+  };
+
+  const openConfigAtStep = (step: 'type' | 'region' | 'subarea' | 'difficulty') => {
+    setConfigInitialStep(step);
+    setConfigInitialState({
+      questTypeKey: selectedQuestType,
+      regionIdx: selectedRegionIdx,
+      subAreaIdx: selectedSubAreaIdx,
+    });
+    setConfigOpen(true);
   };
 
   if (loading) {
