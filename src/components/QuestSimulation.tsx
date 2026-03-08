@@ -295,8 +295,12 @@ export default function QuestSimulation() {
       const result = runCombatSimulation({
         heroes: selectedHeroes,
         monster: questMonster,
-        miniBoss: 'none' as MiniBossType,
+        miniBoss: selectedMiniBoss,
         booster: { type: selectedBooster },
+        questTypeKey: selectedQuestType,
+        regionName: currentRegion.name,
+        isTerrorTower,
+      });
         questTypeKey: selectedQuestType,
         regionName: currentRegion.name,
         isTerrorTower,
