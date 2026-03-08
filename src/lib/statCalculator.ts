@@ -242,8 +242,6 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     relicEffects,
     preRelicCrit,
     preRelicEvasion,
-    relicBonusFlat,
-    relicBonusPct,
     jobName,
     jobElement: fixed.element,
   };
