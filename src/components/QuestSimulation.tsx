@@ -222,7 +222,7 @@ export default function QuestSimulation() {
   return (
     <div className="animate-fade-in">
       {/* Lobby Layout */}
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
 
         {/* Top Section: Quest Slot + Info */}
         <div className="flex items-start gap-6 mb-6">
