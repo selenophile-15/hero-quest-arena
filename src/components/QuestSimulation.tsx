@@ -453,7 +453,7 @@ export default function QuestSimulation() {
             <div className="bg-secondary/30 rounded-lg p-3">
               <div className="flex items-center gap-1.5 mb-1">
                 <Shield className="w-3.5 h-3.5 text-blue-400" />
-                <span className="text-xs text-muted-foreground">권장 전투력</span>
+                <span className="text-xs text-muted-foreground">최소 전투력</span>
               </div>
               <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.minPower)}</span>
             </div>
