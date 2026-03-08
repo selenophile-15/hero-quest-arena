@@ -131,7 +131,7 @@ function hasSpiritAffinity(info: ItemAffinityInfo | null, spName: string): boole
 }
 
 export default function EnchantPickerDialog({
-  open, onClose, slotCount, slots, itemInfoPerSlot, itemNames, onConfirm, initialTab,
+  open, onClose, slotCount, slots, itemInfoPerSlot, itemNames, itemTypes, onConfirm, initialTab,
 }: EnchantPickerDialogProps) {
   const [localSlots, setLocalSlots] = useState<EnchantSlotData[]>([...slots]);
   const [bulkElement, setBulkElement] = useState<string>('');
