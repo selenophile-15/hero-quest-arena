@@ -127,7 +127,8 @@ const equipDataCache: Record<string, EquipmentItem[]> = {};
  */
 export async function loadEquipmentByTypes(
   typeKorNames: string[],
-  nameMap: Record<string, Record<string, string>>
+  nameMap: Record<string, Record<string, string>>,
+  onProgress?: (loaded: number) => void
 ): Promise<EquipmentItem[]> {
   const results: EquipmentItem[] = [];
 
