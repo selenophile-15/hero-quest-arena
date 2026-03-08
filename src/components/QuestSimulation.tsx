@@ -240,8 +240,6 @@ export default function QuestSimulation() {
     return [...new Set(rawElements)] as string[];
   })() : [];
 
-  // Barrier name for display
-  const barrierName = barrierElements.length > 0 ? `${barrierElements.join(' ')}장벽` : null;
 
   // Sub-area or boss display name
   const locationName = selectedSubAreaIdx === 99 && currentRegion?.boss
