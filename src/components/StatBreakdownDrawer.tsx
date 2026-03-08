@@ -415,6 +415,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           </td>
                         </tr>
                       )}
+                      {/* 화살통 스탯 0 안내 */}
+                      {slot && slot.itemType === 'quiver' && getSlotStatDirect(slot, finalKey as keyof EquipSlotCalc) === 0 && hasItem && (
+                        <tr className="border-b border-border/20">
+                          <td colSpan={2} className="px-2 py-1 text-[10px] text-yellow-400/80">
+                            ⚠ 활/석궁/총 미장착 시 화살통 스탯 0
+                          </td>
+                        </tr>
+                      )}
                       <tr className={hasItem ? 'bg-secondary/30' : ''}>
                         <td className="px-2 py-1 font-semibold text-foreground">최종</td>
                         <td className={`px-2 py-1 text-right tabular-nums font-bold ${config.color}`}>
