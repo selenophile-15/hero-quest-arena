@@ -8,7 +8,7 @@ import { getElementValue } from '@/components/EnchantPickerDialog';
 import { loadFamiliars, loadAurasongs, getAurasongSkillEffect, getAurasongSkillIconPath, ensureAurasongDataLoaded, getFamiliarImagePath, getAurasongImagePath, getLeaderSkillTierName } from '@/lib/championEquipUtils';
 import ElementIcon from './ElementIcon';
 import EnchantPickerDialog from './EnchantPickerDialog';
-import ManualEquipmentForm from './ManualEquipmentForm';
+import ManualEquipmentForm, { ManualEquipmentFormRef } from './ManualEquipmentForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -189,6 +189,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [equipFilterSpirit, setEquipFilterSpirit] = useState<string>('_all');
   const [equipSlotQuality, setEquipSlotQuality] = useState<string>('common');
   const [championManualMode, setChampionManualMode] = useState(false);
+  const championManualFormRef = useRef<ManualEquipmentFormRef>(null);
 
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -359,7 +360,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       <div
         key={slotIdx}
         className="flex flex-col items-center gap-1 cursor-pointer"
-        onClick={() => setEquipDialogType(slotIdx === 0 ? 'familiar' : 'aurasong')}
+        onClick={() => { setEquipDialogType(slotIdx === 0 ? 'familiar' : 'aurasong'); setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual); }}
       >
         <div className="text-[10px] font-semibold text-primary/80 bg-primary/10 w-full text-center rounded-t py-0.5">
           {SLOT_LABELS[slotIdx]}
@@ -525,6 +526,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               수동
             </Button>
 
+            {championManualMode && (
+              <div className="flex items-center gap-1.5 ml-auto">
+                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setChampionManualMode(false)}>취소</Button>
+                <Button size="sm" className="h-7 text-xs" onClick={() => championManualFormRef.current?.triggerConfirm()}>적용</Button>
+              </div>
+            )}
+
             {!championManualMode && (
               <>
                 <span className="text-muted-foreground">스탯:</span>
@@ -588,6 +596,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             <div className="overflow-y-auto h-full border border-border rounded p-3">
               {championManualMode ? (
                 <ManualEquipmentForm
+                  ref={championManualFormRef}
+                  hideActions
                   isAurasong={equipDialogType === 'aurasong'}
                   initialData={equipmentSlots[slotIdx]?.item?.manualData || null}
                   onConfirm={(item) => {

@@ -6,7 +6,7 @@ import { formatNumber } from '@/lib/format';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { Wrench } from 'lucide-react';
-import ManualEquipmentForm from './ManualEquipmentForm';
+import ManualEquipmentForm, { ManualEquipmentFormRef } from './ManualEquipmentForm';
 import {
   EquipmentItem,
   loadEquipmentByTypes,
@@ -145,6 +145,7 @@ export default function EquipmentSelectDialog({
   const [slotAllowedTypes, setSlotAllowedTypes] = useState<string[][]>([]);
   const [loading, setLoading] = useState(false);
   const [manualMode, setManualMode] = useState(false);
+  const manualFormRef = useRef<ManualEquipmentFormRef>(null);
 
   const maxTier = getMaxTierForLevel(heroLevel || 1);
   const [filterType, setFilterType] = useState<string>('_all');
@@ -416,7 +417,14 @@ export default function EquipmentSelectDialog({
           >
             <Wrench className="w-3 h-3" />
             수동
-          </Button>
+           </Button>
+
+          {manualMode && (
+            <div className="flex items-center gap-1.5 ml-auto">
+              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setManualMode(false)}>취소</Button>
+              <Button size="sm" className="h-7 text-xs" onClick={() => manualFormRef.current?.triggerConfirm()}>적용</Button>
+            </div>
+           )}
 
           {!manualMode && (
             <>
@@ -509,6 +517,8 @@ export default function EquipmentSelectDialog({
           <div className="overflow-y-auto h-full border border-border rounded p-3">
             {manualMode ? (
               <ManualEquipmentForm
+                ref={manualFormRef}
+                hideActions
                 initialData={slots[activeSlot]?.item?.manualData || null}
                 allowedTypes={currentAllowedTypes}
                 onConfirm={(item) => {
