@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { formatNumber } from '@/lib/format';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
+import { Wrench } from 'lucide-react';
+import ManualEquipmentForm from './ManualEquipmentForm';
 import {
   EquipmentItem,
   loadEquipmentByTypes,
@@ -142,6 +144,7 @@ export default function EquipmentSelectDialog({
   const [allItems, setAllItems] = useState<EquipmentItem[]>([]);
   const [slotAllowedTypes, setSlotAllowedTypes] = useState<string[][]>([]);
   const [loading, setLoading] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
 
   const maxTier = getMaxTierForLevel(heroLevel || 1);
   const [filterType, setFilterType] = useState<string>('_all');
