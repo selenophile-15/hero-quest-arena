@@ -432,9 +432,9 @@ export default function EnchantPickerDialog({
                 const spiritEffect = spiritName ? getSpiritEffectFromData(spiritData, spiritName, spiritAffinity) : '';
                 const isIdolSlot = itemTypes?.[i] === 'idol' || itemTypes?.[i] === '우상';
 
-                // For idol slots, double the numeric values in the effect text
+                // For idol slots, double only stat bonus numbers (after +/- signs), not condition numbers
                 const displayEffect = spiritEffect && isIdolSlot
-                  ? spiritEffect.replace(/([+-]?\d+(?:\.\d+)?)/g, (_, num) => String(Number(num) * 2))
+                  ? spiritEffect.replace(/([+-])(\d+(?:\.\d+)?)/g, (_, sign, num) => sign + String(Number(num) * 2))
                   : spiritEffect;
 
                 return (

@@ -416,12 +416,17 @@ export async function calculateEquipmentStats(
     };
 
     // Calculate skill bonus % for this slot
+    // For dual wield (쌍수), use judgmentTypes for matching 해당장비 bonuses
     const typeKor = item.typeKor || '';
+    const matchTypes = item.judgmentTypes?.length ? item.judgmentTypes : [typeKor];
     
-    const specificAtkPct = (skillBonuses.해당장비공격력[typeKor] || 0);
-    const specificDefPct = (skillBonuses.해당장비방어력[typeKor] || 0);
-    const specificHpPct = (skillBonuses.해당장비체력[typeKor] || 0);
-    const specificAllPct = (skillBonuses.해당장비전체[typeKor] || 0);
+    let specificAtkPct = 0, specificDefPct = 0, specificHpPct = 0, specificAllPct = 0;
+    for (const mt of matchTypes) {
+      specificAtkPct += (skillBonuses.해당장비공격력[mt] || 0);
+      specificDefPct += (skillBonuses.해당장비방어력[mt] || 0);
+      specificHpPct += (skillBonuses.해당장비체력[mt] || 0);
+      specificAllPct += (skillBonuses.해당장비전체[mt] || 0);
+    }
 
     let bonusAtkPct = specificAtkPct + specificAllPct + skillBonuses.모든장비공격력 + skillBonuses.모든장비전체;
     let bonusDefPct = specificDefPct + specificAllPct + skillBonuses.모든장비방어력 + skillBonuses.모든장비전체;
