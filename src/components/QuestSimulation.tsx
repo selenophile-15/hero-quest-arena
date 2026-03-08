@@ -5,6 +5,7 @@ import { getHeroes } from '@/lib/storage';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, Clock, Coffee, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
@@ -71,6 +72,7 @@ interface QuestData {
 interface QuestCommon {
   difficulties: Record<string, { key: string; image: string }>;
   elementalBarriers: Record<string, { key: string; image: string }>;
+  boosters: Record<string, { key: string; image: string }>;
 }
 
 const QUEST_FILES = [
@@ -156,6 +158,7 @@ export default function QuestSimulation() {
   const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
   const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
+  const [selectedBooster, setSelectedBooster] = useState<'none' | 'normal' | 'super' | 'mega'>('none');
 
   // Load quest data
   useEffect(() => {
@@ -211,10 +214,47 @@ export default function QuestSimulation() {
     if (heroes.length === 0) return;
     calculatePartyBuffs({ heroes, isBoss: isBossQuest, isFlashQuest })
       .then(({ summary, buffedStats: bs }) => {
+        // Apply booster on top of party buffs
+        if (selectedBooster !== 'none') {
+          const boosterAtkPct = selectedBooster === 'mega' ? 0.8 : selectedBooster === 'super' ? 0.4 : 0.2;
+          const boosterDefPct = boosterAtkPct;
+          const boosterCrit = selectedBooster === 'mega' ? 25 : selectedBooster === 'super' ? 10 : 0;
+          const boosterCritDmg = selectedBooster === 'mega' ? 50 : 0;
+          
+          bs.forEach((stat, i) => {
+            const hero = heroes[i];
+            const atkAdd = Math.floor((hero.atk || 0) * boosterAtkPct);
+            const defAdd = Math.floor((hero.def || 0) * boosterDefPct);
+            stat.atk += atkAdd;
+            stat.deltaAtk += atkAdd;
+            stat.def += defAdd;
+            stat.deltaDef += defAdd;
+            stat.crit += boosterCrit;
+            stat.deltaCrit += boosterCrit;
+            stat.critDmg += boosterCritDmg;
+            stat.deltaCritDmg += boosterCritDmg;
+          });
+          
+          const boosterNames: Record<string, string> = {
+            normal: '전투력 부스터',
+            super: '슈퍼 전투력 부스터',
+            mega: '메가 전투력 부스터',
+          };
+          summary.sources.push({
+            name: boosterNames[selectedBooster],
+            type: 'aurasong',
+            atkPct: boosterAtkPct * 100,
+            defPct: boosterDefPct * 100,
+            critPct: boosterCrit || undefined,
+            critDmgPct: boosterCritDmg || undefined,
+            note: '부스터',
+          });
+        }
+        
         setBuffedStats(bs);
         setBuffSummary(summary);
       });
-  }, [heroIdKey, isBossQuest, isFlashQuest]);
+  }, [heroIdKey, isBossQuest, isFlashQuest, selectedBooster]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
@@ -329,6 +369,22 @@ export default function QuestSimulation() {
     { key: 'r75' as const, label: '75%', color: '#ffffff', textClass: 'text-white', value: currentQuest?.def.r75 || 0 },
   ];
 
+  // Calculate damage reduction % for a given defense value using threshold interpolation
+  const getDamageReductionForDef = (def: number): number => {
+    const reductions = [-50, 0, 50, 70, 75];
+    for (let i = defThresholds.length - 1; i >= 1; i--) {
+      if (def >= defThresholds[i - 1].value) {
+        const lower = defThresholds[i - 1].value;
+        const upper = defThresholds[i].value;
+        const lowerRed = reductions[i - 1];
+        const upperRed = reductions[i];
+        const t = upper > lower ? Math.min(1, (def - lower) / (upper - lower)) : 0;
+        return lowerRed + t * (upperRed - lowerRed);
+      }
+    }
+    return -50;
+  };
+
   const questTimeSettings = timeSettings.filter(s => s.category === 'quest');
   const restTimeSettings = timeSettings.filter(s => s.category === 'rest');
 
@@ -350,6 +406,54 @@ export default function QuestSimulation() {
                 <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
               </div>
             )}
+
+            {/* Booster slot - top right, symmetric with region icon */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
+                  {selectedBooster !== 'none' && commonData?.boosters ? (() => {
+                    const boosterKeys: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
+                    const boosterEntry = commonData.boosters[boosterKeys[selectedBooster]];
+                    return boosterEntry ? (
+                      <img src={boosterEntry.image} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-lg">⚡</span>
+                    );
+                  })() : (
+                    <Plus className="w-5 h-5 text-muted-foreground/40" />
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-52 p-2" align="end">
+                <div className="text-xs font-medium text-foreground mb-2">전투력 부스터</div>
+                <div className="space-y-1">
+                  <button
+                    onClick={() => setSelectedBooster('none')}
+                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${selectedBooster === 'none' ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
+                  >
+                    없음
+                  </button>
+                  {(['normal', 'super', 'mega'] as const).map(bType => {
+                    const names: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
+                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40%, 치확 +10%', mega: '공/방 +80%, 치확 +25%, 치댐 +50%' };
+                    const bEntry = commonData?.boosters?.[names[bType]];
+                    return (
+                      <button
+                        key={bType}
+                        onClick={() => setSelectedBooster(bType)}
+                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${selectedBooster === bType ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
+                      >
+                        {bEntry && <img src={bEntry.image} alt="" className="w-6 h-6 rounded" />}
+                        <div className="text-left">
+                          <div className="font-medium">{names[bType]}</div>
+                          <div className="text-[10px] text-muted-foreground">{descs[bType]}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
 
             {/* Quest select button - centered, larger with less cropping */}
             <div className="flex justify-center pt-2 mb-4">
@@ -450,20 +554,13 @@ export default function QuestSimulation() {
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
                   </div>
-                  <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-orange-400" />
-                      <span className="text-xs text-foreground">치명타 확률</span>
-                    </div>
-                    <span className="text-sm font-bold font-mono text-foreground">{currentQuest.aoeChance}%</span>
-                  </div>
                 </div>
 
                 {/* Defense Reference - vertical bar */}
                 <div className="pt-2 border-t border-border/30">
                   <div className="flex items-center gap-1.5 mb-3 px-1">
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-xs text-foreground font-medium">방어력 기준치</span>
+                    <span className="text-xs text-foreground font-medium">방어력 기준치 (데미지 감소율)</span>
                   </div>
                   {(() => {
                     // Map defense value to bar % using threshold interpolation
@@ -532,9 +629,16 @@ export default function QuestSimulation() {
                           </div>
                           {/* Right: defense values */}
                           <div className="flex flex-col justify-between h-64 shrink-0">
-                            {[...defThresholds].reverse().map(t => (
-                              <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
-                            ))}
+                            {[...defThresholds].reverse().map((t, i) => {
+                              const reductions = [75, 70, 50, 0, -50];
+                              const received = 100 - reductions[i];
+                              return (
+                                <div key={t.key} className="text-right">
+                                  <span className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
+                                  <span className={`text-[9px] font-mono ml-1 ${t.textClass} opacity-60`}>({received}%)</span>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
 
@@ -572,7 +676,7 @@ export default function QuestSimulation() {
                                     <line x1={startX + 10} y1={dotY} x2={endX} y2={labelY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
                                     <line x1={endX} y1={labelY} x2={endX + 8} y2={labelY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
                                     <text x={endX + 12} y={labelY + 3} fill={pinColor} fontSize="9" fontFamily="monospace">
-                                      {item.h.name} ({formatNumber(item.def)})
+                                      {item.h.name} ({formatNumber(item.def)}) {Math.round(100 - getDamageReductionForDef(item.def))}%
                                     </text>
                                   </g>
                                 );
@@ -597,12 +701,21 @@ export default function QuestSimulation() {
         {/* CENTER: Hero Slots */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-3">
+            {currentQuest && selectedHeroes.length > 0 && (
+              <Button
+                onClick={() => setBuffBreakdownOpen(true)}
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+              >
+                📊 스탯 계산표
+              </Button>
+            )}
             <Users className="w-5 h-5 text-primary" />
             <h3 className="font-display text-lg text-foreground">파티 구성</h3>
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
           </div>
           <div className="card-fantasy p-4 overflow-x-auto">
-            {/* Unified table: visual rows (element, face, hero circle, name, class) + stat rows */}
             <table className="w-full text-xs">
               <colgroup>
                 <col className="w-20" />
@@ -611,29 +724,6 @@ export default function QuestSimulation() {
                 ))}
               </colgroup>
               <tbody>
-                {/* Party buff summary row - above element row */}
-                {(() => {
-                  const hasBuffs = buffSummary && buffSummary.sources.length > 0;
-                  if (!hasBuffs || selectedHeroes.length === 0) return null;
-                  return (
-                    <tr className="border-b border-border/30 bg-primary/5">
-                      <td colSpan={maxMembers + 1} className="py-2 px-2">
-                        <div className="flex flex-wrap items-center gap-2 text-[10px]">
-                          <span className="text-primary font-bold text-[11px]">📊 파티 버프</span>
-                          {buffSummary!.sources.map((src, i) => (
-                            <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary/10 text-primary/90">
-                              <span className={src.type === 'champion' ? 'text-yellow-400' : 'text-purple-400'}>
-                                {src.type === 'champion' ? '👑' : '🎵'}
-                              </span>
-                              <span className="font-medium">{src.name}</span>
-                              {src.note && <span className="text-muted-foreground">({src.note})</span>}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })()}
                 {/* Row: Element barrier icons */}
                 {barrierElements.length > 0 && (
                   <tr>
@@ -741,9 +831,8 @@ export default function QuestSimulation() {
                     );
                   })}
                 </tr>
-                {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF */}
+                {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF, CRIT.C, EVA, THREAT */}
                 {selectedHeroes.length > 0 && (() => {
-                  // Determine if evasion penalty applies (익스트림 or 명인의 탑 공포)
                   const hasEvasionPenalty = currentQuest && (
                     currentQuest.isExtreme ||
                     (selectedQuestType === 'tot' && currentRegion?.name === '공포')
@@ -771,7 +860,6 @@ export default function QuestSimulation() {
                             if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
                             const bs = buffedStats[slotIdx];
                             
-                            // Use buffed stats if available
                             let val: number;
                             let delta = 0;
                             if (bs && hasBuffs) {
@@ -789,23 +877,45 @@ export default function QuestSimulation() {
                                 : (hero as any)[stat.key] || 0;
                             }
                             
+                            // Evasion special handling
+                            let displayColor = stat.color;
+                            let evasionNote = '';
+                            if (stat.key === 'evasion') {
+                              const hasRockStompers = hero.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
+                              const isPathfinder = (hero.heroClass || '').includes('길잡이');
+                              const cap = isPathfinder ? 78 : 75;
+                              
+                              if (hasRockStompers) {
+                                val = 0;
+                                delta = 0;
+                                evasionNote = '🪨';
+                              } else {
+                                if (hasEvasionPenalty) {
+                                  val = val - 20;
+                                  delta = delta - 20;
+                                }
+                                if (val > cap) val = cap;
+                              }
+                              if (val < 0) displayColor = 'text-amber-500';
+                            }
+                            
                             return (
-                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${stat.color}`}>
+                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${displayColor}`}>
                                 <div className="flex flex-col items-center">
-                                  <span>{stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}</span>
+                                  <span>{stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}</span>
                                   {delta > 0 && (
                                     <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
                                   {delta < 0 && (
                                     <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
+                                  {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
                                 </div>
                               </td>
                             );
                           })}
                         </tr>
                       ))}
-                      {/* Removed: old buff sources summary row - now shown above element row */}
                       {/* Targeting chance row (threat-based) */}
                       <tr className="border-b border-border/20 bg-muted/20">
                         <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
@@ -833,18 +943,6 @@ export default function QuestSimulation() {
             </table>
             {currentQuest && selectedHeroes.length > 0 && (
               <div className="mt-3 space-y-3">
-                <div className="flex gap-2">
-                  {buffSummary && buffSummary.sources.length > 0 && (
-                    <Button
-                      onClick={() => setBuffBreakdownOpen(true)}
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5"
-                    >
-                      📊 스탯 계산표
-                    </Button>
-                  )}
-                </div>
                 <Button
                   onClick={() => {
                     if (simRunning || !currentQuest || !currentRegion) return;
@@ -862,13 +960,12 @@ export default function QuestSimulation() {
                       barrier: currentQuest.barrier,
                       barrierElement: barrierElements[0] || null,
                     };
-                    // Run simulation async to not block UI
                     setTimeout(() => {
                       const result = runCombatSimulation({
                         heroes: selectedHeroes,
                         monster: questMonster,
                         miniBoss: 'none' as MiniBossType,
-                        booster: { type: 'none' },
+                        booster: { type: selectedBooster },
                         questTypeKey: selectedQuestType,
                         regionName: currentRegion!.name,
                         isTerrorTower,
@@ -1044,6 +1141,7 @@ export default function QuestSimulation() {
         heroes={selectedHeroes}
         buffSummary={buffSummary}
         buffedStats={buffedStats}
+        hasEvasionPenalty={!!(currentQuest && (currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')))}
       />
     </div>
   );

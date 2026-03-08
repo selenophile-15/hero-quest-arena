@@ -12,17 +12,19 @@ interface PartyBuffBreakdownDrawerProps {
   heroes: Hero[];
   buffSummary: PartyBuffSummary | null;
   buffedStats: BuffedHeroStats[];
+  hasEvasionPenalty?: boolean;
 }
 
-type StatTab = 'atk' | 'def' | 'hp' | 'crit' | 'evasion' | 'threat';
+type StatTab = 'atk' | 'def' | 'hp' | 'hpRegen' | 'critChance' | 'critDmg' | 'evasion';
 
 const STAT_TABS: { key: StatTab; label: string; icon: string; color: string; headerBg: string }[] = [
   { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-900/60' },
   { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-900/60' },
   { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#ff7f00]/40' },
-  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-yellow-500/30' },
+  { key: 'hpRegen', label: '체력 재생', icon: STAT_ICON_MAP.hp, color: 'text-green-400', headerBg: 'bg-green-900/40' },
+  { key: 'critChance', label: '치명타 확률', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-yellow-500/30' },
+  { key: 'critDmg', label: '치명타 대미지', icon: STAT_ICON_MAP.critDmg, color: 'text-orange-300', headerBg: 'bg-orange-500/30' },
   { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-teal-300', headerBg: 'bg-teal-600/30' },
-  { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-purple-400', headerBg: 'bg-purple-900/60' },
 ];
 
 function isMercenary(hero: Hero): boolean {
@@ -33,17 +35,13 @@ function hasLoneWolfCowl(hero: Hero): boolean {
   return hero.equipmentSlots?.some(s => s.item?.name === '고독한 늑대 두건') || false;
 }
 
-function getClassLineKor(hero: Hero): string {
-  if (hero.classLine) return hero.classLine;
-  return '';
-}
-
 function getSourcePctForStat(src: PartyBuffSource, stat: StatTab): number {
   switch (stat) {
     case 'atk': return src.atkPct || 0;
     case 'def': return src.defPct || 0;
     case 'hp': return src.hpPct || 0;
-    case 'crit': return src.critPct || 0;
+    case 'critChance': return src.critPct || 0;
+    case 'critDmg': return src.critDmgPct || 0;
     case 'evasion': return src.evaPct || 0;
     default: return 0;
   }
@@ -58,7 +56,11 @@ function getSourceFlatForStat(src: PartyBuffSource, stat: StatTab): number {
   }
 }
 
-export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, buffSummary, buffedStats }: PartyBuffBreakdownDrawerProps) {
+function isBoosterSource(src: PartyBuffSource): boolean {
+  return src.note === '부스터';
+}
+
+export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, buffSummary, buffedStats, hasEvasionPenalty }: PartyBuffBreakdownDrawerProps) {
   const [activeTab, setActiveTab] = useState<StatTab>('atk');
 
   if (!buffSummary || heroes.length === 0) return null;
@@ -71,9 +73,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
       case 'atk': return hero.atk || 0;
       case 'def': return hero.def || 0;
       case 'hp': return hero.hp || 0;
-      case 'crit': return hero.crit || 0;
+      case 'critChance': return hero.crit || 0;
+      case 'critDmg': return hero.critDmg || 0;
       case 'evasion': return hero.evasion || 0;
-      case 'threat': return hero.threat || 0;
+      default: return 0;
     }
   };
 
@@ -82,9 +85,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
       case 'atk': return bs.atk;
       case 'def': return bs.def;
       case 'hp': return bs.hp;
-      case 'crit': return bs.crit;
+      case 'critChance': return bs.crit;
+      case 'critDmg': return bs.critDmg;
       case 'evasion': return bs.evasion;
-      case 'threat': return bs.threat;
+      default: return 0;
     }
   };
 
@@ -93,7 +97,8 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
       case 'atk': return bs.deltaAtk;
       case 'def': return bs.deltaDef;
       case 'hp': return bs.deltaHp;
-      case 'crit': return bs.deltaCrit;
+      case 'critChance': return bs.deltaCrit;
+      case 'critDmg': return bs.deltaCritDmg;
       case 'evasion': return bs.deltaEvasion;
       default: return 0;
     }
@@ -103,28 +108,126 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
   const relevantSources = buffSummary.sources.filter(src => {
     const pct = getSourcePctForStat(src, activeTab);
     const flat = getSourceFlatForStat(src, activeTab);
-    if (activeTab === 'crit' && src.critDmgPct) return true;
     return pct !== 0 || flat !== 0;
   });
+
+  // HP Regen detection
+  const liluChampion = heroes.find(h => h.type === 'champion' && (h.championName?.includes('릴루') || h.name?.includes('릴루')));
+  const liluTier = liluChampion ? (liluChampion.cardLevel || 1) : 0;
+  const liluHealPct = liluTier === 4 ? 20 : liluTier === 3 ? 10 : liluTier === 2 ? 5 : liluTier === 1 ? 3 : 0;
+  const healerHeroes = heroes.filter(h => {
+    const cls = h.heroClass || '';
+    return cls.includes('클레릭') || cls.includes('성직자') || cls.includes('비숍') || cls.includes('주교');
+  });
+
+  // HP Regen tab content
+  if (activeTab === 'hpRegen') {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="bottom" className="h-[85vh] flex flex-col bg-card border-t border-primary/30">
+          <SheetHeader className="shrink-0 pb-2">
+            <SheetTitle className="text-foreground flex items-center gap-2 text-lg">
+              📊 파티 버프 스탯 계산표
+            </SheetTitle>
+            <SheetDescription className="text-muted-foreground text-sm">
+              파티 버프(챔피언 리더스킬, 오라의 노래, 부스터) 적용 전후 스탯 비교
+            </SheetDescription>
+          </SheetHeader>
+
+          <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatTab)} className="flex-1 flex flex-col min-h-0">
+            <TabsList className="shrink-0 mb-3 bg-secondary/50 p-1 flex gap-0.5 overflow-x-auto">
+              {STAT_TABS.map(tab => (
+                <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1.5 text-sm px-3 py-2 data-[state=active]:bg-primary/20">
+                  {tab.icon && <img src={tab.icon} alt="" className="w-5 h-5" />}
+                  <span>{tab.label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            <div className="flex-1 overflow-y-auto">
+              <div className={`${config.headerBg} rounded-t-lg px-4 py-3 flex items-center gap-2`}>
+                {config.icon && <img src={config.icon} alt="" className="w-6 h-6" />}
+                <span className={`font-bold text-base ${config.color}`}>{config.label} - 전투 중 회복</span>
+              </div>
+              <div className="bg-secondary/30 rounded-b-lg p-4 space-y-4">
+                {liluChampion ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-yellow-400 text-lg">👑</span>
+                      <span className="text-foreground font-medium text-sm">릴루 (카드 LV.{liluTier})</span>
+                    </div>
+                    <div className="text-sm text-green-400">
+                      매 라운드 파티원 최대 HP의 <span className="font-bold text-base">{liluHealPct}%</span> 회복
+                    </div>
+                    <table className="w-full text-sm mt-2">
+                      <thead>
+                        <tr className="border-b border-border/30">
+                          <th className="text-left py-2 text-muted-foreground font-normal">영웅</th>
+                          <th className="text-center py-2 text-muted-foreground font-normal">최대 HP</th>
+                          <th className="text-center py-2 text-muted-foreground font-normal">라운드당 회복</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {heroes.map((h, hi) => {
+                          const bs = buffedStats[hi];
+                          const maxHp = bs ? bs.hp : (h.hp || 0);
+                          const healPerRound = Math.floor(maxHp * liluHealPct / 100);
+                          return (
+                            <tr key={h.id} className="border-b border-border/20">
+                              <td className="py-2 text-foreground font-medium">{h.name}</td>
+                              <td className="py-2 text-center font-mono text-orange-400">{formatNumber(maxHp)}</td>
+                              <td className="py-2 text-center font-mono text-green-400">+{formatNumber(healPerRound)}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-muted-foreground text-sm">릴루 챔피언이 파티에 없습니다</div>
+                )}
+
+                {healerHeroes.length > 0 && (
+                  <div className="border-t border-border/30 pt-3 space-y-2">
+                    <div className="text-foreground font-medium text-sm">🩹 힐러 영웅</div>
+                    {healerHeroes.map(h => (
+                      <div key={h.id} className="text-sm text-muted-foreground">
+                        <span className="text-foreground">{h.name}</span> ({h.heroClass}) - 매 라운드 파티원 HP 회복
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {!liluChampion && healerHeroes.length === 0 && (
+                  <div className="text-center text-muted-foreground text-sm py-6">
+                    체력 재생 소스가 파티에 없습니다
+                  </div>
+                )}
+              </div>
+            </div>
+          </Tabs>
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="h-[85vh] flex flex-col bg-card border-t border-primary/30">
         <SheetHeader className="shrink-0 pb-2">
-          <SheetTitle className="text-foreground flex items-center gap-2">
+          <SheetTitle className="text-foreground flex items-center gap-2 text-lg">
             📊 파티 버프 스탯 계산표
           </SheetTitle>
-          <SheetDescription className="text-muted-foreground text-xs">
-            파티 버프(챔피언 리더스킬, 오라의 노래) 적용 전후 스탯 비교
+          <SheetDescription className="text-muted-foreground text-sm">
+            파티 버프(챔피언 리더스킬, 오라의 노래, 부스터) 적용 전후 스탯 비교
           </SheetDescription>
         </SheetHeader>
 
-        {/* Stat tabs */}
         <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatTab)} className="flex-1 flex flex-col min-h-0">
           <TabsList className="shrink-0 mb-3 bg-secondary/50 p-1 flex gap-0.5 overflow-x-auto">
             {STAT_TABS.map(tab => (
-              <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1 text-xs px-2 py-1.5 data-[state=active]:bg-primary/20">
-                {tab.icon && <img src={tab.icon} alt="" className="w-4 h-4" />}
+              <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1.5 text-sm px-3 py-2 data-[state=active]:bg-primary/20">
+                {tab.icon && <img src={tab.icon} alt="" className="w-5 h-5" />}
                 <span>{tab.label}</span>
               </TabsTrigger>
             ))}
@@ -132,45 +235,45 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
           <div className="flex-1 overflow-y-auto">
             {/* Header: stat color bar */}
-            <div className={`${config.headerBg} rounded-t-lg px-3 py-2 flex items-center gap-2`}>
-              {config.icon && <img src={config.icon} alt="" className="w-5 h-5" />}
-              <span className={`font-bold text-sm ${config.color}`}>{config.label} 파티 버프 상세</span>
+            <div className={`${config.headerBg} rounded-t-lg px-4 py-3 flex items-center gap-2`}>
+              {config.icon && <img src={config.icon} alt="" className="w-6 h-6" />}
+              <span className={`font-bold text-base ${config.color}`}>{config.label} 파티 버프 상세</span>
             </div>
 
             <div className="bg-secondary/30 rounded-b-lg overflow-x-auto">
-              <table className="w-full text-xs">
+              <table className="w-full text-sm">
                 <colgroup>
-                  <col className="w-32" />
+                  <col className="w-36" />
                   {heroes.map(h => <col key={h.id} />)}
                 </colgroup>
                 {/* Hero names header */}
                 <thead>
                   <tr className="border-b border-border/30">
-                    <th className="py-2 px-2 text-left text-muted-foreground font-normal">항목</th>
+                    <th className="py-2.5 px-3 text-left text-muted-foreground font-normal">항목</th>
                     {heroes.map(h => (
-                      <th key={h.id} className="py-2 px-2 text-center">
-                        <div className="text-foreground font-medium text-[11px]">{h.name}</div>
-                        <div className="text-muted-foreground text-[9px]">
+                      <th key={h.id} className="py-2.5 px-2 text-center">
+                        <div className="text-foreground font-medium text-sm">{h.name}</div>
+                        <div className="text-muted-foreground text-xs">
                           {h.heroClass || h.championName || ''}
-                          {isMercenary(h) && <span className="text-yellow-400 ml-0.5">(용병)</span>}
-                          {hasLoneWolfCowl(h) && <span className="text-red-400 ml-0.5">(고독)</span>}
+                          {isMercenary(h) && <span className="text-yellow-400 ml-1">(용병)</span>}
+                          {hasLoneWolfCowl(h) && <span className="text-red-400 ml-1">(고독)</span>}
                         </div>
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Row 1: Base stat (개인 스탯) */}
+                  {/* Row 1: Base stat */}
                   <tr className="border-b border-border/20">
-                    <td className="py-1.5 px-2 text-muted-foreground">
+                    <td className="py-2 px-3 text-muted-foreground">
                       개인 스탯
-                      <span className="text-[9px] text-muted-foreground/60 block">
+                      <span className="text-xs text-muted-foreground/60 block">
                         (장비/스킬/영혼 포함)
                       </span>
                     </td>
                     {heroes.map(h => (
-                      <td key={h.id} className={`py-1.5 px-2 text-center font-mono ${config.color}`}>
-                        {isMultStat || activeTab === 'threat'
+                      <td key={h.id} className={`py-2 px-2 text-center font-mono text-sm ${config.color}`}>
+                        {isMultStat
                           ? formatNumber(getBaseVal(h))
                           : `${getBaseVal(h)}%`
                         }
@@ -178,50 +281,51 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     ))}
                   </tr>
 
-                  {/* Buff source rows - show each source's raw % contribution */}
+                  {/* Buff source rows */}
                   {relevantSources.map((src, srcIdx) => {
                     const isChamp = src.type === 'champion';
-                    const icon = isChamp ? '👑' : '🎵';
-                    const tagClass = isChamp ? 'bg-yellow-600/60' : 'bg-purple-600/60';
+                    const isBooster = isBoosterSource(src);
+                    const icon = isBooster ? '⚡' : isChamp ? '👑' : '🎵';
+                    const tagClass = isBooster ? 'bg-green-600/60' : isChamp ? 'bg-yellow-600/60' : 'bg-purple-600/60';
+                    const tagLabel = isBooster ? '부스터' : isChamp ? '챔피언' : '오라';
                     const pctVal = getSourcePctForStat(src, activeTab);
                     const flatVal = getSourceFlatForStat(src, activeTab);
 
                     return (
                       <tr key={srcIdx} className="border-b border-border/20 bg-primary/5">
-                        <td className="py-1.5 px-2">
-                          <div className="flex items-center gap-1">
-                            <span className={`px-1 py-0.5 rounded text-[9px] font-semibold ${tagClass} text-foreground`}>
-                              {icon} {isChamp ? '챔피언' : '오라'}
+                        <td className="py-2 px-3">
+                          <div className="flex items-center gap-1.5">
+                            <span className={`px-1.5 py-0.5 rounded text-xs font-semibold ${tagClass} text-foreground`}>
+                              {icon} {tagLabel}
                             </span>
                           </div>
-                          <div className="text-[9px] text-foreground/70 mt-0.5 leading-tight">{src.name}</div>
-                          {src.note && <div className="text-[8px] text-muted-foreground">{src.note}</div>}
+                          <div className="text-xs text-foreground/70 mt-1 leading-tight">{src.name}</div>
+                          {src.note && !isBooster && <div className="text-xs text-muted-foreground">{src.note}</div>}
                         </td>
                         {heroes.map((h) => {
                           const hasLW = hasLoneWolfCowl(h);
-                          const isMerc = isMercenary(h);
                           const champMod = hasLW ? 0 : 1;
                           const effectivePct = isChamp ? pctVal * champMod : pctVal;
 
                           if (isMultStat) {
                             return (
-                              <td key={h.id} className="py-1.5 px-2 text-center">
+                              <td key={h.id} className="py-2 px-2 text-center">
                                 {hasLW && isChamp ? (
-                                  <span className="text-red-400 text-[9px]">무효</span>
+                                  <span className="text-red-400 text-xs">무효</span>
                                 ) : (
                                   <div className="space-y-0.5">
                                     {effectivePct !== 0 && (
-                                      <div className="text-green-400/80 text-[10px] font-mono">
+                                      <div className="text-green-400/80 text-sm font-mono">
                                         +{effectivePct.toFixed(1)}%
                                       </div>
                                     )}
                                     {flatVal !== 0 && (
-                                      <div className="text-green-400/70 text-[9px] font-mono">
+                                      <div className="text-green-400/70 text-xs font-mono">
                                         +{formatNumber(flatVal)} (깡)
                                       </div>
                                     )}
                                     {effectivePct === 0 && flatVal === 0 && (
-                                      <span className="text-muted-foreground text-[9px]">-</span>
+                                      <span className="text-muted-foreground text-xs">-</span>
                                     )}
                                   </div>
                                 )}
@@ -229,15 +333,15 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                             );
                           } else {
                             return (
-                              <td key={h.id} className="py-1.5 px-2 text-center">
+                              <td key={h.id} className="py-2 px-2 text-center">
                                 {hasLW && isChamp ? (
-                                  <span className="text-red-400 text-[9px]">무효</span>
+                                  <span className="text-red-400 text-xs">무효</span>
                                 ) : effectivePct !== 0 ? (
-                                  <div className="text-green-400/80 text-[10px] font-mono">
+                                  <div className="text-green-400/80 text-sm font-mono">
                                     +{effectivePct.toFixed(1)}%
                                   </div>
                                 ) : (
-                                  <span className="text-muted-foreground text-[9px]">-</span>
+                                  <span className="text-muted-foreground text-xs">-</span>
                                 )}
                               </td>
                             );
@@ -247,12 +351,12 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     );
                   })}
 
-                  {/* Combined multiplier row - shows total additive % and final multiplier */}
+                  {/* Combined multiplier row for mult stats */}
                   {isMultStat && relevantSources.length > 0 && (
                     <tr className="border-b border-border/20 bg-green-900/20">
-                      <td className="py-1.5 px-2">
-                        <div className="text-foreground text-[10px] font-semibold">합산 배율</div>
-                        <div className="text-[8px] text-muted-foreground">(1 + Σ버프%)</div>
+                      <td className="py-2 px-3">
+                        <div className="text-foreground text-sm font-semibold">합산 배율</div>
+                        <div className="text-xs text-muted-foreground">(1 + Σ버프%)</div>
                       </td>
                       {heroes.map((h) => {
                         const hasLW = hasLoneWolfCowl(h);
@@ -260,33 +364,41 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         const mercMult = isMerc ? 1.25 : 1.0;
                         const champMod = hasLW ? 0 : 1;
 
-                        let totalPct = 0;
+                        let champAuraPct = 0;
+                        let boosterPct = 0;
                         let totalFlat = 0;
                         relevantSources.forEach(src => {
                           const pct = getSourcePctForStat(src, activeTab);
                           const flat = getSourceFlatForStat(src, activeTab);
-                          totalPct += src.type === 'champion' ? pct * champMod : pct;
+                          if (isBoosterSource(src)) {
+                            boosterPct += pct;
+                          } else {
+                            champAuraPct += src.type === 'champion' ? pct * champMod : pct;
+                          }
                           totalFlat += flat;
                         });
-                        const effectiveTotalPct = totalPct * mercMult;
+                        const effectiveTotalPct = champAuraPct * mercMult + boosterPct;
                         const baseVal = getBaseVal(h);
                         const addedFromPct = Math.floor(baseVal * effectiveTotalPct / 100);
 
                         return (
-                          <td key={h.id} className="py-1.5 px-2 text-center">
+                          <td key={h.id} className="py-2 px-2 text-center">
                             <div className="space-y-0.5">
-                              <div className="text-green-400 text-[11px] font-mono font-bold">
+                              <div className="text-green-400 text-base font-mono font-bold">
                                 ×{(1 + effectiveTotalPct / 100).toFixed(3)}
                               </div>
-                              <div className="text-muted-foreground text-[9px] font-mono">
+                              <div className="text-muted-foreground text-xs font-mono">
                                 (+{effectiveTotalPct.toFixed(1)}%)
                               </div>
-                              <div className="text-green-400/70 text-[9px] font-mono">
+                              <div className="text-green-400/70 text-xs font-mono">
                                 +{formatNumber(addedFromPct)}
                                 {totalFlat !== 0 && <span> +{formatNumber(totalFlat)}깡</span>}
                               </div>
                               {isMerc && (
-                                <div className="text-yellow-400 text-[8px]">용병 ×1.25 적용</div>
+                                <div className="text-yellow-400 text-xs">용병 ×1.25 적용</div>
+                              )}
+                              {boosterPct > 0 && (
+                                <div className="text-green-300 text-xs">부스터 {boosterPct}% (용병 미적용)</div>
                               )}
                             </div>
                           </td>
@@ -296,10 +408,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   )}
 
                   {/* Combined additive row for crit/eva */}
-                  {!isMultStat && activeTab !== 'threat' && relevantSources.length > 0 && (
+                  {!isMultStat && relevantSources.length > 0 && (
                     <tr className="border-b border-border/20 bg-green-900/20">
-                      <td className="py-1.5 px-2">
-                        <div className="text-foreground text-[10px] font-semibold">합산 보너스</div>
+                      <td className="py-2 px-3">
+                        <div className="text-foreground text-sm font-semibold">합산 보너스</div>
                       </td>
                       {heroes.map((h) => {
                         const hasLW = hasLoneWolfCowl(h);
@@ -307,20 +419,25 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         const mercMult = isMerc ? 1.25 : 1.0;
                         const champMod = hasLW ? 0 : 1;
 
-                        let totalPct = 0;
+                        let champAuraPct = 0;
+                        let boosterPct = 0;
                         relevantSources.forEach(src => {
                           const pct = getSourcePctForStat(src, activeTab);
-                          totalPct += src.type === 'champion' ? pct * champMod : pct;
+                          if (isBoosterSource(src)) {
+                            boosterPct += pct;
+                          } else {
+                            champAuraPct += src.type === 'champion' ? pct * champMod : pct;
+                          }
                         });
-                        const effectiveTotal = totalPct * mercMult;
+                        const effectiveTotal = champAuraPct * mercMult + boosterPct;
 
                         return (
-                          <td key={h.id} className="py-1.5 px-2 text-center">
-                            <div className="text-green-400 text-[11px] font-mono font-bold">
+                          <td key={h.id} className="py-2 px-2 text-center">
+                            <div className="text-green-400 text-base font-mono font-bold">
                               +{effectiveTotal.toFixed(1)}%
                             </div>
                             {isMerc && (
-                              <div className="text-yellow-400 text-[8px]">용병 ×1.25 적용</div>
+                              <div className="text-yellow-400 text-xs">용병 ×1.25 적용</div>
                             )}
                           </td>
                         );
@@ -328,36 +445,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     </tr>
                   )}
 
-                  {/* Crit damage row (only on crit tab) */}
-                  {activeTab === 'crit' && buffSummary.sources.some(s => s.critDmgPct) && (
-                    <tr className="border-b border-border/20 bg-primary/5">
-                      <td className="py-1.5 px-2">
-                        <div className="text-muted-foreground text-[10px]">치명타 대미지</div>
-                      </td>
-                      {heroes.map((h, hi) => {
-                        const bs = buffedStats[hi];
-                        const critDmgDelta = bs ? bs.deltaCritDmg : 0;
-                        return (
-                          <td key={h.id} className="py-1.5 px-2 text-center">
-                            {critDmgDelta !== 0 ? (
-                              <div className="space-y-0.5">
-                                <div className="text-[9px] text-muted-foreground font-mono">{h.critDmg}%</div>
-                                <div className="text-green-400 text-[10px] font-mono">+{critDmgDelta}%</div>
-                                <div className="text-yellow-300 text-[10px] font-mono font-bold">{bs!.critDmg}%</div>
-                              </div>
-                            ) : (
-                              <span className="text-muted-foreground text-[9px]">{h.critDmg}%</span>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  )}
-
-                  {/* No buffs message for this stat */}
-                  {relevantSources.length === 0 && activeTab !== 'crit' && (
+                  {/* No buffs message */}
+                  {relevantSources.length === 0 && (
                     <tr>
-                      <td colSpan={heroes.length + 1} className="py-4 text-center text-muted-foreground text-xs">
+                      <td colSpan={heroes.length + 1} className="py-6 text-center text-muted-foreground text-sm">
                         이 스탯에 대한 파티 버프가 없습니다
                       </td>
                     </tr>
@@ -368,7 +459,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
                   {/* Final buffed stat */}
                   <tr className={`${config.headerBg} border-t border-border/40`}>
-                    <td className="py-2 px-2 font-bold text-foreground text-[11px]">
+                    <td className="py-2.5 px-3 font-bold text-foreground text-sm">
                       최종 (버프 적용)
                     </td>
                     {heroes.map((h, hi) => {
@@ -376,15 +467,15 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                       if (!bs) return <td key={h.id} />;
                       const finalVal = getBuffedVal(bs);
                       const delta = getDelta(bs);
-                      const suffix = isMultStat || activeTab === 'threat' ? '' : '%';
+                      const suffix = isMultStat ? '' : '%';
 
                       return (
-                        <td key={h.id} className="py-2 px-2 text-center">
-                          <div className={`font-bold font-mono text-sm ${config.color}`}>
+                        <td key={h.id} className="py-2.5 px-2 text-center">
+                          <div className={`font-bold font-mono text-lg ${config.color}`}>
                             {suffix ? `${finalVal}${suffix}` : formatNumber(finalVal)}
                           </div>
                           {delta !== 0 && (
-                            <div className={`text-[9px] font-mono ${delta > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            <div className={`text-xs font-mono ${delta > 0 ? 'text-green-400' : 'text-red-400'}`}>
                               {delta > 0 ? '+' : ''}{suffix ? `${delta}${suffix}` : formatNumber(delta)}
                             </div>
                           )}
@@ -393,15 +484,15 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     })}
                   </tr>
 
-                  {/* Crit attack row (only on crit tab) */}
-                  {activeTab === 'crit' && (
+                  {/* Crit attack row (only on critDmg tab) */}
+                  {activeTab === 'critDmg' && (
                     <tr className="border-t border-border/20 bg-yellow-900/20">
-                      <td className="py-2 px-2 text-foreground text-[11px]">
-                        <div className="flex items-center gap-1">
-                          <img src={STAT_ICON_MAP.critAttack} alt="" className="w-4 h-4" />
+                      <td className="py-2.5 px-3 text-foreground text-sm">
+                        <div className="flex items-center gap-1.5">
+                          <img src={STAT_ICON_MAP.critAttack} alt="" className="w-5 h-5" />
                           <span className="font-medium">치명타 공격력</span>
                         </div>
-                        <span className="text-[8px] text-muted-foreground">(ATK × 치댐%)</span>
+                        <span className="text-xs text-muted-foreground">(ATK × 치댐%)</span>
                       </td>
                       {heroes.map((h, hi) => {
                         const bs = buffedStats[hi];
@@ -410,10 +501,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         const baseCritAtk = Math.floor((h.atk || 0) * (h.critDmg || 0) / 100);
                         const delta = critAtk - baseCritAtk;
                         return (
-                          <td key={h.id} className="py-2 px-2 text-center">
-                            <div className="font-bold font-mono text-sm text-yellow-300">{formatNumber(critAtk)}</div>
+                          <td key={h.id} className="py-2.5 px-2 text-center">
+                            <div className="font-bold font-mono text-lg text-yellow-300">{formatNumber(critAtk)}</div>
                             {delta !== 0 && (
-                              <div className="text-[9px] text-green-400 font-mono">+{formatNumber(delta)}</div>
+                              <div className="text-xs text-green-400 font-mono">+{formatNumber(delta)}</div>
                             )}
                           </td>
                         );
@@ -424,12 +515,28 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
               </table>
             </div>
 
+            {/* Evasion notes */}
+            {activeTab === 'evasion' && (
+              <div className="mt-3 px-3 space-y-1.5">
+                <div className="text-sm text-muted-foreground font-medium">📋 회피 관련 규칙</div>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <div>• 회피 캡: 길잡이 <span className="text-teal-300 font-mono">78%</span>, 그 외 <span className="text-teal-300 font-mono">75%</span></div>
+                  <div>• 익스트림 / 공포의 탑: 회피 <span className="text-red-400 font-mono">-20%</span> 페널티 적용</div>
+                  <div>• 락 스톰퍼: 회피 <span className="text-amber-400 font-mono">0%</span> 고정 (페널티 무시)</div>
+                  {hasEvasionPenalty && (
+                    <div className="text-amber-400 font-medium mt-1">⚠ 현재 퀘스트에 회피 페널티가 적용됩니다</div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Buff sources summary */}
-            <div className="mt-4 px-2">
-              <div className="text-[10px] text-muted-foreground font-medium mb-2">적용된 파티 버프 소스</div>
+            <div className="mt-4 px-3">
+              <div className="text-sm text-muted-foreground font-medium mb-2">적용된 파티 버프 소스</div>
               <div className="flex flex-wrap gap-2">
                 {buffSummary.sources.map((src, i) => {
                   const isChamp = src.type === 'champion';
+                  const isBooster = isBoosterSource(src);
                   const parts: string[] = [];
                   if (src.atkPct) parts.push(`공격력 +${src.atkPct}%`);
                   if (src.defPct) parts.push(`방어력 +${src.defPct}%`);
@@ -442,16 +549,16 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   if (src.flatHp) parts.push(`깡체 +${src.flatHp}`);
 
                   return (
-                    <div key={i} className="bg-secondary/50 border border-border/30 rounded-lg px-3 py-2 text-[10px]">
-                      <div className="flex items-center gap-1 mb-1">
-                        <span className={isChamp ? 'text-yellow-400' : 'text-purple-400'}>
-                          {isChamp ? '👑' : '🎵'}
+                    <div key={i} className="bg-secondary/50 border border-border/30 rounded-lg px-3 py-2 text-sm">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className={isBooster ? 'text-green-400' : isChamp ? 'text-yellow-400' : 'text-purple-400'}>
+                          {isBooster ? '⚡' : isChamp ? '👑' : '🎵'}
                         </span>
                         <span className="text-foreground font-medium">{src.name}</span>
                       </div>
-                      <div className="text-muted-foreground leading-relaxed">
+                      <div className="text-muted-foreground text-xs leading-relaxed">
                         {parts.join(', ')}
-                        {src.note && <span className="text-primary/60 ml-1">({src.note})</span>}
+                        {src.note && !isBooster && <span className="text-primary/60 ml-1">({src.note})</span>}
                       </div>
                     </div>
                   );
