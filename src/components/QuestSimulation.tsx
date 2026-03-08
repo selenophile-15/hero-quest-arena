@@ -896,35 +896,34 @@ export default function QuestSimulation() {
                     })}
                   </tr>
                 )}
-                {/* Row: Face - based on death count */}
+                {/* Row: Face - based on death count, using face images */}
                 <tr>
                   <td className="py-1 px-1.5 text-muted-foreground">표정</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
                     
-                    // Calculate face rating based on simulation deaths
                     const heroResult = simResult?.heroResults.find(r => r.heroId === hero.id);
                     const totalSims = simResult?.totalSimulations || 1;
                     const scale = totalSims / 20;
                     
-                    let face = '😐';
+                    let faceImg = '/images/quest/face/icon_shop_face_A.webp';
                     if (heroResult && simResult) {
                       const deathCount = totalSims - Math.round(heroResult.survivalRate / 100 * totalSims);
                       const belowMinPower = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
                       
-                      if (belowMinPower || deathCount >= 20 * scale) face = '😈';
-                      else if (deathCount >= 12 * scale) face = '😡';
-                      else if (deathCount >= 8 * scale) face = '😟';
-                      else if (deathCount >= 3 * scale) face = '😊';
-                      else if (deathCount >= 0.01 * scale) face = '😃';
-                      else if (simResult.avgRounds <= 1 && simResult.winRate >= 99.9) face = '😎';
-                      else face = '😃';
+                      if (belowMinPower || deathCount >= 20 * scale) faceImg = '/images/quest/face/icon_shop_face_D.webp';
+                      else if (deathCount >= 12 * scale) faceImg = '/images/quest/face/icon_shop_face_C.webp';
+                      else if (deathCount >= 8 * scale) faceImg = '/images/quest/face/icon_shop_face_B.webp';
+                      else if (deathCount >= 3 * scale) faceImg = '/images/quest/face/icon_shop_face_A.webp';
+                      else if (deathCount >= 0.01 * scale) faceImg = '/images/quest/face/icon_shop_face_S.webp';
+                      else if (simResult.avgRounds <= 1 && simResult.winRate >= 99.9) faceImg = '/images/quest/face/icon_shop_face_SSS.webp';
+                      else faceImg = '/images/quest/face/icon_shop_face_S.webp';
                     }
                     
                     return (
                       <td key={hero.id} className="text-center py-1">
-                        <span className="text-2xl">{face}</span>
+                        <img src={faceImg} alt="face" className="w-8 h-8 mx-auto" />
                       </td>
                     );
                   })}
