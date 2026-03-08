@@ -428,10 +428,18 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       {flatBonus ? `+${formatNumber(flatBonus)}` : '0'}
                     </td>
                   </tr>
+                  {relicFlatVal !== 0 && (
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-yellow-400">⭐ 유물 깡</td>
+                      <td className="py-1.5 text-right tabular-nums font-medium text-yellow-400">
+                        {relicFlatVal > 0 ? '+' : ''}{formatNumber(relicFlatVal)}
+                      </td>
+                    </tr>
+                  )}
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/80">× (1 + 공통%)</td>
-                    <td className={`py-1.5 text-right tabular-nums font-medium ${pctBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      ×{(1 + pctBonus / 100).toFixed(2)} ({pctBonus}%)
+                    <td className="py-1.5 text-foreground/80">× (1 + 공통%{relicPctVal ? '+유물%' : ''})</td>
+                    <td className={`py-1.5 text-right tabular-nums font-medium ${(pctBonus || relicPctVal) ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      ×{(1 + (pctBonus + relicPctVal) / 100).toFixed(2)} ({pctBonus}{relicPctVal ? `+${relicPctVal}` : ''}%)
                     </td>
                   </tr>
                 </tbody>
