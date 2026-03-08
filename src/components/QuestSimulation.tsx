@@ -155,8 +155,22 @@ export default function QuestSimulation() {
 
   const resetSelection = () => {
     setSelectedRegionIdx(-1);
+    setSelectedSubAreaIdx(-1);
     setSelectedQuestIdx(-1);
     setSelectedHeroIds(new Set());
+  };
+
+  // Whether this quest type has meaningful sub-areas (normal quests have 3 sub-areas per region)
+  const hasSubAreas = currentRegion && currentRegion.subAreas.length > 1;
+  const selectedSubArea = currentRegion && selectedSubAreaIdx >= 0 ? currentRegion.subAreas[selectedSubAreaIdx] : null;
+
+  // Get the barrier element for the selected sub-area
+  const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
+    if (!barrier) return null;
+    if (selectedSubAreaIdx === 0) return barrier.sub1;
+    if (selectedSubAreaIdx === 1) return barrier.sub2;
+    if (selectedSubAreaIdx === 2) return barrier.sub3;
+    return barrier.sub1; // fallback
   };
 
   const getDifficultyColor = (diff: string) => {
