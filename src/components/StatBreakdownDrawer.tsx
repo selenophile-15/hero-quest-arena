@@ -3,21 +3,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { STAT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { CalculatedStats } from '@/lib/statCalculator';
+import { CalculatedStats, EquipSlotCalc } from '@/lib/statCalculator';
 
 interface StatBreakdownDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   calcStats: CalculatedStats | null;
-  equipmentSlots: Array<{ item: any | null; quality: string; element: any | null; spirit: any | null }>;
-  selectedSkills: string[];
-  uniqueSkillName: string;
-  heroClass: string;
 }
-
-const QUALITY_MULTIPLIER: Record<string, number> = {
-  common: 1, uncommon: 1.25, flawless: 1.5, epic: 2, legendary: 3,
-};
 
 const QUALITY_LABEL: Record<string, string> = {
   common: '일반', uncommon: '고급', flawless: '최고급', epic: '에픽', legendary: '전설',
@@ -31,22 +23,16 @@ const TAB_CONFIG: { key: StatType; label: string; icon: string; color: string; h
   { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-yellow-900/40' },
 ];
 
-const EQUIP_STAT_KEY_MAP: Record<StatType, string> = {
-  atk: '장비_공격력',
-  def: '장비_방어력',
-  hp: '장비_체력',
-};
-
-function getEquipBaseStatForType(item: any, statType: StatType): number {
-  if (!item?.stats) return 0;
-  const key = EQUIP_STAT_KEY_MAP[statType];
-  const found = item.stats.find((s: any) => s.key === key);
-  return found?.value || 0;
+function getSlotStat(slot: EquipSlotCalc, statType: StatType, field: string): number {
+  const key = `${field}${statType.charAt(0).toUpperCase() + statType.slice(1)}` as keyof EquipSlotCalc;
+  return (slot[key] as number) || 0;
 }
 
-export default function StatBreakdownDrawer({
-  open, onOpenChange, calcStats, equipmentSlots, selectedSkills, uniqueSkillName, heroClass,
-}: StatBreakdownDrawerProps) {
+function getSlotStatDirect(slot: EquipSlotCalc, key: keyof EquipSlotCalc): number {
+  return (slot[key] as number) || 0;
+}
+
+export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: StatBreakdownDrawerProps) {
   const [activeTab, setActiveTab] = useState<StatType>('atk');
 
   const renderBreakdownTable = (statType: StatType) => {
@@ -57,16 +43,33 @@ export default function StatBreakdownDrawer({
     const seedStat = calcStats
       ? statType === 'atk' ? calcStats.seedAtk : statType === 'def' ? calcStats.seedDef : calcStats.seedHp
       : 0;
+    const equipSlots = calcStats?.equipResult?.slots || [];
+    const equipTotal = calcStats
+      ? statType === 'atk' ? calcStats.equipResult.totalAtk : statType === 'def' ? calcStats.equipResult.totalDef : calcStats.equipResult.totalHp
+      : 0;
+    const totalStat = calcStats
+      ? statType === 'atk' ? calcStats.totalAtk : statType === 'def' ? calcStats.totalDef : calcStats.totalHp
+      : 0;
+
+    // Field mapping for statType
+    const baseKey = statType === 'atk' ? 'baseAtk' : statType === 'def' ? 'baseDef' : 'baseHp';
+    const qualityKey = statType === 'atk' ? 'qualityAtk' : statType === 'def' ? 'qualityDef' : 'qualityHp';
+    const elementRawKey = statType === 'atk' ? 'elementRawAtk' : statType === 'def' ? 'elementRawDef' : 'elementRawHp';
+    const spiritRawKey = statType === 'atk' ? 'spiritRawAtk' : statType === 'def' ? 'spiritRawDef' : 'spiritRawHp';
+    const elementCapKey = statType === 'atk' ? 'elementCapAtk' : statType === 'def' ? 'elementCapDef' : 'elementCapHp';
+    const spiritCapKey = statType === 'atk' ? 'spiritCapAtk' : statType === 'def' ? 'spiritCapDef' : 'spiritCapHp';
+    const preBonusKey = statType === 'atk' ? 'preBonusAtk' : statType === 'def' ? 'preBonusDef' : 'preBonusHp';
+    const bonusPctKey = statType === 'atk' ? 'bonusAtkPct' : statType === 'def' ? 'bonusDefPct' : 'bonusHpPct';
+    const finalKey = statType === 'atk' ? 'finalAtk' : statType === 'def' ? 'finalDef' : 'finalHp';
 
     return (
       <div className="grid grid-cols-[1fr_2fr] gap-4 h-full">
-        {/* Left: Skill coefficients */}
+        {/* Left: Base stats and skill info (placeholder for now) */}
         <div className="space-y-3 overflow-y-auto">
           <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
             <h4 className="text-sm font-bold text-foreground">스킬</h4>
           </div>
 
-          {/* Base stats */}
           <div className="px-3">
             <table className="w-full text-xs">
               <tbody>
@@ -78,11 +81,14 @@ export default function StatBreakdownDrawer({
                   <td className="py-1.5 text-foreground/70">씨앗 {config.label}</td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(seedStat)}</td>
                 </tr>
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground/70">장비 {config.label} 합</td>
+                  <td className="py-1.5 text-right tabular-nums font-bold text-foreground">{formatNumber(equipTotal)}</td>
+                </tr>
               </tbody>
             </table>
           </div>
 
-          {/* Skill % bonuses */}
           <div className="px-3">
             <h5 className="text-xs font-semibold text-primary mb-1">직업 고유 보너스 스탯 : 깡/% 증가분</h5>
             <table className="w-full text-xs">
@@ -100,7 +106,7 @@ export default function StatBreakdownDrawer({
                   <td className="py-1 text-right tabular-nums text-muted-foreground">0</td>
                 </tr>
                 <tr className="border-b border-border/20">
-                  <td className="py-1 text-foreground/70">공공 스킬</td>
+                  <td className="py-1 text-foreground/70">공용 스킬</td>
                   <td className="py-1 text-center text-foreground">X</td>
                   <td className="py-1 text-right tabular-nums text-muted-foreground">0</td>
                 </tr>
@@ -175,58 +181,71 @@ export default function StatBreakdownDrawer({
 
           {/* Equipment grid: 2 columns x 3 rows */}
           <div className="grid grid-cols-2 gap-3 px-3">
-            {equipmentSlots.map((slot, i) => {
-              const item = slot.item;
-              const quality = slot.quality || 'common';
-              const qualityMult = QUALITY_MULTIPLIER[quality] || 1;
-              const baseStat = item ? getEquipBaseStatForType(item, statType) : 0;
-              const qualityStat = Math.floor(baseStat * qualityMult);
+            {Array.from({ length: 6 }).map((_, i) => {
+              const slot = equipSlots[i] || null;
+              const hasItem = slot && slot.itemName;
 
               return (
                 <div key={i} className="border border-border/40 rounded overflow-hidden">
                   <div className="bg-secondary/40 px-2 py-1 flex items-center justify-between">
                     <span className="text-xs font-semibold text-foreground">장비 {i + 1}</span>
-                    <span className="text-[10px] text-muted-foreground">
-                      {item ? `${item.name}` : '비어있음'}
+                    <span className="text-[10px] text-muted-foreground truncate ml-1">
+                      {hasItem ? slot.itemName : '비어있음'}
                     </span>
                   </div>
                   <table className="w-full text-xs">
                     <tbody>
                       <tr className="border-b border-border/20">
                         <td className="px-2 py-1 text-foreground/70">유형</td>
-                        <td className="px-2 py-1 text-right text-foreground">{item?.type || '-'}</td>
-                      </tr>
-                      <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-foreground/70">등급</td>
-                        <td className="px-2 py-1 text-right text-foreground">{QUALITY_LABEL[quality] || quality}</td>
+                        <td className="px-2 py-1 text-right text-foreground">{hasItem ? slot.itemTypeKor || slot.itemType : '-'}</td>
                       </tr>
                       <tr className="border-b border-border/20">
                         <td className="px-2 py-1 text-foreground/70">기본 {config.label}</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-foreground">{formatNumber(baseStat)}</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
+                          {formatNumber(slot ? getSlotStatDirect(slot, baseKey as keyof EquipSlotCalc) : 0)}
+                        </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-foreground/70">등급 적용 {config.label}</td>
-                        <td className="px-2 py-1 text-right tabular-nums font-medium text-foreground">{formatNumber(qualityStat)}</td>
+                        <td className="px-2 py-1 text-foreground/70">등급 적용</td>
+                        <td className="px-2 py-1 text-right tabular-nums font-medium text-foreground">
+                          {formatNumber(slot ? getSlotStatDirect(slot, qualityKey as keyof EquipSlotCalc) : 0)}
+                        </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-foreground/70">원소 마부 {config.label}</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-muted-foreground">0</td>
+                        <td className="px-2 py-1 text-foreground/70">원소 마부</td>
+                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-foreground'}`}>
+                          {formatNumber(slot ? getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) : 0)}
+                          {slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) && (
+                            <span className="text-[9px] text-muted-foreground ml-0.5">(캡)</span>
+                          )}
+                        </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-foreground/70">영혼 마부 {config.label}</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-muted-foreground">0</td>
+                        <td className="px-2 py-1 text-foreground/70">영혼 마부</td>
+                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-foreground'}`}>
+                          {formatNumber(slot ? getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) : 0)}
+                          {slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) && (
+                            <span className="text-[9px] text-muted-foreground ml-0.5">(캡)</span>
+                          )}
+                        </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-foreground/70">해당 인캔트 스킬 가치</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-muted-foreground">0</td>
+                        <td className="px-2 py-1 text-foreground/70">보너스 전</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
+                          {formatNumber(slot ? getSlotStatDirect(slot, preBonusKey as keyof EquipSlotCalc) : 0)}
+                        </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-foreground/70">해당 장비 스킬 보너스 %</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-muted-foreground">0</td>
+                        <td className="px-2 py-1 text-foreground/70">장비 보너스 %</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
+                          {slot ? `${getSlotStatDirect(slot, bonusPctKey as keyof EquipSlotCalc)}%` : '0%'}
+                        </td>
                       </tr>
-                      <tr>
-                        <td className="px-2 py-1 text-foreground/70">스펠나이트 보조 계수</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-muted-foreground">1</td>
+                      <tr className={hasItem ? 'bg-secondary/30' : ''}>
+                        <td className="px-2 py-1 font-semibold text-foreground">최종</td>
+                        <td className={`px-2 py-1 text-right tabular-nums font-bold ${config.color}`}>
+                          {formatNumber(slot ? getSlotStatDirect(slot, finalKey as keyof EquipSlotCalc) : 0)}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -246,40 +265,40 @@ export default function StatBreakdownDrawer({
                     <td className="py-1.5 text-right tabular-nums text-foreground">{formatNumber(baseStat)}</td>
                   </tr>
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/80">씨앗 습격치</td>
+                    <td className="py-1.5 text-foreground/80">씨앗</td>
                     <td className="py-1.5 text-right tabular-nums text-foreground">{formatNumber(seedStat)}</td>
                   </tr>
-                  {[1, 2, 3, 4, 5, 6].map(n => (
+                  {equipSlots.map((slot, n) => (
                     <tr key={n} className="border-b border-border/20">
-                      <td className="py-1 text-foreground/70">장비 {n}</td>
-                      <td className="py-1 text-right tabular-nums text-muted-foreground">0</td>
+                      <td className="py-1 text-foreground/70">장비 {n + 1} {slot.itemName && <span className="text-muted-foreground">({slot.itemName})</span>}</td>
+                      <td className="py-1 text-right tabular-nums text-foreground">
+                        {formatNumber(getSlotStatDirect(slot, finalKey as keyof EquipSlotCalc))}
+                      </td>
                     </tr>
                   ))}
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/80">깡 보너스 스탯 & 장비 물자치</td>
+                    <td className="py-1.5 text-foreground/80">깡 보너스 스탯</td>
                     <td className="py-1.5 text-right tabular-nums text-muted-foreground">0</td>
                   </tr>
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/80">1 + 공통 장비(+소울&인캔트 물자치)</td>
+                    <td className="py-1.5 text-foreground/80">1 + 공통 스킬 계수</td>
                     <td className="py-1.5 text-right tabular-nums text-foreground">1</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div className={`px-3 py-3 border-t border-border/40 flex items-center justify-between`}>
+            <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
               <span className="text-sm font-bold text-foreground">최종 {config.label}</span>
               <span className={`text-xl font-bold tabular-nums ${config.color}`}>
-                {calcStats ? formatNumber(
-                  statType === 'atk' ? calcStats.totalAtk : statType === 'def' ? calcStats.totalDef : calcStats.totalHp
-                ) : '0'}
+                {formatNumber(totalStat)}
               </span>
             </div>
           </div>
 
-          {/* Formula */}
           <div className="px-3 pb-3">
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              ※ {config.label} = (기본 {config.label} + 씨앗 {config.label} + [깡 보너스] + 장비 {config.label} 합 + 공통 장비(+소울&인캔트 물자치) × 1 + 해당 아이템 스킬 계수 + 공통 장비 보너스 스킬 계수)
+              ※ {config.label} = (기본 + 씨앗 + Σ장비최종 + 깡 보너스) × (1 + 공통%/100)
+              <br />※ 깡 보너스와 공통 스킬 계수는 다음 단계에서 구현됩니다
             </p>
           </div>
         </div>
