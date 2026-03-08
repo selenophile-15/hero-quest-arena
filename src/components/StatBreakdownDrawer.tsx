@@ -294,8 +294,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
               return (
                 <div key={i} className="border border-border/40 rounded overflow-hidden">
-                  <div className="bg-secondary/40 px-2 py-1 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-foreground">장비 {i + 1}</span>
+                  <div className="bg-yellow-900/50 px-2 py-1 flex items-center justify-between border-b border-yellow-700/30">
+                    <span className="text-xs font-semibold text-yellow-400">장비 {i + 1}</span>
                     <span className="text-[10px] text-foreground truncate ml-1">
                       {hasItem ? slot.itemName : '비어있음'}
                     </span>
