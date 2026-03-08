@@ -290,7 +290,11 @@ export async function calculateEquipmentStats(
   ]);
 
   const slotResults: EquipSlotCalc[] = [];
+  const relicEffects: RelicEffect[] = [];
 
+  // First pass: detect relics and their effects
+  const hasWeaponNullify = slots.some(s => s?.item?.name === '평화의 목걸이');
+  
   for (let i = 0; i < 6; i++) {
     const slot = slots[i];
     const item = slot?.item;
@@ -298,6 +302,40 @@ export async function calculateEquipmentStats(
     if (!item) {
       slotResults.push(emptySlotCalc(i));
       continue;
+    }
+
+    // Detect named relic effects
+    if (item.name === '키쿠 이치몬지') {
+      relicEffects.push({
+        itemName: item.name, slotIndex: i, type: 'crit_fixed',
+        description: '치명타 확률 20%로 고정', fixedValue: 20,
+      });
+    }
+    if (item.name === '락 스톰퍼') {
+      relicEffects.push({
+        itemName: item.name, slotIndex: i, type: 'evasion_fixed',
+        description: '회피 0%로 고정', fixedValue: 0,
+      });
+    }
+    if (item.name === '평화의 목걸이') {
+      relicEffects.push({
+        itemName: item.name, slotIndex: i, type: 'weapon_nullify',
+        description: '장착한 무기의 스탯 무효화',
+      });
+    }
+    if (item.name === '역효과 해머') {
+      relicEffects.push({
+        itemName: item.name, slotIndex: i, type: 'self_double',
+        description: '이 장비 스탯 +100% (2배 적용)',
+      });
+    }
+
+    // Detect manual relic bonuses
+    if (item.relicStatBonuses?.length) {
+      relicEffects.push({
+        itemName: item.name, slotIndex: i, type: 'relic_bonus',
+        description: '유물 보너스', bonuses: item.relicStatBonuses,
+      });
     }
 
     const isQuiverZero = item.type === 'quiver' && !hasRangedWeapon;
@@ -350,9 +388,16 @@ export async function calculateEquipmentStats(
     const specificHpPct = (skillBonuses.해당장비체력[typeKor] || 0);
     const specificAllPct = (skillBonuses.해당장비전체[typeKor] || 0);
 
-    const bonusAtkPct = specificAtkPct + specificAllPct + skillBonuses.모든장비공격력 + skillBonuses.모든장비전체;
-    const bonusDefPct = specificDefPct + specificAllPct + skillBonuses.모든장비방어력 + skillBonuses.모든장비전체;
-    const bonusHpPct = specificHpPct + specificAllPct + skillBonuses.모든장비체력 + skillBonuses.모든장비전체;
+    let bonusAtkPct = specificAtkPct + specificAllPct + skillBonuses.모든장비공격력 + skillBonuses.모든장비전체;
+    let bonusDefPct = specificDefPct + specificAllPct + skillBonuses.모든장비방어력 + skillBonuses.모든장비전체;
+    let bonusHpPct = specificHpPct + specificAllPct + skillBonuses.모든장비체력 + skillBonuses.모든장비전체;
+
+    // 역효과 해머: +100% to self
+    if (item.name === '역효과 해머') {
+      bonusAtkPct += 100;
+      bonusDefPct += 100;
+      bonusHpPct += 100;
+    }
 
     // Final slot stats
     let finalAtk = Math.floor(preBonusAtk * (1 + bonusAtkPct / 100));
@@ -363,6 +408,13 @@ export async function calculateEquipmentStats(
 
     // Quiver zeroing
     if (isQuiverZero) {
+      finalAtk = 0;
+      finalDef = 0;
+      finalHp = 0;
+    }
+
+    // 평화의 목걸이: weapon stats → 0
+    if (hasWeaponNullify && item.category === 'weapon') {
       finalAtk = 0;
       finalDef = 0;
       finalHp = 0;
@@ -393,6 +445,7 @@ export async function calculateEquipmentStats(
     totalHp: slotResults.reduce((sum, s) => sum + s.finalHp, 0),
     totalCrit: slotResults.reduce((sum, s) => sum + s.finalCrit, 0),
     totalEvasion: slotResults.reduce((sum, s) => sum + s.finalEvasion, 0),
+    relicEffects,
   };
 }
 
