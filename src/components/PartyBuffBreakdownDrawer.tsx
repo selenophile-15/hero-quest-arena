@@ -27,6 +27,46 @@ const STAT_TABS: { key: StatTab; label: string; icon: string; color: string; hea
   { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-teal-300', headerBg: 'bg-teal-600/30' },
 ];
 
+// Spirit names that provide per-turn HP regen
+const REGEN_SPIRIT_NAMES: Record<string, Record<string, number>> = {
+  '도마뱀': { 'X': 3, 'O': 5 },
+  '우로보로스': { 'X': 4, 'O': 6 },
+};
+
+function getHeroRegenSources(hero: Hero): { source: string; value: number }[] {
+  const sources: { source: string; value: number }[] = [];
+  
+  // Check spirits on equipment
+  hero.equipmentSlots?.forEach((slot: any) => {
+    if (!slot.spirit?.name) return;
+    const spiritName = slot.spirit.name;
+    const regenData = REGEN_SPIRIT_NAMES[spiritName];
+    if (regenData) {
+      const affKey = slot.spirit.affinity ? 'O' : 'X';
+      sources.push({ source: `${spiritName} 영혼${slot.spirit.affinity ? '(친밀)' : ''}`, value: regenData[affKey] || 0 });
+    }
+  });
+  
+  // Check class-based regen (cleric/bishop innate skill)
+  const cls = hero.heroClass || '';
+  if (cls.includes('성직자') || cls.includes('클레릭')) {
+    // Cleric regen from innate: tier 2=5, tier 3=10
+    const tier = hero.promoted ? 3 : hero.level >= 25 ? 2 : 1;
+    const regen = Math.min(tier, 3) * 5 - 5;
+    if (regen > 0) sources.push({ source: `${cls} 고유 스킬`, value: regen });
+  } else if (cls.includes('비숍') || cls.includes('주교')) {
+    const tier = hero.promoted ? 4 : hero.level >= 35 ? 3 : hero.level >= 25 ? 2 : 1;
+    const regen = tier >= 3 ? 20 : tier >= 2 ? 5 : 0;
+    if (regen > 0) sources.push({ source: `${cls} 고유 스킬`, value: regen });
+  }
+  
+  // Check skills for 매턴체력회복
+  // Skills are stored as string names; we'd need skill data lookup
+  // For now, skills with regen are identified by the class skill having 스킬_매턴체력회복
+  
+  return sources;
+}
+
 function isMercenary(hero: Hero): boolean {
   return (hero.heroClass || '') === '용병';
 }
