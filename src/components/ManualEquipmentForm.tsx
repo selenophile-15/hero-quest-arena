@@ -83,6 +83,20 @@ const RELIC_STAT_OPTIONS = [
   { value: '위협도', label: '위협도' },
 ];
 
+const AURA_STAT_OPTIONS = [
+  { value: '오라_공격력%', label: '공격력%' },
+  { value: '오라_방어력%', label: '방어력%' },
+  { value: '오라_체력%', label: '체력%' },
+  { value: '오라_깡체력', label: '체력(깡)' },
+  { value: '오라_치명타확률%', label: '치명타 확률%' },
+  { value: '오라_치명타데미지%', label: '치명타 대미지%' },
+  { value: '오라_회피%', label: '회피%' },
+  { value: '오라_경험치%', label: '경험치%' },
+  { value: '오라_매턴체력회복', label: '매턴 체력 회복' },
+  { value: '오라_퀘스트시간감소%', label: '퀘스트 시간 감소%' },
+  { value: '오라_휴식시간감소%', label: '휴식 시간 감소%' },
+];
+
 const RELIC_OP_OPTIONS = [
   { value: '증가', label: '증가' },
   { value: '감소', label: '감소' },
@@ -118,6 +132,7 @@ export interface ManualEquipmentData {
 interface ManualEquipmentFormProps {
   initialData?: ManualEquipmentData | null;
   allowedTypes?: string[];
+  isAurasong?: boolean;
   onConfirm: (item: EquipmentItem, manualData: ManualEquipmentData) => void;
   onCancel: () => void;
 }
@@ -159,8 +174,12 @@ function migrateData(d: any): ManualEquipmentData {
   };
 }
 
-export default function ManualEquipmentForm({ initialData, allowedTypes, onConfirm, onCancel }: ManualEquipmentFormProps) {
-  const [data, setData] = useState<ManualEquipmentData>(initialData ? migrateData(initialData) : emptyData());
+export default function ManualEquipmentForm({ initialData, allowedTypes, isAurasong, onConfirm, onCancel }: ManualEquipmentFormProps) {
+  const [data, setData] = useState<ManualEquipmentData>(() => {
+    const d = initialData ? migrateData(initialData) : emptyData();
+    if (isAurasong && !d.type) d.type = '오라의 노래';
+    return d;
+  });
   const [rawStats, setRawStats] = useState<Record<string, string>>({});
   const [rawRelicValues, setRawRelicValues] = useState<Record<number, string>>({});
   const typeOptions = getAllowedTypesForSlot(allowedTypes);
