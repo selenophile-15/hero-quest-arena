@@ -34,7 +34,7 @@ export interface SkillBonusSummary {
 
 export interface SkillBonusSource {
   name: string;        // skill or soul name
-  type: 'unique' | 'common' | 'soul';
+  type: 'unique' | 'common' | 'soul' | 'relic';
   flatAtk: number;
   flatDef: number;
   flatHp: number;
