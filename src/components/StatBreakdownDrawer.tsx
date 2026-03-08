@@ -141,92 +141,54 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </table>
           </div>
 
-          {/* Skill bonuses breakdown */}
+          {/* Skill & Soul bonuses combined */}
           <div className="px-3">
             <h5 className="text-xs font-semibold text-primary mb-1">스킬 보너스 ({config.label})</h5>
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border/50">
-                  <th className="py-1 text-left text-foreground/60">스킬명</th>
+                  <th className="py-1 text-left text-foreground/60">스킬/영혼명</th>
                   <th className="py-1 text-center text-foreground/60">깡</th>
                   <th className="py-1 text-right text-foreground/60">%</th>
                 </tr>
               </thead>
               <tbody>
-                {skillSources.length === 0 ? (
-                  <tr className="border-b border-border/20">
-                    <td colSpan={3} className="py-1 text-center text-muted-foreground">스킬 없음</td>
-                  </tr>
-                ) : skillSources.map((src, i) => {
-                  const flat = getBonusField(src, statType, 'flat');
-                  const pct = getBonusField(src, statType, 'pct');
-                  return (
-                    <tr key={i} className="border-b border-border/20">
-                      <td className="py-1 text-foreground/70">
-                        <span className={`text-[9px] mr-1 px-1 rounded ${src.type === 'unique' ? 'bg-purple-700/60' : 'bg-amber-800/40'}`}>
-                          {src.type === 'unique' ? '고유' : '공용'}
-                        </span>
-                        {src.name}
-                      </td>
-                      <td className={`py-1 text-center tabular-nums ${flat ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {flat ? `+${formatNumber(flat)}` : '-'}
-                      </td>
-                      <td className={`py-1 text-right tabular-nums ${pct ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {pct ? `+${pct}%` : '-'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Soul bonuses breakdown */}
-          <div className="px-3">
-            <h5 className="text-xs font-semibold text-primary mb-1">영혼 보너스 ({config.label})</h5>
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-border/50">
-                  <th className="py-1 text-left text-foreground/60">영혼</th>
-                  <th className="py-1 text-center text-foreground/60">깡</th>
-                  <th className="py-1 text-right text-foreground/60">%</th>
-                </tr>
-              </thead>
-              <tbody>
-                {soulSources.length === 0 ? (
-                  <tr className="border-b border-border/20">
-                    <td colSpan={3} className="py-1 text-center text-muted-foreground">영혼 없음</td>
-                  </tr>
-                ) : soulSources.map((src, i) => {
-                  const flat = getBonusField(src, statType, 'flat');
-                  const pct = getBonusField(src, statType, 'pct');
-                  if (flat === 0 && pct === 0) return null;
-                  return (
-                    <tr key={i} className="border-b border-border/20">
-                      <td className="py-1 text-foreground/70">{src.name}</td>
-                      <td className={`py-1 text-center tabular-nums ${flat ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {flat ? `+${formatNumber(flat)}` : '-'}
-                      </td>
-                      <td className={`py-1 text-right tabular-nums ${pct ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {pct ? `+${pct}%` : '-'}
-                      </td>
-                    </tr>
-                  );
-                }).filter(Boolean)}
-                {soulSources.length > 0 && soulSources.some(s => getBonusField(s, statType, 'flat') !== 0 || getBonusField(s, statType, 'pct') !== 0) && (() => {
-                  const totalFlat = soulSources.reduce((sum, s) => sum + getBonusField(s, statType, 'flat'), 0);
-                  const totalPct = soulSources.reduce((sum, s) => sum + getBonusField(s, statType, 'pct'), 0);
-                  return (
-                    <tr className="border-t border-border/40 font-semibold">
-                      <td className="py-1 text-foreground/80">합계</td>
-                      <td className={`py-1 text-center tabular-nums ${totalFlat ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {totalFlat ? `+${formatNumber(totalFlat)}` : '-'}
-                      </td>
-                      <td className={`py-1 text-right tabular-nums ${totalPct ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {totalPct ? `+${totalPct}%` : '-'}
-                      </td>
-                    </tr>
-                  );
+                {(() => {
+                  const allSources = [...skillSources, ...soulSources];
+                  const filtered = allSources.filter(src => {
+                    const flat = getBonusField(src, statType, 'flat');
+                    const pct = getBonusField(src, statType, 'pct');
+                    return flat !== 0 || pct !== 0;
+                  });
+                  if (filtered.length === 0) {
+                    return (
+                      <tr className="border-b border-border/20">
+                        <td colSpan={3} className="py-1 text-center text-muted-foreground">보너스 없음</td>
+                      </tr>
+                    );
+                  }
+                  return filtered.map((src, i) => {
+                    const flat = getBonusField(src, statType, 'flat');
+                    const pct = getBonusField(src, statType, 'pct');
+                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
+                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
+                    return (
+                      <tr key={i} className="border-b border-border/20">
+                        <td className="py-1 text-foreground/70">
+                          <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>
+                            {tagLabel}
+                          </span>
+                          {src.name}
+                        </td>
+                        <td className={`py-1 text-center tabular-nums ${flat ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          {flat ? `+${formatNumber(flat)}` : '-'}
+                        </td>
+                        <td className={`py-1 text-right tabular-nums ${pct ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          {pct ? `+${pct}%` : '-'}
+                        </td>
+                      </tr>
+                    );
+                  });
                 })()}
               </tbody>
             </table>
@@ -235,21 +197,30 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
           {/* Equipment-specific bonuses */}
           <div className="px-3">
             <h5 className="text-xs font-semibold text-primary mb-1">장비 보너스 스킬 ({config.label})</h5>
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-border/50">
-                  <th className="py-1 text-left text-foreground/60">구분</th>
-                  <th className="py-1 text-right text-foreground/60">%</th>
-                </tr>
-              </thead>
-              <tbody>
-                {해당장비Entries.length === 0 && equipBonusData.모든장비 === 0 ? (
-                  <tr className="border-b border-border/20">
-                    <td colSpan={2} className="py-1 text-center text-muted-foreground">장비 보너스 없음</td>
-                  </tr>
-                ) : (
-                  <>
-                    {해당장비Entries.map(([equipType, pct], i) => (
+            {/* 해당 장비 보너스 */}
+            {(() => {
+              // Filter to only show equipment types that match currently equipped items
+              const equippedTypes = new Set(
+                (calcStats?.equipResult?.slots || [])
+                  .filter(s => s.itemName)
+                  .map(s => s.itemTypeKor || s.itemType)
+              );
+              const matchedEntries = 해당장비Entries.filter(([equipType]) => equippedTypes.has(equipType));
+              
+              return (
+                <table className="w-full text-xs mb-2">
+                  <thead>
+                    <tr className="border-b border-border/50">
+                      <th className="py-1 text-left text-foreground/60">해당 장비 {config.label} 보너스</th>
+                      <th className="py-1 text-right text-foreground/60">%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {matchedEntries.length === 0 ? (
+                      <tr className="border-b border-border/20">
+                        <td colSpan={2} className="py-1 text-center text-muted-foreground">해당 없음</td>
+                      </tr>
+                    ) : matchedEntries.map(([equipType, pct], i) => (
                       <tr key={i} className="border-b border-border/20">
                         <td className="py-1 text-foreground/70">
                           <span className="text-[9px] mr-1 px-1 rounded bg-cyan-800/40">해당</span>
@@ -258,16 +229,31 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         <td className="py-1 text-right tabular-nums text-foreground">+{pct}%</td>
                       </tr>
                     ))}
-                    {equipBonusData.모든장비 !== 0 && (
-                      <tr className="border-b border-border/20">
-                        <td className="py-1 text-foreground/70">
-                          <span className="text-[9px] mr-1 px-1 rounded bg-green-800/40">전체</span>
-                          모든 장비
-                        </td>
-                        <td className="py-1 text-right tabular-nums text-foreground">+{equipBonusData.모든장비}%</td>
-                      </tr>
-                    )}
-                  </>
+                  </tbody>
+                </table>
+              );
+            })()}
+            {/* 모든 장비 보너스 */}
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="py-1 text-left text-foreground/60">모든 장비 보너스</th>
+                  <th className="py-1 text-right text-foreground/60">%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {equipBonusData.모든장비 === 0 ? (
+                  <tr className="border-b border-border/20">
+                    <td colSpan={2} className="py-1 text-center text-muted-foreground">해당 없음</td>
+                  </tr>
+                ) : (
+                  <tr className="border-b border-border/20">
+                    <td className="py-1 text-foreground/70">
+                      <span className="text-[9px] mr-1 px-1 rounded bg-green-800/40">전체</span>
+                      모든 장비
+                    </td>
+                    <td className="py-1 text-right tabular-nums text-foreground">+{equipBonusData.모든장비}%</td>
+                  </tr>
                 )}
               </tbody>
             </table>
@@ -308,8 +294,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
               return (
                 <div key={i} className="border border-border/40 rounded overflow-hidden">
-                  <div className="bg-secondary/40 px-2 py-1 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-foreground">장비 {i + 1}</span>
+                  <div className="bg-yellow-900/50 px-2 py-1 flex items-center justify-between border-b border-yellow-700/30">
+                    <span className="text-xs font-semibold text-yellow-400">장비 {i + 1}</span>
                     <span className="text-[10px] text-foreground truncate ml-1">
                       {hasItem ? slot.itemName : '비어있음'}
                     </span>
