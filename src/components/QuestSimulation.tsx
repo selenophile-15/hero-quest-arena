@@ -465,9 +465,13 @@ export default function QuestSimulation() {
           <div className="card-fantasy p-4 relative min-h-[400px]">
             {/* Region icon - top left, bigger */}
             {currentRegion && (
-              <div className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10">
+              <button
+                onClick={() => openConfigAtStep('region')}
+                className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 hover:border-primary/70 transition-all cursor-pointer"
+                title="지역 변경"
+              >
                 <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-              </div>
+              </button>
             )}
 
             {/* Booster slot - top right, symmetric with region icon */}
