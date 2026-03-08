@@ -969,19 +969,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   };
 }
 
-/** Get the booster config for Fateweaver retry (stack Normal on top) */
+/** Get the booster config for Fateweaver retry: original booster + Normal booster stacked */
 function getRetryBooster(original: BoosterType): BoosterType {
-  // Retry adds a Normal Power Booster (+20% atk/def) on top
-  // The actual stacking: if no booster → normal, if normal → super-equivalent, etc.
-  // But per the game docs, it literally adds Normal booster stats on top
-  // So we just need to track the original + extra 20%/20%
-  // We'll handle this by creating a synthetic booster level
-  switch (original.type) {
-    case 'none': return { type: 'normal' };  // 0 + 20% = normal equivalent
-    case 'normal': return { type: 'super' }; // This isn't exact but approximates
-    case 'super': return { type: 'mega' };   // Approximation
-    case 'mega': return { type: 'mega' };    // Already max; the +20% is on top but we cap at mega
-  }
+  // Normal booster = +20% atk, +20% def. Just add these on top of whatever was used.
+  return {
+    ...original,
+    extraAtkBonus: (original.extraAtkBonus || 0) + 0.2,
+    extraDefBonus: (original.extraDefBonus || 0) + 0.2,
+  };
 }
 
 
