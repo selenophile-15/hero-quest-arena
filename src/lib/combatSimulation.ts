@@ -817,8 +817,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         
         const baseHeroDmg = finalAtk[jj] * atkMod * tamasAtkMult + hemmaBonus[jj];
 
-        const totalCritChance = (heroCritChance[jj] + ninjaBonus[jj] + rudoBonus) * heroArtCritChanceMod[jj]
-          + (1 - heroArtCritChanceMod[jj]) * 0.2;
+        const totalCritChance = Math.min(1.0,
+          (heroCritChance[jj] + ninjaBonus[jj] + rudoBonus) * heroArtCritChanceMod[jj]
+          + (1 - heroArtCritChanceMod[jj]) * 0.2);
 
         const isCrit = Math.random() < totalCritChance || guaranteedCrit[jj];
 

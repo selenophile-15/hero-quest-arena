@@ -701,21 +701,23 @@ export default function QuestSimulation() {
         {/* CENTER: Hero Slots */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-3">
-            {currentQuest && selectedHeroes.length > 0 && (
-              <Button
-                onClick={() => setBuffBreakdownOpen(true)}
-                variant="outline"
-                size="sm"
-                className="gap-1.5"
-              >
-                📊 스탯 계산표
-              </Button>
-            )}
             <Users className="w-5 h-5 text-primary" />
             <h3 className="font-display text-lg text-foreground">파티 구성</h3>
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
           </div>
           <div className="card-fantasy p-4 overflow-x-auto">
+            {currentQuest && selectedHeroes.length > 0 && (
+              <div className="mb-3">
+                <Button
+                  onClick={() => setBuffBreakdownOpen(true)}
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5"
+                >
+                  📊 스탯 계산표
+                </Button>
+              </div>
+            )}
             <table className="w-full text-xs">
               <colgroup>
                 <col className="w-20" />
@@ -838,6 +840,15 @@ export default function QuestSimulation() {
                     (selectedQuestType === 'tot' && currentRegion?.name === '공포')
                   );
 
+                  // Check if barrier is broken
+                  const barrierBroken = (() => {
+                    if (!currentQuest?.barrier || barrierElements.length === 0) return true;
+                    const heroSum = selectedHeroes.reduce((sum, h) => {
+                      return sum + barrierElements.reduce((s, el) => s + (h.equipmentElements?.[el] || 0), 0);
+                    }, 0);
+                    return heroSum >= currentQuest.barrier.hp;
+                  })();
+
                   const statRows = [
                     { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-400' },
                     { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400' },
@@ -880,6 +891,7 @@ export default function QuestSimulation() {
                             // Evasion special handling
                             let displayColor = stat.color;
                             let evasionNote = '';
+                            let barrierNote = '';
                             if (stat.key === 'evasion') {
                               const hasRockStompers = hero.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
                               const isPathfinder = (hero.heroClass || '').includes('길잡이');
@@ -888,7 +900,7 @@ export default function QuestSimulation() {
                               if (hasRockStompers) {
                                 val = 0;
                                 delta = 0;
-                                evasionNote = '🪨';
+                                evasionNote = '0% 고정';
                               } else {
                                 if (hasEvasionPenalty) {
                                   val = val - 20;
@@ -901,15 +913,31 @@ export default function QuestSimulation() {
                               }
                               if (val < 0) displayColor = 'text-purple-400';
                             }
+
+                            // Crit chance cap at 100%
+                            if (stat.key === 'crit') {
+                              if (val > 100) val = 100;
+                            }
+
+                            // Barrier not broken: ATK and CRIT.DMG show 20% values
+                            if (!barrierBroken && (stat.key === 'atk' || (stat as any).computed)) {
+                              const originalVal = val;
+                              val = Math.floor(val * 0.2);
+                              barrierNote = `(${(stat as any).computed ? formatNumber(originalVal) : formatNumber(originalVal)})`;
+                              displayColor = 'text-purple-400';
+                            }
                             
                             return (
                               <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${displayColor}`}>
                                 <div className="flex flex-col items-center">
-                                  <span>{stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}</span>
-                                  {delta > 0 && (
+                                  <span>
+                                    {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
+                                    {barrierNote && <span className="text-[9px] text-muted-foreground ml-0.5">{barrierNote}</span>}
+                                  </span>
+                                  {delta > 0 && !barrierNote && (
                                     <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
-                                  {delta < 0 && (
+                                  {delta < 0 && !barrierNote && (
                                     <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}

@@ -583,6 +583,11 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         }
                       }
 
+                      // Crit chance cap at 100%
+                      if (activeTab === 'critChance') {
+                        if (finalVal > 100) finalVal = 100;
+                      }
+
                       return (
                         <td key={h.id} className="py-2.5 px-2 text-center">
                           <div className={`font-bold font-mono text-lg ${activeTab === 'evasion' ? evasionColor : config.color}`}>
