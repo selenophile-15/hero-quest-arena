@@ -891,6 +891,7 @@ export default function QuestSimulation() {
                             // Evasion special handling
                             let displayColor = stat.color;
                             let evasionNote = '';
+                            let barrierNote = '';
                             if (stat.key === 'evasion') {
                               const hasRockStompers = hero.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
                               const isPathfinder = (hero.heroClass || '').includes('길잡이');
@@ -912,15 +913,31 @@ export default function QuestSimulation() {
                               }
                               if (val < 0) displayColor = 'text-purple-400';
                             }
+
+                            // Crit chance cap at 100%
+                            if (stat.key === 'crit') {
+                              if (val > 100) val = 100;
+                            }
+
+                            // Barrier not broken: ATK and CRIT.DMG show 20% values
+                            if (!barrierBroken && (stat.key === 'atk' || (stat as any).computed)) {
+                              const originalVal = val;
+                              val = Math.floor(val * 0.2);
+                              barrierNote = `(${(stat as any).computed ? formatNumber(originalVal) : formatNumber(originalVal)})`;
+                              displayColor = 'text-purple-400';
+                            }
                             
                             return (
                               <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${displayColor}`}>
                                 <div className="flex flex-col items-center">
-                                  <span>{stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}</span>
-                                  {delta > 0 && (
+                                  <span>
+                                    {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
+                                    {barrierNote && <span className="text-[9px] text-muted-foreground ml-0.5">{barrierNote}</span>}
+                                  </span>
+                                  {delta > 0 && !barrierNote && (
                                     <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
-                                  {delta < 0 && (
+                                  {delta < 0 && !barrierNote && (
                                     <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
