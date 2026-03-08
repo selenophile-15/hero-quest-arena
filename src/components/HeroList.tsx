@@ -554,7 +554,14 @@ export default function HeroList() {
                 ].map((s, i) => (
                   <div key={i} className={`flex items-center gap-2 py-0.5 px-1 ${dimClass(s.value)}`}>
                     <img src={s.icon} alt="" className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm ml-auto tabular-nums">{s.value ? `${formatNumber(s.value)}${s.suffix}` : '0'}</span>
+                    <span className="text-sm ml-auto tabular-nums">{s.value ? (() => {
+                      const v = `${formatNumber(s.value)}${s.suffix}`;
+                      if ((s as any).isEvasion && s.value) {
+                        const cap = (s as any).jobName === '길잡이' ? 78 : 75;
+                        if (Number(s.value) > cap) return <>{v} <span className="text-xs text-muted-foreground">({cap}%)</span></>;
+                      }
+                      return v;
+                    })() : '0'}</span>
                   </div>
                 ))}
                 <div className="flex items-center gap-2 py-0.5 px-1">

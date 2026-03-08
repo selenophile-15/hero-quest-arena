@@ -733,7 +733,14 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <div key={i} className="flex items-center gap-2 py-0.5 px-1">
                   <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
                   <span className="text-sm text-foreground ml-auto tabular-nums">
-                    {stat.value ? `${formatNumber(stat.value)}${stat.suffix}` : '-'}
+                    {stat.value ? (() => {
+                      const v = `${formatNumber(stat.value)}${stat.suffix}`;
+                      if ((stat as any).isEvasion && stat.value) {
+                        const cap = heroClass === '길잡이' ? 78 : 75;
+                        if (Number(stat.value) > cap) return <>{v} <span className="text-xs text-muted-foreground">({cap}%)</span></>;
+                      }
+                      return v;
+                    })() : '-'}
                   </span>
                 </div>
               ))}
