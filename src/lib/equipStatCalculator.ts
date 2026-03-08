@@ -77,6 +77,19 @@ export interface EquipCalcResult {
   totalHp: number;
   totalCrit: number;
   totalEvasion: number;
+  // Relic effects detected
+  relicEffects: RelicEffect[];
+}
+
+export interface RelicEffect {
+  itemName: string;
+  slotIndex: number;
+  type: 'crit_fixed' | 'evasion_fixed' | 'weapon_nullify' | 'self_double' | 'relic_bonus';
+  description: string;
+  // For fixed effects
+  fixedValue?: number;
+  // For relic bonuses
+  bonuses?: { stat: string; op: string; value: number }[];
 }
 
 interface SlotInput {
