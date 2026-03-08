@@ -10,7 +10,7 @@ import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Lo
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
-import { runCombatSimulation, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType } from '@/lib/combatSimulation';
+import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 
@@ -159,6 +159,8 @@ export default function QuestSimulation() {
   const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
   const [selectedBooster, setSelectedBooster] = useState<'none' | 'normal' | 'super' | 'mega'>('none');
+  const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
+  const [showCombatLog, setShowCombatLog] = useState(false);
 
   // Load quest data
   useEffect(() => {
@@ -558,16 +560,16 @@ export default function QuestSimulation() {
 
                 {/* Line 4: Element Barrier */}
                 {barrierElements.length > 0 && currentQuest.barrier && (
-                  <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center gap-4">
                     {barrierElements.map((el, i) => {
                       const iconPath = commonData?.elementalBarriers?.[el]?.image;
                       const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
                       const required = currentQuest.barrier!.hp;
                       const isMet = heroSum >= required;
                       return (
-                        <div key={i} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-purple-500/30 bg-purple-500/10'}`}>
-                          {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                          <span className={`text-xs font-mono font-bold ${isMet ? 'text-green-400' : 'text-purple-300'}`}>
+                        <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-purple-500/30 bg-purple-500/10'}`}>
+                          {iconPath && <img src={iconPath} alt="" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                          <span className={`text-sm font-mono font-bold ${isMet ? 'text-green-400' : 'text-purple-300'}`}>
                             {formatNumber(heroSum)} / {formatNumber(required)}
                           </span>
                         </div>
@@ -752,7 +754,7 @@ export default function QuestSimulation() {
           </div>
           <div className="card-fantasy p-4 overflow-x-auto">
             {currentQuest && selectedHeroes.length > 0 && (
-              <div className="mb-3">
+              <div className="mb-3 flex items-center gap-3">
                 <Button
                   onClick={() => setBuffBreakdownOpen(true)}
                   variant="outline"
@@ -761,6 +763,31 @@ export default function QuestSimulation() {
                 >
                   📊 스탯 계산표
                 </Button>
+              </div>
+            )}
+            {/* Win Rate - between stat button and element row */}
+            {currentQuest && selectedHeroes.length > 0 && simResult && (
+              <div className="mb-3 text-center">
+                <div className="text-[10px] text-muted-foreground mb-0.5">승률</div>
+                <div className={`text-2xl font-bold font-mono ${
+                  simResult.winRate >= 90 ? 'text-green-400' :
+                  simResult.winRate >= 70 ? 'text-lime-400' :
+                  simResult.winRate >= 50 ? 'text-yellow-400' :
+                  simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400'
+                }`}>
+                  {simResult.winRate.toFixed(1)}%
+                </div>
+                {simResult.retryWinRate !== undefined && (
+                  <div className="text-[9px] text-muted-foreground space-y-0.5 mt-1">
+                    <div>1차 시도: <span className="text-foreground">{simResult.rawWinRate.toFixed(1)}%</span></div>
+                    <div>2차 시도 (부스터 적용): <span className="text-foreground">{simResult.retryWinRate.toFixed(1)}%</span></div>
+                  </div>
+                )}
+                {simRunning && (
+                  <div className="flex items-center justify-center gap-2 mt-1 text-xs text-muted-foreground">
+                    <Loader2 className="w-3 h-3 animate-spin" /> 계산 중...
+                  </div>
+                )}
               </div>
             )}
             <table className="w-full text-xs">
@@ -959,17 +986,20 @@ export default function QuestSimulation() {
                               if (val < 0) displayColor = 'text-purple-400';
                             }
 
-                            // Crit chance: show raw value, note capped at 100%
+                            // Crit chance: cap display at 100%, show raw in parentheses
                             let critCapNote = '';
+                            let rawCritVal = 0;
                             if (stat.key === 'crit' && val > 100) {
-                              critCapNote = `(판정: 100%)`;
+                              rawCritVal = val;
+                              critCapNote = `(실제: ${rawCritVal}%)`;
+                              val = 100;
                             }
 
                             // Barrier not broken: ATK and CRIT.DMG show 20% values
+                            let barrierOriginal = 0;
                             if (!barrierBroken && (stat.key === 'atk' || (stat as any).computed)) {
-                              const originalVal = val;
+                              barrierOriginal = val;
                               val = Math.floor(val * 0.2);
-                              barrierNote = `(${(stat as any).computed ? formatNumber(originalVal) : formatNumber(originalVal)})`;
                               displayColor = 'text-purple-400';
                             }
                             
@@ -978,12 +1008,14 @@ export default function QuestSimulation() {
                                 <div className="flex flex-col items-center">
                                   <span>
                                     {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
-                                    {barrierNote && <span className="text-[9px] text-muted-foreground ml-0.5">{barrierNote}</span>}
                                   </span>
-                                  {delta > 0 && !barrierNote && (
+                                  {barrierOriginal > 0 && (
+                                    <span className="text-[9px] text-muted-foreground leading-tight">({formatNumber(barrierOriginal)})</span>
+                                  )}
+                                  {delta > 0 && !barrierOriginal && (
                                     <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
-                                  {delta < 0 && !barrierNote && (
+                                  {delta < 0 && !barrierOriginal && (
                                     <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
@@ -1019,88 +1051,6 @@ export default function QuestSimulation() {
                 })()}
               </tbody>
             </table>
-            {currentQuest && selectedHeroes.length > 0 && (
-              <div className="mt-3 space-y-3">
-                {simRunning && (
-                  <div className="flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" /> 시뮬레이션 진행 중...
-                  </div>
-                )}
-
-                {/* Simulation Results */}
-                {simResult && (
-                  <div className="space-y-2 border-t border-border/30 pt-3">
-                    {/* Win Rate - large */}
-                    <div className="text-center">
-                      <div className="text-[10px] text-muted-foreground mb-0.5">승률</div>
-                      <div className={`text-2xl font-bold font-mono ${
-                        simResult.winRate >= 90 ? 'text-green-400' :
-                        simResult.winRate >= 70 ? 'text-lime-400' :
-                        simResult.winRate >= 50 ? 'text-yellow-400' :
-                        simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400'
-                      }`}>
-                        {simResult.winRate.toFixed(1)}%
-                      </div>
-                      {simResult.retryWinRate !== undefined && (
-                        <div className="text-[9px] text-muted-foreground space-y-0.5 mt-1">
-                          <div>1차 시도: <span className="text-foreground">{simResult.rawWinRate.toFixed(1)}%</span></div>
-                          <div>2차 시도 (부스터 적용): <span className="text-foreground">{simResult.retryWinRate.toFixed(1)}%</span></div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Rounds & Stats */}
-                    <div className="grid grid-cols-3 gap-1 text-center">
-                      <div>
-                        <div className="text-[9px] text-muted-foreground">최소 라운드</div>
-                        <div className="text-xs font-mono text-foreground">{simResult.minRounds}</div>
-                      </div>
-                      <div>
-                        <div className="text-[9px] text-muted-foreground">평균 라운드</div>
-                        <div className="text-xs font-mono text-foreground">{simResult.avgRounds.toFixed(1)}</div>
-                      </div>
-                      <div>
-                        <div className="text-[9px] text-muted-foreground">최대 라운드</div>
-                        <div className="text-xs font-mono text-foreground">{simResult.maxRounds}</div>
-                      </div>
-                    </div>
-
-                    {simResult.roundLimitRate > 0 && (
-                      <div className="text-center text-[9px] text-red-400">
-                        ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
-                      </div>
-                    )}
-
-                    {/* Per-hero results */}
-                    <table className="w-full text-[10px]">
-                      <thead>
-                        <tr className="text-muted-foreground border-b border-border/30">
-                          <th className="text-left py-1 px-1">영웅</th>
-                          <th className="text-center py-1">생존률</th>
-                          <th className="text-center py-1">평균 데미지</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {simResult.heroResults.map(hr => (
-                          <tr key={hr.heroId} className="border-b border-border/10">
-                            <td className="py-1 px-1 text-foreground font-medium">{hr.heroName}</td>
-                            <td className={`py-1 text-center font-mono ${
-                              hr.survivalRate >= 90 ? 'text-green-400' :
-                              hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
-                            }`}>{hr.survivalRate.toFixed(1)}%</td>
-                            <td className="py-1 text-center font-mono text-red-400">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-
-                    <div className="text-center text-[8px] text-muted-foreground/50">
-                      {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
@@ -1155,6 +1105,140 @@ export default function QuestSimulation() {
           </div>
         </div>
       </div>
+
+      {/* Full-width Simulation Details Box */}
+      {currentQuest && selectedHeroes.length > 0 && simResult && (
+        <div className="mt-4 card-fantasy p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
+            <div className="flex items-center gap-2">
+              <span className="text-[8px] text-muted-foreground/50">
+                {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1"
+                onClick={() => {
+                  if (!currentQuest || !currentRegion) return;
+                  const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
+                  const bElements = currentQuest?.barrier ? (() => {
+                    const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                    const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                      ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
+                      : null;
+                    const rawElements = barrierElement2
+                      ? [barrierElement2]
+                      : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+                    return [...new Set(rawElements)] as string[];
+                  })() : [];
+                  const questMonster: QuestMonster = {
+                    hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
+                    aoeChance: currentQuest.aoeChance, def: currentQuest.def,
+                    isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
+                    barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
+                  };
+                  const entries = runSingleCombatLog({
+                    heroes: selectedHeroes, monster: questMonster,
+                    miniBoss: 'none' as MiniBossType, booster: { type: selectedBooster },
+                    questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
+                  });
+                  setCombatLog(entries);
+                  setShowCombatLog(true);
+                }}
+              >
+                🎲 1회 전투 로그
+              </Button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Left: Rounds info */}
+            <div>
+              <div className="text-xs text-muted-foreground mb-2 font-medium">라운드 정보</div>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="bg-secondary/30 rounded p-2">
+                  <div className="text-[9px] text-muted-foreground">최소</div>
+                  <div className="text-sm font-mono text-foreground font-bold">{simResult.minRounds}</div>
+                </div>
+                <div className="bg-secondary/30 rounded p-2">
+                  <div className="text-[9px] text-muted-foreground">평균</div>
+                  <div className="text-sm font-mono text-foreground font-bold">{simResult.avgRounds.toFixed(1)}</div>
+                </div>
+                <div className="bg-secondary/30 rounded p-2">
+                  <div className="text-[9px] text-muted-foreground">최대</div>
+                  <div className="text-sm font-mono text-foreground font-bold">{simResult.maxRounds}</div>
+                </div>
+              </div>
+              {simResult.roundLimitRate > 0 && (
+                <div className="mt-2 text-center text-[10px] text-red-400">
+                  ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
+                </div>
+              )}
+            </div>
+
+            {/* Right: Per-hero results */}
+            <div>
+              <div className="text-xs text-muted-foreground mb-2 font-medium">영웅별 결과</div>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-muted-foreground border-b border-border/30">
+                    <th className="text-left py-1 px-1">영웅</th>
+                    <th className="text-center py-1">생존률</th>
+                    <th className="text-center py-1">평균 데미지</th>
+                    <th className="text-center py-1">최대 데미지</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {simResult.heroResults.map(hr => (
+                    <tr key={hr.heroId} className="border-b border-border/10">
+                      <td className="py-1.5 px-1 text-foreground font-medium">{hr.heroName}</td>
+                      <td className={`py-1.5 text-center font-mono ${
+                        hr.survivalRate >= 90 ? 'text-green-400' :
+                        hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
+                      }`}>{hr.survivalRate.toFixed(1)}%</td>
+                      <td className="py-1.5 text-center font-mono text-red-400">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
+                      <td className="py-1.5 text-center font-mono text-orange-400">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Combat Log */}
+          {showCombatLog && combatLog && (
+            <div className="mt-4 border-t border-border/30 pt-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-foreground">🎲 1회 전투 로그</span>
+                <button onClick={() => setShowCombatLog(false)} className="text-[10px] text-muted-foreground hover:text-foreground">닫기 ✕</button>
+              </div>
+              <ScrollArea className="h-64 rounded border border-border/30 bg-secondary/20 p-2">
+                <div className="space-y-0.5 text-[11px] font-mono">
+                  {combatLog.map((entry, idx) => {
+                    let color = 'text-muted-foreground';
+                    let icon = '';
+                    if (entry.type === 'monster_attack') { color = 'text-red-400'; icon = '⚔️'; }
+                    else if (entry.type === 'hero_attack') { color = 'text-blue-400'; icon = '🗡️'; }
+                    else if (entry.type === 'heal') { color = 'text-green-400'; icon = '💚'; }
+                    else if (entry.type === 'result') { color = entry.detail.includes('승리') ? 'text-green-400' : 'text-red-400'; icon = '🏁'; }
+                    else { color = 'text-yellow-400'; icon = '⚡'; }
+                    return (
+                      <div key={idx} className={`${color} leading-relaxed`}>
+                        <span className="text-muted-foreground/50 mr-1">[R{entry.round}]</span>
+                        <span className="mr-1">{icon}</span>
+                        <span className="text-foreground/80 font-semibold mr-1">{entry.actor}</span>
+                        {entry.target && <span className="text-muted-foreground mr-1">→ {entry.target}</span>}
+                        <span>{entry.detail}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Config Dialog */}
       <QuestConfigDialog

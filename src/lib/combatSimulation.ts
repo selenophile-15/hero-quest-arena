@@ -981,7 +981,168 @@ function getRetryBooster(original: BoosterType): BoosterType {
   };
 }
 
+// ─── Single Combat Log ──────────────────────────────────────────────────────
 
+export interface CombatLogEntry {
+  round: number;
+  type: 'monster_attack' | 'hero_attack' | 'heal' | 'event' | 'result';
+  actor: string;
+  target?: string;
+  detail: string;
+  values?: Record<string, number | string>;
+}
+
+export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
+  const { heroes, monster, booster, isTerrorTower } = config;
+  const log: CombatLogEntry[] = [];
+  const activeHeroes = heroes.filter(h => h.hp > 0);
+  if (activeHeroes.length === 0) return [{ round: 0, type: 'result', actor: '시스템', detail: '활성 영웅 없음' }];
+
+  const numHeroes = activeHeroes.length;
+  const isExtreme = monster.isExtreme || isTerrorTower;
+
+  // Simplified single run with logging - reuse the same core logic
+  // We run the full simulation with count=1 but also capture a log
+  const singleResult = runCombatSimulation({ ...config, simulationCount: 1 });
+
+  // Since the simulation engine doesn't produce logs internally,
+  // we do a simplified single combat here with logging
+  const mobCap = monster.def.r0;
+  let mobDamage = monster.atk;
+  if (isTerrorTower) mobDamage = Math.round(mobDamage * 0.05);
+  const mobAoeDmgRatio = monster.aoe / monster.atk;
+  const mobAoeChance = monster.aoeChance / 100;
+
+  // Barrier check
+  let barrierMod = 1.0;
+  if (monster.barrier && monster.barrier.hp > 0 && monster.barrierElement) {
+    let totalEl = 0;
+    activeHeroes.forEach(h => {
+      totalEl += h.equipmentElements?.[monster.barrierElement!] || 0;
+    });
+    if (totalEl < monster.barrier.hp) {
+      barrierMod = 0.2;
+      log.push({ round: 0, type: 'event', actor: '시스템', detail: `원소 배리어 미돌파! 대미지 ${barrierMod * 100}%로 제한`, values: { heroSum: totalEl, required: monster.barrier.hp } });
+    } else {
+      log.push({ round: 0, type: 'event', actor: '시스템', detail: `원소 배리어 돌파! (${totalEl} ≥ ${monster.barrier.hp})` });
+    }
+  }
+
+  // Setup hero stats (simplified - use hero base stats with booster)
+  const boosterAtkPct = booster.type === 'mega' ? 0.8 : booster.type === 'super' ? 0.4 : booster.type === 'normal' ? 0.2 : 0;
+  const boosterDefPct = boosterAtkPct;
+
+  const heroHp: number[] = [];
+  const heroMaxHp: number[] = [];
+  const heroAtkVal: number[] = [];
+  const heroDefVal: number[] = [];
+  const heroCrit: number[] = [];
+  const heroCritMult: number[] = [];
+  const heroEva: number[] = [];
+  const heroThreatVal: number[] = [];
+  const heroDmgDealt: number[] = [];
+
+  for (let i = 0; i < numHeroes; i++) {
+    const h = activeHeroes[i];
+    const atkFinal = Math.floor((h.atk || 0) * (1 + boosterAtkPct));
+    const defFinal = Math.floor((h.def || 0) * (1 + boosterDefPct));
+    heroMaxHp.push(h.hp || 0);
+    heroHp.push(h.hp || 0);
+    heroAtkVal.push(atkFinal);
+    heroDefVal.push(defFinal);
+    heroCrit.push(Math.min((h.crit || 0) / 100, 1.0));
+    heroCritMult.push((h.critDmg || 0) / 100);
+    let eva = (h.evasion || 0) / 100;
+    if (isExtreme) eva -= 0.2;
+    heroEva.push(Math.min(eva, 0.75));
+    heroThreatVal.push(h.threat || 1);
+    heroDmgDealt.push(0);
+  }
+
+  log.push({ round: 0, type: 'event', actor: '시스템', detail: `전투 시작! 몬스터 HP: ${formatNum(monster.hp)}, 영웅 ${numHeroes}명` });
+
+  let mobHpCurrent = monster.hp;
+  let heroesAlive = numHeroes;
+  const MAX_ROUNDS = 100; // Limit log to 100 rounds for readability
+
+  for (let round = 1; round <= MAX_ROUNDS; round++) {
+    if (mobHpCurrent <= 0 || heroesAlive <= 0) break;
+
+    // Monster attack
+    const totalThreat = heroThreatVal.reduce((s, t, i) => heroHp[i] > 0 ? s + t : s, 0);
+    const isAoe = Math.random() < mobAoeChance && heroesAlive > 1;
+
+    if (isAoe) {
+      log.push({ round, type: 'monster_attack', actor: '몬스터', detail: `광역 공격!` });
+      for (let i = 0; i < numHeroes; i++) {
+        if (heroHp[i] <= 0) continue;
+        if (Math.random() < heroEva[i]) {
+          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `회피 성공!` });
+          continue;
+        }
+        const dmg = calcDamageTaken(heroDefVal[i], Math.ceil(mobDamage * mobAoeDmgRatio), mobCap);
+        heroHp[i] -= dmg;
+        log.push({ round, type: 'monster_attack', actor: '몬스터', target: activeHeroes[i].name, detail: `${formatNum(dmg)} 피해 (잔여 HP: ${formatNum(Math.max(0, heroHp[i]))})` });
+        if (heroHp[i] <= 0) { heroesAlive--; log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `사망!` }); }
+      }
+    } else {
+      // Single target
+      let target = 0;
+      const rng = Math.random() * totalThreat;
+      let cum = 0;
+      for (let i = 0; i < numHeroes; i++) {
+        if (heroHp[i] <= 0) continue;
+        cum += heroThreatVal[i];
+        if (rng <= cum) { target = i; break; }
+      }
+      if (heroHp[target] <= 0) {
+        for (let i = numHeroes - 1; i >= 0; i--) { if (heroHp[i] > 0) { target = i; break; } }
+      }
+
+      if (Math.random() < heroEva[target]) {
+        log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `회피 성공!` });
+      } else {
+        const isCrit = Math.random() < 0.1;
+        const normalDmg = calcDamageTaken(heroDefVal[target], mobDamage, mobCap);
+        const dmg = isCrit ? calcCritDamageTaken(normalDmg, mobDamage) : normalDmg;
+        heroHp[target] -= dmg;
+        log.push({ round, type: 'monster_attack', actor: '몬스터', target: activeHeroes[target].name, detail: `${isCrit ? '치명타! ' : ''}${formatNum(dmg)} 피해 (잔여 HP: ${formatNum(Math.max(0, heroHp[target]))})` });
+        if (heroHp[target] <= 0) { heroesAlive--; log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `사망!` }); }
+      }
+    }
+
+    if (heroesAlive <= 0) {
+      log.push({ round, type: 'result', actor: '시스템', detail: `패배! (${round}라운드)` });
+      break;
+    }
+
+    // Heroes attack
+    for (let i = 0; i < numHeroes; i++) {
+      if (heroHp[i] <= 0) continue;
+      const isCrit = Math.random() < heroCrit[i];
+      const dmg = Math.floor(heroAtkVal[i] * (isCrit ? heroCritMult[i] : 1) * barrierMod);
+      mobHpCurrent -= dmg;
+      heroDmgDealt[i] += dmg;
+      log.push({ round, type: 'hero_attack', actor: activeHeroes[i].name, detail: `${isCrit ? '치명타! ' : ''}${formatNum(dmg)} 대미지 (몬스터 잔여: ${formatNum(Math.max(0, mobHpCurrent))})` });
+      if (mobHpCurrent <= 0) break;
+    }
+
+    if (mobHpCurrent <= 0) {
+      log.push({ round, type: 'result', actor: '시스템', detail: `승리! (${round}라운드)` });
+      break;
+    }
+
+    if (round >= MAX_ROUNDS) {
+      log.push({ round, type: 'result', actor: '시스템', detail: `라운드 제한 도달 (${MAX_ROUNDS}라운드)` });
+    }
+  }
+
+  return log;
+}
+
+function formatNum(n: number): string {
+  return Math.round(n).toLocaleString();
+}
 
 function emptyResult(simCount: number): SimulationResult {
   return {
