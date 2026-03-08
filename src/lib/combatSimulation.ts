@@ -186,7 +186,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       break;
     case 'dire':
       mobHpMod = 1.5;
-      mobCritChanceMod = 3.0;
+      mobCritChanceMod = 3.0; // 10% * 3 = 30%
       break;
     case 'huge':
       mobHpMod = 2.0;
@@ -198,7 +198,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     case 'legendary':
       mobHpMod = 1.5;
       mobDamageMod = 1.25;
-      mobCritChanceMod = 1.5;
+      mobCritChanceMod = 1.5; // 10% * 1.5 = 15%
       mobEvasion = 0.1;
       break;
   }

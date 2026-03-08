@@ -603,11 +603,11 @@ export default function QuestSimulation() {
                         <div className="space-y-1">
                           {([
                             { id: 'none', label: '없음', desc: '일반 몬스터', color: '' },
-                            { id: 'huge', label: '거대한', desc: 'HP 2배, 전체 공격 2배', color: 'text-green-400' },
+                            { id: 'huge', label: '거대한', desc: 'HP 2배, 전체 공격 확률 2배', color: 'text-green-400' },
                             { id: 'agile', label: '민첩한', desc: '회피 +40%', color: 'text-blue-400' },
-                            { id: 'dire', label: '흉포한', desc: 'HP 1.5배, 치확 3배', color: 'text-red-400' },
+                            { id: 'dire', label: '흉포한', desc: 'HP 1.5배, 치확 30%', color: 'text-red-400' },
                             { id: 'wealthy', label: '부유한', desc: '보상 증가', color: 'text-yellow-400' },
-                            { id: 'legendary', label: '전설의', desc: 'HP 1.5배, ATK 1.25배, 치확 1.5배, 회피 10%', color: 'text-purple-400' },
+                            { id: 'legendary', label: '전설의', desc: 'HP 1.5배, ATK 1.25배, 치확 15%, 회피 10%', color: 'text-purple-400' },
                           ] as const).map(mb => (
                             <button
                               key={mb.id}
@@ -676,18 +676,16 @@ export default function QuestSimulation() {
                   </div>
                   {/* Monster Crit Chance */}
                   {(() => {
-                    const baseCrit = 10;
-                    const critMod = selectedMiniBoss === 'dire' ? 3 : selectedMiniBoss === 'legendary' ? 1.5 : 1;
-                    const finalCrit = Math.round(baseCrit * critMod);
+                    const finalCrit = selectedMiniBoss === 'dire' ? 30 : selectedMiniBoss === 'legendary' ? 15 : 10;
+                    const isModified = selectedMiniBoss === 'dire' || selectedMiniBoss === 'legendary';
                     return (
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <img src="/images/stats/critchance.webp" alt="" className="w-3.5 h-3.5" />
                           <span className="text-xs text-foreground">치명타 확률</span>
                         </div>
-                        <span className={`text-sm font-bold font-mono ${critMod > 1 ? 'text-red-400' : 'text-foreground'}`}>
+                        <span className={`text-sm font-bold font-mono ${isModified ? 'text-red-400' : 'text-foreground'}`}>
                           {finalCrit}%
-                          {critMod > 1 && <span className="text-[9px] text-muted-foreground ml-1">(기본 {baseCrit}% × {critMod})</span>}
                         </span>
                       </div>
                     );
