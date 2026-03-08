@@ -903,12 +903,35 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
                     <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusVal}{unit}</td>
                   </tr>
+                  {isEvasion && relicEvasionBonus !== 0 && (
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
+                      <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicEvasionBonus}%</td>
+                    </tr>
+                  )}
+                  {!isEvasion && statType === 'threat' && relicThreatBonus !== 0 && (
+                    <tr className="border-b border-border/30">
+                      <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
+                      <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicThreatBonus}</td>
+                    </tr>
+                  )}
+                  {isEvasion && hasEvasionFixed && (
+                    <tr className="border-b border-border/30 bg-red-900/20">
+                      <td className="py-1.5 text-red-400 font-semibold">⚠ {hasEvasionFixed.itemName}</td>
+                      <td className="py-1.5 text-right tabular-nums text-red-400 font-bold">→ {hasEvasionFixed.fixedValue}% 고정</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
             <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
               <span className="text-sm font-bold text-foreground">최종 {config.label}</span>
-              {isEvasion ? (
+              {isEvasion && hasEvasionFixed ? (
+                <span className="text-xl font-bold tabular-nums text-red-400">
+                  {totalVal}%
+                  <span className="text-sm font-normal text-muted-foreground ml-1">({preRelicEvasion}%→고정)</span>
+                </span>
+              ) : isEvasion ? (
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
                   {cappedEvasion}%
                   {isEvasionCapped && (
@@ -923,7 +946,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
           </div>
 
-          {isEvasion && (
+          {isEvasion && !hasEvasionFixed && (
             <div className="px-3">
               <div className="rounded bg-teal-900/20 border border-teal-500/20 px-3 py-2">
                 <p className="text-[10px] text-teal-300/80 leading-relaxed">
@@ -935,11 +958,23 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
           )}
 
+          {isEvasion && hasEvasionFixed && (
+            <div className="px-3">
+              <div className="rounded bg-red-900/20 border border-red-500/20 px-3 py-2">
+                <p className="text-[10px] text-red-300/80 leading-relaxed">
+                  ⚠ <span className="font-bold text-red-200">{hasEvasionFixed.itemName}</span> 장착으로 회피가 {hasEvasionFixed.fixedValue}%로 고정됩니다.
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="px-3 pb-3">
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              {isEvasion
-                ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75%/78%)'
-                : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
+              {isEvasion && hasEvasionFixed
+                ? `※ ${hasEvasionFixed.itemName}: 회피 ${hasEvasionFixed.fixedValue}%로 고정`
+                : isEvasion
+                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75%/78%)'
+                  : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
             </p>
           </div>
         </div>
