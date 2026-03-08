@@ -311,6 +311,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       level: Number(level) || 1,
       rank: Number(rank) || 1,
       championName,
+      cardLevel,
       power: Number(power) || 0,
       hp, atk, def,
       crit, critDmg,
