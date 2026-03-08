@@ -7,7 +7,7 @@
  */
 
 import { lookupHeroStats } from './gameData';
-import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc, SkillBonuses, RelicEffect } from './equipStatCalculator';
+import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc, SkillBonuses, RelicEffect, EquipBonusSource } from './equipStatCalculator';
 import { parseSkillBonuses, parseSoulBonuses, combineBonuses, SkillBonusSummary, SkillBonusInput, SoulBonusInput, SkillBonusSource } from './skillBonusParser';
 
 export interface CalculatedStats {
