@@ -533,7 +533,7 @@ export default function QuestSimulation() {
         <div className="w-full lg:w-72 shrink-0">
           <div className="flex items-center gap-2 mb-3">
             <Clock className="w-5 h-5 text-primary" />
-            <h3 className="font-display text-lg text-foreground">소요 시간 설정</h3>
+            <h3 className="font-display text-lg text-foreground">시간 설정</h3>
           </div>
           <div className="card-fantasy p-3">
             {/* Quest Time Reduction */}

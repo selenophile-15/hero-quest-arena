@@ -188,11 +188,11 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 <div className="bg-secondary/30 flex items-center justify-center p-1.5">
                   <img src={r.areaImage} alt={r.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
-                <div className="p-1 text-center">
+                <div className="p-1.5 text-center">
                   <span className="text-[10px] font-medium text-foreground leading-tight block">{r.name}</span>
-                  <div className="flex items-center justify-center gap-0.5 mt-0.5">
-                    <Users className="w-2.5 h-2.5 text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground">{r.maxMembers}</span>
+                  <div className="flex items-center justify-center gap-1 mt-1">
+                    <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground">{r.maxMembers}</span>
                   </div>
                 </div>
               </button>
