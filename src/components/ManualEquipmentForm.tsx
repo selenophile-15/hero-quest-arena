@@ -188,7 +188,7 @@ function migrateData(d: any): ManualEquipmentData {
   };
 }
 
-export default function ManualEquipmentForm({ initialData, allowedTypes, isAurasong, onConfirm, onCancel }: ManualEquipmentFormProps) {
+const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFormProps>(({ initialData, allowedTypes, isAurasong, hideActions, onConfirm, onCancel }, ref) => {
   const [data, setData] = useState<ManualEquipmentData>(() => {
     const d = initialData ? migrateData(initialData) : emptyData();
     if (isAurasong && !d.type) d.type = '오라의 노래';
