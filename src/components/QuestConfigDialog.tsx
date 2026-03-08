@@ -84,7 +84,17 @@ const getDifficultyColor = (diff: string) => {
   }
 };
 
-export default function QuestConfigDialog({ open, onOpenChange, questDataMap, questFiles, onSelect, initialStep, initialState }: Props) {
+const getDifficultyBorder = (diff: string) => {
+  switch (diff) {
+    case '쉬움': return 'border-green-400/30 hover:border-green-400/60';
+    case '보통': return 'border-blue-400/30 hover:border-blue-400/60';
+    case '어려움': return 'border-orange-400/30 hover:border-orange-400/60';
+    case '익스트림': return 'border-purple-400/30 hover:border-purple-400/60';
+    default: return 'border-border hover:border-primary/30';
+  }
+};
+
+
   const [step, setStep] = useState<'type' | 'region' | 'subarea' | 'difficulty'>(initialStep || 'type');
   const [selType, setSelType] = useState(initialState?.questTypeKey || '');
   const [selRegionIdx, setSelRegionIdx] = useState(initialState?.regionIdx ?? -1);
