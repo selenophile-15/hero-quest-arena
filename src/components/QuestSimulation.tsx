@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
 import { runCombatSimulation, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType } from '@/lib/combatSimulation';
+import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
 
 // Quest data types
 interface QuestTime {
@@ -150,6 +151,10 @@ export default function QuestSimulation() {
   const [simRunning, setSimRunning] = useState(false);
   const [simResult, setSimResult] = useState<CombatSimResult | null>(null);
 
+  // Party buff state
+  const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
+  const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
+
   // Load quest data
   useEffect(() => {
     const loadData = async () => {
@@ -187,6 +192,28 @@ export default function QuestSimulation() {
   const hasSubAreas = currentRegion && currentRegion.subAreas.length > 1;
   const selectedSubArea = currentRegion && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99 ? currentRegion.subAreas[selectedSubAreaIdx] : null;
 
+  const selectedHeroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+  const maxMembers = currentRegion?.maxMembers || 5;
+  const isBossQuest = currentQuest?.isBoss || false;
+  const isFlashQuest = selectedQuestType === 'flash';
+
+  // Compute party-buffed stats whenever party changes
+  const heroIdKey = Array.from(selectedHeroIds).join(',');
+  useEffect(() => {
+    if (selectedHeroIds.size === 0) {
+      setBuffedStats([]);
+      setBuffSummary(null);
+      return;
+    }
+    const heroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    if (heroes.length === 0) return;
+    calculatePartyBuffs({ heroes, isBoss: isBossQuest, isFlashQuest })
+      .then(({ summary, buffedStats: bs }) => {
+        setBuffedStats(bs);
+        setBuffSummary(summary);
+      });
+  }, [heroIdKey, isBossQuest, isFlashQuest]);
+
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
     if (selectedSubAreaIdx === 0) return barrier.sub1;
@@ -197,36 +224,23 @@ export default function QuestSimulation() {
 
   const toggleHero = (id: string) => {
     if (!currentRegion) return;
-    
-    // If editing a specific slot, replace the hero in that slot
     if (editingSlotIdx !== null) {
       setSelectedHeroIds(prev => {
         const arr = Array.from(prev);
-        // If the hero is already selected, remove from old position
         const existingIdx = arr.indexOf(id);
-        if (existingIdx !== -1) {
-          arr.splice(existingIdx, 1);
-        }
-        // Replace at the editing slot position
-        if (editingSlotIdx < arr.length) {
-          arr[editingSlotIdx] = id;
-        } else {
-          arr.push(id);
-        }
+        if (existingIdx !== -1) arr.splice(existingIdx, 1);
+        if (editingSlotIdx < arr.length) arr[editingSlotIdx] = id;
+        else arr.push(id);
         return new Set(arr);
       });
       setEditingSlotIdx(null);
       setHeroSelectOpen(false);
       return;
     }
-    
     setSelectedHeroIds(prev => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else if (next.size < currentRegion.maxMembers) {
-        next.add(id);
-      }
+      if (next.has(id)) next.delete(id);
+      else if (next.size < currentRegion.maxMembers) next.add(id);
       return next;
     });
   };
@@ -274,9 +288,6 @@ export default function QuestSimulation() {
       </div>
     );
   }
-
-  const selectedHeroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
-  const maxMembers = currentRegion?.maxMembers || 5;
 
   // Get barrier elements for display
   const barrierElements = currentQuest?.barrier ? (() => {
@@ -495,8 +506,9 @@ export default function QuestSimulation() {
                               );
                             })}
                             {/* Hero pins as dots on the bar */}
-                            {selectedHeroes.map((h) => {
-                              const heroDef = h.def || 0;
+                            {selectedHeroes.map((h, hi) => {
+                              const bs = buffedStats[hi];
+                              const heroDef = bs ? bs.def : (h.def || 0);
                               const pct = defToBarPct(heroDef);
                               let pinColor = '#ef4444';
                               for (const t of defThresholds) {
@@ -530,7 +542,7 @@ export default function QuestSimulation() {
                             {(() => {
                               // Sort heroes by def descending so highest is at top
                               const sorted = selectedHeroes
-                                .map((h, hi) => ({ h, hi, def: h.def || 0 }))
+                                .map((h, hi) => ({ h, hi, def: buffedStats[hi] ? buffedStats[hi].def : (h.def || 0) }))
                                 .sort((a, b) => b.def - a.def);
                               // Line starts after defense value column: left(32 w-8) + gap(8) + bar(12) + gap(8) + defValues(~55) = ~115px
                               const startX = 115;
@@ -713,14 +725,16 @@ export default function QuestSimulation() {
                   );
 
                   const statRows = [
-                    { label: 'HP', key: 'hp', color: 'text-orange-400' },
-                    { label: 'ATK', key: 'atk', color: 'text-red-400' },
-                    { label: 'CRIT.DMG', key: 'critAttack', color: 'text-yellow-400', computed: true },
-                    { label: 'DEF', key: 'def', color: 'text-blue-400' },
-                    { label: 'CRIT.C', key: 'crit', color: 'text-yellow-400', suffix: '%' },
-                    { label: 'EVA', key: 'evasion', color: 'text-teal-400', suffix: '%' },
-                    { label: 'THREAT', key: 'threat', color: 'text-foreground' },
+                    { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-400' },
+                    { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400' },
+                    { label: 'CRIT.DMG', key: 'critAttack', bKey: 'critAttack', dKey: null, color: 'text-yellow-400', computed: true },
+                    { label: 'DEF', key: 'def', bKey: 'def', dKey: 'deltaDef', color: 'text-blue-400' },
+                    { label: 'CRIT.C', key: 'crit', bKey: 'crit', dKey: 'deltaCrit', color: 'text-yellow-400', suffix: '%' },
+                    { label: 'EVA', key: 'evasion', bKey: 'evasion', dKey: 'deltaEvasion', color: 'text-teal-400', suffix: '%' },
+                    { label: 'THREAT', key: 'threat', bKey: 'threat', dKey: null, color: 'text-foreground' },
                   ];
+
+                  const hasBuffs = buffSummary && buffSummary.sources.length > 0;
 
                   return (
                     <>
@@ -730,22 +744,65 @@ export default function QuestSimulation() {
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
                             if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
-                            const val = (stat as any).computed
-                              ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
-                              : (hero as any)[stat.key] || 0;
+                            const bs = buffedStats[slotIdx];
+                            
+                            // Use buffed stats if available
+                            let val: number;
+                            let delta = 0;
+                            if (bs && hasBuffs) {
+                              if ((stat as any).computed) {
+                                val = Math.floor(bs.atk * bs.critDmg / 100);
+                                const rawVal = Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100);
+                                delta = val - rawVal;
+                              } else {
+                                val = (bs as any)[stat.bKey] || 0;
+                                delta = stat.dKey ? ((bs as any)[stat.dKey] || 0) : 0;
+                              }
+                            } else {
+                              val = (stat as any).computed
+                                ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
+                                : (hero as any)[stat.key] || 0;
+                            }
+                            
                             return (
                               <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${stat.color}`}>
-                                {stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}
+                                <div className="flex flex-col items-center">
+                                  <span>{stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}</span>
+                                  {delta > 0 && (
+                                    <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
+                                  )}
+                                  {delta < 0 && (
+                                    <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
+                                  )}
+                                </div>
                               </td>
                             );
                           })}
                         </tr>
                       ))}
+                      {/* Buff sources summary row */}
+                      {hasBuffs && (
+                        <tr className="border-b border-border/20 bg-primary/5">
+                          <td colSpan={maxMembers + 1} className="py-1 px-1.5">
+                            <div className="flex flex-wrap items-center gap-1.5 text-[9px]">
+                              <span className="text-primary font-semibold">파티 버프:</span>
+                              {buffSummary!.sources.map((src, i) => (
+                                <span key={i} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary/80">
+                                  <span className={src.type === 'champion' ? 'text-yellow-400' : 'text-purple-400'}>
+                                    {src.type === 'champion' ? '👑' : '🎵'}
+                                  </span>
+                                  {src.name}
+                                  {src.note && <span className="text-muted-foreground ml-0.5">({src.note})</span>}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
                       {/* Targeting chance row (threat-based) */}
                       <tr className="border-b border-border/20 bg-muted/20">
                         <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
                         {(() => {
-                          // Total threat of all selected heroes
                           const totalThreat = selectedHeroes.reduce((sum, h) => sum + (h.threat || 1), 0);
                           return Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
