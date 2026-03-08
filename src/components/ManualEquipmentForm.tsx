@@ -34,21 +34,21 @@ const SPIRIT_OPTIONS = [
 ];
 
 const RELIC_STAT_OPTIONS = [
-  { value: '깡공격력', label: '깡공격력' },
-  { value: '깡방어력', label: '깡방어력' },
-  { value: '깡체력', label: '깡체력' },
+  { value: '깡공격력', label: '공격력' },
+  { value: '깡방어력', label: '방어력' },
+  { value: '깡체력', label: '체력' },
   { value: '공격력%', label: '공격력%' },
   { value: '방어력%', label: '방어력%' },
   { value: '체력%', label: '체력%' },
-  { value: '치명타확률%', label: '치명타확률%' },
-  { value: '치명타데미지%', label: '치명타데미지%' },
+  { value: '해당장비공격력%', label: '해당 장비 공격력%' },
+  { value: '해당장비방어력%', label: '해당 장비 방어력%' },
+  { value: '해당장비전체%', label: '해당 장비 전체%' },
+  { value: '모든장비보너스%', label: '모든 장비 보너스%' },
+  { value: '치명타확률%', label: '치명타 확률%' },
+  { value: '치명타데미지%', label: '치명타 데미지%' },
+  { value: '치명타생존%', label: '치명타 생존%' },
   { value: '회피%', label: '회피%' },
   { value: '위협도', label: '위협도' },
-  { value: '해당장비공격력%', label: '해당장비 공격력%' },
-  { value: '해당장비방어력%', label: '해당장비 방어력%' },
-  { value: '해당장비전체%', label: '해당장비 전체%' },
-  { value: '모든장비보너스%', label: '모든장비 보너스%' },
-  { value: '치명타생존%', label: '치명타 생존%' },
 ];
 
 const RELIC_OP_OPTIONS = [
@@ -197,13 +197,13 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
 
       {/* Name */}
       <div className="grid grid-cols-[80px_1fr] gap-2 items-center text-xs">
-        <span className="text-muted-foreground">이름</span>
+        <span className="text-foreground/70">이름</span>
         <Input className="h-7 text-xs" value={data.name} onChange={e => update('name', e.target.value)} placeholder="장비 이름" />
       </div>
 
       {/* Type */}
       <div className="grid grid-cols-[80px_1fr] gap-2 items-center text-xs">
-        <span className="text-muted-foreground">타입</span>
+        <span className="text-foreground/70">타입</span>
         <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
           <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="선택" /></SelectTrigger>
           <SelectContent className="max-h-[240px]">
@@ -215,7 +215,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
       {/* Dual wield sub-types */}
       {isDualWield && (
         <div className="grid grid-cols-[80px_1fr] gap-2 items-start text-xs">
-          <span className="text-muted-foreground">쌍수 타입</span>
+          <span className="text-foreground/70">쌍수 타입</span>
           <div className="flex flex-wrap gap-1">
             {WEAPON_TYPES.map(t => (
               <button
@@ -236,7 +236,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
       )}
 
       {/* Stats (일반 등급 기준) */}
-      <div className="text-[10px] text-muted-foreground">일반 등급 기준 스탯</div>
+      <div className="text-[10px] text-foreground/70">일반 등급 기준 스탯</div>
       <div className="grid grid-cols-5 gap-2 text-xs">
         {[
           { key: 'atk' as const, label: '공격력', suffix: '' },
@@ -246,13 +246,16 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
           { key: 'evasion' as const, label: '회피', suffix: '%' },
         ].map(s => (
           <div key={s.key} className="flex flex-col items-center gap-0.5">
-            <span className="text-muted-foreground text-[10px]">{s.label}</span>
+            <span className="text-foreground/70 text-[10px]">{s.label}</span>
             <div className="relative">
               <Input
                 type="number"
                 className={`h-7 text-xs text-center ${s.suffix ? 'pr-4' : ''}`}
-                value={data[s.key] === 0 ? '0' : (data[s.key] || '')}
-                onChange={e => update(s.key, parseFloat(e.target.value) || 0)}
+                value={data[s.key] === 0 ? '' : (data[s.key] || '')}
+                onChange={e => {
+                  const v = e.target.value;
+                  update(s.key, v === '' ? 0 : (parseFloat(v) || 0));
+                }}
               />
               {s.suffix && <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none">{s.suffix}</span>}
             </div>
@@ -263,7 +266,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
       {/* Affinity */}
       <div className="grid grid-cols-2 gap-3 text-xs">
         <div className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-[10px]">친밀/고유 원소</span>
+          <span className="text-foreground/70 text-[10px]">친밀/고유 원소</span>
           <Select value={data.affinityElement || '_none'} onValueChange={v => update('affinityElement', v === '_none' ? '' : v)}>
             <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="없음" /></SelectTrigger>
             <SelectContent>
@@ -273,7 +276,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
           </Select>
         </div>
         <div className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-[10px]">친밀/고유 영혼</span>
+          <span className="text-foreground/70 text-[10px]">친밀/고유 영혼</span>
           <Select value={data.affinitySpirit || '_none'} onValueChange={v => update('affinitySpirit', v === '_none' ? '' : v)}>
             <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="없음" /></SelectTrigger>
             <SelectContent className="max-h-[200px]">
@@ -291,7 +294,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
           onCheckedChange={v => update('isRelic', !!v)}
           id="manual-relic"
         />
-        <label htmlFor="manual-relic" className="text-muted-foreground cursor-pointer">유물</label>
+        <label htmlFor="manual-relic" className="text-foreground/70 cursor-pointer">유물</label>
       </div>
 
       {data.isRelic && (
@@ -321,8 +324,11 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
               <Input
                 type="number"
                 className="h-7 text-[10px] w-20 text-center"
-                value={b.value === 0 ? '0' : (b.value || '')}
-                onChange={e => updateBonus(i, 'value', parseFloat(e.target.value) || 0)}
+                value={b.value === 0 ? '' : (b.value || '')}
+                onChange={e => {
+                  const v = e.target.value;
+                  updateBonus(i, 'value', v === '' ? 0 : (parseFloat(v) || 0));
+                }}
               />
               <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => removeRelicBonus(i)}>
                 <Trash2 className="w-3 h-3 text-destructive" />
