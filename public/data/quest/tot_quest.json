@@ -1,0 +1,67 @@
+{
+  "questType": "명인의 탑",
+  "questTypeKey": "tot_quest",
+  "regions": [
+    {
+      "name": "알파",
+      "key": "tot",
+      "areaImage": "/images/quest/area/tot_quest/tot.webp",
+      "maxMembers": 3,
+      "subAreas": [{ "name": "알파 30 층", "key": "alpha", "image": "/images/quest/details/tot_quest/alpha.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "없음", "minPower": 1600, "hp": 30000, "atk": 30, "aoe": 25, "aoeChance": 25, "time": { "base": 60, "additional": 90, "perMember": 30, "total": 150, "rest": 120, "recovery": 240 }, "def": { "r0": 700, "r50": 1400, "r70": 2800, "r75": 8400 }, "barrier": null, "isBoss": true, "isExtreme": false }
+      ]
+    },
+    {
+      "name": "베타",
+      "key": "tot",
+      "areaImage": "/images/quest/area/tot_quest/tot.webp",
+      "maxMembers": 3,
+      "subAreas": [{ "name": "베타 30 층", "key": "beta", "image": "/images/quest/details/tot_quest/beta.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "없음", "minPower": 3000, "hp": 125000, "atk": 70, "aoe": 40, "aoeChance": 25, "time": { "base": 60, "additional": 90, "perMember": 30, "total": 150, "rest": 120, "recovery": 240 }, "def": { "r0": 1500, "r50": 3000, "r70": 6000, "r75": 18000 }, "barrier": null, "isBoss": true, "isExtreme": false }
+      ]
+    },
+    {
+      "name": "감마",
+      "key": "tot",
+      "areaImage": "/images/quest/area/tot_quest/tot.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "감마 30 층", "key": "gamma", "image": "/images/quest/details/tot_quest/gamma.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "없음", "minPower": 6750, "hp": 500000, "atk": 140, "aoe": 75, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 120, "recovery": 240 }, "def": { "r0": 3000, "r50": 6000, "r70": 12000, "r75": 36000 }, "barrier": null, "isBoss": true, "isExtreme": false }
+      ]
+    },
+    {
+      "name": "델타",
+      "key": "tot",
+      "areaImage": "/images/quest/area/tot_quest/tot.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "델타 30 층", "key": "delta", "image": "/images/quest/details/tot_quest/delta.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "없음", "minPower": 10000, "hp": 1300000, "atk": 175, "aoe": 100, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 120, "recovery": 240 }, "def": { "r0": 3700, "r50": 7400, "r70": 14800, "r75": 44400 }, "barrier": null, "isBoss": true, "isExtreme": false }
+      ]
+    },
+    {
+      "name": "엡실론",
+      "key": "tot",
+      "areaImage": "/images/quest/area/tot_quest/tot.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "앱실론 30 층", "key": "epsilon", "image": "/images/quest/details/tot_quest/epsilon.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "없음", "minPower": 16000, "hp": 2500000, "atk": 240, "aoe": 120, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 120, "recovery": 240 }, "def": { "r0": 4800, "r50": 9600, "r70": 19200, "r75": 57600 }, "barrier": null, "isBoss": true, "isExtreme": false }
+      ]
+    },
+    {
+      "name": "공포",
+      "key": "tot",
+      "areaImage": "/images/quest/area/tot_quest/tot.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "공포 27~30 층", "key": "terror", "image": "/images/quest/details/tot_quest/terror.webp" }],
+      "quests": [
+        { "type": "boss", "stage": 27, "difficulty": "없음", "minPower": 28000, "hp": 310000, "atk": 270, "aoe": 135, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 120, "recovery": 240 }, "def": { "r0": 11500, "r50": 23000, "r70": 46000, "r75": 138000 }, "barrier": { "sub1": "랜덤", "sub2": null, "sub3": null, "hp": 230 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 30, "difficulty": "없음", "minPower": 32500, "hp": 400000, "atk": 300, "aoe": 150, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 120, "recovery": 240 }, "def": { "r0": 12800, "r50": 25600, "r70": 51200, "r75": 153600 }, "barrier": { "sub1": "랜덤", "sub2": null, "sub3": null, "hp": 350 }, "isBoss": true, "isExtreme": true }
+      ]
+    }
+  ]
+}

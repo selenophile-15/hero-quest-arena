@@ -1,0 +1,292 @@
+{
+  "questType": "일반",
+  "questTypeKey": "normal_quest",
+  "regions": [
+    {
+      "name": "울부짖는 숲",
+      "key": "forest",
+      "areaImage": "/images/quest/area/normal_quest/forest.webp",
+      "maxMembers": 3,
+      "subAreas": [
+        { "name": "엘프 나무", "key": "elvenwood", "image": "/images/quest/details/normal_quest/elvenwood.webp" },
+        { "name": "강철 솔방울", "key": "redpinecone", "image": "/images/quest/details/normal_quest/redpinecone.webp" },
+        { "name": "야광 버섯", "key": "glowingmushrooms", "image": "/images/quest/details/normal_quest/glowingmushrooms.webp" }
+      ],
+      "boss": { "name": "트러블린 족장", "key": "forest_boss", "image": "/images/quest/details/normal_quest/forest_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 0, "hp": 250, "atk": 8, "aoe": 5, "aoeChance": 25, "time": { "base": 10, "additional": 15, "perMember": 5, "total": 25, "rest": 10, "recovery": 20 }, "def": { "r0": 50, "r50": 100, "r70": 200, "r75": 600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 250, "hp": 1000, "atk": 10, "aoe": 6, "aoeChance": 25, "time": { "base": 20, "additional": 30, "perMember": 10, "total": 50, "rest": 40, "recovery": 80 }, "def": { "r0": 150, "r50": 300, "r70": 600, "r75": 1800 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 450, "hp": 3500, "atk": 14, "aoe": 9, "aoeChance": 25, "time": { "base": 20, "additional": 30, "perMember": 10, "total": 50, "rest": 100, "recovery": 200 }, "def": { "r0": 240, "r50": 480, "r70": 960, "r75": 2880 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 2000, "hp": 30000, "atk": 40, "aoe": 20, "aoeChance": 25, "time": { "base": 120, "additional": 180, "perMember": 60, "total": 300, "rest": 600, "recovery": 1200 }, "def": { "r0": 1000, "r50": 2000, "r70": 4000, "r75": 12000 }, "barrier": { "sub1": "공기", "sub2": "대지", "sub3": "빛", "hp": 15 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 250, "hp": 2000, "atk": 12, "aoe": 7, "aoeChance": 25, "time": { "base": 60, "additional": 90, "perMember": 30, "total": 150, "rest": 60, "recovery": 120 }, "def": { "r0": 200, "r50": 400, "r70": 800, "r75": 2400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 500, "hp": 4000, "atk": 15, "aoe": 9, "aoeChance": 25, "time": { "base": 60, "additional": 90, "perMember": 30, "total": 150, "rest": 120, "recovery": 240 }, "def": { "r0": 300, "r50": 600, "r70": 1200, "r75": 3600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 750, "hp": 10000, "atk": 20, "aoe": 13, "aoeChance": 25, "time": { "base": 60, "additional": 90, "perMember": 30, "total": 150, "rest": 180, "recovery": 360 }, "def": { "r0": 500, "r50": 1000, "r70": 2000, "r75": 6000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 3000, "hp": 80000, "atk": 60, "aoe": 30, "aoeChance": 25, "time": { "base": 120, "additional": 180, "perMember": 60, "total": 300, "rest": 360, "recovery": 720 }, "def": { "r0": 1500, "r50": 3000, "r70": 6000, "r75": 18000 }, "barrier": { "sub1": "공기", "sub2": "공기", "sub3": "공기", "hp": 30 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "오로라 동굴",
+      "key": "grotto",
+      "areaImage": "/images/quest/area/normal_quest/grotto.webp",
+      "maxMembers": 3,
+      "subAreas": [
+        { "name": "은가루", "key": "arcanedust", "image": "/images/quest/details/normal_quest/arcanedust.webp" },
+        { "name": "갈퀴 날개", "key": "webbedwings", "image": "/images/quest/details/normal_quest/webbedwings.webp" },
+        { "name": "귀중한 보석", "key": "preciousgem", "image": "/images/quest/details/normal_quest/preciousgem.webp" }
+      ],
+      "boss": { "name": "설인 왕", "key": "grotto_boss", "image": "/images/quest/details/normal_quest/grotto_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 250, "hp": 900, "atk": 9, "aoe": 7, "aoeChance": 25, "time": { "base": 30, "additional": 45, "perMember": 15, "total": 75, "rest": 30, "recovery": 60 }, "def": { "r0": 130, "r50": 260, "r70": 520, "r75": 1560 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 450, "hp": 4000, "atk": 12, "aoe": 8, "aoeChance": 25, "time": { "base": 30, "additional": 45, "perMember": 15, "total": 75, "rest": 60, "recovery": 120 }, "def": { "r0": 260, "r50": 520, "r70": 1040, "r75": 3120 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 750, "hp": 8000, "atk": 14, "aoe": 10, "aoeChance": 25, "time": { "base": 30, "additional": 45, "perMember": 15, "total": 75, "rest": 150, "recovery": 300 }, "def": { "r0": 450, "r50": 900, "r70": 1800, "r75": 5400 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 3500, "hp": 60000, "atk": 55, "aoe": 30, "aoeChance": 25, "time": { "base": 120, "additional": 180, "perMember": 60, "total": 300, "rest": 600, "recovery": 1200 }, "def": { "r0": 2000, "r50": 4000, "r70": 8000, "r75": 24000 }, "barrier": { "sub1": "물", "sub2": "불", "sub3": "어둠", "hp": 25 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 600, "hp": 7000, "atk": 12, "aoe": 9, "aoeChance": 25, "time": { "base": 90, "additional": 135, "perMember": 45, "total": 225, "rest": 90, "recovery": 180 }, "def": { "r0": 350, "r50": 700, "r70": 1400, "r75": 4200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 800, "hp": 10000, "atk": 17, "aoe": 12, "aoeChance": 25, "time": { "base": 90, "additional": 135, "perMember": 45, "total": 225, "rest": 180, "recovery": 360 }, "def": { "r0": 450, "r50": 900, "r70": 1800, "r75": 5400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 1500, "hp": 22000, "atk": 27, "aoe": 18, "aoeChance": 25, "time": { "base": 90, "additional": 135, "perMember": 45, "total": 225, "rest": 270, "recovery": 540 }, "def": { "r0": 650, "r50": 1300, "r70": 2600, "r75": 7800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 5000, "hp": 170000, "atk": 80, "aoe": 40, "aoeChance": 25, "time": { "base": 150, "additional": 225, "perMember": 75, "total": 375, "rest": 450, "recovery": 900 }, "def": { "r0": 2100, "r50": 4200, "r70": 8400, "r75": 25200 }, "barrier": { "sub1": "불", "sub2": "불", "sub3": "불", "hp": 40 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "속삭이는 늪지",
+      "key": "swamp",
+      "areaImage": "/images/quest/area/normal_quest/swamp.webp",
+      "maxMembers": 3,
+      "subAreas": [
+        { "name": "살아있는 뿌리", "key": "livingroots", "image": "/images/quest/details/normal_quest/livingroots.webp" },
+        { "name": "러스트웜 비늘", "key": "darkscale", "image": "/images/quest/details/normal_quest/darkscale.webp" },
+        { "name": "늪지 진주", "key": "icypearl", "image": "/images/quest/details/normal_quest/icypearl.webp" }
+      ],
+      "boss": { "name": "두꺼비 마녀", "key": "swamp_boss", "image": "/images/quest/details/normal_quest/swamp_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 500, "hp": 4000, "atk": 15, "aoe": 10, "aoeChance": 25, "time": { "base": 40, "additional": 60, "perMember": 20, "total": 100, "rest": 40, "recovery": 80 }, "def": { "r0": 300, "r50": 600, "r70": 1200, "r75": 3600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 650, "hp": 6000, "atk": 18, "aoe": 12, "aoeChance": 25, "time": { "base": 40, "additional": 60, "perMember": 20, "total": 100, "rest": 80, "recovery": 160 }, "def": { "r0": 400, "r50": 800, "r70": 1600, "r75": 4800 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 900, "hp": 13000, "atk": 25, "aoe": 16, "aoeChance": 25, "time": { "base": 40, "additional": 60, "perMember": 20, "total": 100, "rest": 200, "recovery": 400 }, "def": { "r0": 600, "r50": 1200, "r70": 2400, "r75": 7200 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 4500, "hp": 140000, "atk": 70, "aoe": 35, "aoeChance": 25, "time": { "base": 120, "additional": 180, "perMember": 60, "total": 300, "rest": 600, "recovery": 1200 }, "def": { "r0": 2300, "r50": 4600, "r70": 9200, "r75": 27600 }, "barrier": { "sub1": "대지", "sub2": "불", "sub3": "빛", "hp": 35 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 750, "hp": 9000, "atk": 20, "aoe": 10, "aoeChance": 25, "time": { "base": 120, "additional": 180, "perMember": 60, "total": 300, "rest": 120, "recovery": 240 }, "def": { "r0": 500, "r50": 1000, "r70": 2000, "r75": 6000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 1130, "hp": 16000, "atk": 25, "aoe": 18, "aoeChance": 25, "time": { "base": 120, "additional": 180, "perMember": 60, "total": 300, "rest": 240, "recovery": 480 }, "def": { "r0": 700, "r50": 1400, "r70": 2800, "r75": 8400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 2000, "hp": 30000, "atk": 35, "aoe": 28, "aoeChance": 25, "time": { "base": 120, "additional": 180, "perMember": 60, "total": 300, "rest": 360, "recovery": 720 }, "def": { "r0": 900, "r50": 1800, "r70": 3600, "r75": 10800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 7500, "hp": 330000, "atk": 100, "aoe": 50, "aoeChance": 25, "time": { "base": 240, "additional": 360, "perMember": 120, "total": 600, "rest": 720, "recovery": 1440 }, "def": { "r0": 2400, "r50": 4800, "r70": 9600, "r75": 28800 }, "barrier": { "sub1": "대지", "sub2": "대지", "sub3": "대지", "hp": 55 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "황량한 불모지",
+      "key": "desert",
+      "areaImage": "/images/quest/area/normal_quest/desert.webp",
+      "maxMembers": 3,
+      "subAreas": [
+        { "name": "하얀 모래", "key": "whitesand", "image": "/images/quest/details/normal_quest/whitesand.webp" },
+        { "name": "청동 송곳니", "key": "sharpfang", "image": "/images/quest/details/normal_quest/sharpfang.webp" },
+        { "name": "달 수정", "key": "mooncrystal", "image": "/images/quest/details/normal_quest/mooncrystal.webp" }
+      ],
+      "boss": { "name": "머시군", "key": "desert_boss", "image": "/images/quest/details/normal_quest/desert_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 700, "hp": 9000, "atk": 18, "aoe": 12, "aoeChance": 25, "time": { "base": 60, "additional": 90, "perMember": 30, "total": 150, "rest": 60, "recovery": 120 }, "def": { "r0": 400, "r50": 800, "r70": 1600, "r75": 4800 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 1000, "hp": 13000, "atk": 23, "aoe": 17, "aoeChance": 25, "time": { "base": 60, "additional": 90, "perMember": 30, "total": 150, "rest": 120, "recovery": 240 }, "def": { "r0": 600, "r50": 1200, "r70": 2400, "r75": 7200 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 1500, "hp": 26000, "atk": 30, "aoe": 18, "aoeChance": 25, "time": { "base": 60, "additional": 90, "perMember": 30, "total": 150, "rest": 300, "recovery": 600 }, "def": { "r0": 800, "r50": 1600, "r70": 3200, "r75": 9600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 6500, "hp": 280000, "atk": 100, "aoe": 50, "aoeChance": 25, "time": { "base": 120, "additional": 180, "perMember": 60, "total": 300, "rest": 600, "recovery": 1200 }, "def": { "r0": 2500, "r50": 5000, "r70": 10000, "r75": 30000 }, "barrier": { "sub1": "공기", "sub2": "불", "sub3": "어둠", "hp": 50 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 1500, "hp": 20000, "atk": 25, "aoe": 19, "aoeChance": 25, "time": { "base": 180, "additional": 270, "perMember": 90, "total": 450, "rest": 180, "recovery": 360 }, "def": { "r0": 700, "r50": 1400, "r70": 2800, "r75": 8400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 2000, "hp": 45000, "atk": 35, "aoe": 23, "aoeChance": 25, "time": { "base": 180, "additional": 270, "perMember": 90, "total": 450, "rest": 360, "recovery": 720 }, "def": { "r0": 800, "r50": 1600, "r70": 3200, "r75": 9600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 2750, "hp": 80000, "atk": 50, "aoe": 34, "aoeChance": 25, "time": { "base": 180, "additional": 270, "perMember": 90, "total": 450, "rest": 540, "recovery": 1080 }, "def": { "r0": 1000, "r50": 2000, "r70": 4000, "r75": 12000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 8000, "hp": 500000, "atk": 125, "aoe": 60, "aoeChance": 25, "time": { "base": 270, "additional": 405, "perMember": 135, "total": 675, "rest": 810, "recovery": 1620 }, "def": { "r0": 2900, "r50": 5800, "r70": 11600, "r75": 34800 }, "barrier": { "sub1": "물", "sub2": "물", "sub3": "물", "hp": 75 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "태양의 신 무덤",
+      "key": "pyramid",
+      "areaImage": "/images/quest/area/normal_quest/pyramid.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "악마의 눈", "key": "evileye", "image": "/images/quest/details/normal_quest/evileye.webp" },
+        { "name": "실크 풍뎅이", "key": "silkscarab", "image": "/images/quest/details/normal_quest/silkscarab.webp" },
+        { "name": "별의 금속", "key": "starmetal", "image": "/images/quest/details/normal_quest/starmetal.webp" }
+      ],
+      "boss": { "name": "위대한 아누비스", "key": "pyramid_boss", "image": "/images/quest/details/normal_quest/pyramid_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 1200, "hp": 25000, "atk": 40, "aoe": 20, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 80, "recovery": 160 }, "def": { "r0": 1000, "r50": 2000, "r70": 4000, "r75": 12000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 1500, "hp": 40000, "atk": 50, "aoe": 25, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 160, "recovery": 320 }, "def": { "r0": 1200, "r50": 2400, "r70": 4800, "r75": 14400 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 2500, "hp": 80000, "atk": 60, "aoe": 30, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 400, "recovery": 800 }, "def": { "r0": 1350, "r50": 2700, "r70": 5400, "r75": 16200 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 7500, "hp": 430000, "atk": 130, "aoe": 65, "aoeChance": 25, "time": { "base": 150, "additional": 200, "perMember": 50, "total": 350, "rest": 750, "recovery": 1500 }, "def": { "r0": 3400, "r50": 6800, "r70": 13600, "r75": 40800 }, "barrier": { "sub1": "어둠", "sub2": "물", "sub3": "공기", "hp": 70 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 1800, "hp": 60000, "atk": 60, "aoe": 30, "aoeChance": 25, "time": { "base": 240, "additional": 320, "perMember": 80, "total": 560, "rest": 240, "recovery": 480 }, "def": { "r0": 1400, "r50": 2800, "r70": 5600, "r75": 16800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 2500, "hp": 90000, "atk": 70, "aoe": 35, "aoeChance": 25, "time": { "base": 240, "additional": 320, "perMember": 80, "total": 560, "rest": 480, "recovery": 960 }, "def": { "r0": 1700, "r50": 3400, "r70": 6800, "r75": 20400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 4000, "hp": 130000, "atk": 80, "aoe": 40, "aoeChance": 25, "time": { "base": 240, "additional": 320, "perMember": 80, "total": 560, "rest": 720, "recovery": 1440 }, "def": { "r0": 1900, "r50": 3800, "r70": 7600, "r75": 22800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 10000, "hp": 750000, "atk": 175, "aoe": 80, "aoeChance": 25, "time": { "base": 300, "additional": 400, "perMember": 100, "total": 700, "rest": 900, "recovery": 1800 }, "def": { "r0": 3800, "r50": 7600, "r70": 15200, "r75": 45600 }, "barrier": { "sub1": "빛", "sub2": "빛", "sub3": "빛", "hp": 95 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "크로노스 유적",
+      "key": "ruins",
+      "areaImage": "/images/quest/area/normal_quest/ruins.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "고대의 대리석", "key": "ancientmarble", "image": "/images/quest/details/normal_quest/ancientmarble.webp" },
+        { "name": "과성장 줄기", "key": "overgrownvine", "image": "/images/quest/details/normal_quest/overgrownvine.webp" },
+        { "name": "크로노스 크리스털", "key": "timecrystal", "image": "/images/quest/details/normal_quest/timecrystal.webp" }
+      ],
+      "boss": { "name": "키클롭스 군주", "key": "ruins_boss", "image": "/images/quest/details/normal_quest/ruins_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 2500, "hp": 60000, "atk": 60, "aoe": 30, "aoeChance": 25, "time": { "base": 100, "additional": 133, "perMember": 33, "total": 233, "rest": 100, "recovery": 200 }, "def": { "r0": 1750, "r50": 3500, "r70": 7000, "r75": 21000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 3500, "hp": 90000, "atk": 70, "aoe": 35, "aoeChance": 25, "time": { "base": 100, "additional": 133, "perMember": 33, "total": 233, "rest": 200, "recovery": 400 }, "def": { "r0": 2000, "r50": 4000, "r70": 8000, "r75": 24000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 4000, "hp": 120000, "atk": 80, "aoe": 40, "aoeChance": 25, "time": { "base": 100, "additional": 133, "perMember": 33, "total": 233, "rest": 500, "recovery": 1000 }, "def": { "r0": 2250, "r50": 4500, "r70": 9000, "r75": 27000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 9500, "hp": 600000, "atk": 150, "aoe": 75, "aoeChance": 25, "time": { "base": 150, "additional": 200, "perMember": 50, "total": 350, "rest": 750, "recovery": 1500 }, "def": { "r0": 3700, "r50": 7400, "r70": 14800, "r75": 44400 }, "barrier": { "sub1": "공기", "sub2": "불", "sub3": "어둠", "hp": 90 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 4000, "hp": 130000, "atk": 80, "aoe": 40, "aoeChance": 25, "time": { "base": 300, "additional": 400, "perMember": 100, "total": 700, "rest": 300, "recovery": 600 }, "def": { "r0": 2250, "r50": 4500, "r70": 9000, "r75": 27000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 5000, "hp": 170000, "atk": 100, "aoe": 60, "aoeChance": 25, "time": { "base": 300, "additional": 400, "perMember": 100, "total": 700, "rest": 600, "recovery": 1200 }, "def": { "r0": 2500, "r50": 5000, "r70": 10000, "r75": 30000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 6500, "hp": 300000, "atk": 125, "aoe": 70, "aoeChance": 25, "time": { "base": 300, "additional": 400, "perMember": 100, "total": 700, "rest": 900, "recovery": 1800 }, "def": { "r0": 2750, "r50": 5500, "r70": 11000, "r75": 33000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 12500, "hp": 1100000, "atk": 200, "aoe": 100, "aoeChance": 25, "time": { "base": 330, "additional": 440, "perMember": 110, "total": 770, "rest": 990, "recovery": 1980 }, "def": { "r0": 4000, "r50": 8000, "r70": 16000, "r75": 48000 }, "barrier": { "sub1": "공기", "sub2": "공기", "sub3": "공기", "hp": 110 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "유령의 성",
+      "key": "castle",
+      "areaImage": "/images/quest/area/normal_quest/castle.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "섬뜩한 심령", "key": "ectoplasm", "image": "/images/quest/details/normal_quest/ectoplasm.webp" },
+        { "name": "운명의 실타래", "key": "sewingthread", "image": "/images/quest/details/normal_quest/sewingthread.webp" },
+        { "name": "섬뜩한 깃발", "key": "ghostflag", "image": "/images/quest/details/normal_quest/ghostflag.webp" }
+      ],
+      "boss": { "name": "독재자 왕", "key": "castle_boss", "image": "/images/quest/details/normal_quest/castle_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 3750, "hp": 100000, "atk": 80, "aoe": 40, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 2250, "r50": 4500, "r70": 9000, "r75": 27000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 5000, "hp": 150000, "atk": 90, "aoe": 45, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 240, "recovery": 480 }, "def": { "r0": 2600, "r50": 5200, "r70": 10400, "r75": 31200 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 6250, "hp": 250000, "atk": 100, "aoe": 50, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 600, "recovery": 1200 }, "def": { "r0": 2800, "r50": 5600, "r70": 11200, "r75": 33600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 10000, "hp": 1000000, "atk": 170, "aoe": 85, "aoeChance": 25, "time": { "base": 160, "additional": 213, "perMember": 53, "total": 373, "rest": 800, "recovery": 1600 }, "def": { "r0": 4000, "r50": 8000, "r70": 16000, "r75": 48000 }, "barrier": { "sub1": "빛", "sub2": "대지", "sub3": "물", "hp": 100 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 6250, "hp": 200000, "atk": 100, "aoe": 50, "aoeChance": 25, "time": { "base": 360, "additional": 480, "perMember": 120, "total": 840, "rest": 360, "recovery": 720 }, "def": { "r0": 2500, "r50": 5000, "r70": 10000, "r75": 30000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 8000, "hp": 300000, "atk": 125, "aoe": 60, "aoeChance": 25, "time": { "base": 360, "additional": 480, "perMember": 120, "total": 840, "rest": 720, "recovery": 1440 }, "def": { "r0": 2750, "r50": 5500, "r70": 11000, "r75": 33000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 10000, "hp": 500000, "atk": 140, "aoe": 70, "aoeChance": 25, "time": { "base": 360, "additional": 480, "perMember": 120, "total": 840, "rest": 1080, "recovery": 2160 }, "def": { "r0": 3000, "r50": 6000, "r70": 12000, "r75": 36000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 13500, "hp": 1800000, "atk": 200, "aoe": 100, "aoeChance": 25, "time": { "base": 390, "additional": 520, "perMember": 130, "total": 910, "rest": 1170, "recovery": 2340 }, "def": { "r0": 4500, "r50": 9000, "r70": 18000, "r75": 54000 }, "barrier": { "sub1": "빛", "sub2": "빛", "sub3": "빛", "hp": 130 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "가라앉은 사원",
+      "key": "temple",
+      "areaImage": "/images/quest/area/normal_quest/temple.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "심해의 산호", "key": "deepcoral", "image": "/images/quest/details/normal_quest/deepcoral.webp" },
+        { "name": "크리스털 자장가", "key": "sirenshard", "image": "/images/quest/details/normal_quest/sirenshard.webp" },
+        { "name": "귀중한 껍질", "key": "goldshell", "image": "/images/quest/details/normal_quest/goldshell.webp" }
+      ],
+      "boss": { "name": "인어 여왕", "key": "temple_boss", "image": "/images/quest/details/normal_quest/temple_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 6250, "hp": 250000, "atk": 100, "aoe": 50, "aoeChance": 25, "time": { "base": 135, "additional": 180, "perMember": 45, "total": 315, "rest": 135, "recovery": 270 }, "def": { "r0": 2800, "r50": 5600, "r70": 11200, "r75": 33600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 7500, "hp": 350000, "atk": 120, "aoe": 55, "aoeChance": 25, "time": { "base": 135, "additional": 180, "perMember": 45, "total": 315, "rest": 270, "recovery": 540 }, "def": { "r0": 3000, "r50": 6000, "r70": 12000, "r75": 36000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 9000, "hp": 450000, "atk": 145, "aoe": 60, "aoeChance": 25, "time": { "base": 135, "additional": 180, "perMember": 45, "total": 315, "rest": 675, "recovery": 1350 }, "def": { "r0": 3250, "r50": 6500, "r70": 13000, "r75": 39000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 11000, "hp": 1500000, "atk": 210, "aoe": 105, "aoeChance": 25, "time": { "base": 170, "additional": 227, "perMember": 57, "total": 397, "rest": 850, "recovery": 1700 }, "def": { "r0": 4400, "r50": 8800, "r70": 17600, "r75": 52800 }, "barrier": { "sub1": "불", "sub2": "어둠", "sub3": "대지", "hp": 120 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 9000, "hp": 300000, "atk": 145, "aoe": 60, "aoeChance": 25, "time": { "base": 405, "additional": 540, "perMember": 135, "total": 945, "rest": 405, "recovery": 810 }, "def": { "r0": 3000, "r50": 6000, "r70": 12000, "r75": 36000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 10000, "hp": 450000, "atk": 160, "aoe": 70, "aoeChance": 25, "time": { "base": 405, "additional": 540, "perMember": 135, "total": 945, "rest": 810, "recovery": 1620 }, "def": { "r0": 3300, "r50": 6600, "r70": 13200, "r75": 39600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 11750, "hp": 900000, "atk": 175, "aoe": 80, "aoeChance": 25, "time": { "base": 405, "additional": 540, "perMember": 135, "total": 945, "rest": 1215, "recovery": 2430 }, "def": { "r0": 3600, "r50": 7200, "r70": 14400, "r75": 43200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 12500, "hp": 2000000, "atk": 230, "aoe": 110, "aoeChance": 25, "time": { "base": 405, "additional": 540, "perMember": 135, "total": 945, "rest": 1215, "recovery": 2430 }, "def": { "r0": 5000, "r50": 10000, "r70": 20000, "r75": 60000 }, "barrier": { "sub1": "불", "sub2": "불", "sub3": "불", "hp": 155 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "브릭스파이어 피크",
+      "key": "peak",
+      "areaImage": "/images/quest/area/normal_quest/peak.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "음침한 발", "key": "grimtalon", "image": "/images/quest/details/normal_quest/grimtalon.webp" },
+        { "name": "지르코니아 껍질", "key": "crystalegg", "image": "/images/quest/details/normal_quest/crystalegg.webp" },
+        { "name": "북녘의 돌풍", "key": "icybreeze", "image": "/images/quest/details/normal_quest/icybreeze.webp" }
+      ],
+      "boss": { "name": "하피 우두머리", "key": "peak_boss", "image": "/images/quest/details/normal_quest/peak_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 6500, "hp": 400000, "atk": 130, "aoe": 60, "aoeChance": 25, "time": { "base": 150, "additional": 200, "perMember": 50, "total": 350, "rest": 150, "recovery": 300 }, "def": { "r0": 3500, "r50": 7000, "r70": 14000, "r75": 42000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 9000, "hp": 500000, "atk": 150, "aoe": 65, "aoeChance": 25, "time": { "base": 150, "additional": 200, "perMember": 50, "total": 350, "rest": 300, "recovery": 600 }, "def": { "r0": 3750, "r50": 7500, "r70": 15000, "r75": 45000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 10000, "hp": 650000, "atk": 170, "aoe": 70, "aoeChance": 25, "time": { "base": 150, "additional": 200, "perMember": 50, "total": 350, "rest": 750, "recovery": 1500 }, "def": { "r0": 4000, "r50": 8000, "r70": 16000, "r75": 48000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 13000, "hp": 1800000, "atk": 220, "aoe": 110, "aoeChance": 25, "time": { "base": 170, "additional": 227, "perMember": 57, "total": 397, "rest": 850, "recovery": 1700 }, "def": { "r0": 4900, "r50": 9800, "r70": 19600, "r75": 58800 }, "barrier": { "sub1": "불", "sub2": "공기", "sub3": "빛", "hp": 140 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 10000, "hp": 600000, "atk": 170, "aoe": 70, "aoeChance": 25, "time": { "base": 450, "additional": 600, "perMember": 150, "total": 1050, "rest": 450, "recovery": 900 }, "def": { "r0": 3750, "r50": 7500, "r70": 15000, "r75": 45000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 12000, "hp": 900000, "atk": 190, "aoe": 80, "aoeChance": 25, "time": { "base": 450, "additional": 600, "perMember": 150, "total": 1050, "rest": 900, "recovery": 1800 }, "def": { "r0": 4250, "r50": 8500, "r70": 17000, "r75": 51000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 13000, "hp": 1200000, "atk": 215, "aoe": 100, "aoeChance": 25, "time": { "base": 450, "additional": 600, "perMember": 150, "total": 1050, "rest": 1350, "recovery": 2700 }, "def": { "r0": 5000, "r50": 10000, "r70": 20000, "r75": 60000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 16000, "hp": 3000000, "atk": 250, "aoe": 125, "aoeChance": 25, "time": { "base": 450, "additional": 600, "perMember": 150, "total": 1050, "rest": 1350, "recovery": 2700 }, "def": { "r0": 6000, "r50": 12000, "r70": 24000, "r75": 72000 }, "barrier": { "sub1": "대지", "sub2": "대지", "sub3": "대지", "hp": 165 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "신더레이크 화산",
+      "key": "volcano",
+      "areaImage": "/images/quest/area/normal_quest/volcano.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "크러시 집게발", "key": "crabclaw", "image": "/images/quest/details/normal_quest/crabclaw.webp" },
+        { "name": "가공되지 않은 흑요석", "key": "obsidian", "image": "/images/quest/details/normal_quest/obsidian.webp" },
+        { "name": "마그마 코어", "key": "magmacore", "image": "/images/quest/details/normal_quest/magmacore.webp" }
+      ],
+      "boss": { "name": "원로 크러쉬타션", "key": "volcano_boss", "image": "/images/quest/details/normal_quest/volcano_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 8000, "hp": 500000, "atk": 160, "aoe": 80, "aoeChance": 25, "time": { "base": 160, "additional": 213, "perMember": 53, "total": 373, "rest": 160, "recovery": 320 }, "def": { "r0": 3750, "r50": 7500, "r70": 15000, "r75": 45000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 10500, "hp": 650000, "atk": 180, "aoe": 90, "aoeChance": 25, "time": { "base": 160, "additional": 213, "perMember": 53, "total": 373, "rest": 320, "recovery": 640 }, "def": { "r0": 4100, "r50": 8200, "r70": 16400, "r75": 49200 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 12000, "hp": 900000, "atk": 200, "aoe": 100, "aoeChance": 25, "time": { "base": 160, "additional": 213, "perMember": 53, "total": 373, "rest": 800, "recovery": 1600 }, "def": { "r0": 4300, "r50": 8600, "r70": 17200, "r75": 51600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 15000, "hp": 2400000, "atk": 240, "aoe": 120, "aoeChance": 25, "time": { "base": 180, "additional": 240, "perMember": 60, "total": 420, "rest": 900, "recovery": 1800 }, "def": { "r0": 5200, "r50": 10400, "r70": 20800, "r75": 62400 }, "barrier": { "sub1": "물", "sub2": "대지", "sub3": "빛", "hp": 160 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 11000, "hp": 800000, "atk": 180, "aoe": 90, "aoeChance": 25, "time": { "base": 480, "additional": 640, "perMember": 160, "total": 1120, "rest": 480, "recovery": 960 }, "def": { "r0": 3900, "r50": 7800, "r70": 15600, "r75": 46800 }, "barrier": { "sub1": "물", "sub2": "물", "sub3": "물", "hp": 165 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 13000, "hp": 1250000, "atk": 205, "aoe": 100, "aoeChance": 25, "time": { "base": 480, "additional": 640, "perMember": 160, "total": 1120, "rest": 960, "recovery": 1920 }, "def": { "r0": 4350, "r50": 8700, "r70": 17400, "r75": 52200 }, "barrier": { "sub1": "물", "sub2": "물", "sub3": "물", "hp": 170 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 14000, "hp": 1800000, "atk": 225, "aoe": 110, "aoeChance": 25, "time": { "base": 480, "additional": 640, "perMember": 160, "total": 1120, "rest": 1440, "recovery": 2880 }, "def": { "r0": 5300, "r50": 10600, "r70": 21200, "r75": 63600 }, "barrier": { "sub1": "물", "sub2": "물", "sub3": "물", "hp": 175 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 18500, "hp": 4000000, "atk": 280, "aoe": 140, "aoeChance": 25, "time": { "base": 480, "additional": 640, "perMember": 160, "total": 1120, "rest": 1440, "recovery": 2880 }, "def": { "r0": 6500, "r50": 13000, "r70": 26000, "r75": 78000 }, "barrier": { "sub1": "물", "sub2": "물", "sub3": "물", "hp": 180 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "공허 장벽",
+      "key": "rift",
+      "areaImage": "/images/quest/area/normal_quest/rift.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "외부인의 집게발", "key": "voidcrystal", "image": "/images/quest/details/normal_quest/voidcrystal.webp" },
+        { "name": "모든 것을 보는 눈", "key": "voideye", "image": "/images/quest/details/normal_quest/voideye.webp" },
+        { "name": "아스트랄 천", "key": "voidcloth", "image": "/images/quest/details/normal_quest/voidcloth.webp" }
+      ],
+      "boss": { "name": "공허 생명체", "key": "rift_boss", "image": "/images/quest/details/normal_quest/rift_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 9500, "hp": 620000, "atk": 190, "aoe": 95, "aoeChance": 25, "time": { "base": 180, "additional": 240, "perMember": 60, "total": 420, "rest": 180, "recovery": 360 }, "def": { "r0": 4000, "r50": 8000, "r70": 16000, "r75": 48000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 12000, "hp": 800000, "atk": 210, "aoe": 105, "aoeChance": 25, "time": { "base": 180, "additional": 240, "perMember": 60, "total": 420, "rest": 360, "recovery": 720 }, "def": { "r0": 4350, "r50": 8700, "r70": 17400, "r75": 52200 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 14250, "hp": 1100000, "atk": 245, "aoe": 120, "aoeChance": 25, "time": { "base": 180, "additional": 240, "perMember": 60, "total": 420, "rest": 900, "recovery": 1800 }, "def": { "r0": 4800, "r50": 9600, "r70": 19200, "r75": 57600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 16500, "hp": 2740000, "atk": 270, "aoe": 135, "aoeChance": 25, "time": { "base": 200, "additional": 267, "perMember": 67, "total": 467, "rest": 1000, "recovery": 2000 }, "def": { "r0": 5500, "r50": 11000, "r70": 22000, "r75": 66000 }, "barrier": { "sub1": "빛", "sub2": "공기", "sub3": "불", "hp": 170 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 12500, "hp": 1050000, "atk": 215, "aoe": 110, "aoeChance": 25, "time": { "base": 500, "additional": 667, "perMember": 167, "total": 1167, "rest": 500, "recovery": 1000 }, "def": { "r0": 4100, "r50": 8200, "r70": 16400, "r75": 49200 }, "barrier": { "sub1": "빛", "sub2": "빛", "sub3": "빛", "hp": 185 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 14500, "hp": 1550000, "atk": 240, "aoe": 120, "aoeChance": 25, "time": { "base": 500, "additional": 667, "perMember": 167, "total": 1167, "rest": 1000, "recovery": 2000 }, "def": { "r0": 4600, "r50": 9200, "r70": 18400, "r75": 55200 }, "barrier": { "sub1": "빛", "sub2": "빛", "sub3": "빛", "hp": 190 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 15500, "hp": 2150000, "atk": 260, "aoe": 130, "aoeChance": 25, "time": { "base": 500, "additional": 667, "perMember": 167, "total": 1167, "rest": 1500, "recovery": 3000 }, "def": { "r0": 5600, "r50": 11200, "r70": 22400, "r75": 67200 }, "barrier": { "sub1": "빛", "sub2": "빛", "sub3": "빛", "hp": 195 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 20500, "hp": 5000000, "atk": 320, "aoe": 160, "aoeChance": 25, "time": { "base": 500, "additional": 667, "perMember": 167, "total": 1167, "rest": 1500, "recovery": 3000 }, "def": { "r0": 6750, "r50": 13500, "r70": 27000, "r75": 81000 }, "barrier": { "sub1": "빛", "sub2": "빛", "sub3": "빛", "hp": 200 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "엘리시움",
+      "key": "elysium",
+      "areaImage": "/images/quest/area/normal_quest/elysium.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "반신반인 피니언", "key": "demigodpinion", "image": "/images/quest/details/normal_quest/demigodpinion.webp" },
+        { "name": "하늘의 문장", "key": "heavencrest", "image": "/images/quest/details/normal_quest/heavencrest.webp" },
+        { "name": "신성 스파크", "key": "divinespark", "image": "/images/quest/details/normal_quest/divinespark.webp" }
+      ],
+      "boss": { "name": "아바타", "key": "elysium_boss", "image": "/images/quest/details/normal_quest/elysium_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 13000, "hp": 900000, "atk": 220, "aoe": 125, "aoeChance": 25, "time": { "base": 200, "additional": 267, "perMember": 67, "total": 467, "rest": 200, "recovery": 400 }, "def": { "r0": 5000, "r50": 10000, "r70": 20000, "r75": 60000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 15000, "hp": 1200000, "atk": 230, "aoe": 130, "aoeChance": 25, "time": { "base": 200, "additional": 267, "perMember": 67, "total": 467, "rest": 400, "recovery": 800 }, "def": { "r0": 5500, "r50": 11000, "r70": 22000, "r75": 66000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 17000, "hp": 1500000, "atk": 290, "aoe": 150, "aoeChance": 25, "time": { "base": 200, "additional": 267, "perMember": 67, "total": 467, "rest": 1000, "recovery": 2000 }, "def": { "r0": 6500, "r50": 13000, "r70": 26000, "r75": 78000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 22500, "hp": 4000000, "atk": 320, "aoe": 180, "aoeChance": 25, "time": { "base": 220, "additional": 293, "perMember": 73, "total": 513, "rest": 1100, "recovery": 2200 }, "def": { "r0": 7500, "r50": 15000, "r70": 30000, "r75": 90000 }, "barrier": { "sub1": "물", "sub2": "어둠", "sub3": "대지", "hp": 240 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 15000, "hp": 1800000, "atk": 245, "aoe": 140, "aoeChance": 25, "time": { "base": 600, "additional": 800, "perMember": 200, "total": 1400, "rest": 600, "recovery": 1200 }, "def": { "r0": 6000, "r50": 12000, "r70": 24000, "r75": 72000 }, "barrier": { "sub1": "어둠", "sub2": "어둠", "sub3": "어둠", "hp": 190 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 17500, "hp": 2200000, "atk": 270, "aoe": 150, "aoeChance": 25, "time": { "base": 600, "additional": 800, "perMember": 200, "total": 1400, "rest": 1200, "recovery": 2400 }, "def": { "r0": 6500, "r50": 13000, "r70": 26000, "r75": 78000 }, "barrier": { "sub1": "어둠", "sub2": "어둠", "sub3": "어둠", "hp": 220 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 20000, "hp": 2800000, "atk": 300, "aoe": 170, "aoeChance": 25, "time": { "base": 600, "additional": 800, "perMember": 200, "total": 1400, "rest": 1800, "recovery": 3600 }, "def": { "r0": 8500, "r50": 17000, "r70": 34000, "r75": 102000 }, "barrier": { "sub1": "어둠", "sub2": "어둠", "sub3": "어둠", "hp": 260 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 30000, "hp": 8000000, "atk": 360, "aoe": 210, "aoeChance": 25, "time": { "base": 600, "additional": 800, "perMember": 200, "total": 1400, "rest": 1800, "recovery": 3600 }, "def": { "r0": 10000, "r50": 20000, "r70": 40000, "r75": 120000 }, "barrier": { "sub1": "어둠", "sub2": "어둠", "sub3": "어둠", "hp": 320 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "고대 정글",
+      "key": "jurassic",
+      "areaImage": "/images/quest/area/normal_quest/jurassic.webp",
+      "maxMembers": 4,
+      "subAreas": [
+        { "name": "신비로운 화석", "key": "oldfossil", "image": "/images/quest/details/normal_quest/oldfossil.webp" },
+        { "name": "공룡 가죽", "key": "dinoleather", "image": "/images/quest/details/normal_quest/dinoleather.webp" },
+        { "name": "고대 호박", "key": "amber", "image": "/images/quest/details/normal_quest/amber.webp" }
+      ],
+      "boss": { "name": "티라오사우루스 렉스", "key": "jurassic_boss", "image": "/images/quest/details/normal_quest/jurassic_boss.webp" },
+      "quests": [
+        { "type": "normal", "difficulty": "쉬움", "minPower": 16000, "hp": 1400000, "atk": 285, "aoe": 150, "aoeChance": 25, "time": { "base": 220, "additional": 293, "perMember": 73, "total": 513, "rest": 220, "recovery": 440 }, "def": { "r0": 7050, "r50": 14100, "r70": 28200, "r75": 84600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "보통", "minPower": 18000, "hp": 1800000, "atk": 310, "aoe": 160, "aoeChance": 25, "time": { "base": 220, "additional": 293, "perMember": 73, "total": 513, "rest": 440, "recovery": 880 }, "def": { "r0": 7700, "r50": 15400, "r70": 30800, "r75": 92400 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "어려움", "minPower": 20000, "hp": 2500000, "atk": 330, "aoe": 170, "aoeChance": 25, "time": { "base": 220, "additional": 293, "perMember": 73, "total": 513, "rest": 1100, "recovery": 2200 }, "def": { "r0": 8800, "r50": 17600, "r70": 35200, "r75": 105600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "difficulty": "익스트림", "minPower": 26000, "hp": 7000000, "atk": 360, "aoe": 235, "aoeChance": 25, "time": { "base": 240, "additional": 320, "perMember": 80, "total": 560, "rest": 1200, "recovery": 2400 }, "def": { "r0": 11000, "r50": 22000, "r70": 44000, "r75": 132000 }, "barrier": { "sub1": "공기", "sub2": "불", "sub3": "빛", "hp": 280 }, "isBoss": false, "isExtreme": true },
+        { "type": "boss", "difficulty": "쉬움", "minPower": 20000, "hp": 2800000, "atk": 300, "aoe": 175, "aoeChance": 25, "time": { "base": 660, "additional": 880, "perMember": 220, "total": 1540, "rest": 660, "recovery": 1320 }, "def": { "r0": 9350, "r50": 18700, "r70": 37400, "r75": 112200 }, "barrier": { "sub1": "불", "sub2": "불", "sub3": "불", "hp": 210 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 22000, "hp": 3500000, "atk": 330, "aoe": 190, "aoeChance": 25, "time": { "base": 660, "additional": 880, "perMember": 220, "total": 1540, "rest": 1320, "recovery": 2640 }, "def": { "r0": 11000, "r50": 22000, "r70": 44000, "r75": 132000 }, "barrier": { "sub1": "불", "sub2": "불", "sub3": "불", "hp": 240 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 24000, "hp": 5000000, "atk": 370, "aoe": 215, "aoeChance": 25, "time": { "base": 660, "additional": 880, "perMember": 220, "total": 1540, "rest": 1980, "recovery": 3960 }, "def": { "r0": 12100, "r50": 24200, "r70": 48400, "r75": 145200 }, "barrier": { "sub1": "불", "sub2": "불", "sub3": "불", "hp": 280 }, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 34000, "hp": 15000000, "atk": 410, "aoe": 250, "aoeChance": 25, "time": { "base": 660, "additional": 880, "perMember": 220, "total": 1540, "rest": 1980, "recovery": 3960 }, "def": { "r0": 14000, "r50": 28000, "r70": 56000, "r75": 168000 }, "barrier": { "sub1": "불", "sub2": "불", "sub3": "불", "hp": 360 }, "isBoss": true, "isExtreme": true }
+      ]
+    }
+  ]
+}
