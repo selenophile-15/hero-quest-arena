@@ -269,7 +269,7 @@ export default function QuestSimulation() {
 
   // Defense thresholds (from -50%=0 to 75%)
   const defThresholds = [
-    { key: 'neg50' as const, label: '-50%', color: '#dc2626', textClass: 'text-red-600', value: 0 },
+    { key: 'neg50' as const, label: '-50%', color: '#a855f7', textClass: 'text-purple-400', value: 0 },
     { key: 'r0' as const, label: '0%', color: '#ef4444', textClass: 'text-red-400', value: currentQuest?.def.r0 || 0 },
     { key: 'r50' as const, label: '50%', color: '#eab308', textClass: 'text-yellow-400', value: currentQuest?.def.r50 || 0 },
     { key: 'r70' as const, label: '70%', color: '#84cc16', textClass: 'text-lime-400', value: currentQuest?.def.r70 || 0 },
@@ -497,9 +497,9 @@ export default function QuestSimulation() {
                               // Dot x is at left(8 w-8) + gap(8) + center of bar(6) = ~46px
                               const dotX = 46;
                               const dotY = barH - (pct / 100) * barH;
-                              // Angled line: go right and up, stagger angle per hero
-                              const lineLen = 30 + hi * 18;
-                              const angle = -(15 + hi * 10); // degrees upward
+                              // Angled line: fixed length, stagger angle per hero
+                              const lineLen = 35;
+                              const angle = -(10 + hi * 12); // degrees upward
                               const rad = (angle * Math.PI) / 180;
                               const endX = dotX + lineLen * Math.cos(rad);
                               const endY = dotY + lineLen * Math.sin(rad);
