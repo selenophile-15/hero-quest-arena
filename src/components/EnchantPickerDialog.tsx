@@ -300,6 +300,10 @@ export default function EnchantPickerDialog({
                 </SelectContent>
               </Select>
               <Button size="sm" variant="outline" className="h-9 text-sm" onClick={handleBulkElement}>적용</Button>
+              <div className="ml-auto flex gap-2">
+                <Button variant="outline" onClick={onClose}>취소</Button>
+                <Button onClick={handleConfirm}>확인</Button>
+              </div>
             </div>
 
             {/* Element totals */}
@@ -404,6 +408,10 @@ export default function EnchantPickerDialog({
               <span className="text-sm font-semibold text-primary">일괄 적용</span>
               {renderSpiritSelect(bulkSpirit || '_none', v => setBulkSpirit(v === '_none' ? '' : v), 'w-48')}
               <Button size="sm" variant="outline" className="h-9 text-sm" onClick={handleBulkSpirit}>적용</Button>
+              <div className="ml-auto flex gap-2">
+                <Button variant="outline" onClick={onClose}>취소</Button>
+                <Button onClick={handleConfirm}>확인</Button>
+              </div>
             </div>
 
             {titanCount >= 2 && (
@@ -481,10 +489,6 @@ export default function EnchantPickerDialog({
           </TabsContent>
         </Tabs>
 
-        <div className="flex gap-2 mt-4 justify-end">
-          <Button variant="outline" onClick={onClose}>취소</Button>
-          <Button onClick={handleConfirm}>확인</Button>
-        </div>
       </DialogContent>
     </Dialog>
   );
