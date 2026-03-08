@@ -643,7 +643,7 @@ export default function QuestSimulation() {
                       return (
                         <td key={`slot-empty-${slotIdx}`} className="text-center py-2">
                           <button
-                            onClick={() => currentQuest && setHeroSelectOpen(true)}
+                            onClick={() => currentQuest && openSlotForAdd()}
                             className={`w-16 h-16 rounded-full border-2 border-dashed inline-flex items-center justify-center transition-all ${
                               currentQuest ? 'border-muted-foreground/30 hover:border-primary/50 cursor-pointer' : 'border-muted-foreground/15 cursor-not-allowed'
                             }`}>
