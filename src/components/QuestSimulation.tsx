@@ -568,12 +568,53 @@ export default function QuestSimulation() {
                   </div>
                 )}
 
-                {/* Line 3: Boss (below difficulty) */}
-                {currentQuest.isBoss && (
+                {/* Line 3: Boss or Mini Boss selector */}
+                {currentQuest.isBoss ? (
                   <div className="text-center text-sm">
                     <span className="text-red-400">
                       <Crown className="w-3.5 h-3.5 inline mr-0.5" />보스
                     </span>
+                  </div>
+                ) : !currentQuest.isBoss && selectedSubAreaIdx !== 99 && (
+                  <div className="text-center">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className={`text-xs px-2 py-0.5 rounded border transition-all ${
+                          selectedMiniBoss !== 'none'
+                            ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
+                            : 'border-border/40 text-muted-foreground hover:border-primary/40'
+                        }`}>
+                          {selectedMiniBoss === 'none' ? '미니보스 없음' :
+                           selectedMiniBoss === 'huge' ? '🟡 거대한' :
+                           selectedMiniBoss === 'agile' ? '🟢 민첩한' :
+                           selectedMiniBoss === 'dire' ? '🔴 흉포한' :
+                           selectedMiniBoss === 'legendary' ? '🟣 전설의' : '미니보스'}
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-48 p-2" align="center">
+                        <div className="text-xs font-medium text-foreground mb-2">미니보스 수식어</div>
+                        <div className="space-y-1">
+                          {([
+                            { id: 'none', label: '없음', desc: '일반 몬스터', color: '' },
+                            { id: 'huge', label: '거대한', desc: 'HP 2배, 광역 2배', color: 'text-yellow-400' },
+                            { id: 'agile', label: '민첩한', desc: '회피 +40%', color: 'text-green-400' },
+                            { id: 'dire', label: '흉포한', desc: 'HP 1.5배, 치확 3배', color: 'text-red-400' },
+                            { id: 'legendary', label: '전설의', desc: 'HP 1.5배, ATK 1.25배, 치확 1.5배, 회피 10%', color: 'text-purple-400' },
+                          ] as const).map(mb => (
+                            <button
+                              key={mb.id}
+                              onClick={() => setSelectedMiniBoss(mb.id as MiniBossType)}
+                              className={`w-full text-left px-2 py-1.5 rounded text-xs transition-colors ${
+                                selectedMiniBoss === mb.id ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'
+                              }`}
+                            >
+                              <span className={`font-medium ${mb.color}`}>{mb.label}</span>
+                              <span className="text-[10px] text-muted-foreground ml-1">{mb.desc}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 )}
 
