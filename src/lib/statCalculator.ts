@@ -44,12 +44,22 @@ export interface CalculatedStats {
   totalEvasion: number;
   totalThreat: number;
 
+  // Relic effects
+  relicEffects: RelicEffect[];
+  // Pre-relic values (before fixed effects)
+  preRelicCrit: number;
+  preRelicEvasion: number;
+
+  // Relic bonus additions to general stats
+  relicBonusFlat: { atk: number; def: number; hp: number; crit: number; critDmg: number; evasion: number; threat: number };
+  relicBonusPct: { atk: number; def: number; hp: number };
+
   // Metadata
   jobName: string;
   jobElement: string;
 }
 
-export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses };
+export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect };
 
 const SEED_MULTIPLIER = { hp: 1, atk: 4, def: 4 };
 
