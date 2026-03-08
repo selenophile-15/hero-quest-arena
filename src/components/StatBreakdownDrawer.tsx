@@ -114,6 +114,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
     const skillSources = bonus?.sources.filter(s => s.type === 'unique' || s.type === 'common') || [];
     const soulSources = bonus?.sources.filter(s => s.type === 'soul') || [];
+    const relicSources = bonus?.sources.filter(s => s.type === 'relic') || [];
+    const jobSources = bonus?.sources.filter(s => s.type === 'job') || [];
 
     // Get equipped item types to filter 해당 장비 bonuses
     const equippedItemTypes = new Set(
@@ -178,7 +180,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               </thead>
               <tbody>
                 {(() => {
-                  const allSources = [...skillSources, ...soulSources];
+                  const allSources = [...skillSources, ...soulSources, ...relicSources, ...jobSources];
                   const filtered = allSources.filter(src => {
                     const flat = getBonusField(src, statType, 'flat');
                     const pct = getBonusField(src, statType, 'pct');
