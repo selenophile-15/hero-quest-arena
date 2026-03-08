@@ -4,7 +4,7 @@ import { formatNumber } from '@/lib/format';
 import { getHeroes } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, X, Clock, Coffee } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, Clock, Coffee } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
