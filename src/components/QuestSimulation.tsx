@@ -141,6 +141,7 @@ export default function QuestSimulation() {
   // Dialogs
   const [configOpen, setConfigOpen] = useState(false);
   const [heroSelectOpen, setHeroSelectOpen] = useState(false);
+  const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null); // Which slot is being edited
 
   // Time settings
   const [timeSettings, setTimeSettings] = useState<TimeSettingItem[]>(DEFAULT_TIME_SETTINGS);
