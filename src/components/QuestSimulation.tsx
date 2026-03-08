@@ -1307,10 +1307,18 @@ export default function QuestSimulation() {
       {/* Config Dialog */}
       <QuestConfigDialog
         open={configOpen}
-        onOpenChange={setConfigOpen}
+        onOpenChange={(open) => {
+          setConfigOpen(open);
+          if (!open) {
+            setConfigInitialStep(undefined);
+            setConfigInitialState(undefined);
+          }
+        }}
         questDataMap={questDataMap}
         questFiles={QUEST_FILES}
         onSelect={handleQuestSelect}
+        initialStep={configInitialStep}
+        initialState={configInitialState}
       />
 
       {/* Hero Select Dialog */}
