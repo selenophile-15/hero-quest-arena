@@ -676,7 +676,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   ? `※ ${hasCritFixed.itemName}: 치명타 확률 ${hasCritFixed.fixedValue}%로 고정`
                   : '※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스'}
               </p>
-              </p>
             </div>
           </div>
 
