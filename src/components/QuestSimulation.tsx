@@ -558,16 +558,16 @@ export default function QuestSimulation() {
 
                 {/* Line 4: Element Barrier */}
                 {barrierElements.length > 0 && currentQuest.barrier && (
-                  <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center gap-4">
                     {barrierElements.map((el, i) => {
                       const iconPath = commonData?.elementalBarriers?.[el]?.image;
                       const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
                       const required = currentQuest.barrier!.hp;
                       const isMet = heroSum >= required;
                       return (
-                        <div key={i} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-purple-500/30 bg-purple-500/10'}`}>
-                          {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                          <span className={`text-xs font-mono font-bold ${isMet ? 'text-green-400' : 'text-purple-300'}`}>
+                        <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-purple-500/30 bg-purple-500/10'}`}>
+                          {iconPath && <img src={iconPath} alt="" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                          <span className={`text-sm font-mono font-bold ${isMet ? 'text-green-400' : 'text-purple-300'}`}>
                             {formatNumber(heroSum)} / {formatNumber(required)}
                           </span>
                         </div>
