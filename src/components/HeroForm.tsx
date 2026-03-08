@@ -227,6 +227,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [enchantInitialTab, setEnchantInitialTab] = useState<'element' | 'spirit'>('element');
   const [nameError, setNameError] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const [calcStats, setCalcStats] = useState<CalculatedStats | null>(null);
 
   useEffect(() => {
     getCommonSkills().then(data => {
