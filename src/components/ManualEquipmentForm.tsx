@@ -23,6 +23,7 @@ function getAllowedTypesForSlot(allowedTypes?: string[]) {
 }
 
 const ELEMENT_OPTIONS = ['불', '물', '공기', '대지', '빛', '어둠', '골드', '모든 원소'];
+const UNIQUE_ELEMENT_OPTIONS = ['불', '물', '공기', '대지', '빛', '어둠'];
 
 const SPIRIT_OPTIONS = [
   '바하무트', '레비아탄', '그리핀', '명인', '조상', '베히모스', '우로보로스',
@@ -34,7 +35,7 @@ const SPIRIT_OPTIONS = [
   '독수리', '황소', '양', '늑대', '고양이', '거위', '독사', '토끼',
 ];
 
-const UNIQUE_ELEMENT_TIERS = [1, 2, 3, 4, 5];
+const UNIQUE_ELEMENT_TIERS = [4, 7, 9, 12, 14];
 
 const RELIC_STAT_OPTIONS = [
   { value: '깡공격력', label: '공격력' },
@@ -280,38 +281,19 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
 
           {/* Stats */}
           <div className="text-[10px] text-foreground">일반 등급 기준 스탯</div>
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            {[
-              { key: 'atk' as const, label: '공격력', suffix: '' },
-              { key: 'def' as const, label: '방어력', suffix: '' },
-              { key: 'hp' as const, label: '체력', suffix: '' },
-            ].map(s => (
-              <div key={s.key} className="flex flex-col items-center gap-0.5">
-                <span className="text-foreground text-[10px]">{s.label}</span>
-                <Input
-                  type="number"
-                  className="h-7 text-xs text-center"
-                  value={rawStats[s.key] ?? (data[s.key] === 0 ? '' : String(data[s.key]))}
-                  onChange={e => {
-                    const v = e.target.value;
-                    setRawStats(prev => ({ ...prev, [s.key]: v }));
-                    update(s.key, v === '' ? 0 : (parseFloat(v) || 0));
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            {[
-              { key: 'crit' as const, label: '치명타 확률', suffix: '%' },
-              { key: 'evasion' as const, label: '회피', suffix: '%' },
-            ].map(s => (
-              <div key={s.key} className="flex flex-col items-center gap-0.5">
-                <span className="text-foreground text-[10px]">{s.label}</span>
-                <div className="relative w-full">
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            {/* Left: atk, def, hp */}
+            <div className="flex flex-col gap-1.5">
+              {[
+                { key: 'atk' as const, label: '공격력' },
+                { key: 'def' as const, label: '방어력' },
+                { key: 'hp' as const, label: '체력' },
+              ].map(s => (
+                <div key={s.key} className="grid grid-cols-[56px_1fr] gap-1 items-center">
+                  <span className="text-foreground text-[10px]">{s.label}</span>
                   <Input
                     type="number"
-                    className="h-7 text-xs text-center pr-4"
+                    className="h-7 text-xs text-center"
                     value={rawStats[s.key] ?? (data[s.key] === 0 ? '' : String(data[s.key]))}
                     onChange={e => {
                       const v = e.target.value;
@@ -319,10 +301,33 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
                       update(s.key, v === '' ? 0 : (parseFloat(v) || 0));
                     }}
                   />
-                  <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none">%</span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            {/* Right: crit, evasion */}
+            <div className="flex flex-col gap-1.5">
+              {[
+                { key: 'crit' as const, label: '치명타 확률' },
+                { key: 'evasion' as const, label: '회피' },
+              ].map(s => (
+                <div key={s.key} className="grid grid-cols-[56px_1fr] gap-1 items-center">
+                  <span className="text-foreground text-[10px]">{s.label}</span>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      className="h-7 text-xs text-center pr-4"
+                      value={rawStats[s.key] ?? (data[s.key] === 0 ? '' : String(data[s.key]))}
+                      onChange={e => {
+                        const v = e.target.value;
+                        setRawStats(prev => ({ ...prev, [s.key]: v }));
+                        update(s.key, v === '' ? 0 : (parseFloat(v) || 0));
+                      }}
+                    />
+                    <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none">%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
