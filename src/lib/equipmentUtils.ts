@@ -192,6 +192,7 @@ export async function loadEquipmentByTypes(
     } catch (e) {
       console.warn(`Failed to load equipment: ${file}`, e);
     }
+    onProgress?.(results.length > 0 ? typeKorNames.indexOf(typeKor) + 1 : typeKorNames.indexOf(typeKor) + 1);
   }
 
   // Sort by tier descending
