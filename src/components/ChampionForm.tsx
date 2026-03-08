@@ -359,7 +359,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       <div
         key={slotIdx}
         className="flex flex-col items-center gap-1 cursor-pointer"
-        onClick={() => setEquipDialogType(slotIdx === 0 ? 'familiar' : 'aurasong')}
+        onClick={() => { setEquipDialogType(slotIdx === 0 ? 'familiar' : 'aurasong'); setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual); }}
       >
         <div className="text-[10px] font-semibold text-primary/80 bg-primary/10 w-full text-center rounded-t py-0.5">
           {SLOT_LABELS[slotIdx]}
