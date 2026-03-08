@@ -1054,9 +1054,8 @@ export default function QuestSimulation() {
                                   <span>
                                     {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
                                   </span>
-                                  {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
-                                  {critCapNote && <span className="text-[9px] text-muted-foreground">{critCapNote}</span>}
-                                </div>
+                                  {barrierOriginal > 0 && (
+                                    <span className="text-[9px] text-muted-foreground leading-tight">({formatNumber(barrierOriginal)})</span>
                                   )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
                                   {critCapNote && <span className="text-[9px] text-muted-foreground">{critCapNote}</span>}
