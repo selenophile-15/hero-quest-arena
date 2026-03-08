@@ -878,7 +878,7 @@ export default function HeroList() {
                     {item?.manual ? <CircleHelp className="w-9 h-9 text-muted-foreground/60" /> : item?.imagePath ? <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
                   </div>
                   {item && (displayElement || displaySpirit || itemType) && (
-                     <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-0.5">
+                     <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-1">
                       {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                       {displaySpirit && (() => {
                         const eng = SPIRIT_NAME_MAP[displaySpirit.name];
