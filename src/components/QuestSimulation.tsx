@@ -3,11 +3,11 @@ import { Hero } from '@/types/game';
 import { formatNumber } from '@/lib/format';
 import { getHeroes } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, X } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, X, Clock, Coffee } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
+import HeroSelectDialog from '@/components/HeroSelectDialog';
 
 // Quest data types
 interface QuestTime {
@@ -90,6 +90,39 @@ function formatTime(seconds: number): string {
   return `${seconds}초`;
 }
 
+// Time reduction setting items
+interface TimeSettingItem {
+  id: string;
+  label: string;
+  category: 'quest' | 'rest';
+  color?: string;
+  enabled: boolean;
+  value: number | null; // null = not yet implemented
+}
+
+const DEFAULT_TIME_SETTINGS: TimeSettingItem[] = [
+  { id: 'region_level', label: '퀘스트) 지역 레벨 효과', category: 'quest', enabled: false, value: null },
+  { id: 'skill_boss_time', label: '재능) 보스 시간 감소', category: 'quest', color: 'text-red-400', enabled: false, value: null },
+  { id: 'skill_airship_time', label: '재능) 에어쉽 시간 감소', category: 'quest', enabled: false, value: null },
+  { id: 'skill_blackquest_time', label: '재능) 깜깜퀘스트 시간 감소', category: 'quest', enabled: false, value: null },
+  { id: 'champion_ami', label: '챔피언) 아미', category: 'quest', enabled: false, value: null },
+  { id: 'champion_emily', label: '챔피언) 에밀리', category: 'quest', enabled: false, value: null },
+  { id: 'booster_compass', label: '부스터) 나침반 효과', category: 'quest', enabled: false, value: null },
+  { id: 'equip_song', label: '장비) 오라의 노래 효과', category: 'quest', enabled: false, value: null },
+  { id: 'event_quest', label: '이벤트) 퀘스트, 휴식 감소', category: 'quest', enabled: false, value: null },
+  { id: 'guild_quest', label: '길드) 퀘스트, 휴식 부스트', category: 'quest', enabled: false, value: null },
+  // Rest
+  { id: 'rest_region_level', label: '퀘스트) 지역 레벨 효과', category: 'rest', enabled: false, value: null },
+  { id: 'rest_guild_emerald', label: '길드) 에메랄드 여관 효과', category: 'rest', color: 'text-green-400', enabled: false, value: null },
+  { id: 'rest_skill_hero_champ', label: '재능) 영웅, 챔피언 시간 감소', category: 'rest', enabled: false, value: null },
+  { id: 'rest_skill_airship', label: '재능) 에어쉽 시간 감소', category: 'rest', enabled: false, value: null },
+  { id: 'rest_champion_pillow', label: '챔피언) 필루', category: 'rest', enabled: false, value: null },
+  { id: 'rest_booster_compass', label: '부스터) 나침반 효과', category: 'rest', enabled: false, value: null },
+  { id: 'rest_equip_song', label: '장비) 오라의 노래 효과', category: 'rest', enabled: false, value: null },
+  { id: 'rest_event', label: '이벤트) 퀘스트, 휴식 감소', category: 'rest', enabled: false, value: null },
+  { id: 'rest_guild_boost', label: '길드) 퀘스트, 휴식 부스트', category: 'rest', enabled: false, value: null },
+];
+
 export default function QuestSimulation() {
   const allHeroes = getHeroes();
   const [questDataMap, setQuestDataMap] = useState<Record<string, QuestData>>({});
@@ -103,8 +136,12 @@ export default function QuestSimulation() {
   const [selectedQuestIdx, setSelectedQuestIdx] = useState<number>(-1);
   const [selectedHeroIds, setSelectedHeroIds] = useState<Set<string>>(new Set());
 
-  // Dialog
+  // Dialogs
   const [configOpen, setConfigOpen] = useState(false);
+  const [heroSelectOpen, setHeroSelectOpen] = useState(false);
+
+  // Time settings
+  const [timeSettings, setTimeSettings] = useState<TimeSettingItem[]>(DEFAULT_TIME_SETTINGS);
 
   // Load quest data
   useEffect(() => {
@@ -172,32 +209,6 @@ export default function QuestSimulation() {
     setSelectedHeroIds(new Set());
   };
 
-  // Get display image for the quest slot
-  const getQuestSlotImage = () => {
-    if (!currentRegion) return null;
-    if (selectedSubAreaIdx === 99 && currentRegion.boss) return currentRegion.boss.image;
-    if (selectedSubArea) return selectedSubArea.image;
-    return currentRegion.areaImage;
-  };
-
-  const getQuestSlotLabel = () => {
-    if (!currentQuestData || !currentRegion) return null;
-    let label = currentRegion.name;
-    if (selectedSubAreaIdx === 99 && currentRegion.boss) label += ` - ${currentRegion.boss.name}`;
-    else if (selectedSubArea) label += ` - ${selectedSubArea.name}`;
-    return label;
-  };
-
-  const getDifficultyColor = (diff: string) => {
-    switch (diff) {
-      case '쉬움': return 'text-green-400';
-      case '보통': return 'text-blue-400';
-      case '어려움': return 'text-orange-400';
-      case '익스트림': return 'text-red-400';
-      default: return 'text-muted-foreground';
-    }
-  };
-
   if (loading) {
     return (
       <div className="animate-fade-in text-center py-20">
@@ -219,321 +230,315 @@ export default function QuestSimulation() {
   const selectedHeroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
   const maxMembers = currentRegion?.maxMembers || 5;
 
+  // Get barrier elements for display
+  const barrierElements = currentQuest?.barrier ? (() => {
+    const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+      ? getSubAreaBarrierElement(currentQuest.barrier) : null;
+    const rawElements = barrierElement
+      ? [barrierElement]
+      : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
+    return [...new Set(rawElements)] as string[];
+  })() : [];
+
+  // Barrier name for display
+  const barrierName = barrierElements.length > 0 ? `${barrierElements.join(' ')}장벽` : null;
+
+  // Sub-area or boss display name
+  const locationName = selectedSubAreaIdx === 99 && currentRegion?.boss
+    ? currentRegion.boss.name
+    : selectedSubArea
+    ? selectedSubArea.name
+    : currentRegion?.name || '';
+
+  // Center image
+  const centerImage = currentQuest
+    ? (selectedSubAreaIdx === 99 && currentRegion?.boss
+      ? currentRegion.boss.image
+      : selectedSubArea
+      ? selectedSubArea.image
+      : currentRegion?.areaImage) || null
+    : null;
+
+  // Defense thresholds
+  const defThresholds = [
+    { key: 'r0' as const, label: '0%', color: '#ef4444', textClass: 'text-red-400' },
+    { key: 'r50' as const, label: '50%', color: '#eab308', textClass: 'text-yellow-400' },
+    { key: 'r70' as const, label: '70%', color: '#84cc16', textClass: 'text-lime-400' },
+    { key: 'r75' as const, label: '75%', color: '#ffffff', textClass: 'text-white' },
+  ];
+
+  const questTimeSettings = timeSettings.filter(s => s.category === 'quest');
+  const restTimeSettings = timeSettings.filter(s => s.category === 'rest');
+
   return (
     <div className="animate-fade-in">
-      {/* Lobby Layout */}
-      <div className="max-w-5xl mx-auto">
+      {/* Full-width 3-column layout */}
+      <div className="flex gap-4 flex-col lg:flex-row">
 
-        {/* Main Content: Monster Info (left) + Hero Panel (right) */}
-        <div className="flex gap-4 flex-col lg:flex-row">
-          {/* Left: Monster Info */}
-          <div className="flex-1 min-w-0">
-            <div className="card-fantasy p-4 relative">
-              {/* Region icon - top left corner */}
-              {currentRegion && (
-                <div className="absolute top-3 left-3 w-12 h-12 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10">
-                  <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                </div>
-              )}
-
-              {/* Quest select button centered at top */}
-              <div className="flex justify-center mb-3">
-                <button
-                  onClick={() => setConfigOpen(true)}
-                  className={`relative w-24 h-24 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
-                    currentQuest
-                      ? 'border-primary/60 glow-gold'
-                      : 'border-dashed border-muted-foreground/40 hover:border-primary/50'
-                  }`}
-                >
-                  {currentQuest ? (
-                    <>
-                      {(() => {
-                        // Show sub-area or boss image in center, fallback to region
-                        const centerImage = selectedSubAreaIdx === 99 && currentRegion?.boss
-                          ? currentRegion.boss.image
-                          : selectedSubArea
-                          ? selectedSubArea.image
-                          : currentRegion?.areaImage;
-                        return centerImage ? (
-                          <img src={centerImage} alt="" className="w-full h-full object-cover" />
-                        ) : null;
-                      })()}
-                      <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="text-[10px] text-foreground font-medium">변경</span>
-                      </div>
-                    </>
-                  ) : (
-                    <Plus className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
-                  )}
-                </button>
+        {/* LEFT: Monster Info */}
+        <div className="w-full lg:w-80 shrink-0">
+          <div className="card-fantasy p-4 relative min-h-[400px]">
+            {/* Region icon - top left, bigger */}
+            {currentRegion && (
+              <div className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10">
+                <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
               </div>
+            )}
 
-              {currentQuest ? (
-                <>
-                  {/* Quest info line: barrier name - boss name / difficulty / time */}
-                  <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
-                    {/* Barrier type name if exists */}
-                    {currentQuest.barrier && (() => {
-                      const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-                        ? getSubAreaBarrierElement(currentQuest.barrier) : null;
-                      const rawElements = barrierElement
-                        ? [barrierElement]
-                        : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
-                      const elements = [...new Set(rawElements)] as string[];
-                      if (elements.length === 0) return null;
-                      return (
-                        <span className="text-xs text-purple-300">
-                          {elements.join(' ')}장벽
-                        </span>
-                      );
-                    })()}
-                    {currentQuest.barrier && <span className="text-xs text-muted-foreground/40">-</span>}
-                    {/* Sub-area / boss name */}
-                    <span className="text-sm text-foreground font-medium">
-                      {selectedSubAreaIdx === 99 && currentRegion?.boss
-                        ? currentRegion.boss.name
-                        : selectedSubArea
-                        ? selectedSubArea.name
-                        : currentRegion?.name}
+            {/* Quest select button - centered */}
+            <div className="flex justify-center pt-2 mb-4">
+              <button
+                onClick={() => setConfigOpen(true)}
+                className={`relative w-28 h-28 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
+                  currentQuest
+                    ? 'border-primary/60 glow-gold'
+                    : 'border-dashed border-muted-foreground/40 hover:border-primary/50'
+                }`}
+              >
+                {currentQuest && centerImage ? (
+                  <>
+                    <img src={centerImage} alt="" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-[10px] text-foreground font-medium">변경</span>
+                    </div>
+                  </>
+                ) : (
+                  <Plus className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
+                )}
+              </button>
+            </div>
+
+            {currentQuest ? (
+              <div className="space-y-2">
+                {/* Line 1: Barrier - Location */}
+                <div className="text-center">
+                  {barrierName && (
+                    <span className="text-sm text-purple-300">{barrierName}</span>
+                  )}
+                  {barrierName && <span className="text-sm text-muted-foreground/40"> - </span>}
+                  <span className="text-sm text-foreground font-medium">{locationName}</span>
+                  <button onClick={clearQuest} className="ml-2 align-middle">
+                    <X className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive transition-colors inline" />
+                  </button>
+                </div>
+
+                {/* Line 2: Difficulty + Boss */}
+                <div className="text-center text-sm">
+                  {currentQuest.difficulty !== '없음' && (
+                    <span className={`${
+                      currentQuest.difficulty === '쉬움' ? 'text-green-400' :
+                      currentQuest.difficulty === '보통' ? 'text-blue-400' :
+                      currentQuest.difficulty === '어려움' ? 'text-orange-400' :
+                      currentQuest.difficulty === '익스트림' ? 'text-red-400' : 'text-muted-foreground'
+                    }`}>{currentQuest.difficulty}</span>
+                  )}
+                  {currentQuest.isBoss && (
+                    <span className="text-red-400 ml-1">
+                      <Crown className="w-3.5 h-3.5 inline mr-0.5" />보스
                     </span>
-                    {/* Difficulty + Boss tag */}
-                    {currentQuest.difficulty !== '없음' && (() => {
-                      const diffColors: Record<string, string> = {
-                        '쉬움': 'bg-green-500/20 text-green-400',
-                        '보통': 'bg-blue-500/20 text-blue-400',
-                        '어려움': 'bg-orange-500/20 text-orange-400',
-                        '익스트림': 'bg-red-500/20 text-red-400',
-                      };
-                      return <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[currentQuest.difficulty] || 'bg-secondary text-muted-foreground'}`}>{currentQuest.difficulty}</span>;
-                    })()}
-                    {currentQuest.isBoss && <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">보스</span>}
-                    {/* Time - white */}
-                    <span className="text-xs text-foreground">⏱ {formatTime(currentQuest.time.total)}</span>
-                    <button onClick={clearQuest} className="ml-1">
-                      <X className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive transition-colors" />
-                    </button>
-                  </div>
+                  )}
+                </div>
 
-                  {/* Element Barrier with hero sums */}
-                  {currentQuest.barrier && (() => {
-                    const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-                      ? getSubAreaBarrierElement(currentQuest.barrier) : null;
-                    const rawElements = barrierElement
-                      ? [barrierElement]
-                      : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
-                    const elements = [...new Set(rawElements)] as string[];
-                    if (elements.length === 0) return null;
+                {/* Line 3: Total time (white) */}
+                <div className="text-center">
+                  <span className="text-sm text-foreground">⏱ {formatTime(currentQuest.time.total)}</span>
+                </div>
 
-                    const heroElementSums: Record<string, number> = {};
-                    elements.forEach(el => {
-                      heroElementSums[el] = selectedHeroes.reduce((sum, h) => {
-                        return sum + (h.equipmentElements?.[el] || 0);
-                      }, 0);
-                    });
-
-                    return (
-                      <div className="flex items-center justify-center gap-3 mb-3">
-                        {elements.map((el, i) => {
-                          const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                          const heroSum = heroElementSums[el] || 0;
-                          const required = currentQuest.barrier!.hp;
-                          const isMet = heroSum >= required;
-                          return (
-                            <div key={i} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-purple-500/30 bg-purple-500/10'}`}>
-                              {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                              <span className="text-xs text-foreground">{el}</span>
-                              <span className={`text-xs font-mono font-bold ${isMet ? 'text-green-400' : 'text-purple-300'}`}>
-                                {formatNumber(heroSum)} / {formatNumber(required)}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  })()}
-
-                  {/* Stats grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-                    <div className="bg-secondary/30 rounded-lg p-2.5">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <Heart className="w-3.5 h-3.5 text-red-400" />
-                        <span className="text-[10px] text-muted-foreground">HP</span>
-                      </div>
-                      <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.hp)}</span>
-                    </div>
-                    <div className="bg-secondary/30 rounded-lg p-2.5">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <Swords className="w-3.5 h-3.5 text-orange-400" />
-                        <span className="text-[10px] text-muted-foreground">공격력</span>
-                      </div>
-                      <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.atk)}</span>
-                    </div>
-                    <div className="bg-secondary/30 rounded-lg p-2.5">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                        <span className="text-[10px] text-muted-foreground">광역 ({currentQuest.aoeChance}%)</span>
-                      </div>
-                      <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.aoe)}</span>
-                    </div>
-                    <div className="bg-secondary/30 rounded-lg p-2.5">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <Shield className="w-3.5 h-3.5 text-blue-400" />
-                        <span className="text-[10px] text-muted-foreground">최소 전투력</span>
-                      </div>
-                      <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.minPower)}</span>
-                    </div>
-                  </div>
-
-                  {/* Defense thresholds - bar */}
-                  <div className="bg-secondary/20 rounded-lg p-3">
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <Shield className="w-3.5 h-3.5 text-blue-400" />
-                      <span className="text-xs text-muted-foreground font-medium">방어력 기준치</span>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="w-3 h-3 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">대미지 감소율에 따른 필요 방어력</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    {(() => {
-                      const thresholds = [
-                        { key: 'r0' as const, label: '0%', dotColor: '#ef4444', textColor: 'text-red-400' },
-                        { key: 'r50' as const, label: '50%', dotColor: '#eab308', textColor: 'text-yellow-400' },
-                        { key: 'r70' as const, label: '70%', dotColor: '#84cc16', textColor: 'text-lime-400' },
-                        { key: 'r75' as const, label: '75%', dotColor: '#ffffff', textColor: 'text-white' },
-                      ];
-                      const maxDef = currentQuest.def.r75 * 1.15;
-                      const heroDefPositions = selectedHeroes.map(h => ({
-                        name: h.name,
-                        def: h.def || 0,
-                        percent: maxDef > 0 ? Math.min(((h.def || 0) / maxDef) * 100, 96) : 0,
-                      }));
-
+                {/* Line 4: Element Barrier */}
+                {barrierElements.length > 0 && currentQuest.barrier && (
+                  <div className="flex items-center justify-center gap-3">
+                    {barrierElements.map((el, i) => {
+                      const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                      const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
+                      const required = currentQuest.barrier!.hp;
+                      const isMet = heroSum >= required;
                       return (
-                        <div>
-                          <div className="relative h-7 bg-secondary/80 rounded-full border border-border/50">
-                            {thresholds.map(t => {
-                              const pct = maxDef > 0 ? Math.min((currentQuest.def[t.key] / maxDef) * 100, 96) : 0;
-                              return (
-                                <div key={t.key} className="absolute top-0 bottom-0" style={{ left: `${pct}%` }}>
-                                  <div className="w-px h-full opacity-50" style={{ backgroundColor: t.dotColor }} />
-                                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full border border-background/80" style={{ backgroundColor: t.dotColor }} />
-                                </div>
-                              );
-                            })}
-                            {heroDefPositions.map(h => (
-                              <Tooltip key={h.name}>
-                                <TooltipTrigger asChild>
-                                  <div className="absolute top-1/2 -translate-y-1/2 z-10 cursor-pointer" style={{ left: `clamp(4px, calc(${h.percent}% - 8px), calc(100% - 20px))` }}>
-                                    <Shield className="w-4 h-4 text-primary drop-shadow-md" />
-                                  </div>
-                                </TooltipTrigger>
-                                <TooltipContent><p className="text-xs">{h.name}: {formatNumber(h.def)}</p></TooltipContent>
-                              </Tooltip>
-                            ))}
-                          </div>
-                          <div className="relative h-8 mt-1">
-                            {thresholds.map(t => {
-                              const pct = maxDef > 0 ? Math.min((currentQuest.def[t.key] / maxDef) * 100, 96) : 0;
-                              return (
-                                <div key={t.key} className="absolute flex flex-col items-center" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
-                                  <span className={`text-[10px] font-medium ${t.textColor}`}>{t.label}</span>
-                                  <span className="text-[9px] font-mono text-muted-foreground">{formatNumber(currentQuest.def[t.key])}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
+                        <div key={i} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-purple-500/30 bg-purple-500/10'}`}>
+                          {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                          <span className={`text-xs font-mono font-bold ${isMet ? 'text-green-400' : 'text-purple-300'}`}>
+                            {formatNumber(heroSum)} / {formatNumber(required)}
+                          </span>
                         </div>
                       );
-                    })()}
+                    })}
                   </div>
-                </>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-muted-foreground text-sm">퀘스트를 선택하세요</p>
-                  <p className="text-muted-foreground/60 text-xs mt-1">위의 + 버튼을 눌러 지역과 난이도를 설정합니다</p>
-                </div>
-              )}
-            </div>
-          </div>
+                )}
 
-          {/* Right: Hero Panel */}
-          <div className="w-full lg:w-72 shrink-0">
-            <div className="flex items-center gap-2 mb-3">
-              <Users className="w-5 h-5 text-primary" />
-              <h3 className="font-display text-lg text-foreground">파티 구성</h3>
-              <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
-            </div>
-            <div className="card-fantasy p-4">
-              <div className="flex gap-2 mb-3 flex-wrap">
-                {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                  const hero = selectedHeroes[slotIdx];
-                  if (hero) {
-                    return (
-                      <button key={hero.id} onClick={() => toggleHero(hero.id)}
-                        className="relative w-12 h-12 rounded-full border-2 border-primary/50 bg-secondary/50 flex flex-col items-center justify-center overflow-hidden group transition-all hover:border-destructive/50"
+                {/* Stats: vertical list */}
+                <div className="space-y-1.5 pt-2 border-t border-border/30">
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-1.5">
+                      <Heart className="w-3.5 h-3.5 text-red-400" />
+                      <span className="text-xs text-muted-foreground">체력</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.hp)}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-1.5">
+                      <Swords className="w-3.5 h-3.5 text-red-400" />
+                      <span className="text-xs text-muted-foreground">공격력</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.atk)}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                      <span className="text-xs text-muted-foreground">광역 공격 ({currentQuest.aoeChance}%)</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
+                  </div>
+                </div>
+
+                {/* Defense Reference - vertical */}
+                <div className="pt-2 border-t border-border/30">
+                  <div className="flex items-center gap-1.5 mb-2 px-1">
+                    <Shield className="w-3.5 h-3.5 text-blue-400" />
+                    <span className="text-xs text-muted-foreground font-medium">방어력 기준치</span>
+                  </div>
+                  <div className="space-y-1">
+                    {defThresholds.map(t => {
+                      const defVal = currentQuest.def[t.key];
+                      // Show hero indicators for this threshold
+                      const heroesAbove = selectedHeroes.filter(h => (h.def || 0) >= defVal);
+                      return (
+                        <div key={t.key} className="flex items-center gap-2 px-1">
+                          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: t.color }} />
+                          <span className={`text-xs w-8 ${t.textClass}`}>{t.label}</span>
+                          <span className="text-xs font-mono text-muted-foreground flex-1">{formatNumber(defVal)}</span>
+                          {selectedHeroes.length > 0 && (
+                            <div className="flex -space-x-1">
+                              {selectedHeroes.map(h => (
+                                <Tooltip key={h.id}>
+                                  <TooltipTrigger asChild>
+                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                                      (h.def || 0) >= defVal ? 'border-green-500/60 bg-green-500/20' : 'border-red-500/40 bg-red-500/10'
+                                    }`}>
+                                      <Shield className={`w-2.5 h-2.5 ${(h.def || 0) >= defVal ? 'text-green-400' : 'text-red-400/50'}`} />
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent><p className="text-xs">{h.name}: {formatNumber(h.def || 0)}</p></TooltipContent>
+                                </Tooltip>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-muted-foreground text-sm">퀘스트를 선택하세요</p>
+                <p className="text-muted-foreground/60 text-xs mt-1">위의 + 버튼을 눌러 설정</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* CENTER: Hero Slots */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-3">
+            <Users className="w-5 h-5 text-primary" />
+            <h3 className="font-display text-lg text-foreground">파티 구성</h3>
+            <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
+          </div>
+          <div className="card-fantasy p-4">
+            {/* Hero slots row */}
+            <div className="flex gap-3 flex-wrap mb-3">
+              {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                const hero = selectedHeroes[slotIdx];
+                const belowMin = hero && currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
+                if (hero) {
+                  return (
+                    <div key={hero.id} className="flex flex-col items-center gap-1">
+                      {/* Power indicator above head */}
+                      {belowMin && (
+                        <span className="text-[9px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
+                      )}
+                      <button onClick={() => toggleHero(hero.id)}
+                        className={`relative w-14 h-14 rounded-full border-2 bg-secondary/50 flex flex-col items-center justify-center overflow-hidden group transition-all ${
+                          belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
+                        } hover:border-destructive/50`}
                         title={`${hero.name} (클릭하여 제거)`}>
-                        <span className="text-sm">⚔</span>
-                        <span className="text-[8px] text-foreground font-medium truncate max-w-[40px] leading-tight">{hero.name}</span>
+                        {/* Future: face icon here */}
+                        <span className="text-lg">⚔</span>
                         <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
                           <X className="w-4 h-4 text-destructive-foreground" />
                         </div>
                       </button>
-                    );
-                  }
-                  return (
-                    <div key={`empty-${slotIdx}`} className="w-12 h-12 rounded-full border-2 border-dashed border-muted-foreground/20 flex items-center justify-center">
-                      <Plus className="w-4 h-4 text-muted-foreground/30" />
+                      <span className="text-[10px] text-foreground font-medium truncate max-w-[56px]">{hero.name}</span>
+                      <span className="text-[9px] text-muted-foreground">{hero.heroClass || hero.championName || ''}</span>
                     </div>
                   );
-                })}
+                }
+                return (
+                  <button key={`empty-${slotIdx}`}
+                    onClick={() => currentQuest && setHeroSelectOpen(true)}
+                    className={`w-14 h-14 rounded-full border-2 border-dashed flex items-center justify-center transition-all ${
+                      currentQuest ? 'border-muted-foreground/30 hover:border-primary/50 cursor-pointer' : 'border-muted-foreground/15 cursor-not-allowed'
+                    }`}>
+                    <Plus className="w-5 h-5 text-muted-foreground/30" />
+                  </button>
+                );
+              })}
+            </div>
+
+            {currentQuest && selectedHeroes.length > 0 && (
+              <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} className="w-full mt-2 gap-2" size="sm">
+                <Play className="w-4 h-4" /> 시뮬레이션 실행
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT: Time & Rest Settings */}
+        <div className="w-full lg:w-72 shrink-0">
+          <div className="flex items-center gap-2 mb-3">
+            <Clock className="w-5 h-5 text-primary" />
+            <h3 className="font-display text-lg text-foreground">소요 시간 설정</h3>
+          </div>
+          <div className="card-fantasy p-3">
+            {/* Quest Time Reduction */}
+            <div className="mb-3">
+              <div className="flex items-center gap-1.5 mb-2">
+                <Clock className="w-3.5 h-3.5 text-yellow-400" />
+                <span className="text-xs font-medium text-foreground">퀘스트 소요 시간 감소</span>
               </div>
-              {currentQuest && (
-                <>
-                  <div className="border-t border-border pt-3">
-                    <span className="text-xs text-muted-foreground mb-2 block">영웅 선택</span>
-                    <ScrollArea className="max-h-[300px]">
-                      <div className="space-y-1.5">
-                        {allHeroes.map(hero => {
-                          const isSelected = selectedHeroIds.has(hero.id);
-                          const isFull = selectedHeroIds.size >= maxMembers && !isSelected;
-                          return (
-                            <button key={hero.id} onClick={() => !isFull && toggleHero(hero.id)} disabled={isFull}
-                              className={`flex items-center gap-2 p-2 rounded-lg transition-all border text-left w-full ${
-                                isSelected ? 'border-primary/50 bg-primary/5' : isFull ? 'border-border/30 opacity-40 cursor-not-allowed' : 'border-border hover:border-primary/20'
-                              }`}>
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                                isSelected ? 'bg-primary/20 border border-primary/40' : 'bg-secondary/50 border border-border'
-                              }`}>
-                                <span className="text-xs">⚔</span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1">
-                                  <span className="font-medium text-xs text-foreground truncate">{hero.name}</span>
-                                  <span className={`text-[9px] px-1 py-0.5 rounded ${hero.type === 'champion' ? 'bg-accent/20 text-accent' : 'bg-primary/20 text-primary'}`}>
-                                    {hero.type === 'champion' ? '챔피언' : '영웅'}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1.5 mt-0.5">
-                                  <span className="text-[10px] text-muted-foreground">Lv.{hero.level}</span>
-                                  {hero.power > 0 && <span className="text-[10px] text-yellow-400">⚔ {formatNumber(hero.power)}</span>}
-                                </div>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </ScrollArea>
+              <div className="space-y-1">
+                {questTimeSettings.map(item => (
+                  <div key={item.id} className="flex items-center gap-2 text-[11px]">
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
+                      item.enabled ? 'border-primary bg-primary/20' : 'border-border bg-secondary/30'
+                    }`}>
+                      {item.enabled && <span className="text-primary text-[10px]">✓</span>}
+                    </div>
+                    <span className={`flex-1 ${item.color || 'text-muted-foreground'}`}>{item.label}</span>
+                    <span className="text-muted-foreground/50 text-[10px]">-</span>
                   </div>
-                  <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} disabled={selectedHeroIds.size === 0} className="w-full mt-3 gap-2" size="sm">
-                    <Play className="w-4 h-4" /> 시뮬레이션 실행
-                  </Button>
-                </>
-              )}
+                ))}
+              </div>
+            </div>
+
+            {/* Rest Time Reduction */}
+            <div className="border-t border-border/30 pt-3">
+              <div className="flex items-center gap-1.5 mb-2">
+                <Coffee className="w-3.5 h-3.5 text-green-400" />
+                <span className="text-xs font-medium text-foreground">휴식 시간 감소</span>
+              </div>
+              <div className="space-y-1">
+                {restTimeSettings.map(item => (
+                  <div key={item.id} className="flex items-center gap-2 text-[11px]">
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
+                      item.enabled ? 'border-primary bg-primary/20' : 'border-border bg-secondary/30'
+                    }`}>
+                      {item.enabled && <span className="text-primary text-[10px]">✓</span>}
+                    </div>
+                    <span className={`flex-1 ${item.color || 'text-muted-foreground'}`}>{item.label}</span>
+                    <span className="text-muted-foreground/50 text-[10px]">-</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -546,6 +551,17 @@ export default function QuestSimulation() {
         questDataMap={questDataMap}
         questFiles={QUEST_FILES}
         onSelect={handleQuestSelect}
+      />
+
+      {/* Hero Select Dialog */}
+      <HeroSelectDialog
+        open={heroSelectOpen}
+        onOpenChange={setHeroSelectOpen}
+        heroes={allHeroes}
+        selectedIds={selectedHeroIds}
+        maxMembers={maxMembers}
+        minPower={currentQuest?.minPower || 0}
+        onSelect={toggleHero}
       />
     </div>
   );
