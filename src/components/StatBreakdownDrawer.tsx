@@ -644,6 +644,18 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusVal}%</td>
                     </tr>
+                    {relicCritBonus !== 0 && (
+                      <tr className="border-b border-border/30">
+                        <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
+                        <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicCritBonus}%</td>
+                      </tr>
+                    )}
+                    {hasCritFixed && (
+                      <tr className="border-b border-border/30 bg-red-900/20">
+                        <td className="py-1.5 text-red-400 font-semibold">⚠ {hasCritFixed.itemName}</td>
+                        <td className="py-1.5 text-right tabular-nums text-red-400 font-bold">→ {hasCritFixed.fixedValue}% 고정</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -651,13 +663,19 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 <span className="text-sm font-bold text-foreground">최종 치명타 확률</span>
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
                   {totalVal}%
+                  {hasCritFixed && (
+                    <span className="text-sm font-normal text-muted-foreground ml-1">({preRelicCrit}%→고정)</span>
+                  )}
                 </span>
               </div>
             </div>
 
             <div className="px-3 pb-3">
               <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                ※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스
+                {hasCritFixed
+                  ? `※ ${hasCritFixed.itemName}: 치명타 확률 ${hasCritFixed.fixedValue}%로 고정`
+                  : '※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스'}
+              </p>
               </p>
             </div>
           </div>
