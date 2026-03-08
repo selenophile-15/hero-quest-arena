@@ -255,7 +255,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
         const suffix = opt?.pct ? '%' : '';
         return `${sign}${name} ${b.value}${suffix}`;
       });
-      relicEffect = `+파티에 ${parts.join(', ')} 보너스를 부여`;
+      relicEffect = `파티에 ${parts.join(', ')} 보너스를 부여`;
     } else if (!isAurasong && data.isRelic && data.relicBonuses.length > 0) {
       relicEffect = data.relicBonuses.map(b => {
         const label = RELIC_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
@@ -567,7 +567,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
                       const suffix = opt?.pct ? '%' : '';
                       return `${sign}${name} ${b.value || 0}${suffix}`;
                     });
-                    return `+파티에 ${parts.join(', ')} 보너스를 부여`;
+                    return `파티에 ${parts.join(', ')} 보너스를 부여`;
                   })()}
                 </div>
               )}
