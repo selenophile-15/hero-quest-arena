@@ -542,7 +542,7 @@ export default function QuestSimulation() {
                             {(() => {
                               // Sort heroes by def descending so highest is at top
                               const sorted = selectedHeroes
-                                .map((h, hi) => ({ h, hi, def: h.def || 0 }))
+                                .map((h, hi) => ({ h, hi, def: buffedStats[hi] ? buffedStats[hi].def : (h.def || 0) }))
                                 .sort((a, b) => b.def - a.def);
                               // Line starts after defense value column: left(32 w-8) + gap(8) + bar(12) + gap(8) + defValues(~55) = ~115px
                               const startX = 115;
