@@ -970,16 +970,7 @@ function getRetryBooster(original: BoosterType): BoosterType {
   }
 }
 
-/** Internal version that accepts _isRetry flag */
-interface InternalSimConfig extends SimulationConfig {
-  _isRetry?: boolean;
-}
 
-function runCombatSimulationInternal(config: InternalSimConfig): SimulationResult {
-  // This is a wrapper - for retry, we skip the Fateweaver recursion
-  const result = runCombatSimulation({ ...config });
-  return result;
-}
 
 function emptyResult(simCount: number): SimulationResult {
   return {
