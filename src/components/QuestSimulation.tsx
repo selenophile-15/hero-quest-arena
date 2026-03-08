@@ -662,19 +662,25 @@ export default function QuestSimulation() {
                           {belowMin && (
                             <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                           )}
-                          <button onClick={() => toggleHero(hero.id)}
+                          <button onClick={() => openSlotForEdit(slotIdx)}
                             className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden group transition-all ${
                               belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
-                            } hover:border-destructive/50`}
-                            title={`${hero.name} (클릭하여 제거)`}>
+                            } hover:border-accent/70`}
+                            title={`${hero.name} (클릭하여 변경)`}>
                             {heroImg ? (
                               <img src={heroImg} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
                             ) : (
                               <span className="text-lg">⚔</span>
                             )}
-                            <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                              <span className="text-destructive-foreground text-xs font-bold">✕</span>
+                            <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                              <span className="text-foreground text-xs font-bold">변경</span>
                             </div>
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
+                            className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+                            title="제거">
+                            ✕
                           </button>
                         </div>
                       </td>
