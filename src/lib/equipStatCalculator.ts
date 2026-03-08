@@ -322,6 +322,9 @@ export async function calculateEquipmentStats(
   // 평화의 목걸이 weapon nullify doesn't apply to weaponless jobs
   const hasWeaponNullify = !isWeaponlessJob && slots.some(s => s?.item?.name === '평화의 목걸이');
   
+  // 화살통 보너스: 활/크로스보우/총에 30% 보너스 적용
+  const hasQuiver = slots.some(s => s?.item?.type === 'quiver');
+  
   for (let i = 0; i < 6; i++) {
     const slot = slots[i];
     const item = slot?.item;
@@ -432,11 +435,19 @@ export async function calculateEquipmentStats(
     let bonusDefPct = specificDefPct + specificAllPct + skillBonuses.모든장비방어력 + skillBonuses.모든장비전체;
     let bonusHpPct = specificHpPct + specificAllPct + skillBonuses.모든장비체력 + skillBonuses.모든장비전체;
 
-    // 역효과 해머: +100% to self
+    // 역효과 해머: +100% to self (added to bonus pool, not multiplied separately)
     if (item.name === '역효과 해머') {
       bonusAtkPct += 100;
       bonusDefPct += 100;
       bonusHpPct += 100;
+    }
+
+    // 화살통 보너스: 활/크로스보우/총 장착 시 해당 무기에 +30% 
+    // (pre-weapon-skill 기준이므로 bonus pool에 합산하면 동일한 결과)
+    if (hasQuiver && ['bow', 'crossbow', 'gun'].includes(item.type)) {
+      bonusAtkPct += 30;
+      bonusDefPct += 30;
+      bonusHpPct += 30;
     }
 
     // Final slot stats: afterSpellknight × (1 + bonus%)

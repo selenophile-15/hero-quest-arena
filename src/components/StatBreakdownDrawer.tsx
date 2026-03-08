@@ -385,6 +385,27 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           </td>
                         </tr>
                       )}
+                      {/* 역효과 해머 +100% 표시 */}
+                      {slot && slot.itemName === '역효과 해머' && (
+                        <tr className="border-b border-border/20">
+                          <td className="px-2 py-1 text-red-400 text-[11px]">
+                            <span className="text-[9px] mr-1 px-1 rounded bg-red-700/40">유물</span>
+                            역효과 해머 자체 보너스
+                          </td>
+                          <td className="px-2 py-1 text-right tabular-nums text-red-400">+100%</td>
+                        </tr>
+                      )}
+                      {/* 화살통 보너스 +30% 표시 */}
+                      {slot && ['bow', 'crossbow', 'gun'].includes(slot.itemType) && 
+                        calcStats?.equipResult?.slots?.some((s: any) => s.itemType === 'quiver') && (
+                        <tr className="border-b border-border/20">
+                          <td className="px-2 py-1 text-green-400 text-[11px]">
+                            <span className="text-[9px] mr-1 px-1 rounded bg-green-700/40">화살통</span>
+                            화살통 보너스
+                          </td>
+                          <td className="px-2 py-1 text-right tabular-nums text-green-400">+30%</td>
+                        </tr>
+                      )}
                       <tr className="border-b border-border/20">
                         <td className="px-2 py-1 text-foreground/70">장비 보너스 %</td>
                         <td className="px-2 py-1 text-right tabular-nums text-foreground">
