@@ -480,14 +480,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                               <div className="text-muted-foreground text-xs font-mono">
                                 (+{effectiveTotalPct.toFixed(1)}%)
                               </div>
-                              <div className="text-green-400/70 text-xs font-mono">
-                                +{formatNumber(addedFromPct)}
-                                {totalFlat !== 0 && <span> +{formatNumber(totalFlat)}깡</span>}
-                              </div>
                               {isMerc && (
                                 <div className="text-yellow-400 text-xs">용병 ×1.25 적용</div>
                               )}
-                              {boosterPct > 0 && (
+                              {isMerc && boosterPct > 0 && (
                                 <div className="text-green-300 text-xs">부스터 {boosterPct}% (용병 미적용)</div>
                               )}
                             </div>
