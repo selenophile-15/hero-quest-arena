@@ -102,6 +102,14 @@ interface SlotInput {
   spirit: { name: string; affinity: boolean } | null;
 }
 
+export interface EquipBonusSource {
+  skillName: string;
+  skillType: 'unique' | 'common';
+  bonusKey: string; // e.g. '해당장비공격력', '모든장비전체'
+  equipType?: string; // Korean equip type name (for 해당장비 only)
+  value: number;
+}
+
 export interface SkillBonuses {
   // Per equipment type Korean name → bonus %
   해당장비공격력: Record<string, number>;
@@ -113,6 +121,9 @@ export interface SkillBonuses {
   모든장비방어력: number;
   모든장비체력: number;
   모든장비전체: number;
+  // Source tracking for UI display
+  sources: EquipBonusSource[];
+}
 }
 
 // Cached data
