@@ -406,12 +406,62 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     }
   }, [calculatedElements, elementManual]);
 
-  // Auto-calculate stats (Phase 1: base + seeds)
+  // Build skill bonus inputs for equipment calculation
+  const skillBonusInputs = useMemo(() => {
+    const inputs: Array<{
+      bonusData: Record<string, number | number[]>;
+      appliedEquip: string[][] | undefined;
+      skillLevel: number;
+    }> = [];
+
+    // Helper to compute skill level from element thresholds
+    const getSkillLevel = (thresholds: number[]) => {
+      let lvl = 0;
+      for (let i = 0; i < thresholds.length; i++) {
+        if (jobElementValue >= thresholds[i]) lvl = i;
+      }
+      return lvl;
+    };
+
+    // Unique skill (class skill from SKD3)
+    if (uniqueSkillData?.['스탯_보너스']) {
+      const thresholds = (uniqueSkillData['원소_기준치'] || [0]).map(Number).filter(Number.isFinite);
+      const lvl = getSkillLevel(thresholds);
+      inputs.push({
+        bonusData: uniqueSkillData['스탯_보너스'],
+        appliedEquip: uniqueSkillData['적용_장비'],
+        skillLevel: lvl,
+      });
+    }
+
+    // Common skills
+    for (const skillName of selectedSkills) {
+      const skillData = commonSkillsData[skillName];
+      if (!skillData?.['스탯_보너스']) continue;
+      const thresholds = (skillData['원소_기준치'] || [0]).map(Number).filter(Number.isFinite);
+      const lvl = getSkillLevel(thresholds);
+      inputs.push({
+        bonusData: skillData['스탯_보너스'],
+        appliedEquip: skillData['적용_장비'],
+        skillLevel: lvl,
+      });
+    }
+
+    return inputs;
+  }, [uniqueSkillData, selectedSkills, commonSkillsData, jobElementValue]);
+
+  // Auto-calculate stats (Phase 2: base + seeds + equipment)
   useEffect(() => {
     if (!heroClass || !level) { setCalcStats(null); return; }
-    calculateHeroStats(heroClass, Number(level), { hp: seedHp, atk: seedAtk, def: seedDef })
-      .then(result => setCalcStats(result));
-  }, [heroClass, level, seedHp, seedAtk, seedDef]);
+    calculateHeroStats({
+      jobName: heroClass,
+      level: Number(level),
+      seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
+      equipmentSlots,
+      hasRangedWeapon: hasRanged,
+      skillBonusInputs,
+    }).then(result => setCalcStats(result));
+  }, [heroClass, level, seedHp, seedAtk, seedDef, equipmentSlots, hasRanged, skillBonusInputs]);
 
   const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
   const totalEquipElement = Object.values(equipElements).reduce((a, b) => a + b, 0);
