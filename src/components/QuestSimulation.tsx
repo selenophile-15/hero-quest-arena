@@ -379,28 +379,28 @@ export default function QuestSimulation() {
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-1.5">
                       <Heart className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs text-muted-foreground">체력</span>
+                      <span className="text-xs text-foreground">체력</span>
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.hp)}</span>
                   </div>
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-1.5">
                       <Swords className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs text-muted-foreground">공격력</span>
+                      <span className="text-xs text-foreground">공격력</span>
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.atk)}</span>
                   </div>
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                      <span className="text-xs text-muted-foreground">광역 공격 ({currentQuest.aoeChance}%)</span>
+                      <span className="text-xs text-foreground">광역 공격 ({currentQuest.aoeChance}%)</span>
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
                   </div>
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 text-orange-400" />
-                      <span className="text-xs text-muted-foreground">치명타 확률</span>
+                      <span className="text-xs text-foreground">치명타 확률</span>
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{currentQuest.aoeChance}%</span>
                   </div>
