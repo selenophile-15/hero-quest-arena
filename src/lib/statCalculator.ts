@@ -219,7 +219,7 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     bonusSummary.pctAtk += elementAtkPct;
     bonusSummary.sources.push({
       name: `원소 포인트 ${totalElementPoints}pt → +${elementAtkPct}%`,
-      type: 'relic' as const,
+      type: 'job' as const,
       flatAtk: 0, flatDef: 0, flatHp: 0,
       pctAtk: elementAtkPct, pctDef: 0, pctHp: 0,
       critRate: 0, critDmg: 0, evasion: 0, threat: 0,
