@@ -212,20 +212,20 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-foreground/70">원소 마부</td>
+                        <td className="px-2 py-1 text-foreground/70">원소 {config.label}</td>
                         <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-foreground'}`}>
                           {formatNumber(slot ? getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) : 0)}
                           {slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) && (
-                            <span className="text-[9px] text-muted-foreground ml-0.5">(캡)</span>
+                            <span className="text-[9px] text-muted-foreground ml-0.5">(보정)</span>
                           )}
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-foreground/70">영혼 마부</td>
+                        <td className="px-2 py-1 text-foreground/70">영혼 {config.label}</td>
                         <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-foreground'}`}>
                           {formatNumber(slot ? getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) : 0)}
                           {slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) && (
-                            <span className="text-[9px] text-muted-foreground ml-0.5">(캡)</span>
+                            <span className="text-[9px] text-muted-foreground ml-0.5">(보정)</span>
                           )}
                         </td>
                       </tr>
