@@ -87,7 +87,7 @@ const getDifficultyBorder = (diff: string) => {
     case '쉬움': return 'border-green-400/30 hover:border-green-400/60';
     case '보통': return 'border-blue-400/30 hover:border-blue-400/60';
     case '어려움': return 'border-orange-400/30 hover:border-orange-400/60';
-    case '익스트림': return 'border-red-400/30 hover:border-red-400/60';
+    case '익스트림': return 'border-purple-400/30 hover:border-purple-400/60';
     default: return 'border-border hover:border-primary/30';
   }
 };
