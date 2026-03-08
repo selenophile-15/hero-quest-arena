@@ -407,6 +407,54 @@ export default function QuestSimulation() {
               </div>
             )}
 
+            {/* Booster slot - top right, symmetric with region icon */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
+                  {selectedBooster !== 'none' && commonData?.boosters ? (() => {
+                    const boosterKeys: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
+                    const boosterEntry = commonData.boosters[boosterKeys[selectedBooster]];
+                    return boosterEntry ? (
+                      <img src={boosterEntry.image} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-lg">⚡</span>
+                    );
+                  })() : (
+                    <Plus className="w-5 h-5 text-muted-foreground/40" />
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-52 p-2" align="end">
+                <div className="text-xs font-medium text-foreground mb-2">전투력 부스터</div>
+                <div className="space-y-1">
+                  <button
+                    onClick={() => setSelectedBooster('none')}
+                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${selectedBooster === 'none' ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
+                  >
+                    없음
+                  </button>
+                  {(['normal', 'super', 'mega'] as const).map(bType => {
+                    const names: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
+                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40%, 치확 +10%', mega: '공/방 +80%, 치확 +25%, 치댐 +50%' };
+                    const bEntry = commonData?.boosters?.[names[bType]];
+                    return (
+                      <button
+                        key={bType}
+                        onClick={() => setSelectedBooster(bType)}
+                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${selectedBooster === bType ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
+                      >
+                        {bEntry && <img src={bEntry.image} alt="" className="w-6 h-6 rounded" />}
+                        <div className="text-left">
+                          <div className="font-medium">{names[bType]}</div>
+                          <div className="text-[10px] text-muted-foreground">{descs[bType]}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
+
             {/* Quest select button - centered, larger with less cropping */}
             <div className="flex justify-center pt-2 mb-4">
               <button
