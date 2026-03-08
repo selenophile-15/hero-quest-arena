@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Hero } from '@/types/game';
+import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
 import { getHeroes } from '@/lib/storage';
+import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, Clock, Coffee } from 'lucide-react';
@@ -298,11 +299,11 @@ export default function QuestSimulation() {
               </div>
             )}
 
-            {/* Quest select button - centered */}
+            {/* Quest select button - centered, larger with less cropping */}
             <div className="flex justify-center pt-2 mb-4">
               <button
                 onClick={() => setConfigOpen(true)}
-                className={`relative w-28 h-28 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
+                className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
                   currentQuest
                     ? 'border-primary/60 glow-gold'
                     : 'border-dashed border-muted-foreground/40 hover:border-primary/50'
@@ -310,7 +311,7 @@ export default function QuestSimulation() {
               >
                 {currentQuest && centerImage ? (
                   <>
-                    <img src={centerImage} alt="" className="w-full h-full object-cover" />
+                    <img src={centerImage} alt="" className="w-[140%] h-[140%] object-cover" />
                     <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-[10px] text-foreground font-medium">변경</span>
                     </div>
@@ -548,88 +549,121 @@ export default function QuestSimulation() {
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
           </div>
           <div className="card-fantasy p-4">
-            {/* Hero slots row - evenly distributed */}
+            {/* Hero slots - consistent rows: element, face, slot circle, name, class */}
             <div className="flex justify-around mb-4">
               {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                 const hero = selectedHeroes[slotIdx];
                 const belowMin = hero && currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
+
                 if (hero) {
-                  // Determine barrier elements this hero covers
+                  // Get hero's element values matching barrier elements
                   const heroBarrierIcons = barrierElements.map(el => {
-                    const iconPath = commonData?.elementalBarriers?.[el]?.image;
                     const heroVal = hero.equipmentElements?.[el] || 0;
+                    const iconPath = ELEMENT_ICON_MAP[el];
                     return { el, iconPath, heroVal };
                   }).filter(b => b.heroVal > 0);
 
+                  // Get hero job/champion image
+                  const heroImg = hero.type === 'champion'
+                    ? getChampionImagePath(hero.championName || hero.name)
+                    : hero.heroClass ? getJobImagePath(hero.heroClass) : null;
+
                   return (
-                    <div key={hero.id} className="flex flex-col items-center gap-1">
-                      {/* Elemental barrier icons (topmost) */}
-                      {heroBarrierIcons.length > 0 && (
-                        <div className="flex gap-0.5">
-                          {heroBarrierIcons.map(b => (
-                            <div key={b.el} className="flex flex-col items-center">
-                              {b.iconPath && <img src={b.iconPath} alt="" className="w-4 h-4" />}
-                              <span className="text-[8px] font-mono text-purple-300">{formatNumber(b.heroVal)}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {/* Face icon placeholder */}
-                      <div className="w-5 h-5 flex items-center justify-center">
-                        <span className="text-[10px] text-muted-foreground">😐</span>
+                    <div key={hero.id} className="flex flex-col items-center" style={{ width: `${100 / maxMembers}%` }}>
+                      {/* Row 1: Element barrier values (fixed height) */}
+                      <div className="h-8 flex items-end justify-center gap-0.5 mb-0.5">
+                        {heroBarrierIcons.map(b => (
+                          <div key={b.el} className="flex flex-col items-center">
+                            {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-4 h-4" />}
+                            <span className="text-[8px] font-mono text-purple-300">{formatNumber(b.heroVal)}</span>
+                          </div>
+                        ))}
                       </div>
-                      {/* Power warning */}
-                      {belowMin && (
-                        <span className="text-[9px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
-                      )}
+                      {/* Row 2: Face icon (fixed height) */}
+                      <div className="h-10 flex items-center justify-center mb-0.5">
+                        <span className="text-2xl">😐</span>
+                      </div>
+                      {/* Row 3: Power warning (fixed height) */}
+                      <div className="h-4 flex items-center justify-center mb-0.5">
+                        {belowMin && (
+                          <span className="text-[9px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
+                        )}
+                      </div>
+                      {/* Row 4: Hero circle slot (bigger) */}
                       <button onClick={() => toggleHero(hero.id)}
-                        className={`relative w-14 h-14 rounded-full border-2 bg-secondary/50 flex flex-col items-center justify-center overflow-hidden group transition-all ${
+                        className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden group transition-all ${
                           belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
                         } hover:border-destructive/50`}
                         title={`${hero.name} (클릭하여 제거)`}>
-                        <span className="text-lg">⚔</span>
+                        {heroImg ? (
+                          <img src={heroImg} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : (
+                          <span className="text-lg">⚔</span>
+                        )}
                         <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
                           <span className="text-destructive-foreground text-xs font-bold">✕</span>
                         </div>
                       </button>
-                      <span className="text-[10px] text-foreground font-medium truncate max-w-[56px]">{hero.name}</span>
+                      {/* Row 5: Name */}
+                      <span className="text-[10px] text-foreground font-medium truncate max-w-[64px] mt-1">{hero.name}</span>
+                      {/* Row 6: Class */}
                       <span className="text-[9px] text-muted-foreground">{hero.heroClass || hero.championName || ''}</span>
                     </div>
                   );
                 }
+                // Empty slot
                 return (
-                  <button key={`empty-${slotIdx}`}
-                    onClick={() => currentQuest && setHeroSelectOpen(true)}
-                    className={`w-14 h-14 rounded-full border-2 border-dashed flex items-center justify-center transition-all ${
-                      currentQuest ? 'border-muted-foreground/30 hover:border-primary/50 cursor-pointer' : 'border-muted-foreground/15 cursor-not-allowed'
-                    }`}>
-                    <Plus className="w-5 h-5 text-muted-foreground/30" />
-                  </button>
+                  <div key={`empty-${slotIdx}`} className="flex flex-col items-center" style={{ width: `${100 / maxMembers}%` }}>
+                    <div className="h-8 mb-0.5" />
+                    <div className="h-10 mb-0.5" />
+                    <div className="h-4 mb-0.5" />
+                    <button
+                      onClick={() => currentQuest && setHeroSelectOpen(true)}
+                      className={`w-16 h-16 rounded-full border-2 border-dashed flex items-center justify-center transition-all ${
+                        currentQuest ? 'border-muted-foreground/30 hover:border-primary/50 cursor-pointer' : 'border-muted-foreground/15 cursor-not-allowed'
+                      }`}>
+                      <Plus className="w-5 h-5 text-muted-foreground/30" />
+                    </button>
+                  </div>
                 );
               })}
             </div>
 
-            {/* Hero stats table */}
+            {/* Hero stats table - VERTICAL layout (heroes as columns, stats as rows) */}
             {selectedHeroes.length > 0 && (
-              <div className="border-t border-border/30 pt-3">
+              <div className="border-t border-border/30 pt-3 overflow-x-auto">
                 <table className="w-full text-[11px]">
                   <thead>
                     <tr className="border-b border-border/30 text-muted-foreground">
-                      <th className="text-left py-1 px-1.5">이름</th>
-                      <th className="text-right py-1 px-1.5">전투력</th>
-                      <th className="text-right py-1 px-1.5">공격력</th>
-                      <th className="text-right py-1 px-1.5">방어력</th>
-                      <th className="text-right py-1 px-1.5">체력</th>
+                      <th className="text-left py-1 px-1.5 w-16"></th>
+                      {selectedHeroes.map(hero => (
+                        <th key={hero.id} className="text-center py-1 px-1.5 font-medium text-foreground">{hero.name}</th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedHeroes.map(hero => (
-                      <tr key={hero.id} className="border-b border-border/20">
-                        <td className="py-1 px-1.5 font-medium text-foreground">{hero.name}</td>
-                        <td className="py-1 px-1.5 text-right font-mono text-yellow-400">{hero.power > 0 ? formatNumber(hero.power) : '-'}</td>
-                        <td className="py-1 px-1.5 text-right font-mono text-red-400">{formatNumber(hero.atk)}</td>
-                        <td className="py-1 px-1.5 text-right font-mono text-blue-400">{formatNumber(hero.def)}</td>
-                        <td className="py-1 px-1.5 text-right font-mono text-orange-400">{formatNumber(hero.hp)}</td>
+                    {[
+                      { label: '전투력', key: 'power', color: 'text-yellow-400' },
+                      { label: 'ATK', key: 'atk', color: 'text-red-400' },
+                      { label: 'DEF', key: 'def', color: 'text-blue-400' },
+                      { label: 'HP', key: 'hp', color: 'text-orange-400' },
+                      { label: 'CRIT.C', key: 'crit', color: 'text-yellow-400' },
+                      { label: 'CRIT.D', key: 'critDmg', color: 'text-yellow-400' },
+                      { label: 'EVA', key: 'evasion', color: 'text-teal-400' },
+                      { label: 'THREAT', key: 'threat', color: 'text-foreground' },
+                    ].map(stat => (
+                      <tr key={stat.key} className="border-b border-border/20">
+                        <td className="py-1 px-1.5 text-muted-foreground font-medium">{stat.label}</td>
+                        {selectedHeroes.map(hero => {
+                          const val = (hero as any)[stat.key] || 0;
+                          return (
+                            <td key={hero.id} className={`py-1 px-1.5 text-center font-mono ${stat.color}`}>
+                              {stat.key === 'crit' || stat.key === 'critDmg' || stat.key === 'evasion'
+                                ? `${val}%`
+                                : val > 0 ? formatNumber(val) : '-'}
+                            </td>
+                          );
+                        })}
                       </tr>
                     ))}
                   </tbody>
