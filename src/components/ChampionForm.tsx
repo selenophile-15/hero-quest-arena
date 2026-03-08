@@ -145,6 +145,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [name, setName] = useState(hero?.name || '');
   const [promoted, setPromoted] = useState(false);
   const [rank, setRank] = useState<number | ''>(hero?.rank || 1);
+  const [cardLevel, setCardLevel] = useState<number>(hero?.cardLevel || 1);
   const [level, setLevel] = useState<number | ''>(hero?.level || 1);
   const [label, setLabel] = useState(hero?.label || '');
   const [position, setPosition] = useState(hero?.position || '');
