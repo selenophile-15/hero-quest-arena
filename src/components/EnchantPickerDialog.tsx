@@ -482,10 +482,15 @@ export default function EnchantPickerDialog({
                       })()}
                     </div>
 
-                    <div className="text-xs text-foreground/80 min-h-[32px] min-w-[200px] flex items-center whitespace-pre-line leading-relaxed">
+                    <div className="text-xs min-h-[32px] min-w-[200px] flex items-center whitespace-pre-line leading-relaxed">
                       {displayEffect && (
-                        <span className={spiritName === '명인' && titanCount >= 2 ? 'text-yellow-400' : ''}>
-                          {isIdolSlot && <span className="text-accent font-semibold mr-1">×2</span>}
+                        <span className={
+                          spiritName === '명인' && titanCount >= 2
+                            ? 'text-yellow-400'
+                            : isIdolSlot
+                              ? 'text-accent font-semibold'
+                              : 'text-foreground/80'
+                        }>
                           {displayEffect}
                         </span>
                       )}
