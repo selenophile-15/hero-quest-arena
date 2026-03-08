@@ -658,12 +658,12 @@ export default function QuestSimulation() {
                       : hero.heroClass ? getJobImagePath(hero.heroClass) : null;
                     return (
                       <td key={hero.id} className="text-center py-2">
-                        <div className="inline-flex flex-col items-center gap-0.5">
+                        <div className="relative inline-flex flex-col items-center gap-0.5 group">
                           {belowMin && (
                             <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                           )}
                           <button onClick={() => openSlotForEdit(slotIdx)}
-                            className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden group transition-all ${
+                            className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all ${
                               belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
                             } hover:border-accent/70`}
                             title={`${hero.name} (클릭하여 변경)`}>
