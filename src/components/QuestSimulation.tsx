@@ -699,41 +699,26 @@ export default function QuestSimulation() {
                           })}
                         </tr>
                       ))}
-                      {/* Hit chance row */}
+                      {/* Targeting chance row (threat-based) */}
                       <tr className="border-b border-border/20 bg-muted/20">
                         <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
-                        {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                          const hero = selectedHeroes[slotIdx];
-                          if (!hero) return <td key={`hit-empty-${slotIdx}`} />;
-
-                          let evasion = hero.evasion || 0;
-                          const evasionCap = hero.heroClass === '길잡이' ? 78 : 75;
-
-                          // Check if evasion is fixed at 0 (락 스톰퍼 - evasion already 0 on hero)
-                          const isEvasionFixed = evasion === 0 && hero.equipmentSlots?.some(
-                            slot => slot.item?.name === '락 스톰퍼'
-                          );
-
-                          if (hasEvasionPenalty && !isEvasionFixed) {
-                            // Apply -20% penalty first, then cap
-                            evasion = Math.max(0, evasion - 20);
-                          }
-
-                          // Apply cap
-                          const cappedEvasion = Math.min(evasion, evasionCap);
-                          const hitChance = 100 - cappedEvasion;
-
-                          return (
-                            <td key={hero.id} className="py-1.5 px-1 text-center font-mono">
-                              <span className={hitChance >= 80 ? 'text-red-400' : hitChance >= 50 ? 'text-yellow-400' : 'text-green-400'}>
-                                {hitChance}%
-                              </span>
-                              {hasEvasionPenalty && !isEvasionFixed && (
-                                <div className="text-[9px] text-red-400/70">(-20%)</div>
-                              )}
-                            </td>
-                          );
-                        })}
+                        {(() => {
+                          // Total threat of all selected heroes
+                          const totalThreat = selectedHeroes.reduce((sum, h) => sum + (h.threat || 1), 0);
+                          return Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                            const hero = selectedHeroes[slotIdx];
+                            if (!hero) return <td key={`hit-empty-${slotIdx}`} />;
+                            const threat = hero.threat || 1;
+                            const targetChance = totalThreat > 0 ? (threat / totalThreat) * 100 : 0;
+                            return (
+                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono">
+                                <span className={targetChance >= 40 ? 'text-red-400' : targetChance >= 25 ? 'text-yellow-400' : 'text-green-400'}>
+                                  {targetChance.toFixed(1)}%
+                                </span>
+                              </td>
+                            );
+                          });
+                        })()}
                       </tr>
                     </>
                   );
