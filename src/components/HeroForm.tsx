@@ -5,6 +5,7 @@ import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { lookupHeroStats, getAvailableSkills, getCommonSkills, getUniqueSkills, lookupHeroFixedStats } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { calculateHeroStats, CalculatedStats } from '@/lib/statCalculator';
+import { SkillBonusInput } from '@/lib/skillBonusParser';
 import StatBreakdownDrawer from '@/components/StatBreakdownDrawer';
 import { JOB_NAME_MAP, getJobImagePath, getJobIllustPath } from '@/lib/nameMap';
 import { getMaxCommonSkillSlots, getSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
@@ -458,7 +459,43 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     return inputs;
   }, [uniqueSkillData, selectedSkills, commonSkillsData, jobElementValue]);
 
-  // Auto-calculate stats (Phase 2: base + seeds + equipment)
+  // Build skill inputs for general bonus parsing (with names)
+  const skillInputs = useMemo((): SkillBonusInput[] => {
+    const inputs: SkillBonusInput[] = [];
+    const getSkillLevel2 = (thresholds: number[]) => {
+      let lvl = 0;
+      for (let i = 0; i < thresholds.length; i++) {
+        if (jobElementValue >= thresholds[i]) lvl = i;
+      }
+      return lvl;
+    };
+
+    if (uniqueSkillData?.['스탯_보너스']) {
+      const thresholds = (uniqueSkillData['원소_기준치'] || [0]).map(Number).filter(Number.isFinite);
+      inputs.push({
+        name: uniqueSkillName || '고유 스킬',
+        type: 'unique',
+        bonusData: uniqueSkillData['스탯_보너스'],
+        skillLevel: getSkillLevel2(thresholds),
+      });
+    }
+
+    for (const skillName of selectedSkills) {
+      const skillData = commonSkillsData[skillName];
+      if (!skillData?.['스탯_보너스']) continue;
+      const thresholds = (skillData['원소_기준치'] || [0]).map(Number).filter(Number.isFinite);
+      inputs.push({
+        name: skillName,
+        type: 'common',
+        bonusData: skillData['스탯_보너스'],
+        skillLevel: getSkillLevel2(thresholds),
+      });
+    }
+
+    return inputs;
+  }, [uniqueSkillData, uniqueSkillName, selectedSkills, commonSkillsData, jobElementValue]);
+
+  // Auto-calculate stats (Phase 3: full formula)
   useEffect(() => {
     if (!heroClass || !level) { setCalcStats(null); return; }
     calculateHeroStats({
@@ -468,8 +505,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       equipmentSlots,
       hasRangedWeapon: hasRanged,
       skillBonusInputs,
+      skillInputs,
     }).then(result => setCalcStats(result));
-  }, [heroClass, level, seedHp, seedAtk, seedDef, equipmentSlots, hasRanged, skillBonusInputs]);
+  }, [heroClass, level, seedHp, seedAtk, seedDef, equipmentSlots, hasRanged, skillBonusInputs, skillInputs]);
 
   const handleSubmit = () => {
     if (!name.trim()) {
