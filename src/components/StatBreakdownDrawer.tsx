@@ -282,9 +282,43 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     {pctBonus ? `+${pctBonus}%` : '0%'}
                   </td>
                 </tr>
+                {relicFlatVal !== 0 && (
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-yellow-400">⭐ 유물 깡 보너스</td>
+                    <td className="py-1.5 text-right tabular-nums font-medium text-yellow-400">
+                      {relicFlatVal > 0 ? '+' : ''}{formatNumber(relicFlatVal)}
+                    </td>
+                  </tr>
+                )}
+                {relicPctVal !== 0 && (
+                  <tr className="border-b border-border/30">
+                    <td className="py-1.5 text-yellow-400">⭐ 유물 % 보너스</td>
+                    <td className="py-1.5 text-right tabular-nums font-medium text-yellow-400">
+                      {relicPctVal > 0 ? '+' : ''}{relicPctVal}%
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
+
+          {/* Relic effects info */}
+          {relicEffects.length > 0 && (
+            <div className="px-3">
+              <h5 className="text-xs font-semibold text-yellow-400 mb-1">⭐ 유물 효과</h5>
+              <div className="space-y-1">
+                {relicEffects.map((e, i) => (
+                  <div key={i} className="text-[10px] bg-yellow-900/20 border border-yellow-500/20 rounded px-2 py-1">
+                    <span className="text-yellow-300 font-semibold">{e.itemName}</span>
+                    <span className="text-foreground/70 ml-1">— {e.description}</span>
+                    {e.type === 'weapon_nullify' && (
+                      <span className="text-red-400 ml-1">(무기 스탯 → 0)</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right: Equipment breakdown */}
