@@ -882,10 +882,10 @@ export default function HeroList() {
                        {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                       {displaySpirit && (() => {
                         const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                         if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                       })()}
-                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                     </div>
                   )}
                 </div>
