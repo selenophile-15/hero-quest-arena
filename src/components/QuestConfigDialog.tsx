@@ -77,7 +77,7 @@ const getDifficultyColor = (diff: string) => {
     case '쉬움': return 'text-green-400';
     case '보통': return 'text-blue-400';
     case '어려움': return 'text-orange-400';
-    case '익스트림': return 'text-red-400';
+    case '익스트림': return 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]';
     default: return 'text-muted-foreground';
   }
 };
@@ -87,7 +87,7 @@ const getDifficultyBorder = (diff: string) => {
     case '쉬움': return 'border-green-400/30 hover:border-green-400/60';
     case '보통': return 'border-blue-400/30 hover:border-blue-400/60';
     case '어려움': return 'border-orange-400/30 hover:border-orange-400/60';
-    case '익스트림': return 'border-red-400/30 hover:border-red-400/60';
+    case '익스트림': return 'border-purple-400/30 hover:border-purple-400/60';
     default: return 'border-border hover:border-primary/30';
   }
 };
@@ -188,11 +188,11 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 <div className="bg-secondary/30 flex items-center justify-center p-1.5">
                   <img src={r.areaImage} alt={r.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
-                <div className="p-1 text-center">
+                <div className="p-1.5 text-center">
                   <span className="text-[10px] font-medium text-foreground leading-tight block">{r.name}</span>
-                  <div className="flex items-center justify-center gap-0.5 mt-0.5">
-                    <Users className="w-2.5 h-2.5 text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground">{r.maxMembers}</span>
+                  <div className="flex items-center justify-center gap-1 mt-1">
+                    <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground">{r.maxMembers}</span>
                   </div>
                 </div>
               </button>

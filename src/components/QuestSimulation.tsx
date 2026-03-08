@@ -4,7 +4,7 @@ import { formatNumber } from '@/lib/format';
 import { getHeroes } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, X, Clock, Coffee } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, Clock, Coffee } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -157,6 +157,14 @@ export default function QuestSimulation() {
           map[f.key] = questResults[i];
         });
         setQuestDataMap(map);
+        // Preload all region/sub-area images
+        Object.values(map).forEach((qd: QuestData) => {
+          qd.regions.forEach(r => {
+            if (r.areaImage) { const img = new Image(); img.src = r.areaImage; }
+            r.subAreas.forEach(s => { if (s.image) { const img = new Image(); img.src = s.image; } });
+            if (r.boss?.image) { const img = new Image(); img.src = r.boss.image; }
+          });
+        });
       } catch (e) {
         console.error('Failed to load quest data', e);
       } finally {
@@ -240,8 +248,6 @@ export default function QuestSimulation() {
     return [...new Set(rawElements)] as string[];
   })() : [];
 
-  // Barrier name for display
-  const barrierName = barrierElements.length > 0 ? `${barrierElements.join(' ')}장벽` : null;
 
   // Sub-area or boss display name
   const locationName = selectedSubAreaIdx === 99 && currentRegion?.boss
@@ -259,12 +265,13 @@ export default function QuestSimulation() {
       : currentRegion?.areaImage) || null
     : null;
 
-  // Defense thresholds
+  // Defense thresholds (from -50%=0 to 75%)
   const defThresholds = [
-    { key: 'r0' as const, label: '0%', color: '#ef4444', textClass: 'text-red-400' },
-    { key: 'r50' as const, label: '50%', color: '#eab308', textClass: 'text-yellow-400' },
-    { key: 'r70' as const, label: '70%', color: '#84cc16', textClass: 'text-lime-400' },
-    { key: 'r75' as const, label: '75%', color: '#ffffff', textClass: 'text-white' },
+    { key: 'neg50' as const, label: '-50%', color: '#dc2626', textClass: 'text-red-600', value: 0 },
+    { key: 'r0' as const, label: '0%', color: '#ef4444', textClass: 'text-red-400', value: currentQuest?.def.r0 || 0 },
+    { key: 'r50' as const, label: '50%', color: '#eab308', textClass: 'text-yellow-400', value: currentQuest?.def.r50 || 0 },
+    { key: 'r70' as const, label: '70%', color: '#84cc16', textClass: 'text-lime-400', value: currentQuest?.def.r70 || 0 },
+    { key: 'r75' as const, label: '75%', color: '#ffffff', textClass: 'text-white', value: currentQuest?.def.r75 || 0 },
   ];
 
   const questTimeSettings = timeSettings.filter(s => s.category === 'quest');
@@ -277,6 +284,10 @@ export default function QuestSimulation() {
 
         {/* LEFT: Monster Info */}
         <div className="w-full lg:w-80 shrink-0">
+          <div className="flex items-center gap-2 mb-3">
+            <Info className="w-5 h-5 text-primary" />
+            <h3 className="font-display text-lg text-foreground">몬스터 정보</h3>
+          </div>
           <div className="card-fantasy p-4 relative min-h-[400px]">
             {/* Region icon - top left, bigger */}
             {currentRegion && (
@@ -310,34 +321,31 @@ export default function QuestSimulation() {
 
             {currentQuest ? (
               <div className="space-y-2">
-                {/* Line 1: Barrier - Location */}
+                {/* Line 1: Location */}
                 <div className="text-center">
-                  {barrierName && (
-                    <span className="text-sm text-purple-300">{barrierName}</span>
-                  )}
-                  {barrierName && <span className="text-sm text-muted-foreground/40"> - </span>}
                   <span className="text-sm text-foreground font-medium">{locationName}</span>
-                  <button onClick={clearQuest} className="ml-2 align-middle">
-                    <X className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive transition-colors inline" />
-                  </button>
                 </div>
 
-                {/* Line 2: Difficulty + Boss */}
-                <div className="text-center text-sm">
-                  {currentQuest.difficulty !== '없음' && (
-                    <span className={`${
+                {/* Line 2: Difficulty */}
+                {currentQuest.difficulty !== '없음' && (
+                  <div className="text-center text-sm">
+                    <span className={`font-medium ${
                       currentQuest.difficulty === '쉬움' ? 'text-green-400' :
                       currentQuest.difficulty === '보통' ? 'text-blue-400' :
                       currentQuest.difficulty === '어려움' ? 'text-orange-400' :
-                      currentQuest.difficulty === '익스트림' ? 'text-red-400' : 'text-muted-foreground'
+                      currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
                     }`}>{currentQuest.difficulty}</span>
-                  )}
-                  {currentQuest.isBoss && (
-                    <span className="text-red-400 ml-1">
+                  </div>
+                )}
+
+                {/* Line 3: Boss (below difficulty) */}
+                {currentQuest.isBoss && (
+                  <div className="text-center text-sm">
+                    <span className="text-red-400">
                       <Crown className="w-3.5 h-3.5 inline mr-0.5" />보스
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Line 3: Total time (white) */}
                 <div className="text-center">
@@ -387,43 +395,78 @@ export default function QuestSimulation() {
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
                   </div>
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5 text-orange-400" />
+                      <span className="text-xs text-muted-foreground">치명타 확률</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono text-foreground">{currentQuest.aoeChance}%</span>
+                  </div>
                 </div>
 
-                {/* Defense Reference - vertical */}
+                {/* Defense Reference - vertical bar */}
                 <div className="pt-2 border-t border-border/30">
-                  <div className="flex items-center gap-1.5 mb-2 px-1">
+                  <div className="flex items-center gap-1.5 mb-3 px-1">
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
                     <span className="text-xs text-muted-foreground font-medium">방어력 기준치</span>
                   </div>
-                  <div className="space-y-1">
-                    {defThresholds.map(t => {
-                      const defVal = currentQuest.def[t.key];
-                      // Show hero indicators for this threshold
-                      const heroesAbove = selectedHeroes.filter(h => (h.def || 0) >= defVal);
-                      return (
-                        <div key={t.key} className="flex items-center gap-2 px-1">
-                          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: t.color }} />
-                          <span className={`text-xs w-8 ${t.textClass}`}>{t.label}</span>
-                          <span className="text-xs font-mono text-muted-foreground flex-1">{formatNumber(defVal)}</span>
-                          {selectedHeroes.length > 0 && (
-                            <div className="flex -space-x-1">
-                              {selectedHeroes.map(h => (
-                                <Tooltip key={h.id}>
-                                  <TooltipTrigger asChild>
-                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                                      (h.def || 0) >= defVal ? 'border-green-500/60 bg-green-500/20' : 'border-red-500/40 bg-red-500/10'
-                                    }`}>
-                                      <Shield className={`w-2.5 h-2.5 ${(h.def || 0) >= defVal ? 'text-green-400' : 'text-red-400/50'}`} />
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent><p className="text-xs">{h.name}: {formatNumber(h.def || 0)}</p></TooltipContent>
-                                </Tooltip>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <div className="flex gap-2 px-1">
+                    {/* Left: labels */}
+                    <div className="flex flex-col justify-between h-48 text-right shrink-0">
+                      {[...defThresholds].reverse().map(t => (
+                        <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{t.label}</span>
+                      ))}
+                    </div>
+                    {/* Center: vertical bar with hero pins */}
+                    <div className="relative w-8 h-48 flex-shrink-0">
+                      {/* Bar background - gradient from red(bottom) to white(top) */}
+                      <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                      {/* Threshold markers */}
+                      {[...defThresholds].reverse().map((t, i) => {
+                        const pct = (i / (defThresholds.length - 1)) * 100;
+                        return (
+                          <div key={t.key} className="absolute left-0 right-0 flex items-center justify-center" style={{ bottom: `${pct}%`, transform: 'translateY(50%)' }}>
+                            <div className="w-full h-px" style={{ backgroundColor: t.color, opacity: 0.4 }} />
+                          </div>
+                        );
+                      })}
+                      {/* Hero pins */}
+                      {selectedHeroes.map((h, hi) => {
+                        const heroDef = h.def || 0;
+                        const maxDef = defThresholds[defThresholds.length - 1].value;
+                        const minDef = 0;
+                        const pct = maxDef > minDef ? Math.min(100, Math.max(0, ((heroDef - minDef) / (maxDef - minDef)) * 100)) : 0;
+                        // Find which threshold range the hero is in
+                        let pinColor = '#ef4444';
+                        for (const t of defThresholds) {
+                          if (heroDef >= t.value) pinColor = t.color;
+                        }
+                        return (
+                          <Tooltip key={h.id}>
+                            <TooltipTrigger asChild>
+                              <div
+                                className="absolute flex items-center"
+                                style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}
+                              >
+                                <div
+                                  className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[8px] font-bold shadow-md cursor-pointer"
+                                  style={{ borderColor: pinColor, backgroundColor: `${pinColor}33`, color: pinColor }}
+                                >
+                                  {hi + 1}
+                                </div>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent><p className="text-xs">{h.name}: {formatNumber(heroDef)}</p></TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                    {/* Right: defense values */}
+                    <div className="flex flex-col justify-between h-48 shrink-0">
+                      {[...defThresholds].reverse().map(t => (
+                        <span key={t.key} className="text-[10px] font-mono text-muted-foreground">{formatNumber(t.value)}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -464,7 +507,7 @@ export default function QuestSimulation() {
                         {/* Future: face icon here */}
                         <span className="text-lg">⚔</span>
                         <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                          <X className="w-4 h-4 text-destructive-foreground" />
+                          <span className="text-destructive-foreground text-xs font-bold">✕</span>
                         </div>
                       </button>
                       <span className="text-[10px] text-foreground font-medium truncate max-w-[56px]">{hero.name}</span>
@@ -496,7 +539,7 @@ export default function QuestSimulation() {
         <div className="w-full lg:w-72 shrink-0">
           <div className="flex items-center gap-2 mb-3">
             <Clock className="w-5 h-5 text-primary" />
-            <h3 className="font-display text-lg text-foreground">소요 시간 설정</h3>
+            <h3 className="font-display text-lg text-foreground">시간 설정</h3>
           </div>
           <div className="card-fantasy p-3">
             {/* Quest Time Reduction */}
