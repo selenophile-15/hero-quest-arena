@@ -6,6 +6,7 @@ import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
@@ -163,7 +164,7 @@ export default function QuestSimulation() {
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
   const [selectedBooster, setSelectedBooster] = useState<'none' | 'normal' | 'super' | 'mega'>('none');
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
-  const [showCombatLog, setShowCombatLog] = useState(false);
+  const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>('none');
 
   // Load quest data
@@ -581,14 +582,20 @@ export default function QuestSimulation() {
                       <PopoverTrigger asChild>
                         <button className={`text-xs px-2 py-0.5 rounded border transition-all ${
                           selectedMiniBoss !== 'none'
-                            ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
+                            ? selectedMiniBoss === 'huge' ? 'border-green-500/40 bg-green-500/10 text-green-400' :
+                              selectedMiniBoss === 'agile' ? 'border-blue-500/40 bg-blue-500/10 text-blue-400' :
+                              selectedMiniBoss === 'dire' ? 'border-red-500/40 bg-red-500/10 text-red-400' :
+                              selectedMiniBoss === 'wealthy' ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400' :
+                              selectedMiniBoss === 'legendary' ? 'border-purple-500/40 bg-purple-500/10 text-purple-400' :
+                              'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
                             : 'border-border/40 text-muted-foreground hover:border-primary/40'
                         }`}>
                           {selectedMiniBoss === 'none' ? '미니보스 없음' :
-                           selectedMiniBoss === 'huge' ? '🟡 거대한' :
-                           selectedMiniBoss === 'agile' ? '🟢 민첩한' :
-                           selectedMiniBoss === 'dire' ? '🔴 흉포한' :
-                           selectedMiniBoss === 'legendary' ? '🟣 전설의' : '미니보스'}
+                           selectedMiniBoss === 'huge' ? '거대한' :
+                           selectedMiniBoss === 'agile' ? '민첩한' :
+                           selectedMiniBoss === 'dire' ? '흉포한' :
+                           selectedMiniBoss === 'wealthy' ? '부유한' :
+                           selectedMiniBoss === 'legendary' ? '전설의' : '미니보스'}
                         </button>
                       </PopoverTrigger>
                       <PopoverContent className="w-48 p-2" align="center">
@@ -596,9 +603,10 @@ export default function QuestSimulation() {
                         <div className="space-y-1">
                           {([
                             { id: 'none', label: '없음', desc: '일반 몬스터', color: '' },
-                            { id: 'huge', label: '거대한', desc: 'HP 2배, 광역 2배', color: 'text-yellow-400' },
-                            { id: 'agile', label: '민첩한', desc: '회피 +40%', color: 'text-green-400' },
+                            { id: 'huge', label: '거대한', desc: 'HP 2배, 전체 공격 2배', color: 'text-green-400' },
+                            { id: 'agile', label: '민첩한', desc: '회피 +40%', color: 'text-blue-400' },
                             { id: 'dire', label: '흉포한', desc: 'HP 1.5배, 치확 3배', color: 'text-red-400' },
+                            { id: 'wealthy', label: '부유한', desc: '보상 증가', color: 'text-yellow-400' },
                             { id: 'legendary', label: '전설의', desc: 'HP 1.5배, ATK 1.25배, 치확 1.5배, 회피 10%', color: 'text-purple-400' },
                           ] as const).map(mb => (
                             <button
@@ -888,35 +896,34 @@ export default function QuestSimulation() {
                     })}
                   </tr>
                 )}
-                {/* Row: Face - based on death count */}
+                {/* Row: Face - based on death count, using face images */}
                 <tr>
                   <td className="py-1 px-1.5 text-muted-foreground">표정</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
                     
-                    // Calculate face rating based on simulation deaths
                     const heroResult = simResult?.heroResults.find(r => r.heroId === hero.id);
                     const totalSims = simResult?.totalSimulations || 1;
                     const scale = totalSims / 20;
                     
-                    let face = '😐';
+                    let faceImg = '/images/quest/face/icon_shop_face_A.webp';
                     if (heroResult && simResult) {
                       const deathCount = totalSims - Math.round(heroResult.survivalRate / 100 * totalSims);
                       const belowMinPower = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
                       
-                      if (belowMinPower || deathCount >= 20 * scale) face = '😈';
-                      else if (deathCount >= 12 * scale) face = '😡';
-                      else if (deathCount >= 8 * scale) face = '😟';
-                      else if (deathCount >= 3 * scale) face = '😊';
-                      else if (deathCount >= 0.01 * scale) face = '😃';
-                      else if (simResult.avgRounds <= 1 && simResult.winRate >= 99.9) face = '😎';
-                      else face = '😃';
+                      if (belowMinPower || deathCount >= 20 * scale) faceImg = '/images/quest/face/icon_shop_face_D.webp';
+                      else if (deathCount >= 12 * scale) faceImg = '/images/quest/face/icon_shop_face_C.webp';
+                      else if (deathCount >= 8 * scale) faceImg = '/images/quest/face/icon_shop_face_B.webp';
+                      else if (deathCount >= 3 * scale) faceImg = '/images/quest/face/icon_shop_face_A.webp';
+                      else if (deathCount >= 0.01 * scale) faceImg = '/images/quest/face/icon_shop_face_S.webp';
+                      else if (simResult.avgRounds <= 1 && simResult.winRate >= 99.9) faceImg = '/images/quest/face/icon_shop_face_SSS.webp';
+                      else faceImg = '/images/quest/face/icon_shop_face_S.webp';
                     }
                     
                     return (
                       <td key={hero.id} className="text-center py-1">
-                        <span className="text-2xl">{face}</span>
+                        <img src={faceImg} alt="face" className="w-8 h-8 mx-auto" />
                       </td>
                     );
                   })}
@@ -1224,7 +1231,7 @@ export default function QuestSimulation() {
                     questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
                   });
                   setCombatLog(entries);
-                  setShowCombatLog(true);
+                  setCombatLogDialogOpen(true);
                 }}
               >
                 🎲 1회 전투 로그
@@ -1286,23 +1293,25 @@ export default function QuestSimulation() {
             </div>
           </div>
 
-          {/* Combat Battlefield */}
-          {showCombatLog && combatLog && (
-            <div className="mt-4 border-t border-border/30 pt-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-foreground">🎲 1회 전투 시각화</span>
-                <button onClick={() => setShowCombatLog(false)} className="text-[10px] text-muted-foreground hover:text-foreground">닫기 ✕</button>
-              </div>
-              <CombatBattlefield
-                log={combatLog}
-                heroes={selectedHeroes}
-                monsterHp={currentQuest?.hp || 0}
-                monsterName={locationName}
-              />
-            </div>
-          )}
         </div>
       )}
+
+      {/* Combat Log Dialog */}
+      <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-sm">🎲 1회 전투 시각화</DialogTitle>
+          </DialogHeader>
+          {combatLog && (
+            <CombatBattlefield
+              log={combatLog}
+              heroes={selectedHeroes}
+              monsterHp={currentQuest?.hp || 0}
+              monsterName={locationName}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Config Dialog */}
       <QuestConfigDialog

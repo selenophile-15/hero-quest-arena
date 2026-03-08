@@ -29,7 +29,7 @@ export interface QuestMonster {
   barrierElement: string | null; // Resolved barrier element for this sub-area
 }
 
-export type MiniBossType = 'none' | 'agile' | 'dire' | 'huge' | 'legendary';
+export type MiniBossType = 'none' | 'agile' | 'dire' | 'huge' | 'wealthy' | 'legendary';
 
 export interface BoosterType {
   type: 'none' | 'normal' | 'super' | 'mega';
@@ -191,6 +191,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     case 'huge':
       mobHpMod = 2.0;
       mobAoeChanceMod = 2.0;
+      break;
+    case 'wealthy':
+      // No stat changes, only loot bonus
       break;
     case 'legendary':
       mobHpMod = 1.5;
@@ -538,13 +541,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
 
   // ─── Lilu heal amount ───
-  // Lilu heal: percentage of max HP per round
-  let liluHealPct = 0;
+  // Lilu heal: FLAT amount per hero per round (NOT percentage)
+  let liluHealFlat = 0;
   if (champName.includes('릴루') || champName === 'Lilu') {
-    if (champTier === 1) liluHealPct = 3;
-    else if (champTier === 2) liluHealPct = 5;
-    else if (champTier === 3) liluHealPct = 10;
-    else if (champTier === 4) liluHealPct = 20;
+    if (champTier === 1) liluHealFlat = 3;
+    else if (champTier === 2) liluHealFlat = 5;
+    else if (champTier === 3) liluHealFlat = 10;
+    else if (champTier === 4) liluHealFlat = 20;
   }
 
   // ─── Simulation ──────────────────────────────────────────────────────────
@@ -905,8 +908,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             hp[i] = Math.min(hp[i] + bHeal, finalHp[i]);
           }
 
-          if (liluHealPct > 0) {
-            hp[i] = Math.min(hp[i] + Math.floor(finalHp[i] * liluHealPct / 100) * heroArtChampionMod[i], finalHp[i]);
+          if (liluHealFlat > 0) {
+            hp[i] = Math.min(hp[i] + liluHealFlat * heroArtChampionMod[i], finalHp[i]);
           }
         }
       }
@@ -1012,6 +1015,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     case 'agile': mobEvasion = 0.4; break;
     case 'dire': mobHpMod = 1.5; mobCritChanceMod = 3.0; break;
     case 'huge': mobHpMod = 2.0; mobAoeChanceMod = 2.0; break;
+    case 'wealthy': break; // No stat changes
     case 'legendary': mobHpMod = 1.5; mobDamageMod = 1.25; mobCritChanceMod = 1.5; mobEvasion = 0.1; break;
   }
 
