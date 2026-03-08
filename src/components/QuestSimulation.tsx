@@ -299,11 +299,11 @@ export default function QuestSimulation() {
               </div>
             )}
 
-            {/* Quest select button - centered */}
+            {/* Quest select button - centered, larger with less cropping */}
             <div className="flex justify-center pt-2 mb-4">
               <button
                 onClick={() => setConfigOpen(true)}
-                className={`relative w-28 h-28 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
+                className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
                   currentQuest
                     ? 'border-primary/60 glow-gold'
                     : 'border-dashed border-muted-foreground/40 hover:border-primary/50'
@@ -311,7 +311,7 @@ export default function QuestSimulation() {
               >
                 {currentQuest && centerImage ? (
                   <>
-                    <img src={centerImage} alt="" className="w-full h-full object-cover" />
+                    <img src={centerImage} alt="" className="w-[140%] h-[140%] object-cover" />
                     <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-[10px] text-foreground font-medium">변경</span>
                     </div>
