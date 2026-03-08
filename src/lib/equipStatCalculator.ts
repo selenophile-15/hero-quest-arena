@@ -522,6 +522,7 @@ function emptySlotCalc(index: number): EquipSlotCalc {
     preBonusAtk: 0, preBonusDef: 0, preBonusHp: 0,
     spellknightMult: 1.0,
     bonusAtkPct: 0, bonusDefPct: 0, bonusHpPct: 0,
+    quiverBonusAtk: 0, quiverBonusDef: 0, quiverBonusHp: 0,
     finalAtk: 0, finalDef: 0, finalHp: 0, finalCrit: 0, finalEvasion: 0,
   };
 }
