@@ -914,7 +914,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let retrySimulations: number | undefined;
 
   // Fateweaver/Chronomancer retry: re-run simulation with added Normal booster
-  if (fateweaverPresent && rawWinRate < 100) {
+  if (fateweaverPresent && rawWinRate < 100 && !config._isRetry) {
     // Determine retry booster: current booster + Normal booster stacked
     const retryBoosterType: BoosterType['type'] = (() => {
       // Stack Normal booster on top of existing booster
