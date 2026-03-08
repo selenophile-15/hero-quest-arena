@@ -1015,6 +1015,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     case 'agile': mobEvasion = 0.4; break;
     case 'dire': mobHpMod = 1.5; mobCritChanceMod = 3.0; break;
     case 'huge': mobHpMod = 2.0; mobAoeChanceMod = 2.0; break;
+    case 'wealthy': break; // No stat changes
     case 'legendary': mobHpMod = 1.5; mobDamageMod = 1.25; mobCritChanceMod = 1.5; mobEvasion = 0.1; break;
   }
 
