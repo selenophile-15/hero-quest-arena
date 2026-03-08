@@ -145,8 +145,10 @@ export default function QuestSimulation() {
 
   // Dialogs
   const [configOpen, setConfigOpen] = useState(false);
+  const [configInitialStep, setConfigInitialStep] = useState<'type' | 'region' | 'subarea' | 'difficulty' | undefined>();
+  const [configInitialState, setConfigInitialState] = useState<{ questTypeKey: string; regionIdx: number; subAreaIdx: number } | undefined>();
   const [heroSelectOpen, setHeroSelectOpen] = useState(false);
-  const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null); // Which slot is being edited
+  const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null);
 
   // Time settings
   const [timeSettings, setTimeSettings] = useState<TimeSettingItem[]>(DEFAULT_TIME_SETTINGS);
@@ -162,6 +164,7 @@ export default function QuestSimulation() {
   const [selectedBooster, setSelectedBooster] = useState<'none' | 'normal' | 'super' | 'mega'>('none');
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
   const [showCombatLog, setShowCombatLog] = useState(false);
+  const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>('none');
 
   // Load quest data
   useEffect(() => {
