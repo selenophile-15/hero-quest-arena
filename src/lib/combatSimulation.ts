@@ -33,6 +33,11 @@ export type MiniBossType = 'none' | 'agile' | 'dire' | 'huge' | 'legendary';
 
 export interface BoosterType {
   type: 'none' | 'normal' | 'super' | 'mega';
+  // Extra flat bonuses stacked on top (e.g., Fateweaver retry adds +20%/+20%)
+  extraAtkBonus?: number;
+  extraDefBonus?: number;
+  extraCritChance?: number;
+  extraCritMult?: number;
 }
 
 export interface SimulationConfig {
