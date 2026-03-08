@@ -942,6 +942,7 @@ export default function QuestSimulation() {
                                     <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
+                                  {critCapNote && <span className="text-[9px] text-muted-foreground">{critCapNote}</span>}
                                 </div>
                               </td>
                             );
