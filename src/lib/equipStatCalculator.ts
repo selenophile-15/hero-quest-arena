@@ -65,6 +65,11 @@ export interface EquipSlotCalc {
   bonusDefPct: number;
   bonusHpPct: number;
 
+  // Quiver bonus (added last, 30% of pre-bonus)
+  quiverBonusAtk: number;
+  quiverBonusDef: number;
+  quiverBonusHp: number;
+
   // Final slot stats
   finalAtk: number;
   finalDef: number;
