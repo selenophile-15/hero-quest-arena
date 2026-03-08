@@ -611,6 +611,29 @@ export default function QuestSimulation() {
                 ))}
               </colgroup>
               <tbody>
+                {/* Party buff summary row - above element row */}
+                {(() => {
+                  const hasBuffs = buffSummary && buffSummary.sources.length > 0;
+                  if (!hasBuffs || selectedHeroes.length === 0) return null;
+                  return (
+                    <tr className="border-b border-border/30 bg-primary/5">
+                      <td colSpan={maxMembers + 1} className="py-2 px-2">
+                        <div className="flex flex-wrap items-center gap-2 text-[10px]">
+                          <span className="text-primary font-bold text-[11px]">📊 파티 버프</span>
+                          {buffSummary!.sources.map((src, i) => (
+                            <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary/10 text-primary/90">
+                              <span className={src.type === 'champion' ? 'text-yellow-400' : 'text-purple-400'}>
+                                {src.type === 'champion' ? '👑' : '🎵'}
+                              </span>
+                              <span className="font-medium">{src.name}</span>
+                              {src.note && <span className="text-muted-foreground">({src.note})</span>}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })()}
                 {/* Row: Element barrier icons */}
                 {barrierElements.length > 0 && (
                   <tr>
