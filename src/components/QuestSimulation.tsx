@@ -831,9 +831,8 @@ export default function QuestSimulation() {
                     );
                   })}
                 </tr>
-                {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF */}
+                {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF, CRIT.C, EVA, THREAT */}
                 {selectedHeroes.length > 0 && (() => {
-                  // Determine if evasion penalty applies (익스트림 or 명인의 탑 공포)
                   const hasEvasionPenalty = currentQuest && (
                     currentQuest.isExtreme ||
                     (selectedQuestType === 'tot' && currentRegion?.name === '공포')
@@ -861,7 +860,6 @@ export default function QuestSimulation() {
                             if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
                             const bs = buffedStats[slotIdx];
                             
-                            // Use buffed stats if available
                             let val: number;
                             let delta = 0;
                             if (bs && hasBuffs) {
@@ -879,23 +877,45 @@ export default function QuestSimulation() {
                                 : (hero as any)[stat.key] || 0;
                             }
                             
+                            // Evasion special handling
+                            let displayColor = stat.color;
+                            let evasionNote = '';
+                            if (stat.key === 'evasion') {
+                              const hasRockStompers = hero.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
+                              const isPathfinder = (hero.heroClass || '').includes('길잡이');
+                              const cap = isPathfinder ? 78 : 75;
+                              
+                              if (hasRockStompers) {
+                                val = 0;
+                                delta = 0;
+                                evasionNote = '🪨';
+                              } else {
+                                if (hasEvasionPenalty) {
+                                  val = val - 20;
+                                  delta = delta - 20;
+                                }
+                                if (val > cap) val = cap;
+                              }
+                              if (val < 0) displayColor = 'text-amber-500';
+                            }
+                            
                             return (
-                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${stat.color}`}>
+                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${displayColor}`}>
                                 <div className="flex flex-col items-center">
-                                  <span>{stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}</span>
+                                  <span>{stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}</span>
                                   {delta > 0 && (
                                     <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
                                   {delta < 0 && (
                                     <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
+                                  {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
                                 </div>
                               </td>
                             );
                           })}
                         </tr>
                       ))}
-                      {/* Removed: old buff sources summary row - now shown above element row */}
                       {/* Targeting chance row (threat-based) */}
                       <tr className="border-b border-border/20 bg-muted/20">
                         <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
