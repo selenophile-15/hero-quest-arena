@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Settings } from 'lucide-react';
 import { STAT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { CalculatedStats, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect } from '@/lib/statCalculator';
+import { CalculatedStats, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect, EquipBonusSource } from '@/lib/statCalculator';
 
 interface StatBreakdownDrawerProps {
   open: boolean;
@@ -63,23 +63,26 @@ function getSummaryField(summary: SkillBonusSummary, statType: MultStatType, fie
 function getEquipBonusForStat(equipBonuses: SkillBonuses, statType: MultStatType): {
   해당장비: Record<string, number>;
   모든장비: number;
+  해당Sources: EquipBonusSource[];
+  모든Sources: EquipBonusSource[];
 } {
-  if (statType === 'atk') {
-    const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비공격력)) merged[k] = (merged[k] || 0) + v;
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
-    return { 해당장비: merged, 모든장비: equipBonuses.모든장비공격력 + equipBonuses.모든장비전체 };
-  } else if (statType === 'def') {
-    const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비방어력)) merged[k] = (merged[k] || 0) + v;
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
-    return { 해당장비: merged, 모든장비: equipBonuses.모든장비방어력 + equipBonuses.모든장비전체 };
-  } else {
-    const merged: Record<string, number> = {};
-    for (const [k, v] of Object.entries(equipBonuses.해당장비체력)) merged[k] = (merged[k] || 0) + v;
-    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
-    return { 해당장비: merged, 모든장비: equipBonuses.모든장비체력 + equipBonuses.모든장비전체 };
-  }
+  const statSuffix = statType === 'atk' ? '공격력' : statType === 'def' ? '방어력' : '체력';
+  const 해당Key = `해당장비${statSuffix}` as const;
+  const 모든Key = `모든장비${statSuffix}` as const;
+
+  // Merge stat-specific + 전체 for totals
+  const merged: Record<string, number> = {};
+  for (const [k, v] of Object.entries(equipBonuses[해당Key])) merged[k] = (merged[k] || 0) + v;
+  for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) merged[k] = (merged[k] || 0) + v;
+  const 모든장비 = equipBonuses[모든Key] + equipBonuses.모든장비전체;
+
+  // Filter sources relevant to this stat type
+  const relevantKeys = new Set([해당Key, '해당장비전체']);
+  const 해당Sources = equipBonuses.sources.filter(s => relevantKeys.has(s.bonusKey));
+  const 모든Keys = new Set([모든Key, '모든장비전체']);
+  const 모든Sources = equipBonuses.sources.filter(s => 모든Keys.has(s.bonusKey));
+
+  return { 해당장비: merged, 모든장비, 해당Sources, 모든Sources };
 }
 
 export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: StatBreakdownDrawerProps) {
@@ -112,8 +115,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const skillSources = bonus?.sources.filter(s => s.type === 'unique' || s.type === 'common') || [];
     const soulSources = bonus?.sources.filter(s => s.type === 'soul') || [];
 
-    const equipBonusData = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0 };
-    const 해당장비Entries = Object.entries(equipBonusData.해당장비).filter(([, v]) => v !== 0);
+    const equipBonusData = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0, 해당Sources: [], 모든Sources: [] };
+    
 
     const baseKey = statType === 'atk' ? 'baseAtk' : statType === 'def' ? 'baseDef' : 'baseHp';
     const qualityKey = statType === 'atk' ? 'qualityAtk' : statType === 'def' ? 'qualityDef' : 'qualityHp';
@@ -204,39 +207,33 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
           <div className="px-3">
             <h5 className="text-xs font-semibold text-primary mb-1">장비 보너스 스킬 ({config.label})</h5>
-            {(() => {
-              const equippedTypes = new Set(
-                (calcStats?.equipResult?.slots || [])
-                  .filter(s => s.itemName)
-                  .map(s => s.itemTypeKor || s.itemType)
-              );
-              const matchedEntries = 해당장비Entries.filter(([equipType]) => equippedTypes.has(equipType));
-              return (
-                <table className="w-full text-xs mb-2">
-                  <thead>
-                    <tr className="border-b border-border/50">
-                      <th className="py-1 text-left text-foreground/60">해당 장비 {config.label} 보너스</th>
-                      <th className="py-1 text-right text-foreground/60">%</th>
+            <table className="w-full text-xs mb-2">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="py-1 text-left text-foreground/60">해당 장비 {config.label} 보너스</th>
+                  <th className="py-1 text-right text-foreground/60">%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {equipBonusData.해당Sources.length === 0 ? (
+                  <tr className="border-b border-border/20">
+                    <td colSpan={2} className="py-1 text-center text-muted-foreground">해당 없음</td>
+                  </tr>
+                ) : equipBonusData.해당Sources.map((src, i) => {
+                  const tagClass = src.skillType === 'unique' ? 'bg-purple-700/60' : 'bg-amber-800/40';
+                  const tagLabel = src.skillType === 'unique' ? '고유' : '공용';
+                  return (
+                    <tr key={i} className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">
+                        <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
+                        {src.skillName} → {src.equipType}
+                      </td>
+                      <td className="py-1 text-right tabular-nums text-foreground">+{src.value}%</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {matchedEntries.length === 0 ? (
-                      <tr className="border-b border-border/20">
-                        <td colSpan={2} className="py-1 text-center text-muted-foreground">해당 없음</td>
-                      </tr>
-                    ) : matchedEntries.map(([equipType, pct], i) => (
-                      <tr key={i} className="border-b border-border/20">
-                        <td className="py-1 text-foreground/70">
-                          <span className="text-[9px] mr-1 px-1 rounded bg-cyan-800/40">해당</span>
-                          {equipType}
-                        </td>
-                        <td className="py-1 text-right tabular-nums text-foreground">+{pct}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              );
-            })()}
+                  );
+                })}
+              </tbody>
+            </table>
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border/50">
@@ -245,19 +242,23 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 </tr>
               </thead>
               <tbody>
-                {equipBonusData.모든장비 === 0 ? (
+                {equipBonusData.모든Sources.length === 0 ? (
                   <tr className="border-b border-border/20">
                     <td colSpan={2} className="py-1 text-center text-muted-foreground">해당 없음</td>
                   </tr>
-                ) : (
-                  <tr className="border-b border-border/20">
-                    <td className="py-1 text-foreground/70">
-                      <span className="text-[9px] mr-1 px-1 rounded bg-green-800/40">전체</span>
-                      모든 장비
-                    </td>
-                    <td className="py-1 text-right tabular-nums text-foreground">+{equipBonusData.모든장비}%</td>
-                  </tr>
-                )}
+                ) : equipBonusData.모든Sources.map((src, i) => {
+                  const tagClass = src.skillType === 'unique' ? 'bg-purple-700/60' : 'bg-amber-800/40';
+                  const tagLabel = src.skillType === 'unique' ? '고유' : '공용';
+                  return (
+                    <tr key={i} className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">
+                        <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
+                        {src.skillName}
+                      </td>
+                      <td className="py-1 text-right tabular-nums text-foreground">+{src.value}%</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

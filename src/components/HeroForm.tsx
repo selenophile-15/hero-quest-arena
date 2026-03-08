@@ -422,6 +422,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       bonusData: Record<string, number | number[]>;
       appliedEquip: string[][] | undefined;
       skillLevel: number;
+      skillType: 'unique' | 'common';
+      skillName: string;
     }> = [];
 
     const getSkillLevel = (thresholds: number[]) => {
@@ -440,6 +442,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         bonusData: uniqueSkillData['스탯_보너스'],
         appliedEquip: uniqueSkillData['적용_장비'],
         skillLevel: lvl,
+        skillType: 'unique',
+        skillName: uniqueSkillData['스킬명'] || '고유 스킬',
       });
     }
 
@@ -453,6 +457,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         bonusData: skillData['스탯_보너스'],
         appliedEquip: skillData['적용_장비'],
         skillLevel: lvl,
+        skillType: 'common',
+        skillName,
       });
     }
 

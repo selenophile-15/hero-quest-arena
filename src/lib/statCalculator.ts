@@ -7,7 +7,7 @@
  */
 
 import { lookupHeroStats } from './gameData';
-import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc, SkillBonuses, RelicEffect } from './equipStatCalculator';
+import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc, SkillBonuses, RelicEffect, EquipBonusSource } from './equipStatCalculator';
 import { parseSkillBonuses, parseSoulBonuses, combineBonuses, SkillBonusSummary, SkillBonusInput, SoulBonusInput, SkillBonusSource } from './skillBonusParser';
 
 export interface CalculatedStats {
@@ -56,7 +56,7 @@ export interface CalculatedStats {
   jobElement: string;
 }
 
-export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect };
+export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect, EquipBonusSource };
 
 const SEED_MULTIPLIER = { hp: 1, atk: 4, def: 4 };
 
@@ -77,6 +77,8 @@ export interface CalcInput {
     bonusData: Record<string, number | number[]>;
     appliedEquip: string[][] | undefined;
     skillLevel: number;
+    skillType: 'unique' | 'common';
+    skillName: string;
   }>;
   // Skill data for general stat parsing (with names)
   skillInputs: SkillBonusInput[];
