@@ -315,34 +315,31 @@ export default function QuestSimulation() {
 
             {currentQuest ? (
               <div className="space-y-2">
-                {/* Line 1: Barrier - Location */}
+                {/* Line 1: Location */}
                 <div className="text-center">
-                  {barrierName && (
-                    <span className="text-sm text-purple-300">{barrierName}</span>
-                  )}
-                  {barrierName && <span className="text-sm text-muted-foreground/40"> - </span>}
                   <span className="text-sm text-foreground font-medium">{locationName}</span>
-                  <button onClick={clearQuest} className="ml-2 align-middle">
-                    <X className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive transition-colors inline" />
-                  </button>
                 </div>
 
-                {/* Line 2: Difficulty + Boss */}
-                <div className="text-center text-sm">
-                  {currentQuest.difficulty !== '없음' && (
-                    <span className={`${
+                {/* Line 2: Difficulty */}
+                {currentQuest.difficulty !== '없음' && (
+                  <div className="text-center text-sm">
+                    <span className={`font-medium ${
                       currentQuest.difficulty === '쉬움' ? 'text-green-400' :
                       currentQuest.difficulty === '보통' ? 'text-blue-400' :
                       currentQuest.difficulty === '어려움' ? 'text-orange-400' :
-                      currentQuest.difficulty === '익스트림' ? 'text-red-400' : 'text-muted-foreground'
+                      currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
                     }`}>{currentQuest.difficulty}</span>
-                  )}
-                  {currentQuest.isBoss && (
-                    <span className="text-red-400 ml-1">
+                  </div>
+                )}
+
+                {/* Line 3: Boss (below difficulty) */}
+                {currentQuest.isBoss && (
+                  <div className="text-center text-sm">
+                    <span className="text-red-400">
                       <Crown className="w-3.5 h-3.5 inline mr-0.5" />보스
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Line 3: Total time (white) */}
                 <div className="text-center">
