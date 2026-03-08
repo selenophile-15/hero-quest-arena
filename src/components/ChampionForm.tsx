@@ -526,6 +526,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               수동
             </Button>
 
+            {championManualMode && (
+              <div className="flex items-center gap-1.5 ml-auto">
+                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setChampionManualMode(false)}>취소</Button>
+                <Button size="sm" className="h-7 text-xs" onClick={() => championManualFormRef.current?.triggerConfirm()}>적용</Button>
+              </div>
+            )}
+
             {!championManualMode && (
               <>
                 <span className="text-muted-foreground">스탯:</span>
