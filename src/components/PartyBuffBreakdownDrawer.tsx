@@ -583,9 +583,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         }
                       }
 
-                      // Crit chance cap at 100%
-                      if (activeTab === 'critChance') {
-                        if (finalVal > 100) finalVal = 100;
+                      // Crit chance: show raw value with cap note
+                      let critCapNote = '';
+                      if (activeTab === 'critChance' && finalVal > 100) {
+                        critCapNote = `(판정: 100%)`;
                       }
 
                       return (
@@ -593,6 +594,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                           <div className={`font-bold font-mono text-lg ${activeTab === 'evasion' ? evasionColor : config.color}`}>
                             {suffix ? `${finalVal}${suffix}` : formatNumber(finalVal)}
                             {evasionDisplayNote && <span className="text-xs text-muted-foreground ml-1">{evasionDisplayNote}</span>}
+                            {critCapNote && <span className="text-xs text-muted-foreground ml-1">{critCapNote}</span>}
                           </div>
                           {delta !== 0 && (
                             <div className={`text-xs font-mono ${delta > 0 ? 'text-green-400' : 'text-red-400'}`}>
