@@ -815,8 +815,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   </tr>
                 ) : filteredSources.map((src, i) => {
                   const val = getAddBonusField(src, statType);
-                  const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : 'bg-amber-800/40';
-                  const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : '공용';
+                  const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
+                  const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
                   return (
                     <tr key={i} className="border-b border-border/20">
                       <td className="py-1 text-foreground/70">
