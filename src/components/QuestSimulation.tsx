@@ -548,15 +548,37 @@ export default function QuestSimulation() {
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
           </div>
           <div className="card-fantasy p-4">
-            {/* Hero slots row */}
-            <div className="flex gap-3 flex-wrap mb-3">
+            {/* Hero slots row - evenly distributed */}
+            <div className="flex justify-around mb-4">
               {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                 const hero = selectedHeroes[slotIdx];
                 const belowMin = hero && currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
                 if (hero) {
+                  // Determine barrier elements this hero covers
+                  const heroBarrierIcons = barrierElements.map(el => {
+                    const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                    const heroVal = hero.equipmentElements?.[el] || 0;
+                    return { el, iconPath, heroVal };
+                  }).filter(b => b.heroVal > 0);
+
                   return (
                     <div key={hero.id} className="flex flex-col items-center gap-1">
-                      {/* Power indicator above head */}
+                      {/* Elemental barrier icons (topmost) */}
+                      {heroBarrierIcons.length > 0 && (
+                        <div className="flex gap-0.5">
+                          {heroBarrierIcons.map(b => (
+                            <div key={b.el} className="flex flex-col items-center">
+                              {b.iconPath && <img src={b.iconPath} alt="" className="w-4 h-4" />}
+                              <span className="text-[8px] font-mono text-purple-300">{formatNumber(b.heroVal)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {/* Face icon placeholder */}
+                      <div className="w-5 h-5 flex items-center justify-center">
+                        <span className="text-[10px] text-muted-foreground">😐</span>
+                      </div>
+                      {/* Power warning */}
                       {belowMin && (
                         <span className="text-[9px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                       )}
@@ -565,7 +587,6 @@ export default function QuestSimulation() {
                           belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
                         } hover:border-destructive/50`}
                         title={`${hero.name} (클릭하여 제거)`}>
-                        {/* Future: face icon here */}
                         <span className="text-lg">⚔</span>
                         <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
                           <span className="text-destructive-foreground text-xs font-bold">✕</span>
@@ -588,8 +609,36 @@ export default function QuestSimulation() {
               })}
             </div>
 
+            {/* Hero stats table */}
+            {selectedHeroes.length > 0 && (
+              <div className="border-t border-border/30 pt-3">
+                <table className="w-full text-[11px]">
+                  <thead>
+                    <tr className="border-b border-border/30 text-muted-foreground">
+                      <th className="text-left py-1 px-1.5">이름</th>
+                      <th className="text-right py-1 px-1.5">전투력</th>
+                      <th className="text-right py-1 px-1.5">공격력</th>
+                      <th className="text-right py-1 px-1.5">방어력</th>
+                      <th className="text-right py-1 px-1.5">체력</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedHeroes.map(hero => (
+                      <tr key={hero.id} className="border-b border-border/20">
+                        <td className="py-1 px-1.5 font-medium text-foreground">{hero.name}</td>
+                        <td className="py-1 px-1.5 text-right font-mono text-yellow-400">{hero.power > 0 ? formatNumber(hero.power) : '-'}</td>
+                        <td className="py-1 px-1.5 text-right font-mono text-red-400">{formatNumber(hero.atk)}</td>
+                        <td className="py-1 px-1.5 text-right font-mono text-blue-400">{formatNumber(hero.def)}</td>
+                        <td className="py-1 px-1.5 text-right font-mono text-orange-400">{formatNumber(hero.hp)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
             {currentQuest && selectedHeroes.length > 0 && (
-              <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} className="w-full mt-2 gap-2" size="sm">
+              <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} className="w-full mt-3 gap-2" size="sm">
                 <Play className="w-4 h-4" /> 시뮬레이션 실행
               </Button>
             )}
