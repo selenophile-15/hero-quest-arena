@@ -914,9 +914,10 @@ export default function QuestSimulation() {
                               if (val < 0) displayColor = 'text-purple-400';
                             }
 
-                            // Crit chance cap at 100%
-                            if (stat.key === 'crit') {
-                              if (val > 100) val = 100;
+                            // Crit chance: show raw value, note capped at 100%
+                            let critCapNote = '';
+                            if (stat.key === 'crit' && val > 100) {
+                              critCapNote = `(판정: 100%)`;
                             }
 
                             // Barrier not broken: ATK and CRIT.DMG show 20% values
