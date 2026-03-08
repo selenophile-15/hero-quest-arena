@@ -511,14 +511,20 @@ export default function EquipmentSelectDialog({
               <ManualEquipmentForm
                 initialData={slots[activeSlot]?.item?.manualData || null}
                 allowedTypes={currentAllowedTypes}
-                onConfirm={(item, manualData) => {
+                onConfirm={(item) => {
                   const newSlots = [...slots];
                   const existingSlot = newSlots[activeSlot];
+                  const slotElement = item.uniqueElement?.length
+                    ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true }
+                    : existingSlot?.element || null;
+                  const slotSpirit = item.uniqueSpirit?.length
+                    ? { name: item.uniqueSpirit[0], affinity: true }
+                    : existingSlot?.spirit || null;
                   newSlots[activeSlot] = {
                     item: { ...item },
                     quality: existingSlot?.quality || slotQuality,
-                    element: existingSlot?.element || null,
-                    spirit: existingSlot?.spirit || null,
+                    element: slotElement,
+                    spirit: slotSpirit,
                   };
                   setSlots(newSlots);
                   setManualMode(false);
