@@ -1123,7 +1123,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       if (Math.random() < heroEva[target]) {
         log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `회피 성공!` });
       } else {
-        const isCrit = Math.random() < 0.1;
+        const negEvaBonus = (heroEva[target] < 0 && isExtreme) ? -0.25 * heroEva[target] : 0;
+        const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
         const normalDmg = calcDamageTaken(heroDefVal[target], mobDamage, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, mobDamage) : normalDmg;
         heroHp[target] -= dmg;
