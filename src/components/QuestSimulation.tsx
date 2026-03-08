@@ -847,14 +847,35 @@ export default function QuestSimulation() {
                     })}
                   </tr>
                 )}
-                {/* Row: Face */}
+                {/* Row: Face - based on death count */}
                 <tr>
                   <td className="py-1 px-1.5 text-muted-foreground">표정</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
+                    if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
+                    
+                    // Calculate face rating based on simulation deaths
+                    const heroResult = simResult?.heroResults.find(r => r.heroId === hero.id);
+                    const totalSims = simResult?.totalSimulations || 1;
+                    const scale = totalSims / 20;
+                    
+                    let face = '😐';
+                    if (heroResult && simResult) {
+                      const deathCount = totalSims - Math.round(heroResult.survivalRate / 100 * totalSims);
+                      const belowMinPower = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
+                      
+                      if (belowMinPower || deathCount >= 20 * scale) face = '😈';
+                      else if (deathCount >= 12 * scale) face = '😡';
+                      else if (deathCount >= 8 * scale) face = '😟';
+                      else if (deathCount >= 3 * scale) face = '😊';
+                      else if (deathCount >= 0.01 * scale) face = '😃';
+                      else if (simResult.avgRounds <= 1 && simResult.winRate >= 99.9) face = '😎';
+                      else face = '😃';
+                    }
+                    
                     return (
-                      <td key={hero?.id || `face-empty-${slotIdx}`} className="text-center py-1">
-                        {hero ? <span className="text-2xl">😐</span> : null}
+                      <td key={hero.id} className="text-center py-1">
+                        <span className="text-2xl">{face}</span>
                       </td>
                     );
                   })}
