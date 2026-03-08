@@ -13,6 +13,7 @@ import HeroSelectDialog from '@/components/HeroSelectDialog';
 import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
+import CombatBattlefield from '@/components/CombatBattlefield';
 
 // Quest data types
 interface QuestTime {
