@@ -1231,7 +1231,7 @@ export default function QuestSimulation() {
                     questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
                   });
                   setCombatLog(entries);
-                  setShowCombatLog(true);
+                  setCombatLogDialogOpen(true);
                 }}
               >
                 🎲 1회 전투 로그
