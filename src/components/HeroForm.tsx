@@ -1070,6 +1070,17 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         />
 
       </div>
+
+      {/* Stat Breakdown Drawer */}
+      <StatBreakdownDrawer
+        open={breakdownOpen}
+        onOpenChange={setBreakdownOpen}
+        calcStats={calcStats}
+        equipmentSlots={equipmentSlots}
+        selectedSkills={selectedSkills}
+        uniqueSkillName={uniqueSkillName}
+        heroClass={heroClass}
+      />
     </div>
   );
 }
