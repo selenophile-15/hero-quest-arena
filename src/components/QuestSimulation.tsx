@@ -548,128 +548,147 @@ export default function QuestSimulation() {
             <h3 className="font-display text-lg text-foreground">파티 구성</h3>
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
           </div>
-          <div className="card-fantasy p-4">
-            {/* Hero slots - consistent rows: element, face, slot circle, name, class */}
-            <div className="flex justify-around mb-4">
-              {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                const hero = selectedHeroes[slotIdx];
-                const belowMin = hero && currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
-
-                if (hero) {
-                  // Get hero's element values matching barrier elements
-                  const heroBarrierIcons = barrierElements.map(el => {
-                    const heroVal = hero.equipmentElements?.[el] || 0;
-                    const iconPath = ELEMENT_ICON_MAP[el];
-                    return { el, iconPath, heroVal };
-                  }).filter(b => b.heroVal > 0);
-
-                  // Get hero job/champion image
-                  const heroImg = hero.type === 'champion'
-                    ? getChampionImagePath(hero.championName || hero.name)
-                    : hero.heroClass ? getJobImagePath(hero.heroClass) : null;
-
-                  return (
-                    <div key={hero.id} className="flex flex-col items-center" style={{ width: `${100 / maxMembers}%` }}>
-                      {/* Row 1: Element barrier values (fixed height) */}
-                      <div className="h-8 flex items-end justify-center gap-0.5 mb-0.5">
-                        {heroBarrierIcons.map(b => (
-                          <div key={b.el} className="flex flex-col items-center">
-                            {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-4 h-4" />}
-                            <span className="text-[8px] font-mono text-purple-300">{formatNumber(b.heroVal)}</span>
+          <div className="card-fantasy p-4 overflow-x-auto">
+            {/* Unified table: visual rows (element, face, hero circle, name, class) + stat rows */}
+            <table className="w-full text-[11px]">
+              <colgroup>
+                <col className="w-16" />
+                {Array.from({ length: maxMembers }).map((_, i) => (
+                  <col key={i} />
+                ))}
+              </colgroup>
+              <tbody>
+                {/* Row: Element barrier icons */}
+                {barrierElements.length > 0 && (
+                  <tr>
+                    <td className="py-1 px-1 text-muted-foreground text-[10px]">원소</td>
+                    {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                      const hero = selectedHeroes[slotIdx];
+                      if (!hero) return <td key={`el-empty-${slotIdx}`} className="text-center py-1" />;
+                      const icons = barrierElements.map(el => ({
+                        el, iconPath: ELEMENT_ICON_MAP[el], val: hero.equipmentElements?.[el] || 0,
+                      })).filter(b => b.val > 0);
+                      return (
+                        <td key={hero.id} className="text-center py-1">
+                          <div className="flex justify-center gap-0.5">
+                            {icons.map(b => (
+                              <div key={b.el} className="flex flex-col items-center">
+                                {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-4 h-4" />}
+                                <span className="text-[8px] font-mono text-purple-300">{formatNumber(b.val)}</span>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                      {/* Row 2: Face icon (fixed height) */}
-                      <div className="h-10 flex items-center justify-center mb-0.5">
-                        <span className="text-2xl">😐</span>
-                      </div>
-                      {/* Row 3: Power warning (fixed height) */}
-                      <div className="h-4 flex items-center justify-center mb-0.5">
-                        {belowMin && (
-                          <span className="text-[9px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
-                        )}
-                      </div>
-                      {/* Row 4: Hero circle slot (bigger) */}
-                      <button onClick={() => toggleHero(hero.id)}
-                        className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden group transition-all ${
-                          belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
-                        } hover:border-destructive/50`}
-                        title={`${hero.name} (클릭하여 제거)`}>
-                        {heroImg ? (
-                          <img src={heroImg} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        ) : (
-                          <span className="text-lg">⚔</span>
-                        )}
-                        <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                          <span className="text-destructive-foreground text-xs font-bold">✕</span>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                )}
+                {/* Row: Face */}
+                <tr>
+                  <td className="py-1 px-1 text-muted-foreground text-[10px]">표정</td>
+                  {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                    const hero = selectedHeroes[slotIdx];
+                    return (
+                      <td key={hero?.id || `face-empty-${slotIdx}`} className="text-center py-1">
+                        {hero ? <span className="text-2xl">😐</span> : null}
+                      </td>
+                    );
+                  })}
+                </tr>
+                {/* Row: Hero circle (job image) */}
+                <tr>
+                  <td className="py-1 px-1 text-muted-foreground text-[10px]">직업</td>
+                  {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                    const hero = selectedHeroes[slotIdx];
+                    if (!hero) {
+                      return (
+                        <td key={`slot-empty-${slotIdx}`} className="text-center py-2">
+                          <button
+                            onClick={() => currentQuest && setHeroSelectOpen(true)}
+                            className={`w-16 h-16 rounded-full border-2 border-dashed inline-flex items-center justify-center transition-all ${
+                              currentQuest ? 'border-muted-foreground/30 hover:border-primary/50 cursor-pointer' : 'border-muted-foreground/15 cursor-not-allowed'
+                            }`}>
+                            <Plus className="w-5 h-5 text-muted-foreground/30" />
+                          </button>
+                        </td>
+                      );
+                    }
+                    const belowMin = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
+                    const heroImg = hero.type === 'champion'
+                      ? getChampionImagePath(hero.championName || hero.name)
+                      : hero.heroClass ? getJobImagePath(hero.heroClass) : null;
+                    return (
+                      <td key={hero.id} className="text-center py-2">
+                        <div className="inline-flex flex-col items-center gap-0.5">
+                          {belowMin && (
+                            <span className="text-[9px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
+                          )}
+                          <button onClick={() => toggleHero(hero.id)}
+                            className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden group transition-all ${
+                              belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
+                            } hover:border-destructive/50`}
+                            title={`${hero.name} (클릭하여 제거)`}>
+                            {heroImg ? (
+                              <img src={heroImg} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                            ) : (
+                              <span className="text-lg">⚔</span>
+                            )}
+                            <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                              <span className="text-destructive-foreground text-xs font-bold">✕</span>
+                            </div>
+                          </button>
                         </div>
-                      </button>
-                      {/* Row 5: Name */}
-                      <span className="text-[10px] text-foreground font-medium truncate max-w-[64px] mt-1">{hero.name}</span>
-                      {/* Row 6: Class */}
-                      <span className="text-[9px] text-muted-foreground">{hero.heroClass || hero.championName || ''}</span>
-                    </div>
-                  );
-                }
-                // Empty slot
-                return (
-                  <div key={`empty-${slotIdx}`} className="flex flex-col items-center" style={{ width: `${100 / maxMembers}%` }}>
-                    <div className="h-8 mb-0.5" />
-                    <div className="h-10 mb-0.5" />
-                    <div className="h-4 mb-0.5" />
-                    <button
-                      onClick={() => currentQuest && setHeroSelectOpen(true)}
-                      className={`w-16 h-16 rounded-full border-2 border-dashed flex items-center justify-center transition-all ${
-                        currentQuest ? 'border-muted-foreground/30 hover:border-primary/50 cursor-pointer' : 'border-muted-foreground/15 cursor-not-allowed'
-                      }`}>
-                      <Plus className="w-5 h-5 text-muted-foreground/30" />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Hero stats table - VERTICAL layout (heroes as columns, stats as rows) */}
-            {selectedHeroes.length > 0 && (
-              <div className="border-t border-border/30 pt-3 overflow-x-auto">
-                <table className="w-full text-[11px]">
-                  <thead>
-                    <tr className="border-b border-border/30 text-muted-foreground">
-                      <th className="text-left py-1 px-1.5 w-16"></th>
-                      {selectedHeroes.map(hero => (
-                        <th key={hero.id} className="text-center py-1 px-1.5 font-medium text-foreground">{hero.name}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { label: '전투력', key: 'power', color: 'text-yellow-400' },
-                      { label: 'ATK', key: 'atk', color: 'text-red-400' },
-                      { label: 'DEF', key: 'def', color: 'text-blue-400' },
-                      { label: 'HP', key: 'hp', color: 'text-orange-400' },
-                      { label: 'CRIT.C', key: 'crit', color: 'text-yellow-400' },
-                      { label: 'CRIT.D', key: 'critDmg', color: 'text-yellow-400' },
-                      { label: 'EVA', key: 'evasion', color: 'text-teal-400' },
-                      { label: 'THREAT', key: 'threat', color: 'text-foreground' },
-                    ].map(stat => (
-                      <tr key={stat.key} className="border-b border-border/20">
-                        <td className="py-1 px-1.5 text-muted-foreground font-medium">{stat.label}</td>
-                        {selectedHeroes.map(hero => {
-                          const val = (hero as any)[stat.key] || 0;
-                          return (
-                            <td key={hero.id} className={`py-1 px-1.5 text-center font-mono ${stat.color}`}>
-                              {stat.key === 'crit' || stat.key === 'critDmg' || stat.key === 'evasion'
-                                ? `${val}%`
-                                : val > 0 ? formatNumber(val) : '-'}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                      </td>
+                    );
+                  })}
+                </tr>
+                {/* Row: Name */}
+                <tr className="border-b border-border/30">
+                  <td className="py-1 px-1 text-muted-foreground text-[10px]">이름</td>
+                  {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                    const hero = selectedHeroes[slotIdx];
+                    return (
+                      <td key={hero?.id || `name-empty-${slotIdx}`} className="text-center py-1">
+                        {hero && (
+                          <div>
+                            <div className="text-[10px] text-foreground font-medium truncate">{hero.name}</div>
+                            <div className="text-[9px] text-muted-foreground">{hero.heroClass || hero.championName || ''}</div>
+                          </div>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+                {/* Stat rows */}
+                {selectedHeroes.length > 0 && [
+                  { label: '전투력', key: 'power', color: 'text-yellow-400' },
+                  { label: 'ATK', key: 'atk', color: 'text-red-400' },
+                  { label: 'DEF', key: 'def', color: 'text-blue-400' },
+                  { label: 'HP', key: 'hp', color: 'text-orange-400' },
+                  { label: 'CRIT.C', key: 'crit', color: 'text-yellow-400' },
+                  { label: 'CRIT.D', key: 'critDmg', color: 'text-yellow-400' },
+                  { label: 'EVA', key: 'evasion', color: 'text-teal-400' },
+                  { label: 'THREAT', key: 'threat', color: 'text-foreground' },
+                ].map(stat => (
+                  <tr key={stat.key} className="border-b border-border/20">
+                    <td className="py-1 px-1 text-muted-foreground font-medium">{stat.label}</td>
+                    {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                      const hero = selectedHeroes[slotIdx];
+                      if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
+                      const val = (hero as any)[stat.key] || 0;
+                      return (
+                        <td key={hero.id} className={`py-1 px-1 text-center font-mono ${stat.color}`}>
+                          {stat.key === 'crit' || stat.key === 'critDmg' || stat.key === 'evasion'
+                            ? `${val}%`
+                            : val > 0 ? formatNumber(val) : '-'}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
             {currentQuest && selectedHeroes.length > 0 && (
               <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} className="w-full mt-3 gap-2" size="sm">
