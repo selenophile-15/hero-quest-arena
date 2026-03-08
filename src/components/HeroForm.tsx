@@ -406,6 +406,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     }
   }, [calculatedElements, elementManual]);
 
+  const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
+  const totalEquipElement = Object.values(equipElements).reduce((a, b) => a + b, 0);
+
+  const isAllElement = element === '모든 원소' || heroClass === '마법검' || heroClass === '스펠나이트';
+  const jobElementValue = isAllElement ? totalEquipElement : (element ? (equipElements[element] || 0) : 0);
+
+  // Quiver stat check
+  const hasRanged = useMemo(() => hasRangedWeapon(equipmentSlots), [equipmentSlots]);
+
   // Build skill bonus inputs for equipment calculation
   const skillBonusInputs = useMemo(() => {
     const inputs: Array<{
@@ -414,7 +423,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       skillLevel: number;
     }> = [];
 
-    // Helper to compute skill level from element thresholds
     const getSkillLevel = (thresholds: number[]) => {
       let lvl = 0;
       for (let i = 0; i < thresholds.length; i++) {
@@ -462,15 +470,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       skillBonusInputs,
     }).then(result => setCalcStats(result));
   }, [heroClass, level, seedHp, seedAtk, seedDef, equipmentSlots, hasRanged, skillBonusInputs]);
-
-  const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
-  const totalEquipElement = Object.values(equipElements).reduce((a, b) => a + b, 0);
-
-  const isAllElement = element === '모든 원소' || heroClass === '마법검' || heroClass === '스펠나이트';
-  const jobElementValue = isAllElement ? totalEquipElement : (element ? (equipElements[element] || 0) : 0);
-
-  // Quiver stat check
-  const hasRanged = useMemo(() => hasRangedWeapon(equipmentSlots), [equipmentSlots]);
 
   const handleSubmit = () => {
     if (!name.trim()) {
