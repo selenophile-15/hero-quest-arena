@@ -282,6 +282,22 @@ export default function QuestSimulation() {
 
   const selectedHeroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
   const maxMembers = currentRegion?.maxMembers || 5;
+  const isBoss = currentQuest?.isBoss || false;
+  const isFlash = selectedQuestType === 'flash';
+
+  // Compute party-buffed stats
+  useEffect(() => {
+    if (selectedHeroes.length === 0) {
+      setBuffedStats([]);
+      setBuffSummary(null);
+      return;
+    }
+    calculatePartyBuffs({ heroes: selectedHeroes, isBoss, isFlashQuest: isFlash })
+      .then(({ summary, buffedStats: bs }) => {
+        setBuffedStats(bs);
+        setBuffSummary(summary);
+      });
+  }, [selectedHeroes.map(h => h.id).join(','), isBoss, isFlash]);
 
   // Get barrier elements for display
   const barrierElements = currentQuest?.barrier ? (() => {
