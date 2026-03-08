@@ -182,7 +182,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     }
 
     // Check if this spirit has 중복불가 flag
-    const hasNoDup = bonusStats['중복불가'] === true || (bonusStats as any)['중복불가'] === true;
+    const hasNoDup = !!(bonusStats as any)['중복불가'];
     if (hasNoDup) {
       if (!noDupCandidates.has(soul.spiritName)) {
         noDupCandidates.set(soul.spiritName, []);
