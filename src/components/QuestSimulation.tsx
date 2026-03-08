@@ -611,6 +611,29 @@ export default function QuestSimulation() {
                 ))}
               </colgroup>
               <tbody>
+                {/* Party buff summary row - above element row */}
+                {(() => {
+                  const hasBuffs = buffSummary && buffSummary.sources.length > 0;
+                  if (!hasBuffs || selectedHeroes.length === 0) return null;
+                  return (
+                    <tr className="border-b border-border/30 bg-primary/5">
+                      <td colSpan={maxMembers + 1} className="py-2 px-2">
+                        <div className="flex flex-wrap items-center gap-2 text-[10px]">
+                          <span className="text-primary font-bold text-[11px]">📊 파티 버프</span>
+                          {buffSummary!.sources.map((src, i) => (
+                            <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary/10 text-primary/90">
+                              <span className={src.type === 'champion' ? 'text-yellow-400' : 'text-purple-400'}>
+                                {src.type === 'champion' ? '👑' : '🎵'}
+                              </span>
+                              <span className="font-medium">{src.name}</span>
+                              {src.note && <span className="text-muted-foreground">({src.note})</span>}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })()}
                 {/* Row: Element barrier icons */}
                 {barrierElements.length > 0 && (
                   <tr>
@@ -782,36 +805,7 @@ export default function QuestSimulation() {
                           })}
                         </tr>
                       ))}
-                      {/* Buff sources summary row */}
-                      {hasBuffs && (
-                        <tr className="border-b border-border/20 bg-primary/5">
-                          <td colSpan={maxMembers + 1} className="py-1 px-1.5">
-                            <div className="flex flex-wrap items-center gap-1.5 text-[9px]">
-                              <button
-                                onClick={() => setBuffBreakdownOpen(true)}
-                                className="text-primary font-semibold hover:underline cursor-pointer"
-                              >
-                                📊 파티 버프:
-                              </button>
-                              {buffSummary!.sources.map((src, i) => (
-                                <span key={i} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary/80">
-                                  <span className={src.type === 'champion' ? 'text-yellow-400' : 'text-purple-400'}>
-                                    {src.type === 'champion' ? '👑' : '🎵'}
-                                  </span>
-                                  {src.name}
-                                  {src.note && <span className="text-muted-foreground ml-0.5">({src.note})</span>}
-                                </span>
-                              ))}
-                              <button
-                                onClick={() => setBuffBreakdownOpen(true)}
-                                className="text-primary/60 hover:text-primary text-[9px] underline ml-1"
-                              >
-                                상세 보기
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
+                      {/* Removed: old buff sources summary row - now shown above element row */}
                       {/* Targeting chance row (threat-based) */}
                       <tr className="border-b border-border/20 bg-muted/20">
                         <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
@@ -839,6 +833,18 @@ export default function QuestSimulation() {
             </table>
             {currentQuest && selectedHeroes.length > 0 && (
               <div className="mt-3 space-y-3">
+                <div className="flex gap-2">
+                  {buffSummary && buffSummary.sources.length > 0 && (
+                    <Button
+                      onClick={() => setBuffBreakdownOpen(true)}
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                    >
+                      📊 스탯 계산표
+                    </Button>
+                  )}
+                </div>
                 <Button
                   onClick={() => {
                     if (simRunning || !currentQuest || !currentRegion) return;
