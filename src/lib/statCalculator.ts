@@ -142,6 +142,7 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     totalHp, totalAtk, totalDef,
     totalCrit, totalCritDmg, totalCritAttack,
     totalEvasion, totalThreat,
+    jobName,
     jobElement: fixed.element,
   };
 }
