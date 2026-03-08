@@ -1,0 +1,304 @@
+import { useState, useMemo } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Crown, Users, ChevronLeft } from 'lucide-react';
+import { formatNumber } from '@/lib/format';
+
+interface SubArea {
+  name: string;
+  key: string;
+  image: string;
+}
+
+interface QuestBarrier {
+  sub1: string | null;
+  sub2: string | null;
+  sub3: string | null;
+  hp: number;
+}
+
+interface QuestTime {
+  base: number;
+  additional: number;
+  perMember: number;
+  total: number;
+  rest: number;
+  recovery: number;
+}
+
+interface QuestEntry {
+  type: string;
+  difficulty: string;
+  stage?: number;
+  minPower: number;
+  hp: number;
+  atk: number;
+  aoe: number;
+  aoeChance: number;
+  time: QuestTime;
+  def: { r0: number; r50: number; r70: number; r75: number };
+  barrier: QuestBarrier | null;
+  isBoss: boolean;
+  isExtreme: boolean;
+}
+
+interface QuestRegion {
+  name: string;
+  key: string;
+  areaImage: string;
+  maxMembers: number;
+  subAreas: SubArea[];
+  boss?: { name: string; key: string; image: string };
+  quests: QuestEntry[];
+}
+
+interface QuestData {
+  questType: string;
+  questTypeKey: string;
+  regions: QuestRegion[];
+}
+
+interface QuestSelection {
+  questTypeKey: string;
+  regionIdx: number;
+  subAreaIdx: number;
+  questIdx: number;
+}
+
+interface Props {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  questDataMap: Record<string, QuestData>;
+  questFiles: { key: string; file: string }[];
+  onSelect: (selection: QuestSelection) => void;
+}
+
+const getDifficultyColor = (diff: string) => {
+  switch (diff) {
+    case '쉬움': return 'text-green-400';
+    case '보통': return 'text-blue-400';
+    case '어려움': return 'text-orange-400';
+    case '익스트림': return 'text-red-400';
+    default: return 'text-muted-foreground';
+  }
+};
+
+const getDifficultyBorder = (diff: string) => {
+  switch (diff) {
+    case '쉬움': return 'border-green-400/30 hover:border-green-400/60';
+    case '보통': return 'border-blue-400/30 hover:border-blue-400/60';
+    case '어려움': return 'border-orange-400/30 hover:border-orange-400/60';
+    case '익스트림': return 'border-red-400/30 hover:border-red-400/60';
+    default: return 'border-border hover:border-primary/30';
+  }
+};
+
+export default function QuestConfigDialog({ open, onOpenChange, questDataMap, questFiles, onSelect }: Props) {
+  const [step, setStep] = useState<'type' | 'region' | 'subarea' | 'difficulty'>('type');
+  const [selType, setSelType] = useState('');
+  const [selRegionIdx, setSelRegionIdx] = useState(-1);
+  const [selSubAreaIdx, setSelSubAreaIdx] = useState(-1);
+
+  const questData = selType ? questDataMap[selType] : null;
+  const region = questData && selRegionIdx >= 0 ? questData.regions[selRegionIdx] : null;
+  const hasSubAreas = region && region.subAreas.length > 1;
+
+  const questGroups = useMemo(() => {
+    if (!region) return { normal: [], boss: [] };
+    const normal = region.quests.filter(q => q.type === 'normal').map(q => ({ ...q, originalIdx: region.quests.indexOf(q) }));
+    const boss = region.quests.filter(q => q.type === 'boss').map(q => ({ ...q, originalIdx: region.quests.indexOf(q) }));
+    return { normal, boss };
+  }, [region]);
+
+  const reset = () => {
+    setStep('type');
+    setSelType('');
+    setSelRegionIdx(-1);
+    setSelSubAreaIdx(-1);
+  };
+
+  const handleOpen = (isOpen: boolean) => {
+    if (!isOpen) reset();
+    onOpenChange(isOpen);
+  };
+
+  const goBack = () => {
+    if (step === 'difficulty') {
+      if (hasSubAreas) { setStep('subarea'); setSelSubAreaIdx(-1); }
+      else { setStep('region'); setSelRegionIdx(-1); }
+    } else if (step === 'subarea') { setStep('region'); setSelRegionIdx(-1); }
+    else if (step === 'region') { setStep('type'); setSelType(''); }
+  };
+
+  const selectQuest = (questIdx: number) => {
+    onSelect({ questTypeKey: selType, regionIdx: selRegionIdx, subAreaIdx: selSubAreaIdx, questIdx });
+    handleOpen(false);
+  };
+
+  const stepTitle = step === 'type' ? '퀘스트 종류'
+    : step === 'region' ? '지역 선택'
+    : step === 'subarea' ? '세부 지역'
+    : '난이도 선택';
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpen}>
+      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-display flex items-center gap-2">
+            {step !== 'type' && (
+              <button onClick={goBack} className="p-1 rounded hover:bg-secondary/50 transition-colors">
+                <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+              </button>
+            )}
+            {stepTitle}
+          </DialogTitle>
+        </DialogHeader>
+
+        {/* Step: Quest Type */}
+        {step === 'type' && (
+          <div className="grid grid-cols-2 gap-3">
+            {questFiles.map(f => {
+              const data = questDataMap[f.key];
+              if (!data) return null;
+              return (
+                <button
+                  key={f.key}
+                  onClick={() => { setSelType(f.key); setStep('region'); }}
+                  className="p-4 rounded-lg border border-border bg-secondary/20 hover:border-primary/50 hover:bg-primary/5 transition-all text-center"
+                >
+                  <span className="text-sm font-medium text-foreground">{data.questType}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Step: Region */}
+        {step === 'region' && questData && (
+          <div className="grid grid-cols-3 gap-3">
+            {questData.regions.map((r, idx) => (
+              <button
+                key={`${r.key}-${idx}`}
+                onClick={() => {
+                  setSelRegionIdx(idx);
+                  if (r.subAreas.length > 1) setStep('subarea');
+                  else setStep('difficulty');
+                }}
+                className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all group"
+              >
+                <div className="bg-secondary/30 flex items-center justify-center p-2">
+                  <img src={r.areaImage} alt={r.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                <div className="p-2 text-center">
+                  <span className="text-xs font-medium text-foreground">{r.name}</span>
+                  <div className="flex items-center justify-center gap-1 mt-0.5">
+                    <Users className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-[10px] text-muted-foreground">{r.maxMembers}명</span>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Step: Sub-area */}
+        {step === 'subarea' && region && (
+          <div className="grid grid-cols-3 gap-3">
+            {region.subAreas.map((sub, idx) => (
+              <button
+                key={sub.key}
+                onClick={() => { setSelSubAreaIdx(idx); setStep('difficulty'); }}
+                className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all"
+              >
+                <div className="bg-secondary/30 flex items-center justify-center p-2">
+                  <img src={sub.image} alt={sub.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                <div className="p-2 text-center">
+                  <span className="text-xs font-medium text-foreground">{sub.name}</span>
+                </div>
+              </button>
+            ))}
+            {region.boss && (
+              <button
+                onClick={() => { setSelSubAreaIdx(99); setStep('difficulty'); }}
+                className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all"
+              >
+                <div className="bg-red-500/10 flex items-center justify-center p-2">
+                  <img src={region.boss.image} alt={region.boss.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                <div className="p-2 text-center">
+                  <span className="text-xs font-medium text-red-400 flex items-center justify-center gap-1">
+                    <Crown className="w-3 h-3" /> {region.boss.name}
+                  </span>
+                </div>
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Step: Difficulty */}
+        {step === 'difficulty' && region && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <img src={region.areaImage} alt="" className="w-10 h-10 rounded object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+              <div>
+                <span className="text-sm font-medium text-foreground">{region.name}</span>
+                {selSubAreaIdx >= 0 && selSubAreaIdx !== 99 && region.subAreas[selSubAreaIdx] && (
+                  <span className="text-xs text-muted-foreground ml-1">- {region.subAreas[selSubAreaIdx].name}</span>
+                )}
+                {selSubAreaIdx === 99 && region.boss && (
+                  <span className="text-xs text-red-400 ml-1">- {region.boss.name}</span>
+                )}
+              </div>
+            </div>
+
+            {((!hasSubAreas || (selSubAreaIdx >= 0 && selSubAreaIdx !== 99)) && questGroups.normal.length > 0) && (
+              <div>
+                <span className="text-xs text-muted-foreground mb-2 block">일반</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {questGroups.normal.map(q => (
+                    <button
+                      key={q.originalIdx}
+                      onClick={() => selectQuest(q.originalIdx)}
+                      className={`p-3 rounded-lg border text-left transition-all ${getDifficultyBorder(q.difficulty)}`}
+                    >
+                      <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
+                        {q.stage ? `${q.stage}단계` : q.difficulty}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground mt-0.5">
+                        최소 {formatNumber(q.minPower)}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {((!hasSubAreas || selSubAreaIdx === 99) && questGroups.boss.length > 0) && (
+              <div>
+                <span className="text-xs text-muted-foreground mb-2 block flex items-center gap-1">
+                  <Crown className="w-3 h-3" /> 보스
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  {questGroups.boss.map(q => (
+                    <button
+                      key={q.originalIdx}
+                      onClick={() => selectQuest(q.originalIdx)}
+                      className={`p-3 rounded-lg border text-left transition-all ${getDifficultyBorder(q.difficulty)}`}
+                    >
+                      <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
+                        {q.stage ? `${q.stage}단계` : q.difficulty}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground mt-0.5">
+                        최소 {formatNumber(q.minPower)}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
