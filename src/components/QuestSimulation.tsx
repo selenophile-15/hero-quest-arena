@@ -984,17 +984,20 @@ export default function QuestSimulation() {
                               if (val < 0) displayColor = 'text-purple-400';
                             }
 
-                            // Crit chance: show raw value, note capped at 100%
+                            // Crit chance: cap display at 100%, show raw in parentheses
                             let critCapNote = '';
+                            let rawCritVal = 0;
                             if (stat.key === 'crit' && val > 100) {
-                              critCapNote = `(판정: 100%)`;
+                              rawCritVal = val;
+                              critCapNote = `(실제: ${rawCritVal}%)`;
+                              val = 100;
                             }
 
                             // Barrier not broken: ATK and CRIT.DMG show 20% values
+                            let barrierOriginal = 0;
                             if (!barrierBroken && (stat.key === 'atk' || (stat as any).computed)) {
-                              const originalVal = val;
+                              barrierOriginal = val;
                               val = Math.floor(val * 0.2);
-                              barrierNote = `(${(stat as any).computed ? formatNumber(originalVal) : formatNumber(originalVal)})`;
                               displayColor = 'text-purple-400';
                             }
                             
@@ -1003,12 +1006,14 @@ export default function QuestSimulation() {
                                 <div className="flex flex-col items-center">
                                   <span>
                                     {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
-                                    {barrierNote && <span className="text-[9px] text-muted-foreground ml-0.5">{barrierNote}</span>}
                                   </span>
-                                  {delta > 0 && !barrierNote && (
+                                  {barrierOriginal > 0 && (
+                                    <span className="text-[9px] text-muted-foreground leading-tight">({formatNumber(barrierOriginal)})</span>
+                                  )}
+                                  {delta > 0 && !barrierOriginal && (
                                     <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
-                                  {delta < 0 && !barrierNote && (
+                                  {delta < 0 && !barrierOriginal && (
                                     <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
                                   )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
