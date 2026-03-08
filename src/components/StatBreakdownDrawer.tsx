@@ -442,7 +442,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const equipSlots = calcStats?.equipResult?.slots || [];
     const allSources = bonus?.sources || [];
     const relicEffects = calcStats?.relicEffects || [];
-    const relicFlat = calcStats?.relicBonusFlat;
+    
 
     if (statType === 'other') {
       return (
