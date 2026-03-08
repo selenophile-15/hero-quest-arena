@@ -158,6 +158,7 @@ export default function QuestSimulation() {
   const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
   const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
+  const [selectedBooster, setSelectedBooster] = useState<'none' | 'normal' | 'super' | 'mega'>('none');
 
   // Load quest data
   useEffect(() => {
