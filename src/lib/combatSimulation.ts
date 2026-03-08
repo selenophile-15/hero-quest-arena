@@ -44,6 +44,7 @@ export interface SimulationConfig {
   regionName: string;        // e.g. '공포'
   isTerrorTower: boolean;    // 공포의 탑 (5% damage)
   simulationCount?: number;  // Default 50000
+  _isRetry?: boolean;        // Internal: prevents Fateweaver recursion
 }
 
 export interface HeroSimResult {
