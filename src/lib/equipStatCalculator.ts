@@ -86,7 +86,7 @@ interface SlotInput {
   spirit: { name: string; affinity: boolean } | null;
 }
 
-interface SkillBonuses {
+export interface SkillBonuses {
   // Per equipment type Korean name → bonus %
   해당장비공격력: Record<string, number>;
   해당장비방어력: Record<string, number>;

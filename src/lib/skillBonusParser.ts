@@ -167,6 +167,9 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
         case '영혼_공격력%': src.pctAtk += val; totals.pctAtk += val; break;
         case '영혼_방어력%': src.pctDef += val; totals.pctDef += val; break;
         case '영혼_체력%': src.pctHp += val; totals.pctHp += val; break;
+        case '영혼_깡공격력': src.flatAtk += val; totals.flatAtk += val; break;
+        case '영혼_깡방어력': src.flatDef += val; totals.flatDef += val; break;
+        case '영혼_깡체력': src.flatHp += val; totals.flatHp += val; break;
         case '영혼_치명타확률%': src.critRate += val; totals.critRate += val; break;
         case '영혼_치명타데미지%': src.critDmg += val; totals.critDmg += val; break;
         case '영혼_회피%': src.evasion += val; totals.evasion += val; break;

@@ -3,17 +3,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { STAT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { CalculatedStats, EquipSlotCalc, SkillBonusSummary, SkillBonusSource } from '@/lib/statCalculator';
+import { CalculatedStats, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses } from '@/lib/statCalculator';
 
 interface StatBreakdownDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   calcStats: CalculatedStats | null;
 }
-
-const QUALITY_LABEL: Record<string, string> = {
-  common: '일반', uncommon: '고급', flawless: '최고급', epic: '에픽', legendary: '전설',
-};
 
 type StatType = 'atk' | 'def' | 'hp';
 
@@ -39,6 +35,41 @@ function getSummaryField(summary: SkillBonusSummary, statType: StatType, field: 
     return statType === 'atk' ? summary.flatAtk : statType === 'def' ? summary.flatDef : summary.flatHp;
   }
   return statType === 'atk' ? summary.pctAtk : statType === 'def' ? summary.pctDef : summary.pctHp;
+}
+
+function getEquipBonusForStat(equipBonuses: SkillBonuses, statType: StatType): {
+  해당장비: Record<string, number>;
+  모든장비: number;
+} {
+  if (statType === 'atk') {
+    // 해당장비공격력 + 해당장비전체
+    const merged: Record<string, number> = {};
+    for (const [k, v] of Object.entries(equipBonuses.해당장비공격력)) {
+      merged[k] = (merged[k] || 0) + v;
+    }
+    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) {
+      merged[k] = (merged[k] || 0) + v;
+    }
+    return { 해당장비: merged, 모든장비: equipBonuses.모든장비공격력 + equipBonuses.모든장비전체 };
+  } else if (statType === 'def') {
+    const merged: Record<string, number> = {};
+    for (const [k, v] of Object.entries(equipBonuses.해당장비방어력)) {
+      merged[k] = (merged[k] || 0) + v;
+    }
+    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) {
+      merged[k] = (merged[k] || 0) + v;
+    }
+    return { 해당장비: merged, 모든장비: equipBonuses.모든장비방어력 + equipBonuses.모든장비전체 };
+  } else {
+    const merged: Record<string, number> = {};
+    for (const [k, v] of Object.entries(equipBonuses.해당장비체력)) {
+      merged[k] = (merged[k] || 0) + v;
+    }
+    for (const [k, v] of Object.entries(equipBonuses.해당장비전체)) {
+      merged[k] = (merged[k] || 0) + v;
+    }
+    return { 해당장비: merged, 모든장비: equipBonuses.모든장비체력 + equipBonuses.모든장비전체 };
+  }
 }
 
 export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: StatBreakdownDrawerProps) {
@@ -68,6 +99,10 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const skillSources = bonus?.sources.filter(s => s.type === 'unique' || s.type === 'common') || [];
     const soulSources = bonus?.sources.filter(s => s.type === 'soul') || [];
 
+    // Equipment bonuses
+    const equipBonusData = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0 };
+    const 해당장비Entries = Object.entries(equipBonusData.해당장비).filter(([, v]) => v !== 0);
+
     // Field keys for equipment slots
     const baseKey = statType === 'atk' ? 'baseAtk' : statType === 'def' ? 'baseDef' : 'baseHp';
     const qualityKey = statType === 'atk' ? 'qualityAtk' : statType === 'def' ? 'qualityDef' : 'qualityHp';
@@ -79,17 +114,12 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const bonusPctKey = statType === 'atk' ? 'bonusAtkPct' : statType === 'def' ? 'bonusDefPct' : 'bonusHpPct';
     const finalKey = statType === 'atk' ? 'finalAtk' : statType === 'def' ? 'finalDef' : 'finalHp';
 
-    // Total skill flat/pct from skill sources only (not souls)
-    const skillFlatTotal = skillSources.reduce((sum, s) => sum + getBonusField(s, statType, 'flat'), 0);
-    const skillPctTotal = skillSources.reduce((sum, s) => sum + getBonusField(s, statType, 'pct'), 0);
-    const soulPctTotal = soulSources.reduce((sum, s) => sum + getBonusField(s, statType, 'pct'), 0);
-
     return (
       <div className="grid grid-cols-[1fr_2fr] gap-4 h-full">
         {/* Left: Skill & Soul bonuses */}
         <div className="space-y-3 overflow-y-auto">
           <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
-            <h4 className="text-sm font-bold text-foreground">스킬 & 소울 보너스</h4>
+            <h4 className="text-sm font-bold text-foreground">스킬 & 영혼 보너스</h4>
           </div>
 
           <div className="px-3">
@@ -147,54 +177,97 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     </tr>
                   );
                 })}
-                {skillSources.length > 0 && (
-                  <tr className="border-t border-border/40 font-semibold">
-                    <td className="py-1 text-foreground/80">합계</td>
-                    <td className={`py-1 text-center tabular-nums ${skillFlatTotal ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {skillFlatTotal ? `+${formatNumber(skillFlatTotal)}` : '-'}
-                    </td>
-                    <td className={`py-1 text-right tabular-nums ${skillPctTotal ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {skillPctTotal ? `+${skillPctTotal}%` : '-'}
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
 
           {/* Soul bonuses breakdown */}
           <div className="px-3">
-            <h5 className="text-xs font-semibold text-primary mb-1">소울 보너스 ({config.label})</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1">영혼 보너스 ({config.label})</h5>
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border/50">
                   <th className="py-1 text-left text-foreground/60">영혼</th>
+                  <th className="py-1 text-center text-foreground/60">깡</th>
                   <th className="py-1 text-right text-foreground/60">%</th>
                 </tr>
               </thead>
               <tbody>
                 {soulSources.length === 0 ? (
                   <tr className="border-b border-border/20">
-                    <td colSpan={2} className="py-1 text-center text-muted-foreground">영혼 없음</td>
+                    <td colSpan={3} className="py-1 text-center text-muted-foreground">영혼 없음</td>
                   </tr>
                 ) : soulSources.map((src, i) => {
+                  const flat = getBonusField(src, statType, 'flat');
                   const pct = getBonusField(src, statType, 'pct');
+                  if (flat === 0 && pct === 0) return null;
                   return (
                     <tr key={i} className="border-b border-border/20">
                       <td className="py-1 text-foreground/70">{src.name}</td>
+                      <td className={`py-1 text-center tabular-nums ${flat ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {flat ? `+${formatNumber(flat)}` : '-'}
+                      </td>
                       <td className={`py-1 text-right tabular-nums ${pct ? 'text-foreground' : 'text-muted-foreground'}`}>
                         {pct ? `+${pct}%` : '-'}
                       </td>
                     </tr>
                   );
-                })}
-                {soulSources.length > 0 && (
-                  <tr className="border-t border-border/40 font-semibold">
-                    <td className="py-1 text-foreground/80">합계</td>
-                    <td className={`py-1 text-right tabular-nums ${soulPctTotal ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {soulPctTotal ? `+${soulPctTotal}%` : '-'}
-                    </td>
+                }).filter(Boolean)}
+                {soulSources.length > 0 && soulSources.some(s => getBonusField(s, statType, 'flat') !== 0 || getBonusField(s, statType, 'pct') !== 0) && (() => {
+                  const totalFlat = soulSources.reduce((sum, s) => sum + getBonusField(s, statType, 'flat'), 0);
+                  const totalPct = soulSources.reduce((sum, s) => sum + getBonusField(s, statType, 'pct'), 0);
+                  return (
+                    <tr className="border-t border-border/40 font-semibold">
+                      <td className="py-1 text-foreground/80">합계</td>
+                      <td className={`py-1 text-center tabular-nums ${totalFlat ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {totalFlat ? `+${formatNumber(totalFlat)}` : '-'}
+                      </td>
+                      <td className={`py-1 text-right tabular-nums ${totalPct ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {totalPct ? `+${totalPct}%` : '-'}
+                      </td>
+                    </tr>
+                  );
+                })()}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Equipment-specific bonuses */}
+          <div className="px-3">
+            <h5 className="text-xs font-semibold text-primary mb-1">장비 보너스 스킬 ({config.label})</h5>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="py-1 text-left text-foreground/60">구분</th>
+                  <th className="py-1 text-right text-foreground/60">%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {해당장비Entries.length === 0 && equipBonusData.모든장비 === 0 ? (
+                  <tr className="border-b border-border/20">
+                    <td colSpan={2} className="py-1 text-center text-muted-foreground">장비 보너스 없음</td>
                   </tr>
+                ) : (
+                  <>
+                    {해당장비Entries.map(([equipType, pct], i) => (
+                      <tr key={i} className="border-b border-border/20">
+                        <td className="py-1 text-foreground/70">
+                          <span className="text-[9px] mr-1 px-1 rounded bg-cyan-800/40">해당</span>
+                          {equipType}
+                        </td>
+                        <td className="py-1 text-right tabular-nums text-foreground">+{pct}%</td>
+                      </tr>
+                    ))}
+                    {equipBonusData.모든장비 !== 0 && (
+                      <tr className="border-b border-border/20">
+                        <td className="py-1 text-foreground/70">
+                          <span className="text-[9px] mr-1 px-1 rounded bg-green-800/40">전체</span>
+                          모든 장비
+                        </td>
+                        <td className="py-1 text-right tabular-nums text-foreground">+{equipBonusData.모든장비}%</td>
+                      </tr>
+                    )}
+                  </>
                 )}
               </tbody>
             </table>
@@ -228,7 +301,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <h4 className="text-sm font-bold text-foreground">무기, 장비 {config.label}</h4>
           </div>
 
-          {/* Equipment grid: 2 columns x 3 rows */}
           <div className="grid grid-cols-2 gap-3 px-3">
             {Array.from({ length: 6 }).map((_, i) => {
               const slot = equipSlots[i] || null;
