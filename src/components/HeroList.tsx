@@ -453,6 +453,13 @@ export default function HeroList() {
       </span>;
     }
     if (colKey === 'airshipPower') return <span className="text-foreground/20">-</span>;
+    if (colKey === 'evasion') {
+      const ev = typeof hero.evasion === 'number' ? hero.evasion : 0;
+      const cap = hero.heroClass === '길잡이' ? 78 : 75;
+      const isDim = ev === 0;
+      if (ev > cap) return <span>{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
+      return <span className={isDim ? 'text-foreground/20' : ''}>{formatNumber(ev)} %</span>;
+    }
     const value = hero[colKey as keyof Hero];
     const formatted = formatValue(colKey, value);
     if (formatted !== null) {
@@ -549,12 +556,19 @@ export default function HeroList() {
                   { icon: STAT_ICON_MAP.crit, value: hero.crit, suffix: ' %' },
                   { icon: STAT_ICON_MAP.critDmg, value: hero.critDmg, suffix: ' %' },
                   { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
-                  { icon: STAT_ICON_MAP.evasion, value: hero.evasion, suffix: ' %' },
+                  { icon: STAT_ICON_MAP.evasion, value: hero.evasion, suffix: ' %', isEvasion: true, jobName: hero.heroClass },
                   { icon: STAT_ICON_MAP.threat, value: hero.threat, suffix: '' },
                 ].map((s, i) => (
                   <div key={i} className={`flex items-center gap-2 py-0.5 px-1 ${dimClass(s.value)}`}>
                     <img src={s.icon} alt="" className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm ml-auto tabular-nums">{s.value ? `${formatNumber(s.value)}${s.suffix}` : '0'}</span>
+                    <span className="text-sm ml-auto tabular-nums">{s.value ? (() => {
+                      const v = `${formatNumber(s.value)}${s.suffix}`;
+                      if ((s as any).isEvasion && s.value) {
+                        const cap = (s as any).jobName === '길잡이' ? 78 : 75;
+                        if (Number(s.value) > cap) return <>{v} <span className="text-xs text-muted-foreground">({cap}%)</span></>;
+                      }
+                      return v;
+                    })() : '0'}</span>
                   </div>
                 ))}
                 <div className="flex items-center gap-2 py-0.5 px-1">
