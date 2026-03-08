@@ -674,13 +674,44 @@ export default function QuestSimulation() {
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
                   </div>
+                  {/* Monster Crit Chance */}
+                  {(() => {
+                    const baseCrit = 10;
+                    const critMod = selectedMiniBoss === 'dire' ? 3 : selectedMiniBoss === 'legendary' ? 1.5 : 1;
+                    const finalCrit = Math.round(baseCrit * critMod);
+                    return (
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <img src="/images/stats/critchance.webp" alt="" className="w-3.5 h-3.5" />
+                          <span className="text-xs text-foreground">치명타 확률</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${critMod > 1 ? 'text-red-400' : 'text-foreground'}`}>
+                          {finalCrit}%
+                          {critMod > 1 && <span className="text-[9px] text-muted-foreground ml-1">(기본 {baseCrit}% × {critMod})</span>}
+                        </span>
+                      </div>
+                    );
+                  })()}
+                  {/* Monster Evasion */}
+                  {(() => {
+                    const mobEva = selectedMiniBoss === 'agile' ? 40 : selectedMiniBoss === 'legendary' ? 10 : 0;
+                    return mobEva > 0 ? (
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <img src="/images/stats/evasion.webp" alt="" className="w-3.5 h-3.5" />
+                          <span className="text-xs text-foreground">회피</span>
+                        </div>
+                        <span className="text-sm font-bold font-mono text-blue-400">{mobEva}%</span>
+                      </div>
+                    ) : null;
+                  })()}
                 </div>
 
                 {/* Defense Reference - vertical bar */}
                 <div className="pt-2 border-t border-border/30">
                   <div className="flex items-center gap-1.5 mb-3 px-1">
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-xs text-foreground font-medium">방어력 기준치 (데미지 감소율)</span>
+                    <span className="text-xs text-foreground font-medium">방어력 기준치 (대미지 감소율)</span>
                   </div>
                   {(() => {
                     // Map defense value to bar % using threshold interpolation
@@ -1272,8 +1303,8 @@ export default function QuestSimulation() {
                   <tr className="text-muted-foreground border-b border-border/30">
                     <th className="text-left py-1 px-1">영웅</th>
                     <th className="text-center py-1">생존률</th>
-                    <th className="text-center py-1">평균 데미지</th>
-                    <th className="text-center py-1">최대 데미지</th>
+                     <th className="text-center py-1">평균 대미지</th>
+                     <th className="text-center py-1">최대 대미지</th>
                   </tr>
                 </thead>
                 <tbody>
