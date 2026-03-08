@@ -192,6 +192,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       mobHpMod = 2.0;
       mobAoeChanceMod = 2.0;
       break;
+    case 'wealthy':
+      // No stat changes, only loot bonus
+      break;
     case 'legendary':
       mobHpMod = 1.5;
       mobDamageMod = 1.25;
