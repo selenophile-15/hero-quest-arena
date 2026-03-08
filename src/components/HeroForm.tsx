@@ -1025,12 +1025,26 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       </div>
                     </div>
 
-                    {/* Stats inside the glow box */}
+                    {/* Stats inside the glow box - use final calculated values */}
                     {equipItem?.stats && equipItem.stats.length > 0 && (
                       <div className="w-full px-1 pb-1 border-t border-border/20 mt-0.5">
                         <div className="flex items-center justify-center gap-1.5 pt-0.5">
                           {equipItem.stats.slice(0, 3).map((stat: any, si: number) => {
-                            const statVal = isQuiverZero ? 0 : stat.value;
+                            const slotCalc = calcStats?.equipResult?.slots?.[i];
+                            let statVal: number;
+                            if (isQuiverZero) {
+                              statVal = 0;
+                            } else if (slotCalc) {
+                              // Use final calculated values from equipStatCalculator
+                              if (stat.key === '장비_공격력') statVal = slotCalc.finalAtk || 0;
+                              else if (stat.key === '장비_방어력') statVal = slotCalc.finalDef || 0;
+                              else if (stat.key === '장비_체력') statVal = slotCalc.finalHp || 0;
+                              else if (stat.key === '장비_치명타확률%') statVal = slotCalc.baseCrit || 0;
+                              else if (stat.key === '장비_회피%') statVal = slotCalc.baseEvasion || 0;
+                              else statVal = stat.value;
+                            } else {
+                              statVal = stat.value;
+                            }
                             return (
                               <div key={si} className="flex items-center gap-0.5">
                                 <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
