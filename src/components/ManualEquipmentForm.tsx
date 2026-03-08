@@ -209,7 +209,8 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
 
   const addRelicBonus = () => {
     if (data.relicBonuses.length >= 3) return;
-    update('relicBonuses', [...data.relicBonuses, { stat: '깡공격력', op: '증가', value: 0 }]);
+    const defaultStat = isAurasong ? '오라_공격력%' : '깡공격력';
+    update('relicBonuses', [...data.relicBonuses, { stat: defaultStat, op: '증가', value: 0 }]);
   };
 
   const removeRelicBonus = (i: number) => {
@@ -223,11 +224,12 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
   };
 
   const handleConfirm = () => {
-    if (!data.name.trim() || !data.type) return;
+    if (!data.name.trim() || (!isAurasong && !data.type)) return;
 
-    const typeInfo = EQUIP_TYPE_MAP[data.type];
-    const fileType = typeInfo?.file || 'unknown';
-    const category = typeInfo?.category || 'unknown';
+    const effectiveType = isAurasong ? '오라의 노래' : data.type;
+    const typeInfo = EQUIP_TYPE_MAP[effectiveType];
+    const fileType = isAurasong ? 'aurasong' : (typeInfo?.file || 'unknown');
+    const category = isAurasong ? 'champion' : (typeInfo?.category || 'unknown');
 
     const stats: { key: string; value: number }[] = [];
     if (data.atk) stats.push({ key: '장비_공격력', value: data.atk });
@@ -237,7 +239,14 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
     if (data.evasion) stats.push({ key: '장비_회피%', value: data.evasion });
 
     let relicEffect: string | null = null;
-    if (data.isRelic && data.relicBonuses.length > 0) {
+    if (isAurasong && data.relicBonuses.length > 0) {
+      // Generate aura song skill description
+      const parts = data.relicBonuses.map(b => {
+        const label = AURA_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
+        return `${label} ${b.op === '감소' ? '-' : '+'}${b.value}`;
+      });
+      relicEffect = `+파티에 ${parts.join(', ')} 보너스를 부여`;
+    } else if (!isAurasong && data.isRelic && data.relicBonuses.length > 0) {
       relicEffect = data.relicBonuses.map(b => {
         const label = RELIC_STAT_OPTIONS.find(o => o.value === b.stat)?.label || b.stat;
         if (b.op === '고정') return `${label} ${b.value}으로 고정`;
@@ -255,13 +264,13 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
       name: data.name.trim(),
       engName: '',
       type: isDualWield ? 'dual_wield' : fileType,
-      typeKor: data.type,
+      typeKor: effectiveType,
       category,
       tier: 0,
       imagePath: '',
       stats,
       quality: 'common',
-      relic: data.isRelic,
+      relic: isAurasong ? false : data.isRelic,
       relicEffect,
       airshipPower: 0,
       elementAffinity,
@@ -271,8 +280,8 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
       uniqueSpirit,
       judgmentTypes: isDualWield ? data.dualWieldTypes : null,
       manual: true,
-      manualData: data,
-      relicStatBonuses: data.isRelic ? data.relicBonuses : undefined,
+      manualData: { ...data, type: effectiveType },
+      relicStatBonuses: (isAurasong || data.isRelic) ? data.relicBonuses : undefined,
     };
 
     onConfirm(item, data);
