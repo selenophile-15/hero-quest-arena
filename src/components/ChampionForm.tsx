@@ -8,13 +8,14 @@ import { getElementValue } from '@/components/EnchantPickerDialog';
 import { loadFamiliars, loadAurasongs, getAurasongSkillEffect, getAurasongSkillIconPath, ensureAurasongDataLoaded, getFamiliarImagePath, getAurasongImagePath, getLeaderSkillTierName } from '@/lib/championEquipUtils';
 import ElementIcon from './ElementIcon';
 import EnchantPickerDialog from './EnchantPickerDialog';
+import ManualEquipmentForm from './ManualEquipmentForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Plus } from 'lucide-react';
+import { Plus, Wrench } from 'lucide-react';
 import type { EquipmentItem } from '@/lib/equipmentUtils';
 
 interface ChampionFormProps {
