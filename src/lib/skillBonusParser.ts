@@ -150,7 +150,9 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
 
   // Build per-spirit candidates with multiplier applied
-  const spiritCandidates: Map<string, { src: SkillBonusSource; mult: number }[]> = new Map();
+  // Only spirits with 중복불가 flag get deduped (e.g. 명인)
+  const noDupCandidates: Map<string, { src: SkillBonusSource; mult: number }[]> = new Map();
+  const normalSources: SkillBonusSource[] = [];
 
   for (const soul of souls) {
     if (!soul.spiritName) continue;
@@ -179,14 +181,28 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
       }
     }
 
-    if (!spiritCandidates.has(soul.spiritName)) {
-      spiritCandidates.set(soul.spiritName, []);
+    // Check if this spirit has 중복불가 flag
+    const hasNoDup = !!(bonusStats as any)['중복불가'];
+    if (hasNoDup) {
+      if (!noDupCandidates.has(soul.spiritName)) {
+        noDupCandidates.set(soul.spiritName, []);
+      }
+      noDupCandidates.get(soul.spiritName)!.push({ src, mult });
+    } else {
+      normalSources.push(src);
     }
-    spiritCandidates.get(soul.spiritName)!.push({ src, mult });
   }
 
-  // Dedup: for each spirit name, pick the candidate with highest total bonus magnitude
-  for (const [, candidates] of spiritCandidates) {
+  // Normal spirits: all stack
+  for (const s of normalSources) {
+    totals.flatAtk += s.flatAtk; totals.flatDef += s.flatDef; totals.flatHp += s.flatHp;
+    totals.pctAtk += s.pctAtk; totals.pctDef += s.pctDef; totals.pctHp += s.pctHp;
+    totals.critRate += s.critRate; totals.critDmg += s.critDmg; totals.evasion += s.evasion; totals.threat += s.threat;
+    sources.push(s);
+  }
+
+  // 중복불가 spirits: pick highest magnitude only
+  for (const [, candidates] of noDupCandidates) {
     let best = candidates[0];
     if (candidates.length > 1) {
       const magnitude = (s: SkillBonusSource) =>
@@ -196,16 +212,9 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
       best = candidates.reduce((a, b) => magnitude(a.src) >= magnitude(b.src) ? a : b);
     }
     const s = best.src;
-    totals.flatAtk += s.flatAtk;
-    totals.flatDef += s.flatDef;
-    totals.flatHp += s.flatHp;
-    totals.pctAtk += s.pctAtk;
-    totals.pctDef += s.pctDef;
-    totals.pctHp += s.pctHp;
-    totals.critRate += s.critRate;
-    totals.critDmg += s.critDmg;
-    totals.evasion += s.evasion;
-    totals.threat += s.threat;
+    totals.flatAtk += s.flatAtk; totals.flatDef += s.flatDef; totals.flatHp += s.flatHp;
+    totals.pctAtk += s.pctAtk; totals.pctDef += s.pctDef; totals.pctHp += s.pctHp;
+    totals.critRate += s.critRate; totals.critDmg += s.critDmg; totals.evasion += s.evasion; totals.threat += s.threat;
     sources.push(s);
   }
 
