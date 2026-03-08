@@ -278,6 +278,10 @@ export default function QuestSimulation() {
 
         {/* LEFT: Monster Info */}
         <div className="w-full lg:w-80 shrink-0">
+          <div className="flex items-center gap-2 mb-3">
+            <Info className="w-5 h-5 text-primary" />
+            <h3 className="font-display text-lg text-foreground">몬스터 정보</h3>
+          </div>
           <div className="card-fantasy p-4 relative min-h-[400px]">
             {/* Region icon - top left, bigger */}
             {currentRegion && (
