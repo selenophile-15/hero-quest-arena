@@ -1293,22 +1293,25 @@ export default function QuestSimulation() {
             </div>
           </div>
 
-          {/* Combat Battlefield */}
-          {showCombatLog && combatLog && (
-            <div className="mt-4 border-t border-border/30 pt-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-foreground">🎲 1회 전투 시각화</span>
-                <button onClick={() => setShowCombatLog(false)} className="text-[10px] text-muted-foreground hover:text-foreground">닫기 ✕</button>
-              </div>
-              <CombatBattlefield
-                log={combatLog}
-                heroes={selectedHeroes}
-                monsterHp={currentQuest?.hp || 0}
-                monsterName={locationName}
-              />
-            </div>
-          )}
         </div>
+      )}
+
+      {/* Combat Log Dialog */}
+      <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-sm">🎲 1회 전투 시각화</DialogTitle>
+          </DialogHeader>
+          {combatLog && (
+            <CombatBattlefield
+              log={combatLog}
+              heroes={selectedHeroes}
+              monsterHp={currentQuest?.hp || 0}
+              monsterName={locationName}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
       )}
 
       {/* Config Dialog */}
