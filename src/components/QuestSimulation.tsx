@@ -311,7 +311,7 @@ export default function QuestSimulation() {
               >
                 {currentQuest && centerImage ? (
                   <>
-                    <img src={centerImage} alt="" className="w-[140%] h-[140%] object-cover" />
+                    <img src={centerImage} alt="" className="w-full h-full object-cover scale-90" />
                     <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-[10px] text-foreground font-medium">변경</span>
                     </div>
