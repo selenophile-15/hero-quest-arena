@@ -161,7 +161,8 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     const mult = soul.isIdol ? 2 : 1;
     const src = emptySource(soul.spiritName, 'soul');
     if (soul.isIdol) {
-      src.name = `${soul.spiritName} (우상 ×2)`;
+      src.name = `${soul.spiritName} (우상)`;
+      src.isIdol = true;
     }
 
     for (const [key, val] of Object.entries(bonusStats)) {
