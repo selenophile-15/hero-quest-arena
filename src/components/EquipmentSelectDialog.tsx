@@ -314,14 +314,18 @@ export default function EquipmentSelectDialog({
 
     let newElement: EquipmentSlotData['element'];
     if (item.uniqueElement?.length) {
-      // New item has unique element → use it
       newElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true };
     } else if (prevHadUniqueElement) {
-      // Previous item had unique element but new one doesn't → clear it
       newElement = null;
     } else {
-      // Preserve existing element
-      newElement = newSlots[activeSlot]?.element || null;
+      const existing = newSlots[activeSlot]?.element || null;
+      if (existing) {
+        // Update affinity based on new item's elementAffinity
+        const hasAffinity = item.elementAffinity?.includes(existing.type) || item.elementAffinity?.includes('모든 원소');
+        newElement = { ...existing, affinity: !!hasAffinity };
+      } else {
+        newElement = null;
+      }
     }
 
     let newSpirit: EquipmentSlotData['spirit'];
@@ -330,7 +334,13 @@ export default function EquipmentSelectDialog({
     } else if (prevHadUniqueSpirit) {
       newSpirit = null;
     } else {
-      newSpirit = newSlots[activeSlot]?.spirit || null;
+      const existing = newSlots[activeSlot]?.spirit || null;
+      if (existing) {
+        const hasAffinity = item.spiritAffinity?.includes(existing.name);
+        newSpirit = { ...existing, affinity: !!hasAffinity };
+      } else {
+        newSpirit = null;
+      }
     }
 
     newSlots[activeSlot] = { ...newSlots[activeSlot], item: { ...item }, quality: slotQuality, element: newElement, spirit: newSpirit };
