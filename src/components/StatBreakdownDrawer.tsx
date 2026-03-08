@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { STAT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { CalculatedStats, EquipSlotCalc } from '@/lib/statCalculator';
+import { CalculatedStats, EquipSlotCalc, SkillBonusSummary, SkillBonusSource } from '@/lib/statCalculator';
 
 interface StatBreakdownDrawerProps {
   open: boolean;
@@ -23,13 +23,22 @@ const TAB_CONFIG: { key: StatType; label: string; icon: string; color: string; h
   { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-yellow-900/40' },
 ];
 
-function getSlotStat(slot: EquipSlotCalc, statType: StatType, field: string): number {
-  const key = `${field}${statType.charAt(0).toUpperCase() + statType.slice(1)}` as keyof EquipSlotCalc;
+function getSlotStatDirect(slot: EquipSlotCalc, key: keyof EquipSlotCalc): number {
   return (slot[key] as number) || 0;
 }
 
-function getSlotStatDirect(slot: EquipSlotCalc, key: keyof EquipSlotCalc): number {
-  return (slot[key] as number) || 0;
+function getBonusField(source: SkillBonusSource, statType: StatType, field: 'flat' | 'pct'): number {
+  if (field === 'flat') {
+    return statType === 'atk' ? source.flatAtk : statType === 'def' ? source.flatDef : source.flatHp;
+  }
+  return statType === 'atk' ? source.pctAtk : statType === 'def' ? source.pctDef : source.pctHp;
+}
+
+function getSummaryField(summary: SkillBonusSummary, statType: StatType, field: 'flat' | 'pct'): number {
+  if (field === 'flat') {
+    return statType === 'atk' ? summary.flatAtk : statType === 'def' ? summary.flatDef : summary.flatHp;
+  }
+  return statType === 'atk' ? summary.pctAtk : statType === 'def' ? summary.pctDef : summary.pctHp;
 }
 
 export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: StatBreakdownDrawerProps) {
@@ -51,7 +60,15 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
       ? statType === 'atk' ? calcStats.totalAtk : statType === 'def' ? calcStats.totalDef : calcStats.totalHp
       : 0;
 
-    // Field mapping for statType
+    const bonus = calcStats?.bonusSummary;
+    const flatBonus = bonus ? getSummaryField(bonus, statType, 'flat') : 0;
+    const pctBonus = bonus ? getSummaryField(bonus, statType, 'pct') : 0;
+
+    // Sources breakdown
+    const skillSources = bonus?.sources.filter(s => s.type === 'unique' || s.type === 'common') || [];
+    const soulSources = bonus?.sources.filter(s => s.type === 'soul') || [];
+
+    // Field keys for equipment slots
     const baseKey = statType === 'atk' ? 'baseAtk' : statType === 'def' ? 'baseDef' : 'baseHp';
     const qualityKey = statType === 'atk' ? 'qualityAtk' : statType === 'def' ? 'qualityDef' : 'qualityHp';
     const elementRawKey = statType === 'atk' ? 'elementRawAtk' : statType === 'def' ? 'elementRawDef' : 'elementRawHp';
@@ -62,12 +79,17 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const bonusPctKey = statType === 'atk' ? 'bonusAtkPct' : statType === 'def' ? 'bonusDefPct' : 'bonusHpPct';
     const finalKey = statType === 'atk' ? 'finalAtk' : statType === 'def' ? 'finalDef' : 'finalHp';
 
+    // Total skill flat/pct from skill sources only (not souls)
+    const skillFlatTotal = skillSources.reduce((sum, s) => sum + getBonusField(s, statType, 'flat'), 0);
+    const skillPctTotal = skillSources.reduce((sum, s) => sum + getBonusField(s, statType, 'pct'), 0);
+    const soulPctTotal = soulSources.reduce((sum, s) => sum + getBonusField(s, statType, 'pct'), 0);
+
     return (
       <div className="grid grid-cols-[1fr_2fr] gap-4 h-full">
-        {/* Left: Base stats and skill info (placeholder for now) */}
+        {/* Left: Skill & Soul bonuses */}
         <div className="space-y-3 overflow-y-auto">
           <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
-            <h4 className="text-sm font-bold text-foreground">스킬</h4>
+            <h4 className="text-sm font-bold text-foreground">스킬 & 소울 보너스</h4>
           </div>
 
           <div className="px-3">
@@ -89,85 +111,112 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </table>
           </div>
 
+          {/* Skill bonuses breakdown */}
           <div className="px-3">
-            <h5 className="text-xs font-semibold text-primary mb-1">직업 고유 보너스 스탯 : 깡/% 증가분</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1">스킬 보너스 ({config.label})</h5>
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border/50">
-                  <th className="py-1 text-left text-foreground/60">구분</th>
-                  <th className="py-1 text-center text-foreground/60">X</th>
-                  <th className="py-1 text-right text-foreground/60">O</th>
+                  <th className="py-1 text-left text-foreground/60">스킬명</th>
+                  <th className="py-1 text-center text-foreground/60">깡</th>
+                  <th className="py-1 text-right text-foreground/60">%</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-border/20">
-                  <td className="py-1 text-foreground/70">고유 스킬</td>
-                  <td className="py-1 text-center text-foreground">X</td>
-                  <td className="py-1 text-right tabular-nums text-muted-foreground">0</td>
-                </tr>
-                <tr className="border-b border-border/20">
-                  <td className="py-1 text-foreground/70">공용 스킬</td>
-                  <td className="py-1 text-center text-foreground">X</td>
-                  <td className="py-1 text-right tabular-nums text-muted-foreground">0</td>
-                </tr>
+                {skillSources.length === 0 ? (
+                  <tr className="border-b border-border/20">
+                    <td colSpan={3} className="py-1 text-center text-muted-foreground">스킬 없음</td>
+                  </tr>
+                ) : skillSources.map((src, i) => {
+                  const flat = getBonusField(src, statType, 'flat');
+                  const pct = getBonusField(src, statType, 'pct');
+                  return (
+                    <tr key={i} className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">
+                        <span className={`text-[9px] mr-1 px-1 rounded ${src.type === 'unique' ? 'bg-purple-700/60' : 'bg-amber-800/40'}`}>
+                          {src.type === 'unique' ? '고유' : '공용'}
+                        </span>
+                        {src.name}
+                      </td>
+                      <td className={`py-1 text-center tabular-nums ${flat ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {flat ? `+${formatNumber(flat)}` : '-'}
+                      </td>
+                      <td className={`py-1 text-right tabular-nums ${pct ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {pct ? `+${pct}%` : '-'}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {skillSources.length > 0 && (
+                  <tr className="border-t border-border/40 font-semibold">
+                    <td className="py-1 text-foreground/80">합계</td>
+                    <td className={`py-1 text-center tabular-nums ${skillFlatTotal ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {skillFlatTotal ? `+${formatNumber(skillFlatTotal)}` : '-'}
+                    </td>
+                    <td className={`py-1 text-right tabular-nums ${skillPctTotal ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {skillPctTotal ? `+${skillPctTotal}%` : '-'}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
 
+          {/* Soul bonuses breakdown */}
           <div className="px-3">
-            <h5 className="text-xs font-semibold text-primary mb-1">모든 인캔트 스킬 계수</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1">소울 보너스 ({config.label})</h5>
             <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="py-1 text-left text-foreground/60">영혼</th>
+                  <th className="py-1 text-right text-foreground/60">%</th>
+                </tr>
+              </thead>
               <tbody>
-                {['공용 스킬', '스킬1', '스킬2', '스킬3', '스킬4'].map((label, i) => (
-                  <tr key={i} className="border-b border-border/20">
-                    <td className="py-1 text-foreground/70">{label}</td>
-                    <td className="py-1 text-right tabular-nums text-muted-foreground">0</td>
+                {soulSources.length === 0 ? (
+                  <tr className="border-b border-border/20">
+                    <td colSpan={2} className="py-1 text-center text-muted-foreground">영혼 없음</td>
                   </tr>
-                ))}
+                ) : soulSources.map((src, i) => {
+                  const pct = getBonusField(src, statType, 'pct');
+                  return (
+                    <tr key={i} className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">{src.name}</td>
+                      <td className={`py-1 text-right tabular-nums ${pct ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {pct ? `+${pct}%` : '-'}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {soulSources.length > 0 && (
+                  <tr className="border-t border-border/40 font-semibold">
+                    <td className="py-1 text-foreground/80">합계</td>
+                    <td className={`py-1 text-right tabular-nums ${soulPctTotal ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {soulPctTotal ? `+${soulPctTotal}%` : '-'}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
 
+          {/* Summary */}
           <div className="px-3">
-            <h5 className="text-xs font-semibold text-primary mb-1">장비별(특) 스킬 & 장비 물리지</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1">통합 보너스 요약</h5>
             <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-border/50">
-                  <th className="py-1 text-left text-foreground/60">구분</th>
-                  <th className="py-1 text-center text-foreground/60">깡 스킬</th>
-                  <th className="py-1 text-right text-foreground/60">스킬 계수</th>
-                </tr>
-              </thead>
               <tbody>
-                {['스킬', '유물(관련)', '유물(전체)'].map((label, i) => (
-                  <tr key={i} className="border-b border-border/20">
-                    <td className="py-1 text-foreground/70">{label}</td>
-                    <td className="py-1 text-center tabular-nums text-muted-foreground">0</td>
-                    <td className="py-1 text-right tabular-nums text-muted-foreground">0</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="px-3">
-            <h5 className="text-xs font-semibold text-primary mb-1">공통 전체(+소울&인캔트 계수</h5>
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-border/50">
-                  <th className="py-1 text-left text-foreground/60">구분</th>
-                  <th className="py-1 text-center text-foreground/60">깡 스킬</th>
-                  <th className="py-1 text-right text-foreground/60">스킬 계수</th>
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground/70">총 깡 보너스</td>
+                  <td className={`py-1.5 text-right tabular-nums font-medium ${flatBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {flatBonus ? `+${formatNumber(flatBonus)}` : '0'}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {['스킬', '소울1', '소울2', '소울3', '소울4'].map((label, i) => (
-                  <tr key={i} className="border-b border-border/20">
-                    <td className="py-1 text-foreground/70">{label}</td>
-                    <td className="py-1 text-center tabular-nums text-muted-foreground">0</td>
-                    <td className="py-1 text-right tabular-nums text-muted-foreground">0</td>
-                  </tr>
-                ))}
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground/70">총 공통 % 계수</td>
+                  <td className={`py-1.5 text-right tabular-nums font-medium ${pctBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {pctBonus ? `+${pctBonus}%` : '0%'}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -270,19 +319,23 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   </tr>
                   {equipSlots.map((slot, n) => (
                     <tr key={n} className="border-b border-border/20">
-                      <td className="py-1 text-foreground/70">장비 {n + 1} {slot.itemName && <span className="text-muted-foreground">({slot.itemName})</span>}</td>
+                      <td className="py-1 text-foreground/70">장비 {n + 1} {slot.itemName && <span className="text-foreground">({slot.itemName})</span>}</td>
                       <td className="py-1 text-right tabular-nums text-foreground">
                         {formatNumber(getSlotStatDirect(slot, finalKey as keyof EquipSlotCalc))}
                       </td>
                     </tr>
                   ))}
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/80">깡 보너스 스탯</td>
-                    <td className="py-1.5 text-right tabular-nums text-muted-foreground">0</td>
+                    <td className="py-1.5 text-foreground/80">깡 보너스</td>
+                    <td className={`py-1.5 text-right tabular-nums font-medium ${flatBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {flatBonus ? `+${formatNumber(flatBonus)}` : '0'}
+                    </td>
                   </tr>
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/80">1 + 공통 스킬 계수</td>
-                    <td className="py-1.5 text-right tabular-nums text-foreground">1</td>
+                    <td className="py-1.5 text-foreground/80">× (1 + 공통%)</td>
+                    <td className={`py-1.5 text-right tabular-nums font-medium ${pctBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      ×{(1 + pctBonus / 100).toFixed(2)} ({pctBonus}%)
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -298,7 +351,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
           <div className="px-3 pb-3">
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
               ※ {config.label} = (기본 + 씨앗 + Σ장비최종 + 깡 보너스) × (1 + 공통%/100)
-              <br />※ 깡 보너스와 공통 스킬 계수는 다음 단계에서 구현됩니다
             </p>
           </div>
         </div>
