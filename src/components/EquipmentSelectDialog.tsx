@@ -227,11 +227,13 @@ export default function EquipmentSelectDialog({
       setFilterElement('_all');
       setFilterSpirit('_all');
       visitedSlots.current = new Set([initialSlot]);
+      setManualMode(false);
     }
   }, [open, currentEquipment, initialSlot, heroLevel]);
 
   useEffect(() => {
     setSlotQuality(slots[activeSlot]?.quality || 'common');
+    setManualMode(false);
     visitedSlots.current.add(activeSlot);
   }, [activeSlot]);
 
