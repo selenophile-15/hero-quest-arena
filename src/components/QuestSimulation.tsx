@@ -735,8 +735,6 @@ export default function QuestSimulation() {
                 })()}
               </tbody>
             </table>
-          </div>
-
             {currentQuest && selectedHeroes.length > 0 && (
               <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} className="w-full mt-3 gap-2" size="sm">
                 <Play className="w-4 h-4" /> 시뮬레이션 실행
