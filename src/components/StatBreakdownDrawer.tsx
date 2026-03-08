@@ -180,7 +180,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               </thead>
               <tbody>
                 {(() => {
-                  const allSources = [...skillSources, ...soulSources];
+                  const allSources = [...skillSources, ...soulSources, ...relicSources, ...jobSources];
                   const filtered = allSources.filter(src => {
                     const flat = getBonusField(src, statType, 'flat');
                     const pct = getBonusField(src, statType, 'pct');
