@@ -72,6 +72,7 @@ interface QuestData {
 interface QuestCommon {
   difficulties: Record<string, { key: string; image: string }>;
   elementalBarriers: Record<string, { key: string; image: string }>;
+  boosters: Record<string, { key: string; image: string }>;
 }
 
 const QUEST_FILES = [
