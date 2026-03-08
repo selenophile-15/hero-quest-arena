@@ -174,7 +174,7 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
 
         {/* Step: Region */}
         {step === 'region' && questData && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-6 gap-2">
             {questData.regions.map((r, idx) => (
               <button
                 key={`${r.key}-${idx}`}
@@ -185,14 +185,14 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all group"
               >
-                <div className="bg-secondary/30 flex items-center justify-center p-2">
+                <div className="bg-secondary/30 flex items-center justify-center p-1.5">
                   <img src={r.areaImage} alt={r.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
-                <div className="p-2 text-center">
-                  <span className="text-xs font-medium text-foreground">{r.name}</span>
-                  <div className="flex items-center justify-center gap-1 mt-0.5">
-                    <Users className="w-3 h-3 text-muted-foreground" />
-                    <span className="text-[10px] text-muted-foreground">{r.maxMembers}명</span>
+                <div className="p-1 text-center">
+                  <span className="text-[10px] font-medium text-foreground leading-tight block">{r.name}</span>
+                  <div className="flex items-center justify-center gap-0.5 mt-0.5">
+                    <Users className="w-2.5 h-2.5 text-muted-foreground" />
+                    <span className="text-[9px] text-muted-foreground">{r.maxMembers}</span>
                   </div>
                 </div>
               </button>
