@@ -125,55 +125,74 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   // Combine all bonuses
   const bonusSummary = combineBonuses(skillResult, soulResult);
 
-  // Process relic stat bonuses from equipped items
-  const relicBonusFlat = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, evasion: 0, threat: 0 };
-  const relicBonusPct = { atk: 0, def: 0, hp: 0 };
-
+  // Process relic stat bonuses — merge into bonusSummary as relic sources
   for (const effect of equipResult.relicEffects) {
+    const src = { name: '', type: 'relic' as const, flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
+    let hasBonus = false;
+
     if (effect.type === 'relic_bonus' && effect.bonuses) {
+      src.name = effect.itemName;
       for (const b of effect.bonuses) {
+        if (b.op === '고정') continue;
         const val = b.op === '감소' ? -b.value : b.value;
-        if (b.op === '고정') continue; // Fixed effects handled separately
         switch (b.stat) {
-          case '깡공격력': relicBonusFlat.atk += val; break;
-          case '깡방어력': relicBonusFlat.def += val; break;
-          case '깡체력': relicBonusFlat.hp += val; break;
-          case '공격력%': relicBonusPct.atk += val; break;
-          case '방어력%': relicBonusPct.def += val; break;
-          case '체력%': relicBonusPct.hp += val; break;
-          case '치명타확률%': relicBonusFlat.crit += val; break;
-          case '치명타데미지%': relicBonusFlat.critDmg += val; break;
-          case '회피%': relicBonusFlat.evasion += val; break;
-          case '위협도': relicBonusFlat.threat += val; break;
+          case '깡공격력': src.flatAtk += val; break;
+          case '깡방어력': src.flatDef += val; break;
+          case '깡체력': src.flatHp += val; break;
+          case '공격력%': src.pctAtk += val; break;
+          case '방어력%': src.pctDef += val; break;
+          case '체력%': src.pctHp += val; break;
+          case '치명타확률%': src.critRate += val; break;
+          case '치명타데미지%': src.critDmg += val; break;
+          case '회피%': src.evasion += val; break;
+          case '위협도': src.threat += val; break;
         }
+        hasBonus = true;
       }
     }
-    // 키쿠 이치몬지 also gives +200% crit damage
     if (effect.type === 'crit_fixed') {
-      relicBonusFlat.critDmg += 200;
+      src.name = effect.itemName;
+      src.critDmg += 200;
+      hasBonus = true;
     }
-    // 락 스톰퍼 gives +250 def and +25% def
     if (effect.type === 'evasion_fixed') {
-      relicBonusFlat.def += 250;
-      relicBonusPct.def += 25;
+      src.name = effect.itemName;
+      src.flatDef += 250;
+      src.pctDef += 25;
+      hasBonus = true;
     }
-    // 평화의 목걸이 gives +20% hp and +10% evasion
     if (effect.type === 'weapon_nullify') {
-      relicBonusPct.hp += 20;
-      relicBonusFlat.evasion += 10;
+      src.name = effect.itemName;
+      src.pctHp += 20;
+      src.evasion += 10;
+      hasBonus = true;
+    }
+
+    if (hasBonus) {
+      bonusSummary.sources.push(src);
+      bonusSummary.flatAtk += src.flatAtk;
+      bonusSummary.flatDef += src.flatDef;
+      bonusSummary.flatHp += src.flatHp;
+      bonusSummary.pctAtk += src.pctAtk;
+      bonusSummary.pctDef += src.pctDef;
+      bonusSummary.pctHp += src.pctHp;
+      bonusSummary.critRate += src.critRate;
+      bonusSummary.critDmg += src.critDmg;
+      bonusSummary.evasion += src.evasion;
+      bonusSummary.threat += src.threat;
     }
   }
 
-  // Final formula: (base + seed + Σequip + flat + relicFlat) × (1 + (pct + relicPct)/100)
-  const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk + relicBonusFlat.atk) * (1 + (bonusSummary.pctAtk + relicBonusPct.atk) / 100));
-  const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef + relicBonusFlat.def) * (1 + (bonusSummary.pctDef + relicBonusPct.def) / 100));
-  const totalHp = Math.floor((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp + relicBonusFlat.hp) * (1 + (bonusSummary.pctHp + relicBonusPct.hp) / 100));
+  // Final formula: (base + seed + Σequip + flat) × (1 + pct/100)
+  const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
+  const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
+  const totalHp = Math.floor((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp) * (1 + bonusSummary.pctHp / 100));
 
-  // Additive stats (including relic bonuses)
-  let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate + relicBonusFlat.crit;
-  let totalCritDmg = baseCritDmg + bonusSummary.critDmg + relicBonusFlat.critDmg;
-  let totalEvasion = baseEvasion + equipResult.totalEvasion + bonusSummary.evasion + relicBonusFlat.evasion;
-  const totalThreat = baseThreat + bonusSummary.threat + relicBonusFlat.threat;
+  // Additive stats
+  let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate;
+  let totalCritDmg = baseCritDmg + bonusSummary.critDmg;
+  let totalEvasion = baseEvasion + equipResult.totalEvasion + bonusSummary.evasion;
+  const totalThreat = baseThreat + bonusSummary.threat;
 
   // Store pre-relic values for display
   const preRelicCrit = totalCrit;
