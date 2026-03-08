@@ -312,6 +312,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
           </div>
 
           {/* Type */}
+          {!isAurasong && (
           <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs">
             <span className="text-foreground">타입</span>
             <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
@@ -321,6 +322,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, isAuras
               </SelectContent>
             </Select>
           </div>
+          )}
 
           {/* Dual wield sub-types */}
           {isDualWield && (
