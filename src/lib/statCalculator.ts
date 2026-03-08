@@ -45,6 +45,7 @@ export interface CalculatedStats {
   totalThreat: number;
 
   // Metadata
+  jobName: string;
   jobElement: string;
 }
 
