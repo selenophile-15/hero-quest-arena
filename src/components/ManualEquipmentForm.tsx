@@ -25,17 +25,45 @@ function getAllowedTypesForSlot(allowedTypes?: string[]) {
 const ELEMENT_OPTIONS = ['불', '물', '공기', '대지', '빛', '어둠', '골드', '모든 원소'];
 const UNIQUE_ELEMENT_OPTIONS = ['불', '물', '공기', '대지', '빛', '어둠'];
 
-const SPIRIT_OPTIONS = [
-  '바하무트', '레비아탄', '그리핀', '명인', '조상', '베히모스', '우로보로스',
-  '기린', '크람푸스', '크리스마스', '크라켄', '키메라', '카벙클', '타라스크', '하이드라', '불사조',
-  '케찰코아틀',
-  '호랑이', '매머드', '공룡', '사자', '곰', '바다코끼리', '상어',
-  '다람쥐', '하마', '말', '도마뱀', '아르마딜로', '부엉이', '코뿔소',
-  '졸로틀',
-  '독수리', '황소', '양', '늑대', '고양이', '거위', '독사', '토끼',
-];
+const SPIRIT_TIER: Record<string, number> = {
+  '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
+  '기린': 12, '크람푸스': 12, '크리스마스': 12,
+  '크라켄': 12, '키메라': 12, '카벙클': 12, '타라스크': 12, '하이드라': 12, '불사조': 12,
+  '케찰코아틀': 10,
+  '호랑이': 9, '매머드': 9, '공룡': 9, '사자': 9, '곰': 9, '바다코끼리': 9, '상어': 9,
+  '다람쥐': 7, '하마': 7, '말': 7, '도마뱀': 7, '아르마딜로': 7, '부엉이': 7, '코뿔소': 7,
+  '졸로틀': 5,
+  '독수리': 4, '황소': 4, '양': 4, '늑대': 4, '고양이': 4, '거위': 4, '독사': 4, '토끼': 4,
+};
+
+interface SpiritGroup { tier: number; spirits: string[] }
+
+function getSpiritGroups(): SpiritGroup[] {
+  const groups: SpiritGroup[] = [];
+  const allSpirits = Object.entries(SPIRIT_TIER).sort((a, b) => b[1] - a[1]);
+  let lastTier = -1;
+  for (const [name, tier] of allSpirits) {
+    if (tier !== lastTier) {
+      groups.push({ tier, spirits: [name] });
+      lastTier = tier;
+    } else {
+      groups[groups.length - 1].spirits.push(name);
+    }
+  }
+  return groups;
+}
+
+const SPIRIT_GROUPS = getSpiritGroups();
 
 const UNIQUE_ELEMENT_TIERS = [4, 7, 9, 12, 14];
+
+const STAT_COLORS: Record<string, string> = {
+  atk: 'text-red-400',
+  def: 'text-blue-400',
+  hp: 'text-orange-400',
+  crit: 'text-yellow-400',
+  evasion: 'text-teal-400',
+};
 
 const RELIC_STAT_OPTIONS = [
   { value: '깡공격력', label: '공격력' },
@@ -107,7 +135,7 @@ function emptyData(): ManualEquipmentData {
     elementMode: 'none',
     affinityElement: '',
     uniqueElement: '',
-    uniqueElementTier: 1,
+    uniqueElementTier: 4,
     spiritMode: 'none',
     affinitySpirit: '',
     uniqueSpirit: '',
@@ -116,7 +144,6 @@ function emptyData(): ManualEquipmentData {
   };
 }
 
-// Migration helper for old data format
 function migrateData(d: any): ManualEquipmentData {
   if (d.elementMode !== undefined) return d as ManualEquipmentData;
   return {
@@ -125,7 +152,7 @@ function migrateData(d: any): ManualEquipmentData {
     elementMode: d.affinityElement ? 'affinity' : 'none',
     affinityElement: d.affinityElement || '',
     uniqueElement: '',
-    uniqueElementTier: 1,
+    uniqueElementTier: 4,
     spiritMode: d.affinitySpirit ? 'affinity' : 'none',
     affinitySpirit: d.affinitySpirit || '',
     uniqueSpirit: '',
@@ -203,7 +230,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
     const uniqueElement = data.elementMode === 'unique' && data.uniqueElement ? [data.uniqueElement] : null;
     const uniqueElementTier = data.elementMode === 'unique' && data.uniqueElement ? data.uniqueElementTier : null;
     const spiritAffinity = data.spiritMode === 'affinity' && data.affinitySpirit ? [data.affinitySpirit] : null;
-    const uniqueSpirit = data.spiritMode === 'unique' && data.uniqueSpirit ? [data.uniqueSpirit] : null;
+    const uniqueSpirit = data.spiritMode === 'unique' ? ['문드라'] : null;
 
     const item: EquipmentItem = {
       name: data.name.trim(),
@@ -231,6 +258,17 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
 
     onConfirm(item, data);
   };
+
+  const STAT_FIELDS = [
+    { key: 'atk' as const, label: '공격력' },
+    { key: 'def' as const, label: '방어력' },
+    { key: 'hp' as const, label: '체력' },
+  ];
+
+  const PCT_FIELDS = [
+    { key: 'crit' as const, label: '치명타 확률' },
+    { key: 'evasion' as const, label: '회피' },
+  ];
 
   return (
     <div className="space-y-3 p-3">
@@ -280,17 +318,16 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
           )}
 
           {/* Stats */}
-          <div className="text-[10px] text-foreground">일반 등급 기준 스탯</div>
+          <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs mt-1">
+            <span className="text-foreground">스탯</span>
+            <span className="text-muted-foreground text-[10px]">일반 등급 기준</span>
+          </div>
           <div className="grid grid-cols-2 gap-3 text-xs">
             {/* Left: atk, def, hp */}
             <div className="flex flex-col gap-1.5">
-              {[
-                { key: 'atk' as const, label: '공격력' },
-                { key: 'def' as const, label: '방어력' },
-                { key: 'hp' as const, label: '체력' },
-              ].map(s => (
+              {STAT_FIELDS.map(s => (
                 <div key={s.key} className="grid grid-cols-[56px_1fr] gap-1 items-center">
-                  <span className="text-foreground text-[10px]">{s.label}</span>
+                  <span className={`text-[10px] text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
                   <Input
                     type="number"
                     className="h-7 text-xs text-center"
@@ -306,12 +343,9 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
             </div>
             {/* Right: crit, evasion */}
             <div className="flex flex-col gap-1.5">
-              {[
-                { key: 'crit' as const, label: '치명타 확률' },
-                { key: 'evasion' as const, label: '회피' },
-              ].map(s => (
+              {PCT_FIELDS.map(s => (
                 <div key={s.key} className="grid grid-cols-[56px_1fr] gap-1 items-center">
-                  <span className="text-foreground text-[10px]">{s.label}</span>
+                  <span className={`text-[10px] text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
                   <div className="relative">
                     <Input
                       type="number"
@@ -335,16 +369,16 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
         <div className="space-y-3">
           {/* Element */}
           <div className="space-y-1.5">
-            <span className="text-foreground text-[10px] font-semibold">원소</span>
+            <span className="text-foreground text-xs font-semibold">원소</span>
             <RadioGroup
               value={data.elementMode}
               onValueChange={v => {
                 const mode = v as 'none' | 'affinity' | 'unique';
                 update('elementMode', mode);
                 if (mode !== 'affinity') update('affinityElement', '');
-                if (mode !== 'unique') { update('uniqueElement', ''); update('uniqueElementTier', 1); }
+                if (mode !== 'unique') { update('uniqueElement', ''); update('uniqueElementTier', 4); }
               }}
-              className="flex gap-3 text-[10px]"
+              className="flex gap-3 text-[11px]"
             >
               <div className="flex items-center gap-1">
                 <RadioGroupItem value="none" id="elem-none" className="h-3 w-3" />
@@ -380,11 +414,11 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
                   </SelectContent>
                 </Select>
                 <div className="flex items-center gap-2">
-                  <span className="text-foreground text-[10px]">티어</span>
+                  <span className="text-foreground text-xs">티어</span>
                   <Select value={String(data.uniqueElementTier)} onValueChange={v => update('uniqueElementTier', Number(v))}>
                     <SelectTrigger className="h-7 text-xs w-16"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {UNIQUE_ELEMENT_TIERS.map(t => <SelectItem key={t} value={String(t)}>{t}</SelectItem>)}
+                      {UNIQUE_ELEMENT_TIERS.map(t => <SelectItem key={t} value={String(t)}>T{t}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -394,16 +428,17 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
 
           {/* Spirit */}
           <div className="space-y-1.5">
-            <span className="text-foreground text-[10px] font-semibold">영혼</span>
+            <span className="text-foreground text-xs font-semibold">영혼</span>
             <RadioGroup
               value={data.spiritMode}
               onValueChange={v => {
                 const mode = v as 'none' | 'affinity' | 'unique';
                 update('spiritMode', mode);
                 if (mode !== 'affinity') update('affinitySpirit', '');
-                if (mode !== 'unique') update('uniqueSpirit', '');
+                if (mode === 'unique') update('uniqueSpirit', '문드라');
+                else update('uniqueSpirit', '');
               }}
-              className="flex gap-3 text-[10px]"
+              className="flex gap-3 text-[11px]"
             >
               <div className="flex items-center gap-1">
                 <RadioGroupItem value="none" id="spirit-none" className="h-3 w-3" />
@@ -422,21 +457,23 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
             {data.spiritMode === 'affinity' && (
               <Select value={data.affinitySpirit || '_none'} onValueChange={v => update('affinitySpirit', v === '_none' ? '' : v)}>
                 <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="영혼 선택" /></SelectTrigger>
-                <SelectContent className="max-h-[200px]">
+                <SelectContent className="max-h-[280px]">
                   <SelectItem value="_none">선택 안 함</SelectItem>
-                  {SPIRIT_OPTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  {SPIRIT_GROUPS.map((group, gi) => (
+                    <div key={group.tier}>
+                      {gi > 0 && <div className="h-1.5" />}
+                      <div className="px-2 py-0.5 text-[10px] text-muted-foreground font-semibold sticky top-0 bg-popover">T{group.tier}</div>
+                      {group.spirits.map(sp => (
+                        <SelectItem key={sp} value={sp}>{sp}</SelectItem>
+                      ))}
+                    </div>
+                  ))}
                 </SelectContent>
               </Select>
             )}
 
             {data.spiritMode === 'unique' && (
-              <Select value={data.uniqueSpirit || '_none'} onValueChange={v => update('uniqueSpirit', v === '_none' ? '' : v)}>
-                <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="고유 영혼 선택" /></SelectTrigger>
-                <SelectContent className="max-h-[200px]">
-                  <SelectItem value="_none">선택 안 함</SelectItem>
-                  {SPIRIT_OPTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <div className="text-xs text-muted-foreground pl-1">문드라 영혼 자동 적용</div>
             )}
           </div>
 
