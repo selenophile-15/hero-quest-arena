@@ -787,7 +787,12 @@ export default function QuestSimulation() {
                         <tr className="border-b border-border/20 bg-primary/5">
                           <td colSpan={maxMembers + 1} className="py-1 px-1.5">
                             <div className="flex flex-wrap items-center gap-1.5 text-[9px]">
-                              <span className="text-primary font-semibold">파티 버프:</span>
+                              <button
+                                onClick={() => setBuffBreakdownOpen(true)}
+                                className="text-primary font-semibold hover:underline cursor-pointer"
+                              >
+                                📊 파티 버프:
+                              </button>
                               {buffSummary!.sources.map((src, i) => (
                                 <span key={i} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary/80">
                                   <span className={src.type === 'champion' ? 'text-yellow-400' : 'text-purple-400'}>
@@ -797,6 +802,12 @@ export default function QuestSimulation() {
                                   {src.note && <span className="text-muted-foreground ml-0.5">({src.note})</span>}
                                 </span>
                               ))}
+                              <button
+                                onClick={() => setBuffBreakdownOpen(true)}
+                                className="text-primary/60 hover:text-primary text-[9px] underline ml-1"
+                              >
+                                상세 보기
+                              </button>
                             </div>
                           </td>
                         </tr>
