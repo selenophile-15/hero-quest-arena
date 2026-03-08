@@ -116,7 +116,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const soulSources = bonus?.sources.filter(s => s.type === 'soul') || [];
 
     const equipBonusData = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0, 해당Sources: [], 모든Sources: [] };
-    const 해당장비Entries = Object.entries(equipBonusData.해당장비).filter(([, v]) => v !== 0);
+    
 
     const baseKey = statType === 'atk' ? 'baseAtk' : statType === 'def' ? 'baseDef' : 'baseHp';
     const qualityKey = statType === 'atk' ? 'qualityAtk' : statType === 'def' ? 'qualityDef' : 'qualityHp';
