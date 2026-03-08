@@ -283,6 +283,8 @@ export async function calculateEquipmentStats(
   slots: SlotInput[],
   skillBonuses: SkillBonuses,
   hasRangedWeapon: boolean,
+  isSpellknight: boolean = false,
+  isWeaponlessJob: boolean = false,
 ): Promise<EquipCalcResult> {
   const [elementData, spiritData] = await Promise.all([
     loadElementStats(),
@@ -293,7 +295,8 @@ export async function calculateEquipmentStats(
   const relicEffects: RelicEffect[] = [];
 
   // First pass: detect relics and their effects
-  const hasWeaponNullify = slots.some(s => s?.item?.name === '평화의 목걸이');
+  // 평화의 목걸이 weapon nullify doesn't apply to weaponless jobs
+  const hasWeaponNullify = !isWeaponlessJob && slots.some(s => s?.item?.name === '평화의 목걸이');
   
   for (let i = 0; i < 6; i++) {
     const slot = slots[i];
