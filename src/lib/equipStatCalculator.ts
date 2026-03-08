@@ -228,6 +228,8 @@ export function parseEquipSkillBonuses(
     bonusData: Record<string, number | number[]>;
     appliedEquip: string[][] | undefined;
     skillLevel: number;
+    skillType: 'unique' | 'common';
+    skillName: string;
   }>
 ): SkillBonuses {
   const result: SkillBonuses = {
@@ -239,10 +241,11 @@ export function parseEquipSkillBonuses(
     모든장비방어력: 0,
     모든장비체력: 0,
     모든장비전체: 0,
+    sources: [],
   };
 
   for (const skill of skills) {
-    const { bonusData, appliedEquip, skillLevel } = skill;
+    const { bonusData, appliedEquip, skillLevel, skillType, skillName } = skill;
     const lvl = skillLevel;
 
     for (const [key, rawVal] of Object.entries(bonusData)) {
@@ -254,27 +257,35 @@ export function parseEquipSkillBonuses(
       if (key === '스킬_해당장비공격력%') {
         for (const eq of equipTypes) {
           result.해당장비공격력[eq] = (result.해당장비공격력[eq] || 0) + val;
+          result.sources.push({ skillName, skillType, bonusKey: '해당장비공격력', equipType: eq, value: val });
         }
       } else if (key === '스킬_해당장비방어력%') {
         for (const eq of equipTypes) {
           result.해당장비방어력[eq] = (result.해당장비방어력[eq] || 0) + val;
+          result.sources.push({ skillName, skillType, bonusKey: '해당장비방어력', equipType: eq, value: val });
         }
       } else if (key === '스킬_해당장비체력%') {
         for (const eq of equipTypes) {
           result.해당장비체력[eq] = (result.해당장비체력[eq] || 0) + val;
+          result.sources.push({ skillName, skillType, bonusKey: '해당장비체력', equipType: eq, value: val });
         }
       } else if (key === '스킬_해당장비전체%') {
         for (const eq of equipTypes) {
           result.해당장비전체[eq] = (result.해당장비전체[eq] || 0) + val;
+          result.sources.push({ skillName, skillType, bonusKey: '해당장비전체', equipType: eq, value: val });
         }
       } else if (key === '스킬_모든장비공격력%') {
         result.모든장비공격력 += val;
+        result.sources.push({ skillName, skillType, bonusKey: '모든장비공격력', value: val });
       } else if (key === '스킬_모든장비방어력%') {
         result.모든장비방어력 += val;
+        result.sources.push({ skillName, skillType, bonusKey: '모든장비방어력', value: val });
       } else if (key === '스킬_모든장비체력%') {
         result.모든장비체력 += val;
+        result.sources.push({ skillName, skillType, bonusKey: '모든장비체력', value: val });
       } else if (key === '스킬_모든장비전체%') {
         result.모든장비전체 += val;
+        result.sources.push({ skillName, skillType, bonusKey: '모든장비전체', value: val });
       }
     }
   }
