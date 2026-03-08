@@ -181,7 +181,10 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 onClick={() => {
                   setSelRegionIdx(idx);
                   if (r.subAreas.length > 1) setStep('subarea');
-                  else setStep('difficulty');
+                  else {
+                    setSelSubAreaIdx(r.subAreas.length === 1 ? 0 : -1);
+                    setStep('difficulty');
+                  }
                 }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all group"
               >
