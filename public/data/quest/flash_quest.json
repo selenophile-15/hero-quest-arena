@@ -1,0 +1,188 @@
+{
+  "questType": "깜짝 퀘스트",
+  "questTypeKey": "flash_quest",
+  "regions": [
+    {
+      "name": "호화로운 보석",
+      "key": "gold",
+      "areaImage": "/images/quest/area/flash_quest/gold.webp",
+      "maxMembers": 5,
+      "subAreas": [{ "name": "황금 골렘", "key": "gold", "image": "/images/quest/details/flash_quest/gold.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 3500, "hp": 220000, "atk": 100, "aoe": 50, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 60, "recovery": 120 }, "def": { "r0": 1400, "r50": 2800, "r70": 5600, "r75": 16800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 7500, "hp": 600000, "atk": 160, "aoe": 80, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 60, "recovery": 120 }, "def": { "r0": 1800, "r50": 3600, "r70": 7200, "r75": 21600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 11000, "hp": 3500000, "atk": 260, "aoe": 130, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 60, "recovery": 120 }, "def": { "r0": 3500, "r50": 7000, "r70": 14000, "r75": 42000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 13750, "hp": 5500000, "atk": 300, "aoe": 120, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 60, "recovery": 120 }, "def": { "r0": 6500, "r50": 13000, "r70": 26000, "r75": 78000 }, "barrier": { "sub1": "불", "sub2": null, "sub3": null, "hp": 50 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "마법부여",
+      "key": "enchant",
+      "areaImage": "/images/quest/area/flash_quest/enchant.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "두꺼비 현자", "key": "enchant", "image": "/images/quest/details/flash_quest/enchant.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 2600, "hp": 65000, "atk": 65, "aoe": 30, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 1800, "r50": 3600, "r70": 7200, "r75": 21600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 6250, "hp": 250000, "atk": 105, "aoe": 50, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 2700, "r50": 5400, "r70": 10800, "r75": 32400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 10000, "hp": 650000, "atk": 160, "aoe": 80, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 4200, "r50": 8400, "r70": 16800, "r75": 50400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 13000, "hp": 1800000, "atk": 220, "aoe": 110, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 4900, "r50": 9800, "r70": 19600, "r75": 58800 }, "barrier": { "sub1": "대지", "sub2": null, "sub3": null, "hp": 65 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "인장",
+      "key": "sigil",
+      "areaImage": "/images/quest/area/flash_quest/sigil.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "닌자 인장", "key": "sigil", "image": "/images/quest/details/flash_quest/sigil.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 9000, "hp": 475000, "atk": 150, "aoe": 60, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 3300, "r50": 6600, "r70": 13200, "r75": 39600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 11000, "hp": 700000, "atk": 175, "aoe": 75, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 4000, "r50": 8000, "r70": 16000, "r75": 48000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 13000, "hp": 1300000, "atk": 220, "aoe": 110, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 5200, "r50": 10400, "r70": 20800, "r75": 62400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 19500, "hp": 4250000, "atk": 290, "aoe": 150, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 6700, "r50": 13400, "r70": 26800, "r75": 80400 }, "barrier": { "sub1": "불", "sub2": null, "sub3": null, "hp": 35 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "영웅 경험치",
+      "key": "training",
+      "areaImage": "/images/quest/area/flash_quest/training.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "훈련 강사", "key": "training", "image": "/images/quest/details/flash_quest/training.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 750, "hp": 9000, "atk": 23, "aoe": 14, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 60, "recovery": 120 }, "def": { "r0": 500, "r50": 1000, "r70": 2000, "r75": 6000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 950, "hp": 18000, "atk": 30, "aoe": 18, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 60, "recovery": 120 }, "def": { "r0": 700, "r50": 1400, "r70": 2800, "r75": 8400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 2200, "hp": 50000, "atk": 45, "aoe": 30, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 60, "recovery": 120 }, "def": { "r0": 1100, "r50": 2200, "r70": 4400, "r75": 13200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 8500, "hp": 390000, "atk": 110, "aoe": 60, "aoeChance": 25, "time": { "base": 60, "additional": 80, "perMember": 20, "total": 140, "rest": 60, "recovery": 120 }, "def": { "r0": 2600, "r50": 5200, "r70": 10400, "r75": 31200 }, "barrier": { "sub1": "빛", "sub2": null, "sub3": null, "hp": 110 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "문스톤",
+      "key": "moonstone",
+      "areaImage": "/images/quest/area/flash_quest/moonstone.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "문스톤 골렘", "key": "moonstone", "image": "/images/quest/details/flash_quest/moonstone.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 1450, "hp": 40000, "atk": 70, "aoe": 1, "aoeChance": 0, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 1100, "r50": 2200, "r70": 4400, "r75": 13200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 4000, "hp": 130000, "atk": 100, "aoe": 1, "aoeChance": 0, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 2200, "r50": 4400, "r70": 8800, "r75": 26400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 9000, "hp": 460000, "atk": 180, "aoe": 1, "aoeChance": 0, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 3200, "r50": 6400, "r70": 12800, "r75": 38400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 10500, "hp": 1700000, "atk": 250, "aoe": 1, "aoeChance": 0, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 4300, "r50": 8600, "r70": 17200, "r75": 51600 }, "barrier": { "sub1": "빛", "sub2": null, "sub3": null, "hp": 55 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "다양한 장비",
+      "key": "gear",
+      "areaImage": "/images/quest/area/flash_quest/gear.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "키클롭스 상인", "key": "gear", "image": "/images/quest/details/flash_quest/gear.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 1100, "hp": 15000, "atk": 26, "aoe": 18, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 80, "recovery": 160 }, "def": { "r0": 700, "r50": 1400, "r70": 2800, "r75": 8400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 1600, "hp": 30000, "atk": 34, "aoe": 21, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 80, "recovery": 160 }, "def": { "r0": 850, "r50": 1700, "r70": 3400, "r75": 10200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 6750, "hp": 300000, "atk": 110, "aoe": 55, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 80, "recovery": 160 }, "def": { "r0": 2600, "r50": 5200, "r70": 10400, "r75": 31200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 13000, "hp": 1250000, "atk": 210, "aoe": 100, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 80, "recovery": 160 }, "def": { "r0": 4250, "r50": 8500, "r70": 17000, "r75": 51000 }, "barrier": { "sub1": "어둠", "sub2": null, "sub3": null, "hp": 95 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "연구 두루마리",
+      "key": "research",
+      "areaImage": "/images/quest/area/flash_quest/research.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "학자 하피", "key": "research", "image": "/images/quest/details/flash_quest/research.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 650, "hp": 7000, "atk": 20, "aoe": 13, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 160, "recovery": 320 }, "def": { "r0": 425, "r50": 850, "r70": 1700, "r75": 5100 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 1050, "hp": 15000, "atk": 25, "aoe": 18, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 160, "recovery": 320 }, "def": { "r0": 650, "r50": 1300, "r70": 2600, "r75": 7800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 3600, "hp": 110000, "atk": 80, "aoe": 40, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 160, "recovery": 320 }, "def": { "r0": 2200, "r50": 4400, "r70": 8800, "r75": 26400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 13000, "hp": 1300000, "atk": 210, "aoe": 105, "aoeChance": 25, "time": { "base": 80, "additional": 107, "perMember": 27, "total": 187, "rest": 160, "recovery": 320 }, "def": { "r0": 4300, "r50": 8600, "r70": 17200, "r75": 51600 }, "barrier": { "sub1": "대지", "sub2": null, "sub3": null, "hp": 90 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "룬",
+      "key": "rune",
+      "areaImage": "/images/quest/area/flash_quest/rune.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "룬 골렘", "key": "rune", "image": "/images/quest/details/flash_quest/rune.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 1450, "hp": 40000, "atk": 45, "aoe": 20, "aoeChance": 50, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 1100, "r50": 2200, "r70": 4400, "r75": 13200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 4000, "hp": 130000, "atk": 83, "aoe": 35, "aoeChance": 50, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 2200, "r50": 4400, "r70": 8800, "r75": 26400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 9000, "hp": 460000, "atk": 140, "aoe": 50, "aoeChance": 50, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 3200, "r50": 6400, "r70": 12800, "r75": 38400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 10500, "hp": 1700000, "atk": 200, "aoe": 90, "aoeChance": 50, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 4300, "r50": 8600, "r70": 17200, "r75": 51600 }, "barrier": { "sub1": "물", "sub2": null, "sub3": null, "hp": 35 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "수리 키트",
+      "key": "repair",
+      "areaImage": "/images/quest/area/flash_quest/repair.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "트러블린 대장장이", "key": "repair", "image": "/images/quest/details/flash_quest/repair.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 5500, "hp": 160000, "atk": 93, "aoe": 45, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 2700, "r50": 5400, "r70": 10800, "r75": 32400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 9250, "hp": 470000, "atk": 150, "aoe": 65, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 3300, "r50": 6600, "r70": 13200, "r75": 39600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 11000, "hp": 710000, "atk": 170, "aoe": 80, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 4100, "r50": 8200, "r70": 16400, "r75": 49200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 12250, "hp": 930000, "atk": 205, "aoe": 105, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 4250, "r50": 8500, "r70": 17000, "r75": 51000 }, "barrier": { "sub1": "물", "sub2": null, "sub3": null, "hp": 15 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "상자",
+      "key": "chest",
+      "areaImage": "/images/quest/area/flash_quest/chest.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "트러블린 해적", "key": "chest", "image": "/images/quest/details/flash_quest/chest.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 1250, "hp": 21000, "atk": 32, "aoe": 20, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 900, "r50": 1800, "r70": 3600, "r75": 10800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 2830, "hp": 84000, "atk": 55, "aoe": 35, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 1100, "r50": 2200, "r70": 4400, "r75": 13200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 9500, "hp": 480000, "atk": 150, "aoe": 65, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 3350, "r50": 6700, "r70": 13400, "r75": 40200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 14000, "hp": 1900000, "atk": 210, "aoe": 100, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 4600, "r50": 9200, "r70": 18400, "r75": 55200 }, "barrier": { "sub1": "어둠", "sub2": null, "sub3": null, "hp": 10 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "승급 조각",
+      "key": "ascension",
+      "areaImage": "/images/quest/area/flash_quest/ascension.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "고대 크러쉬타션", "key": "ascension", "image": "/images/quest/details/flash_quest/ascension.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 10500, "hp": 625000, "atk": 175, "aoe": 70, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 3800, "r50": 7600, "r70": 15200, "r75": 45600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 12750, "hp": 1000000, "atk": 210, "aoe": 110, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 4400, "r50": 8800, "r70": 17600, "r75": 52800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 19500, "hp": 4400000, "atk": 290, "aoe": 140, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 6750, "r50": 13500, "r70": 27000, "r75": 81000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 21500, "hp": 7000000, "atk": 320, "aoe": 170, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 7500, "r50": 15000, "r70": 30000, "r75": 90000 }, "barrier": { "sub1": "물", "sub2": null, "sub3": null, "hp": 160 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "열쇠",
+      "key": "key",
+      "areaImage": "/images/quest/area/flash_quest/key.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "머시군 도굴꾼", "key": "key", "image": "/images/quest/details/flash_quest/key.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 1000, "hp": 13500, "atk": 22, "aoe": 17, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 800, "r50": 1600, "r70": 3200, "r75": 9600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 4100, "hp": 135000, "atk": 85, "aoe": 40, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 2300, "r50": 4600, "r70": 9200, "r75": 27600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 9500, "hp": 320000, "atk": 150, "aoe": 65, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 3100, "r50": 6200, "r70": 12400, "r75": 37200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 11000, "hp": 670000, "atk": 185, "aoe": 100, "aoeChance": 25, "time": { "base": 90, "additional": 120, "perMember": 30, "total": 210, "rest": 90, "recovery": 180 }, "def": { "r0": 4200, "r50": 8400, "r70": 16800, "r75": 50400 }, "barrier": { "sub1": "대지", "sub2": null, "sub3": null, "hp": 65 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "이국적인 장비",
+      "key": "fancygear",
+      "areaImage": "/images/quest/area/flash_quest/fancygear.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "키클롭스 장군", "key": "fancygear", "image": "/images/quest/details/flash_quest/fancygear.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 7750, "hp": 370000, "atk": 125, "aoe": 60, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 3000, "r50": 6000, "r70": 12000, "r75": 36000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 10000, "hp": 660000, "atk": 172, "aoe": 69, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 3900, "r50": 7800, "r70": 15600, "r75": 46800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 12500, "hp": 1000000, "atk": 215, "aoe": 105, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 4400, "r50": 8800, "r70": 17600, "r75": 52800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 14000, "hp": 1900000, "atk": 235, "aoe": 110, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 5300, "r50": 10600, "r70": 21200, "r75": 63600 }, "barrier": { "sub1": "공기", "sub2": null, "sub3": null, "hp": 50 }, "isBoss": true, "isExtreme": true }
+      ]
+    },
+    {
+      "name": "챔피언 코인",
+      "key": "champion",
+      "areaImage": "/images/quest/area/flash_quest/champion.webp",
+      "maxMembers": 4,
+      "subAreas": [{ "name": "아누비스 챔피언", "key": "champion", "image": "/images/quest/details/flash_quest/champion.webp" }],
+      "quests": [
+        { "type": "boss", "difficulty": "쉬움", "minPower": 3750, "hp": 110000, "atk": 83, "aoe": 42, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 2300, "r50": 4600, "r70": 9200, "r75": 27600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "보통", "minPower": 7500, "hp": 360000, "atk": 125, "aoe": 58, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 3100, "r50": 6200, "r70": 12400, "r75": 37200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "어려움", "minPower": 11000, "hp": 700000, "atk": 180, "aoe": 80, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 4200, "r50": 8400, "r70": 16800, "r75": 50400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "difficulty": "익스트림", "minPower": 16000, "hp": 2500000, "atk": 250, "aoe": 120, "aoeChance": 25, "time": { "base": 120, "additional": 160, "perMember": 40, "total": 280, "rest": 120, "recovery": 240 }, "def": { "r0": 5300, "r50": 10600, "r70": 21200, "r75": 63600 }, "barrier": { "sub1": "빛", "sub2": null, "sub3": null, "hp": 85 }, "isBoss": true, "isExtreme": true }
+      ]
+    }
+  ]
+}

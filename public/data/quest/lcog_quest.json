@@ -1,0 +1,52 @@
+{
+  "questType": "황금의 도시",
+  "questTypeKey": "lcog_quest",
+  "regions": [
+    {
+      "name": "일반",
+      "key": "lcog",
+      "areaImage": "/images/quest/area/lcog_quest/lcog.webp",
+      "maxMembers": 5,
+      "subAreas": [
+        { "name": "1~10단계", "key": "goldcity", "image": "/images/quest/details/lcog_quest/goldcity.webp" }
+      ],
+      "quests": [
+        { "type": "normal", "stage": 1, "difficulty": "없음", "minPower": 0, "hp": 500, "atk": 8, "aoe": 5, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 50, "r50": 100, "r70": 200, "r75": 600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 2, "difficulty": "없음", "minPower": 550, "hp": 10000, "atk": 14, "aoe": 10, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 300, "r50": 600, "r70": 1200, "r75": 3600 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 3, "difficulty": "없음", "minPower": 650, "hp": 18000, "atk": 18, "aoe": 12, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 400, "r50": 800, "r70": 1600, "r75": 4800 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 4, "difficulty": "없음", "minPower": 1000, "hp": 25000, "atk": 23, "aoe": 17, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 600, "r50": 1200, "r70": 2400, "r75": 7200 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 5, "difficulty": "없음", "minPower": 1200, "hp": 50000, "atk": 30, "aoe": 20, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 700, "r50": 1400, "r70": 2800, "r75": 8400 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 6, "difficulty": "없음", "minPower": 3500, "hp": 220000, "atk": 100, "aoe": 50, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 1400, "r50": 2800, "r70": 5600, "r75": 16800 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 7, "difficulty": "없음", "minPower": 4500, "hp": 350000, "atk": 140, "aoe": 70, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 1500, "r50": 3000, "r70": 6000, "r75": 18000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 8, "difficulty": "없음", "minPower": 9000, "hp": 1000000, "atk": 170, "aoe": 90, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 2600, "r50": 5200, "r70": 10400, "r75": 31200 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 9, "difficulty": "없음", "minPower": 10000, "hp": 1500000, "atk": 180, "aoe": 100, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 3000, "r50": 6000, "r70": 12000, "r75": 36000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 10, "difficulty": "없음", "minPower": 11000, "hp": 3500000, "atk": 260, "aoe": 130, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 3500, "r50": 7000, "r70": 14000, "r75": 42000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 11, "difficulty": "없음", "minPower": 12750, "hp": 4750000, "atk": 290, "aoe": 150, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 5750, "r50": 11500, "r70": 23000, "r75": 69000 }, "barrier": null, "isBoss": false, "isExtreme": false },
+        { "type": "normal", "stage": 12, "difficulty": "없음", "minPower": 26000, "hp": 6200000, "atk": 350, "aoe": 185, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 11000, "r50": 22000, "r70": 44000, "r75": 132000 }, "barrier": null, "isBoss": false, "isExtreme": false }
+      ]
+    },
+    {
+      "name": "보스",
+      "key": "lcog",
+      "areaImage": "/images/quest/area/lcog_quest/lcog.webp",
+      "maxMembers": 5,
+      "subAreas": [
+        { "name": "11~12단계", "key": "platinum", "image": "/images/quest/details/lcog_quest/platinum.webp" }
+      ],
+      "quests": [
+        { "type": "boss", "stage": 1, "difficulty": "없음", "minPower": 0, "hp": 1000, "atk": 8, "aoe": 5, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 50, "r50": 100, "r70": 200, "r75": 600 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 2, "difficulty": "없음", "minPower": 630, "hp": 14000, "atk": 16, "aoe": 9, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 350, "r50": 700, "r70": 1400, "r75": 4200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 3, "difficulty": "없음", "minPower": 750, "hp": 25000, "atk": 20, "aoe": 10, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 525, "r50": 1050, "r70": 2100, "r75": 6300 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 4, "difficulty": "없음", "minPower": 1100, "hp": 35000, "atk": 25, "aoe": 16, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 700, "r50": 1400, "r70": 2800, "r75": 8400 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 5, "difficulty": "없음", "minPower": 1500, "hp": 75000, "atk": 35, "aoe": 18, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 900, "r50": 1800, "r70": 3600, "r75": 10800 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 6, "difficulty": "없음", "minPower": 4500, "hp": 300000, "atk": 110, "aoe": 50, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 1500, "r50": 3000, "r70": 6000, "r75": 18000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 7, "difficulty": "없음", "minPower": 6000, "hp": 500000, "atk": 150, "aoe": 70, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 1600, "r50": 3200, "r70": 6400, "r75": 19200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 8, "difficulty": "없음", "minPower": 11000, "hp": 1500000, "atk": 190, "aoe": 110, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 2750, "r50": 5500, "r70": 11000, "r75": 33000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 9, "difficulty": "없음", "minPower": 12500, "hp": 2000000, "atk": 200, "aoe": 120, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 3600, "r50": 7200, "r70": 14400, "r75": 43200 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 10, "difficulty": "없음", "minPower": 13750, "hp": 5500000, "atk": 300, "aoe": 120, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 6500, "r50": 13000, "r70": 26000, "r75": 78000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 11, "difficulty": "없음", "minPower": 15250, "hp": 7000000, "atk": 340, "aoe": 150, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 6750, "r50": 13500, "r70": 27000, "r75": 81000 }, "barrier": null, "isBoss": true, "isExtreme": false },
+        { "type": "boss", "stage": 12, "difficulty": "없음", "minPower": 30000, "hp": 10000000, "atk": 400, "aoe": 200, "aoeChance": 25, "time": { "base": 60, "additional": 75, "perMember": 15, "total": 135, "rest": 120, "recovery": 240 }, "def": { "r0": 12000, "r50": 24000, "r70": 48000, "r75": 144000 }, "barrier": null, "isBoss": true, "isExtreme": false }
+      ]
+    }
+  ]
+}

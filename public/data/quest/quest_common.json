@@ -1,0 +1,33 @@
+{
+  "difficulties": {
+    "쉬움": { "key": "easy", "image": "/images/quest/difficulty/icon_difficulty_easy.webp" },
+    "보통": { "key": "medium", "image": "/images/quest/difficulty/icon_difficulty_medium.webp" },
+    "어려움": { "key": "hard", "image": "/images/quest/difficulty/icon_difficulty_hard.webp" },
+    "익스트림": { "key": "extreme", "image": "/images/quest/difficulty/icon_difficulty_extreme.webp" },
+    "없음": { "key": "empty", "image": "/images/quest/difficulty/icon_difficulty_empty.webp" }
+  },
+  "elementalBarriers": {
+    "불": { "key": "fire", "image": "/images/quest/elemental_barrier/fire.webp" },
+    "물": { "key": "water", "image": "/images/quest/elemental_barrier/water.webp" },
+    "공기": { "key": "air", "image": "/images/quest/elemental_barrier/air.webp" },
+    "대지": { "key": "earth", "image": "/images/quest/elemental_barrier/earth.webp" },
+    "빛": { "key": "light", "image": "/images/quest/elemental_barrier/light.webp" },
+    "어둠": { "key": "dark", "image": "/images/quest/elemental_barrier/dark.webp" }
+  },
+  "boosters": {
+    "전투력 부스터": { "key": "atkbooster_normal", "image": "/images/quest/booster/atkbooster_normal.webp" },
+    "슈퍼 전투력 부스터": { "key": "atkbooster_super", "image": "/images/quest/booster/atkbooster_super.webp" },
+    "메가 전투력 부스터": { "key": "atkbooster_mega", "image": "/images/quest/booster/atkbooster_mega.webp" },
+    "청동 나침반": { "key": "compass_bronze", "image": "/images/quest/booster/compass_bronze.webp" },
+    "은 나침반": { "key": "compass_silver", "image": "/images/quest/booster/compass_silver.webp" },
+    "금 나침반": { "key": "compass_gold", "image": "/images/quest/booster/compass_gold.webp" }
+  },
+  "faces": {
+    "A": "/images/quest/face/icon_shop_face_A.webp",
+    "B": "/images/quest/face/icon_shop_face_B.webp",
+    "C": "/images/quest/face/icon_shop_face_C.webp",
+    "D": "/images/quest/face/icon_shop_face_D.webp",
+    "S": "/images/quest/face/icon_shop_face_S.webp",
+    "SSS": "/images/quest/face/icon_shop_face_SSS.webp"
+  }
+}
