@@ -517,6 +517,8 @@ export default function EquipmentSelectDialog({
           <div className="overflow-y-auto h-full border border-border rounded p-3">
             {manualMode ? (
               <ManualEquipmentForm
+                ref={manualFormRef}
+                hideActions
                 initialData={slots[activeSlot]?.item?.manualData || null}
                 allowedTypes={currentAllowedTypes}
                 onConfirm={(item) => {
