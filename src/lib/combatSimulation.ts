@@ -1141,6 +1141,11 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     // Heroes attack
     for (let i = 0; i < numHeroes; i++) {
       if (heroHp[i] <= 0) continue;
+      // Mob evasion check (mini boss: agile/legendary)
+      if (mobEvasion >= 0 && Math.random() < mobEvasion) {
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `몬스터가 회피!` });
+        continue;
+      }
       const isCrit = Math.random() < heroCrit[i];
       const dmg = Math.floor(heroAtkVal[i] * (isCrit ? heroCritMult[i] : 1) * barrierMod);
       mobHpCurrent -= dmg;
