@@ -953,7 +953,7 @@ export default function QuestSimulation() {
       {/* Hero Select Dialog */}
       <HeroSelectDialog
         open={heroSelectOpen}
-        onOpenChange={setHeroSelectOpen}
+        onOpenChange={(open) => { setHeroSelectOpen(open); if (!open) setEditingSlotIdx(null); }}
         heroes={allHeroes}
         selectedIds={selectedHeroIds}
         maxMembers={maxMembers}
