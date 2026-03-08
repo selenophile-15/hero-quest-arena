@@ -289,7 +289,7 @@ export default function QuestSimulation() {
       {currentRegion && hasSubAreas && (
         <div className="card-fantasy p-4">
           <label className="text-sm text-muted-foreground block mb-3">세부 지역 선택</label>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
             {currentRegion.subAreas.map((sub, idx) => (
               <button
                 key={sub.key}
