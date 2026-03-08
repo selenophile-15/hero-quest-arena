@@ -303,6 +303,11 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
     onConfirm(item, data);
   };
 
+  useImperativeHandle(ref, () => ({
+    triggerConfirm: handleConfirm,
+    isValid: () => !!(data.name.trim() && (isAurasong || data.type)),
+  }));
+
   const STAT_FIELDS = [
     { key: 'atk' as const, label: '공격력' },
     { key: 'def' as const, label: '방어력' },
@@ -636,12 +641,17 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
       </div>
 
       {/* Actions */}
+      {!hideActions && (
       <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
         <Button variant="outline" size="sm" className="text-xs" onClick={onCancel}>취소</Button>
-        <Button size="sm" className="text-xs" onClick={handleConfirm} disabled={!data.name.trim() || !data.type}>
+        <Button size="sm" className="text-xs" onClick={handleConfirm} disabled={!data.name.trim() || (!isAurasong && !data.type)}>
           적용
         </Button>
       </div>
+      )}
     </div>
   );
-}
+});
+
+ManualEquipmentForm.displayName = 'ManualEquipmentForm';
+export default ManualEquipmentForm;
