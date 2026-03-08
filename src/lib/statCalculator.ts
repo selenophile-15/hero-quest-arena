@@ -77,6 +77,8 @@ export interface CalcInput {
     bonusData: Record<string, number | number[]>;
     appliedEquip: string[][] | undefined;
     skillLevel: number;
+    skillType: 'unique' | 'common';
+    skillName: string;
   }>;
   // Skill data for general stat parsing (with names)
   skillInputs: SkillBonusInput[];
