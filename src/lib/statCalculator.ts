@@ -136,6 +136,7 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     baseCrit, baseCritDmg, baseEvasion, baseThreat,
     seedHp, seedAtk, seedDef,
     equipResult,
+    equipBonuses,
     bonusSummary,
     totalHp, totalAtk, totalDef,
     totalCrit, totalCritDmg, totalCritAttack,
