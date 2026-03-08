@@ -249,9 +249,11 @@ export default function QuestSimulation() {
   })() : [];
 
 
-  // Sub-area or boss display name
+  // Sub-area or boss display name - use stage if available
   const locationName = selectedSubAreaIdx === 99 && currentRegion?.boss
     ? currentRegion.boss.name
+    : currentQuest?.stage
+    ? `${selectedSubArea?.name ? currentRegion?.name + ' ' : ''}${currentQuest.stage}단계`
     : selectedSubArea
     ? selectedSubArea.name
     : currentRegion?.name || '';
