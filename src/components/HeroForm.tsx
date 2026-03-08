@@ -404,6 +404,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     }
   }, [calculatedElements, elementManual]);
 
+  // Auto-calculate stats (Phase 1: base + seeds)
+  useEffect(() => {
+    if (!heroClass || !level) { setCalcStats(null); return; }
+    calculateHeroStats(heroClass, Number(level), { hp: seedHp, atk: seedAtk, def: seedDef })
+      .then(result => setCalcStats(result));
+  }, [heroClass, level, seedHp, seedAtk, seedDef]);
+
   const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
   const totalEquipElement = Object.values(equipElements).reduce((a, b) => a + b, 0);
 
