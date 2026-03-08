@@ -239,7 +239,7 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     bonusSummary.pctAtk += threatAtkPct;
     bonusSummary.sources.push({
       name: `위협도 ${totalThreat}의 40% → +${threatAtkPct}%`,
-      type: 'job' as const,
+      type: 'unique' as const,
       flatAtk: 0, flatDef: 0, flatHp: 0,
       pctAtk: threatAtkPct, pctDef: 0, pctHp: 0,
       critRate: 0, critDmg: 0, evasion: 0, threat: 0,
