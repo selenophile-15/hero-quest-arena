@@ -489,7 +489,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const seedValues = [seedHp, seedAtk, seedDef];
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in relative">
+      {/* Floating tab trigger for stat breakdown */}
+      {calcStats && (
+        <button
+          type="button"
+          onClick={() => setBreakdownOpen(true)}
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-20 bg-primary text-primary-foreground px-1.5 py-4 rounded-l-lg shadow-lg hover:bg-primary/90 transition-all writing-vertical"
+          style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+        >
+          <span className="text-xs font-semibold tracking-wider">📊 스탯 계산표</span>
+        </button>
+      )}
       {/* Sticky top bar with title + save/cancel */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
         <h2 className="font-display text-xl text-primary tracking-wide">
