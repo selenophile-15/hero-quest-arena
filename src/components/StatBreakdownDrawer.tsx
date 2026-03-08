@@ -875,18 +875,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
                     <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusVal}{unit}</td>
                   </tr>
-                  {isEvasion && relicEvasionBonus !== 0 && (
-                    <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
-                      <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicEvasionBonus}%</td>
-                    </tr>
-                  )}
-                  {!isEvasion && statType === 'threat' && relicThreatBonus !== 0 && (
-                    <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
-                      <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicThreatBonus}</td>
-                    </tr>
-                  )}
                   {isEvasion && hasEvasionFixed && (
                     <tr className="border-b border-border/30 bg-red-900/20">
                       <td className="py-1.5 text-red-400 font-semibold">⚠ {hasEvasionFixed.itemName}</td>
