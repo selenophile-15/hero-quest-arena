@@ -607,9 +607,11 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                     const existingSlot = newSlots[slotIdx];
                     let slotElement = existingSlot?.element || null;
                     let slotSpirit = existingSlot?.spirit || null;
-                    if (item.manual) {
-                      slotElement = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true } : null;
-                      slotSpirit = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null;
+                    if (item.uniqueElement?.length) {
+                      slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
+                    }
+                    if (item.uniqueSpirit?.length) {
+                      slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
                     }
                     newSlots[slotIdx] = {
                       item: { ...item },
