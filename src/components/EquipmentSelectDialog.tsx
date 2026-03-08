@@ -338,7 +338,7 @@ export default function EquipmentSelectDialog({
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-6xl h-[90vh] overflow-hidden flex flex-col p-5">
         <DialogHeader>
-          <DialogTitle style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
+          <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
           <DialogDescription className="sr-only">슬롯별 장비를 선택하세요</DialogDescription>
         </DialogHeader>
 
@@ -514,12 +514,15 @@ export default function EquipmentSelectDialog({
                 onConfirm={(item) => {
                   const newSlots = [...slots];
                   const existingSlot = newSlots[activeSlot];
-                  const slotElement = item.uniqueElement?.length
-                    ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true }
-                    : existingSlot?.element || null;
-                  const slotSpirit = item.uniqueSpirit?.length
-                    ? { name: item.uniqueSpirit[0], affinity: true }
-                    : existingSlot?.spirit || null;
+                  let slotElement = existingSlot?.element || null;
+                  let slotSpirit = existingSlot?.spirit || null;
+                  if (item.manual) {
+                    slotElement = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true } : null;
+                    slotSpirit = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null;
+                  } else {
+                    if (item.uniqueElement?.length) slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
+                    if (item.uniqueSpirit?.length) slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
+                  }
                   newSlots[activeSlot] = {
                     item: { ...item },
                     quality: existingSlot?.quality || slotQuality,

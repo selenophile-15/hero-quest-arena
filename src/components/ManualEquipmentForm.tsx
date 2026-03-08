@@ -272,7 +272,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
 
   return (
     <div className="space-y-3 p-3">
-      <h3 className="text-sm font-bold text-foreground">수동 입력</h3>
+      <h3 className="text-sm font-bold text-yellow-400">수동 입력</h3>
 
       <div className="grid grid-cols-2 gap-4">
         {/* ===== LEFT COLUMN: Name, Type, Stats ===== */}
@@ -319,7 +319,7 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
 
           {/* Stats */}
           <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs mt-1">
-            <span className="text-foreground">스탯</span>
+            <span className="text-foreground">스탯 *</span>
             <span className="text-muted-foreground text-[10px]">일반 등급 기준</span>
           </div>
           <div className="grid grid-cols-2 gap-3 text-xs">
@@ -501,13 +501,13 @@ export default function ManualEquipmentForm({ initialData, allowedTypes, onConfi
                 {data.relicBonuses.map((b, i) => (
                   <div key={i} className="flex items-center gap-1.5 flex-wrap">
                     <Select value={b.stat} onValueChange={v => updateBonus(i, 'stat', v)}>
-                      <SelectTrigger className="h-7 text-[10px] w-[120px]"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-7 text-[10px] w-[150px]"><SelectValue /></SelectTrigger>
                       <SelectContent className="max-h-[200px]">
                         {RELIC_STAT_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
                       </SelectContent>
                     </Select>
                     <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
-                      <SelectTrigger className="h-7 text-[10px] w-14"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-7 text-[10px] w-[52px]"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
                       </SelectContent>
