@@ -1117,6 +1117,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             uniqueElementTier: s.item.uniqueElementTier,
             uniqueSpirit: s.item.uniqueSpirit,
           } : null)}
+          itemTypes={equipmentSlots.map(s => s.item?.type || s.item?.manualData?.type || '')}
           itemNames={equipmentSlots.map(s => s.item?.name || '')}
           onConfirm={(enchantSlots) => {
             const newSlots = equipmentSlots.map((s, i) => ({
