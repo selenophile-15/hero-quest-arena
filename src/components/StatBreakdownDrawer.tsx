@@ -140,6 +140,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const preBonusKey = statType === 'atk' ? 'preBonusAtk' : statType === 'def' ? 'preBonusDef' : 'preBonusHp';
     const bonusPctKey = statType === 'atk' ? 'bonusAtkPct' : statType === 'def' ? 'bonusDefPct' : 'bonusHpPct';
     const finalKey = statType === 'atk' ? 'finalAtk' : statType === 'def' ? 'finalDef' : 'finalHp';
+    const quiverBonusKey = statType === 'atk' ? 'quiverBonusAtk' : statType === 'def' ? 'quiverBonusDef' : 'quiverBonusHp';
 
     return (
       <div className="grid grid-cols-[1fr_2fr] gap-4 h-full">
