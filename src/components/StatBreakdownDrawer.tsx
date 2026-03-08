@@ -476,10 +476,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
       }
     }
 
-    const relicCritBonus = relicFlat?.crit || 0;
-    const relicCritDmgBonus = relicFlat?.critDmg || 0;
-    const relicEvasionBonus = relicFlat?.evasion || 0;
-    const relicThreatBonus = relicFlat?.threat || 0;
 
     // Base values
     const baseVal = calcStats
