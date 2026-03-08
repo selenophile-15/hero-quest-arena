@@ -413,10 +413,10 @@ export async function calculateEquipmentStats(
       bonusHpPct += 100;
     }
 
-    // Final slot stats
-    let finalAtk = Math.floor(preBonusAtk * (1 + bonusAtkPct / 100));
-    let finalDef = Math.floor(preBonusDef * (1 + bonusDefPct / 100));
-    let finalHp = Math.floor(preBonusHp * (1 + bonusHpPct / 100));
+    // Final slot stats: afterSpellknight × (1 + bonus%)
+    let finalAtk = Math.floor(afterSpellknight.atk * (1 + bonusAtkPct / 100));
+    let finalDef = Math.floor(afterSpellknight.def * (1 + bonusDefPct / 100));
+    let finalHp = Math.floor(afterSpellknight.hp * (1 + bonusHpPct / 100));
     const finalCrit = baseCrit;
     const finalEvasion = baseEvasion;
 
@@ -447,6 +447,7 @@ export async function calculateEquipmentStats(
       elementCapAtk, elementCapDef, elementCapHp,
       spiritCapAtk, spiritCapDef, spiritCapHp,
       preBonusAtk, preBonusDef, preBonusHp,
+      spellknightMult,
       bonusAtkPct, bonusDefPct, bonusHpPct,
       finalAtk, finalDef, finalHp, finalCrit, finalEvasion,
     });
