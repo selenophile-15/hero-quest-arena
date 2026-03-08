@@ -1106,6 +1106,140 @@ export default function QuestSimulation() {
         </div>
       </div>
 
+      {/* Full-width Simulation Details Box */}
+      {currentQuest && selectedHeroes.length > 0 && simResult && (
+        <div className="mt-4 card-fantasy p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
+            <div className="flex items-center gap-2">
+              <span className="text-[8px] text-muted-foreground/50">
+                {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1"
+                onClick={() => {
+                  if (!currentQuest || !currentRegion) return;
+                  const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
+                  const bElements = currentQuest?.barrier ? (() => {
+                    const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                    const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                      ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
+                      : null;
+                    const rawElements = barrierElement2
+                      ? [barrierElement2]
+                      : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+                    return [...new Set(rawElements)] as string[];
+                  })() : [];
+                  const questMonster: QuestMonster = {
+                    hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
+                    aoeChance: currentQuest.aoeChance, def: currentQuest.def,
+                    isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
+                    barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
+                  };
+                  const entries = runSingleCombatLog({
+                    heroes: selectedHeroes, monster: questMonster,
+                    miniBoss: 'none' as MiniBossType, booster: { type: selectedBooster },
+                    questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
+                  });
+                  setCombatLog(entries);
+                  setShowCombatLog(true);
+                }}
+              >
+                🎲 1회 전투 로그
+              </Button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Left: Rounds info */}
+            <div>
+              <div className="text-xs text-muted-foreground mb-2 font-medium">라운드 정보</div>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="bg-secondary/30 rounded p-2">
+                  <div className="text-[9px] text-muted-foreground">최소</div>
+                  <div className="text-sm font-mono text-foreground font-bold">{simResult.minRounds}</div>
+                </div>
+                <div className="bg-secondary/30 rounded p-2">
+                  <div className="text-[9px] text-muted-foreground">평균</div>
+                  <div className="text-sm font-mono text-foreground font-bold">{simResult.avgRounds.toFixed(1)}</div>
+                </div>
+                <div className="bg-secondary/30 rounded p-2">
+                  <div className="text-[9px] text-muted-foreground">최대</div>
+                  <div className="text-sm font-mono text-foreground font-bold">{simResult.maxRounds}</div>
+                </div>
+              </div>
+              {simResult.roundLimitRate > 0 && (
+                <div className="mt-2 text-center text-[10px] text-red-400">
+                  ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
+                </div>
+              )}
+            </div>
+
+            {/* Right: Per-hero results */}
+            <div>
+              <div className="text-xs text-muted-foreground mb-2 font-medium">영웅별 결과</div>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-muted-foreground border-b border-border/30">
+                    <th className="text-left py-1 px-1">영웅</th>
+                    <th className="text-center py-1">생존률</th>
+                    <th className="text-center py-1">평균 데미지</th>
+                    <th className="text-center py-1">최대 데미지</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {simResult.heroResults.map(hr => (
+                    <tr key={hr.heroId} className="border-b border-border/10">
+                      <td className="py-1.5 px-1 text-foreground font-medium">{hr.heroName}</td>
+                      <td className={`py-1.5 text-center font-mono ${
+                        hr.survivalRate >= 90 ? 'text-green-400' :
+                        hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
+                      }`}>{hr.survivalRate.toFixed(1)}%</td>
+                      <td className="py-1.5 text-center font-mono text-red-400">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
+                      <td className="py-1.5 text-center font-mono text-orange-400">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Combat Log */}
+          {showCombatLog && combatLog && (
+            <div className="mt-4 border-t border-border/30 pt-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-foreground">🎲 1회 전투 로그</span>
+                <button onClick={() => setShowCombatLog(false)} className="text-[10px] text-muted-foreground hover:text-foreground">닫기 ✕</button>
+              </div>
+              <ScrollArea className="h-64 rounded border border-border/30 bg-secondary/20 p-2">
+                <div className="space-y-0.5 text-[11px] font-mono">
+                  {combatLog.map((entry, idx) => {
+                    let color = 'text-muted-foreground';
+                    let icon = '';
+                    if (entry.type === 'monster_attack') { color = 'text-red-400'; icon = '⚔️'; }
+                    else if (entry.type === 'hero_attack') { color = 'text-blue-400'; icon = '🗡️'; }
+                    else if (entry.type === 'heal') { color = 'text-green-400'; icon = '💚'; }
+                    else if (entry.type === 'result') { color = entry.detail.includes('승리') ? 'text-green-400' : 'text-red-400'; icon = '🏁'; }
+                    else { color = 'text-yellow-400'; icon = '⚡'; }
+                    return (
+                      <div key={idx} className={`${color} leading-relaxed`}>
+                        <span className="text-muted-foreground/50 mr-1">[R{entry.round}]</span>
+                        <span className="mr-1">{icon}</span>
+                        <span className="text-foreground/80 font-semibold mr-1">{entry.actor}</span>
+                        {entry.target && <span className="text-muted-foreground mr-1">→ {entry.target}</span>}
+                        <span>{entry.detail}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Config Dialog */}
       <QuestConfigDialog
         open={configOpen}
