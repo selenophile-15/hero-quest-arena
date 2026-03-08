@@ -550,9 +550,9 @@ export default function QuestSimulation() {
           </div>
           <div className="card-fantasy p-4 overflow-x-auto">
             {/* Unified table: visual rows (element, face, hero circle, name, class) + stat rows */}
-            <table className="w-full text-[11px]">
+            <table className="w-full text-xs">
               <colgroup>
-                <col className="w-16" />
+                <col className="w-20" />
                 {Array.from({ length: maxMembers }).map((_, i) => (
                   <col key={i} />
                 ))}
@@ -561,7 +561,7 @@ export default function QuestSimulation() {
                 {/* Row: Element barrier icons */}
                 {barrierElements.length > 0 && (
                   <tr>
-                    <td className="py-1 px-1 text-muted-foreground text-[10px]">원소</td>
+                    <td className="py-1 px-1.5 text-muted-foreground">원소</td>
                     {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                       const hero = selectedHeroes[slotIdx];
                       if (!hero) return <td key={`el-empty-${slotIdx}`} className="text-center py-1" />;
@@ -570,11 +570,11 @@ export default function QuestSimulation() {
                       })).filter(b => b.val > 0);
                       return (
                         <td key={hero.id} className="text-center py-1">
-                          <div className="flex justify-center gap-0.5">
+                          <div className="flex justify-center gap-1">
                             {icons.map(b => (
                               <div key={b.el} className="flex flex-col items-center">
-                                {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-4 h-4" />}
-                                <span className="text-[8px] font-mono text-purple-300">{formatNumber(b.val)}</span>
+                                {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-5 h-5" />}
+                                <span className="text-[10px] font-mono font-bold text-purple-300">{formatNumber(b.val)}</span>
                               </div>
                             ))}
                           </div>
@@ -585,7 +585,7 @@ export default function QuestSimulation() {
                 )}
                 {/* Row: Face */}
                 <tr>
-                  <td className="py-1 px-1 text-muted-foreground text-[10px]">표정</td>
+                  <td className="py-1 px-1.5 text-muted-foreground">표정</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     return (
@@ -597,7 +597,7 @@ export default function QuestSimulation() {
                 </tr>
                 {/* Row: Hero circle (job image) */}
                 <tr>
-                  <td className="py-1 px-1 text-muted-foreground text-[10px]">직업</td>
+                  <td className="py-1 px-1.5 text-muted-foreground">직업</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     if (!hero) {
@@ -621,7 +621,7 @@ export default function QuestSimulation() {
                       <td key={hero.id} className="text-center py-2">
                         <div className="inline-flex flex-col items-center gap-0.5">
                           {belowMin && (
-                            <span className="text-[9px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
+                            <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                           )}
                           <button onClick={() => toggleHero(hero.id)}
                             className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden group transition-all ${
@@ -644,51 +644,97 @@ export default function QuestSimulation() {
                 </tr>
                 {/* Row: Name */}
                 <tr className="border-b border-border/30">
-                  <td className="py-1 px-1 text-muted-foreground text-[10px]">이름</td>
+                  <td className="py-1 px-1.5 text-muted-foreground">이름</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     return (
                       <td key={hero?.id || `name-empty-${slotIdx}`} className="text-center py-1">
                         {hero && (
                           <div>
-                            <div className="text-[10px] text-foreground font-medium truncate">{hero.name}</div>
-                            <div className="text-[9px] text-muted-foreground">{hero.heroClass || hero.championName || ''}</div>
+                            <div className="text-xs text-foreground font-medium truncate">{hero.name}</div>
+                            <div className="text-[10px] text-muted-foreground">{hero.heroClass || hero.championName || ''}</div>
                           </div>
                         )}
                       </td>
                     );
                   })}
                 </tr>
-                {/* Stat rows */}
-                {selectedHeroes.length > 0 && [
-                  { label: '전투력', key: 'power', color: 'text-yellow-400' },
-                  { label: 'ATK', key: 'atk', color: 'text-red-400' },
-                  { label: 'DEF', key: 'def', color: 'text-blue-400' },
-                  { label: 'HP', key: 'hp', color: 'text-orange-400' },
-                  { label: 'CRIT.C', key: 'crit', color: 'text-yellow-400' },
-                  { label: 'CRIT.D', key: 'critDmg', color: 'text-yellow-400' },
-                  { label: 'EVA', key: 'evasion', color: 'text-teal-400' },
-                  { label: 'THREAT', key: 'threat', color: 'text-foreground' },
-                ].map(stat => (
-                  <tr key={stat.key} className="border-b border-border/20">
-                    <td className="py-1 px-1 text-muted-foreground font-medium">{stat.label}</td>
-                    {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                      const hero = selectedHeroes[slotIdx];
-                      if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
-                      const val = (hero as any)[stat.key] || 0;
-                      return (
-                        <td key={hero.id} className={`py-1 px-1 text-center font-mono ${stat.color}`}>
-                          {stat.key === 'crit' || stat.key === 'critDmg' || stat.key === 'evasion'
-                            ? `${val}%`
-                            : val > 0 ? formatNumber(val) : '-'}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+                {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF */}
+                {selectedHeroes.length > 0 && (() => {
+                  // Determine if evasion penalty applies (익스트림 or 명인의 탑 공포)
+                  const hasEvasionPenalty = currentQuest && (
+                    currentQuest.isExtreme ||
+                    (selectedQuestType === 'tot' && currentRegion?.name === '공포')
+                  );
+
+                  const statRows = [
+                    { label: 'HP', key: 'hp', color: 'text-orange-400' },
+                    { label: 'ATK', key: 'atk', color: 'text-red-400' },
+                    { label: 'CRIT.DMG', key: 'critDmg', color: 'text-yellow-400', suffix: '%' },
+                    { label: 'DEF', key: 'def', color: 'text-blue-400' },
+                    { label: 'CRIT.C', key: 'crit', color: 'text-yellow-400', suffix: '%' },
+                    { label: 'EVA', key: 'evasion', color: 'text-teal-400', suffix: '%' },
+                    { label: 'THREAT', key: 'threat', color: 'text-foreground' },
+                  ];
+
+                  return (
+                    <>
+                      {statRows.map(stat => (
+                        <tr key={stat.key} className="border-b border-border/20">
+                          <td className="py-1.5 px-1.5 text-muted-foreground font-medium">{stat.label}</td>
+                          {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                            const hero = selectedHeroes[slotIdx];
+                            if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
+                            const val = (hero as any)[stat.key] || 0;
+                            return (
+                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${stat.color}`}>
+                                {stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                      {/* Hit chance row */}
+                      <tr className="border-b border-border/20 bg-muted/20">
+                        <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
+                        {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                          const hero = selectedHeroes[slotIdx];
+                          if (!hero) return <td key={`hit-empty-${slotIdx}`} />;
+
+                          let evasion = hero.evasion || 0;
+                          const evasionCap = hero.heroClass === '길잡이' ? 78 : 75;
+
+                          // Check if evasion is fixed at 0 (락 스톰퍼 - evasion already 0 on hero)
+                          const isEvasionFixed = evasion === 0 && hero.equipmentSlots?.some(
+                            slot => slot.item?.name === '락 스톰퍼'
+                          );
+
+                          if (hasEvasionPenalty && !isEvasionFixed) {
+                            // Apply -20% penalty first, then cap
+                            evasion = Math.max(0, evasion - 20);
+                          }
+
+                          // Apply cap
+                          const cappedEvasion = Math.min(evasion, evasionCap);
+                          const hitChance = 100 - cappedEvasion;
+
+                          return (
+                            <td key={hero.id} className="py-1.5 px-1 text-center font-mono">
+                              <span className={hitChance >= 80 ? 'text-red-400' : hitChance >= 50 ? 'text-yellow-400' : 'text-green-400'}>
+                                {hitChance}%
+                              </span>
+                              {hasEvasionPenalty && !isEvasionFixed && (
+                                <div className="text-[9px] text-red-400/70">(-20%)</div>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    </>
+                  );
+                })()}
               </tbody>
             </table>
-
             {currentQuest && selectedHeroes.length > 0 && (
               <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} className="w-full mt-3 gap-2" size="sm">
                 <Play className="w-4 h-4" /> 시뮬레이션 실행
