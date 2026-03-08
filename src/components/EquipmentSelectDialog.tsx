@@ -368,6 +368,7 @@ export default function EquipmentSelectDialog({
                 <span className={`text-[8px] flex items-center gap-1 ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>
                   슬롯 {i + 1}
                   {s.item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-3 h-3 inline" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                  {s.item?.manual && <Wrench className="w-2.5 h-2.5 inline text-muted-foreground" />}
                 </span>
                 {s.item ? (
                   <>
