@@ -389,6 +389,13 @@ export default function QuestSimulation() {
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
                   </div>
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5 text-orange-400" />
+                      <span className="text-xs text-muted-foreground">치명타 확률</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono text-foreground">{currentQuest.aoeChance}%</span>
+                  </div>
                 </div>
 
                 {/* Defense Reference - vertical */}
