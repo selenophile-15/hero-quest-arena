@@ -369,6 +369,22 @@ export default function QuestSimulation() {
     { key: 'r75' as const, label: '75%', color: '#ffffff', textClass: 'text-white', value: currentQuest?.def.r75 || 0 },
   ];
 
+  // Calculate damage reduction % for a given defense value using threshold interpolation
+  const getDamageReductionForDef = (def: number): number => {
+    const reductions = [-50, 0, 50, 70, 75];
+    for (let i = defThresholds.length - 1; i >= 1; i--) {
+      if (def >= defThresholds[i - 1].value) {
+        const lower = defThresholds[i - 1].value;
+        const upper = defThresholds[i].value;
+        const lowerRed = reductions[i - 1];
+        const upperRed = reductions[i];
+        const t = upper > lower ? Math.min(1, (def - lower) / (upper - lower)) : 0;
+        return lowerRed + t * (upperRed - lowerRed);
+      }
+    }
+    return -50;
+  };
+
   const questTimeSettings = timeSettings.filter(s => s.category === 'quest');
   const restTimeSettings = timeSettings.filter(s => s.category === 'rest');
 
