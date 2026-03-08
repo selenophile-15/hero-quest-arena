@@ -58,14 +58,16 @@ export interface HeroSimResult {
 }
 
 export interface SimulationResult {
-  winRate: number;           // % (after Fateweaver correction if applicable)
-  rawWinRate: number;        // % (before Fateweaver)
+  winRate: number;           // % (after Fateweaver retry if applicable)
+  rawWinRate: number;        // % (first attempt, before retry)
+  retryWinRate?: number;     // % (second attempt with booster, if Fateweaver)
   avgRounds: number;
   minRounds: number;
   maxRounds: number;
   heroResults: HeroSimResult[];
   roundLimitRate: number;    // % of sims hitting 499 round limit
   totalSimulations: number;
+  retrySimulations?: number; // Number of retry sims (if Fateweaver)
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
