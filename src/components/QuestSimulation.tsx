@@ -10,7 +10,7 @@ import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Lo
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
-import { runCombatSimulation, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType } from '@/lib/combatSimulation';
+import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 
