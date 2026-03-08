@@ -189,6 +189,43 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     }
   }
 
+  // === Special job mechanics ===
+
+  // 경보병/근위병: shield's final defense → added to flat ATK
+  const isPraetorian = jobName === '경보병' || jobName === '근위병';
+  let shieldDefToAtk = 0;
+  if (isPraetorian) {
+    for (const slot of equipResult.slots) {
+      if (slot.itemType === 'shield') {
+        shieldDefToAtk += slot.finalDef;
+      }
+    }
+    if (shieldDefToAtk > 0) {
+      bonusSummary.flatAtk += shieldDefToAtk;
+      bonusSummary.sources.push({
+        name: `방패 방어력→공격력 (${jobName})`,
+        type: 'relic' as const,
+        flatAtk: shieldDefToAtk, flatDef: 0, flatHp: 0,
+        pctAtk: 0, pctDef: 0, pctHp: 0,
+        critRate: 0, critDmg: 0, evasion: 0, threat: 0,
+      });
+    }
+  }
+
+  // 풍수사/아스트라맨서: total element points × 1% added to common ATK %
+  const isGeomancer = jobName === '풍수사' || jobName === '아스트라맨서';
+  if (isGeomancer && totalElementPoints > 0) {
+    const elementAtkPct = totalElementPoints; // 1% per point
+    bonusSummary.pctAtk += elementAtkPct;
+    bonusSummary.sources.push({
+      name: `원소 포인트 ${totalElementPoints}pt → +${elementAtkPct}%`,
+      type: 'relic' as const,
+      flatAtk: 0, flatDef: 0, flatHp: 0,
+      pctAtk: elementAtkPct, pctDef: 0, pctHp: 0,
+      critRate: 0, critDmg: 0, evasion: 0, threat: 0,
+    });
+  }
+
   // Final formula: (base + seed + Σequip + flat) × (1 + pct/100)
   const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
   const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
@@ -198,7 +235,23 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate;
   let totalCritDmg = baseCritDmg + bonusSummary.critDmg;
   let totalEvasion = baseEvasion + equipResult.totalEvasion + bonusSummary.evasion;
-  const totalThreat = baseThreat + bonusSummary.threat;
+  let totalThreat = baseThreat + bonusSummary.threat;
+
+  // 족장: final threat × 40% → added to common ATK % (must be computed after threat is finalized)
+  const isChieftain = jobName === '족장';
+  if (isChieftain && totalThreat > 0) {
+    const threatAtkPct = Math.floor(totalThreat * 0.4 * 10) / 10; // threat × 40%
+    // Need to recompute totalAtk with this additional %
+    // This is applied as a post-calculation adjustment
+    bonusSummary.pctAtk += threatAtkPct;
+    bonusSummary.sources.push({
+      name: `위협도 ${totalThreat}의 40% → +${threatAtkPct}%`,
+      type: 'relic' as const,
+      flatAtk: 0, flatDef: 0, flatHp: 0,
+      pctAtk: threatAtkPct, pctDef: 0, pctHp: 0,
+      critRate: 0, critDmg: 0, evasion: 0, threat: 0,
+    });
+  }
 
   // Store pre-relic values for display
   const preRelicCrit = totalCrit;
