@@ -95,6 +95,9 @@ export interface EquipmentItem {
   uniqueElementTier: number | null;
   uniqueSpirit: string[] | null;
   judgmentTypes: string[] | null;
+  manual?: boolean;
+  manualData?: any;
+  relicStatBonuses?: { stat: string; op: string; value: number }[];
 }
 
 // Level → max equippable tier
