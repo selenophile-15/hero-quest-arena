@@ -1021,47 +1021,11 @@ export default function QuestSimulation() {
             </table>
             {currentQuest && selectedHeroes.length > 0 && (
               <div className="mt-3 space-y-3">
-                <Button
-                  onClick={() => {
-                    if (simRunning || !currentQuest || !currentRegion) return;
-                    setSimRunning(true);
-                    setSimResult(null);
-                    const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
-                    const questMonster: QuestMonster = {
-                      hp: currentQuest.hp,
-                      atk: currentQuest.atk,
-                      aoe: currentQuest.aoe,
-                      aoeChance: currentQuest.aoeChance,
-                      def: currentQuest.def,
-                      isBoss: currentQuest.isBoss,
-                      isExtreme: currentQuest.isExtreme,
-                      barrier: currentQuest.barrier,
-                      barrierElement: barrierElements[0] || null,
-                    };
-                    setTimeout(() => {
-                      const result = runCombatSimulation({
-                        heroes: selectedHeroes,
-                        monster: questMonster,
-                        miniBoss: 'none' as MiniBossType,
-                        booster: { type: selectedBooster },
-                        questTypeKey: selectedQuestType,
-                        regionName: currentRegion!.name,
-                        isTerrorTower,
-                      });
-                      setSimResult(result);
-                      setSimRunning(false);
-                    }, 50);
-                  }}
-                  className="w-full gap-2"
-                  size="sm"
-                  disabled={simRunning}
-                >
-                  {simRunning ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> 시뮬레이션 진행 중...</>
-                  ) : (
-                    <><Play className="w-4 h-4" /> 시뮬레이션 실행</>
-                  )}
-                </Button>
+                {simRunning && (
+                  <div className="flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground">
+                    <Loader2 className="w-4 h-4 animate-spin" /> 시뮬레이션 진행 중...
+                  </div>
+                )}
 
                 {/* Simulation Results */}
                 {simResult && (
