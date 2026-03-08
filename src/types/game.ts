@@ -28,6 +28,7 @@ export interface Hero {
   skills: string[];
   // Champion-specific
   championName?: string;
+  cardLevel?: number; // 챔피언 카드 레벨 (1-3)
   rank?: number;
   createdAt: string;
   // Equipment persistence
