@@ -380,8 +380,8 @@ export default function QuestSimulation() {
             </div>
           )}
 
-          {/* Boss quests */}
-          {questGroups.boss.length > 0 && (
+          {/* Boss quests - show for boss sub-area selection or when no sub-area system */}
+          {((!hasSubAreas || selectedSubAreaIdx === 99) && questGroups.boss.length > 0) && (
             <div>
               <span className="text-xs text-muted-foreground mb-1.5 block flex items-center gap-1">
                 <Crown className="w-3 h-3" /> 보스
