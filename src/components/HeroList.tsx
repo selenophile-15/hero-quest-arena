@@ -879,7 +879,7 @@ export default function HeroList() {
                   </div>
                   {item && (displayElement || displaySpirit || itemType) && (
                      <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-4">
-                      {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                       {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                       {displaySpirit && (() => {
                         const eng = SPIRIT_NAME_MAP[displaySpirit.name];
                         if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-3.5 h-3.5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
