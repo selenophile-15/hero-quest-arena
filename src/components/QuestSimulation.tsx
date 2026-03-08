@@ -13,6 +13,7 @@ import HeroSelectDialog from '@/components/HeroSelectDialog';
 import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
+import CombatBattlefield from '@/components/CombatBattlefield';
 
 // Quest data types
 interface QuestTime {
@@ -144,8 +145,10 @@ export default function QuestSimulation() {
 
   // Dialogs
   const [configOpen, setConfigOpen] = useState(false);
+  const [configInitialStep, setConfigInitialStep] = useState<'type' | 'region' | 'subarea' | 'difficulty' | undefined>();
+  const [configInitialState, setConfigInitialState] = useState<{ questTypeKey: string; regionIdx: number; subAreaIdx: number } | undefined>();
   const [heroSelectOpen, setHeroSelectOpen] = useState(false);
-  const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null); // Which slot is being edited
+  const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null);
 
   // Time settings
   const [timeSettings, setTimeSettings] = useState<TimeSettingItem[]>(DEFAULT_TIME_SETTINGS);
@@ -161,6 +164,7 @@ export default function QuestSimulation() {
   const [selectedBooster, setSelectedBooster] = useState<'none' | 'normal' | 'super' | 'mega'>('none');
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
   const [showCombatLog, setShowCombatLog] = useState(false);
+  const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>('none');
 
   // Load quest data
   useEffect(() => {
@@ -291,7 +295,7 @@ export default function QuestSimulation() {
       const result = runCombatSimulation({
         heroes: selectedHeroes,
         monster: questMonster,
-        miniBoss: 'none' as MiniBossType,
+        miniBoss: selectedMiniBoss,
         booster: { type: selectedBooster },
         questTypeKey: selectedQuestType,
         regionName: currentRegion.name,
@@ -301,7 +305,7 @@ export default function QuestSimulation() {
       setSimRunning(false);
     }, 100);
     return () => clearTimeout(timer);
-  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx]);
+  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
@@ -350,6 +354,7 @@ export default function QuestSimulation() {
     setSelectedSubAreaIdx(-1);
     setSelectedQuestIdx(-1);
     setSelectedHeroIds(new Set());
+    setSelectedMiniBoss('none');
   };
 
   const handleQuestSelect = (sel: { questTypeKey: string; regionIdx: number; subAreaIdx: number; questIdx: number }) => {
@@ -358,6 +363,17 @@ export default function QuestSimulation() {
     setSelectedSubAreaIdx(sel.subAreaIdx);
     setSelectedQuestIdx(sel.questIdx);
     setSelectedHeroIds(new Set());
+    setSelectedMiniBoss('none');
+  };
+
+  const openConfigAtStep = (step: 'type' | 'region' | 'subarea' | 'difficulty') => {
+    setConfigInitialStep(step);
+    setConfigInitialState({
+      questTypeKey: selectedQuestType,
+      regionIdx: selectedRegionIdx,
+      subAreaIdx: selectedSubAreaIdx,
+    });
+    setConfigOpen(true);
   };
 
   if (loading) {
@@ -449,9 +465,13 @@ export default function QuestSimulation() {
           <div className="card-fantasy p-4 relative min-h-[400px]">
             {/* Region icon - top left, bigger */}
             {currentRegion && (
-              <div className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10">
+              <button
+                onClick={() => openConfigAtStep('region')}
+                className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 hover:border-primary/70 transition-all cursor-pointer"
+                title="지역 변경"
+              >
                 <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-              </div>
+              </button>
             )}
 
             {/* Booster slot - top right, symmetric with region icon */}
@@ -535,21 +555,66 @@ export default function QuestSimulation() {
                 {/* Line 2: Difficulty */}
                 {currentQuest.difficulty !== '없음' && (
                   <div className="text-center text-sm">
-                    <span className={`font-medium ${
-                      currentQuest.difficulty === '쉬움' ? 'text-green-400' :
-                      currentQuest.difficulty === '보통' ? 'text-blue-400' :
-                      currentQuest.difficulty === '어려움' ? 'text-orange-400' :
-                      currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
-                    }`}>{currentQuest.difficulty}</span>
+                    <button
+                      onClick={() => openConfigAtStep('difficulty')}
+                      className={`font-medium cursor-pointer hover:underline ${
+                        currentQuest.difficulty === '쉬움' ? 'text-green-400' :
+                        currentQuest.difficulty === '보통' ? 'text-blue-400' :
+                        currentQuest.difficulty === '어려움' ? 'text-orange-400' :
+                        currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
+                      }`}
+                      title="난이도 변경"
+                    >{currentQuest.difficulty}</button>
                   </div>
                 )}
 
-                {/* Line 3: Boss (below difficulty) */}
-                {currentQuest.isBoss && (
+                {/* Line 3: Boss or Mini Boss selector */}
+                {currentQuest.isBoss ? (
                   <div className="text-center text-sm">
                     <span className="text-red-400">
                       <Crown className="w-3.5 h-3.5 inline mr-0.5" />보스
                     </span>
+                  </div>
+                ) : !currentQuest.isBoss && selectedSubAreaIdx !== 99 && (
+                  <div className="text-center">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className={`text-xs px-2 py-0.5 rounded border transition-all ${
+                          selectedMiniBoss !== 'none'
+                            ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
+                            : 'border-border/40 text-muted-foreground hover:border-primary/40'
+                        }`}>
+                          {selectedMiniBoss === 'none' ? '미니보스 없음' :
+                           selectedMiniBoss === 'huge' ? '🟡 거대한' :
+                           selectedMiniBoss === 'agile' ? '🟢 민첩한' :
+                           selectedMiniBoss === 'dire' ? '🔴 흉포한' :
+                           selectedMiniBoss === 'legendary' ? '🟣 전설의' : '미니보스'}
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-48 p-2" align="center">
+                        <div className="text-xs font-medium text-foreground mb-2">미니보스 수식어</div>
+                        <div className="space-y-1">
+                          {([
+                            { id: 'none', label: '없음', desc: '일반 몬스터', color: '' },
+                            { id: 'huge', label: '거대한', desc: 'HP 2배, 광역 2배', color: 'text-yellow-400' },
+                            { id: 'agile', label: '민첩한', desc: '회피 +40%', color: 'text-green-400' },
+                            { id: 'dire', label: '흉포한', desc: 'HP 1.5배, 치확 3배', color: 'text-red-400' },
+                            { id: 'legendary', label: '전설의', desc: 'HP 1.5배, ATK 1.25배, 치확 1.5배, 회피 10%', color: 'text-purple-400' },
+                          ] as const).map(mb => (
+                            <button
+                              key={mb.id}
+                              onClick={() => setSelectedMiniBoss(mb.id as MiniBossType)}
+                              className={`w-full text-left px-2 py-1.5 rounded text-xs transition-colors ${
+                                selectedMiniBoss === mb.id ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'
+                              }`}
+                            >
+                              <span className={`font-medium ${mb.color}`}>{mb.label}</span>
+                              <span className="text-[10px] text-muted-foreground ml-1">{mb.desc}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 )}
 
@@ -823,14 +888,35 @@ export default function QuestSimulation() {
                     })}
                   </tr>
                 )}
-                {/* Row: Face */}
+                {/* Row: Face - based on death count */}
                 <tr>
                   <td className="py-1 px-1.5 text-muted-foreground">표정</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
+                    if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
+                    
+                    // Calculate face rating based on simulation deaths
+                    const heroResult = simResult?.heroResults.find(r => r.heroId === hero.id);
+                    const totalSims = simResult?.totalSimulations || 1;
+                    const scale = totalSims / 20;
+                    
+                    let face = '😐';
+                    if (heroResult && simResult) {
+                      const deathCount = totalSims - Math.round(heroResult.survivalRate / 100 * totalSims);
+                      const belowMinPower = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
+                      
+                      if (belowMinPower || deathCount >= 20 * scale) face = '😈';
+                      else if (deathCount >= 12 * scale) face = '😡';
+                      else if (deathCount >= 8 * scale) face = '😟';
+                      else if (deathCount >= 3 * scale) face = '😊';
+                      else if (deathCount >= 0.01 * scale) face = '😃';
+                      else if (simResult.avgRounds <= 1 && simResult.winRate >= 99.9) face = '😎';
+                      else face = '😃';
+                    }
+                    
                     return (
-                      <td key={hero?.id || `face-empty-${slotIdx}`} className="text-center py-1">
-                        {hero ? <span className="text-2xl">😐</span> : null}
+                      <td key={hero.id} className="text-center py-1">
+                        <span className="text-2xl">{face}</span>
                       </td>
                     );
                   })}
@@ -1012,12 +1098,6 @@ export default function QuestSimulation() {
                                   {barrierOriginal > 0 && (
                                     <span className="text-[9px] text-muted-foreground leading-tight">({formatNumber(barrierOriginal)})</span>
                                   )}
-                                  {delta > 0 && !barrierOriginal && (
-                                    <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
-                                  )}
-                                  {delta < 0 && !barrierOriginal && (
-                                    <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
-                                  )}
                                   {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
                                   {critCapNote && <span className="text-[9px] text-muted-foreground">{critCapNote}</span>}
                                 </div>
@@ -1140,7 +1220,7 @@ export default function QuestSimulation() {
                   };
                   const entries = runSingleCombatLog({
                     heroes: selectedHeroes, monster: questMonster,
-                    miniBoss: 'none' as MiniBossType, booster: { type: selectedBooster },
+                    miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
                     questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
                   });
                   setCombatLog(entries);
@@ -1206,35 +1286,19 @@ export default function QuestSimulation() {
             </div>
           </div>
 
-          {/* Combat Log */}
+          {/* Combat Battlefield */}
           {showCombatLog && combatLog && (
             <div className="mt-4 border-t border-border/30 pt-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-foreground">🎲 1회 전투 로그</span>
+                <span className="text-xs font-medium text-foreground">🎲 1회 전투 시각화</span>
                 <button onClick={() => setShowCombatLog(false)} className="text-[10px] text-muted-foreground hover:text-foreground">닫기 ✕</button>
               </div>
-              <ScrollArea className="h-64 rounded border border-border/30 bg-secondary/20 p-2">
-                <div className="space-y-0.5 text-[11px] font-mono">
-                  {combatLog.map((entry, idx) => {
-                    let color = 'text-muted-foreground';
-                    let icon = '';
-                    if (entry.type === 'monster_attack') { color = 'text-red-400'; icon = '⚔️'; }
-                    else if (entry.type === 'hero_attack') { color = 'text-blue-400'; icon = '🗡️'; }
-                    else if (entry.type === 'heal') { color = 'text-green-400'; icon = '💚'; }
-                    else if (entry.type === 'result') { color = entry.detail.includes('승리') ? 'text-green-400' : 'text-red-400'; icon = '🏁'; }
-                    else { color = 'text-yellow-400'; icon = '⚡'; }
-                    return (
-                      <div key={idx} className={`${color} leading-relaxed`}>
-                        <span className="text-muted-foreground/50 mr-1">[R{entry.round}]</span>
-                        <span className="mr-1">{icon}</span>
-                        <span className="text-foreground/80 font-semibold mr-1">{entry.actor}</span>
-                        {entry.target && <span className="text-muted-foreground mr-1">→ {entry.target}</span>}
-                        <span>{entry.detail}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </ScrollArea>
+              <CombatBattlefield
+                log={combatLog}
+                heroes={selectedHeroes}
+                monsterHp={currentQuest?.hp || 0}
+                monsterName={locationName}
+              />
             </div>
           )}
         </div>
@@ -1243,10 +1307,18 @@ export default function QuestSimulation() {
       {/* Config Dialog */}
       <QuestConfigDialog
         open={configOpen}
-        onOpenChange={setConfigOpen}
+        onOpenChange={(open) => {
+          setConfigOpen(open);
+          if (!open) {
+            setConfigInitialStep(undefined);
+            setConfigInitialState(undefined);
+          }
+        }}
         questDataMap={questDataMap}
         questFiles={QUEST_FILES}
         onSelect={handleQuestSelect}
+        initialStep={configInitialStep}
+        initialState={configInitialState}
       />
 
       {/* Hero Select Dialog */}

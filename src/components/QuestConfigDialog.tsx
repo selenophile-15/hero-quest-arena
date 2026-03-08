@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Crown, Users, ChevronLeft } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
@@ -70,6 +70,8 @@ interface Props {
   questDataMap: Record<string, QuestData>;
   questFiles: { key: string; file: string }[];
   onSelect: (selection: QuestSelection) => void;
+  initialStep?: 'type' | 'region' | 'subarea' | 'difficulty';
+  initialState?: { questTypeKey: string; regionIdx: number; subAreaIdx: number };
 }
 
 const getDifficultyColor = (diff: string) => {
@@ -92,11 +94,21 @@ const getDifficultyBorder = (diff: string) => {
   }
 };
 
-export default function QuestConfigDialog({ open, onOpenChange, questDataMap, questFiles, onSelect }: Props) {
-  const [step, setStep] = useState<'type' | 'region' | 'subarea' | 'difficulty'>('type');
-  const [selType, setSelType] = useState('');
-  const [selRegionIdx, setSelRegionIdx] = useState(-1);
-  const [selSubAreaIdx, setSelSubAreaIdx] = useState(-1);
+export default function QuestConfigDialog({ open, onOpenChange, questDataMap, questFiles, onSelect, initialStep, initialState }: Props) {
+  const [step, setStep] = useState<'type' | 'region' | 'subarea' | 'difficulty'>(initialStep || 'type');
+  const [selType, setSelType] = useState(initialState?.questTypeKey || '');
+  const [selRegionIdx, setSelRegionIdx] = useState(initialState?.regionIdx ?? -1);
+  const [selSubAreaIdx, setSelSubAreaIdx] = useState(initialState?.subAreaIdx ?? -1);
+
+  // Sync initial state when dialog opens
+  useEffect(() => {
+    if (open && initialStep && initialState) {
+      setStep(initialStep);
+      setSelType(initialState.questTypeKey);
+      setSelRegionIdx(initialState.regionIdx);
+      setSelSubAreaIdx(initialState.subAreaIdx);
+    }
+  }, [open, initialStep, initialState]);
 
   const questData = selType ? questDataMap[selType] : null;
   const region = questData && selRegionIdx >= 0 ? questData.regions[selRegionIdx] : null;
@@ -110,14 +122,25 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
   }, [region]);
 
   const reset = () => {
-    setStep('type');
-    setSelType('');
-    setSelRegionIdx(-1);
-    setSelSubAreaIdx(-1);
+    setStep(initialStep || 'type');
+    setSelType(initialState?.questTypeKey || '');
+    setSelRegionIdx(initialState?.regionIdx ?? -1);
+    setSelSubAreaIdx(initialState?.subAreaIdx ?? -1);
   };
 
   const handleOpen = (isOpen: boolean) => {
-    if (!isOpen) reset();
+    if (!isOpen) {
+      // Reset to defaults
+      setStep('type');
+      setSelType('');
+      setSelRegionIdx(-1);
+      setSelSubAreaIdx(-1);
+    } else if (initialStep && initialState) {
+      setStep(initialStep);
+      setSelType(initialState.questTypeKey);
+      setSelRegionIdx(initialState.regionIdx);
+      setSelSubAreaIdx(initialState.subAreaIdx);
+    }
     onOpenChange(isOpen);
   };
 

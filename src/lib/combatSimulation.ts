@@ -138,13 +138,17 @@ const BJORN_DOUBLE_ZONES = [
 
 function calcDamageTaken(heroDef: number, mobDamage: number, mobCap: number): number {
   // Piecewise linear damage reduction based on defense vs cap
+  // Cap at 75% reduction (0.25x damage minimum)
+  let dmg: number;
   if (heroDef <= mobCap / 6) {
-    return Math.round(1.5 * mobDamage + ((heroDef - 0) / (mobCap / 6 - 0)) * (0.5 * mobDamage - 1.5 * mobDamage));
+    dmg = Math.round(1.5 * mobDamage + ((heroDef - 0) / (mobCap / 6 - 0)) * (0.5 * mobDamage - 1.5 * mobDamage));
   } else if (heroDef <= mobCap / 3) {
-    return Math.round(0.5 * mobDamage + ((heroDef - mobCap / 6) / (mobCap / 3 - mobCap / 6)) * (0.3 * mobDamage - 0.5 * mobDamage));
+    dmg = Math.round(0.5 * mobDamage + ((heroDef - mobCap / 6) / (mobCap / 3 - mobCap / 6)) * (0.3 * mobDamage - 0.5 * mobDamage));
   } else {
-    return Math.round(0.3 * mobDamage + ((heroDef - mobCap / 3) / (mobCap - mobCap / 3)) * (0.25 * mobDamage - 0.3 * mobDamage));
+    dmg = Math.round(0.3 * mobDamage + ((heroDef - mobCap / 3) / (mobCap - mobCap / 3)) * (0.25 * mobDamage - 0.3 * mobDamage));
   }
+  // Floor at 25% of mob damage (75% max reduction)
+  return Math.max(dmg, Math.round(0.25 * mobDamage));
 }
 
 function calcCritDamageTaken(normalDmg: number, mobDamage: number): number {
@@ -993,7 +997,7 @@ export interface CombatLogEntry {
 }
 
 export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
-  const { heroes, monster, booster, isTerrorTower } = config;
+  const { heroes, monster, miniBoss, booster, isTerrorTower } = config;
   const log: CombatLogEntry[] = [];
   const activeHeroes = heroes.filter(h => h.hp > 0);
   if (activeHeroes.length === 0) return [{ round: 0, type: 'result', actor: '시스템', detail: '활성 영웅 없음' }];
@@ -1001,17 +1005,22 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   const numHeroes = activeHeroes.length;
   const isExtreme = monster.isExtreme || isTerrorTower;
 
-  // Simplified single run with logging - reuse the same core logic
-  // We run the full simulation with count=1 but also capture a log
-  const singleResult = runCombatSimulation({ ...config, simulationCount: 1 });
+  // Mini boss modifiers
+  let mobHpMod = 1.0, mobDamageMod = 1.0, mobCritChanceMod = 1.0;
+  let mobEvasion = -1.0, mobAoeChanceMod = 1.0;
+  switch (miniBoss) {
+    case 'agile': mobEvasion = 0.4; break;
+    case 'dire': mobHpMod = 1.5; mobCritChanceMod = 3.0; break;
+    case 'huge': mobHpMod = 2.0; mobAoeChanceMod = 2.0; break;
+    case 'legendary': mobHpMod = 1.5; mobDamageMod = 1.25; mobCritChanceMod = 1.5; mobEvasion = 0.1; break;
+  }
 
-  // Since the simulation engine doesn't produce logs internally,
-  // we do a simplified single combat here with logging
   const mobCap = monster.def.r0;
-  let mobDamage = monster.atk;
+  let mobDamage = Math.round(monster.atk * mobDamageMod);
   if (isTerrorTower) mobDamage = Math.round(mobDamage * 0.05);
   const mobAoeDmgRatio = monster.aoe / monster.atk;
-  const mobAoeChance = monster.aoeChance / 100;
+  const mobAoeChance = (monster.aoeChance / 100) * mobAoeChanceMod;
+  const baseMobCritChance = 0.10;
 
   // Barrier check
   let barrierMod = 1.0;
@@ -1028,7 +1037,11 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     }
   }
 
-  // Setup hero stats (simplified - use hero base stats with booster)
+  if (miniBoss !== 'none') {
+    log.push({ round: 0, type: 'event', actor: '시스템', detail: `미니보스: ${miniBoss} (HP ×${mobHpMod}, ATK ×${mobDamageMod}, 치확 ×${mobCritChanceMod})` });
+  }
+
+  // Setup hero stats
   const boosterAtkPct = booster.type === 'mega' ? 0.8 : booster.type === 'super' ? 0.4 : booster.type === 'normal' ? 0.2 : 0;
   const boosterDefPct = boosterAtkPct;
 
@@ -1054,16 +1067,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroCritMult.push((h.critDmg || 0) / 100);
     let eva = (h.evasion || 0) / 100;
     if (isExtreme) eva -= 0.2;
-    heroEva.push(Math.min(eva, 0.75));
+    const hasRockStompers = h.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
+    if (hasRockStompers) eva = 0;
+    heroEva.push(hasRockStompers ? 0 : Math.min(eva, 0.75));
     heroThreatVal.push(h.threat || 1);
     heroDmgDealt.push(0);
   }
 
-  log.push({ round: 0, type: 'event', actor: '시스템', detail: `전투 시작! 몬스터 HP: ${formatNum(monster.hp)}, 영웅 ${numHeroes}명` });
+  const totalMobHp = Math.round(monster.hp * mobHpMod);
+  log.push({ round: 0, type: 'event', actor: '시스템', detail: `전투 시작! 몬스터 HP: ${formatNum(totalMobHp)}, 영웅 ${numHeroes}명` });
 
-  let mobHpCurrent = monster.hp;
+  let mobHpCurrent = totalMobHp;
   let heroesAlive = numHeroes;
-  const MAX_ROUNDS = 100; // Limit log to 100 rounds for readability
+  const MAX_ROUNDS = 100;
 
   for (let round = 1; round <= MAX_ROUNDS; round++) {
     if (mobHpCurrent <= 0 || heroesAlive <= 0) break;
@@ -1080,9 +1096,14 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
           log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `회피 성공!` });
           continue;
         }
-        const dmg = calcDamageTaken(heroDefVal[i], Math.ceil(mobDamage * mobAoeDmgRatio), mobCap);
+        // Negative evasion → increased monster crit chance
+        const negEvaBonus = (heroEva[i] < 0 && isExtreme) ? -0.25 * heroEva[i] : 0;
+        const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
+        const aoeDmg = Math.ceil(mobDamage * mobAoeDmgRatio);
+        const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmg, mobCap);
+        const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmg) : normalDmg;
         heroHp[i] -= dmg;
-        log.push({ round, type: 'monster_attack', actor: '몬스터', target: activeHeroes[i].name, detail: `${formatNum(dmg)} 피해 (잔여 HP: ${formatNum(Math.max(0, heroHp[i]))})` });
+        log.push({ round, type: 'monster_attack', actor: '몬스터', target: activeHeroes[i].name, detail: `${isCrit ? '치명타! ' : ''}${formatNum(dmg)} 피해 (잔여 HP: ${formatNum(Math.max(0, heroHp[i]))})` });
         if (heroHp[i] <= 0) { heroesAlive--; log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `사망!` }); }
       }
     } else {
@@ -1102,7 +1123,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       if (Math.random() < heroEva[target]) {
         log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `회피 성공!` });
       } else {
-        const isCrit = Math.random() < 0.1;
+        const negEvaBonus = (heroEva[target] < 0 && isExtreme) ? -0.25 * heroEva[target] : 0;
+        const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
         const normalDmg = calcDamageTaken(heroDefVal[target], mobDamage, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, mobDamage) : normalDmg;
         heroHp[target] -= dmg;
@@ -1119,6 +1141,11 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     // Heroes attack
     for (let i = 0; i < numHeroes; i++) {
       if (heroHp[i] <= 0) continue;
+      // Mob evasion check (mini boss: agile/legendary)
+      if (mobEvasion >= 0 && Math.random() < mobEvasion) {
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `몬스터가 회피!` });
+        continue;
+      }
       const isCrit = Math.random() < heroCrit[i];
       const dmg = Math.floor(heroAtkVal[i] * (isCrit ? heroCritMult[i] : 1) * barrierMod);
       mobHpCurrent -= dmg;
