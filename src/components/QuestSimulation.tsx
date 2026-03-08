@@ -141,6 +141,7 @@ export default function QuestSimulation() {
   // Dialogs
   const [configOpen, setConfigOpen] = useState(false);
   const [heroSelectOpen, setHeroSelectOpen] = useState(false);
+  const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null); // Which slot is being edited
 
   // Time settings
   const [timeSettings, setTimeSettings] = useState<TimeSettingItem[]>(DEFAULT_TIME_SETTINGS);
@@ -196,6 +197,29 @@ export default function QuestSimulation() {
 
   const toggleHero = (id: string) => {
     if (!currentRegion) return;
+    
+    // If editing a specific slot, replace the hero in that slot
+    if (editingSlotIdx !== null) {
+      setSelectedHeroIds(prev => {
+        const arr = Array.from(prev);
+        // If the hero is already selected, remove from old position
+        const existingIdx = arr.indexOf(id);
+        if (existingIdx !== -1) {
+          arr.splice(existingIdx, 1);
+        }
+        // Replace at the editing slot position
+        if (editingSlotIdx < arr.length) {
+          arr[editingSlotIdx] = id;
+        } else {
+          arr.push(id);
+        }
+        return new Set(arr);
+      });
+      setEditingSlotIdx(null);
+      setHeroSelectOpen(false);
+      return;
+    }
+    
     setSelectedHeroIds(prev => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -205,6 +229,16 @@ export default function QuestSimulation() {
       }
       return next;
     });
+  };
+
+  const openSlotForEdit = (slotIdx: number) => {
+    setEditingSlotIdx(slotIdx);
+    setHeroSelectOpen(true);
+  };
+
+  const openSlotForAdd = () => {
+    setEditingSlotIdx(null);
+    setHeroSelectOpen(true);
   };
 
   const clearQuest = () => {
@@ -609,7 +643,7 @@ export default function QuestSimulation() {
                       return (
                         <td key={`slot-empty-${slotIdx}`} className="text-center py-2">
                           <button
-                            onClick={() => currentQuest && setHeroSelectOpen(true)}
+                            onClick={() => currentQuest && openSlotForAdd()}
                             className={`w-16 h-16 rounded-full border-2 border-dashed inline-flex items-center justify-center transition-all ${
                               currentQuest ? 'border-muted-foreground/30 hover:border-primary/50 cursor-pointer' : 'border-muted-foreground/15 cursor-not-allowed'
                             }`}>
@@ -624,23 +658,29 @@ export default function QuestSimulation() {
                       : hero.heroClass ? getJobImagePath(hero.heroClass) : null;
                     return (
                       <td key={hero.id} className="text-center py-2">
-                        <div className="inline-flex flex-col items-center gap-0.5">
+                        <div className="relative inline-flex flex-col items-center gap-0.5 group">
                           {belowMin && (
                             <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                           )}
-                          <button onClick={() => toggleHero(hero.id)}
-                            className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden group transition-all ${
+                          <button onClick={() => openSlotForEdit(slotIdx)}
+                            className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all ${
                               belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
-                            } hover:border-destructive/50`}
-                            title={`${hero.name} (클릭하여 제거)`}>
+                            } hover:border-accent/70`}
+                            title={`${hero.name} (클릭하여 변경)`}>
                             {heroImg ? (
                               <img src={heroImg} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
                             ) : (
                               <span className="text-lg">⚔</span>
                             )}
-                            <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                              <span className="text-destructive-foreground text-xs font-bold">✕</span>
+                            <div className="absolute inset-0 bg-primary/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                              <span className="text-foreground text-xs font-bold">변경</span>
                             </div>
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
+                            className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+                            title="제거">
+                            ✕
                           </button>
                         </div>
                       </td>
@@ -913,7 +953,7 @@ export default function QuestSimulation() {
       {/* Hero Select Dialog */}
       <HeroSelectDialog
         open={heroSelectOpen}
-        onOpenChange={setHeroSelectOpen}
+        onOpenChange={(open) => { setHeroSelectOpen(open); if (!open) setEditingSlotIdx(null); }}
         heroes={allHeroes}
         selectedIds={selectedHeroIds}
         maxMembers={maxMembers}
