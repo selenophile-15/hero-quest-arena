@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { formatNumber } from '@/lib/format';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
+import { Wrench } from 'lucide-react';
+import ManualEquipmentForm from './ManualEquipmentForm';
 import {
   EquipmentItem,
   loadEquipmentByTypes,
@@ -142,6 +144,7 @@ export default function EquipmentSelectDialog({
   const [allItems, setAllItems] = useState<EquipmentItem[]>([]);
   const [slotAllowedTypes, setSlotAllowedTypes] = useState<string[][]>([]);
   const [loading, setLoading] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
 
   const maxTier = getMaxTierForLevel(heroLevel || 1);
   const [filterType, setFilterType] = useState<string>('_all');
@@ -224,11 +227,13 @@ export default function EquipmentSelectDialog({
       setFilterElement('_all');
       setFilterSpirit('_all');
       visitedSlots.current = new Set([initialSlot]);
+      setManualMode(false);
     }
   }, [open, currentEquipment, initialSlot, heroLevel]);
 
   useEffect(() => {
     setSlotQuality(slots[activeSlot]?.quality || 'common');
+    setManualMode(false);
     visitedSlots.current.add(activeSlot);
   }, [activeSlot]);
 
@@ -363,6 +368,7 @@ export default function EquipmentSelectDialog({
                 <span className={`text-[8px] flex items-center gap-1 ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>
                   슬롯 {i + 1}
                   {s.item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-3 h-3 inline" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                  {s.item?.manual && <Wrench className="w-2.5 h-2.5 inline text-muted-foreground" />}
                 </span>
                 {s.item ? (
                   <>
@@ -400,94 +406,125 @@ export default function EquipmentSelectDialog({
           ))}
         </div>
 
-        {/* Filters */}
+        {/* Manual mode toggle + Filters */}
         <div className="flex items-center gap-2 px-1 flex-wrap text-xs">
-          <span className="text-muted-foreground">타입:</span>
-          <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">전체</SelectItem>
-              {filterTypeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-            </SelectContent>
-          </Select>
-
-          <span className="text-muted-foreground">스탯:</span>
-          <Select value={filterStat} onValueChange={setFilterStat}>
-            <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">전체</SelectItem>
-              {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
-
-          <span className="text-muted-foreground">티어:</span>
-          <input type="number" min={1} max={maxTier} value={filterTierMin}
-            onChange={e => {
-              const raw = e.target.value;
-              if (raw === '') { setFilterTierMin(''); return; }
-              const v = parseInt(raw, 10);
-              if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
-            }}
-            className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-          <span className="text-muted-foreground">~</span>
-          <input type="number" min={1} max={maxTier} value={filterTierMax}
-            onChange={e => {
-              const raw = e.target.value;
-              if (raw === '') { setFilterTierMax(''); return; }
-              const v = parseInt(raw, 10);
-              if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
-            }}
-            className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-
-          <span className="text-muted-foreground">원소:</span>
-          <Select value={filterElement} onValueChange={setFilterElement}>
-            <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">전체</SelectItem>
-              {ELEMENT_FILTER_OPTIONS.map(e => (
-                <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <span className="text-muted-foreground">영혼:</span>
-          <Select value={filterSpirit} onValueChange={setFilterSpirit}>
-            <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">전체</SelectItem>
-              {spiritGroups.map((group, gi) => (
-                <div key={gi}>
-                  {gi > 0 && <div className="border-t border-border/30 my-1" />}
-                  {group.spirits.map(sp => (
-                    <SelectItem key={sp} value={sp}>
-                      <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
-                    </SelectItem>
-                  ))}
-                </div>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="flex-1" />
-
-          <span className="text-muted-foreground">아이템 등급:</span>
-          <Select value={slotQuality} onValueChange={handleQualityChange}>
-            <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {QUALITY_OPTIONS.map(q => (
-                <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
-            일괄 적용
+          <Button
+            variant={manualMode ? 'default' : 'outline'}
+            size="sm"
+            className="h-7 text-xs gap-1"
+            onClick={() => setManualMode(prev => !prev)}
+          >
+            <Wrench className="w-3 h-3" />
+            수동
           </Button>
+
+          {!manualMode && (
+            <>
+              <span className="text-muted-foreground">타입:</span>
+              <Select value={filterType} onValueChange={setFilterType}>
+                <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_all">전체</SelectItem>
+                  {filterTypeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+
+              <span className="text-muted-foreground">스탯:</span>
+              <Select value={filterStat} onValueChange={setFilterStat}>
+                <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_all">전체</SelectItem>
+                  {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+
+              <span className="text-muted-foreground">티어:</span>
+              <input type="number" min={1} max={maxTier} value={filterTierMin}
+                onChange={e => {
+                  const raw = e.target.value;
+                  if (raw === '') { setFilterTierMin(''); return; }
+                  const v = parseInt(raw, 10);
+                  if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
+                }}
+                className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+              <span className="text-muted-foreground">~</span>
+              <input type="number" min={1} max={maxTier} value={filterTierMax}
+                onChange={e => {
+                  const raw = e.target.value;
+                  if (raw === '') { setFilterTierMax(''); return; }
+                  const v = parseInt(raw, 10);
+                  if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
+                }}
+                className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+
+              <span className="text-muted-foreground">원소:</span>
+              <Select value={filterElement} onValueChange={setFilterElement}>
+                <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_all">전체</SelectItem>
+                  {ELEMENT_FILTER_OPTIONS.map(e => (
+                    <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <span className="text-muted-foreground">영혼:</span>
+              <Select value={filterSpirit} onValueChange={setFilterSpirit}>
+                <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="_all">전체</SelectItem>
+                  {spiritGroups.map((group, gi) => (
+                    <div key={gi}>
+                      {gi > 0 && <div className="border-t border-border/30 my-1" />}
+                      {group.spirits.map(sp => (
+                        <SelectItem key={sp} value={sp}>
+                          <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
+                        </SelectItem>
+                      ))}
+                    </div>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex-1" />
+
+              <span className="text-muted-foreground">아이템 등급:</span>
+              <Select value={slotQuality} onValueChange={handleQualityChange}>
+                <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {QUALITY_OPTIONS.map(q => (
+                    <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
+                일괄 적용
+              </Button>
+            </>
+          )}
         </div>
 
-        {/* Item grid */}
+        {/* Item grid or Manual form */}
         <div className="flex-1 min-h-0 mt-1">
           <div className="overflow-y-auto h-full border border-border rounded p-3">
-            {loading ? (
+            {manualMode ? (
+              <ManualEquipmentForm
+                initialData={slots[activeSlot]?.item?.manualData || null}
+                onConfirm={(item, manualData) => {
+                  const newSlots = [...slots];
+                  const existingSlot = newSlots[activeSlot];
+                  newSlots[activeSlot] = {
+                    item: { ...item },
+                    quality: existingSlot?.quality || slotQuality,
+                    element: existingSlot?.element || null,
+                    spirit: existingSlot?.spirit || null,
+                  };
+                  setSlots(newSlots);
+                  setManualMode(false);
+                }}
+                onCancel={() => setManualMode(false)}
+              />
+            ) : loading ? (
               <div className="flex flex-col items-center justify-center py-16 gap-3">
                 <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
                 <span className="text-muted-foreground text-sm">장비 데이터 로딩 중...</span>
