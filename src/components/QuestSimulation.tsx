@@ -487,26 +487,36 @@ export default function QuestSimulation() {
           </div>
 
           {/* Element Barrier */}
-          {currentQuest.barrier && (
-            <div className="mt-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className="text-xs font-medium text-purple-300">속성 장벽</span>
-                <span className="text-xs text-purple-400">HP: {currentQuest.barrier.hp}</span>
+          {currentQuest.barrier && (() => {
+            const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+              ? getSubAreaBarrierElement(currentQuest.barrier)
+              : null;
+            // For sub-area mode, show only the relevant element; for boss/no-sub-area, show all
+            const elements = barrierElement
+              ? [barrierElement]
+              : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
+            if (elements.length === 0) return null;
+            return (
+              <div className="mt-3 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <span className="text-xs font-medium text-purple-300">속성 장벽</span>
+                  <span className="text-xs text-purple-400">HP: {currentQuest.barrier.hp}</span>
+                </div>
+                <div className="flex gap-2">
+                  {elements.map((el, i) => {
+                    if (!el) return null;
+                    const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                    return (
+                      <div key={i} className="flex items-center gap-1 bg-secondary/40 rounded px-2 py-1">
+                        {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                        <span className="text-xs text-foreground">{el}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="flex gap-2">
-                {[currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].map((el, i) => {
-                  if (!el) return null;
-                  const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                  return (
-                    <div key={i} className="flex items-center gap-1 bg-secondary/40 rounded px-2 py-1">
-                      {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                      <span className="text-xs text-foreground">{el}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Time info */}
           <div className="mt-3 bg-secondary/20 rounded-lg p-3">
