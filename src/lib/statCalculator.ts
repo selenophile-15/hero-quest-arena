@@ -71,6 +71,7 @@ export interface CalcInput {
     spirit: { name: string; affinity: boolean } | null;
   }>;
   hasRangedWeapon: boolean;
+  totalElementPoints: number; // 풍수사: total element points for atk% bonus
   // Skill data for equipment bonuses + general bonuses
   skillBonusInputs: Array<{
     bonusData: Record<string, number | number[]>;
