@@ -145,6 +145,10 @@ export default function QuestSimulation() {
   // Time settings
   const [timeSettings, setTimeSettings] = useState<TimeSettingItem[]>(DEFAULT_TIME_SETTINGS);
 
+  // Simulation state
+  const [simRunning, setSimRunning] = useState(false);
+  const [simResult, setSimResult] = useState<CombatSimResult | null>(null);
+
   // Load quest data
   useEffect(() => {
     const loadData = async () => {
