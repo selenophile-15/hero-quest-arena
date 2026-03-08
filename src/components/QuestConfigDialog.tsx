@@ -70,6 +70,8 @@ interface Props {
   questDataMap: Record<string, QuestData>;
   questFiles: { key: string; file: string }[];
   onSelect: (selection: QuestSelection) => void;
+  initialStep?: 'type' | 'region' | 'subarea' | 'difficulty';
+  initialState?: { questTypeKey: string; regionIdx: number; subAreaIdx: number };
 }
 
 const getDifficultyColor = (diff: string) => {
@@ -82,21 +84,21 @@ const getDifficultyColor = (diff: string) => {
   }
 };
 
-const getDifficultyBorder = (diff: string) => {
-  switch (diff) {
-    case '쉬움': return 'border-green-400/30 hover:border-green-400/60';
-    case '보통': return 'border-blue-400/30 hover:border-blue-400/60';
-    case '어려움': return 'border-orange-400/30 hover:border-orange-400/60';
-    case '익스트림': return 'border-purple-400/30 hover:border-purple-400/60';
-    default: return 'border-border hover:border-primary/30';
-  }
-};
+export default function QuestConfigDialog({ open, onOpenChange, questDataMap, questFiles, onSelect, initialStep, initialState }: Props) {
+  const [step, setStep] = useState<'type' | 'region' | 'subarea' | 'difficulty'>(initialStep || 'type');
+  const [selType, setSelType] = useState(initialState?.questTypeKey || '');
+  const [selRegionIdx, setSelRegionIdx] = useState(initialState?.regionIdx ?? -1);
+  const [selSubAreaIdx, setSelSubAreaIdx] = useState(initialState?.subAreaIdx ?? -1);
 
-export default function QuestConfigDialog({ open, onOpenChange, questDataMap, questFiles, onSelect }: Props) {
-  const [step, setStep] = useState<'type' | 'region' | 'subarea' | 'difficulty'>('type');
-  const [selType, setSelType] = useState('');
-  const [selRegionIdx, setSelRegionIdx] = useState(-1);
-  const [selSubAreaIdx, setSelSubAreaIdx] = useState(-1);
+  // Sync initial state when dialog opens
+  useState(() => {
+    if (open && initialStep && initialState) {
+      setStep(initialStep);
+      setSelType(initialState.questTypeKey);
+      setSelRegionIdx(initialState.regionIdx);
+      setSelSubAreaIdx(initialState.subAreaIdx);
+    }
+  });
 
   const questData = selType ? questDataMap[selType] : null;
   const region = questData && selRegionIdx >= 0 ? questData.regions[selRegionIdx] : null;
