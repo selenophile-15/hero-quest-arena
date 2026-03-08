@@ -447,7 +447,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       <Dialog open={!!equipDialogType} onOpenChange={v => !v && setEquipDialogType(null)}>
         <DialogContent className="max-w-5xl h-[85vh] overflow-hidden flex flex-col p-5">
           <DialogHeader>
-            <DialogTitle style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
+            <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
             <DialogDescription className="sr-only">퍼밀리어 또는 오라의 노래를 선택하세요</DialogDescription>
           </DialogHeader>
 
@@ -476,7 +476,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       boxShadow: QUALITY_SHADOW_COLOR[s.quality],
                     } : {}}
                   >
-                    <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>{i === 0 ? '퍼밀리어' : '오라의 노래'}</span>
+                    <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>
+                      {i === 0 ? '퍼밀리어' : '오라의 노래'}
+                      {s.item?.manual && <Wrench className="w-2.5 h-2.5 inline ml-0.5 text-muted-foreground" />}
+                    </span>
                     {s.item ? (
                       <>
                         {s.item.imagePath ? (
