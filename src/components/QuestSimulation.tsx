@@ -418,7 +418,15 @@ export default function QuestSimulation() {
             <Swords className="w-4 h-4 text-primary" />
             몬스터 정보
             {currentQuest.isBoss && <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">BOSS</span>}
-            {currentQuest.isExtreme && <span className="text-xs px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400">EXTREME</span>}
+            {currentQuest.difficulty !== '없음' && (() => {
+              const diffColors: Record<string, string> = {
+                '쉬움': 'bg-green-500/20 text-green-400',
+                '보통': 'bg-blue-500/20 text-blue-400',
+                '어려움': 'bg-orange-500/20 text-orange-400',
+                '익스트림': 'bg-purple-500/20 text-purple-400',
+              };
+              return <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[currentQuest.difficulty] || 'bg-secondary text-muted-foreground'}`}>{currentQuest.difficulty}</span>;
+            })()}
           </h3>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
