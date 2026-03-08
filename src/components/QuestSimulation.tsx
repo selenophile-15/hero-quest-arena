@@ -629,9 +629,16 @@ export default function QuestSimulation() {
                           </div>
                           {/* Right: defense values */}
                           <div className="flex flex-col justify-between h-64 shrink-0">
-                            {[...defThresholds].reverse().map(t => (
-                              <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
-                            ))}
+                            {[...defThresholds].reverse().map((t, i) => {
+                              const reductions = [75, 70, 50, 0, -50];
+                              const received = 100 - reductions[i];
+                              return (
+                                <div key={t.key} className="text-right">
+                                  <span className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
+                                  <span className={`text-[9px] font-mono ml-1 ${t.textClass} opacity-60`}>({received}%)</span>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
 
