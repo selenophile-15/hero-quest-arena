@@ -551,14 +551,43 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     {heroes.map((h, hi) => {
                       const bs = buffedStats[hi];
                       if (!bs) return <td key={h.id} />;
-                      const finalVal = getBuffedVal(bs);
-                      const delta = getDelta(bs);
+                      let finalVal = getBuffedVal(bs);
+                      let delta = getDelta(bs);
                       const suffix = isMultStat ? '' : '%';
+
+                      // Evasion: apply penalty + cap
+                      let evasionDisplayNote = '';
+                      let evasionColor = config.color;
+                      if (activeTab === 'evasion') {
+                        const hasRockStompers = h.equipmentSlots?.some((s: any) => s.item?.name === '락 스톰퍼') || false;
+                        const isPathfinder = (h.heroClass || '').includes('길잡이');
+                        const cap = isPathfinder ? 78 : 75;
+                        
+                        if (hasRockStompers) {
+                          finalVal = 0;
+                          delta = 0;
+                          evasionDisplayNote = '🪨 0% 고정';
+                        } else {
+                          let rawVal = finalVal;
+                          if (hasEvasionPenalty) {
+                            rawVal = finalVal - 20;
+                            delta = delta - 20;
+                          }
+                          if (rawVal > cap) {
+                            evasionDisplayNote = `(${rawVal}%)`;
+                            finalVal = cap;
+                          } else {
+                            finalVal = rawVal;
+                          }
+                          if (finalVal < 0) evasionColor = 'text-purple-400';
+                        }
+                      }
 
                       return (
                         <td key={h.id} className="py-2.5 px-2 text-center">
-                          <div className={`font-bold font-mono text-lg ${config.color}`}>
+                          <div className={`font-bold font-mono text-lg ${activeTab === 'evasion' ? evasionColor : config.color}`}>
                             {suffix ? `${finalVal}${suffix}` : formatNumber(finalVal)}
+                            {evasionDisplayNote && <span className="text-xs text-muted-foreground ml-1">{evasionDisplayNote}</span>}
                           </div>
                           {delta !== 0 && (
                             <div className={`text-xs font-mono ${delta > 0 ? 'text-green-400' : 'text-red-400'}`}>

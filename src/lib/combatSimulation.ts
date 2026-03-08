@@ -900,8 +900,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             hp[i] = Math.min(hp[i] + bHeal, finalHp[i]);
           }
 
-          if (liluHeal > 0) {
-            hp[i] = Math.min(hp[i] + liluHeal * heroArtChampionMod[i], finalHp[i]);
+          if (liluHealPct > 0) {
+            hp[i] = Math.min(hp[i] + Math.floor(finalHp[i] * liluHealPct / 100) * heroArtChampionMod[i], finalHp[i]);
           }
         }
       }

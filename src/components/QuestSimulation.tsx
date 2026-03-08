@@ -894,9 +894,12 @@ export default function QuestSimulation() {
                                   val = val - 20;
                                   delta = delta - 20;
                                 }
-                                if (val > cap) val = cap;
+                                if (val > cap) {
+                                  evasionNote = `(${val}%)`;
+                                  val = cap;
+                                }
                               }
-                              if (val < 0) displayColor = 'text-amber-500';
+                              if (val < 0) displayColor = 'text-purple-400';
                             }
                             
                             return (
