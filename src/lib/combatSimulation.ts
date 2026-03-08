@@ -534,12 +534,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
 
   // ─── Lilu heal amount ───
-  let liluHeal = 0;
+  // Lilu heal: percentage of max HP per round
+  let liluHealPct = 0;
   if (champName.includes('릴루') || champName === 'Lilu') {
-    if (champTier === 1) liluHeal = 3;
-    else if (champTier === 2) liluHeal = 5;
-    else if (champTier === 3) liluHeal = 10;
-    else if (champTier === 4) liluHeal = 20;
+    if (champTier === 1) liluHealPct = 3;
+    else if (champTier === 2) liluHealPct = 5;
+    else if (champTier === 3) liluHealPct = 10;
+    else if (champTier === 4) liluHealPct = 20;
   }
 
   // ─── Simulation ──────────────────────────────────────────────────────────
