@@ -249,11 +249,11 @@ export default function QuestSimulation() {
                     : 'border-border hover:border-primary/40'
                 }`}
               >
-                <div className="aspect-[4/3] bg-secondary/30 flex items-center justify-center overflow-hidden">
+                <div className="bg-secondary/30 flex items-center justify-center p-2">
                   <img
                     src={region.areaImage}
                     alt={region.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    className="w-full h-auto object-contain"
                     onError={e => { e.currentTarget.style.display = 'none'; }}
                   />
                 </div>
