@@ -693,6 +693,9 @@ export default function EquipmentSelectDialog({
                           className="max-w-xs p-3 space-y-1.5 z-50"
                         >
                           <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor})</span></p>
+                          {item.type === 'dual_wield' && item.judgmentTypes?.length > 0 && (
+                            <p className="text-xs text-muted-foreground">판정 타입: <span className="text-foreground font-medium">{item.judgmentTypes.join(', ')}</span></p>
+                          )}
                           {item.relic && <p className="text-xs text-yellow-400 font-semibold">⭐ 유물</p>}
 
                           {item.stats.length > 0 && (
