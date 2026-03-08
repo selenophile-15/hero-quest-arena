@@ -603,11 +603,11 @@ export default function QuestSimulation() {
                         <div className="space-y-1">
                           {([
                             { id: 'none', label: '없음', desc: '일반 몬스터', color: '' },
-                            { id: 'huge', label: '거대한', desc: 'HP 2배, 전체 공격 확률 2배', color: 'text-green-400' },
-                            { id: 'agile', label: '민첩한', desc: '회피 +40%', color: 'text-blue-400' },
-                            { id: 'dire', label: '흉포한', desc: 'HP 1.5배, 치확 30%', color: 'text-red-400' },
+                            { id: 'huge', label: '거대한', desc: 'HP ×2, 광역 확률 ×2', color: 'text-green-400' },
+                            { id: 'agile', label: '민첩한', desc: '회피 40%', color: 'text-blue-400' },
+                            { id: 'dire', label: '흉포한', desc: 'HP ×1.5, 치확 30%', color: 'text-red-400' },
                             { id: 'wealthy', label: '부유한', desc: '보상 증가', color: 'text-yellow-400' },
-                            { id: 'legendary', label: '전설의', desc: 'HP 1.5배, ATK 1.25배, 치확 15%, 회피 10%', color: 'text-purple-400' },
+                            { id: 'legendary', label: '전설의', desc: 'HP ×1.5, ATK ×1.25, 치확 15%, 회피 10%', color: 'text-purple-400' },
                           ] as const).map(mb => (
                             <button
                               key={mb.id}
@@ -652,58 +652,74 @@ export default function QuestSimulation() {
                 )}
 
                 {/* Stats: vertical list */}
-                <div className="space-y-1.5 pt-2 border-t border-border/30">
-                  <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-1.5">
-                      <Heart className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs text-foreground">체력</span>
-                    </div>
-                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.hp)}</span>
-                  </div>
-                  <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-1.5">
-                      <Swords className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs text-foreground">공격력</span>
-                    </div>
-                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.atk)}</span>
-                  </div>
-                  <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                      <span className="text-xs text-foreground">광역 공격 ({currentQuest.aoeChance}%)</span>
-                    </div>
-                    <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
-                  </div>
-                  {/* Monster Crit Chance */}
-                  {(() => {
-                    const finalCrit = selectedMiniBoss === 'dire' ? 30 : selectedMiniBoss === 'legendary' ? 15 : 10;
-                    const isModified = selectedMiniBoss === 'dire' || selectedMiniBoss === 'legendary';
-                    return (
+                {(() => {
+                  // Calculate modified values based on mini-boss
+                  const hpMod = selectedMiniBoss === 'huge' ? 2.0 : selectedMiniBoss === 'dire' ? 1.5 : selectedMiniBoss === 'legendary' ? 1.5 : 1.0;
+                  const atkMod = selectedMiniBoss === 'legendary' ? 1.25 : 1.0;
+                  const aoeMod = selectedMiniBoss === 'huge' ? 2.0 : 1.0;
+                  const displayHp = Math.round(currentQuest.hp * hpMod);
+                  const displayAtk = Math.round(currentQuest.atk * atkMod);
+                  const displayAoeChance = Math.min(currentQuest.aoeChance * aoeMod, 100);
+                  const displayAoe = Math.round(currentQuest.aoe * atkMod);
+                  const finalCrit = selectedMiniBoss === 'dire' ? 30 : selectedMiniBoss === 'legendary' ? 15 : 10;
+                  const mobEva = selectedMiniBoss === 'agile' ? 40 : selectedMiniBoss === 'legendary' ? 10 : 0;
+                  const isHpMod = hpMod !== 1.0;
+                  const isAtkMod = atkMod !== 1.0;
+                  const isAoeMod = aoeMod !== 1.0;
+                  const isCritMod = selectedMiniBoss === 'dire' || selectedMiniBoss === 'legendary';
+                  return (
+                    <div className="space-y-1.5 pt-2 border-t border-border/30">
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Heart className="w-3.5 h-3.5 text-red-400" />
+                          <span className="text-xs text-foreground">체력</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-green-400' : 'text-foreground'}`}>
+                          {formatNumber(displayHp)}
+                          {isHpMod && <span className="text-[10px] text-muted-foreground ml-1">(×{hpMod})</span>}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Swords className="w-3.5 h-3.5 text-red-400" />
+                          <span className="text-xs text-foreground">공격력</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
+                          {formatNumber(displayAtk)}
+                          {isAtkMod && <span className="text-[10px] text-muted-foreground ml-1">(×{atkMod})</span>}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                          <span className="text-xs text-foreground">광역 공격 ({displayAoeChance}%)</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${isAoeMod || isAtkMod ? 'text-yellow-400' : 'text-foreground'}`}>
+                          {formatNumber(displayAoe)}
+                          {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(확률 ×{aoeMod})</span>}
+                        </span>
+                      </div>
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <img src="/images/stats/critchance.webp" alt="" className="w-3.5 h-3.5" />
                           <span className="text-xs text-foreground">치명타 확률</span>
                         </div>
-                        <span className={`text-sm font-bold font-mono ${isModified ? 'text-red-400' : 'text-foreground'}`}>
+                        <span className={`text-sm font-bold font-mono ${isCritMod ? 'text-red-400' : 'text-foreground'}`}>
                           {finalCrit}%
                         </span>
                       </div>
-                    );
-                  })()}
-                  {/* Monster Evasion */}
-                  {(() => {
-                    const mobEva = selectedMiniBoss === 'agile' ? 40 : selectedMiniBoss === 'legendary' ? 10 : 0;
-                    return mobEva > 0 ? (
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <img src="/images/stats/evasion.webp" alt="" className="w-3.5 h-3.5" />
-                          <span className="text-xs text-foreground">회피</span>
+                      {mobEva > 0 && (
+                        <div className="flex items-center justify-between px-1">
+                          <div className="flex items-center gap-1.5">
+                            <img src="/images/stats/evasion.webp" alt="" className="w-3.5 h-3.5" />
+                            <span className="text-xs text-foreground">회피</span>
+                          </div>
+                          <span className="text-sm font-bold font-mono text-blue-400">{mobEva}%</span>
                         </div>
-                        <span className="text-sm font-bold font-mono text-blue-400">{mobEva}%</span>
-                      </div>
-                    ) : null;
-                  })()}
-                </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* Defense Reference - vertical bar */}
                 <div className="pt-2 border-t border-border/30">
@@ -1367,7 +1383,12 @@ export default function QuestSimulation() {
         selectedIds={selectedHeroIds}
         maxMembers={maxMembers}
         minPower={currentQuest?.minPower || 0}
-        onSelect={toggleHero}
+        onConfirm={(ids) => {
+          setSelectedHeroIds(ids);
+          setHeroSelectOpen(false);
+          setEditingSlotIdx(null);
+        }}
+        editingSlotIdx={editingSlotIdx}
       />
 
       {/* Party Buff Breakdown Drawer */}
