@@ -361,6 +361,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           {formatNumber(slot ? getSlotStatDirect(slot, preBonusKey as keyof EquipSlotCalc) : 0)}
                         </td>
                       </tr>
+                      {slot && slot.spellknightMult > 1 && (
+                        <tr className="border-b border-border/20">
+                          <td className="px-2 py-1 text-blue-400">스펠나이트 계수</td>
+                          <td className="px-2 py-1 text-right tabular-nums text-blue-400 font-medium">
+                            ×{slot.spellknightMult}
+                          </td>
+                        </tr>
+                      )}
                       <tr className="border-b border-border/20">
                         <td className="px-2 py-1 text-foreground/70">장비 보너스 %</td>
                         <td className="px-2 py-1 text-right tabular-nums text-foreground">

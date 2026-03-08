@@ -57,6 +57,9 @@ export interface EquipSlotCalc {
   preBonusDef: number;
   preBonusHp: number;
 
+  // Spellknight coefficient (1.0 normally, 1.5 for unique element items)
+  spellknightMult: number;
+
   // Skill bonus multipliers applied to this slot
   bonusAtkPct: number;  // sum of all applicable % for atk
   bonusDefPct: number;
@@ -378,17 +381,18 @@ export async function calculateEquipmentStats(
     const spiritCapDef = capEnchant(spiritRaw.def, baseDef);
     const spiritCapHp = capEnchant(spiritRaw.hp, baseHp);
 
-    // Pre-bonus stats
-    let preBonusAtk = qualityAtk + elementCapAtk + spiritCapAtk;
-    let preBonusDef = qualityDef + elementCapDef + spiritCapDef;
-    let preBonusHp = qualityHp + elementCapHp + spiritCapHp;
+    // Pre-bonus stats (before spellknight multiplier)
+    const preBonusAtk = qualityAtk + elementCapAtk + spiritCapAtk;
+    const preBonusDef = qualityDef + elementCapDef + spiritCapDef;
+    const preBonusHp = qualityHp + elementCapHp + spiritCapHp;
 
-    // 스펠나이트: equipment with unique element gets ×1.5 multiplier before bonus
-    if (isSpellknight && (item.uniqueElement?.length > 0)) {
-      preBonusAtk = Math.floor(preBonusAtk * 1.5);
-      preBonusDef = Math.floor(preBonusDef * 1.5);
-      preBonusHp = Math.floor(preBonusHp * 1.5);
-    }
+    // 스펠나이트 계수: equipment with unique element gets ×1.5
+    const spellknightMult = (isSpellknight && item.uniqueElement?.length > 0) ? 1.5 : 1.0;
+    const afterSpellknight = {
+      atk: Math.floor(preBonusAtk * spellknightMult),
+      def: Math.floor(preBonusDef * spellknightMult),
+      hp: Math.floor(preBonusHp * spellknightMult),
+    };
 
     // Calculate skill bonus % for this slot
     const typeKor = item.typeKor || '';
@@ -409,10 +413,10 @@ export async function calculateEquipmentStats(
       bonusHpPct += 100;
     }
 
-    // Final slot stats
-    let finalAtk = Math.floor(preBonusAtk * (1 + bonusAtkPct / 100));
-    let finalDef = Math.floor(preBonusDef * (1 + bonusDefPct / 100));
-    let finalHp = Math.floor(preBonusHp * (1 + bonusHpPct / 100));
+    // Final slot stats: afterSpellknight × (1 + bonus%)
+    let finalAtk = Math.floor(afterSpellknight.atk * (1 + bonusAtkPct / 100));
+    let finalDef = Math.floor(afterSpellknight.def * (1 + bonusDefPct / 100));
+    let finalHp = Math.floor(afterSpellknight.hp * (1 + bonusHpPct / 100));
     const finalCrit = baseCrit;
     const finalEvasion = baseEvasion;
 
@@ -443,6 +447,7 @@ export async function calculateEquipmentStats(
       elementCapAtk, elementCapDef, elementCapHp,
       spiritCapAtk, spiritCapDef, spiritCapHp,
       preBonusAtk, preBonusDef, preBonusHp,
+      spellknightMult,
       bonusAtkPct, bonusDefPct, bonusHpPct,
       finalAtk, finalDef, finalHp, finalCrit, finalEvasion,
     });
@@ -469,6 +474,7 @@ function emptySlotCalc(index: number): EquipSlotCalc {
     elementCapAtk: 0, elementCapDef: 0, elementCapHp: 0,
     spiritCapAtk: 0, spiritCapDef: 0, spiritCapHp: 0,
     preBonusAtk: 0, preBonusDef: 0, preBonusHp: 0,
+    spellknightMult: 1.0,
     bonusAtkPct: 0, bonusDefPct: 0, bonusHpPct: 0,
     finalAtk: 0, finalDef: 0, finalHp: 0, finalCrit: 0, finalEvasion: 0,
   };
