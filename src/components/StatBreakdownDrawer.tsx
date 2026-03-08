@@ -999,7 +999,17 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
           )}
 
-          <div className="px-3 pb-3">
+          {isEvasion && (calcStats?.jobName === '닌자' || calcStats?.jobName === '센세') && (
+            <div className="px-3">
+              <div className="rounded bg-purple-900/20 border border-purple-500/20 px-3 py-2">
+                <p className="text-[10px] text-purple-300/80 leading-relaxed">
+                  🥷 닌자 고유 스킬의 회피 보너스는 <span className="font-bold text-purple-200">피격 시 해제</span>됩니다.
+                  {calcStats?.jobName === '센세' && <span className="text-purple-200"> (센세는 2라운드 후 재획득)</span>}
+                </p>
+              </div>
+            </div>
+          )}
+
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
               {isEvasion && hasEvasionFixed
                 ? `※ ${hasEvasionFixed.itemName}: 회피 ${hasEvasionFixed.fixedValue}%로 고정`
