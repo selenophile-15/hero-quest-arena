@@ -1,15 +1,13 @@
 /**
- * Stat Calculator - Phase 1: Base Stats + Seeds
+ * Stat Calculator - Phase 2: Base Stats + Seeds + Equipment
  * 
  * Formula:
  * - ATK/DEF/HP = (base + seeds + equipment + flat bonuses) × (1 + skill%)
  * - Crit/Eva/CritDmg/Threat = base + equipment + all bonuses (additive)
- * 
- * Phase 1 only computes base + seeds.
- * Equipment, skills, and special mechanics will be added in later phases.
  */
 
-import { lookupHeroStats, HeroLevelStats, HeroFixedStats } from './gameData';
+import { lookupHeroStats } from './gameData';
+import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc } from './equipStatCalculator';
 
 export interface CalculatedStats {
   // Base stats from STD1
@@ -26,7 +24,10 @@ export interface CalculatedStats {
   seedAtk: number;
   seedDef: number;
 
-  // Phase 1 totals (base + seeds only for now)
+  // Equipment totals
+  equipResult: EquipCalcResult;
+
+  // Phase 2 totals (base + seeds + equipment)
   totalHp: number;
   totalAtk: number;
   totalDef: number;
@@ -40,13 +41,31 @@ export interface CalculatedStats {
   jobElement: string;
 }
 
+export type { EquipCalcResult, EquipSlotCalc };
+
 const SEED_MULTIPLIER = { hp: 1, atk: 4, def: 4 };
 
-export async function calculateHeroStats(
-  jobName: string,
-  level: number,
-  seeds: { hp: number; atk: number; def: number },
-): Promise<CalculatedStats | null> {
+export interface CalcInput {
+  jobName: string;
+  level: number;
+  seeds: { hp: number; atk: number; def: number };
+  equipmentSlots: Array<{
+    item: any | null;
+    quality: string;
+    element: { type: string; tier: number; affinity: boolean } | null;
+    spirit: { name: string; affinity: boolean } | null;
+  }>;
+  hasRangedWeapon: boolean;
+  // Skill data for equipment bonuses
+  skillBonusInputs: Array<{
+    bonusData: Record<string, number | number[]>;
+    appliedEquip: string[][] | undefined;
+    skillLevel: number;
+  }>;
+}
+
+export async function calculateHeroStats(input: CalcInput): Promise<CalculatedStats | null> {
+  const { jobName, level, seeds, equipmentSlots, hasRangedWeapon, skillBonusInputs } = input;
   if (!jobName || !level) return null;
 
   const statsData = await lookupHeroStats(jobName, level);
@@ -68,17 +87,19 @@ export async function calculateHeroStats(
   const seedAtk = seeds.atk * SEED_MULTIPLIER.atk;
   const seedDef = seeds.def * SEED_MULTIPLIER.def;
 
-  // Phase 1 totals: (base + seeds) — equipment and skills will be added later
-  // For ATK/DEF/HP: (base + seeds + equipment + flat) × (1 + skill%)
-  // For now, skill% = 0, equipment = 0, flat = 0
-  const totalHp = baseHp + seedHp;
-  const totalAtk = baseAtk + seedAtk;
-  const totalDef = baseDef + seedDef;
+  // Equipment calculation
+  const equipBonuses = parseEquipSkillBonuses(skillBonusInputs);
+  const equipResult = await calculateEquipmentStats(equipmentSlots, equipBonuses, hasRangedWeapon);
 
-  // These are purely additive
-  const totalCrit = baseCrit;
+  // Phase 2 totals: (base + seeds + equipment) — flat bonuses and skill% will be added later
+  const totalHp = baseHp + seedHp + equipResult.totalHp;
+  const totalAtk = baseAtk + seedAtk + equipResult.totalAtk;
+  const totalDef = baseDef + seedDef + equipResult.totalDef;
+
+  // Additive stats
+  const totalCrit = baseCrit + equipResult.totalCrit;
   const totalCritDmg = baseCritDmg;
-  const totalEvasion = baseEvasion;
+  const totalEvasion = baseEvasion + equipResult.totalEvasion;
   const totalThreat = baseThreat;
 
   // Crit attack = atk × critDmg / 100
@@ -88,6 +109,7 @@ export async function calculateHeroStats(
     baseHp, baseAtk, baseDef,
     baseCrit, baseCritDmg, baseEvasion, baseThreat,
     seedHp, seedAtk, seedDef,
+    equipResult,
     totalHp, totalAtk, totalDef,
     totalCrit, totalCritDmg, totalCritAttack,
     totalEvasion, totalThreat,
