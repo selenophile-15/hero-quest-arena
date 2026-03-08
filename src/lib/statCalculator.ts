@@ -7,7 +7,7 @@
  */
 
 import { lookupHeroStats } from './gameData';
-import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc, SkillBonuses } from './equipStatCalculator';
+import { calculateEquipmentStats, parseEquipSkillBonuses, EquipCalcResult, EquipSlotCalc, SkillBonuses, RelicEffect } from './equipStatCalculator';
 import { parseSkillBonuses, parseSoulBonuses, combineBonuses, SkillBonusSummary, SkillBonusInput, SoulBonusInput, SkillBonusSource } from './skillBonusParser';
 
 export interface CalculatedStats {
@@ -44,12 +44,22 @@ export interface CalculatedStats {
   totalEvasion: number;
   totalThreat: number;
 
+  // Relic effects
+  relicEffects: RelicEffect[];
+  // Pre-relic values (before fixed effects)
+  preRelicCrit: number;
+  preRelicEvasion: number;
+
+  // Relic bonus additions to general stats
+  relicBonusFlat: { atk: number; def: number; hp: number; crit: number; critDmg: number; evasion: number; threat: number };
+  relicBonusPct: { atk: number; def: number; hp: number };
+
   // Metadata
   jobName: string;
   jobElement: string;
 }
 
-export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses };
+export type { EquipCalcResult, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect };
 
 const SEED_MULTIPLIER = { hp: 1, atk: 4, def: 4 };
 
@@ -118,16 +128,87 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   // Combine all bonuses
   const bonusSummary = combineBonuses(skillResult, soulResult);
 
-  // Final formula: (base + seed + Σequip + flat) × (1 + pct/100)
-  const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
-  const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
-  const totalHp = Math.floor((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp) * (1 + bonusSummary.pctHp / 100));
+  // Process relic stat bonuses from equipped items
+  const relicBonusFlat = { atk: 0, def: 0, hp: 0, crit: 0, critDmg: 0, evasion: 0, threat: 0 };
+  const relicBonusPct = { atk: 0, def: 0, hp: 0 };
 
-  // Additive stats
-  const totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate;
-  const totalCritDmg = baseCritDmg + bonusSummary.critDmg;
-  const totalEvasion = baseEvasion + equipResult.totalEvasion + bonusSummary.evasion;
-  const totalThreat = baseThreat + bonusSummary.threat;
+  for (const effect of equipResult.relicEffects) {
+    if (effect.type === 'relic_bonus' && effect.bonuses) {
+      for (const b of effect.bonuses) {
+        const val = b.op === '감소' ? -b.value : b.value;
+        if (b.op === '고정') continue; // Fixed effects handled separately
+        switch (b.stat) {
+          case '깡공격력': relicBonusFlat.atk += val; break;
+          case '깡방어력': relicBonusFlat.def += val; break;
+          case '깡체력': relicBonusFlat.hp += val; break;
+          case '공격력%': relicBonusPct.atk += val; break;
+          case '방어력%': relicBonusPct.def += val; break;
+          case '체력%': relicBonusPct.hp += val; break;
+          case '치명타확률%': relicBonusFlat.crit += val; break;
+          case '치명타데미지%': relicBonusFlat.critDmg += val; break;
+          case '회피%': relicBonusFlat.evasion += val; break;
+          case '위협도': relicBonusFlat.threat += val; break;
+        }
+      }
+    }
+    // 키쿠 이치몬지 also gives +200% crit damage
+    if (effect.type === 'crit_fixed') {
+      relicBonusFlat.critDmg += 200;
+    }
+    // 락 스톰퍼 gives +250 def and +25% def
+    if (effect.type === 'evasion_fixed') {
+      relicBonusFlat.def += 250;
+      relicBonusPct.def += 25;
+    }
+    // 평화의 목걸이 gives +20% hp and +10% evasion
+    if (effect.type === 'weapon_nullify') {
+      relicBonusPct.hp += 20;
+      relicBonusFlat.evasion += 10;
+    }
+  }
+
+  // Final formula: (base + seed + Σequip + flat + relicFlat) × (1 + (pct + relicPct)/100)
+  const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk + relicBonusFlat.atk) * (1 + (bonusSummary.pctAtk + relicBonusPct.atk) / 100));
+  const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef + relicBonusFlat.def) * (1 + (bonusSummary.pctDef + relicBonusPct.def) / 100));
+  const totalHp = Math.floor((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp + relicBonusFlat.hp) * (1 + (bonusSummary.pctHp + relicBonusPct.hp) / 100));
+
+  // Additive stats (including relic bonuses)
+  let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate + relicBonusFlat.crit;
+  let totalCritDmg = baseCritDmg + bonusSummary.critDmg + relicBonusFlat.critDmg;
+  let totalEvasion = baseEvasion + equipResult.totalEvasion + bonusSummary.evasion + relicBonusFlat.evasion;
+  const totalThreat = baseThreat + bonusSummary.threat + relicBonusFlat.threat;
+
+  // Store pre-relic values for display
+  const preRelicCrit = totalCrit;
+  const preRelicEvasion = totalEvasion;
+
+  // Apply fixed relic effects
+  const relicEffects = equipResult.relicEffects;
+  
+  // 키쿠 이치몬지: crit rate fixed at 20%
+  const hasCritFixed = relicEffects.find(e => e.type === 'crit_fixed');
+  if (hasCritFixed) {
+    totalCrit = hasCritFixed.fixedValue!;
+  }
+
+  // 락 스톰퍼: evasion fixed at 0%
+  const hasEvasionFixed = relicEffects.find(e => e.type === 'evasion_fixed');
+  if (hasEvasionFixed) {
+    totalEvasion = hasEvasionFixed.fixedValue!;
+  }
+
+  // Check manual relic bonuses for fixed effects
+  for (const effect of relicEffects) {
+    if (effect.type === 'relic_bonus' && effect.bonuses) {
+      for (const b of effect.bonuses) {
+        if (b.op !== '고정') continue;
+        switch (b.stat) {
+          case '치명타확률%': totalCrit = b.value; break;
+          case '회피%': totalEvasion = b.value; break;
+        }
+      }
+    }
+  }
 
   // Crit attack = atk × critDmg / 100
   const totalCritAttack = Math.floor(totalAtk * totalCritDmg / 100);
@@ -142,6 +223,11 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     totalHp, totalAtk, totalDef,
     totalCrit, totalCritDmg, totalCritAttack,
     totalEvasion, totalThreat,
+    relicEffects,
+    preRelicCrit,
+    preRelicEvasion,
+    relicBonusFlat,
+    relicBonusPct,
     jobName,
     jobElement: fixed.element,
   };
