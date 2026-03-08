@@ -58,6 +58,7 @@ export interface SoulBonusInput {
   slotIndex: number;
   spiritName: string;
   affinity: boolean;
+  isIdol: boolean;  // 우상 장비 여부 — 스킬 효과 2배
 }
 
 function getValueAtLevel(val: number | number[], level: number): number {
@@ -149,35 +150,72 @@ export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<Sk
 
 /**
  * Parse soul enchantment bonuses from all equipped spirits.
+ * - Idol (우상) equipment doubles soul skill bonuses.
+ * - Same spirit on multiple slots: only the highest bonus applies (dedup).
  */
 export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summary: Omit<SkillBonusSummary, 'sources'>, sources: SkillBonusSource[] }> {
   const spiritData = await loadSpiritStats();
   const sources: SkillBonusSource[] = [];
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
 
+  // Build per-spirit candidates with multiplier applied
+  const spiritCandidates: Map<string, { src: SkillBonusSource; mult: number }[]> = new Map();
+
   for (const soul of souls) {
     if (!soul.spiritName) continue;
     const bonusStats = getSpiritBonusStats(spiritData, soul.spiritName, soul.affinity);
+    const mult = soul.isIdol ? 2 : 1;
     const src = emptySource(soul.spiritName, 'soul');
+    if (soul.isIdol) {
+      src.name = `${soul.spiritName} (우상 ×2)`;
+    }
 
     for (const [key, val] of Object.entries(bonusStats)) {
       if (typeof val !== 'number' || val === 0) continue;
+      const adjusted = val * mult;
 
       switch (key) {
-        case '영혼_공격력%': src.pctAtk += val; totals.pctAtk += val; break;
-        case '영혼_방어력%': src.pctDef += val; totals.pctDef += val; break;
-        case '영혼_체력%': src.pctHp += val; totals.pctHp += val; break;
-        case '영혼_깡공격력': src.flatAtk += val; totals.flatAtk += val; break;
-        case '영혼_깡방어력': src.flatDef += val; totals.flatDef += val; break;
-        case '영혼_깡체력': src.flatHp += val; totals.flatHp += val; break;
-        case '영혼_치명타확률%': src.critRate += val; totals.critRate += val; break;
-        case '영혼_치명타데미지%': src.critDmg += val; totals.critDmg += val; break;
-        case '영혼_회피%': src.evasion += val; totals.evasion += val; break;
-        case '영혼_위협도': src.threat += val; totals.threat += val; break;
+        case '영혼_공격력%': src.pctAtk += adjusted; break;
+        case '영혼_방어력%': src.pctDef += adjusted; break;
+        case '영혼_체력%': src.pctHp += adjusted; break;
+        case '영혼_깡공격력': src.flatAtk += adjusted; break;
+        case '영혼_깡방어력': src.flatDef += adjusted; break;
+        case '영혼_깡체력': src.flatHp += adjusted; break;
+        case '영혼_치명타확률%': src.critRate += adjusted; break;
+        case '영혼_치명타데미지%': src.critDmg += adjusted; break;
+        case '영혼_회피%': src.evasion += adjusted; break;
+        case '영혼_위협도': src.threat += adjusted; break;
       }
     }
 
-    sources.push(src);
+    if (!spiritCandidates.has(soul.spiritName)) {
+      spiritCandidates.set(soul.spiritName, []);
+    }
+    spiritCandidates.get(soul.spiritName)!.push({ src, mult });
+  }
+
+  // Dedup: for each spirit name, pick the candidate with highest total bonus magnitude
+  for (const [, candidates] of spiritCandidates) {
+    let best = candidates[0];
+    if (candidates.length > 1) {
+      const magnitude = (s: SkillBonusSource) =>
+        Math.abs(s.flatAtk) + Math.abs(s.flatDef) + Math.abs(s.flatHp) +
+        Math.abs(s.pctAtk) + Math.abs(s.pctDef) + Math.abs(s.pctHp) +
+        Math.abs(s.critRate) + Math.abs(s.critDmg) + Math.abs(s.evasion) + Math.abs(s.threat);
+      best = candidates.reduce((a, b) => magnitude(a.src) >= magnitude(b.src) ? a : b);
+    }
+    const s = best.src;
+    totals.flatAtk += s.flatAtk;
+    totals.flatDef += s.flatDef;
+    totals.flatHp += s.flatHp;
+    totals.pctAtk += s.pctAtk;
+    totals.pctDef += s.pctDef;
+    totals.pctHp += s.pctHp;
+    totals.critRate += s.critRate;
+    totals.critDmg += s.critDmg;
+    totals.evasion += s.evasion;
+    totals.threat += s.threat;
+    sources.push(s);
   }
 
   return { summary: totals, sources };
