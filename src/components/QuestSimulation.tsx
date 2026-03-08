@@ -249,9 +249,11 @@ export default function QuestSimulation() {
   })() : [];
 
 
-  // Sub-area or boss display name
+  // Sub-area or boss display name - use stage if available
   const locationName = selectedSubAreaIdx === 99 && currentRegion?.boss
     ? currentRegion.boss.name
+    : currentQuest?.stage
+    ? `${selectedSubArea?.name ? currentRegion?.name + ' ' : ''}${currentQuest.stage}단계`
     : selectedSubArea
     ? selectedSubArea.name
     : currentRegion?.name || '';
@@ -377,28 +379,28 @@ export default function QuestSimulation() {
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-1.5">
                       <Heart className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs text-muted-foreground">체력</span>
+                      <span className="text-xs text-foreground">체력</span>
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.hp)}</span>
                   </div>
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-1.5">
                       <Swords className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs text-muted-foreground">공격력</span>
+                      <span className="text-xs text-foreground">공격력</span>
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.atk)}</span>
                   </div>
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                      <span className="text-xs text-muted-foreground">광역 공격 ({currentQuest.aoeChance}%)</span>
+                      <span className="text-xs text-foreground">광역 공격 ({currentQuest.aoeChance}%)</span>
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{formatNumber(currentQuest.aoe)}</span>
                   </div>
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 text-orange-400" />
-                      <span className="text-xs text-muted-foreground">치명타 확률</span>
+                      <span className="text-xs text-foreground">치명타 확률</span>
                     </div>
                     <span className="text-sm font-bold font-mono text-foreground">{currentQuest.aoeChance}%</span>
                   </div>
@@ -408,64 +410,80 @@ export default function QuestSimulation() {
                 <div className="pt-2 border-t border-border/30">
                   <div className="flex items-center gap-1.5 mb-3 px-1">
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-xs text-muted-foreground font-medium">방어력 기준치</span>
+                    <span className="text-xs text-foreground font-medium">방어력 기준치</span>
                   </div>
-                  <div className="flex gap-2 px-1">
-                    {/* Left: labels */}
-                    <div className="flex flex-col justify-between h-48 text-right shrink-0">
-                      {[...defThresholds].reverse().map(t => (
-                        <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{t.label}</span>
-                      ))}
-                    </div>
-                    {/* Center: vertical bar with hero pins */}
-                    <div className="relative w-8 h-48 flex-shrink-0">
-                      {/* Bar background - gradient from red(bottom) to white(top) */}
-                      <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
-                      {/* Threshold markers */}
-                      {[...defThresholds].reverse().map((t, i) => {
-                        const pct = (i / (defThresholds.length - 1)) * 100;
-                        return (
-                          <div key={t.key} className="absolute left-0 right-0 flex items-center justify-center" style={{ bottom: `${pct}%`, transform: 'translateY(50%)' }}>
-                            <div className="w-full h-px" style={{ backgroundColor: t.color, opacity: 0.4 }} />
-                          </div>
-                        );
-                      })}
-                      {/* Hero pins */}
-                      {selectedHeroes.map((h, hi) => {
-                        const heroDef = h.def || 0;
-                        const maxDef = defThresholds[defThresholds.length - 1].value;
-                        const minDef = 0;
-                        const pct = maxDef > minDef ? Math.min(100, Math.max(0, ((heroDef - minDef) / (maxDef - minDef)) * 100)) : 0;
-                        // Find which threshold range the hero is in
-                        let pinColor = '#ef4444';
-                        for (const t of defThresholds) {
-                          if (heroDef >= t.value) pinColor = t.color;
-                        }
-                        return (
-                          <Tooltip key={h.id}>
-                            <TooltipTrigger asChild>
+                  <div className="relative px-1">
+                    <div className="flex gap-2">
+                      {/* Left: % labels */}
+                      <div className="flex flex-col justify-between h-64 text-right shrink-0 w-8">
+                        {[...defThresholds].reverse().map(t => (
+                          <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{t.label}</span>
+                        ))}
+                      </div>
+                      {/* Center: vertical bar */}
+                      <div className="relative w-3 h-64 flex-shrink-0">
+                        <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                        {/* Threshold markers */}
+                        {[...defThresholds].reverse().map((t, i) => {
+                          const pct = (i / (defThresholds.length - 1)) * 100;
+                          return (
+                            <div key={t.key} className="absolute left-0 right-0" style={{ bottom: `${pct}%`, transform: 'translateY(50%)' }}>
+                              <div className="w-full h-px" style={{ backgroundColor: t.color, opacity: 0.5 }} />
+                            </div>
+                          );
+                        })}
+                        {/* Hero pins as dots on the bar */}
+                        {selectedHeroes.map((h, hi) => {
+                          const heroDef = h.def || 0;
+                          const maxDef = defThresholds[defThresholds.length - 1].value;
+                          const pct = maxDef > 0 ? Math.min(100, Math.max(0, (heroDef / maxDef) * 100)) : 0;
+                          let pinColor = '#ef4444';
+                          for (const t of defThresholds) {
+                            if (heroDef >= t.value) pinColor = t.color;
+                          }
+                          return (
+                            <div
+                              key={h.id}
+                              className="absolute"
+                              style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}
+                            >
                               <div
-                                className="absolute flex items-center"
-                                style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}
-                              >
-                                <div
-                                  className="w-5 h-5 rounded-full border-2 flex items-center justify-center text-[8px] font-bold shadow-md cursor-pointer"
-                                  style={{ borderColor: pinColor, backgroundColor: `${pinColor}33`, color: pinColor }}
-                                >
-                                  {hi + 1}
-                                </div>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent><p className="text-xs">{h.name}: {formatNumber(heroDef)}</p></TooltipContent>
-                          </Tooltip>
-                        );
-                      })}
-                    </div>
-                    {/* Right: defense values */}
-                    <div className="flex flex-col justify-between h-48 shrink-0">
-                      {[...defThresholds].reverse().map(t => (
-                        <span key={t.key} className="text-[10px] font-mono text-muted-foreground">{formatNumber(t.value)}</span>
-                      ))}
+                                className="w-2.5 h-2.5 rounded-full border shadow-md"
+                                style={{ borderColor: pinColor, backgroundColor: pinColor }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {/* Right: defense values + hero name lines */}
+                      <div className="relative flex flex-col justify-between h-64 shrink-0 flex-1 min-w-0">
+                        {/* Defense values at threshold positions */}
+                        {[...defThresholds].reverse().map(t => (
+                          <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
+                        ))}
+                        {/* Hero pin labels - extending right from dot */}
+                        {selectedHeroes.map((h, hi) => {
+                          const heroDef = h.def || 0;
+                          const maxDef = defThresholds[defThresholds.length - 1].value;
+                          const pct = maxDef > 0 ? Math.min(100, Math.max(0, (heroDef / maxDef) * 100)) : 0;
+                          let pinColor = '#ef4444';
+                          for (const t of defThresholds) {
+                            if (heroDef >= t.value) pinColor = t.color;
+                          }
+                          return (
+                            <div
+                              key={h.id}
+                              className="absolute flex items-center gap-1 pointer-events-none"
+                              style={{ bottom: `${pct}%`, left: '0', transform: 'translateY(50%)' }}
+                            >
+                              <div className="w-6 h-px" style={{ backgroundColor: pinColor, opacity: 0.6 }} />
+                              <span className="text-[9px] font-mono whitespace-nowrap" style={{ color: pinColor }}>
+                                {h.name} ({formatNumber(heroDef)})
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -546,7 +564,7 @@ export default function QuestSimulation() {
             <div className="mb-3">
               <div className="flex items-center gap-1.5 mb-2">
                 <Clock className="w-3.5 h-3.5 text-yellow-400" />
-                <span className="text-xs font-medium text-foreground">퀘스트 소요 시간 감소</span>
+                <span className="text-xs font-medium text-foreground">퀘스트 시간 감소</span>
               </div>
               <div className="space-y-1">
                 {questTimeSettings.map(item => (
@@ -556,7 +574,7 @@ export default function QuestSimulation() {
                     }`}>
                       {item.enabled && <span className="text-primary text-[10px]">✓</span>}
                     </div>
-                    <span className={`flex-1 ${item.color || 'text-muted-foreground'}`}>{item.label}</span>
+                    <span className={`flex-1 ${item.color || 'text-foreground/80'}`}>{item.label}</span>
                     <span className="text-muted-foreground/50 text-[10px]">-</span>
                   </div>
                 ))}
@@ -577,7 +595,7 @@ export default function QuestSimulation() {
                     }`}>
                       {item.enabled && <span className="text-primary text-[10px]">✓</span>}
                     </div>
-                    <span className={`flex-1 ${item.color || 'text-muted-foreground'}`}>{item.label}</span>
+                    <span className={`flex-1 ${item.color || 'text-foreground/80'}`}>{item.label}</span>
                     <span className="text-muted-foreground/50 text-[10px]">-</span>
                   </div>
                 ))}
