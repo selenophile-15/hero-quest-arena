@@ -495,10 +495,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         <button
           type="button"
           onClick={() => setBreakdownOpen(true)}
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-20 bg-primary text-primary-foreground px-1.5 py-4 rounded-l-lg shadow-lg hover:bg-primary/90 transition-all writing-vertical"
+          className="fixed right-0 top-1/3 z-30 bg-accent text-accent-foreground px-2 py-6 rounded-l-xl shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:px-3 transition-all border-l-2 border-y-2 border-accent/60"
           style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
         >
-          <span className="text-xs font-semibold tracking-wider">📊 스탯 계산표</span>
+          <span className="text-sm font-bold tracking-widest">📊 스탯 계산표</span>
         </button>
       )}
       {/* Sticky top bar with title + save/cancel */}
