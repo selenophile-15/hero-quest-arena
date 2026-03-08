@@ -105,10 +105,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const bonus = calcStats?.bonusSummary;
     const flatBonus = bonus ? getSummaryField(bonus, statType, 'flat') : 0;
     const pctBonus = bonus ? getSummaryField(bonus, statType, 'pct') : 0;
-    const relicFlat = calcStats?.relicBonusFlat;
-    const relicPct = calcStats?.relicBonusPct;
-    const relicFlatVal = relicFlat ? (statType === 'atk' ? relicFlat.atk : statType === 'def' ? relicFlat.def : relicFlat.hp) : 0;
-    const relicPctVal = relicPct ? (statType === 'atk' ? relicPct.atk : statType === 'def' ? relicPct.def : relicPct.hp) : 0;
 
     const relicEffects = calcStats?.relicEffects || [];
     const hasWeaponNullify = relicEffects.some(e => e.type === 'weapon_nullify');
@@ -184,8 +180,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   return filtered.map((src, i) => {
                     const flat = getBonusField(src, statType, 'flat');
                     const pct = getBonusField(src, statType, 'pct');
-                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
-                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
+                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : 'bg-amber-800/40';
+                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : '공용';
                     return (
                       <tr key={i} className="border-b border-border/20">
                         <td className="py-1 text-foreground/70">
@@ -282,22 +278,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     {pctBonus ? `+${pctBonus}%` : '0%'}
                   </td>
                 </tr>
-                {relicFlatVal !== 0 && (
-                  <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-yellow-400">⭐ 유물 깡 보너스</td>
-                    <td className="py-1.5 text-right tabular-nums font-medium text-yellow-400">
-                      {relicFlatVal > 0 ? '+' : ''}{formatNumber(relicFlatVal)}
-                    </td>
-                  </tr>
-                )}
-                {relicPctVal !== 0 && (
-                  <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-yellow-400">⭐ 유물 % 보너스</td>
-                    <td className="py-1.5 text-right tabular-nums font-medium text-yellow-400">
-                      {relicPctVal > 0 ? '+' : ''}{relicPctVal}%
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
@@ -428,18 +408,10 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       {flatBonus ? `+${formatNumber(flatBonus)}` : '0'}
                     </td>
                   </tr>
-                  {relicFlatVal !== 0 && (
-                    <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-yellow-400">⭐ 유물 깡</td>
-                      <td className="py-1.5 text-right tabular-nums font-medium text-yellow-400">
-                        {relicFlatVal > 0 ? '+' : ''}{formatNumber(relicFlatVal)}
-                      </td>
-                    </tr>
-                  )}
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/80">× (1 + 공통%{relicPctVal ? '+유물%' : ''})</td>
-                    <td className={`py-1.5 text-right tabular-nums font-medium ${(pctBonus || relicPctVal) ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      ×{(1 + (pctBonus + relicPctVal) / 100).toFixed(2)} ({pctBonus}{relicPctVal ? `+${relicPctVal}` : ''}%)
+                    <td className="py-1.5 text-foreground/80">× (1 + 공통%)</td>
+                    <td className={`py-1.5 text-right tabular-nums font-medium ${pctBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      ×{(1 + pctBonus / 100).toFixed(2)} ({pctBonus}%)
                     </td>
                   </tr>
                 </tbody>
@@ -470,7 +442,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const equipSlots = calcStats?.equipResult?.slots || [];
     const allSources = bonus?.sources || [];
     const relicEffects = calcStats?.relicEffects || [];
-    const relicFlat = calcStats?.relicBonusFlat;
+    
 
     if (statType === 'other') {
       return (
@@ -504,10 +476,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
       }
     }
 
-    const relicCritBonus = relicFlat?.crit || 0;
-    const relicCritDmgBonus = relicFlat?.critDmg || 0;
-    const relicEvasionBonus = relicFlat?.evasion || 0;
-    const relicThreatBonus = relicFlat?.threat || 0;
 
     // Base values
     const baseVal = calcStats
@@ -626,8 +594,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     </tr>
                   ) : critRateSources.map((src, i) => {
                     const val = getAddBonusField(src, 'crit');
-                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
-                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
+                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : 'bg-amber-800/40';
+                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : '공용';
                     return (
                       <tr key={i} className="border-b border-border/20">
                         <td className="py-1 text-foreground/70">
@@ -660,12 +628,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusVal}%</td>
                     </tr>
-                    {relicCritBonus !== 0 && (
-                      <tr className="border-b border-border/30">
-                        <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
-                        <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicCritBonus}%</td>
-                      </tr>
-                    )}
                     {hasCritFixed && (
                       <tr className="border-b border-border/30 bg-red-900/20">
                         <td className="py-1.5 text-red-400 font-semibold">⚠ {hasCritFixed.itemName}</td>
@@ -723,8 +685,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     </tr>
                   ) : critDmgSources.map((src, i) => {
                     const val = getCritDmgField(src);
-                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
-                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
+                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : 'bg-amber-800/40';
+                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : '공용';
                     return (
                       <tr key={i} className="border-b border-border/20">
                         <td className="py-1 text-foreground/70">
@@ -753,12 +715,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusCritDmg}%</td>
                     </tr>
-                    {relicCritDmgBonus !== 0 && (
-                      <tr className="border-b border-border/30">
-                        <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
-                        <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicCritDmgBonus}%</td>
-                      </tr>
-                    )}
                   </tbody>
                 </table>
               </div>
@@ -859,8 +815,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   </tr>
                 ) : filteredSources.map((src, i) => {
                   const val = getAddBonusField(src, statType);
-                  const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : 'bg-amber-800/40';
-                  const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : '공용';
+                  const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : 'bg-amber-800/40';
+                  const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : '공용';
                   return (
                     <tr key={i} className="border-b border-border/20">
                       <td className="py-1 text-foreground/70">
@@ -919,18 +875,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
                     <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusVal}{unit}</td>
                   </tr>
-                  {isEvasion && relicEvasionBonus !== 0 && (
-                    <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
-                      <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicEvasionBonus}%</td>
-                    </tr>
-                  )}
-                  {!isEvasion && statType === 'threat' && relicThreatBonus !== 0 && (
-                    <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-yellow-400">⭐ 유물 보너스</td>
-                      <td className="py-1.5 text-right tabular-nums text-yellow-400">+{relicThreatBonus}</td>
-                    </tr>
-                  )}
                   {isEvasion && hasEvasionFixed && (
                     <tr className="border-b border-border/30 bg-red-900/20">
                       <td className="py-1.5 text-red-400 font-semibold">⚠ {hasEvasionFixed.itemName}</td>
