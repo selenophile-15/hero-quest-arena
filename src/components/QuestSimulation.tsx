@@ -192,6 +192,28 @@ export default function QuestSimulation() {
   const hasSubAreas = currentRegion && currentRegion.subAreas.length > 1;
   const selectedSubArea = currentRegion && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99 ? currentRegion.subAreas[selectedSubAreaIdx] : null;
 
+  const selectedHeroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+  const maxMembers = currentRegion?.maxMembers || 5;
+  const isBossQuest = currentQuest?.isBoss || false;
+  const isFlashQuest = selectedQuestType === 'flash';
+
+  // Compute party-buffed stats whenever party changes
+  const heroIdKey = Array.from(selectedHeroIds).join(',');
+  useEffect(() => {
+    if (selectedHeroIds.size === 0) {
+      setBuffedStats([]);
+      setBuffSummary(null);
+      return;
+    }
+    const heroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    if (heroes.length === 0) return;
+    calculatePartyBuffs({ heroes, isBoss: isBossQuest, isFlashQuest })
+      .then(({ summary, buffedStats: bs }) => {
+        setBuffedStats(bs);
+        setBuffSummary(summary);
+      });
+  }, [heroIdKey, isBossQuest, isFlashQuest]);
+
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
     if (selectedSubAreaIdx === 0) return barrier.sub1;
@@ -202,36 +224,23 @@ export default function QuestSimulation() {
 
   const toggleHero = (id: string) => {
     if (!currentRegion) return;
-    
-    // If editing a specific slot, replace the hero in that slot
     if (editingSlotIdx !== null) {
       setSelectedHeroIds(prev => {
         const arr = Array.from(prev);
-        // If the hero is already selected, remove from old position
         const existingIdx = arr.indexOf(id);
-        if (existingIdx !== -1) {
-          arr.splice(existingIdx, 1);
-        }
-        // Replace at the editing slot position
-        if (editingSlotIdx < arr.length) {
-          arr[editingSlotIdx] = id;
-        } else {
-          arr.push(id);
-        }
+        if (existingIdx !== -1) arr.splice(existingIdx, 1);
+        if (editingSlotIdx < arr.length) arr[editingSlotIdx] = id;
+        else arr.push(id);
         return new Set(arr);
       });
       setEditingSlotIdx(null);
       setHeroSelectOpen(false);
       return;
     }
-    
     setSelectedHeroIds(prev => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else if (next.size < currentRegion.maxMembers) {
-        next.add(id);
-      }
+      if (next.has(id)) next.delete(id);
+      else if (next.size < currentRegion.maxMembers) next.add(id);
       return next;
     });
   };
@@ -279,25 +288,6 @@ export default function QuestSimulation() {
       </div>
     );
   }
-
-  const selectedHeroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
-  const maxMembers = currentRegion?.maxMembers || 5;
-  const isBoss = currentQuest?.isBoss || false;
-  const isFlash = selectedQuestType === 'flash';
-
-  // Compute party-buffed stats
-  useEffect(() => {
-    if (selectedHeroes.length === 0) {
-      setBuffedStats([]);
-      setBuffSummary(null);
-      return;
-    }
-    calculatePartyBuffs({ heroes: selectedHeroes, isBoss, isFlashQuest: isFlash })
-      .then(({ summary, buffedStats: bs }) => {
-        setBuffedStats(bs);
-        setBuffSummary(summary);
-      });
-  }, [selectedHeroes.map(h => h.id).join(','), isBoss, isFlash]);
 
   // Get barrier elements for display
   const barrierElements = currentQuest?.barrier ? (() => {
