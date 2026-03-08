@@ -178,7 +178,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     ))}
                   </tr>
 
-                  {/* Buff source rows */}
+                  {/* Buff source rows - show each source's raw % contribution */}
                   {relevantSources.map((src, srcIdx) => {
                     const isChamp = src.type === 'champion';
                     const icon = isChamp ? '👑' : '🎵';
@@ -197,19 +197,13 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                           <div className="text-[9px] text-foreground/70 mt-0.5 leading-tight">{src.name}</div>
                           {src.note && <div className="text-[8px] text-muted-foreground">{src.note}</div>}
                         </td>
-                        {heroes.map((h, hi) => {
-                          const isMerc = isMercenary(h);
+                        {heroes.map((h) => {
                           const hasLW = hasLoneWolfCowl(h);
+                          const isMerc = isMercenary(h);
                           const champMod = hasLW ? 0 : 1;
-                          const mercMult = isMerc ? 1.25 : 1.0;
+                          const effectivePct = isChamp ? pctVal * champMod : pctVal;
 
                           if (isMultStat) {
-                            // For ATK/DEF/HP: show % bonus (with merc multiplier)
-                            const effectivePct = pctVal * champMod * mercMult;
-                            const addedFlat = flatVal; // flat is not affected by merc mult
-                            const baseVal = getBaseVal(h);
-                            const addedFromPct = Math.floor(baseVal * effectivePct / 100);
-
                             return (
                               <td key={h.id} className="py-1.5 px-2 text-center">
                                 {hasLW && isChamp ? (
@@ -217,45 +211,30 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                                 ) : (
                                   <div className="space-y-0.5">
                                     {effectivePct !== 0 && (
-                                      <div className="text-green-400 text-[10px] font-mono">
-                                        ×{(1 + effectivePct / 100).toFixed(3)}
-                                        <span className="text-muted-foreground ml-0.5">
-                                          (+{effectivePct.toFixed(1)}%)
-                                        </span>
+                                      <div className="text-green-400/80 text-[10px] font-mono">
+                                        +{effectivePct.toFixed(1)}%
                                       </div>
                                     )}
-                                    {effectivePct !== 0 && (
+                                    {flatVal !== 0 && (
                                       <div className="text-green-400/70 text-[9px] font-mono">
-                                        +{formatNumber(addedFromPct)}
+                                        +{formatNumber(flatVal)} (깡)
                                       </div>
                                     )}
-                                    {addedFlat !== 0 && (
-                                      <div className="text-green-400/70 text-[9px] font-mono">
-                                        +{formatNumber(addedFlat)} (깡)
-                                      </div>
-                                    )}
-                                    {isMerc && isChamp && pctVal !== 0 && (
-                                      <div className="text-yellow-400 text-[8px]">용병 ×1.25</div>
+                                    {effectivePct === 0 && flatVal === 0 && (
+                                      <span className="text-muted-foreground text-[9px]">-</span>
                                     )}
                                   </div>
                                 )}
                               </td>
                             );
                           } else {
-                            // For CRIT/EVA: show additive bonus
-                            const effectiveAdd = pctVal * champMod * mercMult;
                             return (
                               <td key={h.id} className="py-1.5 px-2 text-center">
                                 {hasLW && isChamp ? (
                                   <span className="text-red-400 text-[9px]">무효</span>
-                                ) : effectiveAdd !== 0 ? (
-                                  <div className="space-y-0.5">
-                                    <div className="text-green-400 text-[10px] font-mono">
-                                      +{effectiveAdd.toFixed(1)}%
-                                    </div>
-                                    {isMerc && isChamp && (
-                                      <div className="text-yellow-400 text-[8px]">용병 ×1.25</div>
-                                    )}
+                                ) : effectivePct !== 0 ? (
+                                  <div className="text-green-400/80 text-[10px] font-mono">
+                                    +{effectivePct.toFixed(1)}%
                                   </div>
                                 ) : (
                                   <span className="text-muted-foreground text-[9px]">-</span>
@@ -267,6 +246,87 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                       </tr>
                     );
                   })}
+
+                  {/* Combined multiplier row - shows total additive % and final multiplier */}
+                  {isMultStat && relevantSources.length > 0 && (
+                    <tr className="border-b border-border/20 bg-green-900/20">
+                      <td className="py-1.5 px-2">
+                        <div className="text-foreground text-[10px] font-semibold">합산 배율</div>
+                        <div className="text-[8px] text-muted-foreground">(1 + Σ버프%)</div>
+                      </td>
+                      {heroes.map((h) => {
+                        const hasLW = hasLoneWolfCowl(h);
+                        const isMerc = isMercenary(h);
+                        const mercMult = isMerc ? 1.25 : 1.0;
+                        const champMod = hasLW ? 0 : 1;
+
+                        let totalPct = 0;
+                        let totalFlat = 0;
+                        relevantSources.forEach(src => {
+                          const pct = getSourcePctForStat(src, activeTab);
+                          const flat = getSourceFlatForStat(src, activeTab);
+                          totalPct += src.type === 'champion' ? pct * champMod : pct;
+                          totalFlat += flat;
+                        });
+                        const effectiveTotalPct = totalPct * mercMult;
+                        const baseVal = getBaseVal(h);
+                        const addedFromPct = Math.floor(baseVal * effectiveTotalPct / 100);
+
+                        return (
+                          <td key={h.id} className="py-1.5 px-2 text-center">
+                            <div className="space-y-0.5">
+                              <div className="text-green-400 text-[11px] font-mono font-bold">
+                                ×{(1 + effectiveTotalPct / 100).toFixed(3)}
+                              </div>
+                              <div className="text-muted-foreground text-[9px] font-mono">
+                                (+{effectiveTotalPct.toFixed(1)}%)
+                              </div>
+                              <div className="text-green-400/70 text-[9px] font-mono">
+                                +{formatNumber(addedFromPct)}
+                                {totalFlat !== 0 && <span> +{formatNumber(totalFlat)}깡</span>}
+                              </div>
+                              {isMerc && (
+                                <div className="text-yellow-400 text-[8px]">용병 ×1.25 적용</div>
+                              )}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  )}
+
+                  {/* Combined additive row for crit/eva */}
+                  {!isMultStat && activeTab !== 'threat' && relevantSources.length > 0 && (
+                    <tr className="border-b border-border/20 bg-green-900/20">
+                      <td className="py-1.5 px-2">
+                        <div className="text-foreground text-[10px] font-semibold">합산 보너스</div>
+                      </td>
+                      {heroes.map((h) => {
+                        const hasLW = hasLoneWolfCowl(h);
+                        const isMerc = isMercenary(h);
+                        const mercMult = isMerc ? 1.25 : 1.0;
+                        const champMod = hasLW ? 0 : 1;
+
+                        let totalPct = 0;
+                        relevantSources.forEach(src => {
+                          const pct = getSourcePctForStat(src, activeTab);
+                          totalPct += src.type === 'champion' ? pct * champMod : pct;
+                        });
+                        const effectiveTotal = totalPct * mercMult;
+
+                        return (
+                          <td key={h.id} className="py-1.5 px-2 text-center">
+                            <div className="text-green-400 text-[11px] font-mono font-bold">
+                              +{effectiveTotal.toFixed(1)}%
+                            </div>
+                            {isMerc && (
+                              <div className="text-yellow-400 text-[8px]">용병 ×1.25 적용</div>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  )}
 
                   {/* Crit damage row (only on crit tab) */}
                   {activeTab === 'crit' && buffSummary.sources.some(s => s.critDmgPct) && (
