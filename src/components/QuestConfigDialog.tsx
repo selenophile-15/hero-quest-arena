@@ -77,7 +77,7 @@ const getDifficultyColor = (diff: string) => {
     case '쉬움': return 'text-green-400';
     case '보통': return 'text-blue-400';
     case '어려움': return 'text-orange-400';
-    case '익스트림': return 'text-red-400';
+    case '익스트림': return 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]';
     default: return 'text-muted-foreground';
   }
 };
