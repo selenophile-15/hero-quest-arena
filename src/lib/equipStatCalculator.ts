@@ -494,6 +494,7 @@ export async function calculateEquipmentStats(
       preBonusAtk, preBonusDef, preBonusHp,
       spellknightMult,
       bonusAtkPct, bonusDefPct, bonusHpPct,
+      quiverBonusAtk, quiverBonusDef, quiverBonusHp,
       finalAtk, finalDef, finalHp, finalCrit, finalEvasion,
     });
   }
