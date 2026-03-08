@@ -727,7 +727,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 { icon: STAT_ICON_MAP.crit, value: crit, suffix: ' %' },
                 { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: ' %' },
                 { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
-                { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %' },
+                { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %', isEvasion: true },
                 { icon: STAT_ICON_MAP.threat, value: threat, suffix: '' },
               ].map((stat, i) => (
                 <div key={i} className="flex items-center gap-2 py-0.5 px-1">

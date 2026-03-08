@@ -964,9 +964,9 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 </span>
               ) : isEvasion ? (
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
-                  {cappedEvasion}%
+                  {totalVal}%
                   {isEvasionCapped && (
-                    <span className="text-sm font-normal text-muted-foreground ml-1">({totalVal}%)</span>
+                    <span className="text-sm font-normal text-muted-foreground ml-1">({evasionCap}%)</span>
                   )}
                 </span>
               ) : (

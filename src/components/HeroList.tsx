@@ -549,7 +549,7 @@ export default function HeroList() {
                   { icon: STAT_ICON_MAP.crit, value: hero.crit, suffix: ' %' },
                   { icon: STAT_ICON_MAP.critDmg, value: hero.critDmg, suffix: ' %' },
                   { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
-                  { icon: STAT_ICON_MAP.evasion, value: hero.evasion, suffix: ' %' },
+                  { icon: STAT_ICON_MAP.evasion, value: hero.evasion, suffix: ' %', isEvasion: true, jobName: hero.heroClass },
                   { icon: STAT_ICON_MAP.threat, value: hero.threat, suffix: '' },
                 ].map((s, i) => (
                   <div key={i} className={`flex items-center gap-2 py-0.5 px-1 ${dimClass(s.value)}`}>
