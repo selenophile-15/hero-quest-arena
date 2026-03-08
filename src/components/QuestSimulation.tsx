@@ -1,14 +1,15 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
 import { getHeroes } from '@/lib/storage';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, Clock, Coffee } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Play, Info, Plus, Clock, Coffee, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
+import { runCombatSimulation, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType } from '@/lib/combatSimulation';
 
 // Quest data types
 interface QuestTime {
@@ -143,6 +144,10 @@ export default function QuestSimulation() {
 
   // Time settings
   const [timeSettings, setTimeSettings] = useState<TimeSettingItem[]>(DEFAULT_TIME_SETTINGS);
+
+  // Simulation state
+  const [simRunning, setSimRunning] = useState(false);
+  const [simResult, setSimResult] = useState<CombatSimResult | null>(null);
 
   // Load quest data
   useEffect(() => {
@@ -311,7 +316,7 @@ export default function QuestSimulation() {
               >
                 {currentQuest && centerImage ? (
                   <>
-                    <img src={centerImage} alt="" className="w-[140%] h-[140%] object-cover" />
+                    <img src={centerImage} alt="" className="w-full h-full object-cover scale-90" />
                     <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-[10px] text-foreground font-medium">변경</span>
                     </div>
@@ -736,9 +741,122 @@ export default function QuestSimulation() {
               </tbody>
             </table>
             {currentQuest && selectedHeroes.length > 0 && (
-              <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} className="w-full mt-3 gap-2" size="sm">
-                <Play className="w-4 h-4" /> 시뮬레이션 실행
-              </Button>
+              <div className="mt-3 space-y-3">
+                <Button
+                  onClick={() => {
+                    if (simRunning || !currentQuest || !currentRegion) return;
+                    setSimRunning(true);
+                    setSimResult(null);
+                    const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
+                    const questMonster: QuestMonster = {
+                      hp: currentQuest.hp,
+                      atk: currentQuest.atk,
+                      aoe: currentQuest.aoe,
+                      aoeChance: currentQuest.aoeChance,
+                      def: currentQuest.def,
+                      isBoss: currentQuest.isBoss,
+                      isExtreme: currentQuest.isExtreme,
+                      barrier: currentQuest.barrier,
+                      barrierElement: barrierElements[0] || null,
+                    };
+                    // Run simulation async to not block UI
+                    setTimeout(() => {
+                      const result = runCombatSimulation({
+                        heroes: selectedHeroes,
+                        monster: questMonster,
+                        miniBoss: 'none' as MiniBossType,
+                        booster: { type: 'none' },
+                        questTypeKey: selectedQuestType,
+                        regionName: currentRegion!.name,
+                        isTerrorTower,
+                      });
+                      setSimResult(result);
+                      setSimRunning(false);
+                    }, 50);
+                  }}
+                  className="w-full gap-2"
+                  size="sm"
+                  disabled={simRunning}
+                >
+                  {simRunning ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> 시뮬레이션 진행 중...</>
+                  ) : (
+                    <><Play className="w-4 h-4" /> 시뮬레이션 실행</>
+                  )}
+                </Button>
+
+                {/* Simulation Results */}
+                {simResult && (
+                  <div className="space-y-2 border-t border-border/30 pt-3">
+                    {/* Win Rate - large */}
+                    <div className="text-center">
+                      <div className="text-[10px] text-muted-foreground mb-0.5">승률</div>
+                      <div className={`text-2xl font-bold font-mono ${
+                        simResult.winRate >= 90 ? 'text-green-400' :
+                        simResult.winRate >= 70 ? 'text-lime-400' :
+                        simResult.winRate >= 50 ? 'text-yellow-400' :
+                        simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400'
+                      }`}>
+                        {simResult.winRate.toFixed(1)}%
+                      </div>
+                      {simResult.winRate !== simResult.rawWinRate && (
+                        <div className="text-[9px] text-muted-foreground">
+                          (운명직공 보정 전: {simResult.rawWinRate.toFixed(1)}%)
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Rounds & Stats */}
+                    <div className="grid grid-cols-3 gap-1 text-center">
+                      <div>
+                        <div className="text-[9px] text-muted-foreground">최소 라운드</div>
+                        <div className="text-xs font-mono text-foreground">{simResult.minRounds}</div>
+                      </div>
+                      <div>
+                        <div className="text-[9px] text-muted-foreground">평균 라운드</div>
+                        <div className="text-xs font-mono text-foreground">{simResult.avgRounds.toFixed(1)}</div>
+                      </div>
+                      <div>
+                        <div className="text-[9px] text-muted-foreground">최대 라운드</div>
+                        <div className="text-xs font-mono text-foreground">{simResult.maxRounds}</div>
+                      </div>
+                    </div>
+
+                    {simResult.roundLimitRate > 0 && (
+                      <div className="text-center text-[9px] text-red-400">
+                        ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
+                      </div>
+                    )}
+
+                    {/* Per-hero results */}
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="text-muted-foreground border-b border-border/30">
+                          <th className="text-left py-1 px-1">영웅</th>
+                          <th className="text-center py-1">생존률</th>
+                          <th className="text-center py-1">평균 데미지</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {simResult.heroResults.map(hr => (
+                          <tr key={hr.heroId} className="border-b border-border/10">
+                            <td className="py-1 px-1 text-foreground font-medium">{hr.heroName}</td>
+                            <td className={`py-1 text-center font-mono ${
+                              hr.survivalRate >= 90 ? 'text-green-400' :
+                              hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
+                            }`}>{hr.survivalRate.toFixed(1)}%</td>
+                            <td className="py-1 text-center font-mono text-red-400">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    <div className="text-center text-[8px] text-muted-foreground/50">
+                      {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
