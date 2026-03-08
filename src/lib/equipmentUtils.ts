@@ -127,18 +127,22 @@ const equipDataCache: Record<string, EquipmentItem[]> = {};
  */
 export async function loadEquipmentByTypes(
   typeKorNames: string[],
-  nameMap: Record<string, Record<string, string>>
+  nameMap: Record<string, Record<string, string>>,
+  onProgress?: (loaded: number) => void
 ): Promise<EquipmentItem[]> {
   const results: EquipmentItem[] = [];
+  let loadedCount = 0;
 
   for (const typeKor of typeKorNames) {
     const typeInfo = EQUIP_TYPE_MAP[typeKor];
-    if (!typeInfo) continue;
+    if (!typeInfo) { loadedCount++; onProgress?.(loadedCount); continue; }
     const { file, category } = typeInfo;
 
     // Check cache
     if (equipDataCache[file]) {
       results.push(...equipDataCache[file]);
+      loadedCount++;
+      onProgress?.(loadedCount);
       continue;
     }
 
@@ -191,6 +195,8 @@ export async function loadEquipmentByTypes(
     } catch (e) {
       console.warn(`Failed to load equipment: ${file}`, e);
     }
+    loadedCount++;
+    onProgress?.(loadedCount);
   }
 
   // Sort by tier descending

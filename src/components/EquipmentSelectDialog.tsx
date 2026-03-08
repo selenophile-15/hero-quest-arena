@@ -188,10 +188,15 @@ export default function EquipmentSelectDialog({
     return groups;
   }, [spiritNames]);
 
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingTotal, setLoadingTotal] = useState(0);
+
   useEffect(() => {
     if (!open || !jobName) return;
     const load = async () => {
       setLoading(true);
+      setLoadingProgress(0);
+      setLoadingTotal(0);
       const [sid, nameMap] = await Promise.all([loadSID(), loadEquipNameMap()]);
       const allowedPerSlot: string[][] = [];
       const allTypeSet = new Set<string>();
@@ -208,7 +213,11 @@ export default function EquipmentSelectDialog({
         allTypeSet.add('쌍수');
       }
       setSlotAllowedTypes(allowedPerSlot);
-      const items = await loadEquipmentByTypes(Array.from(allTypeSet), nameMap);
+      const typeArr = Array.from(allTypeSet);
+      setLoadingTotal(typeArr.length);
+      const items = await loadEquipmentByTypes(typeArr, nameMap, (loaded) => {
+        setLoadingProgress(loaded);
+      });
       setAllItems(items);
       setLoading(false);
     };
@@ -305,14 +314,18 @@ export default function EquipmentSelectDialog({
 
     let newElement: EquipmentSlotData['element'];
     if (item.uniqueElement?.length) {
-      // New item has unique element → use it
       newElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true };
     } else if (prevHadUniqueElement) {
-      // Previous item had unique element but new one doesn't → clear it
       newElement = null;
     } else {
-      // Preserve existing element
-      newElement = newSlots[activeSlot]?.element || null;
+      const existing = newSlots[activeSlot]?.element || null;
+      if (existing) {
+        // Update affinity based on new item's elementAffinity
+        const hasAffinity = item.elementAffinity?.includes(existing.type) || item.elementAffinity?.includes('모든 원소');
+        newElement = { ...existing, affinity: !!hasAffinity };
+      } else {
+        newElement = null;
+      }
     }
 
     let newSpirit: EquipmentSlotData['spirit'];
@@ -321,7 +334,13 @@ export default function EquipmentSelectDialog({
     } else if (prevHadUniqueSpirit) {
       newSpirit = null;
     } else {
-      newSpirit = newSlots[activeSlot]?.spirit || null;
+      const existing = newSlots[activeSlot]?.spirit || null;
+      if (existing) {
+        const hasAffinity = item.spiritAffinity?.includes(existing.name);
+        newSpirit = { ...existing, affinity: !!hasAffinity };
+      } else {
+        newSpirit = null;
+      }
     }
 
     newSlots[activeSlot] = { ...newSlots[activeSlot], item: { ...item }, quality: slotQuality, element: newElement, spirit: newSpirit };
@@ -567,9 +586,25 @@ export default function EquipmentSelectDialog({
                 onCancel={() => setManualMode(false)}
               />
             ) : loading ? (
-              <div className="flex flex-col items-center justify-center py-16 gap-3">
-                <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+              <div className="flex flex-col items-center justify-center py-16 gap-4">
+                <div className="relative w-12 h-12">
+                  <div className="absolute inset-0 border-[3px] border-dashed border-primary/30 rounded-full animate-spin" style={{ animationDuration: '2s' }} />
+                  <div className="absolute inset-1 border-[3px] border-transparent border-t-primary rounded-full animate-spin" style={{ animationDuration: '0.8s' }} />
+                </div>
                 <span className="text-muted-foreground text-sm">장비 데이터 로딩 중...</span>
+                {loadingTotal > 0 && (
+                  <div className="flex flex-col items-center gap-1.5 w-48">
+                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-300"
+                        style={{ width: `${Math.round((loadingProgress / loadingTotal) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                      {loadingProgress} / {loadingTotal} 타입 로드 완료
+                    </span>
+                  </div>
+                )}
               </div>
             ) : filteredItems.length === 0 ? (
               <div className="flex items-center justify-center py-16 text-muted-foreground">장착 가능한 장비가 없습니다</div>
