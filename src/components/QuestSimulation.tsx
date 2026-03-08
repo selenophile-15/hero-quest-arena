@@ -151,6 +151,10 @@ export default function QuestSimulation() {
   const [simRunning, setSimRunning] = useState(false);
   const [simResult, setSimResult] = useState<CombatSimResult | null>(null);
 
+  // Party buff state
+  const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
+  const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
+
   // Load quest data
   useEffect(() => {
     const loadData = async () => {
