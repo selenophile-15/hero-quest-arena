@@ -872,10 +872,10 @@ export default function HeroList() {
                   className={`relative rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center overflow-hidden`}
                   style={{ width: '64px', ...(item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }) }}>
                   {/* Item image area */}
-                  <div className="relative w-full flex items-center justify-center pt-1 pb-0.5">
+                  <div className="relative w-full flex items-center justify-center pt-0.5 -mb-1">
                     {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
                     {item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                    {item?.manual ? <CircleHelp className="w-7 h-7 text-muted-foreground/60" /> : item?.imagePath ? <img src={item.imagePath} alt="" className="w-8 h-8 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
+                    {item?.manual ? <CircleHelp className="w-9 h-9 text-muted-foreground/60" /> : item?.imagePath ? <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
                   </div>
                   {item && (displayElement || displaySpirit || itemType) && (
                     <div className="flex items-center justify-center gap-0.5 pb-0.5">
@@ -904,10 +904,10 @@ export default function HeroList() {
                 <div key={i}
                   className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center overflow-hidden`}
                   style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
-                  <div className="relative w-full flex items-center justify-center pt-1 pb-0.5">
+                  <div className="relative w-full flex items-center justify-center pt-0.5 -mb-1">
                     {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
                     {item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                    {item?.manual ? <CircleHelp className="w-7 h-7 text-muted-foreground/60" /> : item?.imagePath ? <img src={item.imagePath} alt="" className="w-8 h-8 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
+                    {item?.manual ? <CircleHelp className="w-9 h-9 text-muted-foreground/60" /> : item?.imagePath ? <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
                   </div>
                   {item && (displayElement || displaySpirit || itemType) && (
                     <div className="flex items-center justify-center gap-0.5 pb-0.5">
