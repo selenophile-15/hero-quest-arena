@@ -338,7 +338,7 @@ export default function QuestSimulation() {
                     const maxDef = currentQuest.def.r75;
                     // Calculate selected heroes' average defense
                     const heroAvgDef = selectedHeroes.length > 0
-                      ? Math.round(selectedHeroes.reduce((sum, h) => sum + (h.stats?.def || 0), 0) / selectedHeroes.length)
+                      ? Math.round(selectedHeroes.reduce((sum, h) => sum + (h.def || 0), 0) / selectedHeroes.length)
                       : null;
                     const heroPercent = heroAvgDef !== null && maxDef > 0 ? Math.min((heroAvgDef / maxDef) * 100, 100) : null;
 
