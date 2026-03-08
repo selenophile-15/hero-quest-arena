@@ -971,8 +971,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               <div className="rounded bg-teal-900/20 border border-teal-500/20 px-3 py-2">
                 <p className="text-[10px] text-teal-300/80 leading-relaxed">
                   ⚠️ 던전에서 회피율은 최대 <span className="font-bold text-teal-200">{evasionCap}%</span>까지만 적용됩니다.
-                  {isPathfinder && ' (길잡이/방랑자는 78%까지 적용)'}
-                  {!isPathfinder && ' (길잡이/방랑자만 78%까지 적용 가능)'}
+                  {isPathfinder && ' (길잡이만 78%까지 적용)'}
+                  {!isPathfinder && ' (길잡이만 78%까지 적용 가능)'}
                 </p>
               </div>
             </div>
