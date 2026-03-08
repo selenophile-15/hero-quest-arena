@@ -408,7 +408,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   )}
 
                   {/* Combined additive row for crit/eva */}
-                  {!isMultStat && activeTab !== 'hpRegen' && relevantSources.length > 0 && (
+                  {!isMultStat && relevantSources.length > 0 && (
                     <tr className="border-b border-border/20 bg-green-900/20">
                       <td className="py-2 px-3">
                         <div className="text-foreground text-sm font-semibold">합산 보너스</div>
