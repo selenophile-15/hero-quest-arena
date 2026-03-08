@@ -57,6 +57,9 @@ export interface EquipSlotCalc {
   preBonusDef: number;
   preBonusHp: number;
 
+  // Spellknight coefficient (1.0 normally, 1.5 for unique element items)
+  spellknightMult: number;
+
   // Skill bonus multipliers applied to this slot
   bonusAtkPct: number;  // sum of all applicable % for atk
   bonusDefPct: number;
