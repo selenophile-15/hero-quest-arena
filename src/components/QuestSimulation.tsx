@@ -1141,6 +1141,7 @@ export default function QuestSimulation() {
         heroes={selectedHeroes}
         buffSummary={buffSummary}
         buffedStats={buffedStats}
+        hasEvasionPenalty={!!(currentQuest && (currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')))}
       />
     </div>
   );
