@@ -583,9 +583,33 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             )}
           </div>
 
-          {/* Item grid */}
+          {/* Item grid or Manual form */}
           <div className="flex-1 min-h-0 mt-1">
             <div className="overflow-y-auto h-full border border-border rounded p-3">
+              {championManualMode ? (
+                <ManualEquipmentForm
+                  initialData={equipmentSlots[slotIdx]?.item?.manualData || null}
+                  onConfirm={(item) => {
+                    const newSlots = [...equipmentSlots];
+                    const existingSlot = newSlots[slotIdx];
+                    let slotElement = existingSlot?.element || null;
+                    let slotSpirit = existingSlot?.spirit || null;
+                    if (item.manual) {
+                      slotElement = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true } : null;
+                      slotSpirit = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null;
+                    }
+                    newSlots[slotIdx] = {
+                      item: { ...item },
+                      quality: existingSlot?.quality || equipSlotQuality,
+                      element: slotElement,
+                      spirit: slotSpirit,
+                    };
+                    setEquipmentSlots(newSlots);
+                    setChampionManualMode(false);
+                  }}
+                  onCancel={() => setChampionManualMode(false)}
+                />
+              ) : (
               <TooltipProvider delayDuration={200}>
                 <div className="grid grid-cols-6 gap-3">
                   {filteredItems.map((item, idx) => {
@@ -697,6 +721,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   })}
                 </div>
               </TooltipProvider>
+              )}
             </div>
           </div>
         </DialogContent>
