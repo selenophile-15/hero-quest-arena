@@ -432,11 +432,16 @@ export default function EnchantPickerDialog({
                 const spiritEffect = spiritName ? getSpiritEffectFromData(spiritData, spiritName, spiritAffinity) : '';
                 const isIdolSlot = itemTypes?.[i] === 'idol' || itemTypes?.[i] === '우상';
 
-                // For idol slots, double stat bonus numbers (after stat keywords like 공격력, 방어력, etc.)
-                // but NOT condition numbers like "50% 미만"
+                // For idol slots, double ALL numbers except condition thresholds (e.g. "50% 미만")
                 const displayEffect = spiritEffect && isIdolSlot
-                  ? spiritEffect.replace(/(공격력|방어력|체력|위협도|회피|치명타확률|치명타데미지)\s*(\d+(?:\.\d+)?)/g,
-                      (_, stat, num) => `${stat} ${Number(num) * 2}`)
+                  ? spiritEffect.replace(/(\d+(?:\.\d+)?)/g, (match, _num, offset, str) => {
+                      // Don't double numbers followed by "% 미만" or "% 이하" (condition thresholds)
+                      const after = str.substring(offset + match.length);
+                      if (after.startsWith('% 미만') || after.startsWith('% 이하')) {
+                        return match;
+                      }
+                      return String(Number(match) * 2);
+                    })
                   : spiritEffect;
 
                 return (
