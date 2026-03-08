@@ -262,304 +262,239 @@ export default function QuestSimulation() {
             )}
           </div>
 
-          {/* Monster Display (center) */}
+          {/* Main Content: Monster Info (left) + Hero Panel (right) */}
           {currentQuest ? (
-            <div className="flex-1 min-w-0">
-              {/* Monster title bar */}
-              <div className="flex items-center gap-2 mb-3">
-                <Swords className="w-5 h-5 text-primary" />
-                <h3 className="font-display text-lg text-foreground">몬스터 정보</h3>
-                {currentQuest.isBoss && <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">BOSS</span>}
-                {currentQuest.difficulty !== '없음' && (() => {
-                  const diffColors: Record<string, string> = {
-                    '쉬움': 'bg-green-500/20 text-green-400',
-                    '보통': 'bg-blue-500/20 text-blue-400',
-                    '어려움': 'bg-orange-500/20 text-orange-400',
-                    '익스트림': 'bg-purple-500/20 text-purple-400',
-                  };
-                  return <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[currentQuest.difficulty] || 'bg-secondary text-muted-foreground'}`}>{currentQuest.difficulty}</span>;
-                })()}
-              </div>
-
-              {/* Stats grid */}
-              <div className="card-fantasy p-4">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-                  <div className="bg-secondary/30 rounded-lg p-2.5">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Heart className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-[10px] text-muted-foreground">HP</span>
-                    </div>
-                    <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.hp)}</span>
-                  </div>
-                  <div className="bg-secondary/30 rounded-lg p-2.5">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Swords className="w-3.5 h-3.5 text-orange-400" />
-                      <span className="text-[10px] text-muted-foreground">공격력</span>
-                    </div>
-                    <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.atk)}</span>
-                  </div>
-                  <div className="bg-secondary/30 rounded-lg p-2.5">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                      <span className="text-[10px] text-muted-foreground">광역 ({currentQuest.aoeChance}%)</span>
-                    </div>
-                    <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.aoe)}</span>
-                  </div>
-                  <div className="bg-secondary/30 rounded-lg p-2.5">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Shield className="w-3.5 h-3.5 text-blue-400" />
-                      <span className="text-[10px] text-muted-foreground">최소 전투력</span>
-                    </div>
-                    <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.minPower)}</span>
-                  </div>
+            <div className="flex gap-4 flex-col lg:flex-row">
+              {/* Left: Monster Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <Swords className="w-5 h-5 text-primary" />
+                  <h3 className="font-display text-lg text-foreground">몬스터 정보</h3>
+                  {currentQuest.isBoss && <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">보스</span>}
+                  {currentQuest.difficulty !== '없음' && (() => {
+                    const diffColors: Record<string, string> = {
+                      '쉬움': 'bg-green-500/20 text-green-400',
+                      '보통': 'bg-blue-500/20 text-blue-400',
+                      '어려움': 'bg-orange-500/20 text-orange-400',
+                      '익스트림': 'bg-red-500/20 text-red-400',
+                    };
+                    return <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[currentQuest.difficulty] || 'bg-secondary text-muted-foreground'}`}>{currentQuest.difficulty}</span>;
+                  })()}
+                  <span className="text-xs text-muted-foreground ml-auto">⏱ {formatTime(currentQuest.time.total)}</span>
                 </div>
 
-                {/* Defense thresholds - bar style */}
-                <div className="bg-secondary/20 rounded-lg p-3 mb-3">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Shield className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-xs text-muted-foreground font-medium">방어력 기준치</span>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="w-3 h-3 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="text-xs">대미지 감소율에 따른 필요 방어력</p>
-                      </TooltipContent>
-                    </Tooltip>
+                <div className="card-fantasy p-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+                    <div className="bg-secondary/30 rounded-lg p-2.5">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Heart className="w-3.5 h-3.5 text-red-400" />
+                        <span className="text-[10px] text-muted-foreground">HP</span>
+                      </div>
+                      <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.hp)}</span>
+                    </div>
+                    <div className="bg-secondary/30 rounded-lg p-2.5">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Swords className="w-3.5 h-3.5 text-orange-400" />
+                        <span className="text-[10px] text-muted-foreground">공격력</span>
+                      </div>
+                      <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.atk)}</span>
+                    </div>
+                    <div className="bg-secondary/30 rounded-lg p-2.5">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                        <span className="text-[10px] text-muted-foreground">광역 ({currentQuest.aoeChance}%)</span>
+                      </div>
+                      <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.aoe)}</span>
+                    </div>
+                    <div className="bg-secondary/30 rounded-lg p-2.5">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Shield className="w-3.5 h-3.5 text-blue-400" />
+                        <span className="text-[10px] text-muted-foreground">최소 전투력</span>
+                      </div>
+                      <span className="text-sm font-bold text-foreground">{formatNumber(currentQuest.minPower)}</span>
+                    </div>
                   </div>
-                  {(() => {
-                    const thresholds = [
-                      { key: 'r0' as const, label: '0%', color: 'bg-red-500', textColor: 'text-red-400' },
-                      { key: 'r50' as const, label: '50%', color: 'bg-yellow-500', textColor: 'text-yellow-400' },
-                      { key: 'r70' as const, label: '70%', color: 'bg-lime-500', textColor: 'text-lime-400' },
-                      { key: 'r75' as const, label: '75%', color: 'bg-white', textColor: 'text-white' },
-                    ];
-                    const maxDef = currentQuest.def.r75;
-                    // Calculate selected heroes' average defense
-                    const heroAvgDef = selectedHeroes.length > 0
-                      ? Math.round(selectedHeroes.reduce((sum, h) => sum + (h.def || 0), 0) / selectedHeroes.length)
-                      : null;
-                    const heroPercent = heroAvgDef !== null && maxDef > 0 ? Math.min((heroAvgDef / maxDef) * 100, 100) : null;
 
-                    return (
-                      <div className="space-y-1.5">
-                        {/* Bar */}
-                        <div className="relative h-6 bg-secondary/40 rounded-full overflow-hidden">
-                          {thresholds.map((t, i) => {
-                            const percent = maxDef > 0 ? (currentQuest.def[t.key] / maxDef) * 100 : 0;
-                            return (
-                              <div
-                                key={t.key}
-                                className={`absolute top-0 bottom-0 w-0.5 ${t.color}`}
-                                style={{ left: `${percent}%` }}
-                              >
-                                <div className={`absolute -top-0.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full ${t.color}`} />
-                              </div>
-                            );
-                          })}
-                          {/* Hero indicator */}
-                          {heroPercent !== null && (
-                            <div
-                              className="absolute top-0 bottom-0 flex flex-col items-center z-10"
-                              style={{ left: `${heroPercent}%` }}
-                            >
-                              <div className="w-0.5 h-full bg-primary" />
-                              <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
-                                <Shield className="w-4 h-4 text-primary drop-shadow-md" />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        {/* Labels */}
-                        <div className="flex justify-between text-center px-1">
-                          {thresholds.map(t => {
-                            const percent = maxDef > 0 ? (currentQuest.def[t.key] / maxDef) * 100 : 0;
-                            return (
-                              <div key={t.key} className="flex flex-col items-center" style={{ position: 'relative', left: `${percent * 0.15}%` }}>
-                                <span className={`text-[10px] font-medium ${t.textColor}`}>{t.label}</span>
-                                <span className="text-[10px] font-mono text-muted-foreground">{formatNumber(currentQuest.def[t.key])}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        {heroAvgDef !== null && (
-                          <div className="text-center mt-1">
-                            <span className="text-[10px] text-primary">영웅 평균 방어력: {formatNumber(heroAvgDef)}</span>
+                  {/* Defense thresholds - bar */}
+                  <div className="bg-secondary/20 rounded-lg p-3 mb-3">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Shield className="w-3.5 h-3.5 text-blue-400" />
+                      <span className="text-xs text-muted-foreground font-medium">방어력 기준치</span>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="w-3 h-3 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">대미지 감소율에 따른 필요 방어력</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    {(() => {
+                      const thresholds = [
+                        { key: 'r0' as const, label: '0%', dotColor: '#ef4444', textColor: 'text-red-400' },
+                        { key: 'r50' as const, label: '50%', dotColor: '#eab308', textColor: 'text-yellow-400' },
+                        { key: 'r70' as const, label: '70%', dotColor: '#84cc16', textColor: 'text-lime-400' },
+                        { key: 'r75' as const, label: '75%', dotColor: '#ffffff', textColor: 'text-white' },
+                      ];
+                      const maxDef = currentQuest.def.r75 * 1.15;
+                      const heroDefPositions = selectedHeroes.map(h => ({
+                        name: h.name,
+                        def: h.def || 0,
+                        percent: maxDef > 0 ? Math.min(((h.def || 0) / maxDef) * 100, 96) : 0,
+                      }));
+
+                      return (
+                        <div>
+                          <div className="relative h-7 bg-secondary/80 rounded-full border border-border/50">
+                            {thresholds.map(t => {
+                              const pct = maxDef > 0 ? Math.min((currentQuest.def[t.key] / maxDef) * 100, 96) : 0;
+                              return (
+                                <div key={t.key} className="absolute top-0 bottom-0" style={{ left: `${pct}%` }}>
+                                  <div className="w-px h-full opacity-50" style={{ backgroundColor: t.dotColor }} />
+                                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full border border-background/80" style={{ backgroundColor: t.dotColor }} />
+                                </div>
+                              );
+                            })}
+                            {heroDefPositions.map(h => (
+                              <Tooltip key={h.name}>
+                                <TooltipTrigger asChild>
+                                  <div className="absolute top-1/2 -translate-y-1/2 z-10 cursor-pointer" style={{ left: `clamp(4px, calc(${h.percent}% - 8px), calc(100% - 20px))` }}>
+                                    <Shield className="w-4 h-4 text-primary drop-shadow-md" />
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent><p className="text-xs">{h.name}: {formatNumber(h.def)}</p></TooltipContent>
+                              </Tooltip>
+                            ))}
                           </div>
-                        )}
+                          <div className="relative h-8 mt-1">
+                            {thresholds.map(t => {
+                              const pct = maxDef > 0 ? Math.min((currentQuest.def[t.key] / maxDef) * 100, 96) : 0;
+                              return (
+                                <div key={t.key} className="absolute flex flex-col items-center" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
+                                  <span className={`text-[10px] font-medium ${t.textColor}`}>{t.label}</span>
+                                  <span className="text-[9px] font-mono text-muted-foreground">{formatNumber(currentQuest.def[t.key])}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Element Barrier */}
+                  {currentQuest.barrier && (() => {
+                    const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                      ? getSubAreaBarrierElement(currentQuest.barrier) : null;
+                    const rawElements = barrierElement
+                      ? [barrierElement]
+                      : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
+                    const elements = [...new Set(rawElements)];
+                    if (elements.length === 0) return null;
+                    return (
+                      <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <span className="text-xs font-medium text-purple-300">속성 장벽</span>
+                          <span className="text-xs text-purple-400">HP: {currentQuest.barrier.hp}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          {elements.map((el, i) => {
+                            if (!el) return null;
+                            const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                            return (
+                              <div key={i} className="flex items-center gap-1 bg-secondary/40 rounded px-2 py-1">
+                                {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                                <span className="text-xs text-foreground">{el}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     );
                   })()}
                 </div>
+              </div>
 
-                {/* Element Barrier */}
-                {currentQuest.barrier && (() => {
-                  const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-                    ? getSubAreaBarrierElement(currentQuest.barrier)
-                    : null;
-                  const rawElements = barrierElement
-                    ? [barrierElement]
-                    : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
-                  const elements = [...new Set(rawElements)];
-                  if (elements.length === 0) return null;
-                  return (
-                    <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 mb-3">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <span className="text-xs font-medium text-purple-300">속성 장벽</span>
-                        <span className="text-xs text-purple-400">HP: {currentQuest.barrier.hp}</span>
-                      </div>
-                      <div className="flex gap-2">
-                        {elements.map((el, i) => {
-                          if (!el) return null;
-                          const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                          return (
-                            <div key={i} className="flex items-center gap-1 bg-secondary/40 rounded px-2 py-1">
-                              {iconPath && <img src={iconPath} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                              <span className="text-xs text-foreground">{el}</span>
+              {/* Right: Hero Panel */}
+              <div className="w-full lg:w-72 shrink-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <Users className="w-5 h-5 text-primary" />
+                  <h3 className="font-display text-lg text-foreground">파티 구성</h3>
+                  <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
+                </div>
+                <div className="card-fantasy p-4">
+                  <div className="flex gap-2 mb-3 flex-wrap">
+                    {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                      const hero = selectedHeroes[slotIdx];
+                      if (hero) {
+                        return (
+                          <button key={hero.id} onClick={() => toggleHero(hero.id)}
+                            className="relative w-12 h-12 rounded-full border-2 border-primary/50 bg-secondary/50 flex flex-col items-center justify-center overflow-hidden group transition-all hover:border-destructive/50"
+                            title={`${hero.name} (클릭하여 제거)`}>
+                            <span className="text-sm">⚔</span>
+                            <span className="text-[8px] text-foreground font-medium truncate max-w-[40px] leading-tight">{hero.name}</span>
+                            <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                              <X className="w-4 h-4 text-destructive-foreground" />
                             </div>
+                          </button>
+                        );
+                      }
+                      return (
+                        <div key={`empty-${slotIdx}`} className="w-12 h-12 rounded-full border-2 border-dashed border-muted-foreground/20 flex items-center justify-center">
+                          <Plus className="w-4 h-4 text-muted-foreground/30" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="border-t border-border pt-3">
+                    <span className="text-xs text-muted-foreground mb-2 block">영웅 선택</span>
+                    <ScrollArea className="max-h-[300px]">
+                      <div className="space-y-1.5">
+                        {allHeroes.map(hero => {
+                          const isSelected = selectedHeroIds.has(hero.id);
+                          const isFull = selectedHeroIds.size >= maxMembers && !isSelected;
+                          return (
+                            <button key={hero.id} onClick={() => !isFull && toggleHero(hero.id)} disabled={isFull}
+                              className={`flex items-center gap-2 p-2 rounded-lg transition-all border text-left w-full ${
+                                isSelected ? 'border-primary/50 bg-primary/5' : isFull ? 'border-border/30 opacity-40 cursor-not-allowed' : 'border-border hover:border-primary/20'
+                              }`}>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                                isSelected ? 'bg-primary/20 border border-primary/40' : 'bg-secondary/50 border border-border'
+                              }`}>
+                                <span className="text-xs">⚔</span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1">
+                                  <span className="font-medium text-xs text-foreground truncate">{hero.name}</span>
+                                  <span className={`text-[9px] px-1 py-0.5 rounded ${hero.type === 'champion' ? 'bg-accent/20 text-accent' : 'bg-primary/20 text-primary'}`}>
+                                    {hero.type === 'champion' ? '챔피언' : '영웅'}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className="text-[10px] text-muted-foreground">Lv.{hero.level}</span>
+                                  {hero.power > 0 && <span className="text-[10px] text-yellow-400">⚔ {formatNumber(hero.power)}</span>}
+                                </div>
+                              </div>
+                            </button>
                           );
                         })}
                       </div>
-                    </div>
-                  );
-                })()}
-
-                {/* Time info */}
-                <div className="bg-secondary/20 rounded-lg p-3">
-                  <span className="text-xs text-muted-foreground font-medium mb-2 block">시간 정보</span>
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    {[
-                      { label: '기본', value: currentQuest.time.base },
-                      { label: '추가', value: currentQuest.time.additional },
-                      { label: '인당', value: currentQuest.time.perMember },
-                      { label: '총합', value: currentQuest.time.total },
-                      { label: '휴식', value: currentQuest.time.rest },
-                      { label: '회복', value: currentQuest.time.recovery },
-                    ].map(t => (
-                      <div key={t.label}>
-                        <span className="text-[10px] text-muted-foreground block">{t.label}</span>
-                        <span className="text-xs font-mono text-foreground">{formatTime(t.value)}</span>
-                      </div>
-                    ))}
+                    </ScrollArea>
                   </div>
+                  <Button onClick={() => { alert('시뮬레이션 로직은 추후 구현 예정입니다.'); }} disabled={selectedHeroIds.size === 0} className="w-full mt-3 gap-2" size="sm">
+                    <Play className="w-4 h-4" /> 시뮬레이션 실행
+                  </Button>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex-1 card-fantasy p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
+            <div className="card-fantasy p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
               <Swords className="w-12 h-12 text-muted-foreground/30 mb-4" />
               <p className="text-muted-foreground text-sm mb-1">퀘스트를 선택하세요</p>
               <p className="text-muted-foreground/60 text-xs">왼쪽의 + 버튼을 눌러 지역과 난이도를 설정합니다</p>
             </div>
           )}
         </div>
-
-        {/* Bottom Section: Party Slots */}
-        <div className="card-fantasy p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" />
-              <h3 className="font-display text-base text-foreground">파티 구성</h3>
-            </div>
-            <span className="text-xs text-muted-foreground">{selectedHeroIds.size} / {maxMembers}명</span>
-          </div>
-
-          {/* Hero slots - circular icons like the game */}
-          <div className="flex gap-3 mb-4 flex-wrap">
-            {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-              const hero = selectedHeroes[slotIdx];
-              if (hero) {
-                return (
-                  <button
-                    key={hero.id}
-                    onClick={() => toggleHero(hero.id)}
-                    className="relative w-16 h-16 rounded-full border-2 border-primary/50 bg-secondary/50 flex flex-col items-center justify-center overflow-hidden group transition-all hover:border-destructive/50"
-                    title={`${hero.name} (클릭하여 제거)`}
-                  >
-                    <span className="text-lg">⚔</span>
-                    <span className="text-[9px] text-foreground font-medium truncate max-w-[56px] leading-tight">{hero.name}</span>
-                    <div className="absolute inset-0 bg-destructive/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                      <X className="w-5 h-5 text-destructive-foreground" />
-                    </div>
-                  </button>
-                );
-              }
-              return (
-                <div
-                  key={`empty-${slotIdx}`}
-                  className="w-16 h-16 rounded-full border-2 border-dashed border-muted-foreground/20 flex items-center justify-center"
-                >
-                  <Plus className="w-5 h-5 text-muted-foreground/30" />
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Hero Selection List */}
-          {currentQuest && (
-            <>
-              <div className="border-t border-border pt-3">
-                <span className="text-xs text-muted-foreground mb-2 block">영웅 선택</span>
-                <ScrollArea className="max-h-[250px]">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {allHeroes.map(hero => {
-                      const isSelected = selectedHeroIds.has(hero.id);
-                      const isFull = selectedHeroIds.size >= maxMembers && !isSelected;
-                      return (
-                        <button
-                          key={hero.id}
-                          onClick={() => !isFull && toggleHero(hero.id)}
-                          disabled={isFull}
-                          className={`flex items-center gap-3 p-2.5 rounded-lg transition-all border text-left ${
-                            isSelected
-                              ? 'border-primary/50 bg-primary/5'
-                              : isFull
-                              ? 'border-border/30 opacity-40 cursor-not-allowed'
-                              : 'border-border hover:border-primary/20'
-                          }`}
-                        >
-                          <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                            isSelected ? 'bg-primary/20 border border-primary/40' : 'bg-secondary/50 border border-border'
-                          }`}>
-                            <span className="text-sm">⚔</span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-sm text-foreground truncate">{hero.name}</span>
-                              <span className={`text-[10px] px-1 py-0.5 rounded ${hero.type === 'champion' ? 'bg-accent/20 text-accent' : 'bg-primary/20 text-primary'}`}>
-                                {hero.type === 'champion' ? '챔피언' : '영웅'}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              {hero.heroClass && <span className="text-xs text-muted-foreground">{hero.heroClass}</span>}
-                              <span className="text-xs text-muted-foreground">Lv.{hero.level}</span>
-                              {hero.power > 0 && (
-                                <span className="text-xs text-yellow-400">⚔ {formatNumber(hero.power)}</span>
-                              )}
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </ScrollArea>
-              </div>
-
-              <Button
-                onClick={() => {
-                  alert('시뮬레이션 로직은 추후 구현 예정입니다.');
-                }}
-                disabled={selectedHeroIds.size === 0}
-                className="w-full mt-4 gap-2"
-                size="lg"
-              >
-                <Play className="w-4 h-4" /> 시뮬레이션 실행
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
 
       {/* Config Dialog */}
       <QuestConfigDialog
