@@ -58,6 +58,7 @@ export interface SoulBonusInput {
   slotIndex: number;
   spiritName: string;
   affinity: boolean;
+  isIdol: boolean;  // 우상 장비 여부 — 스킬 효과 2배
 }
 
 function getValueAtLevel(val: number | number[], level: number): number {
