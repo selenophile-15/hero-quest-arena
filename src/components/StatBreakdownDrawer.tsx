@@ -17,16 +17,16 @@ type AddStatType = 'crit' | 'evasion' | 'threat' | 'other';
 type StatType = MultStatType | AddStatType;
 
 const MULT_TABS: { key: MultStatType; label: string; icon: string; color: string; headerBg: string }[] = [
-  { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-500/25' },
-  { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-500/25' },
-  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-orange-500/25' },
+  { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-900/60' },
+  { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-900/60' },
+  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#ff7f00]/40' },
 ];
 
 const ADD_TABS: { key: AddStatType; label: string; icon: string; color: string; headerBg: string }[] = [
-  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-yellow-400/20' },
-  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-teal-300', headerBg: 'bg-teal-400/20' },
-  { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-purple-400', headerBg: 'bg-purple-400/20' },
-  { key: 'other', label: '기타', icon: '', color: 'text-gray-400', headerBg: 'bg-gray-500/20' },
+  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-yellow-500/30' },
+  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-teal-300', headerBg: 'bg-teal-600/30' },
+  { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-purple-400', headerBg: 'bg-purple-900/60' },
+  { key: 'other', label: '기타', icon: '', color: 'text-gray-400', headerBg: 'bg-gray-700/60' },
 ];
 
 const ALL_TABS = [...MULT_TABS, ...ADD_TABS];
@@ -292,7 +292,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               const hasItem = slot && slot.itemName;
               return (
                 <div key={i} className="border border-border/40 rounded overflow-hidden">
-                  <div className="bg-yellow-500/15 px-2 py-1 flex items-center justify-between border-b border-yellow-400/20">
+                  <div className="bg-yellow-900/50 px-2 py-1 flex items-center justify-between border-b border-yellow-700/30">
                     <span className="text-xs font-semibold text-yellow-400">장비 {i + 1}</span>
                     <span className="text-[10px] text-foreground truncate ml-1">
                       {hasItem ? slot.itemName : '비어있음'}
