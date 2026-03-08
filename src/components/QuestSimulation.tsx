@@ -724,14 +724,16 @@ export default function QuestSimulation() {
                   );
 
                   const statRows = [
-                    { label: 'HP', key: 'hp', color: 'text-orange-400' },
-                    { label: 'ATK', key: 'atk', color: 'text-red-400' },
-                    { label: 'CRIT.DMG', key: 'critAttack', color: 'text-yellow-400', computed: true },
-                    { label: 'DEF', key: 'def', color: 'text-blue-400' },
-                    { label: 'CRIT.C', key: 'crit', color: 'text-yellow-400', suffix: '%' },
-                    { label: 'EVA', key: 'evasion', color: 'text-teal-400', suffix: '%' },
-                    { label: 'THREAT', key: 'threat', color: 'text-foreground' },
+                    { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-400' },
+                    { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400' },
+                    { label: 'CRIT.DMG', key: 'critAttack', bKey: 'critAttack', dKey: null, color: 'text-yellow-400', computed: true },
+                    { label: 'DEF', key: 'def', bKey: 'def', dKey: 'deltaDef', color: 'text-blue-400' },
+                    { label: 'CRIT.C', key: 'crit', bKey: 'crit', dKey: 'deltaCrit', color: 'text-yellow-400', suffix: '%' },
+                    { label: 'EVA', key: 'evasion', bKey: 'evasion', dKey: 'deltaEvasion', color: 'text-teal-400', suffix: '%' },
+                    { label: 'THREAT', key: 'threat', bKey: 'threat', dKey: null, color: 'text-foreground' },
                   ];
+
+                  const hasBuffs = buffSummary && buffSummary.sources.length > 0;
 
                   return (
                     <>
@@ -741,22 +743,65 @@ export default function QuestSimulation() {
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
                             if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
-                            const val = (stat as any).computed
-                              ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
-                              : (hero as any)[stat.key] || 0;
+                            const bs = buffedStats[slotIdx];
+                            
+                            // Use buffed stats if available
+                            let val: number;
+                            let delta = 0;
+                            if (bs && hasBuffs) {
+                              if ((stat as any).computed) {
+                                val = Math.floor(bs.atk * bs.critDmg / 100);
+                                const rawVal = Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100);
+                                delta = val - rawVal;
+                              } else {
+                                val = (bs as any)[stat.bKey] || 0;
+                                delta = stat.dKey ? ((bs as any)[stat.dKey] || 0) : 0;
+                              }
+                            } else {
+                              val = (stat as any).computed
+                                ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
+                                : (hero as any)[stat.key] || 0;
+                            }
+                            
                             return (
                               <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${stat.color}`}>
-                                {stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}
+                                <div className="flex flex-col items-center">
+                                  <span>{stat.suffix ? `${val}${stat.suffix}` : val > 0 ? formatNumber(val) : '-'}</span>
+                                  {delta > 0 && (
+                                    <span className="text-[9px] text-green-400 leading-none">+{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
+                                  )}
+                                  {delta < 0 && (
+                                    <span className="text-[9px] text-red-400 leading-none">{stat.suffix ? `${delta}${stat.suffix}` : formatNumber(delta)}</span>
+                                  )}
+                                </div>
                               </td>
                             );
                           })}
                         </tr>
                       ))}
+                      {/* Buff sources summary row */}
+                      {hasBuffs && (
+                        <tr className="border-b border-border/20 bg-primary/5">
+                          <td colSpan={maxMembers + 1} className="py-1 px-1.5">
+                            <div className="flex flex-wrap items-center gap-1.5 text-[9px]">
+                              <span className="text-primary font-semibold">파티 버프:</span>
+                              {buffSummary!.sources.map((src, i) => (
+                                <span key={i} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary/80">
+                                  <span className={src.type === 'champion' ? 'text-yellow-400' : 'text-purple-400'}>
+                                    {src.type === 'champion' ? '👑' : '🎵'}
+                                  </span>
+                                  {src.name}
+                                  {src.note && <span className="text-muted-foreground ml-0.5">({src.note})</span>}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
                       {/* Targeting chance row (threat-based) */}
                       <tr className="border-b border-border/20 bg-muted/20">
                         <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
                         {(() => {
-                          // Total threat of all selected heroes
                           const totalThreat = selectedHeroes.reduce((sum, h) => sum + (h.threat || 1), 0);
                           return Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
