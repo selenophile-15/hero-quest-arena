@@ -140,6 +140,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const preBonusKey = statType === 'atk' ? 'preBonusAtk' : statType === 'def' ? 'preBonusDef' : 'preBonusHp';
     const bonusPctKey = statType === 'atk' ? 'bonusAtkPct' : statType === 'def' ? 'bonusDefPct' : 'bonusHpPct';
     const finalKey = statType === 'atk' ? 'finalAtk' : statType === 'def' ? 'finalDef' : 'finalHp';
+    const quiverBonusKey = statType === 'atk' ? 'quiverBonusAtk' : statType === 'def' ? 'quiverBonusDef' : 'quiverBonusHp';
 
     return (
       <div className="grid grid-cols-[1fr_2fr] gap-4 h-full">
@@ -395,23 +396,25 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           <td className="px-2 py-1 text-right tabular-nums text-red-400">+100%</td>
                         </tr>
                       )}
-                      {/* 화살통 보너스 +30% 표시 */}
-                      {slot && ['bow', 'crossbow', 'gun'].includes(slot.itemType) && 
-                        calcStats?.equipResult?.slots?.some((s: any) => s.itemType === 'quiver') && (
-                        <tr className="border-b border-border/20">
-                          <td className="px-2 py-1 text-green-400 text-[11px]">
-                            <span className="text-[9px] mr-1 px-1 rounded bg-green-700/40">화살통</span>
-                            화살통 보너스
-                          </td>
-                          <td className="px-2 py-1 text-right tabular-nums text-green-400">+30%</td>
-                        </tr>
-                      )}
                       <tr className="border-b border-border/20">
                         <td className="px-2 py-1 text-foreground/70">장비 보너스 %</td>
                         <td className="px-2 py-1 text-right tabular-nums text-foreground">
                           {slot ? `${getSlotStatDirect(slot, bonusPctKey as keyof EquipSlotCalc)}%` : '0%'}
                         </td>
                       </tr>
+                      {/* 화살통 보너스: 보너스 적용 후 마지막에 추가 */}
+                      {slot && ['bow', 'crossbow', 'gun'].includes(slot.itemType) && 
+                        calcStats?.equipResult?.slots?.some((s: any) => s.itemType === 'quiver') && (
+                        <tr className="border-b border-border/20">
+                          <td className="px-2 py-1 text-green-400 text-[11px]">
+                            <span className="text-[9px] mr-1 px-1 rounded bg-green-700/40">화살통</span>
+                            화살통 보너스 (보너스 전 ×30%)
+                          </td>
+                          <td className="px-2 py-1 text-right tabular-nums text-green-400">
+                            +{formatNumber(slot ? getSlotStatDirect(slot, quiverBonusKey as keyof EquipSlotCalc) : 0)}
+                          </td>
+                        </tr>
+                      )}
                       <tr className={hasItem ? 'bg-secondary/30' : ''}>
                         <td className="px-2 py-1 font-semibold text-foreground">최종</td>
                         <td className={`px-2 py-1 text-right tabular-nums font-bold ${config.color}`}>

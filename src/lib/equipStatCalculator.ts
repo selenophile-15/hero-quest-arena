@@ -65,6 +65,11 @@ export interface EquipSlotCalc {
   bonusDefPct: number;
   bonusHpPct: number;
 
+  // Quiver bonus (added last, 30% of pre-bonus)
+  quiverBonusAtk: number;
+  quiverBonusDef: number;
+  quiverBonusHp: number;
+
   // Final slot stats
   finalAtk: number;
   finalDef: number;
@@ -442,18 +447,21 @@ export async function calculateEquipmentStats(
       bonusHpPct += 100;
     }
 
-    // 화살통 보너스: 활/크로스보우/총 장착 시 해당 무기에 +30% 
-    // (pre-weapon-skill 기준이므로 bonus pool에 합산하면 동일한 결과)
-    if (hasQuiver && ['bow', 'crossbow', 'gun'].includes(item.type)) {
-      bonusAtkPct += 30;
-      bonusDefPct += 30;
-      bonusHpPct += 30;
-    }
-
     // Final slot stats: afterSpellknight × (1 + bonus%)
     let finalAtk = Math.floor(afterSpellknight.atk * (1 + bonusAtkPct / 100));
     let finalDef = Math.floor(afterSpellknight.def * (1 + bonusDefPct / 100));
     let finalHp = Math.floor(afterSpellknight.hp * (1 + bonusHpPct / 100));
+
+    // 화살통 보너스: 보너스 적용 후 마지막에 보너스 전 값의 30%를 더함
+    let quiverBonusAtk = 0, quiverBonusDef = 0, quiverBonusHp = 0;
+    if (hasQuiver && ['bow', 'crossbow', 'gun'].includes(item.type)) {
+      quiverBonusAtk = Math.floor(afterSpellknight.atk * 0.3);
+      quiverBonusDef = Math.floor(afterSpellknight.def * 0.3);
+      quiverBonusHp = Math.floor(afterSpellknight.hp * 0.3);
+      finalAtk += quiverBonusAtk;
+      finalDef += quiverBonusDef;
+      finalHp += quiverBonusHp;
+    }
     const finalCrit = baseCrit;
     const finalEvasion = baseEvasion;
 
@@ -486,6 +494,7 @@ export async function calculateEquipmentStats(
       preBonusAtk, preBonusDef, preBonusHp,
       spellknightMult,
       bonusAtkPct, bonusDefPct, bonusHpPct,
+      quiverBonusAtk, quiverBonusDef, quiverBonusHp,
       finalAtk, finalDef, finalHp, finalCrit, finalEvasion,
     });
   }
@@ -513,6 +522,7 @@ function emptySlotCalc(index: number): EquipSlotCalc {
     preBonusAtk: 0, preBonusDef: 0, preBonusHp: 0,
     spellknightMult: 1.0,
     bonusAtkPct: 0, bonusDefPct: 0, bonusHpPct: 0,
+    quiverBonusAtk: 0, quiverBonusDef: 0, quiverBonusHp: 0,
     finalAtk: 0, finalDef: 0, finalHp: 0, finalCrit: 0, finalEvasion: 0,
   };
 }
