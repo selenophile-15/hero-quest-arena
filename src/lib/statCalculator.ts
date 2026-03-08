@@ -207,10 +207,10 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
       bonusSummary.flatAtk += shieldDefToAtk;
       bonusSummary.sources.push({
         name: `방패 방어력→공격력 (${jobName})`,
-        type: 'job' as const,
-        flatAtk: shieldDefToAtk, flatDef: 0, flatHp: 0,
-        pctAtk: 0, pctDef: 0, pctHp: 0,
-        critRate: 0, critDmg: 0, evasion: 0, threat: 0,
+      type: 'unique' as const,
+      flatAtk: shieldDefToAtk, flatDef: 0, flatHp: 0,
+      pctAtk: 0, pctDef: 0, pctHp: 0,
+      critRate: 0, critDmg: 0, evasion: 0, threat: 0,
       });
     }
   }
