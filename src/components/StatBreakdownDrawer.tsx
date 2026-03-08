@@ -16,7 +16,7 @@ type StatType = 'atk' | 'def' | 'hp';
 const TAB_CONFIG: { key: StatType; label: string; icon: string; color: string; headerBg: string }[] = [
   { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-900/60' },
   { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-900/60' },
-  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-orange-900/50' },
+  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-orange-600/40' },
 ];
 
 function getSlotStatDirect(slot: EquipSlotCalc, key: keyof EquipSlotCalc): number {
