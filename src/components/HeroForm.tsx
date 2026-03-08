@@ -490,17 +490,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
   return (
     <div className="animate-fade-in relative">
-      {/* Floating tab trigger for stat breakdown */}
-      {calcStats && (
-        <button
-          type="button"
-          onClick={() => setBreakdownOpen(true)}
-          className="fixed right-0 top-1/3 z-30 bg-accent text-accent-foreground px-2 py-6 rounded-l-xl shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:px-3 transition-all border-l-2 border-y-2 border-accent/60"
-          style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
-        >
-          <span className="text-sm font-bold tracking-widest">📊 스탯 계산표</span>
-        </button>
-      )}
       {/* Sticky top bar with title + save/cancel */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
         <h2 className="font-display text-xl text-primary tracking-wide">
