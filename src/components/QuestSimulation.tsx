@@ -285,8 +285,55 @@ export default function QuestSimulation() {
         </div>
       )}
 
-      {/* Step 3: Quest/Difficulty Select */}
-      {currentRegion && (
+      {/* Step 3: Sub-area Select (for regions with multiple sub-areas) */}
+      {currentRegion && hasSubAreas && (
+        <div className="card-fantasy p-4">
+          <label className="text-sm text-muted-foreground block mb-3">세부 지역 선택</label>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {currentRegion.subAreas.map((sub, idx) => (
+              <button
+                key={sub.key}
+                onClick={() => { setSelectedSubAreaIdx(idx); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                className={`rounded-lg border overflow-hidden transition-all ${
+                  selectedSubAreaIdx === idx
+                    ? 'border-primary ring-1 ring-primary/30'
+                    : 'border-border hover:border-primary/40'
+                }`}
+              >
+                <div className="bg-secondary/30 flex items-center justify-center p-1.5">
+                  <img src={sub.image} alt={sub.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                <div className="p-1.5 text-center">
+                  <span className="text-xs font-medium text-foreground">{sub.name}</span>
+                </div>
+              </button>
+            ))}
+            {/* Boss option */}
+            {currentRegion.boss && (
+              <button
+                onClick={() => { setSelectedSubAreaIdx(99); setSelectedQuestIdx(-1); setSelectedHeroIds(new Set()); }}
+                className={`rounded-lg border overflow-hidden transition-all ${
+                  selectedSubAreaIdx === 99
+                    ? 'border-primary ring-1 ring-primary/30'
+                    : 'border-border hover:border-primary/40'
+                }`}
+              >
+                <div className="bg-red-500/10 flex items-center justify-center p-1.5">
+                  <img src={currentRegion.boss.image} alt={currentRegion.boss.name} className="w-full h-auto object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                <div className="p-1.5 text-center">
+                  <span className="text-xs font-medium text-red-400 flex items-center justify-center gap-1">
+                    <Crown className="w-3 h-3" /> {currentRegion.boss.name}
+                  </span>
+                </div>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Step 4: Quest/Difficulty Select */}
+      {currentRegion && (!hasSubAreas || selectedSubAreaIdx >= 0) && (
         <div className="card-fantasy p-4">
           <div className="flex items-center gap-3 mb-3">
             {currentRegion.boss && (
