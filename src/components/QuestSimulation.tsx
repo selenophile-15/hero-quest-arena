@@ -890,7 +890,7 @@ export default function QuestSimulation() {
                               if (hasRockStompers) {
                                 val = 0;
                                 delta = 0;
-                                evasionNote = '🪨';
+                                evasionNote = '0% 고정';
                               } else {
                                 if (hasEvasionPenalty) {
                                   val = val - 20;
