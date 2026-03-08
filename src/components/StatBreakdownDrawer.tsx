@@ -415,6 +415,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           </td>
                         </tr>
                       )}
+                      {/* 화살통 스탯 0 안내 */}
+                      {slot && slot.itemType === 'quiver' && getSlotStatDirect(slot, finalKey as keyof EquipSlotCalc) === 0 && hasItem && (
+                        <tr className="border-b border-border/20">
+                          <td colSpan={2} className="px-2 py-1 text-[10px] text-yellow-400/80">
+                            ⚠ 활/석궁/총 미장착 시 화살통 스탯 0
+                          </td>
+                        </tr>
+                      )}
                       <tr className={hasItem ? 'bg-secondary/30' : ''}>
                         <td className="px-2 py-1 font-semibold text-foreground">최종</td>
                         <td className={`px-2 py-1 text-right tabular-nums font-bold ${config.color}`}>
@@ -559,8 +567,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const totalCritDmg = calcStats?.totalCritDmg || 0;
     const totalCritAttack = calcStats?.totalCritAttack || 0;
 
-    // Evasion cap logic
-    const isPathfinder = calcStats?.jobName === '길잡이' || calcStats?.jobName === '방랑자';
+    // Evasion cap logic (only 길잡이 gets 78%, all others including 방랑자 get 75%)
+    const isPathfinder = calcStats?.jobName === '길잡이';
     const evasionCap = isPathfinder ? 78 : 75;
     const cappedEvasion = isEvasion && totalVal > evasionCap ? evasionCap : totalVal;
     const isEvasionCapped = isEvasion && totalVal > evasionCap;
@@ -696,6 +704,17 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 </span>
               </div>
             </div>
+
+            {(calcStats?.jobName === '닌자' || calcStats?.jobName === '센세') && (
+              <div className="px-3">
+                <div className="rounded bg-purple-900/20 border border-purple-500/20 px-3 py-2">
+                  <p className="text-[10px] text-purple-300/80 leading-relaxed">
+                    🥷 닌자 고유 스킬의 치확/회피 보너스는 <span className="font-bold text-purple-200">피격 시 해제</span>됩니다.
+                    {calcStats?.jobName === '센세' && <span className="text-purple-200"> (센세는 2라운드 후 재획득)</span>}
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="px-3 pb-3">
               <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
@@ -963,8 +982,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               <div className="rounded bg-teal-900/20 border border-teal-500/20 px-3 py-2">
                 <p className="text-[10px] text-teal-300/80 leading-relaxed">
                   ⚠️ 던전에서 회피율은 최대 <span className="font-bold text-teal-200">{evasionCap}%</span>까지만 적용됩니다.
-                  {isPathfinder && ' (길잡이/방랑자는 78%까지 적용)'}
-                  {!isPathfinder && ' (길잡이/방랑자만 78%까지 적용 가능)'}
+                  {isPathfinder && ' (길잡이만 78%까지 적용)'}
+                  {!isPathfinder && ' (길잡이만 78%까지 적용 가능)'}
                 </p>
               </div>
             </div>
@@ -980,12 +999,23 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
           )}
 
+          {isEvasion && (calcStats?.jobName === '닌자' || calcStats?.jobName === '센세') && (
+            <div className="px-3">
+              <div className="rounded bg-purple-900/20 border border-purple-500/20 px-3 py-2">
+                <p className="text-[10px] text-purple-300/80 leading-relaxed">
+                  🥷 닌자 고유 스킬의 회피 보너스는 <span className="font-bold text-purple-200">피격 시 해제</span>됩니다.
+                  {calcStats?.jobName === '센세' && <span className="text-purple-200"> (센세는 2라운드 후 재획득)</span>}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="px-3 pb-3">
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
               {isEvasion && hasEvasionFixed
                 ? `※ ${hasEvasionFixed.itemName}: 회피 ${hasEvasionFixed.fixedValue}%로 고정`
                 : isEvasion
-                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75%/78%)'
+                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75% / 길잡이 78%)'
                   : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
             </p>
           </div>
