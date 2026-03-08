@@ -943,18 +943,6 @@ export default function QuestSimulation() {
             </table>
             {currentQuest && selectedHeroes.length > 0 && (
               <div className="mt-3 space-y-3">
-                <div className="flex gap-2">
-                  {buffSummary && buffSummary.sources.length > 0 && (
-                    <Button
-                      onClick={() => setBuffBreakdownOpen(true)}
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5"
-                    >
-                      📊 스탯 계산표
-                    </Button>
-                  )}
-                </div>
                 <Button
                   onClick={() => {
                     if (simRunning || !currentQuest || !currentRegion) return;
@@ -972,13 +960,12 @@ export default function QuestSimulation() {
                       barrier: currentQuest.barrier,
                       barrierElement: barrierElements[0] || null,
                     };
-                    // Run simulation async to not block UI
                     setTimeout(() => {
                       const result = runCombatSimulation({
                         heroes: selectedHeroes,
                         monster: questMonster,
                         miniBoss: 'none' as MiniBossType,
-                        booster: { type: 'none' },
+                        booster: { type: selectedBooster },
                         questTypeKey: selectedQuestType,
                         regionName: currentRegion!.name,
                         isTerrorTower,
