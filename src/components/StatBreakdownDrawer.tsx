@@ -207,39 +207,33 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
           <div className="px-3">
             <h5 className="text-xs font-semibold text-primary mb-1">장비 보너스 스킬 ({config.label})</h5>
-            {(() => {
-              const equippedTypes = new Set(
-                (calcStats?.equipResult?.slots || [])
-                  .filter(s => s.itemName)
-                  .map(s => s.itemTypeKor || s.itemType)
-              );
-              const matchedEntries = 해당장비Entries.filter(([equipType]) => equippedTypes.has(equipType));
-              return (
-                <table className="w-full text-xs mb-2">
-                  <thead>
-                    <tr className="border-b border-border/50">
-                      <th className="py-1 text-left text-foreground/60">해당 장비 {config.label} 보너스</th>
-                      <th className="py-1 text-right text-foreground/60">%</th>
+            <table className="w-full text-xs mb-2">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="py-1 text-left text-foreground/60">해당 장비 {config.label} 보너스</th>
+                  <th className="py-1 text-right text-foreground/60">%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {equipBonusData.해당Sources.length === 0 ? (
+                  <tr className="border-b border-border/20">
+                    <td colSpan={2} className="py-1 text-center text-muted-foreground">해당 없음</td>
+                  </tr>
+                ) : equipBonusData.해당Sources.map((src, i) => {
+                  const tagClass = src.skillType === 'unique' ? 'bg-purple-700/60' : 'bg-amber-800/40';
+                  const tagLabel = src.skillType === 'unique' ? '고유' : '공용';
+                  return (
+                    <tr key={i} className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">
+                        <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
+                        {src.skillName} → {src.equipType}
+                      </td>
+                      <td className="py-1 text-right tabular-nums text-foreground">+{src.value}%</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {matchedEntries.length === 0 ? (
-                      <tr className="border-b border-border/20">
-                        <td colSpan={2} className="py-1 text-center text-muted-foreground">해당 없음</td>
-                      </tr>
-                    ) : matchedEntries.map(([equipType, pct], i) => (
-                      <tr key={i} className="border-b border-border/20">
-                        <td className="py-1 text-foreground/70">
-                          <span className="text-[9px] mr-1 px-1 rounded bg-cyan-800/40">해당</span>
-                          {equipType}
-                        </td>
-                        <td className="py-1 text-right tabular-nums text-foreground">+{pct}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              );
-            })()}
+                  );
+                })}
+              </tbody>
+            </table>
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border/50">
@@ -248,19 +242,23 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 </tr>
               </thead>
               <tbody>
-                {equipBonusData.모든장비 === 0 ? (
+                {equipBonusData.모든Sources.length === 0 ? (
                   <tr className="border-b border-border/20">
                     <td colSpan={2} className="py-1 text-center text-muted-foreground">해당 없음</td>
                   </tr>
-                ) : (
-                  <tr className="border-b border-border/20">
-                    <td className="py-1 text-foreground/70">
-                      <span className="text-[9px] mr-1 px-1 rounded bg-green-800/40">전체</span>
-                      모든 장비
-                    </td>
-                    <td className="py-1 text-right tabular-nums text-foreground">+{equipBonusData.모든장비}%</td>
-                  </tr>
-                )}
+                ) : equipBonusData.모든Sources.map((src, i) => {
+                  const tagClass = src.skillType === 'unique' ? 'bg-purple-700/60' : 'bg-amber-800/40';
+                  const tagLabel = src.skillType === 'unique' ? '고유' : '공용';
+                  return (
+                    <tr key={i} className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">
+                        <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
+                        {src.skillName}
+                      </td>
+                      <td className="py-1 text-right tabular-nums text-foreground">+{src.value}%</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
