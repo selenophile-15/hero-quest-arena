@@ -986,11 +986,11 @@ export default function QuestSimulation() {
                 )}
               </div>
             )}
-            <table className="w-full text-xs">
+            <table className="w-full text-xs table-fixed">
               <colgroup>
-                <col className="w-20" />
+                <col style={{ width: '72px' }} />
                 {Array.from({ length: maxMembers }).map((_, i) => (
-                  <col key={i} />
+                  <col key={i} style={{ width: `${(100 - 10) / maxMembers}%` }} />
                 ))}
               </colgroup>
               <tbody>
