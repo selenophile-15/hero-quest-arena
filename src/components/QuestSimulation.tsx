@@ -1262,11 +1262,21 @@ export default function QuestSimulation() {
                             let evasionNote = '';
                             let barrierNote = '';
                             if (stat.key === 'evasion') {
+                              const hasRockStompers = hero.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
                               const isPathfinder = (hero.heroClass || '').includes('길잡이');
                               const cap = isPathfinder ? 78 : 75;
-                              if (val > cap) {
-                                evasionNote = `(${val}%)`;
-                                val = cap;
+                              if (hasRockStompers) {
+                                val = 0;
+                                delta = 0;
+                              } else {
+                                if (hasEvasionPenalty) {
+                                  val = val - 20;
+                                  delta = delta - 20;
+                                }
+                                if (val > cap) {
+                                  evasionNote = `(${val}%)`;
+                                  val = cap;
+                                }
                               }
                               if (val < 0) displayColor = 'text-purple-400';
                             }
