@@ -58,9 +58,12 @@ export interface HeroSimResult {
   survivalRate: number;      // %
   avgHpRemaining: number;
   maxHpRemaining: number;
+  // Total damage
   avgDamageDealt: number;
   maxDamageDealt: number;
   minDamageDealt: number;
+  // Per-turn damage
+  avgDamagePerTurn: number;
   // Incoming damage stats (per hit, not total)
   normalDamageTaken: number;     // Single normal hit damage
   aoeDamageTaken: number;        // Single AoE hit damage
@@ -68,6 +71,9 @@ export interface HeroSimResult {
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
+  // Dinosaur (first turn) stats
+  dinosaurNormalDmg: number;     // First turn normal damage with dinosaur
+  dinosaurCritDmg: number;       // First turn crit damage with dinosaur
   // Final stat snapshots used in simulation
   finalAtk: number;
   finalDef: number;
@@ -75,6 +81,23 @@ export interface HeroSimResult {
   finalCritChance: number;       // %
   finalCritDmg: number;          // %
   finalEvasion: number;          // %
+  // Damage reduction value
+  damageReduction: number;       // % reduction from defense
+  // Targeting
+  targetingRate: number;         // % of times targeted (threat-based)
+  evasionRate: number;           // % of attacks evaded among targeted
+  // Berserker thresholds
+  berserkerThresholds?: { threshold: number; belowRate: number }[];
+  // Chronomancer
+  chronomancerRetries?: number;
+  chronomancerRetrySuccessRate?: number;
+  // Healing
+  totalHealingAvg: number;
+  healPerTurn: number;
+  // Lord protection
+  lordProtectionAvg: number;
+  // Crit survival (armadillo, cleric/bishop)
+  critSurvivalCount: number;
 }
 
 export interface MiniBossResult {
