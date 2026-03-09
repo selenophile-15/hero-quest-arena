@@ -211,8 +211,8 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all group"
               >
-                <div className="bg-secondary/30 flex items-center justify-center p-1.5">
-                  <img src={r.areaImage} alt={r.name} className="w-full h-auto object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                <div className="bg-secondary/30 flex items-center justify-center p-1.5 aspect-square">
+                  <img src={r.areaImage} alt={r.name} className="w-full h-full object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
                 <div className="p-1.5 text-center">
                   <span className="text-[10px] font-medium text-foreground leading-tight block">{r.name}</span>
