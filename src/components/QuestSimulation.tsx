@@ -277,9 +277,14 @@ export default function QuestSimulation() {
   }, [heroIdKey, isBossQuest, isFlashQuest, selectedBooster]);
 
   // Auto-run simulation when party or booster changes
+  // IMPORTANT: Only run when buffedStats is ready (prevents fallback path with wrong aurasong values)
   useEffect(() => {
     if (!currentQuest || !currentRegion || selectedHeroes.length === 0) {
       setSimResult(null);
+      return;
+    }
+    // Guard: wait until buffedStats is computed and matches hero count
+    if (buffedStats.length !== selectedHeroes.length) {
       return;
     }
     setSimRunning(true);
@@ -306,17 +311,15 @@ export default function QuestSimulation() {
         barrier: currentQuest.barrier,
         barrierElement: bElements[0] || null,
       };
-      // Pass precomputed stats from buffedStats (includes champion + aurasong + booster)
-      const precomputed = buffedStats.length === selectedHeroes.length
-        ? buffedStats.map(bs => ({
-            atk: bs.atk,
-            def: bs.def,
-            hp: bs.hp,
-            crit: bs.crit,
-            critDmg: bs.critDmg,
-            evasion: bs.evasion,
-          }))
-        : undefined;
+      // Always pass precomputed stats (buffedStats includes champion + aurasong + booster)
+      const precomputed = buffedStats.map(bs => ({
+        atk: bs.atk,
+        def: bs.def,
+        hp: bs.hp,
+        crit: bs.crit,
+        critDmg: bs.critDmg,
+        evasion: bs.evasion,
+      }));
       const result = runCombatSimulation({
         heroes: selectedHeroes,
         monster: questMonster,
@@ -331,7 +334,7 @@ export default function QuestSimulation() {
       setSimRunning(false);
     }, 100);
     return () => clearTimeout(timer);
-  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffSummary]);
+  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffSummary, buffedStats]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
