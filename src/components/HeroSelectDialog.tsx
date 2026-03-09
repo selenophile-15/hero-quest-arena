@@ -166,9 +166,17 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
   const cycleJobMode = () => setJobImageMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon');
   const jobModeLabel = jobImageMode === 'icon' ? '🎭' : jobImageMode === 'illust' ? '🖼️' : '✖';
 
+  // ─── Manual overlay helper ────────────────────────────────────────────────
+  const ManualOverlay = () => (
+    <div className="absolute bottom-0 right-0 w-3 h-3 bg-background/80 rounded-tl flex items-center justify-center">
+      <HelpCircle className="w-2.5 h-2.5 text-yellow-400" />
+    </div>
+  );
+
   // ─── Render Equipment Slot (album) ──────────────────────────────────────────
   const renderEquipSlot = (slot: any, idx: number) => {
     const item = slot?.item || null;
+    const isManual = item?.manual;
     const quality = slot?.quality || 'common';
     const displayElement = slot?.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
     const displaySpirit = slot?.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
@@ -184,6 +192,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
             ? <img src={item.imagePath} alt="" className="w-8 h-8 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
             : <span className="text-[6px] text-muted-foreground/40 py-1">-</span>
           }
+          {isManual && <ManualOverlay />}
         </div>
         {item && (displayElement || displaySpirit) && (
           <div className="flex items-center justify-center gap-0.5 pb-0.5">
