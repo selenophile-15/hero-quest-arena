@@ -367,7 +367,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const hasKiku = h.equipmentSlots?.some(s => s.item?.name === '키쿠이치몬지') || false;
     heroArtCritChanceMod.push(hasKiku ? 0 : 1);
     
-    const hasLoneWolf = h.equipmentSlots?.some(s => s.item?.name === '고독한 늑대 두건') || false;
+    const hasLoneWolf = h.equipmentSlots?.some(s => s.item?.name === '외로운 늑대 두건' || s.item?.name === '고독한 늑대 두건') || false;
     heroArtChampionMod.push(hasLoneWolf ? 0 : 1);
 
     // Class flags
@@ -583,11 +583,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   for (let i = 0; i < numHeroes; i++) {
     const mercMult = heroIsMercenary[i] ? 1.25 : 1.0;
     const champModI = heroArtChampionMod[i];
+    // Lone Wolf Cowl: +40% self atk/def when champion bonus is blocked
+    const loneWolfBonus = champModI === 0 ? 0.4 : 0;
     // aurasong bonus would go here too (TODO: implement aurasong)
     const aurasongAtk = 0, aurasongDef = 0, aurasongHp = 0;
 
-    finalAtk.push(heroAtk[i] * (1.0 + (champAtkBonus * champModI + aurasongAtk) * mercMult + boosterAtkBonus));
-    finalDef.push(heroDef[i] * (1.0 + (champDefBonus * champModI + aurasongDef) * mercMult + boosterDefBonus));
+    finalAtk.push(heroAtk[i] * (1.0 + (champAtkBonus * champModI + aurasongAtk) * mercMult + boosterAtkBonus + loneWolfBonus));
+    finalDef.push(heroDef[i] * (1.0 + (champDefBonus * champModI + aurasongDef) * mercMult + boosterDefBonus + loneWolfBonus));
     finalHp.push(heroHpMax[i] * (1.0 + (champHpBonus * champModI + aurasongHp) * mercMult));
   }
 
@@ -1166,7 +1168,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       finalCritChance: Math.round(Math.min(heroCritChance[i], 1) * 100 * 10) / 10,
       finalCritDmg: Math.round(heroCritMult[i] * 100 * 10) / 10,
       finalCritAttack: effectiveCritAttack,
-      finalEvasion: Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
+      finalEvasion: heroArtNoEvasion[i] ? 0 : Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
       damageReduction: Math.round(dmgReduction * 10) / 10,
       targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
       evasionRate: timesTargeted[i] > 0 ? Math.round((timesEvaded[i] / timesTargeted[i]) * 100 * 10) / 10 : 0,
