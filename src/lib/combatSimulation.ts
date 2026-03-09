@@ -1200,6 +1200,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (!contFight) {
         for (let i = 0; i < numHeroes; i++) {
           damageDealtAvg[i] += damageFight[i];
+          normalDmgDealtAccum[i] += normalDmgFight[i];
+          critDmgDealtAccum[i] += critDmgFight[i];
           damageDealtMax[i] = Math.max(damageDealtMax[i], damageFight[i]);
           damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
           totalRoundsPerHero[i] += round;
