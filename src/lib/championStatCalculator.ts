@@ -42,9 +42,15 @@ export interface ChampionCalcResult {
   // Champion info
   championName: string;
   rank: number;
+  level: number;
   promoted: boolean;
   cardLevel: number;
   cardLevelBonusPct: number;
+
+  // Level stats
+  levelHp: number;
+  levelAtk: number;
+  levelDef: number;
 
   // Rank base stats (before promotion)
   rankBaseHp: number;
@@ -119,9 +125,17 @@ interface RankData {
   '기본_원소': number;
 }
 
+interface LevelData {
+  '레벨': number;
+  '기본_체력': number;
+  '기본_공격력': number;
+  '기본_방어력': number;
+}
+
 export function calculateChampionStats(params: {
   championData: any;
   rank: number;
+  level: number;
   promoted: boolean;
   cardLevel: number;
   seeds: { hp: number; atk: number; def: number };
@@ -132,11 +146,12 @@ export function calculateChampionStats(params: {
     spirit: any | null;
   }>;
 }): ChampionCalcResult | null {
-  const { championData, rank, promoted, cardLevel, seeds, equipmentSlots } = params;
+  const { championData, rank, level, promoted, cardLevel, seeds, equipmentSlots } = params;
   if (!championData) return null;
 
   const fixed = championData['고정_능력치'] || {};
   const rankArray: RankData[] = championData['랭크별_능력치'] || [];
+  const levelArray: LevelData[] = championData['레벨별_능력치'] || [];
 
   // Find rank data
   const currentRankData = rankArray.find(r => r['랭크'] === rank);
@@ -147,6 +162,12 @@ export function calculateChampionStats(params: {
   const rankBaseDef = currentRankData['기본_방어력'] || 0;
   const rankBaseElement = currentRankData['기본_원소'] || 0;
 
+  // Find level data
+  const currentLevelData = levelArray.find(l => l['레벨'] === level);
+  const levelHp = currentLevelData ? (currentLevelData['기본_체력'] || 0) : 0;
+  const levelAtk = currentLevelData ? (currentLevelData['기본_공격력'] || 0) : 0;
+  const levelDef = currentLevelData ? (currentLevelData['기본_방어력'] || 0) : 0;
+
   // Promoted: lookup rank+2
   const promotedRankData = promoted ? rankArray.find(r => r['랭크'] === rank + 2) : null;
   const promotedRankHp = promotedRankData ? promotedRankData['기본_체력'] : rankBaseHp;
@@ -154,13 +175,13 @@ export function calculateChampionStats(params: {
   const promotedRankDef = promotedRankData ? promotedRankData['기본_방어력'] : rankBaseDef;
   const promotedRankElement = promotedRankData ? promotedRankData['기본_원소'] : rankBaseElement;
 
-  // Apply promotion multiplier
+  // Apply promotion multiplier to rank stats (level stats are NOT affected)
   const soulMult = promoted ? 1.5 : 1.0;
   const promotedHp = promotedRankHp * soulMult;
   const promotedAtk = promotedRankAtk * soulMult;
   const promotedDef = promotedRankDef * soulMult;
 
-  // Non-promoted stats (for comparison)
+  // Non-promoted stats (for comparison) - rank base only, level same
   const nonPromotedHp = rankBaseHp;
   const nonPromotedAtk = rankBaseAtk;
   const nonPromotedDef = rankBaseDef;
@@ -232,15 +253,15 @@ export function calculateChampionStats(params: {
   const seedAtkMult = seedAtk * 4;
   const seedDefMult = seedDef * 4;
 
-  // Subtotal (before card level bonus)
-  const subtotalHp = promotedHp + totalEquipHp + seedHp;
-  const subtotalAtk = promotedAtk + totalEquipAtk + seedAtkMult;
-  const subtotalDef = promotedDef + totalEquipDef + seedDefMult;
+  // Subtotal (before card level bonus) — rank (with promotion) + level + equipment + seeds
+  const subtotalHp = promotedHp + levelHp + totalEquipHp + seedHp;
+  const subtotalAtk = promotedAtk + levelAtk + totalEquipAtk + seedAtkMult;
+  const subtotalDef = promotedDef + levelDef + totalEquipDef + seedDefMult;
 
   // Non-promoted subtotals
-  const nonPromotedSubHp = nonPromotedHp + totalEquipHp + seedHp;
-  const nonPromotedSubAtk = nonPromotedAtk + totalEquipAtk + seedAtkMult;
-  const nonPromotedSubDef = nonPromotedDef + totalEquipDef + seedDefMult;
+  const nonPromotedSubHp = nonPromotedHp + levelHp + totalEquipHp + seedHp;
+  const nonPromotedSubAtk = nonPromotedAtk + levelAtk + totalEquipAtk + seedAtkMult;
+  const nonPromotedSubDef = nonPromotedDef + levelDef + totalEquipDef + seedDefMult;
 
   // Card level bonus
   const cardLevelBonusPct = CARD_LEVEL_BONUS[cardLevel] || 0;
@@ -271,9 +292,11 @@ export function calculateChampionStats(params: {
   return {
     championName: '',
     rank,
+    level,
     promoted,
     cardLevel,
     cardLevelBonusPct,
+    levelHp, levelAtk, levelDef,
     rankBaseHp, rankBaseAtk, rankBaseDef, rankBaseElement,
     promotedRankHp, promotedRankAtk, promotedRankDef, promotedRankElement,
     promotedHp, promotedAtk, promotedDef,

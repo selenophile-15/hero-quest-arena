@@ -45,6 +45,8 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
     const afterSoulMult = statType === 'atk' ? r.promotedAtk : statType === 'def' ? r.promotedDef : r.promotedHp;
     const nonPromotedBase = statType === 'atk' ? r.nonPromotedAtk : statType === 'def' ? r.nonPromotedDef : r.nonPromotedHp;
 
+    const levelVal = statType === 'atk' ? r.levelAtk : statType === 'def' ? r.levelDef : r.levelHp;
+
     const seedRaw = statType === 'atk' ? r.seedAtk : statType === 'def' ? r.seedDef : r.seedHp;
     const seedFinal = statType === 'atk' ? r.seedAtkMult : statType === 'def' ? r.seedDefMult : r.seedHp;
     const seedMultLabel = statType === 'hp' ? '' : ' × 4';
@@ -67,14 +69,22 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
         </div>
 
         <div className="px-4 space-y-4">
-          {/* Step 1: Rank base stat */}
+          {/* Step 1: Rank + Level base stat */}
           <div>
-            <h5 className="text-xs font-semibold text-primary mb-1.5">① 랭크 기본 스탯</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1.5">① 기본 스탯 (랭크 + 레벨)</h5>
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">랭크 {r.rank} 기본 {config.label}</td>
+                  <td className="py-1.5 text-foreground/70">랭크 {r.rank} {config.label}</td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(rankBase)}</td>
+                </tr>
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground/70">레벨 {r.level} {config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(levelVal)}</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-1.5 text-foreground/70 font-medium">합계 (랭크 + 레벨)</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(rankBase + levelVal)}</td>
                 </tr>
               </tbody>
             </table>
@@ -193,8 +203,8 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">
-                    {formatNumber(Math.round(afterSoulMult))} + {formatNumber(equipTotal)} + {formatNumber(seedFinal)}
+                  <td className="py-1.5 text-foreground/70 text-[10px]">
+                    승급스탯({formatNumber(Math.round(afterSoulMult))}) + 레벨({formatNumber(levelVal)}) + 장비({formatNumber(equipTotal)}) + 씨앗({formatNumber(seedFinal)})
                   </td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(Math.round(subtotal))}</td>
                 </tr>
@@ -408,7 +418,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             {r.promoted && <span className="text-xs px-2 py-0.5 rounded bg-yellow-600/60 text-yellow-200">승급</span>}
           </SheetTitle>
           <SheetDescription className="text-muted-foreground text-sm">
-            랭크 {r.rank} | 카드 LV {r.cardLevel} (+{r.cardLevelBonusPct}%)
+            랭크 {r.rank} | 레벨 {r.level} | 카드 LV {r.cardLevel} (+{r.cardLevelBonusPct}%)
           </SheetDescription>
         </SheetHeader>
 
