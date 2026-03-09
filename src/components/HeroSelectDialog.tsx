@@ -3,11 +3,12 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { LayoutGrid, Table2, Filter, ChevronUp, ChevronDown, X } from 'lucide-react';
+import { LayoutGrid, Table2, Filter, ChevronUp, ChevronDown, X, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_MAP, SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { getSkillImagePath, getUniqueSkillImagePath } from '@/lib/skillUtils';
+import { getAurasongSkillIconPath } from '@/lib/championEquipUtils';
 import { HERO_CLASS_MAP } from '@/lib/gameData';
 import ElementIcon from './ElementIcon';
 
@@ -165,9 +166,17 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
   const cycleJobMode = () => setJobImageMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon');
   const jobModeLabel = jobImageMode === 'icon' ? '🎭' : jobImageMode === 'illust' ? '🖼️' : '✖';
 
+  // ─── Manual overlay helper ────────────────────────────────────────────────
+  const ManualOverlay = () => (
+    <div className="absolute bottom-0 right-0 w-3 h-3 bg-background/80 rounded-tl flex items-center justify-center">
+      <HelpCircle className="w-2.5 h-2.5 text-yellow-400" />
+    </div>
+  );
+
   // ─── Render Equipment Slot (album) ──────────────────────────────────────────
   const renderEquipSlot = (slot: any, idx: number) => {
     const item = slot?.item || null;
+    const isManual = item?.manual;
     const quality = slot?.quality || 'common';
     const displayElement = slot?.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
     const displaySpirit = slot?.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
@@ -183,6 +192,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
             ? <img src={item.imagePath} alt="" className="w-8 h-8 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
             : <span className="text-[6px] text-muted-foreground/40 py-1">-</span>
           }
+          {isManual && <ManualOverlay />}
         </div>
         {item && (displayElement || displaySpirit) && (
           <div className="flex items-center justify-center gap-0.5 pb-0.5">
@@ -390,12 +400,37 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       {/* 스킬 */}
                       <td className="py-1.5 px-1 text-center">
                         <div className="flex items-center gap-0.5 justify-center flex-wrap">
-                          {hero.heroClass && (
-                            <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                          {hero.type === 'champion' ? (
+                            <>
+                              {(() => {
+                                const champEng = hero.championName ? CHAMPION_NAME_MAP[hero.championName] : '';
+                                const tier = hero.cardLevel || 1;
+                                const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${tier}.webp` : '';
+                                return leaderIcon ? <img src={leaderIcon} alt="리더" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                              })()}
+                              {(() => {
+                                const aurasongItem = hero.equipmentSlots?.[1]?.item;
+                                if (!aurasongItem) return null;
+                                const isManual = aurasongItem.manual;
+                                const auraIcon = getAurasongSkillIconPath(aurasongItem.name);
+                                return auraIcon ? (
+                                  <div className="relative">
+                                    <img src={auraIcon} alt="오라" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    {isManual && <ManualOverlay />}
+                                  </div>
+                                ) : null;
+                              })()}
+                            </>
+                          ) : (
+                            <>
+                              {hero.heroClass && (
+                                <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                              )}
+                              {hero.skills?.slice(1, 5).map((sk, i) => sk ? (
+                                <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                              ) : null)}
+                            </>
                           )}
-                          {hero.skills?.slice(1, 5).map((sk, i) => sk ? (
-                            <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                          ) : null)}
                         </div>
                       </td>
                       {/* 전투력 */}
@@ -488,6 +523,18 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                     {isChampion ? (
                       <div className="flex items-center gap-1 justify-center flex-wrap">
                         {champLeaderIcon && <img src={champLeaderIcon} alt="리더" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                        {(() => {
+                          const aurasongItem = hero.equipmentSlots?.[1]?.item;
+                          if (!aurasongItem) return null;
+                          const isManual = aurasongItem.manual;
+                          const auraIcon = getAurasongSkillIconPath(aurasongItem.name);
+                          return auraIcon ? (
+                            <div className="relative">
+                              <img src={auraIcon} alt="오라" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                              {isManual && <ManualOverlay />}
+                            </div>
+                          ) : null;
+                        })()}
                       </div>
                     ) : (
                       hero.skills && hero.skills.length > 0 && (
