@@ -309,8 +309,8 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                 <tr className="border-b border-border text-muted-foreground">
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">유형</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">이름</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={cycleJobMode} title={`이미지: ${jobImageMode === 'icon' ? '아이콘' : jobImageMode === 'illust' ? '일러스트' : '없음'} (클릭하여 변경)`}>
-                    직업 {jobModeLabel}
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => { setSortKey('heroClass'); setSortDir(d => d === 'asc' ? 'desc' : 'asc'); }} title="직업순 정렬">
+                    직업
                   </th>
                   <th className="text-center py-2 px-1.5">Lv</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">원소</th>
