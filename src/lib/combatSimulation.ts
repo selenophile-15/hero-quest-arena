@@ -181,6 +181,49 @@ function getHeroTier(hero: Hero): number {
   return hero.promoted ? 4 : 1;
 }
 
+interface AurasongBonuses {
+  atkPct: number;
+  defPct: number;
+  hpPct: number;
+  critPct: number;
+  evaPct: number;
+  critDmgPct: number;
+  flatAtk: number;
+  flatDef: number;
+  flatHp: number;
+}
+
+function getAurasongBonuses(champion: Hero | null): AurasongBonuses {
+  const result: AurasongBonuses = {
+    atkPct: 0, defPct: 0, hpPct: 0,
+    critPct: 0, evaPct: 0, critDmgPct: 0,
+    flatAtk: 0, flatDef: 0, flatHp: 0,
+  };
+  if (!champion) return result;
+
+  const item: any = champion.equipmentSlots?.[1]?.item;
+  const bonuses = item?.relicStatBonuses;
+  if (!Array.isArray(bonuses)) return result;
+
+  for (const b of bonuses) {
+    const rawVal = typeof b?.value === 'number' ? b.value : 0;
+    const val = b?.op === '감소' ? -rawVal : rawVal;
+    switch (b?.stat) {
+      case '오라_공격력%': result.atkPct += val / 100; break;
+      case '오라_방어력%': result.defPct += val / 100; break;
+      case '오라_체력%': result.hpPct += val / 100; break;
+      case '오라_치명타확률%': result.critPct += val / 100; break;
+      case '오라_회피%': result.evaPct += val / 100; break;
+      case '오라_치명타데미지%': result.critDmgPct += val / 100; break;
+      case '오라_깡공격력': result.flatAtk += val; break;
+      case '오라_깡방어력': result.flatDef += val; break;
+      case '오라_깡체력': result.flatHp += val; break;
+    }
+  }
+
+  return result;
+}
+
 // ─── Flash quest (깜짝 퀘스트) Bjorn multiplier zones ─────────────────────────
 
 const BJORN_DOUBLE_ZONES = [

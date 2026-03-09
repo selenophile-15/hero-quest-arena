@@ -959,6 +959,9 @@ export default function QuestSimulation() {
                 >
                   📊 스탯 계산표
                 </Button>
+                {(currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')) && (
+                  <span className="text-xs text-muted-foreground">※ 익스트림 페널티: 회피 -20%</span>
+                )}
               </div>
             )}
             {/* Win Rate - between stat button and element row */}
