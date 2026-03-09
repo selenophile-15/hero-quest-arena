@@ -714,6 +714,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const lostInnate = new Int32Array(numHeroes).fill(-5);
     const consecutiveCritBonus = new Float64Array(numHeroes);
     const hemmaBonus = new Float64Array(numHeroes);
+    const simDmgTaken = new Float64Array(numHeroes);
+    const simTimesHit = new Float64Array(numHeroes);
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
