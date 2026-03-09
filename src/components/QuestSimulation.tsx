@@ -1115,10 +1115,10 @@ export default function QuestSimulation() {
                               <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                             )}
                             <button onClick={() => openSlotForEdit(slotIdx)}
-                              className="relative w-20 h-40 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all hover:opacity-80"
+                              className="relative w-20 h-20 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all hover:opacity-80 rounded"
                               title={`${hero.name} (클릭하여 변경)`}>
                               {illustImg ? (
-                                <img src={illustImg} alt="" className="w-full h-full object-cover object-top" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                <img src={illustImg} alt="" className="w-full h-full object-cover object-center" onError={e => { e.currentTarget.style.display = 'none'; }} />
                               ) : (
                                 <span className="text-lg">⚔</span>
                               )}
