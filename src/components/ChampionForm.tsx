@@ -255,9 +255,15 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const totalEquipElement = Object.values(equipElements).reduce((a, b) => a + b, 0);
   const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
 
-  const champCalcResult = useMemo<ChampionCalcResult | null>(() => {
-    if (!championRawData || !rank || !level) return null;
-    return calculateChampionStats({
+  const [champCalcResult, setChampCalcResult] = useState<ChampionCalcResult | null>(null);
+
+  useEffect(() => {
+    if (!championRawData || !rank || !level) {
+      setChampCalcResult(null);
+      return;
+    }
+    let cancelled = false;
+    calculateChampionStats({
       championData: championRawData,
       rank: Number(rank),
       level: Number(level),
@@ -265,7 +271,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       cardLevel,
       seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
       equipmentSlots,
+    }).then(result => {
+      if (!cancelled) setChampCalcResult(result);
     });
+    return () => { cancelled = true; };
   }, [championRawData, rank, level, promoted, cardLevel, seedHp, seedAtk, seedDef, equipmentSlots]);
 
   // Leader skill from champion data
