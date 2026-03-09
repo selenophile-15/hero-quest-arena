@@ -104,8 +104,13 @@ export interface HeroSimResult {
   // Targeting
   targetingRate: number;         // % of times targeted (threat-based)
   evasionRate: number;           // % of attacks evaded among targeted
+  // Monster crit chance against this hero (%)
+  monsterCritChance: number;
   // Berserker thresholds
   berserkerThresholds?: { threshold: number; belowRate: number }[];
+  // Berserker bonus values per stage
+  berserkerAtkBonus?: number[];  // ATK % bonus per stage [stage1, stage2, stage3]
+  berserkerEvaBonus?: number[];  // EVA % bonus per stage
   // Chronomancer
   chronomancerRetries?: number;
   chronomancerRetrySuccessRate?: number;
@@ -1234,6 +1239,27 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const avgTotalDmgTaken = totalDmgTakenAccum[i] / actualSimCount;
     const avgTimesHit = totalTimesHitAccum[i] / actualSimCount;
 
+    // Monster crit chance against this hero (accounts for negative evasion)
+    const heroFinalEva = heroArtNoEvasion[i] ? 0 : heroEvasion[i];
+    let monsterCritBase = baseMobCritChance * mobCritChanceMod;
+    if (isExtreme && heroFinalEva < 0 && !heroArtNoEvasion[i]) {
+      monsterCritBase += -0.25 * heroFinalEva;
+    }
+    const monsterCritChance = Math.round(Math.min(monsterCritBase, 1) * 100 * 10) / 10;
+
+    // Berserker ATK/EVA bonus per stage
+    let berserkerAtkBonus: number[] | undefined;
+    let berserkerEvaBonus: number[] | undefined;
+    if (heroBerserkerLevel[i] > 0) {
+      const lvl = heroBerserkerLevel[i];
+      berserkerAtkBonus = [
+        Math.round(0.1 * (1 + lvl) * 1 * 100),
+        Math.round(0.1 * (1 + lvl) * 2 * 100),
+        Math.round(0.1 * (1 + lvl) * 3 * 100),
+      ];
+      berserkerEvaBonus = [10, 20, 30];
+    }
+
     return {
       heroId: h.id,
       heroName: h.name,
@@ -1266,7 +1292,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       damageReduction: Math.round(dmgReduction * 10) / 10,
       targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
       evasionRate: timesTargeted[i] > 0 ? Math.round((timesEvaded[i] / timesTargeted[i]) * 100 * 10) / 10 : 0,
+      monsterCritChance,
       berserkerThresholds,
+      berserkerAtkBonus,
+      berserkerEvaBonus,
       chronomancerRetries: fateweaverPresent && isClass(h, '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')
         ? Math.round((actualSimCount - timesQuestWon) / actualSimCount * 100 * 10) / 10
         : undefined,
