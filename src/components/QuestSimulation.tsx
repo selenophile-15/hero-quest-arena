@@ -1437,7 +1437,7 @@ export default function QuestSimulation() {
               </div>
               <div className="bg-secondary/30 rounded p-2">
                 <div className="text-[9px] text-muted-foreground">평균</div>
-                <div className="text-sm font-mono text-foreground font-bold">{simResult.avgRounds.toFixed(1)}</div>
+                <div className="text-sm font-mono text-foreground font-bold">{Math.round(simResult.avgRounds)}</div>
               </div>
               <div className="bg-secondary/30 rounded p-2">
                 <div className="text-[9px] text-muted-foreground">최대</div>
