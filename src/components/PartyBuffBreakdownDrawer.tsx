@@ -384,6 +384,12 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                           ? formatNumber(getBaseVal(h))
                           : `${getBaseVal(h)}%`
                         }
+                        {activeTab === 'critDmg' && (
+                          <div className="text-xs text-yellow-300/70 mt-0.5">
+                            <img src={STAT_ICON_MAP.critAttack} alt="" className="w-3.5 h-3.5 inline mr-0.5" />
+                            {formatNumber(Math.floor((h.atk || 0) * (h.critDmg || 0) / 100))}
+                          </div>
+                        )}
                       </td>
                     ))}
                   </tr>

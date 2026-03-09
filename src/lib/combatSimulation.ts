@@ -72,6 +72,9 @@ export interface HeroSimResult {
   avgDamageDealt: number;
   maxDamageDealt: number;
   minDamageDealt: number;
+  // Normal vs Crit damage breakdown
+  normalDmgDealtAvg: number;   // Average total normal damage
+  critDmgDealtAvg: number;     // Average total crit damage
   // Per-turn damage
   avgDamagePerTurn: number;
   // Incoming damage stats (per hit, not total)
@@ -81,6 +84,7 @@ export interface HeroSimResult {
   // Total incoming damage (averaged across sims)
   totalDamageTakenAvg: number;
   avgDamageTakenPerHit: number;
+  avgDamageTakenPerTurn: number; // Average damage taken per turn
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
