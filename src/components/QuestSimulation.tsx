@@ -1539,7 +1539,7 @@ export default function QuestSimulation() {
                 <div className="space-y-4">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">💥 대미지</div>
+                    <div className="text-sm font-semibold text-yellow-400 mb-2">💥 대미지</div>
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
@@ -1580,8 +1580,8 @@ export default function QuestSimulation() {
                                   const critPct = hr.avgDamageDealt > 0 ? (hr.critDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
                                   return (
                                     <>
-                                      <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{normalPct.toFixed(1)}%</td>
-                                      <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{critPct.toFixed(1)}%</td>
+                                      <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{formatNumber(Math.round(hr.normalDmgDealtAvg))} ({normalPct.toFixed(1)}%)</td>
+                                      <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(Math.round(hr.critDmgDealtAvg))} ({critPct.toFixed(1)}%)</td>
                                     </>
                                   );
                                 })()}
@@ -1603,7 +1603,7 @@ export default function QuestSimulation() {
 
                   {/* Table 1.5: 특수 대미지 (상어 / 첫턴 / 광전사) */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">🦈 특수 대미지 (상어 / 첫턴 / 광전사)</div>
+                    <div className="text-sm font-semibold text-yellow-400 mb-2">🦈 특수 대미지 (상어 / 첫턴 / 광전사)</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
@@ -1654,7 +1654,7 @@ export default function QuestSimulation() {
 
                   {/* Table 2: 생존 & 방어 (with 받는 대미지) */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">🛡 생존 & 방어</div>
+                    <div className="text-sm font-semibold text-yellow-400 mb-2">🛡 생존 & 방어</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
@@ -1704,7 +1704,7 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 회복 & 보호 */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">💚 회복 & 보호</div>
+                    <div className="text-sm font-semibold text-yellow-400 mb-2">💚 회복 & 보호</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
@@ -1734,7 +1734,7 @@ export default function QuestSimulation() {
                   {/* Table 4: 특수 (광전사, 크로노맨서 등) */}
                   {displayResults.some(hr => hr.berserkerThresholds || hr.chronomancerRetries !== undefined) && (
                     <div>
-                      <div className="text-[10px] text-muted-foreground mb-1 font-medium">⚡ 특수 정보</div>
+                      <div className="text-sm font-semibold text-yellow-400 mb-2">⚡ 특수 정보</div>
                       <div className="overflow-x-auto">
                         <div className="space-y-1">
                           {displayResults.map(hr => {
@@ -1769,7 +1769,7 @@ export default function QuestSimulation() {
 
                   {/* Table 5: 시뮬레이션 스탯 */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">📊 시뮬레이션 스탯</div>
+                    <div className="text-sm font-semibold text-yellow-400 mb-2">📊 시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
