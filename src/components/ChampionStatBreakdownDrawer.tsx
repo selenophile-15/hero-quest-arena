@@ -45,6 +45,8 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
     const afterSoulMult = statType === 'atk' ? r.promotedAtk : statType === 'def' ? r.promotedDef : r.promotedHp;
     const nonPromotedBase = statType === 'atk' ? r.nonPromotedAtk : statType === 'def' ? r.nonPromotedDef : r.nonPromotedHp;
 
+    const levelVal = statType === 'atk' ? r.levelAtk : statType === 'def' ? r.levelDef : r.levelHp;
+
     const seedRaw = statType === 'atk' ? r.seedAtk : statType === 'def' ? r.seedDef : r.seedHp;
     const seedFinal = statType === 'atk' ? r.seedAtkMult : statType === 'def' ? r.seedDefMult : r.seedHp;
     const seedMultLabel = statType === 'hp' ? '' : ' × 4';
