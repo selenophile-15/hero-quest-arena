@@ -182,14 +182,24 @@ export default function QuestSimulation() {
           map[f.key] = questResults[i];
         });
         setQuestDataMap(map);
-        // Preload all region/sub-area images
+        // Preload all region/sub-area images with fetch for better caching
+        const preloadImages: string[] = [];
         Object.values(map).forEach((qd: QuestData) => {
           qd.regions.forEach(r => {
-            if (r.areaImage) { const img = new Image(); img.src = r.areaImage; }
-            r.subAreas.forEach(s => { if (s.image) { const img = new Image(); img.src = s.image; } });
-            if (r.boss?.image) { const img = new Image(); img.src = r.boss.image; }
+            if (r.areaImage) preloadImages.push(r.areaImage);
+            r.subAreas.forEach(s => { if (s.image) preloadImages.push(s.image); });
+            if (r.boss?.image) preloadImages.push(r.boss.image);
           });
         });
+        // Preload all images in parallel
+        await Promise.all(preloadImages.map(src => 
+          new Promise<void>(resolve => {
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+            img.src = src;
+          })
+        ));
       } catch (e) {
         console.error('Failed to load quest data', e);
       } finally {
