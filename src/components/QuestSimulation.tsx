@@ -752,75 +752,138 @@ export default function QuestSimulation() {
                       }
                       return 0;
                     };
+
                     const barH = 200;
                     const reductions = [-50, 0, 50, 70, 75];
+                    const rows = defThresholds.map((t, i) => ({
+                      key: t.key,
+                      label: t.label,
+                      value: t.value,
+                      pct: (i / (defThresholds.length - 1)) * 100,
+                      applied: Math.round(100 - reductions[i]),
+                    }));
+
+                    const heroEntries = selectedHeroes.map((h, hi) => {
+                      const bs = buffedStats[hi];
+                      const heroDef = bs ? bs.def : (h.def || 0);
+                      const pinPct = defToBarPct(heroDef);
+                      const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
+                      return {
+                        id: h.id,
+                        name: h.name,
+                        heroDef,
+                        pinPct,
+                        dmgApplied,
+                      };
+                    });
+
+                    // Evenly distribute label positions across the bar height to avoid overlaps
+                    const n = heroEntries.length;
+                    const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
+                    const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
+                    const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
+
                     return (
                       <div className="px-1">
-                        {/* Bar + pins layout: bar on left, labels on right */}
-                        <div className="relative flex gap-0" style={{ height: `${barH}px` }}>
-                          {/* Vertical bar column */}
-                          <div className="relative shrink-0" style={{ width: '14px' }}>
-                            <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
-                            {/* Threshold ticks on bar */}
-                            {defThresholds.map((t, i) => {
-                              const pct = (i / (defThresholds.length - 1)) * 100;
-                              return (
-                                <div key={t.key} className="absolute left-0 right-0 flex items-center pointer-events-none"
-                                  style={{ bottom: `${pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
-                                  <div className="h-px w-full" style={{ backgroundColor: t.color, opacity: 0.7 }} />
-                                </div>
-                              );
-                            })}
-                            {/* Hero pins */}
-                            {selectedHeroes.map((h, hi) => {
-                              const bs = buffedStats[hi];
-                              const heroDef = bs ? bs.def : (h.def || 0);
-                              const pct = defToBarPct(heroDef);
-                              let pinColor = '#ef4444';
-                              for (const t of defThresholds) { if (heroDef >= t.value) pinColor = t.color; }
-                              return (
-                                <div key={h.id} className="absolute" style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
-                                  <div className="w-3 h-3 rounded-full border-2 shadow-md" style={{ borderColor: pinColor, backgroundColor: pinColor }} />
-                                </div>
-                              );
-                            })}
+                        {/* 4 columns: left(-50~75), bar, right(threshold def + dmg applied), far-right(hero labels + connectors) */}
+                        <div
+                          className="relative grid grid-cols-[44px_14px_140px_1fr] gap-x-2"
+                          style={{ height: `${barH}px` }}
+                        >
+                          {/* Left: damage reduction labels */}
+                          <div className="relative">
+                            {rows.map(r => (
+                              <div
+                                key={r.key}
+                                className="absolute right-0 flex items-center"
+                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}
+                              >
+                                <span className="text-[9px] font-mono text-muted-foreground tabular-nums">{r.label}</span>
+                              </div>
+                            ))}
                           </div>
-                          {/* Right: threshold labels + hero pin labels */}
-                          <div className="relative flex-1 ml-1">
-                            {/* Threshold labels */}
-                            {defThresholds.map((t, i) => {
-                              const pct = (i / (defThresholds.length - 1)) * 100;
-                              const applied = 100 - reductions[i];
-                              return (
-                                <div key={t.key} className="absolute left-0 right-0 flex items-center justify-between"
-                                  style={{ bottom: `${pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                                  <span className={`text-[9px] font-mono ${t.textClass} leading-none`}>{t.label}</span>
-                                  <div className="flex items-center gap-0.5">
-                                    <span className={`text-[9px] font-mono ${t.textClass} leading-none`}>{formatNumber(t.value)}</span>
-                                    <span className={`text-[8px] font-mono ${t.textClass} opacity-70 leading-none`}>({applied}%)</span>
-                                  </div>
+
+                          {/* Center: vertical bar with party points */}
+                          <div className="relative">
+                            <div className="absolute inset-0 rounded-full overflow-hidden border border-border/60 bg-gradient-to-t from-muted/40 via-muted/15 to-background" />
+                            {rows.map(r => (
+                              <div
+                                key={`tick-${r.key}`}
+                                className="absolute left-0 right-0 flex items-center pointer-events-none"
+                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}
+                              >
+                                <div className="h-px w-full bg-border/70" />
+                              </div>
+                            ))}
+
+                            {/* Party points */}
+                            {heroEntries.map(h => (
+                              <div
+                                key={`pin-${h.id}`}
+                                className="absolute"
+                                style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}
+                              >
+                                <div className="w-2.5 h-2.5 rounded-full bg-primary border border-primary/70 shadow-sm" />
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Right: defense threshold values (damage applied rate) */}
+                          <div className="relative">
+                            {rows.map(r => (
+                              <div
+                                key={`thr-${r.key}`}
+                                className="absolute left-0 right-0 flex items-center justify-between"
+                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}
+                              >
+                                <span className="text-[9px] font-mono text-foreground tabular-nums">{formatNumber(r.value)}</span>
+                                <span className="text-[8px] font-mono text-muted-foreground tabular-nums">({r.applied}%)</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Far right: hero labels + connector lines (start AFTER threshold column) */}
+                          <div className="relative min-w-0 pl-10">
+                            <svg
+                              className="absolute inset-0"
+                              width="100%"
+                              height={barH}
+                              viewBox={`0 0 100 ${barH}`}
+                              preserveAspectRatio="none"
+                            >
+                              {heroLayout.map(h => {
+                                const yPin = barH - (h.pinPct / 100) * barH;
+                                const yLabel = barH - (h.labelPct / 100) * barH;
+                                const x0 = 6;
+                                const x1 = 28;
+                                const x2 = 28;
+                                const x3 = 55;
+                                const d = `M ${x0} ${yPin} L ${x1} ${yPin} L ${x2} ${yLabel} L ${x3} ${yLabel}`;
+                                return (
+                                  <path
+                                    key={`line-${h.id}`}
+                                    d={d}
+                                    fill="none"
+                                    stroke="hsl(var(--foreground) / 0.35)"
+                                    strokeWidth={1}
+                                  />
+                                );
+                              })}
+                            </svg>
+
+                            {heroLayout.map(h => (
+                              <div
+                                key={`label-${h.id}`}
+                                className="absolute left-0 right-0 flex items-center"
+                                style={{ bottom: `${h.labelPct}%`, transform: 'translateY(50%)', zIndex: 5 }}
+                              >
+                                <div className="min-w-0 flex items-baseline gap-1">
+                                  <span className="text-[10px] font-mono text-foreground truncate max-w-[90px]">{h.name}</span>
+                                  <span className="text-[10px] font-mono text-foreground tabular-nums">{formatNumber(h.heroDef)}</span>
+                                  <span className="text-[9px] font-mono text-muted-foreground tabular-nums">({h.dmgApplied}%)</span>
                                 </div>
-                              );
-                            })}
-                            {/* Hero pin labels — shown outside the threshold label rows */}
-                            {selectedHeroes.map((h, hi) => {
-                              const bs = buffedStats[hi];
-                              const heroDef = bs ? bs.def : (h.def || 0);
-                              const pct = defToBarPct(heroDef);
-                              let pinColor = '#ef4444';
-                              for (const t of defThresholds) { if (heroDef >= t.value) pinColor = t.color; }
-                              const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
-                              return (
-                                <div key={h.id} className="absolute left-0 right-0 flex items-center justify-between"
-                                  style={{ bottom: `${pct}%`, transform: 'translateY(50%) translateY(-12px)', zIndex: 5 }}>
-                                  <span className="text-[9px] font-mono leading-none truncate max-w-[60px]" style={{ color: pinColor }}>{h.name}</span>
-                                  <div className="flex items-center gap-0.5">
-                                    <span className="text-[9px] font-mono leading-none" style={{ color: pinColor }}>{formatNumber(heroDef)}</span>
-                                    <span className="text-[8px] font-mono leading-none opacity-80" style={{ color: pinColor }}>({dmgApplied}%)</span>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                              </div>
+                            ))}
                           </div>
                         </div>
                       </div>
