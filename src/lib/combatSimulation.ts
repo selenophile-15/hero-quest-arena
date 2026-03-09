@@ -77,6 +77,15 @@ export interface HeroSimResult {
   finalEvasion: number;          // %
 }
 
+export interface MiniBossResult {
+  type: 'normal' | MiniBossType;
+  encounters: number;
+  wins: number;
+  winRate: number;
+  avgRounds: number;
+  heroResults: HeroSimResult[];
+}
+
 export interface SimulationResult {
   winRate: number;           // % (after Fateweaver retry if applicable)
   rawWinRate: number;        // % (first attempt, before retry)
@@ -88,6 +97,8 @@ export interface SimulationResult {
   roundLimitRate: number;    // % of sims hitting 499 round limit
   totalSimulations: number;
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
+  // Per mini-boss breakdown (only for random mode)
+  miniBossResults?: MiniBossResult[];
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
