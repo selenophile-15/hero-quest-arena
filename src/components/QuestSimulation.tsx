@@ -167,6 +167,7 @@ export default function QuestSimulation() {
   const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>('random');
   const [jobDisplayMode, setJobDisplayMode] = useState<'icon' | 'illust' | 'none'>('icon');
+  const [simResultsFilter, setSimResultsFilter] = useState<string>('all');
 
   // Load quest data
   useEffect(() => {
