@@ -1274,8 +1274,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const dinoBonus = heroDinosaur[i] * 0.01;
     const dinoNormal = Math.floor(finalAtk[i] * (1 + dinoBonus) * barrierMod);
     const dinoCrit = Math.floor(finalAtk[i] * (1 + dinoBonus) * heroCritMult[i] * barrierMod);
-    // Damage reduction
-    const dmgReduction = getDamageReductionForDef(finalDef[i], monster.def.r0);
+    // Damage application rate using actual thresholds
+    const dmgAppRate = getDamageApplicationRate(finalDef[i], defThresholds);
     // Per-turn damage
     const avgRoundsForHero = totalRoundsPerHero[i] / actualSimCount;
     const avgDmgPerTurn = avgRoundsForHero > 0 ? (damageDealtAvg[i] / actualSimCount) / avgRoundsForHero : 0;
