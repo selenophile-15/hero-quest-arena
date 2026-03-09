@@ -6,9 +6,10 @@
  * - Champion Soul (promotion): rank+2 offset + 1.5x multiplier (rank stats only)
  * - Seeds: HP direct, ATK/DEF × 4
  * - Equipment stats (familiar + aurasong) with quality multiplier + element/spirit enchant
+ * - Spirit skill bonuses (영혼_공격력%, etc.) → added to common %
  * - Card level bonus (0=0%, 1=5%, 2=10%, 3=25%)
  * 
- * Formula: ROUND((rankStat × soulMult + levelStat + equipFinal + seedBonus) × (1 + cardLevelBonus%), 0)
+ * Formula: ROUND((rankStat × soulMult + levelStat + equipFinal + seedBonus) × (1 + cardLevel% + spiritSkill%), 0)
  */
 
 import {
@@ -20,6 +21,7 @@ import {
   capEnchant,
   type EnchantStats,
 } from './equipStatCalculator';
+import { parseSoulBonuses, type SoulBonusInput, type SkillBonusSource } from './skillBonusParser';
 
 export const CARD_LEVEL_BONUS: Record<number, number> = {
   0: 0,
