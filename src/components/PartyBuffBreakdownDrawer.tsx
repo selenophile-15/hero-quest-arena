@@ -681,19 +681,6 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
               </div>
             )}
 
-            {/* Extreme / Terror penalty */}
-            {hasEvasionPenalty && (
-              <div className="mt-4 px-3">
-                <div className="text-sm text-muted-foreground font-medium mb-2">⚠ 퀘스트 페널티</div>
-                <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-red-400">🛡️</span>
-                    <span className="text-foreground font-medium text-sm">익스트림 페널티</span>
-                  </div>
-                  <div className="text-xs text-red-400 font-mono mt-0.5">회피 -20%</div>
-                </div>
-              </div>
-            )}
 
             {/* Artifact effects */}
             {heroes.some(h => 
