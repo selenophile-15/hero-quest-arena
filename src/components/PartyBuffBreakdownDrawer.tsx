@@ -603,6 +603,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                           finalVal = 0;
                           delta = 0;
                         } else {
+                          if (hasEvasionPenalty) {
+                            finalVal = finalVal - 20;
+                            delta = delta - 20;
+                          }
                           if (finalVal > cap) {
                             evasionDisplayNote = `(${finalVal}%)`;
                             finalVal = cap;
