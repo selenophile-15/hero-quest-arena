@@ -1508,22 +1508,24 @@ export default function QuestSimulation() {
           {/* Per-hero results - full width detailed table */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
-              {simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
-                <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
-                  <SelectTrigger className="h-6 w-[100px] text-[10px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">전체</SelectItem>
-                    <SelectItem value="normal">일반</SelectItem>
-                    <SelectItem value="huge">거대한</SelectItem>
-                    <SelectItem value="agile">민첩한</SelectItem>
-                    <SelectItem value="dire">흉포한</SelectItem>
-                    <SelectItem value="wealthy">부유한</SelectItem>
-                    <SelectItem value="legendary">전설의</SelectItem>
-                  </SelectContent>
-                </Select>
+              {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
+                <>
+                  <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
+                  <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
+                    <SelectTrigger className="h-6 w-[100px] text-[10px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value="normal">일반</SelectItem>
+                      <SelectItem value="huge">거대한</SelectItem>
+                      <SelectItem value="agile">민첩한</SelectItem>
+                      <SelectItem value="dire">흉포한</SelectItem>
+                      <SelectItem value="wealthy">부유한</SelectItem>
+                      <SelectItem value="legendary">전설의</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </>
               )}
             </div>
             {(() => {
