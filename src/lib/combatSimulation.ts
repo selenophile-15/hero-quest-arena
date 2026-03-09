@@ -487,15 +487,6 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     heroArmadillo.push(armadilloVal);
   }
 
-  // ─── Extreme: Apply -20% evasion penalty ───
-  if (isExtreme) {
-    for (let i = 0; i < numHeroes; i++) {
-      if (!heroArtNoEvasion[i]) {
-        heroEvasion[i] = heroEvasion[i] - 0.20;
-      }
-    }
-  }
-
   // ─── Mundra only works on bosses ───
   if (!monster.isBoss) {
     for (let i = 0; i < numHeroes; i++) heroMundra[i] = 0;
@@ -627,7 +618,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     for (let i = 0; i < numHeroes; i++) heroCritMult[i] += booster.extraCritMult;
   }
 
-  // ─── Apply champion + booster to base stats ───
+  // ─── Extreme: Apply -20% evasion penalty (after all champion/aurasong/booster bonuses) ───
+  if (isExtreme) {
+    for (let i = 0; i < numHeroes; i++) {
+      if (!heroArtNoEvasion[i]) {
+        heroEvasion[i] = heroEvasion[i] - 0.20;
+      }
+    }
+  }
+
   // Per Korean doc: final = base × (1 + (champ + aurasong) × mercMult + booster)
   // Mercenary: champion and aurasong bonuses are multiplied by 1.25
   const finalAtk: number[] = [];

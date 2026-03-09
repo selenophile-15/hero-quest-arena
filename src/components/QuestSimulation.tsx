@@ -959,9 +959,6 @@ export default function QuestSimulation() {
                 >
                   📊 스탯 계산표
                 </Button>
-                {(currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')) && (
-                  <span className="text-xs text-muted-foreground">※ 익스트림 페널티: 회피 -20%</span>
-                )}
               </div>
             )}
             {/* Win Rate - between stat button and element row */}
@@ -989,11 +986,11 @@ export default function QuestSimulation() {
                 )}
               </div>
             )}
-            <table className="w-full text-xs">
+            <table className="w-full text-xs table-fixed">
               <colgroup>
-                <col className="w-20" />
+                <col style={{ width: '72px' }} />
                 {Array.from({ length: maxMembers }).map((_, i) => (
-                  <col key={i} />
+                  <col key={i} style={{ width: `${(100 - 10) / maxMembers}%` }} />
                 ))}
               </colgroup>
               <tbody>
@@ -1191,10 +1188,6 @@ export default function QuestSimulation() {
                 </tr>
                 {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF, CRIT.C, EVA, THREAT */}
                 {selectedHeroes.length > 0 && (() => {
-                  const hasEvasionPenalty = currentQuest && (
-                    currentQuest.isExtreme ||
-                    (selectedQuestType === 'tot' && currentRegion?.name === '공포')
-                  );
 
                   // Check if barrier is broken
                   const barrierBroken = (() => {
@@ -1249,24 +1242,11 @@ export default function QuestSimulation() {
                             let evasionNote = '';
                             let barrierNote = '';
                             if (stat.key === 'evasion') {
-                              const hasRockStompers = hero.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
                               const isPathfinder = (hero.heroClass || '').includes('길잡이');
                               const cap = isPathfinder ? 78 : 75;
-                              
-                              if (hasRockStompers) {
-                                val = 0;
-                                delta = 0;
-                                evasionNote = '0% 고정';
-                              } else {
-                                if (hasEvasionPenalty) {
-                                  val = val - 20;
-                                  delta = delta - 20;
-                                  evasionNote = '익스트림 -20%';
-                                }
-                                if (val > cap) {
-                                  evasionNote = evasionNote ? `${evasionNote} · (${val}%)` : `(${val}%)`;
-                                  val = cap;
-                                }
+                              if (val > cap) {
+                                evasionNote = `(${val}%)`;
+                                val = cap;
                               }
                               if (val < 0) displayColor = 'text-purple-400';
                             }

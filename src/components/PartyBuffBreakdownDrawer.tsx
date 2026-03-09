@@ -583,19 +583,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         if (hasRockStompers) {
                           finalVal = 0;
                           delta = 0;
-                          evasionDisplayNote = '🪨 0% 고정';
                         } else {
-                          let rawVal = finalVal;
-                          if (hasEvasionPenalty) {
-                            rawVal = finalVal - 20;
-                            delta = delta - 20;
-                            evasionDisplayNote = '익스트림 -20%';
-                          }
-                          if (rawVal > cap) {
-                            evasionDisplayNote = evasionDisplayNote ? `${evasionDisplayNote} · (${rawVal}%)` : `(${rawVal}%)`;
+                          if (finalVal > cap) {
+                            evasionDisplayNote = `(${finalVal}%)`;
                             finalVal = cap;
-                          } else {
-                            finalVal = rawVal;
                           }
                           if (finalVal < 0) evasionColor = 'text-purple-400';
                         }
@@ -663,9 +654,46 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   <div>• 회피 캡: 길잡이 <span className="text-teal-300 font-mono">78%</span>, 그 외 <span className="text-teal-300 font-mono">75%</span></div>
                   <div>• 익스트림 / 공포의 탑: 회피 <span className="text-red-400 font-mono">-20%</span> 페널티 적용</div>
                   <div>• 락 스톰퍼: 회피 <span className="text-amber-400 font-mono">0%</span> 고정 (페널티 무시)</div>
-                  {hasEvasionPenalty && (
-                    <div className="text-amber-400 font-medium mt-1">⚠ 현재 퀘스트에 회피 페널티가 적용됩니다</div>
-                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Extreme / Terror penalty */}
+            {hasEvasionPenalty && (
+              <div className="mt-4 px-3">
+                <div className="text-sm text-muted-foreground font-medium mb-2">⚠ 퀘스트 페널티</div>
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-red-400">🛡️</span>
+                    <span className="text-foreground font-medium text-sm">익스트림 페널티</span>
+                  </div>
+                  <div className="text-xs text-red-400 font-mono mt-0.5">회피 -20%</div>
+                </div>
+              </div>
+            )}
+
+            {/* Artifact effects */}
+            {heroes.some(h => 
+              h.equipmentSlots?.some((s: any) => s.item?.name === '락 스톰퍼') ||
+              h.equipmentSlots?.some((s: any) => s.item?.name === '키쿠이치몬지')
+            ) && (
+              <div className="mt-4 px-3">
+                <div className="text-sm text-muted-foreground font-medium mb-2">🗡️ 유물 효과</div>
+                <div className="space-y-2">
+                  {heroes.map(h => {
+                    const hasRS = h.equipmentSlots?.some((s: any) => s.item?.name === '락 스톰퍼');
+                    const hasKiku = h.equipmentSlots?.some((s: any) => s.item?.name === '키쿠이치몬지');
+                    if (!hasRS && !hasKiku) return null;
+                    return (
+                      <div key={h.id} className="bg-secondary/50 border border-border/30 rounded-lg px-3 py-2 text-sm">
+                        <div className="text-foreground font-medium">{h.name}</div>
+                        <div className="text-xs text-muted-foreground space-y-0.5 mt-0.5">
+                          {hasRS && <div>• <span className="text-amber-400">락 스톰퍼</span>: 회피 <span className="font-mono text-amber-400">0%</span> 고정</div>}
+                          {hasKiku && <div>• <span className="text-yellow-400">키쿠이치몬지</span>: 치명타 확률 <span className="font-mono text-yellow-400">20%</span> 고정</div>}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
