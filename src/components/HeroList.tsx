@@ -883,24 +883,103 @@ export default function HeroList() {
               const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
               const itemType = item?.type || '';
               return (
-                <div key={i}
-                  className={`relative rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center overflow-hidden`}
-                  style={{ width: '64px', ...(item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }) }}>
-                  {/* Item image area */}
-                  <div className="relative w-full flex items-center justify-center pt-0.5 -mb-1">
-                    {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
-                    {item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                    {item?.manual ? <CircleHelp className="w-9 h-9 text-muted-foreground/60" /> : item?.imagePath ? <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
+                <div
+                  key={i}
+                  className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-stretch overflow-hidden`}
+                  style={{
+                    width: '64px',
+                    ...(item
+                      ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] }
+                      : { background: 'hsl(var(--secondary) / 0.2)' }),
+                  }}
+                >
+                  {/* Tier/Relic row (separate from image area) */}
+                  <div className="w-full flex items-center justify-between px-0.5 pt-0.5" style={{ minHeight: '14px' }}>
+                    {item ? (
+                      <span className="text-[7px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span>
+                    ) : (
+                      <span />
+                    )}
+                    {item?.relic ? (
+                      <img
+                        src="/images/special/icon_global_artifact.webp"
+                        alt=""
+                        className="w-3 h-3"
+                        onError={e => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span />
+                    )}
                   </div>
+
+                  {/* Item image area */}
+                  <div className="w-full flex items-center justify-center pt-0.5 -mb-1">
+                    {item?.manual ? (
+                      <CircleHelp className="w-9 h-9 text-muted-foreground/60" />
+                    ) : item?.imagePath ? (
+                      <img
+                        src={item.imagePath}
+                        alt=""
+                        className="w-11 h-11 object-contain"
+                        onError={e => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span className="text-[6px] text-muted-foreground/50">-</span>
+                    )}
+                  </div>
+
+                  {/* Enchant/Type row (keep icon sizes, just pushed down) */}
                   {item && (displayElement || displaySpirit || itemType) && (
-                     <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-2">
-                       {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                    <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-2">
+                      {displayElement && (
+                        <img
+                          src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
+                          className="w-5 h-5"
+                          alt=""
+                          onError={e => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      )}
                       {displaySpirit && (() => {
                         const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                         if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                        if (displaySpirit.name === '문드라') {
+                          return (
+                            <img
+                              src="/images/enchant/spirit/mundra.webp"
+                              className="w-5 h-5"
+                              alt=""
+                              onError={e => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          );
+                        }
+                        return eng ? (
+                          <img
+                            src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`}
+                            className="w-5 h-5"
+                            alt=""
+                            onError={e => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : null;
                       })()}
-                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {itemType && (
+                        <img
+                          src={`/images/type/${itemType}.webp`}
+                          className="w-5 h-5"
+                          alt=""
+                          onError={e => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      )}
                     </div>
                   )}
                 </div>
@@ -916,23 +995,98 @@ export default function HeroList() {
               const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
               const itemType = item?.type || '';
               return (
-                <div key={i}
-                  className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-center overflow-hidden`}
-                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}>
-                  <div className="relative w-full flex items-center justify-center pt-0.5 -mb-1">
-                    {item && <span className="absolute top-0 left-0 text-[7px] font-bold text-muted-foreground bg-background/80 rounded-br px-0.5 z-10">T{item.tier}</span>}
-                    {item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0 right-0 w-3 h-3 z-10" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                    {item?.manual ? <CircleHelp className="w-9 h-9 text-muted-foreground/60" /> : item?.imagePath ? <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground/50">-</span>}
+                <div
+                  key={i}
+                  className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-stretch overflow-hidden min-h-[78px]`}
+                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}
+                >
+                  {/* Tier/Relic row (separate from image area) */}
+                  <div className="w-full flex items-center justify-between px-0.5 pt-0.5" style={{ minHeight: '14px' }}>
+                    {item ? (
+                      <span className="text-[7px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span>
+                    ) : (
+                      <span />
+                    )}
+                    {item?.relic ? (
+                      <img
+                        src="/images/special/icon_global_artifact.webp"
+                        alt=""
+                        className="w-3 h-3"
+                        onError={e => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span />
+                    )}
                   </div>
+
+                  {/* Item image area */}
+                  <div className="w-full flex items-center justify-center pt-0.5 -mb-1">
+                    {item?.manual ? (
+                      <CircleHelp className="w-9 h-9 text-muted-foreground/60" />
+                    ) : item?.imagePath ? (
+                      <img
+                        src={item.imagePath}
+                        alt=""
+                        className="w-11 h-11 object-contain"
+                        onError={e => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span className="text-[6px] text-muted-foreground/50">-</span>
+                    )}
+                  </div>
+
+                  {/* Enchant/Type row (keep icon sizes, just pushed down) */}
                   {item && (displayElement || displaySpirit || itemType) && (
                     <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-2">
-                      {displayElement && <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {displayElement && (
+                        <img
+                          src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
+                          className="w-5 h-5"
+                          alt=""
+                          onError={e => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      )}
                       {displaySpirit && (() => {
                         const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                         if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                        if (displaySpirit.name === '문드라') {
+                          return (
+                            <img
+                              src="/images/enchant/spirit/mundra.webp"
+                              className="w-5 h-5"
+                              alt=""
+                              onError={e => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          );
+                        }
+                        return eng ? (
+                          <img
+                            src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`}
+                            className="w-5 h-5"
+                            alt=""
+                            onError={e => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : null;
                       })()}
-                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {itemType && (
+                        <img
+                          src={`/images/type/${itemType}.webp`}
+                          className="w-5 h-5"
+                          alt=""
+                          onError={e => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      )}
                     </div>
                   )}
                 </div>
