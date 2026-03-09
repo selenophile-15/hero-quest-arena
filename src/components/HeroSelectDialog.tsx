@@ -313,6 +313,8 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                     직업 {jobModeLabel}
                   </th>
                   <th className="text-center py-2 px-1.5">Lv</th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap">원소</th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap">스킬</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">전투력</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">공격력</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">방어력</th>
@@ -320,8 +322,6 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                   <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400">치확</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400">치명타 대미지</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap text-teal-400">회피</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">원소</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">스킬</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">포지션</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">상태</th>
                 </tr>
