@@ -173,7 +173,7 @@ export function getElementEnchantStats(
   };
 }
 
-const SPIRIT_TIER: Record<string, number> = {
+export const SPIRIT_TIER: Record<string, number> = {
   '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
   '기린': 12, '크람푸스': 12, '크리스마스': 12,
   '유니콘': 10, '피닉스': 10, '히드라': 10,
