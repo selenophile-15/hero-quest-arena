@@ -104,8 +104,13 @@ export interface HeroSimResult {
   // Targeting
   targetingRate: number;         // % of times targeted (threat-based)
   evasionRate: number;           // % of attacks evaded among targeted
+  // Monster crit chance against this hero (%)
+  monsterCritChance: number;
   // Berserker thresholds
   berserkerThresholds?: { threshold: number; belowRate: number }[];
+  // Berserker bonus values per stage
+  berserkerAtkBonus?: number[];  // ATK % bonus per stage [stage1, stage2, stage3]
+  berserkerEvaBonus?: number[];  // EVA % bonus per stage
   // Chronomancer
   chronomancerRetries?: number;
   chronomancerRetrySuccessRate?: number;
