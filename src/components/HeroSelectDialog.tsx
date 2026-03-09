@@ -523,6 +523,18 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                     {isChampion ? (
                       <div className="flex items-center gap-1 justify-center flex-wrap">
                         {champLeaderIcon && <img src={champLeaderIcon} alt="리더" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                        {(() => {
+                          const aurasongItem = hero.equipmentSlots?.[1]?.item;
+                          if (!aurasongItem) return null;
+                          const isManual = aurasongItem.manual;
+                          const auraIcon = getAurasongSkillIconPath(aurasongItem.name);
+                          return auraIcon ? (
+                            <div className="relative">
+                              <img src={auraIcon} alt="오라" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                              {isManual && <ManualOverlay />}
+                            </div>
+                          ) : null;
+                        })()}
                       </div>
                     ) : (
                       hero.skills && hero.skills.length > 0 && (
