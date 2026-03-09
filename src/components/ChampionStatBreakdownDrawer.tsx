@@ -204,7 +204,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70 text-[11px]">
+                  <td className="py-1.5 text-foreground/70">
                     기본({formatNumber(baseStat)}) + 레벨({formatNumber(levelVal)}) + 씨앗({formatNumber(seedFinal)}) + 장비({formatNumber(equipTotal)})
                   </td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(Math.round(subtotal))}</td>
