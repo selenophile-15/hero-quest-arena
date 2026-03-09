@@ -1644,13 +1644,13 @@ export default function QuestSimulation() {
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1 px-2 border-l border-border/20" colSpan={5}>기본</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>받는 대미지</th>
+                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>기본</th>
+                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>받는 대미지</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">생존률</th>
-                            <th className="text-center py-1 px-2">대미지 감소</th>
-                            <th className="text-center py-1 px-2">피격 비율</th>
+                            <th className="text-center py-1 px-2">대미지 보정</th>
+                            <th className="text-center py-1 px-2">단일 피격률</th>
                             <th className="text-center py-1 px-2">회피 비율</th>
                             <th className="text-center py-1 px-2 text-red-400">몬스터 치확</th>
                             <th className="text-center py-1 px-2 border-l border-border/20">평균</th>

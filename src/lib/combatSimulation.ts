@@ -1344,7 +1344,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       finalCritDmg: Math.round(heroCritMult[i] * 100 * 10) / 10,
       finalCritAttack: effectiveCritAttack,
       finalEvasion: heroArtNoEvasion[i] ? 0 : Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
-      damageReduction: Math.round(dmgReduction * 10) / 10,
+      damageApplicationRate: dmgAppRate,
       targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
       evasionRate: timesTargeted[i] > 0 ? Math.round((timesEvaded[i] / timesTargeted[i]) * 100 * 10) / 10 : 0,
       monsterCritChance,
