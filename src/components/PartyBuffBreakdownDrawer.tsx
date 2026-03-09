@@ -331,10 +331,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
             </div>
 
             <div className="bg-secondary/30 rounded-b-lg overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm table-fixed" style={{ minWidth: `${140 + heroes.length * 100}px` }}>
                 <colgroup>
-                  <col className="w-36" />
-                  {heroes.map(h => <col key={h.id} />)}
+                  <col style={{ width: '140px' }} />
+                  {heroes.map(h => <col key={h.id} style={{ width: '100px' }} />)}
                 </colgroup>
                 {/* Hero names header */}
                 <thead>
