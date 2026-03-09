@@ -400,12 +400,37 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       {/* 스킬 */}
                       <td className="py-1.5 px-1 text-center">
                         <div className="flex items-center gap-0.5 justify-center flex-wrap">
-                          {hero.heroClass && (
-                            <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                          {hero.type === 'champion' ? (
+                            <>
+                              {(() => {
+                                const champEng = hero.championName ? CHAMPION_NAME_MAP[hero.championName] : '';
+                                const tier = hero.cardLevel || 1;
+                                const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${tier}.webp` : '';
+                                return leaderIcon ? <img src={leaderIcon} alt="리더" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                              })()}
+                              {(() => {
+                                const aurasongItem = hero.equipmentSlots?.[1]?.item;
+                                if (!aurasongItem) return null;
+                                const isManual = aurasongItem.manual;
+                                const auraIcon = getAurasongSkillIconPath(aurasongItem.name);
+                                return auraIcon ? (
+                                  <div className="relative">
+                                    <img src={auraIcon} alt="오라" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    {isManual && <ManualOverlay />}
+                                  </div>
+                                ) : null;
+                              })()}
+                            </>
+                          ) : (
+                            <>
+                              {hero.heroClass && (
+                                <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                              )}
+                              {hero.skills?.slice(1, 5).map((sk, i) => sk ? (
+                                <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                              ) : null)}
+                            </>
                           )}
-                          {hero.skills?.slice(1, 5).map((sk, i) => sk ? (
-                            <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                          ) : null)}
                         </div>
                       </td>
                       {/* 전투력 */}
