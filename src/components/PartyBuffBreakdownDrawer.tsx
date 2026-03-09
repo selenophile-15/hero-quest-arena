@@ -585,16 +585,9 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                           delta = 0;
                           evasionDisplayNote = '🪨 0% 고정';
                         } else {
-                          let rawVal = finalVal;
-                          if (hasEvasionPenalty) {
-                            rawVal = finalVal - 20;
-                            delta = delta - 20;
-                          }
-                          if (rawVal > cap) {
-                            evasionDisplayNote = `(${rawVal}%)`;
+                          if (finalVal > cap) {
+                            evasionDisplayNote = `(${finalVal}%)`;
                             finalVal = cap;
-                          } else {
-                            finalVal = rawVal;
                           }
                           if (finalVal < 0) evasionColor = 'text-purple-400';
                         }
