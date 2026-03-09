@@ -397,18 +397,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   for (let i = 0; i < numHeroes; i++) {
     const h = activeHeroes[i];
+    const ps = precomputedStats?.[i];
     const tier = getHeroTier(h);
     heroTier.push(tier);
 
-    // Base stats - these are already final display values from the hero data
-    // In the original script, atk/def are un-modded then re-modded
-    // Here we use the hero's stats directly as they represent the solo hero's final stats
-    heroAtk.push(h.atk || 0);
-    heroDef.push(h.def || 0);
-    heroHpMax.push(h.hp || 0);
-    heroCritChance.push((h.crit || 0) / 100);
-    heroCritMult.push((h.critDmg || 0) / 100);
-    heroEvasion.push((h.evasion || 0) / 100);
+    // Use precomputed stats (from partyBuffCalculator with champion+aurasong+booster)
+    // or fall back to raw hero stats
+    heroAtk.push(ps ? ps.atk : (h.atk || 0));
+    heroDef.push(ps ? ps.def : (h.def || 0));
+    heroHpMax.push(ps ? ps.hp : (h.hp || 0));
+    heroCritChance.push(ps ? ps.crit / 100 : (h.crit || 0) / 100);
+    heroCritMult.push(ps ? ps.critDmg / 100 : (h.critDmg || 0) / 100);
+    heroEvasion.push(ps ? ps.evasion / 100 : (h.evasion || 0) / 100);
     heroThreat.push(h.threat || 1);
 
     // Evasion cap: Pathfinder = 78%, others = 75%
