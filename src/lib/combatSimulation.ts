@@ -970,6 +970,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (contFight) {
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
+          const hpBefore = hp[i];
           hp[i] = Math.min(hp[i] + heroLizard[i], finalHp[i]);
           
           if (heroIsCleric[i]) {
@@ -982,6 +983,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (liluHealFlat > 0) {
             hp[i] = Math.min(hp[i] + liluHealFlat * heroArtChampionMod[i], finalHp[i]);
           }
+          totalHealing[i] += hp[i] - hpBefore;
         }
       }
 
