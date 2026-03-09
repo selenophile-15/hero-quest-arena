@@ -791,10 +791,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
         }
 
+        timesTargeted[target]++;
+
         const totalEva = heroEvasion[target] + berserkerStage[target] * 0.1 + ninjaEvasion[target];
         const cappedEva = Math.min(totalEva, heroEvaCap[target]);
 
         if (guaranteedEvade[target] || (Math.random() < cappedEva && !heroArtNoEvasion[target])) {
+          timesEvaded[target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
@@ -806,6 +809,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (!survived) {
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
+                lordProtections[target]++;
                 hp[target] += dmg;
                 hp[lordHero] -= damageTaken[lordHero];
                 if (hp[lordHero] <= 0) {
