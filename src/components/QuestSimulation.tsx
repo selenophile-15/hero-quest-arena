@@ -959,6 +959,9 @@ export default function QuestSimulation() {
                 >
                   📊 스탯 계산표
                 </Button>
+                {(currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')) && (
+                  <span className="text-xs text-muted-foreground">※ 익스트림 페널티: 회피 -20%</span>
+                )}
               </div>
             )}
             {/* Win Rate - between stat button and element row */}
@@ -1255,8 +1258,13 @@ export default function QuestSimulation() {
                                 delta = 0;
                                 evasionNote = '0% 고정';
                               } else {
+                                if (hasEvasionPenalty) {
+                                  val = val - 20;
+                                  delta = delta - 20;
+                                  evasionNote = '익스트림 -20%';
+                                }
                                 if (val > cap) {
-                                  evasionNote = `(${val}%)`;
+                                  evasionNote = evasionNote ? `${evasionNote} · (${val}%)` : `(${val}%)`;
                                   val = cap;
                                 }
                               }

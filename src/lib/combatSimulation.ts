@@ -181,6 +181,49 @@ function getHeroTier(hero: Hero): number {
   return hero.promoted ? 4 : 1;
 }
 
+interface AurasongBonuses {
+  atkPct: number;
+  defPct: number;
+  hpPct: number;
+  critPct: number;
+  evaPct: number;
+  critDmgPct: number;
+  flatAtk: number;
+  flatDef: number;
+  flatHp: number;
+}
+
+function getAurasongBonuses(champion: Hero | null): AurasongBonuses {
+  const result: AurasongBonuses = {
+    atkPct: 0, defPct: 0, hpPct: 0,
+    critPct: 0, evaPct: 0, critDmgPct: 0,
+    flatAtk: 0, flatDef: 0, flatHp: 0,
+  };
+  if (!champion) return result;
+
+  const item: any = champion.equipmentSlots?.[1]?.item;
+  const bonuses = item?.relicStatBonuses;
+  if (!Array.isArray(bonuses)) return result;
+
+  for (const b of bonuses) {
+    const rawVal = typeof b?.value === 'number' ? b.value : 0;
+    const val = b?.op === '감소' ? -rawVal : rawVal;
+    switch (b?.stat) {
+      case '오라_공격력%': result.atkPct += val / 100; break;
+      case '오라_방어력%': result.defPct += val / 100; break;
+      case '오라_체력%': result.hpPct += val / 100; break;
+      case '오라_치명타확률%': result.critPct += val / 100; break;
+      case '오라_회피%': result.evaPct += val / 100; break;
+      case '오라_치명타데미지%': result.critDmgPct += val / 100; break;
+      case '오라_깡공격력': result.flatAtk += val; break;
+      case '오라_깡방어력': result.flatDef += val; break;
+      case '오라_깡체력': result.flatHp += val; break;
+    }
+  }
+
+  return result;
+}
+
 // ─── Flash quest (깜짝 퀘스트) Bjorn multiplier zones ─────────────────────────
 
 const BJORN_DOUBLE_ZONES = [
@@ -306,6 +349,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   const champName = champion?.championName || champion?.name || '';
   const champTier = champion ? getHeroTier(champion) : 0;
+  const aurasong = getAurasongBonuses(champion);
 
   // ─── Bjorn multiplier (flash quest zones) ───
   const bjornMult = isFlash ? 2.0 : 1.0;
@@ -545,6 +589,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Random attack bonus applied per simulation
   }
 
+  // ─── Apply aurasong bonuses ───
+  if (aurasong.critPct || aurasong.evaPct || aurasong.critDmgPct) {
+    for (let i = 0; i < numHeroes; i++) {
+      const mercMult = heroIsMercenary[i] ? 1.25 : 1.0;
+      heroCritChance[i] += aurasong.critPct * mercMult;
+      heroEvasion[i] += aurasong.evaPct * mercMult;
+      heroCritMult[i] += aurasong.critDmgPct * mercMult;
+    }
+  }
+
   // ─── Booster bonuses ───
   let boosterAtkBonus = 0, boosterDefBonus = 0;
   switch (booster.type) {
@@ -585,12 +639,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const champModI = heroArtChampionMod[i];
     // Lone Wolf Cowl: +40% self atk/def when champion bonus is blocked
     const loneWolfBonus = champModI === 0 ? 0.4 : 0;
-    // aurasong bonus would go here too (TODO: implement aurasong)
-    const aurasongAtk = 0, aurasongDef = 0, aurasongHp = 0;
 
-    finalAtk.push(heroAtk[i] * (1.0 + (champAtkBonus * champModI + aurasongAtk) * mercMult + boosterAtkBonus + loneWolfBonus));
-    finalDef.push(heroDef[i] * (1.0 + (champDefBonus * champModI + aurasongDef) * mercMult + boosterDefBonus + loneWolfBonus));
-    finalHp.push(heroHpMax[i] * (1.0 + (champHpBonus * champModI + aurasongHp) * mercMult));
+    finalAtk.push(
+      heroAtk[i] * (1.0 + (champAtkBonus * champModI + aurasong.atkPct) * mercMult + boosterAtkBonus + loneWolfBonus)
+      + aurasong.flatAtk
+    );
+    finalDef.push(
+      heroDef[i] * (1.0 + (champDefBonus * champModI + aurasong.defPct) * mercMult + boosterDefBonus + loneWolfBonus)
+      + aurasong.flatDef
+    );
+    finalHp.push(
+      heroHpMax[i] * (1.0 + (champHpBonus * champModI + aurasong.hpPct) * mercMult)
+      + aurasong.flatHp
+    );
   }
 
   // ─── Damage taken calculation ───
