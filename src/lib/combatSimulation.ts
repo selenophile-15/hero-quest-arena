@@ -1203,7 +1203,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           normalDmgDealtAccum[i] += normalDmgFight[i];
           critDmgDealtAccum[i] += critDmgFight[i];
           damageDealtMax[i] = Math.max(damageDealtMax[i], damageFight[i]);
-          damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
+          // Only update min damage if hero actually dealt damage (fought at least once)
+          if (damageFight[i] > 0) {
+            damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
+          }
           totalRoundsPerHero[i] += round;
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];

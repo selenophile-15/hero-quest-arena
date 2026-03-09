@@ -1769,7 +1769,7 @@ export default function QuestSimulation() {
 
                   {/* Table 5: 시뮬레이션 스탯 */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">📊 시뮬레이션 스탯</div>
+                    <div className="text-sm font-semibold text-yellow-400 mb-2">📊 시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
