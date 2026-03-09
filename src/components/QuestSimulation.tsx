@@ -473,6 +473,23 @@ export default function QuestSimulation() {
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-5 h-5 text-primary" />
             <h3 className="font-display text-lg text-foreground">몬스터 정보</h3>
+            {currentQuest && (
+              <button
+                onClick={() => {
+                  setSelectedQuestType('');
+                  setSelectedRegionIdx(-1);
+                  setSelectedSubAreaIdx(-1);
+                  setSelectedQuestIdx(-1);
+                  setSelectedMiniBoss('none');
+                  setSelectedBooster('none');
+                  setSimResult(null);
+                }}
+                className="ml-auto text-[10px] text-muted-foreground hover:text-destructive transition-colors px-1.5 py-0.5 rounded border border-border/40 hover:border-destructive/50"
+                title="몬스터 정보 초기화"
+              >
+                초기화
+              </button>
+            )}
           </div>
           <div className="card-fantasy p-4 relative min-h-[400px]">
             {/* Region icon - top left, bigger */}
