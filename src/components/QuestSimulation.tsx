@@ -1603,7 +1603,7 @@ export default function QuestSimulation() {
 
                   {/* Table 1.5: 특수 대미지 (상어 / 첫턴 / 광전사) */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">🦈 특수 대미지 (상어 / 첫턴 / 광전사)</div>
+                    <div className="text-sm font-semibold text-yellow-400 mb-2">🦈 특수 대미지 (상어 / 첫턴 / 광전사)</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
