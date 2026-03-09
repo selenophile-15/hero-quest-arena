@@ -1414,53 +1414,81 @@ export default function QuestSimulation() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Left: Rounds info */}
-            <div>
-              <div className="text-xs text-muted-foreground mb-2 font-medium">라운드 정보</div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-secondary/30 rounded p-2">
-                  <div className="text-[9px] text-muted-foreground">최소</div>
-                  <div className="text-sm font-mono text-foreground font-bold">{simResult.minRounds}</div>
-                </div>
-                <div className="bg-secondary/30 rounded p-2">
-                  <div className="text-[9px] text-muted-foreground">평균</div>
-                  <div className="text-sm font-mono text-foreground font-bold">{simResult.avgRounds.toFixed(1)}</div>
-                </div>
-                <div className="bg-secondary/30 rounded p-2">
-                  <div className="text-[9px] text-muted-foreground">최대</div>
-                  <div className="text-sm font-mono text-foreground font-bold">{simResult.maxRounds}</div>
-                </div>
+          {/* Rounds info */}
+          <div className="mb-4">
+            <div className="text-xs text-muted-foreground mb-2 font-medium">라운드 정보</div>
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="bg-secondary/30 rounded p-2">
+                <div className="text-[9px] text-muted-foreground">최소</div>
+                <div className="text-sm font-mono text-foreground font-bold">{simResult.minRounds}</div>
               </div>
-              {simResult.roundLimitRate > 0 && (
-                <div className="mt-2 text-center text-[10px] text-red-400">
-                  ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
-                </div>
-              )}
+              <div className="bg-secondary/30 rounded p-2">
+                <div className="text-[9px] text-muted-foreground">평균</div>
+                <div className="text-sm font-mono text-foreground font-bold">{simResult.avgRounds.toFixed(1)}</div>
+              </div>
+              <div className="bg-secondary/30 rounded p-2">
+                <div className="text-[9px] text-muted-foreground">최대</div>
+                <div className="text-sm font-mono text-foreground font-bold">{simResult.maxRounds}</div>
+              </div>
             </div>
+            {simResult.roundLimitRate > 0 && (
+              <div className="mt-2 text-center text-[10px] text-red-400">
+                ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
+              </div>
+            )}
+          </div>
 
-            {/* Right: Per-hero results */}
-            <div>
-              <div className="text-xs text-muted-foreground mb-2 font-medium">영웅별 결과</div>
-              <table className="w-full text-xs">
+          {/* Per-hero results - full width detailed table */}
+          <div>
+            <div className="text-xs text-muted-foreground mb-2 font-medium">영웅별 결과</div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[11px] border-collapse">
                 <thead>
-                  <tr className="text-muted-foreground border-b border-border/30">
-                    <th className="text-left py-1 px-1">영웅</th>
-                    <th className="text-center py-1">생존률</th>
-                     <th className="text-center py-1">평균 대미지</th>
-                     <th className="text-center py-1">최대 대미지</th>
+                  <tr className="border-b border-border/40">
+                    <th className="text-left py-1.5 px-2 text-muted-foreground font-medium whitespace-nowrap" rowSpan={2}>영웅</th>
+                    <th className="text-center py-1 px-1 text-muted-foreground font-medium whitespace-nowrap" rowSpan={2}>생존률</th>
+                    <th className="text-center py-1 px-1 text-muted-foreground font-medium border-l border-border/20" colSpan={3}>가하는 대미지</th>
+                    <th className="text-center py-1 px-1 text-muted-foreground font-medium border-l border-border/20" colSpan={3}>받는 대미지 (1회)</th>
+                    <th className="text-center py-1 px-1 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>상어 적용 시 대미지</th>
+                    <th className="text-center py-1 px-1 text-muted-foreground font-medium border-l border-border/20" colSpan={3}>시뮬레이션 스탯</th>
+                  </tr>
+                  <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
+                    <th className="text-center py-1 px-1 border-l border-border/20">평균</th>
+                    <th className="text-center py-1 px-1">최소</th>
+                    <th className="text-center py-1 px-1">최대</th>
+                    <th className="text-center py-1 px-1 border-l border-border/20">일반</th>
+                    <th className="text-center py-1 px-1">광역</th>
+                    <th className="text-center py-1 px-1">치명타</th>
+                    <th className="text-center py-1 px-1 border-l border-border/20">일반</th>
+                    <th className="text-center py-1 px-1">치명타</th>
+                    <th className="text-center py-1 px-1 border-l border-border/20">ATK</th>
+                    <th className="text-center py-1 px-1">CRIT.C</th>
+                    <th className="text-center py-1 px-1">EVA</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {simResult.heroResults.map(hr => (
-                    <tr key={hr.heroId} className="border-b border-border/10">
-                      <td className="py-1.5 px-1 text-foreground font-medium">{hr.heroName}</td>
-                      <td className={`py-1.5 text-center font-mono ${
+                  {simResult.heroResults.map((hr, idx) => (
+                    <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                      <td className="py-1.5 px-2 text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
+                      <td className={`py-1.5 px-1 text-center font-mono whitespace-nowrap ${
                         hr.survivalRate >= 90 ? 'text-green-400' :
                         hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
                       }`}>{hr.survivalRate.toFixed(1)}%</td>
-                      <td className="py-1.5 text-center font-mono text-red-400">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
-                      <td className="py-1.5 text-center font-mono text-orange-400">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
+                      {/* 가하는 대미지 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-red-400 border-l border-border/20 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
+                      <td className="py-1.5 px-1 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.minDamageDealt))}</td>
+                      <td className="py-1.5 px-1 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
+                      {/* 받는 대미지 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono text-blue-400 whitespace-nowrap">{formatNumber(hr.aoeDamageTaken)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono text-purple-400 whitespace-nowrap">{formatNumber(hr.critDamageTakenVal)}</td>
+                      {/* 상어 적용 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-cyan-400 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.sharkNormalDmg)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono text-cyan-300 whitespace-nowrap">{formatNumber(hr.sharkCritDmg)}</td>
+                      {/* 시뮬레이션 스탯 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-foreground/70 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.finalAtk)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400/70 whitespace-nowrap">{hr.finalCritChance}%</td>
+                      <td className="py-1.5 px-1 text-center font-mono text-teal-400/70 whitespace-nowrap">{hr.finalEvasion}%</td>
                     </tr>
                   ))}
                 </tbody>
