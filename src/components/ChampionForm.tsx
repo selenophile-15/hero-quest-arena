@@ -873,14 +873,14 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 )}
               </div>
               {[
-                { icon: STAT_ICON_MAP.hp, value: hp, suffix: '' },
-                { icon: STAT_ICON_MAP.atk, value: atk, suffix: '' },
-                { icon: STAT_ICON_MAP.def, value: def, suffix: '' },
-                { icon: STAT_ICON_MAP.crit, value: crit, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
-                { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %' },
-                { icon: STAT_ICON_MAP.threat, value: threat, suffix: '' },
+                { icon: STAT_ICON_MAP.hp, value: champCalcResult?.finalHp ?? hp, suffix: '' },
+                { icon: STAT_ICON_MAP.atk, value: champCalcResult?.finalAtk ?? atk, suffix: '' },
+                { icon: STAT_ICON_MAP.def, value: champCalcResult?.finalDef ?? def, suffix: '' },
+                { icon: STAT_ICON_MAP.crit, value: champCalcResult?.totalCrit ?? crit, suffix: ' %' },
+                { icon: STAT_ICON_MAP.critDmg, value: champCalcResult?.totalCritDmg ?? critDmg, suffix: ' %' },
+                { icon: STAT_ICON_MAP.critAttack, value: champCalcResult?.critAttack ?? critAttack, suffix: '' },
+                { icon: STAT_ICON_MAP.evasion, value: champCalcResult?.totalEvasion ?? evasion, suffix: ' %' },
+                { icon: STAT_ICON_MAP.threat, value: champCalcResult?.totalThreat ?? threat, suffix: '' },
               ].map((stat, i) => (
                 <div key={i} className="flex items-center gap-2 py-0.5 px-1">
                   <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
