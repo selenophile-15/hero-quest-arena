@@ -729,12 +729,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // AoE attack hits all alive heroes
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
+          timesTargeted[i]++;
 
           const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
           const cappedEva = Math.min(totalEva, heroEvaCap[i]);
 
           if (guaranteedEvade[i] || (Math.random() < cappedEva && !heroArtNoEvasion[i])) {
             // Evaded
+            timesEvaded[i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
             // Hit - AoE uses normal damage × aoe ratio
@@ -750,6 +752,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 // Lord save check
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
                   lordSave = false;
+                  lordProtections[i]++;
                   hp[i] += dmg; // Restore this hero
                   const lordDmg = Math.ceil(damageTaken[lordHero] * mobAoeDmgRatio);
                   hp[lordHero] -= lordDmg;
