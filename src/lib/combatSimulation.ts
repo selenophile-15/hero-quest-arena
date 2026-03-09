@@ -854,11 +854,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
       // ─── Berserker stage update ───
       for (let i = 0; i < numHeroes; i++) {
-        if (heroBerserkerLevel[i] > 0) {
+        if (heroBerserkerLevel[i] > 0 && hp[i] > 0) {
           if (hp[i] >= berserkHp1[i] * finalHp[i]) berserkerStage[i] = 0;
-          else if (hp[i] >= berserkHp2[i] * finalHp[i]) berserkerStage[i] = 1;
-          else if (hp[i] >= berserkHp3[i] * finalHp[i]) berserkerStage[i] = 2;
-          else if (hp[i] > 0) berserkerStage[i] = 3;
+          else if (hp[i] >= berserkHp2[i] * finalHp[i]) { berserkerStage[i] = 1; berserkerBelowT1[i]++; }
+          else if (hp[i] >= berserkHp3[i] * finalHp[i]) { berserkerStage[i] = 2; berserkerBelowT1[i]++; berserkerBelowT2[i]++; }
+          else { berserkerStage[i] = 3; berserkerBelowT1[i]++; berserkerBelowT2[i]++; berserkerBelowT3[i]++; }
         }
 
         // Ninja loses innate when hit
