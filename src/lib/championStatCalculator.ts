@@ -42,9 +42,15 @@ export interface ChampionCalcResult {
   // Champion info
   championName: string;
   rank: number;
+  level: number;
   promoted: boolean;
   cardLevel: number;
   cardLevelBonusPct: number;
+
+  // Level stats
+  levelHp: number;
+  levelAtk: number;
+  levelDef: number;
 
   // Rank base stats (before promotion)
   rankBaseHp: number;
