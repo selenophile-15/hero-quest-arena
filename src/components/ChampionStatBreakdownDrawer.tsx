@@ -203,8 +203,8 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">
-                    {formatNumber(Math.round(afterSoulMult))} + {formatNumber(equipTotal)} + {formatNumber(seedFinal)}
+                  <td className="py-1.5 text-foreground/70 text-[10px]">
+                    승급스탯({formatNumber(Math.round(afterSoulMult))}) + 레벨({formatNumber(levelVal)}) + 장비({formatNumber(equipTotal)}) + 씨앗({formatNumber(seedFinal)})
                   </td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(Math.round(subtotal))}</td>
                 </tr>
