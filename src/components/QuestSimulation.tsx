@@ -1118,9 +1118,9 @@ export default function QuestSimulation() {
                             {belowMin && (
                               <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                             )}
-                            <button onClick={() => toggleHero(hero.id)}
+                            <button onClick={() => openSlotForEdit(slotIdx)}
                               className="relative w-20 h-20 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all hover:opacity-80 rounded"
-                              title={`${hero.name} (클릭하여 제거)`}>
+                              title={`${hero.name} (클릭하여 변경)`}>
                               {illustImg ? (
                                 <img src={illustImg} alt="" className="w-full h-full object-cover object-center" onError={e => { e.currentTarget.style.display = 'none'; }} />
                               ) : (
