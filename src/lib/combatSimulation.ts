@@ -962,6 +962,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           damageDealtAvg[i] += damageFight[i];
           damageDealtMax[i] = Math.max(damageDealtMax[i], damageFight[i]);
           damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
+          totalRoundsPerHero[i] += round;
         }
       }
 
