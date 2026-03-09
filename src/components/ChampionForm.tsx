@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Hero, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
-import { CHAMPION_NAMES, lookupChampionStats, getChampionSkillsData } from '@/lib/gameData';
+import { CHAMPION_NAMES, lookupChampionStats, getChampionSkillsData, getChampionStats } from '@/lib/gameData';
+import { calculateChampionStats, ChampionCalcResult } from '@/lib/championStatCalculator';
+import ChampionStatBreakdownDrawer from './ChampionStatBreakdownDrawer';
 import { CHAMPION_NAME_MAP, getChampionImagePath, SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { formatNumber } from '@/lib/format';
 import { getElementValue } from '@/components/EnchantPickerDialog';
