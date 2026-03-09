@@ -36,6 +36,18 @@ const CLASS_LINE_BORDER: Record<string, string> = {
   '주문술사': 'border-sky-500/60 shadow-[0_0_12px_rgba(56,189,248,0.3)]',
 };
 
+// Inline style colors for reliable border rendering
+const CLASS_LINE_BORDER_COLOR: Record<string, string> = {
+  '전사': '#ef4444',
+  '로그': '#84cc16',
+  '주문술사': '#38bdf8',
+};
+const CLASS_LINE_SHADOW_STYLE: Record<string, string> = {
+  '전사': '0 0 12px rgba(239,68,68,0.3)',
+  '로그': '0 0 12px rgba(132,204,22,0.3)',
+  '주문술사': '0 0 12px rgba(56,189,248,0.3)',
+};
+
 const JOB_ORDER: Record<string, number> = {};
 let orderIdx = 0;
 for (const [, jobs] of Object.entries(HERO_CLASS_MAP)) {
