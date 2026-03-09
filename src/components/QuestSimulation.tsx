@@ -1466,8 +1466,8 @@ export default function QuestSimulation() {
             )}
           </div>
 
-          {/* Mini-boss breakdown (only for random mode) */}
-          {simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
+          {/* Mini-boss breakdown (only for random mode, not boss quests) */}
+          {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
             <div className="mb-4">
               <div className="text-xs text-muted-foreground mb-2 font-medium">미니보스별 결과</div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
