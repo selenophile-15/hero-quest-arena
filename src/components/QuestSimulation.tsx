@@ -609,16 +609,17 @@ export default function QuestSimulation() {
                     <Popover>
                       <PopoverTrigger asChild>
                         <button className={`text-xs px-2 py-0.5 rounded border transition-all ${
-                          selectedMiniBoss !== 'none'
+                          selectedMiniBoss !== 'random'
                             ? selectedMiniBoss === 'huge' ? 'border-green-500/40 bg-green-500/10 text-green-400' :
                               selectedMiniBoss === 'agile' ? 'border-blue-500/40 bg-blue-500/10 text-blue-400' :
                               selectedMiniBoss === 'dire' ? 'border-red-500/40 bg-red-500/10 text-red-400' :
                               selectedMiniBoss === 'wealthy' ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400' :
                               selectedMiniBoss === 'legendary' ? 'border-purple-500/40 bg-purple-500/10 text-purple-400' :
-                              'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
-                            : 'border-border/40 text-muted-foreground hover:border-primary/40'
+                              'border-border/40 text-muted-foreground hover:border-primary/40'
+                            : 'border-primary/40 bg-primary/10 text-primary'
                         }`}>
-                          {selectedMiniBoss === 'none' ? '미니보스 없음' :
+                          {selectedMiniBoss === 'random' ? '랜덤 (2%)' :
+                           selectedMiniBoss === 'none' ? '미니보스 없음' :
                            selectedMiniBoss === 'huge' ? '거대한' :
                            selectedMiniBoss === 'agile' ? '민첩한' :
                            selectedMiniBoss === 'dire' ? '흉포한' :
@@ -626,16 +627,17 @@ export default function QuestSimulation() {
                            selectedMiniBoss === 'legendary' ? '전설의' : '미니보스'}
                         </button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-48 p-2" align="center">
+                      <PopoverContent className="w-52 p-2" align="center">
                         <div className="text-xs font-medium text-foreground mb-2">미니보스 수식어</div>
                         <div className="space-y-1">
                           {([
-                            { id: 'none', label: '없음', desc: '일반 몬스터', color: '' },
-                            { id: 'huge', label: '거대한', desc: 'HP ×2, 광역 확률 ×2', color: 'text-green-400' },
-                            { id: 'agile', label: '민첩한', desc: '회피 40%', color: 'text-blue-400' },
-                            { id: 'dire', label: '흉포한', desc: 'HP ×1.5, 치확 30%', color: 'text-red-400' },
-                            { id: 'wealthy', label: '부유한', desc: '보상 증가', color: 'text-yellow-400' },
-                            { id: 'legendary', label: '전설의', desc: 'HP ×1.5, ATK ×1.25, 치확 15%, 회피 10%', color: 'text-purple-400' },
+                            { id: 'random', label: '랜덤', desc: '2% 확률로 미니보스 등장', color: 'text-primary' },
+                            { id: 'none', label: '없음 (항상)', desc: '미니보스 없음 고정', color: '' },
+                            { id: 'huge', label: '거대한 (항상)', desc: 'HP ×2, 광역 확률 ×2', color: 'text-green-400' },
+                            { id: 'agile', label: '민첩한 (항상)', desc: '회피 40%', color: 'text-blue-400' },
+                            { id: 'dire', label: '흉포한 (항상)', desc: 'HP ×1.5, 치확 30%', color: 'text-red-400' },
+                            { id: 'wealthy', label: '부유한 (항상)', desc: '보상 증가', color: 'text-yellow-400' },
+                            { id: 'legendary', label: '전설의 (항상)', desc: 'HP ×1.5, ATK ×1.25, 치확 15%, 회피 10%', color: 'text-purple-400' },
                           ] as const).map(mb => (
                             <button
                               key={mb.id}
