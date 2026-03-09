@@ -379,7 +379,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
                         ) : (
                           <div className="flex flex-col items-center gap-0.5">
-                            <div className="w-16 h-16 overflow-hidden rounded border border-border/30 bg-secondary/20">
+                            <div className="w-28 h-28 overflow-hidden rounded border border-border/30 bg-secondary/20">
                               {illustPath
                                 ? <img src={illustPath} alt="" className="w-full h-full object-cover" onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }} />
                                 : null}
