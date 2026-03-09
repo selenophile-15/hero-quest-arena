@@ -867,6 +867,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Per-simulation state
     const hp = new Float64Array(numHeroes);
     const damageFight = new Float64Array(numHeroes);
+    const normalDmgFight = new Float64Array(numHeroes);
+    const critDmgFight = new Float64Array(numHeroes);
     const surviveChance = new Float64Array(numHeroes);
     const berserkerStage = new Int32Array(numHeroes);
     const guaranteedCrit = new Uint8Array(numHeroes);
