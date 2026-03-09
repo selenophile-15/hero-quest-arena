@@ -589,6 +589,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Random attack bonus applied per simulation
   }
 
+  // ─── Apply aurasong bonuses ───
+  if (aurasong.critPct || aurasong.evaPct || aurasong.critDmgPct) {
+    for (let i = 0; i < numHeroes; i++) {
+      const mercMult = heroIsMercenary[i] ? 1.25 : 1.0;
+      heroCritChance[i] += aurasong.critPct * mercMult;
+      heroEvasion[i] += aurasong.evaPct * mercMult;
+      heroCritMult[i] += aurasong.critDmgPct * mercMult;
+    }
+  }
+
   // ─── Booster bonuses ───
   let boosterAtkBonus = 0, boosterDefBonus = 0;
   switch (booster.type) {
@@ -629,12 +639,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const champModI = heroArtChampionMod[i];
     // Lone Wolf Cowl: +40% self atk/def when champion bonus is blocked
     const loneWolfBonus = champModI === 0 ? 0.4 : 0;
-    // aurasong bonus would go here too (TODO: implement aurasong)
-    const aurasongAtk = 0, aurasongDef = 0, aurasongHp = 0;
 
-    finalAtk.push(heroAtk[i] * (1.0 + (champAtkBonus * champModI + aurasongAtk) * mercMult + boosterAtkBonus + loneWolfBonus));
-    finalDef.push(heroDef[i] * (1.0 + (champDefBonus * champModI + aurasongDef) * mercMult + boosterDefBonus + loneWolfBonus));
-    finalHp.push(heroHpMax[i] * (1.0 + (champHpBonus * champModI + aurasongHp) * mercMult));
+    finalAtk.push(
+      heroAtk[i] * (1.0 + (champAtkBonus * champModI + aurasong.atkPct) * mercMult + boosterAtkBonus + loneWolfBonus)
+      + aurasong.flatAtk
+    );
+    finalDef.push(
+      heroDef[i] * (1.0 + (champDefBonus * champModI + aurasong.defPct) * mercMult + boosterDefBonus + loneWolfBonus)
+      + aurasong.flatDef
+    );
+    finalHp.push(
+      heroHpMax[i] * (1.0 + (champHpBonus * champModI + aurasong.hpPct) * mercMult)
+      + aurasong.flatHp
+    );
   }
 
   // ─── Damage taken calculation ───

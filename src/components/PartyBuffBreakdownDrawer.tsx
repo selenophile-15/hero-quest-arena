@@ -585,9 +585,17 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                           delta = 0;
                           evasionDisplayNote = '🪨 0% 고정';
                         } else {
-                          if (finalVal > cap) {
-                            evasionDisplayNote = `(${finalVal}%)`;
+                          let rawVal = finalVal;
+                          if (hasEvasionPenalty) {
+                            rawVal = finalVal - 20;
+                            delta = delta - 20;
+                            evasionDisplayNote = '익스트림 -20%';
+                          }
+                          if (rawVal > cap) {
+                            evasionDisplayNote = evasionDisplayNote ? `${evasionDisplayNote} · (${rawVal}%)` : `(${rawVal}%)`;
                             finalVal = cap;
+                          } else {
+                            finalVal = rawVal;
                           }
                           if (finalVal < 0) evasionColor = 'text-purple-400';
                         }
