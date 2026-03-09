@@ -58,6 +58,9 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
 
     const promotedDiff = r.promoted ? final - nonPromotedFinal : 0;
 
+    // Base stat = promotion applied (Rank+2 × 1.5) or just rank stat
+    const baseStat = Math.round(r.promoted ? afterSoulMult : rankBase);
+
     return (
       <div className="flex flex-col gap-4 h-full overflow-y-auto">
         {/* Calculation steps */}
@@ -69,71 +72,65 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
         </div>
 
         <div className="px-4 space-y-4">
-          {/* Step 1: Rank + Level base stat */}
-          <div>
-            <h5 className="text-xs font-semibold text-primary mb-1.5">① 기본 스탯 (랭크 + 레벨)</h5>
-            <table className="w-full text-xs">
-              <tbody>
-                <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">랭크 {r.rank} {config.label}</td>
-                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(rankBase)}</td>
-                </tr>
-                <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">레벨 {r.level} {config.label}</td>
-                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(levelVal)}</td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="py-1.5 text-foreground/70 font-medium">합계 (랭크 + 레벨)</td>
-                  <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(rankBase + levelVal)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Step 2: Champion Soul */}
+          {/* Step 1: Base stat (includes promotion) */}
           <div>
             <h5 className="text-xs font-semibold text-primary mb-1.5">
-              ② 승급 (Champion Soul)
-              {r.promoted && <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-yellow-600/60 text-yellow-200">적용됨</span>}
-              {!r.promoted && <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-gray-600/40 text-gray-400">미적용</span>}
+              ① 기본 스탯
+              {r.promoted && <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-yellow-600/60 text-yellow-200">승급 적용</span>}
             </h5>
             <table className="w-full text-xs">
               <tbody>
                 {r.promoted ? (
                   <>
                     <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-foreground/70">랭크 {r.rank}+2 = {r.rank + 2} 스탯</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground">{formatNumber(promotedRankVal)}</td>
+                      <td className="py-1.5 text-foreground/60 text-[11px]">랭크 {r.rank}+2 = {r.rank + 2} 기준</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(promotedRankVal)}</td>
                     </tr>
                     <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-foreground/70">× 1.5 배율</td>
-                      <td className="py-1.5 text-right tabular-nums text-yellow-300 font-bold">{formatNumber(Math.round(afterSoulMult))}</td>
+                      <td className="py-1.5 text-foreground/60 text-[11px]">× 1.5 (챔피언 소울)</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(Math.round(promotedRankVal * 1.5))}</td>
                     </tr>
-                    <tr className="border-b border-yellow-500/30 bg-yellow-900/10">
-                      <td className="py-1.5 text-yellow-300/80 font-medium">승급 효과</td>
-                      <td className="py-1.5 text-right tabular-nums">
-                        <DiffBadge value={afterSoulMult - nonPromotedBase} />
-                      </td>
+                    <tr className="border-b border-border/50">
+                      <td className="py-1.5 text-foreground font-medium">기본 {config.label}</td>
+                      <td className="py-1.5 text-right tabular-nums text-yellow-300 font-bold">{formatNumber(baseStat)}</td>
                     </tr>
                   </>
                 ) : (
-                  <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-muted-foreground">승급 미적용 → {config.label} = {formatNumber(rankBase)}</td>
-                    <td className="py-1.5 text-right tabular-nums text-foreground">{formatNumber(rankBase)}</td>
+                  <tr className="border-b border-border/50">
+                    <td className="py-1.5 text-foreground font-medium">랭크 {r.rank} {config.label}</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(baseStat)}</td>
                   </tr>
                 )}
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground/70">레벨 {r.level} {config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(levelVal)}</td>
+                </tr>
               </tbody>
             </table>
-            {/* Promotion comparison */}
-            {r.promoted && (
-              <div className="mt-2 p-2 rounded border border-yellow-500/20 bg-yellow-900/10">
-                <p className="text-[11px] text-yellow-200/80">
-                  🏆 승급 전 기본 {config.label}: <span className="tabular-nums font-medium">{formatNumber(nonPromotedBase)}</span>
-                  → 승급 후: <span className="tabular-nums font-bold text-yellow-300">{formatNumber(Math.round(afterSoulMult))}</span>
-                  <DiffBadge value={afterSoulMult - nonPromotedBase} />
-                </p>
-              </div>
-            )}
+          </div>
+
+          {/* Step 2: Seeds (moved before equipment) */}
+          <div>
+            <h5 className="text-xs font-semibold text-primary mb-1.5">② 씨앗 보너스</h5>
+            <table className="w-full text-sm">
+              <tbody>
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground">
+                    씨앗 {config.label}
+                    {seedMultLabel && <span className="text-foreground/60 ml-1">{seedMultLabel}</span>}
+                  </td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">
+                    {seedRaw > 0 ? (
+                      <>
+                        {formatNumber(seedRaw)}{seedMultLabel ? ` = ${formatNumber(seedFinal)}` : ''}
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">0</span>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           {/* Step 3: Equipment */}
@@ -169,7 +166,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                               ({slot.itemName} T{slot.tier})
                             </span>
                           </span>
-                          <div className="text-[10px] text-muted-foreground pl-2 space-y-0.5">
+                          <div className="text-[11px] text-foreground/60 pl-2 space-y-0.5">
                             <div>등급 ({slot.quality} ×{slot.qualityMult}): {formatNumber(qualityVal)}</div>
                             {slot.elementName && (
                               <div className={elementVal < elementRaw ? 'text-yellow-400' : ''}>
@@ -201,38 +198,14 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             </table>
           </div>
 
-          {/* Step 4: Seeds */}
-          <div>
-            <h5 className="text-xs font-semibold text-primary mb-1.5">④ 씨앗 보너스</h5>
-            <table className="w-full text-xs">
-              <tbody>
-                <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">
-                    씨앗 {config.label}
-                    {seedMultLabel && <span className="text-muted-foreground">{seedMultLabel}</span>}
-                  </td>
-                  <td className="py-1.5 text-right tabular-nums text-foreground">
-                    {seedRaw > 0 ? (
-                      <>
-                        {formatNumber(seedRaw)}{seedMultLabel ? ` = ${formatNumber(seedFinal)}` : ''}
-                      </>
-                    ) : (
-                      <span className="text-muted-foreground">0</span>
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Step 5: Subtotal */}
+          {/* Step 4: Subtotal */}
           <div className="border-t-2 border-border/60 pt-2">
-            <h5 className="text-xs font-semibold text-primary mb-1.5">⑤ 소계 (공통% 적용 전)</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1.5">④ 소계 (공통% 적용 전)</h5>
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70 text-[10px]">
-                    승급스탯({formatNumber(Math.round(afterSoulMult))}) + 레벨({formatNumber(levelVal)}) + 장비({formatNumber(equipTotal)}) + 씨앗({formatNumber(seedFinal)})
+                  <td className="py-1.5 text-foreground/70 text-[11px]">
+                    기본({formatNumber(baseStat)}) + 레벨({formatNumber(levelVal)}) + 씨앗({formatNumber(seedFinal)}) + 장비({formatNumber(equipTotal)})
                   </td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(Math.round(subtotal))}</td>
                 </tr>
@@ -240,9 +213,9 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             </table>
           </div>
 
-          {/* Step 6: Common % bonus (card + spirit skill) */}
+          {/* Step 5: Common % bonus (card + spirit skill) */}
           <div>
-            <h5 className="text-xs font-semibold text-primary mb-1.5">⑥ 공통% 보너스</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1.5">⑤ 공통% 보너스</h5>
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">

@@ -353,9 +353,14 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       championName,
       cardLevel,
       power: Number(power) || 0,
-      hp, atk, def,
-      crit, critDmg,
-      evasion, threat, element,
+      hp: champCalcResult?.finalHp ?? hp,
+      atk: champCalcResult?.finalAtk ?? atk,
+      def: champCalcResult?.finalDef ?? def,
+      crit: champCalcResult?.totalCrit ?? crit,
+      critDmg: champCalcResult?.totalCritDmg ?? critDmg,
+      evasion: champCalcResult?.totalEvasion ?? evasion,
+      threat: champCalcResult?.totalThreat ?? threat,
+      element,
       elementValue: totalEquipElement || elementValue,
       skills: [],
       label,
@@ -440,18 +445,30 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             </div>
           </div>
         </div>
-        {equipItem?.stats && equipItem.stats.length > 0 && (
-          <div className="flex items-center justify-center w-full mt-0.5">
-            <div className="flex gap-1.5">
-              {equipItem.stats.slice(0, 3).map((stat: any, si: number) => (
-                <div key={si} className="flex items-center gap-0.5">
-                  <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                  <span className="text-xs text-foreground font-semibold tabular-nums">{formatEquipStatVal(stat.key, stat.value)}</span>
-                </div>
-              ))}
+        {(() => {
+          // Use calculated equip stats if available
+          const calcSlot = champCalcResult?.equipSlots?.[slotIdx];
+          const hasCalcStats = calcSlot && calcSlot.itemName;
+          const displayStats = hasCalcStats ? [
+            ...(calcSlot.finalAtk ? [{ key: '장비_공격력', value: calcSlot.finalAtk }] : []),
+            ...(calcSlot.finalDef ? [{ key: '장비_방어력', value: calcSlot.finalDef }] : []),
+            ...(calcSlot.finalHp ? [{ key: '장비_체력', value: calcSlot.finalHp }] : []),
+            ...(calcSlot.finalCrit ? [{ key: '장비_치명타확률%', value: calcSlot.finalCrit }] : []),
+            ...(calcSlot.finalEvasion ? [{ key: '장비_회피%', value: calcSlot.finalEvasion }] : []),
+          ] : equipItem?.stats;
+          return displayStats && displayStats.length > 0 ? (
+            <div className="flex items-center justify-center w-full mt-0.5">
+              <div className="flex gap-1.5">
+                {displayStats.slice(0, 3).map((stat: any, si: number) => (
+                  <div key={si} className="flex items-center gap-0.5">
+                    <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
+                    <span className="text-xs text-foreground font-semibold tabular-nums">{formatEquipStatVal(stat.key, stat.value)}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          ) : null;
+        })()}
         <p className="text-sm text-foreground truncate w-full text-center leading-tight font-medium mt-0.5">{equipItem?.name || '-'}</p>
       </div>
     );
@@ -873,14 +890,14 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 )}
               </div>
               {[
-                { icon: STAT_ICON_MAP.hp, value: hp, suffix: '' },
-                { icon: STAT_ICON_MAP.atk, value: atk, suffix: '' },
-                { icon: STAT_ICON_MAP.def, value: def, suffix: '' },
-                { icon: STAT_ICON_MAP.crit, value: crit, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
-                { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %' },
-                { icon: STAT_ICON_MAP.threat, value: threat, suffix: '' },
+                { icon: STAT_ICON_MAP.hp, value: champCalcResult?.finalHp ?? hp, suffix: '' },
+                { icon: STAT_ICON_MAP.atk, value: champCalcResult?.finalAtk ?? atk, suffix: '' },
+                { icon: STAT_ICON_MAP.def, value: champCalcResult?.finalDef ?? def, suffix: '' },
+                { icon: STAT_ICON_MAP.crit, value: champCalcResult?.totalCrit ?? crit, suffix: ' %' },
+                { icon: STAT_ICON_MAP.critDmg, value: champCalcResult?.totalCritDmg ?? critDmg, suffix: ' %' },
+                { icon: STAT_ICON_MAP.critAttack, value: champCalcResult?.critAttack ?? critAttack, suffix: '' },
+                { icon: STAT_ICON_MAP.evasion, value: champCalcResult?.totalEvasion ?? evasion, suffix: ' %' },
+                { icon: STAT_ICON_MAP.threat, value: champCalcResult?.totalThreat ?? threat, suffix: '' },
               ].map((stat, i) => (
                 <div key={i} className="flex items-center gap-2 py-0.5 px-1">
                   <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
