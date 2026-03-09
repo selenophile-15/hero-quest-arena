@@ -134,7 +134,7 @@ export interface SkillBonuses {
 let elementStatsCache: Record<string, any> | null = null;
 let spiritStatsCache: Record<string, any> | null = null;
 
-async function loadElementStats(): Promise<Record<string, any>> {
+export async function loadElementStats(): Promise<Record<string, any>> {
   if (elementStatsCache) return elementStatsCache;
   try {
     const resp = await fetch('/data/STD3_element_stats.json');
@@ -145,7 +145,7 @@ async function loadElementStats(): Promise<Record<string, any>> {
   }
 }
 
-async function loadSpiritStats(): Promise<Record<string, any>> {
+export async function loadSpiritStats(): Promise<Record<string, any>> {
   if (spiritStatsCache) return spiritStatsCache;
   try {
     const resp = await fetch('/data/equipment/enchantment/spirit.json');
@@ -156,7 +156,7 @@ async function loadSpiritStats(): Promise<Record<string, any>> {
   }
 }
 
-function getElementEnchantStats(
+export function getElementEnchantStats(
   elementData: Record<string, any>,
   tier: number,
   affinity: boolean
@@ -173,7 +173,7 @@ function getElementEnchantStats(
   };
 }
 
-const SPIRIT_TIER: Record<string, number> = {
+export const SPIRIT_TIER: Record<string, number> = {
   '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
   '기린': 12, '크람푸스': 12, '크리스마스': 12,
   '유니콘': 10, '피닉스': 10, '히드라': 10,
@@ -182,7 +182,7 @@ const SPIRIT_TIER: Record<string, number> = {
   '늑대': 4, '양': 4, '독수리': 4, '황소': 4, '독사': 4, '고양이': 4, '토끼': 4, '문드라': 4,
 };
 
-function getSpiritEnchantStats(
+export function getSpiritEnchantStats(
   spiritData: Record<string, any>,
   spiritName: string,
   affinity: boolean
@@ -203,7 +203,7 @@ function getSpiritEnchantStats(
   };
 }
 
-function capEnchant(enchantVal: number, baseVal: number): number {
+export function capEnchant(enchantVal: number, baseVal: number): number {
   if (baseVal <= 0) return 0;
   return Math.min(enchantVal, baseVal);
 }

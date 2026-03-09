@@ -141,30 +141,58 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <h5 className="text-xs font-semibold text-primary mb-1.5">③ 장비 스탯</h5>
             <table className="w-full text-xs">
               <tbody>
-                {r.equipSlots.map((slot, i) => (
-                  <tr key={i} className="border-b border-border/30">
-                    <td className="py-1.5 text-foreground/70">
-                      {slot.slotName}
-                      {slot.itemName && (
-                        <span className="text-muted-foreground ml-1">
-                          ({slot.itemName} T{slot.tier}
-                          {slot.qualityMult !== 1 && ` × ${slot.qualityMult}`})
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-1.5 text-right tabular-nums text-foreground">
-                      {slot.itemName ? (
-                        <>
-                          {statType === 'atk' ? formatNumber(slot.finalAtk) :
-                           statType === 'def' ? formatNumber(slot.finalDef) :
-                           formatNumber(slot.finalHp)}
-                        </>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                {r.equipSlots.map((slot, i) => {
+                  if (!slot.itemName) {
+                    return (
+                      <tr key={i} className="border-b border-border/30">
+                        <td className="py-1.5 text-foreground/70">{slot.slotName}</td>
+                        <td className="py-1.5 text-right tabular-nums text-muted-foreground">-</td>
+                      </tr>
+                    );
+                  }
+
+                  const qualityVal = statType === 'atk' ? slot.qualityAtk : statType === 'def' ? slot.qualityDef : slot.qualityHp;
+                  const elementVal = statType === 'atk' ? slot.elementCapAtk : statType === 'def' ? slot.elementCapDef : slot.elementCapHp;
+                  const elementRaw = statType === 'atk' ? slot.elementRawAtk : statType === 'def' ? slot.elementRawDef : slot.elementRawHp;
+                  const spiritVal = statType === 'atk' ? slot.spiritCapAtk : statType === 'def' ? slot.spiritCapDef : slot.spiritCapHp;
+                  const spiritRaw = statType === 'atk' ? slot.spiritRawAtk : statType === 'def' ? slot.spiritRawDef : slot.spiritRawHp;
+                  const finalVal = statType === 'atk' ? slot.finalAtk : statType === 'def' ? slot.finalDef : slot.finalHp;
+                  const isCapped = (elementVal < elementRaw) || (spiritVal < spiritRaw);
+
+                  return (
+                    <tr key={i} className="border-b border-border/30">
+                      <td className="py-1.5 text-foreground/70">
+                        <div className="flex flex-col gap-0.5">
+                          <span>
+                            {slot.slotName}
+                            <span className="text-muted-foreground ml-1">
+                              ({slot.itemName} T{slot.tier})
+                            </span>
+                          </span>
+                          <div className="text-[10px] text-muted-foreground pl-2 space-y-0.5">
+                            <div>등급 ({slot.quality} ×{slot.qualityMult}): {formatNumber(qualityVal)}</div>
+                            {slot.elementName && (
+                              <div className={elementVal < elementRaw ? 'text-yellow-400' : ''}>
+                                원소 {slot.elementName}: {formatNumber(elementVal)}
+                                {elementVal < elementRaw && <span className="text-muted-foreground"> (제한: {elementRaw}→{elementVal})</span>}
+                              </div>
+                            )}
+                            {slot.spiritName && (
+                              <div className={spiritVal < spiritRaw ? 'text-yellow-400' : ''}>
+                                영혼 {slot.spiritName}: {formatNumber(spiritVal)}
+                                {spiritVal < spiritRaw && <span className="text-muted-foreground"> (제한: {spiritRaw}→{spiritVal})</span>}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground align-top">
+                        <span className="font-medium">{formatNumber(finalVal)}</span>
+                        {isCapped && <span className="ml-0.5 text-[9px] text-yellow-400" title="마법부여 제한 적용됨">⚠</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
                 <tr className="border-b border-border/50">
                   <td className="py-1.5 text-foreground/70 font-medium">장비 합계</td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(equipTotal)}</td>
