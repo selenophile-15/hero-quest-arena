@@ -756,32 +756,21 @@ export default function QuestSimulation() {
                     const reductions = [-50, 0, 50, 70, 75];
                     return (
                       <div className="px-1">
-                        <div className="relative" style={{ height: `${barH}px` }}>
-                          {/* Threshold rows: horizontal line + labels (line masked by text background) */}
-                          {defThresholds.map((t, i) => {
-                            const pct = (i / (defThresholds.length - 1)) * 100;
-                            const applied = 100 - reductions[i];
-                            return (
-                              <div key={t.key} className="absolute left-0 right-0"
-                                style={{ bottom: `${pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                                {/* Horizontal line - full width, behind text */}
-                                <div className="absolute inset-0 flex items-center pointer-events-none" style={{ zIndex: 1 }}>
-                                  <div className="h-px w-full" style={{ backgroundColor: t.color, opacity: 0.45 }} />
-                                </div>
-                                {/* Text row: left = reduction label, right = def value + applied% — same color */}
-                                <div className="relative flex items-center justify-between" style={{ paddingLeft: '18px', zIndex: 10 }}>
-                                  <span className={`text-[10px] font-mono ${t.textClass} bg-card/95 px-0.5 rounded-sm`}>{t.label}</span>
-                                  <div className="flex items-center gap-1 bg-card/95 px-0.5 rounded-sm">
-                                    <span className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
-                                    <span className={`text-[9px] font-mono ${t.textClass} opacity-70`}>({applied}%)</span>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                          {/* Vertical bar - above lines, z-20 */}
-                          <div className="absolute" style={{ left: 0, top: 0, bottom: 0, width: '14px', zIndex: 20 }}>
+                        {/* Bar + pins layout: bar on left, labels on right */}
+                        <div className="relative flex gap-0" style={{ height: `${barH}px` }}>
+                          {/* Vertical bar column */}
+                          <div className="relative shrink-0" style={{ width: '14px' }}>
                             <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                            {/* Threshold ticks on bar */}
+                            {defThresholds.map((t, i) => {
+                              const pct = (i / (defThresholds.length - 1)) * 100;
+                              return (
+                                <div key={t.key} className="absolute left-0 right-0 flex items-center pointer-events-none"
+                                  style={{ bottom: `${pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
+                                  <div className="h-px w-full" style={{ backgroundColor: t.color, opacity: 0.7 }} />
+                                </div>
+                              );
+                            })}
                             {/* Hero pins */}
                             {selectedHeroes.map((h, hi) => {
                               const bs = buffedStats[hi];
@@ -790,33 +779,50 @@ export default function QuestSimulation() {
                               let pinColor = '#ef4444';
                               for (const t of defThresholds) { if (heroDef >= t.value) pinColor = t.color; }
                               return (
-                                <div key={h.id} className="absolute" style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}>
+                                <div key={h.id} className="absolute" style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
                                   <div className="w-3 h-3 rounded-full border-2 shadow-md" style={{ borderColor: pinColor, backgroundColor: pinColor }} />
                                 </div>
                               );
                             })}
                           </div>
-                        </div>
-                        {/* Hero legend */}
-                        {selectedHeroes.length > 0 && (
-                          <div className="mt-3 space-y-1 border-t border-border/20 pt-2">
+                          {/* Right: threshold labels + hero pin labels */}
+                          <div className="relative flex-1 ml-1">
+                            {/* Threshold labels */}
+                            {defThresholds.map((t, i) => {
+                              const pct = (i / (defThresholds.length - 1)) * 100;
+                              const applied = 100 - reductions[i];
+                              return (
+                                <div key={t.key} className="absolute left-0 right-0 flex items-center justify-between"
+                                  style={{ bottom: `${pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                                  <span className={`text-[9px] font-mono ${t.textClass} leading-none`}>{t.label}</span>
+                                  <div className="flex items-center gap-0.5">
+                                    <span className={`text-[9px] font-mono ${t.textClass} leading-none`}>{formatNumber(t.value)}</span>
+                                    <span className={`text-[8px] font-mono ${t.textClass} opacity-70 leading-none`}>({applied}%)</span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                            {/* Hero pin labels — shown outside the threshold label rows */}
                             {selectedHeroes.map((h, hi) => {
                               const bs = buffedStats[hi];
                               const heroDef = bs ? bs.def : (h.def || 0);
+                              const pct = defToBarPct(heroDef);
                               let pinColor = '#ef4444';
                               for (const t of defThresholds) { if (heroDef >= t.value) pinColor = t.color; }
                               const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
                               return (
-                                <div key={h.id} className="flex items-center gap-1.5">
-                                  <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: pinColor }} />
-                                  <span className="text-[10px] text-foreground truncate flex-1">{h.name}</span>
-                                  <span className="text-[10px] font-mono text-muted-foreground">{formatNumber(heroDef)}</span>
-                                  <span className="text-[9px] font-mono ml-1" style={{ color: pinColor }}>{dmgApplied}%</span>
+                                <div key={h.id} className="absolute left-0 right-0 flex items-center justify-between"
+                                  style={{ bottom: `${pct}%`, transform: 'translateY(50%) translateY(-12px)', zIndex: 5 }}>
+                                  <span className="text-[9px] font-mono leading-none truncate max-w-[60px]" style={{ color: pinColor }}>{h.name}</span>
+                                  <div className="flex items-center gap-0.5">
+                                    <span className="text-[9px] font-mono leading-none" style={{ color: pinColor }}>{formatNumber(heroDef)}</span>
+                                    <span className="text-[8px] font-mono leading-none opacity-80" style={{ color: pinColor }}>({dmgApplied}%)</span>
+                                  </div>
                                 </div>
                               );
                             })}
                           </div>
-                        )}
+                        </div>
                       </div>
                     );
                   })()}
@@ -1009,16 +1015,14 @@ export default function QuestSimulation() {
                               <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                             )}
                             <button onClick={() => openSlotForEdit(slotIdx)}
-                              className={`relative w-16 h-20 rounded-lg border-2 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all ${
-                                belowMin ? 'border-red-500/70' : 'border-primary/50'
-                              } hover:border-accent/70`}
+                              className="relative w-20 h-20 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all hover:opacity-80"
                               title={`${hero.name} (클릭하여 변경)`}>
                               {illustImg ? (
                                 <img src={illustImg} alt="" className="w-full h-full object-cover object-top" onError={e => { e.currentTarget.style.display = 'none'; }} />
                               ) : (
                                 <span className="text-lg">⚔</span>
                               )}
-                              <div className="absolute inset-0 bg-primary/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                              <div className="absolute inset-0 bg-primary/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <span className="text-foreground text-xs font-bold">변경</span>
                               </div>
                             </button>
