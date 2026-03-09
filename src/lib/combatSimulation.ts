@@ -40,16 +40,13 @@ export interface BoosterType {
   extraCritMult?: number;
 }
 
-export interface SimulationAurasongBonus {
-  atkPct: number;
-  defPct: number;
-  hpPct: number;
-  critPct: number;
-  evaPct: number;
-  critDmgPct: number;
-  flatAtk: number;
-  flatDef: number;
-  flatHp: number;
+export interface PrecomputedHeroStats {
+  atk: number;
+  def: number;
+  hp: number;
+  crit: number;      // % (e.g., 87)
+  critDmg: number;   // % (e.g., 700)
+  evasion: number;    // % (e.g., 62)
 }
 
 export interface SimulationConfig {
@@ -60,7 +57,7 @@ export interface SimulationConfig {
   questTypeKey: string;      // 'normal' | 'flash' | 'lcog' | 'tot'
   regionName: string;        // e.g. '공포'
   isTerrorTower: boolean;    // 공포의 탑 (5% damage)
-  aurasongBonus?: SimulationAurasongBonus;
+  precomputedStats?: PrecomputedHeroStats[];  // If provided, skip champion/aurasong computation
   simulationCount?: number;  // Default 50000
   _isRetry?: boolean;        // Internal: prevents Fateweaver recursion
 }
@@ -280,7 +277,7 @@ function getDamageReductionForDef(def: number, mobCap: number): number {
 // ─── Main Simulation ─────────────────────────────────────────────────────────
 
 export function runCombatSimulation(config: SimulationConfig): SimulationResult {
-  const { heroes, monster, miniBoss, booster, questTypeKey, isTerrorTower, aurasongBonus } = config;
+  const { heroes, monster, miniBoss, booster, questTypeKey, isTerrorTower, precomputedStats } = config;
   const simCount = config.simulationCount || 50000;
 
   // Filter out heroes with 0 HP (empty slots)
@@ -362,7 +359,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   const champName = champion?.championName || champion?.name || '';
   const champTier = champion ? getHeroTier(champion) : 0;
-  const aurasong = aurasongBonus || getAurasongBonuses(champion);
+  const aurasong = getAurasongBonuses(champion);
 
   // ─── Bjorn multiplier (flash quest zones) ───
   const bjornMult = isFlash ? 2.0 : 1.0;
@@ -400,18 +397,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   for (let i = 0; i < numHeroes; i++) {
     const h = activeHeroes[i];
+    const ps = precomputedStats?.[i];
     const tier = getHeroTier(h);
     heroTier.push(tier);
 
-    // Base stats - these are already final display values from the hero data
-    // In the original script, atk/def are un-modded then re-modded
-    // Here we use the hero's stats directly as they represent the solo hero's final stats
-    heroAtk.push(h.atk || 0);
-    heroDef.push(h.def || 0);
-    heroHpMax.push(h.hp || 0);
-    heroCritChance.push((h.crit || 0) / 100);
-    heroCritMult.push((h.critDmg || 0) / 100);
-    heroEvasion.push((h.evasion || 0) / 100);
+    // Use precomputed stats (from partyBuffCalculator with champion+aurasong+booster)
+    // or fall back to raw hero stats
+    heroAtk.push(ps ? ps.atk : (h.atk || 0));
+    heroDef.push(ps ? ps.def : (h.def || 0));
+    heroHpMax.push(ps ? ps.hp : (h.hp || 0));
+    heroCritChance.push(ps ? ps.crit / 100 : (h.crit || 0) / 100);
+    heroCritMult.push(ps ? ps.critDmg / 100 : (h.critDmg || 0) / 100);
+    heroEvasion.push(ps ? ps.evasion / 100 : (h.evasion || 0) / 100);
     heroThreat.push(h.threat || 1);
 
     // Evasion cap: Pathfinder = 78%, others = 75%
@@ -513,13 +510,38 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let lordHero = -1;
   let fateweaverPresent = false;
 
-  // Find Lord and Fateweaver
+  // Find Lord and Fateweaver (always needed for combat logic)
   for (let i = 0; i < numHeroes; i++) {
     if (heroIsLord[i]) { lordPresent = true; lordHero = i; }
     if (isClass(activeHeroes[i], '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')) {
       fateweaverPresent = true;
     }
   }
+
+  // When precomputedStats are provided, stats already include champion+aurasong+booster
+  // Skip recomputation, just apply extreme penalty and use stats directly
+  if (precomputedStats && precomputedStats.length === numHeroes) {
+    // Hemma detection still needed for per-round cumulative bonus
+    if (champName.includes('헴마') || champName === 'Hemma') {
+      hemmaWho = championIdx;
+      hemmaMult = 0.15 + champTier * 0.05;
+    }
+
+    // Extreme penalty on evasion
+    if (isExtreme) {
+      for (let i = 0; i < numHeroes; i++) {
+        if (!heroArtNoEvasion[i]) {
+          heroEvasion[i] = heroEvasion[i] - 0.20;
+        }
+      }
+    }
+
+    // Use precomputed ATK/DEF/HP directly (already includes champion+aurasong+booster)
+    var finalAtk: number[] = heroAtk.map(v => v);
+    var finalDef: number[] = heroDef.map(v => v);
+    var finalHp: number[] = heroHpMax.map(v => v);
+  } else {
+    // ─── Full champion bonus computation (fallback when no precomputed stats) ───
 
   if (champName.includes('아르곤') || champName === 'Argon') {
     champAtkBonus = 0.1 * champTier;
@@ -641,15 +663,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
 
   // Per Korean doc: final = base × (1 + (champ + aurasong) × mercMult + booster)
-  // Mercenary: champion and aurasong bonuses are multiplied by 1.25
-  const finalAtk: number[] = [];
-  const finalDef: number[] = [];
-  const finalHp: number[] = [];
+  var finalAtk: number[] = [];
+  var finalDef: number[] = [];
+  var finalHp: number[] = [];
 
   for (let i = 0; i < numHeroes; i++) {
     const mercMult = heroIsMercenary[i] ? 1.25 : 1.0;
     const champModI = heroArtChampionMod[i];
-    // Lone Wolf Cowl: +40% self atk/def when champion bonus is blocked
     const loneWolfBonus = champModI === 0 ? 0.4 : 0;
 
     finalAtk.push(
@@ -665,6 +685,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       + aurasong.flatHp
     );
   }
+  } // end else (no precomputed stats)
 
   // ─── Damage taken calculation ───
   const damageTaken: number[] = [];

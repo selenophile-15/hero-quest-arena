@@ -295,11 +295,6 @@ export default function QuestSimulation() {
           : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
         return [...new Set(rawElements)] as string[];
       })() : [];
-      const aurasongSrc = buffSummary?.sources.find(src => {
-        if (src.type !== 'aurasong') return false;
-        if (src.note === '부스터') return false;
-        return !['전투력 부스터', '슈퍼 전투력 부스터', '메가 전투력 부스터'].includes(src.name);
-      });
       const questMonster: QuestMonster = {
         hp: currentQuest.hp,
         atk: currentQuest.atk,
@@ -311,6 +306,17 @@ export default function QuestSimulation() {
         barrier: currentQuest.barrier,
         barrierElement: bElements[0] || null,
       };
+      // Pass precomputed stats from buffedStats (includes champion + aurasong + booster)
+      const precomputed = buffedStats.length === selectedHeroes.length
+        ? buffedStats.map(bs => ({
+            atk: bs.atk,
+            def: bs.def,
+            hp: bs.hp,
+            crit: bs.crit,
+            critDmg: bs.critDmg,
+            evasion: bs.evasion,
+          }))
+        : undefined;
       const result = runCombatSimulation({
         heroes: selectedHeroes,
         monster: questMonster,
@@ -319,17 +325,7 @@ export default function QuestSimulation() {
         questTypeKey: selectedQuestType,
         regionName: currentRegion.name,
         isTerrorTower,
-        aurasongBonus: aurasongSrc ? {
-          atkPct: (aurasongSrc.atkPct || 0) / 100,
-          defPct: (aurasongSrc.defPct || 0) / 100,
-          hpPct: (aurasongSrc.hpPct || 0) / 100,
-          critPct: (aurasongSrc.critPct || 0) / 100,
-          evaPct: (aurasongSrc.evaPct || 0) / 100,
-          critDmgPct: (aurasongSrc.critDmgPct || 0) / 100,
-          flatAtk: aurasongSrc.flatAtk || 0,
-          flatDef: aurasongSrc.flatDef || 0,
-          flatHp: aurasongSrc.flatHp || 0,
-        } : undefined,
+        precomputedStats: precomputed,
       });
       setSimResult(result);
       setSimRunning(false);
