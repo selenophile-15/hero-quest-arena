@@ -325,7 +325,7 @@ export default function QuestSimulation() {
       const result = runCombatSimulation({
         heroes: selectedHeroes,
         monster: questMonster,
-        miniBoss: selectedMiniBoss,
+        miniBoss: effectiveMiniBoss,
         booster: { type: selectedBooster },
         questTypeKey: selectedQuestType,
         regionName: currentRegion.name,
