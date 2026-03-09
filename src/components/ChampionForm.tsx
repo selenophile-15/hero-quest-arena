@@ -210,6 +210,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   }, []);
 
   useEffect(() => {
+    getChampionStats().then(data => {
+      if (data[championName]) setChampionRawData(data[championName]);
+    });
+  }, [championName]);
+
+
+  useEffect(() => {
     if (!championName || !rank) return;
     lookupChampionStats(championName, Number(rank)).then(stats => {
       if (stats) {
