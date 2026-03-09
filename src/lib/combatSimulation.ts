@@ -815,6 +815,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               ? Math.ceil(critDamageTaken[i] * mobAoeDmgRatio)
               : Math.ceil(damageTaken[i] * mobAoeDmgRatio);
             hp[i] -= dmg;
+            simDmgTaken[i] += dmg;
+            simTimesHit[i]++;
 
             if (hp[i] <= 0) {
               const survived = handleFatalBlow(i);
