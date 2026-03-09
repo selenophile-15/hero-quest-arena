@@ -204,6 +204,15 @@ function calcCritDamageTaken(normalDmg: number, mobDamage: number): number {
   return Math.round(Math.max(normalDmg, mobDamage) * 1.5);
 }
 
+function getDamageReductionForDef(def: number, mobCap: number): number {
+  // Returns damage reduction % based on defense vs cap
+  // -50% at 0 def, 0% at r0 (cap), 50% at r50, 70% at r70, 75% at r75
+  if (def <= 0) return -50;
+  if (def >= mobCap) return 75; // Capped at 75%
+  // Interpolate: 0 def = -50% reduction, mobCap def = 0% reduction
+  return -50 + (def / mobCap) * 50;
+}
+
 // ─── Main Simulation ─────────────────────────────────────────────────────────
 
 export function runCombatSimulation(config: SimulationConfig): SimulationResult {
