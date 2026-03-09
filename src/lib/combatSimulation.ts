@@ -277,7 +277,7 @@ function getDamageReductionForDef(def: number, mobCap: number): number {
 // ─── Main Simulation ─────────────────────────────────────────────────────────
 
 export function runCombatSimulation(config: SimulationConfig): SimulationResult {
-  const { heroes, monster, miniBoss, booster, questTypeKey, isTerrorTower, aurasongBonus } = config;
+  const { heroes, monster, miniBoss, booster, questTypeKey, isTerrorTower, precomputedStats } = config;
   const simCount = config.simulationCount || 50000;
 
   // Filter out heroes with 0 HP (empty slots)
