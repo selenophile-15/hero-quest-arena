@@ -368,7 +368,7 @@ export default function QuestSimulation() {
     setSelectedSubAreaIdx(-1);
     setSelectedQuestIdx(-1);
     setSelectedHeroIds(new Set());
-    setSelectedMiniBoss('none');
+    setSelectedMiniBoss('random');
   };
 
   const handleQuestSelect = (sel: { questTypeKey: string; regionIdx: number; subAreaIdx: number; questIdx: number }) => {
