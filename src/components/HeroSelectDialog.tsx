@@ -160,6 +160,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
 
   const isFull = localIds.size >= maxMembers;
   const selectedHeroes = Array.from(localIds).map(id => heroMap.get(id)).filter(Boolean) as Hero[];
+  const hasChampion = selectedHeroes.some(h => h.type === 'champion');
 
   const cycleJobMode = () => setJobImageMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon');
   const jobModeLabel = jobImageMode === 'icon' ? '🎭' : jobImageMode === 'illust' ? '🖼️' : '✖';
