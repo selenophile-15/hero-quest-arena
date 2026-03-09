@@ -375,7 +375,7 @@ export default function QuestSimulation() {
     setSelectedSubAreaIdx(sel.subAreaIdx);
     setSelectedQuestIdx(sel.questIdx);
     // 파티 구성 유지 (던전 변경시 초기화 안함)
-    setSelectedMiniBoss('none');
+    setSelectedMiniBoss('random');
   };
 
   const openConfigAtStep = (step: 'type' | 'region' | 'subarea' | 'difficulty') => {
