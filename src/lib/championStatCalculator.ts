@@ -292,9 +292,11 @@ export function calculateChampionStats(params: {
   return {
     championName: '',
     rank,
+    level,
     promoted,
     cardLevel,
     cardLevelBonusPct,
+    levelHp, levelAtk, levelDef,
     rankBaseHp, rankBaseAtk, rankBaseDef, rankBaseElement,
     promotedRankHp, promotedRankAtk, promotedRankDef, promotedRankElement,
     promotedHp, promotedAtk, promotedDef,
