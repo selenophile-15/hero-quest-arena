@@ -875,6 +875,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
           const dmg = isCrit ? critDamageTaken[target] : damageTaken[target];
           hp[target] -= dmg;
+          simDmgTaken[target] += dmg;
+          simTimesHit[target]++;
 
           if (hp[target] <= 0) {
             const survived = handleFatalBlow(target);
