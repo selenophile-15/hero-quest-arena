@@ -69,14 +69,22 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
         </div>
 
         <div className="px-4 space-y-4">
-          {/* Step 1: Rank base stat */}
+          {/* Step 1: Rank + Level base stat */}
           <div>
-            <h5 className="text-xs font-semibold text-primary mb-1.5">① 랭크 기본 스탯</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1.5">① 기본 스탯 (랭크 + 레벨)</h5>
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">랭크 {r.rank} 기본 {config.label}</td>
+                  <td className="py-1.5 text-foreground/70">랭크 {r.rank} {config.label}</td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(rankBase)}</td>
+                </tr>
+                <tr className="border-b border-border/30">
+                  <td className="py-1.5 text-foreground/70">레벨 {r.level} {config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(levelVal)}</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-1.5 text-foreground/70 font-medium">합계 (랭크 + 레벨)</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(rankBase + levelVal)}</td>
                 </tr>
               </tbody>
             </table>
