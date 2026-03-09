@@ -1025,6 +1025,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           }}
         />
 
+        <ChampionStatBreakdownDrawer
+          open={breakdownOpen}
+          onOpenChange={setBreakdownOpen}
+          calcResult={champCalcResult}
+          championName={championName}
+        />
+
       </div>
     </div>
   );
