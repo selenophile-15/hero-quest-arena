@@ -162,9 +162,11 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
   // HP Regen tab content
   if (activeTab === 'hpRegen') {
-    const liluChampion = heroes.find(h => h.type === 'champion' && (h.championName?.includes('릴루') || h.name?.includes('릴루')));
-    const liluTier = liluChampion ? (liluChampion.cardLevel || 1) : 0;
-    const liluHealPct = liluTier === 4 ? 20 : liluTier === 3 ? 10 : liluTier === 2 ? 5 : liluTier === 1 ? 3 : 0;
+    const liluChamp = heroes.find(h => h.type === 'champion' && (h.championName?.includes('릴루') || h.name?.includes('릴루')));
+    const liluTierVal = liluChamp ? (liluChamp.cardLevel || 1) : 0;
+    const liluHealPctVal = liluTierVal === 4 ? 20 : liluTierVal === 3 ? 10 : liluTierVal === 2 ? 5 : liluTierVal === 1 ? 3 : 0;
+    const allHeroSources = heroes.map(h => getHeroRegenSources(h));
+    const uniqueSourceNames = [...new Set(allHeroSources.flat().map(s => s.source))];
 
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
@@ -193,13 +195,17 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                 {config.icon && <img src={config.icon} alt="" className="w-6 h-6" />}
                 <span className={`font-bold text-base ${config.color}`}>{config.label} - 전투 중 회복</span>
               </div>
-              <div className="bg-secondary/30 rounded-b-lg p-4">
+              <div className="bg-secondary/30 rounded-b-lg overflow-x-auto">
                 <table className="w-full text-sm table-fixed" style={{ minWidth: `${140 + heroes.length * 100}px` }}>
+                  <colgroup>
+                    <col style={{ width: '140px' }} />
+                    {heroes.map(h => <col key={h.id} style={{ width: '100px' }} />)}
+                  </colgroup>
                   <thead>
                     <tr className="border-b border-border/30">
-                      <th className="text-left py-2 text-muted-foreground font-normal w-36">소스</th>
+                      <th className="py-2.5 px-3 text-left text-muted-foreground font-normal">항목</th>
                       {heroes.map(h => (
-                        <th key={h.id} className="text-center py-2">
+                        <th key={h.id} className="py-2.5 px-2 text-center">
                           <div className="text-foreground font-medium text-sm">{h.name}</div>
                           <div className="text-muted-foreground text-xs">{h.heroClass || h.championName || ''}</div>
                         </th>
@@ -207,84 +213,95 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     </tr>
                   </thead>
                   <tbody>
+                    {/* Row: 개인 스탯 (fixed regen from individual hero) */}
+                    <tr className="border-b border-border/20">
+                      <td className="py-2 px-3 text-muted-foreground">
+                        개인 스탯
+                        <span className="text-xs text-muted-foreground/60 block">(고유/영혼 포함)</span>
+                      </td>
+                      {heroes.map(h => {
+                        const heroSources = getHeroRegenSources(h);
+                        const personalTotal = heroSources.reduce((s, r) => s + r.value, 0);
+                        return (
+                          <td key={h.id} className="py-2 px-2 text-center font-mono text-sm text-green-400">
+                            {personalTotal > 0 ? `+${personalTotal}` : <span className="text-muted-foreground">-</span>}
+                          </td>
+                        );
+                      })}
+                    </tr>
+
                     {/* Lilu row */}
-                    {liluChampion && (
-                      <tr className="border-b border-border/20">
-                        <td className="py-2 px-1">
+                    {liluChamp && (
+                      <tr className="border-b border-border/20 bg-primary/5">
+                        <td className="py-2 px-3">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-yellow-400">👑</span>
-                            <span className="text-foreground font-medium">릴루 (LV.{liluTier})</span>
+                            <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-yellow-600/60 text-foreground">👑 챔피언</span>
                           </div>
-                          <div className="text-xs text-green-400">매턴 최대HP {liluHealPct}%</div>
+                          <div className="text-xs text-foreground/70 mt-1 leading-tight">릴루 (LV.{liluTierVal}) — 매턴 최대HP {liluHealPctVal}%</div>
                         </td>
                         {heroes.map((h, hi) => {
                           const bs = buffedStats[hi];
                           const maxHp = bs ? bs.hp : (h.hp || 0);
                           const hasLW = hasLoneWolfCowl(h);
-                          const healPerRound = hasLW ? 0 : Math.floor(maxHp * liluHealPct / 100);
+                          const heal = hasLW ? 0 : Math.floor(maxHp * liluHealPctVal / 100);
                           return (
-                            <td key={h.id} className="py-2 text-center font-mono">
+                            <td key={h.id} className="py-2 px-2 text-center font-mono text-sm">
                               {hasLW ? (
                                 <span className="text-red-400 text-xs">무효</span>
                               ) : (
-                                <span className="text-green-400">+{formatNumber(healPerRound)}</span>
+                                <span className="text-green-400/80">+{formatNumber(heal)}</span>
                               )}
                             </td>
                           );
                         })}
                       </tr>
                     )}
-                    
-                    {/* Per-hero regen sources (spirits, class skills) */}
-                    {(() => {
-                      const allSources = heroes.map(h => getHeroRegenSources(h));
-                      const uniqueSourceNames = [...new Set(allSources.flat().map(s => s.source))];
-                      
-                      return uniqueSourceNames.map(srcName => (
-                        <tr key={srcName} className="border-b border-border/20">
-                          <td className="py-2 px-1">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-purple-400">🔮</span>
-                              <span className="text-foreground font-medium text-sm">{srcName}</span>
-                            </div>
-                          </td>
-                          {heroes.map((h, hi) => {
-                            const heroSources = allSources[hi];
-                            const match = heroSources.find(s => s.source === srcName);
-                            return (
-                              <td key={h.id} className="py-2 text-center font-mono">
-                                {match ? (
-                                  <span className="text-green-400">+{match.value}</span>
-                                ) : (
-                                  <span className="text-muted-foreground">-</span>
-                                )}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ));
-                    })()}
+
+                    {/* Per-hero unique regen sources breakdown */}
+                    {uniqueSourceNames.map(srcName => (
+                      <tr key={srcName} className="border-b border-border/20 bg-primary/5">
+                        <td className="py-2 px-3">
+                          <div className="flex items-center gap-1.5">
+                            <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-600/60 text-foreground">🔮 영혼/고유</span>
+                          </div>
+                          <div className="text-xs text-foreground/70 mt-1 leading-tight">{srcName}</div>
+                        </td>
+                        {heroes.map(h => {
+                          const match = getHeroRegenSources(h).find(s => s.source === srcName);
+                          return (
+                            <td key={h.id} className="py-2 px-2 text-center font-mono text-sm">
+                              {match ? (
+                                <span className="text-green-400/80">+{match.value}</span>
+                              ) : (
+                                <span className="text-muted-foreground text-xs">-</span>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+
+                    <tr><td colSpan={heroes.length + 1} className="h-1" /></tr>
 
                     {/* Total row */}
                     <tr className={`${config.headerBg} border-t border-border/40`}>
-                      <td className="py-2.5 px-1 font-bold text-foreground">총 매턴 회복</td>
+                      <td className="py-2.5 px-3 font-bold text-foreground text-sm">총 매턴 회복</td>
                       {heroes.map((h, hi) => {
                         const bs = buffedStats[hi];
                         const maxHp = bs ? bs.hp : (h.hp || 0);
                         const hasLW = hasLoneWolfCowl(h);
                         let total = 0;
-                        if (liluChampion && !hasLW) total += Math.floor(maxHp * liluHealPct / 100);
-                        const heroSources = getHeroRegenSources(h);
-                        heroSources.forEach(s => total += s.value);
+                        if (liluChamp && !hasLW) total += Math.floor(maxHp * liluHealPctVal / 100);
+                        getHeroRegenSources(h).forEach(s => { total += s.value; });
                         return (
-                          <td key={h.id} className="py-2.5 text-center font-mono font-bold text-green-400 text-lg">
+                          <td key={h.id} className="py-2.5 px-2 text-center font-mono font-bold text-green-400 text-lg">
                             +{formatNumber(total)}
                           </td>
                         );
                       })}
                     </tr>
 
-                    {!liluChampion && heroes.every(h => getHeroRegenSources(h).length === 0) && (
+                    {!liluChamp && heroes.every(h => getHeroRegenSources(h).length === 0) && (
                       <tr>
                         <td colSpan={heroes.length + 1} className="py-6 text-center text-muted-foreground text-sm">
                           체력 재생 소스가 파티에 없습니다

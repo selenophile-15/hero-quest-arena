@@ -313,6 +313,8 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                     직업 {jobModeLabel}
                   </th>
                   <th className="text-center py-2 px-1.5">Lv</th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap">원소</th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap">스킬</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">전투력</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">공격력</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">방어력</th>
@@ -320,8 +322,6 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                   <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400">치확</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400">치명타 대미지</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap text-teal-400">회피</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">원소</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">스킬</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">포지션</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">상태</th>
                 </tr>
@@ -363,10 +363,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                         {jobImageMode === 'none' ? (
                           <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
                         ) : jobImageMode === 'icon' ? (
-                          <div className="flex items-center gap-1 justify-center">
-                            {iconPath && <img src={iconPath} alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                            <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
-                          </div>
+                          <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
                         ) : (
                           <div className="flex flex-col items-center gap-0.5">
                             <div className="w-16 h-16 overflow-hidden rounded border border-border/30 bg-secondary/20">
@@ -380,22 +377,6 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       </td>
                       {/* Lv */}
                       <td className="py-1.5 px-1 text-center text-muted-foreground">{hero.level}</td>
-                      {/* 전투력 */}
-                      <td className={`py-1.5 px-1 text-center font-mono ${belowMin ? 'text-red-400' : 'text-yellow-400'}`}>
-                        {hero.power > 0 ? formatNumber(hero.power) : '-'}
-                      </td>
-                      {/* 공격력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-red-400">{formatNumber(hero.atk)}</td>
-                      {/* 방어력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-blue-400">{formatNumber(hero.def)}</td>
-                      {/* 체력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-orange-400">{formatNumber(hero.hp)}</td>
-                      {/* 치확 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400">{hero.crit > 0 ? `${formatNumber(hero.crit)}%` : '-'}</td>
-                      {/* 치명타 대미지 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400">{critDmgDisplay > 0 ? formatNumber(critDmgDisplay) : '-'}</td>
-                      {/* 회피 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-teal-400">{hero.evasion > 0 ? `${formatNumber(hero.evasion)}%` : '-'}</td>
                       {/* 원소 */}
                       <td className="py-1.5 px-1 text-center">
                         <div className="flex items-center gap-0.5 justify-center">
@@ -414,6 +395,22 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           ) : null)}
                         </div>
                       </td>
+                      {/* 전투력 */}
+                      <td className={`py-1.5 px-1 text-center font-mono ${belowMin ? 'text-red-400' : 'text-yellow-400'}`}>
+                        {hero.power > 0 ? formatNumber(hero.power) : '-'}
+                      </td>
+                      {/* 공격력 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-red-400">{formatNumber(hero.atk)}</td>
+                      {/* 방어력 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-blue-400">{formatNumber(hero.def)}</td>
+                      {/* 체력 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-orange-400">{formatNumber(hero.hp)}</td>
+                      {/* 치확 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400">{hero.crit > 0 ? `${formatNumber(hero.crit)}%` : '-'}</td>
+                      {/* 치명타 대미지 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400">{critDmgDisplay > 0 ? formatNumber(critDmgDisplay) : '-'}</td>
+                      {/* 회피 */}
+                      <td className="py-1.5 px-1 text-center font-mono text-teal-400">{hero.evasion > 0 ? `${formatNumber(hero.evasion)}%` : '-'}</td>
                       {/* 포지션 */}
                       <td className="py-1.5 px-1 text-center text-foreground/70 text-[10px] whitespace-nowrap">{hero.position || '-'}</td>
                       {/* 상태 */}
