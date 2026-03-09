@@ -99,8 +99,8 @@ export interface HeroSimResult {
   finalCritDmg: number;          // %
   finalCritAttack: number;       // ATK * CRIT.D (actual crit damage)
   finalEvasion: number;          // %
-  // Damage reduction value
-  damageReduction: number;       // % reduction from defense
+  // Damage application rate (% of raw damage applied after defense)
+  damageApplicationRate: number;  // e.g., 25 means 25% of raw damage
   // Targeting
   targetingRate: number;         // % of times targeted (threat-based)
   evasionRate: number;           // % of attacks evaded among targeted
@@ -250,19 +250,75 @@ const BJORN_DOUBLE_ZONES = [
 
 // ─── Damage Calculation ──────────────────────────────────────────────────────
 
-function calcDamageTaken(heroDef: number, mobDamage: number, mobCap: number): number {
-  // Piecewise linear damage reduction based on defense vs cap
-  // Cap at 75% reduction (0.25x damage minimum)
-  let dmg: number;
-  if (heroDef <= mobCap / 6) {
-    dmg = Math.round(1.5 * mobDamage + ((heroDef - 0) / (mobCap / 6 - 0)) * (0.5 * mobDamage - 1.5 * mobDamage));
-  } else if (heroDef <= mobCap / 3) {
-    dmg = Math.round(0.5 * mobDamage + ((heroDef - mobCap / 6) / (mobCap / 3 - mobCap / 6)) * (0.3 * mobDamage - 0.5 * mobDamage));
-  } else {
-    dmg = Math.round(0.3 * mobDamage + ((heroDef - mobCap / 3) / (mobCap - mobCap / 3)) * (0.25 * mobDamage - 0.3 * mobDamage));
+interface DefThresholds {
+  r0: number;
+  r50: number;
+  r70: number;
+  r75: number;
+}
+
+/**
+ * Calculate damage taken using actual defense thresholds (r0/r50/r70/r75).
+ * Piecewise linear interpolation between threshold points.
+ * Defense thresholds map to damage multipliers:
+ *   def=0 → 150% damage, def=r0 → 100%, def=r50 → 50%, def=r70 → 30%, def=r75 → 25%
+ */
+function calcDamageTakenWithThresholds(heroDef: number, mobDamage: number, thresholds: DefThresholds): number {
+  const points = [
+    { def: 0, mult: 1.5 },
+    { def: thresholds.r0, mult: 1.0 },
+    { def: thresholds.r50, mult: 0.5 },
+    { def: thresholds.r70, mult: 0.3 },
+    { def: thresholds.r75, mult: 0.25 },
+  ];
+
+  // Find the segment
+  for (let i = points.length - 1; i >= 1; i--) {
+    if (heroDef >= points[i - 1].def) {
+      const lower = points[i - 1];
+      const upper = points[i];
+      const range = upper.def - lower.def;
+      const t = range > 0 ? Math.min(1, (heroDef - lower.def) / range) : 0;
+      const mult = lower.mult + t * (upper.mult - lower.mult);
+      return Math.max(Math.round(mobDamage * mult), Math.round(0.25 * mobDamage));
+    }
   }
-  // Floor at 25% of mob damage (75% max reduction)
-  return Math.max(dmg, Math.round(0.25 * mobDamage));
+  // Below 0 defense
+  return Math.round(1.5 * mobDamage);
+}
+
+/**
+ * Get damage application rate (%) for display.
+ * Returns the multiplier as percentage: 150% at def=0, 100% at r0, 50% at r50, etc.
+ */
+function getDamageApplicationRate(heroDef: number, thresholds: DefThresholds): number {
+  const points = [
+    { def: 0, mult: 150 },
+    { def: thresholds.r0, mult: 100 },
+    { def: thresholds.r50, mult: 50 },
+    { def: thresholds.r70, mult: 30 },
+    { def: thresholds.r75, mult: 25 },
+  ];
+  for (let i = points.length - 1; i >= 1; i--) {
+    if (heroDef >= points[i - 1].def) {
+      const lower = points[i - 1];
+      const upper = points[i];
+      const range = upper.def - lower.def;
+      const t = range > 0 ? Math.min(1, (heroDef - lower.def) / range) : 0;
+      return Math.round((lower.mult + t * (upper.mult - lower.mult)) * 10) / 10;
+    }
+  }
+  return 150;
+}
+
+// Legacy wrapper for combat log (uses r0 only)
+function calcDamageTaken(heroDef: number, mobDamage: number, mobCap: number): number {
+  return calcDamageTakenWithThresholds(heroDef, mobDamage, {
+    r0: mobCap,
+    r50: mobCap * 3,      // approximate
+    r70: mobCap * 6,
+    r75: mobCap * 10,
+  });
 }
 
 function calcCritDamageTaken(normalDmg: number, mobDamage: number): number {
@@ -270,12 +326,10 @@ function calcCritDamageTaken(normalDmg: number, mobDamage: number): number {
   return Math.round(Math.max(normalDmg, mobDamage) * 1.5);
 }
 
+// Keep old function for backward compat but unused now
 function getDamageReductionForDef(def: number, mobCap: number): number {
-  // Returns damage reduction % based on defense vs cap
-  // -50% at 0 def, 0% at r0 (cap), 50% at r50, 70% at r70, 75% at r75
   if (def <= 0) return -50;
-  if (def >= mobCap) return 75; // Capped at 75%
-  // Interpolate: 0 def = -50% reduction, mobCap def = 0% reduction
+  if (def >= mobCap) return 75;
   return -50 + (def / mobCap) * 50;
 }
 
@@ -692,12 +746,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
   } // end else (no precomputed stats)
 
-  // ─── Damage taken calculation ───
+  // ─── Damage taken calculation (using actual defense thresholds) ───
   const damageTaken: number[] = [];
   const critDamageTaken: number[] = [];
+  const defThresholds: DefThresholds = monster.def;
 
   for (let i = 0; i < numHeroes; i++) {
-    const dmg = calcDamageTaken(finalDef[i], mobDamage, mobCap);
+    const dmg = calcDamageTakenWithThresholds(finalDef[i], mobDamage, defThresholds);
     damageTaken.push(dmg);
     critDamageTaken.push(calcCritDamageTaken(dmg, mobDamage));
   }
@@ -1219,8 +1274,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const dinoBonus = heroDinosaur[i] * 0.01;
     const dinoNormal = Math.floor(finalAtk[i] * (1 + dinoBonus) * barrierMod);
     const dinoCrit = Math.floor(finalAtk[i] * (1 + dinoBonus) * heroCritMult[i] * barrierMod);
-    // Damage reduction
-    const dmgReduction = getDamageReductionForDef(finalDef[i], monster.def.r0);
+    // Damage application rate using actual thresholds
+    const dmgAppRate = getDamageApplicationRate(finalDef[i], defThresholds);
     // Per-turn damage
     const avgRoundsForHero = totalRoundsPerHero[i] / actualSimCount;
     const avgDmgPerTurn = avgRoundsForHero > 0 ? (damageDealtAvg[i] / actualSimCount) / avgRoundsForHero : 0;
@@ -1289,7 +1344,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       finalCritDmg: Math.round(heroCritMult[i] * 100 * 10) / 10,
       finalCritAttack: effectiveCritAttack,
       finalEvasion: heroArtNoEvasion[i] ? 0 : Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
-      damageReduction: Math.round(dmgReduction * 10) / 10,
+      damageApplicationRate: dmgAppRate,
       targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
       evasionRate: timesTargeted[i] > 0 ? Math.round((timesEvaded[i] / timesTargeted[i]) * 100 * 10) / 10 : 0,
       monsterCritChance,

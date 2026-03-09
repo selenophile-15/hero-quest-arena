@@ -1644,18 +1644,17 @@ export default function QuestSimulation() {
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1 px-2 border-l border-border/20" colSpan={5}>기본</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>받는 대미지</th>
+                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>기본</th>
+                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>받는 대미지</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">생존률</th>
-                            <th className="text-center py-1 px-2">대미지 감소</th>
-                            <th className="text-center py-1 px-2">피격 비율</th>
+                            <th className="text-center py-1 px-2">대미지 보정</th>
+                            <th className="text-center py-1 px-2">단일 피격률</th>
                             <th className="text-center py-1 px-2">회피 비율</th>
                             <th className="text-center py-1 px-2 text-red-400">몬스터 치확</th>
                             <th className="text-center py-1 px-2 border-l border-border/20">평균</th>
                             <th className="text-center py-1 px-2">일반</th>
-                            <th className="text-center py-1 px-2">광역</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2">총 평균</th>
                           </tr>
@@ -1668,13 +1667,16 @@ export default function QuestSimulation() {
                                 hr.survivalRate >= 90 ? 'text-green-400' :
                                 hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
                               }`}>{hr.survivalRate.toFixed(1)}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{hr.damageReduction.toFixed(1)}%</td>
+                              <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${
+                                hr.damageApplicationRate <= 30 ? 'text-green-400' :
+                                hr.damageApplicationRate <= 60 ? 'text-blue-400' :
+                                hr.damageApplicationRate <= 100 ? 'text-yellow-400' : 'text-red-400'
+                              }`}>{hr.damageApplicationRate}%</td>
                               <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{hr.targetingRate.toFixed(1)}%</td>
                               <td className="py-1 px-2 text-center font-mono text-teal-400 whitespace-nowrap">{hr.evasionRate.toFixed(1)}%</td>
                               <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${hr.monsterCritChance > 10 ? 'text-red-400 font-bold' : 'text-orange-300'}`}>{hr.monsterCritChance}%</td>
                               <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.avgDamageTakenPerHit)}</td>
                               <td className="py-1 px-2 text-center font-mono text-blue-300 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{formatNumber(hr.aoeDamageTaken)}</td>
                               <td className="py-1 px-2 text-center font-mono text-purple-400 whitespace-nowrap">{formatNumber(hr.critDamageTakenVal)}</td>
                               <td className="py-1 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
                             </tr>
