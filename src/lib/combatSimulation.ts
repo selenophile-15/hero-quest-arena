@@ -40,6 +40,18 @@ export interface BoosterType {
   extraCritMult?: number;
 }
 
+export interface SimulationAurasongBonus {
+  atkPct: number;
+  defPct: number;
+  hpPct: number;
+  critPct: number;
+  evaPct: number;
+  critDmgPct: number;
+  flatAtk: number;
+  flatDef: number;
+  flatHp: number;
+}
+
 export interface SimulationConfig {
   heroes: Hero[];
   monster: QuestMonster;
@@ -48,6 +60,7 @@ export interface SimulationConfig {
   questTypeKey: string;      // 'normal' | 'flash' | 'lcog' | 'tot'
   regionName: string;        // e.g. '공포'
   isTerrorTower: boolean;    // 공포의 탑 (5% damage)
+  aurasongBonus?: SimulationAurasongBonus;
   simulationCount?: number;  // Default 50000
   _isRetry?: boolean;        // Internal: prevents Fateweaver recursion
 }
@@ -267,7 +280,7 @@ function getDamageReductionForDef(def: number, mobCap: number): number {
 // ─── Main Simulation ─────────────────────────────────────────────────────────
 
 export function runCombatSimulation(config: SimulationConfig): SimulationResult {
-  const { heroes, monster, miniBoss, booster, questTypeKey, isTerrorTower } = config;
+  const { heroes, monster, miniBoss, booster, questTypeKey, isTerrorTower, aurasongBonus } = config;
   const simCount = config.simulationCount || 50000;
 
   // Filter out heroes with 0 HP (empty slots)
@@ -349,7 +362,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   const champName = champion?.championName || champion?.name || '';
   const champTier = champion ? getHeroTier(champion) : 0;
-  const aurasong = getAurasongBonuses(champion);
+  const aurasong = aurasongBonus || getAurasongBonuses(champion);
 
   // ─── Bjorn multiplier (flash quest zones) ───
   const bjornMult = isFlash ? 2.0 : 1.0;

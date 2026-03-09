@@ -295,6 +295,11 @@ export default function QuestSimulation() {
           : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
         return [...new Set(rawElements)] as string[];
       })() : [];
+      const aurasongSrc = buffSummary?.sources.find(src => {
+        if (src.type !== 'aurasong') return false;
+        if (src.note === '부스터') return false;
+        return !['전투력 부스터', '슈퍼 전투력 부스터', '메가 전투력 부스터'].includes(src.name);
+      });
       const questMonster: QuestMonster = {
         hp: currentQuest.hp,
         atk: currentQuest.atk,
@@ -314,12 +319,23 @@ export default function QuestSimulation() {
         questTypeKey: selectedQuestType,
         regionName: currentRegion.name,
         isTerrorTower,
+        aurasongBonus: aurasongSrc ? {
+          atkPct: (aurasongSrc.atkPct || 0) / 100,
+          defPct: (aurasongSrc.defPct || 0) / 100,
+          hpPct: (aurasongSrc.hpPct || 0) / 100,
+          critPct: (aurasongSrc.critPct || 0) / 100,
+          evaPct: (aurasongSrc.evaPct || 0) / 100,
+          critDmgPct: (aurasongSrc.critDmgPct || 0) / 100,
+          flatAtk: aurasongSrc.flatAtk || 0,
+          flatDef: aurasongSrc.flatDef || 0,
+          flatHp: aurasongSrc.flatHp || 0,
+        } : undefined,
       });
       setSimResult(result);
       setSimRunning(false);
     }, 100);
     return () => clearTimeout(timer);
-  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss]);
+  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffSummary]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
@@ -1188,6 +1204,10 @@ export default function QuestSimulation() {
                 </tr>
                 {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF, CRIT.C, EVA, THREAT */}
                 {selectedHeroes.length > 0 && (() => {
+                  const hasEvasionPenalty = currentQuest && (
+                    currentQuest.isExtreme ||
+                    (selectedQuestType === 'tot' && currentRegion?.name === '공포')
+                  );
 
                   // Check if barrier is broken
                   const barrierBroken = (() => {
@@ -1242,11 +1262,21 @@ export default function QuestSimulation() {
                             let evasionNote = '';
                             let barrierNote = '';
                             if (stat.key === 'evasion') {
+                              const hasRockStompers = hero.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
                               const isPathfinder = (hero.heroClass || '').includes('길잡이');
                               const cap = isPathfinder ? 78 : 75;
-                              if (val > cap) {
-                                evasionNote = `(${val}%)`;
-                                val = cap;
+                              if (hasRockStompers) {
+                                val = 0;
+                                delta = 0;
+                              } else {
+                                if (hasEvasionPenalty) {
+                                  val = val - 20;
+                                  delta = delta - 20;
+                                }
+                                if (val > cap) {
+                                  evasionNote = `(${val}%)`;
+                                  val = cap;
+                                }
                               }
                               if (val < 0) displayColor = 'text-purple-400';
                             }

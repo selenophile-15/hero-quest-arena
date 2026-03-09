@@ -548,6 +548,25 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     </tr>
                   )}
 
+                  {/* Extreme penalty row (evasion only) */}
+                  {activeTab === 'evasion' && hasEvasionPenalty && (
+                    <tr className="border-b border-border/20 bg-red-900/20">
+                      <td className="py-2 px-3">
+                        <div className="text-foreground text-sm font-semibold">익스트림 페널티</div>
+                      </td>
+                      {heroes.map((h) => {
+                        const hasRockStompers = h.equipmentSlots?.some((s: any) => s.item?.name === '락 스톰퍼') || false;
+                        return (
+                          <td key={h.id} className="py-2 px-2 text-center">
+                            <div className={`text-base font-mono font-bold ${hasRockStompers ? 'text-muted-foreground' : 'text-red-400'}`}>
+                              {hasRockStompers ? '0%' : '-20%'}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  )}
+
                   {/* No buffs message */}
                   {relevantSources.length === 0 && (
                     <tr>
@@ -584,6 +603,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                           finalVal = 0;
                           delta = 0;
                         } else {
+                          if (hasEvasionPenalty) {
+                            finalVal = finalVal - 20;
+                            delta = delta - 20;
+                          }
                           if (finalVal > cap) {
                             evasionDisplayNote = `(${finalVal}%)`;
                             finalVal = cap;
@@ -658,19 +681,6 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
               </div>
             )}
 
-            {/* Extreme / Terror penalty */}
-            {hasEvasionPenalty && (
-              <div className="mt-4 px-3">
-                <div className="text-sm text-muted-foreground font-medium mb-2">⚠ 퀘스트 페널티</div>
-                <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-red-400">🛡️</span>
-                    <span className="text-foreground font-medium text-sm">익스트림 페널티</span>
-                  </div>
-                  <div className="text-xs text-red-400 font-mono mt-0.5">회피 -20%</div>
-                </div>
-              </div>
-            )}
 
             {/* Artifact effects */}
             {heroes.some(h => 
