@@ -1651,7 +1651,6 @@ export default function QuestSimulation() {
                       </table>
                     </div>
                   </div>
-                  )}
 
                   {/* Table 2: 생존 & 방어 (with 받는 대미지) */}
                   <div>
