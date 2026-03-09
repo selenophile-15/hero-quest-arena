@@ -1157,6 +1157,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         mobHpCurrent -= damage;
         damageFight[jj] += damage;
+        if (isCrit) critDmgFight[jj] += damage;
+        else normalDmgFight[jj] += damage;
 
         // Dark Knight / Death Knight execute at 10% HP
         if (heroIsDarkKnight[jj] && mobHpCurrent < mobHp * 0.1) {
