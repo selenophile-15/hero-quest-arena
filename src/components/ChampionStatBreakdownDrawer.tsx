@@ -83,11 +83,11 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                 {r.promoted ? (
                   <>
                     <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-foreground/60 text-[11px]">랭크 {r.rank}+2 = {r.rank + 2} 기준</td>
+                      <td className="py-1.5 text-foreground/60">랭크 {r.rank}+2 = {r.rank + 2} 기준</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(promotedRankVal)}</td>
                     </tr>
                     <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-foreground/60 text-[11px]">× 1.5 (챔피언 소울)</td>
+                      <td className="py-1.5 text-foreground/60">× 1.5 (챔피언 소울)</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(Math.round(promotedRankVal * 1.5))}</td>
                     </tr>
                     <tr className="border-b border-border/50">
