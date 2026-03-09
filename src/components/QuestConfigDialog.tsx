@@ -211,8 +211,8 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all group"
               >
-                <div className="bg-secondary/30 flex items-center justify-center p-1.5">
-                  <img src={r.areaImage} alt={r.name} className="w-full h-auto object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                <div className="bg-secondary/30 flex items-center justify-center p-1.5 aspect-square">
+                  <img src={r.areaImage} alt={r.name} className="w-full h-full object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
                 <div className="p-1.5 text-center">
                   <span className="text-[10px] font-medium text-foreground leading-tight block">{r.name}</span>
@@ -235,8 +235,8 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 onClick={() => { setSelSubAreaIdx(idx); setStep('difficulty'); }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all"
               >
-                <div className="bg-secondary/30 flex items-center justify-center p-1.5">
-                  <img src={sub.image} alt={sub.name} className="w-full h-auto object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                <div className="bg-secondary/30 flex items-center justify-center p-1.5 aspect-square">
+                  <img src={sub.image} alt={sub.name} className="w-full h-full object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
                 <div className="p-1 text-center">
                   <span className="text-[10px] font-medium text-foreground leading-tight block">{sub.name}</span>
@@ -248,8 +248,8 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 onClick={() => { setSelSubAreaIdx(99); setStep('difficulty'); }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all"
               >
-                <div className="bg-red-500/10 flex items-center justify-center p-1.5">
-                  <img src={region.boss.image} alt={region.boss.name} className="w-full h-auto object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                <div className="bg-red-500/10 flex items-center justify-center p-1.5 aspect-square">
+                  <img src={region.boss.image} alt={region.boss.name} className="w-full h-full object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
                 <div className="p-1 text-center">
                   <span className="text-[10px] font-medium text-red-400 flex items-center justify-center gap-0.5">
@@ -290,6 +290,13 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                       <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
                         {q.stage ? `${q.stage}단계` : q.difficulty}
                       </div>
+                      {q.isExtreme && (
+                        <div className="text-[9px] text-muted-foreground mt-0.5">
+                          {selType === 'tot' && region?.name === '공포'
+                            ? '(페널티: -회피 20%, 대미지 5%로 적용)'
+                            : '(페널티: -회피 20%)'}
+                        </div>
+                      )}
                       <div className="text-[10px] text-muted-foreground mt-0.5">
                         최소 {formatNumber(q.minPower)}
                       </div>
@@ -314,6 +321,13 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                       <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
                         {q.stage ? `${q.stage}단계` : q.difficulty}
                       </div>
+                      {q.isExtreme && (
+                        <div className="text-[9px] text-muted-foreground mt-0.5">
+                          {selType === 'tot' && region?.name === '공포'
+                            ? '(페널티: -회피 20%, 대미지 5%로 적용)'
+                            : '(페널티: -회피 20%)'}
+                        </div>
+                      )}
                       <div className="text-[10px] text-muted-foreground mt-0.5">
                         최소 {formatNumber(q.minPower)}
                       </div>

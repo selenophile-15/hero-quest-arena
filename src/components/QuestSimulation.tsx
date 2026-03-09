@@ -497,9 +497,9 @@ export default function QuestSimulation() {
             {/* Region icon - top left, bigger */}
             {currentRegion && (
               <button
-                onClick={() => openConfigAtStep('region')}
+                onClick={() => openConfigAtStep(hasSubAreas ? 'subarea' : 'difficulty')}
                 className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 hover:border-primary/70 transition-all cursor-pointer"
-                title="지역 변경"
+                title={hasSubAreas ? "세부 지역 변경" : "난이도 변경"}
               >
                 <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
               </button>
@@ -1437,7 +1437,7 @@ export default function QuestSimulation() {
               </div>
               <div className="bg-secondary/30 rounded p-2">
                 <div className="text-[9px] text-muted-foreground">평균</div>
-                <div className="text-sm font-mono text-foreground font-bold">{simResult.avgRounds.toFixed(1)}</div>
+                <div className="text-sm font-mono text-foreground font-bold">{Math.round(simResult.avgRounds)}</div>
               </div>
               <div className="bg-secondary/30 rounded p-2">
                 <div className="text-[9px] text-muted-foreground">최대</div>
@@ -1481,7 +1481,7 @@ export default function QuestSimulation() {
                           {mbr.winRate.toFixed(1)}%
                         </div>
                         <div className="text-[9px] text-muted-foreground mt-0.5">
-                          평균 {mbr.avgRounds.toFixed(1)}R
+                          평균 {Math.round(mbr.avgRounds)}R
                         </div>
                       </div>
                     );
