@@ -83,11 +83,11 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                 {r.promoted ? (
                   <>
                     <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-foreground/60 text-[11px]">랭크 {r.rank}+2 = {r.rank + 2} 기준</td>
+                      <td className="py-1.5 text-foreground/60">랭크 {r.rank}+2 = {r.rank + 2} 기준</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(promotedRankVal)}</td>
                     </tr>
                     <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-foreground/60 text-[11px]">× 1.5 (챔피언 소울)</td>
+                      <td className="py-1.5 text-foreground/60">× 1.5 (챔피언 소울)</td>
                       <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(Math.round(promotedRankVal * 1.5))}</td>
                     </tr>
                     <tr className="border-b border-border/50">
@@ -112,7 +112,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
           {/* Step 2: Seeds (moved before equipment) */}
           <div>
             <h5 className="text-xs font-semibold text-primary mb-1.5">② 씨앗 보너스</h5>
-            <table className="w-full text-sm">
+            <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
                   <td className="py-1.5 text-foreground">
@@ -166,7 +166,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                               ({slot.itemName} T{slot.tier})
                             </span>
                           </span>
-                          <div className="text-[11px] text-foreground/60 pl-2 space-y-0.5">
+                          <div className="text-xs text-foreground/60 pl-2 space-y-0.5">
                             <div>등급 ({slot.quality} ×{slot.qualityMult}): {formatNumber(qualityVal)}</div>
                             {slot.elementName && (
                               <div className={elementVal < elementRaw ? 'text-yellow-400' : ''}>
@@ -204,7 +204,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70 text-[11px]">
+                  <td className="py-1.5 text-foreground/70">
                     기본({formatNumber(baseStat)}) + 레벨({formatNumber(levelVal)}) + 씨앗({formatNumber(seedFinal)}) + 장비({formatNumber(equipTotal)})
                   </td>
                   <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(Math.round(subtotal))}</td>
@@ -444,8 +444,8 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[85vh] flex flex-col overflow-hidden">
-        <SheetHeader className="shrink-0 pb-2">
+      <SheetContent side="right-wide" className="p-0 flex flex-col overflow-hidden">
+        <SheetHeader className="px-4 pt-4 pb-2 border-b border-border flex-shrink-0">
           <SheetTitle className="text-foreground flex items-center gap-2 text-lg">
             📊 챔피언 스탯 계산표 — {championName}
             {r.promoted && <span className="text-xs px-2 py-0.5 rounded bg-yellow-600/60 text-yellow-200">승급</span>}
@@ -455,23 +455,25 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
           </SheetDescription>
         </SheetHeader>
 
-        <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatTab)} className="flex-1 flex flex-col min-h-0">
-          <TabsList className="w-full justify-start shrink-0">
-            {STAT_TABS.map(tab => (
-              <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1.5 text-xs">
-                {tab.icon && <img src={tab.icon} alt="" className="w-4 h-4" />}
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <div className="flex-1 flex flex-col min-h-0 px-4 pt-2">
+          <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatTab)} className="flex-1 flex flex-col min-h-0">
+            <TabsList className="w-full justify-start shrink-0">
+              {STAT_TABS.map(tab => (
+                <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1.5 text-xs">
+                  {tab.icon && <img src={tab.icon} alt="" className="w-4 h-4" />}
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          <div className="flex-1 min-h-0 overflow-y-auto mt-2">
-            {activeTab === 'atk' && renderMultBreakdown('atk')}
-            {activeTab === 'def' && renderMultBreakdown('def')}
-            {activeTab === 'hp' && renderMultBreakdown('hp')}
-            {activeTab === 'other' && renderOtherBreakdown()}
-          </div>
-        </Tabs>
+            <div className="flex-1 min-h-0 overflow-y-auto mt-2">
+              {activeTab === 'atk' && renderMultBreakdown('atk')}
+              {activeTab === 'def' && renderMultBreakdown('def')}
+              {activeTab === 'hp' && renderMultBreakdown('hp')}
+              {activeTab === 'other' && renderOtherBreakdown()}
+            </div>
+          </Tabs>
+        </div>
       </SheetContent>
     </Sheet>
   );
