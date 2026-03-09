@@ -116,10 +116,21 @@ export interface ChampionCalcResult {
   totalEquipCrit: number;
   totalEquipEvasion: number;
 
-  // Subtotal (before card level bonus)
+  // Subtotal (before common % bonus)
   subtotalHp: number;
   subtotalAtk: number;
   subtotalDef: number;
+
+  // Spirit skill bonuses (영혼 스킬 %)
+  spiritPctAtk: number;
+  spiritPctDef: number;
+  spiritPctHp: number;
+  spiritSources: SkillBonusSource[];
+
+  // Total common % (cardLevel + spiritSkill)
+  totalPctAtk: number;
+  totalPctDef: number;
+  totalPctHp: number;
 
   // Final stats
   finalHp: number;
