@@ -194,7 +194,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                 <span className={`font-bold text-base ${config.color}`}>{config.label} - 전투 중 회복</span>
               </div>
               <div className="bg-secondary/30 rounded-b-lg p-4">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm table-fixed" style={{ minWidth: `${140 + heroes.length * 100}px` }}>
                   <thead>
                     <tr className="border-b border-border/30">
                       <th className="text-left py-2 text-muted-foreground font-normal w-36">소스</th>

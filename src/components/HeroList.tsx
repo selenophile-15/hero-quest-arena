@@ -794,12 +794,14 @@ export default function HeroList() {
 
   // Album card view
   const renderAlbumCard = (hero: Hero) => {
-    const borderClass = hero.classLine ? CLASS_LINE_BORDER[hero.classLine] || 'border-border' : 'border-purple-500/60 shadow-[0_0_12px_rgba(168,85,247,0.3)]';
     const illustPath = hero.type === 'champion' && hero.championName
       ? getChampionImagePath(hero.championName)
       : hero.heroClass ? getJobIllustPath(hero.heroClass) : '';
     const isChampion = hero.type === 'champion';
     const equipSlots = hero.equipmentSlots || Array.from({ length: isChampion ? 2 : 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null }));
+    // Inline border color for reliable rendering
+    const borderColor = hero.classLine ? (CLASS_LINE_BORDER_COLOR[hero.classLine] || '#6b7280') : '#a855f7';
+    const borderShadow = hero.classLine ? (CLASS_LINE_SHADOW_STYLE[hero.classLine] || 'none') : '0 0 12px rgba(168,85,247,0.3)';
 
     // Champion leader skill + aura icons
     let leaderSkillIcon = '';
@@ -824,7 +826,8 @@ export default function HeroList() {
     return (
       <div
         key={hero.id}
-        className={`card-fantasy p-3 border-2 rounded-xl ${borderClass} flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-all`}
+        className="card-fantasy p-3 border-2 rounded-xl flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-all"
+        style={{ borderColor, boxShadow: borderShadow }}
         onClick={() => setEditing(hero)}
       >
         {/* Square illustration with padding */}
