@@ -997,6 +997,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (Math.random() < surviveChance[idx]) {
         hp[idx] = 1;
         surviveChance[idx] = 0;
+        critSurvivals[idx]++;
         return true;
       }
       return false;
