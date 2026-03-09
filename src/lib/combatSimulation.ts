@@ -1028,14 +1028,34 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
 
   // Compute incoming damage stats (single hit, not per-sim averages)
+  // Calculate threat-based targeting rates
+  const totalThreat = activeHeroes.reduce((s, h) => s + (h.threat || 1), 0);
+
   const heroResults: HeroSimResult[] = activeHeroes.map((h, i) => {
     const normalHit = damageTaken[i];
     const aoeHit = Math.ceil(normalHit * (monster.aoe / monster.atk));
     const critHit = critDamageTaken[i];
-    // Shark: +1% per shark spirit count (heroShark is 0 here since spirits not yet wired)
     const sharkBonus = heroShark[i] * 0.01;
     const sharkNormal = Math.floor(finalAtk[i] * (1 + sharkBonus) * barrierMod);
     const sharkCrit = Math.floor(finalAtk[i] * (1 + sharkBonus) * heroCritMult[i] * barrierMod);
+    // Dinosaur first turn damage
+    const dinoBonus = heroDinosaur[i] * 0.01;
+    const dinoNormal = Math.floor(finalAtk[i] * (1 + dinoBonus) * barrierMod);
+    const dinoCrit = Math.floor(finalAtk[i] * (1 + dinoBonus) * heroCritMult[i] * barrierMod);
+    // Damage reduction
+    const dmgReduction = getDamageReductionForDef(finalDef[i], monster.def.r0);
+    // Per-turn damage
+    const avgRoundsForHero = totalRoundsPerHero[i] / actualSimCount;
+    const avgDmgPerTurn = avgRoundsForHero > 0 ? (damageDealtAvg[i] / actualSimCount) / avgRoundsForHero : 0;
+    // Berserker thresholds
+    let berserkerThresholds: { threshold: number; belowRate: number }[] | undefined;
+    if (heroBerserkerLevel[i] > 0) {
+      berserkerThresholds = [
+        { threshold: Math.round(berserkHp1[i] * 100), belowRate: Math.round((berserkerBelowT1[i] / actualSimCount) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp2[i] * 100), belowRate: Math.round((berserkerBelowT2[i] / actualSimCount) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp3[i] * 100), belowRate: Math.round((berserkerBelowT3[i] / actualSimCount) * 100 * 10) / 10 },
+      ];
+    }
 
     return {
       heroId: h.id,
@@ -1046,17 +1066,32 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       avgDamageDealt: damageDealtAvg[i] / actualSimCount,
       maxDamageDealt: damageDealtMax[i],
       minDamageDealt: damageDealtMin[i] >= 1e9 ? 0 : damageDealtMin[i],
+      avgDamagePerTurn: avgDmgPerTurn,
       normalDamageTaken: normalHit,
       aoeDamageTaken: aoeHit,
       critDamageTakenVal: critHit,
       sharkNormalDmg: sharkNormal,
       sharkCritDmg: sharkCrit,
+      dinosaurNormalDmg: dinoNormal,
+      dinosaurCritDmg: dinoCrit,
       finalAtk: Math.round(finalAtk[i]),
       finalDef: Math.round(finalDef[i]),
       finalHp: Math.round(finalHp[i]),
       finalCritChance: Math.round(Math.min(heroCritChance[i], 1) * 100 * 10) / 10,
       finalCritDmg: Math.round(heroCritMult[i] * 100 * 10) / 10,
       finalEvasion: Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
+      damageReduction: Math.round(dmgReduction * 10) / 10,
+      targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
+      evasionRate: timesTargeted[i] > 0 ? Math.round((timesEvaded[i] / timesTargeted[i]) * 100 * 10) / 10 : 0,
+      berserkerThresholds,
+      chronomancerRetries: fateweaverPresent && isClass(h, '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')
+        ? Math.round((actualSimCount - timesQuestWon) / actualSimCount * 100 * 10) / 10
+        : undefined,
+      chronomancerRetrySuccessRate: retryWinRate,
+      totalHealingAvg: totalHealing[i] / actualSimCount,
+      healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
+      lordProtectionAvg: lordProtections[i] / actualSimCount,
+      critSurvivalCount: critSurvivals[i] / actualSimCount,
     };
   });
 
