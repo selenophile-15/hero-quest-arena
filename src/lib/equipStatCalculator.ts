@@ -134,7 +134,7 @@ export interface SkillBonuses {
 let elementStatsCache: Record<string, any> | null = null;
 let spiritStatsCache: Record<string, any> | null = null;
 
-async function loadElementStats(): Promise<Record<string, any>> {
+export async function loadElementStats(): Promise<Record<string, any>> {
   if (elementStatsCache) return elementStatsCache;
   try {
     const resp = await fetch('/data/STD3_element_stats.json');
