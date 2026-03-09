@@ -615,6 +615,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const damageDealtMin = new Float64Array(numHeroes).fill(1e9);
   const hpRemainingAvg = new Float64Array(numHeroes);
   const hpRemainingMax = new Float64Array(numHeroes);
+  // Enhanced tracking
+  const totalRoundsPerHero = new Float64Array(numHeroes);
+  const timesTargeted = new Float64Array(numHeroes);
+  const timesEvaded = new Float64Array(numHeroes);
+  const totalHealing = new Float64Array(numHeroes);
+  const lordProtections = new Float64Array(numHeroes);
+  const critSurvivals = new Float64Array(numHeroes);
+  const berserkerBelowT1 = new Float64Array(numHeroes);
+  const berserkerBelowT2 = new Float64Array(numHeroes);
+  const berserkerBelowT3 = new Float64Array(numHeroes);
 
   // Tamas random range
   const isTamas = champName.includes('타마스') || champName === 'Tamas';
