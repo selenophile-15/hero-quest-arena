@@ -363,7 +363,7 @@ export default function QuestSimulation() {
     setSelectedRegionIdx(sel.regionIdx);
     setSelectedSubAreaIdx(sel.subAreaIdx);
     setSelectedQuestIdx(sel.questIdx);
-    setSelectedHeroIds(new Set());
+    // 파티 구성 유지 (던전 변경시 초기화 안함)
     setSelectedMiniBoss('none');
   };
 
@@ -503,7 +503,7 @@ export default function QuestSimulation() {
                   </button>
                   {(['normal', 'super', 'mega'] as const).map(bType => {
                     const names: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
-                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40%, 치확 +10%', mega: '공/방 +80%, 치확 +25%, 치댐 +50%' };
+                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40%, 치확 +10%', mega: '공/방 +80%, 치확 +25%, 치명타 대미지 +50%' };
                     const bEntry = commonData?.boosters?.[names[bType]];
                     return (
                       <button
@@ -721,23 +721,19 @@ export default function QuestSimulation() {
                   );
                 })()}
 
-                {/* Defense Reference - vertical bar */}
+                {/* Defense Reference */}
                 <div className="pt-2 border-t border-border/30">
                   <div className="flex items-center gap-1.5 mb-3 px-1">
                     <Shield className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-xs text-foreground font-medium">방어력 기준치 (대미지 감소율)</span>
+                    <span className="text-xs text-foreground font-medium">방어력 기준치 (대미지 적용률)</span>
                   </div>
                   {(() => {
-                    // Map defense value to bar % using threshold interpolation
                     const defToBarPct = (def: number) => {
-                      // thresholds are at evenly spaced visual positions: 0%, 25%, 50%, 75%, 100%
                       for (let i = defThresholds.length - 1; i >= 1; i--) {
                         const upper = defThresholds[i];
                         const lower = defThresholds[i - 1];
                         if (def >= lower.value) {
-                          const segPct = upper.value > lower.value
-                            ? (def - lower.value) / (upper.value - lower.value)
-                            : 0;
+                          const segPct = upper.value > lower.value ? (def - lower.value) / (upper.value - lower.value) : 0;
                           const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
                           const upperPos = (i / (defThresholds.length - 1)) * 100;
                           return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
@@ -745,109 +741,70 @@ export default function QuestSimulation() {
                       }
                       return 0;
                     };
-
-                    const barH = 256; // h-64 = 16rem = 256px
-
+                    const barH = 200;
+                    const reductions = [-50, 0, 50, 70, 75];
                     return (
-                      <div className="relative px-1">
-                        <div className="flex gap-2">
-                          {/* Left: % labels */}
-                          <div className="flex flex-col justify-between h-64 text-right shrink-0 w-8">
-                            {[...defThresholds].reverse().map(t => (
-                              <span key={t.key} className={`text-[10px] font-mono ${t.textClass}`}>{t.label}</span>
-                            ))}
-                          </div>
-                          {/* Center: vertical bar */}
-                          <div className="relative w-3 h-64 flex-shrink-0">
+                      <div className="px-1">
+                        <div className="relative" style={{ height: `${barH}px` }}>
+                          {/* Vertical bar - left side */}
+                          <div className="absolute" style={{ left: 0, top: 0, bottom: 0, width: '12px' }}>
                             <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
-                            {/* Threshold markers */}
-                            {[...defThresholds].reverse().map((t, i) => {
+                            {/* Threshold lines - original order (bottom→top) */}
+                            {defThresholds.map((t, i) => {
                               const pct = (i / (defThresholds.length - 1)) * 100;
                               return (
                                 <div key={t.key} className="absolute left-0 right-0" style={{ bottom: `${pct}%`, transform: 'translateY(50%)' }}>
-                                  <div className="w-full h-px" style={{ backgroundColor: t.color, opacity: 0.5 }} />
+                                  <div className="w-full h-px" style={{ backgroundColor: t.color, opacity: 0.7 }} />
                                 </div>
                               );
                             })}
-                            {/* Hero pins as dots on the bar */}
+                            {/* Hero pins */}
                             {selectedHeroes.map((h, hi) => {
                               const bs = buffedStats[hi];
                               const heroDef = bs ? bs.def : (h.def || 0);
                               const pct = defToBarPct(heroDef);
                               let pinColor = '#ef4444';
-                              for (const t of defThresholds) {
-                                if (heroDef >= t.value) pinColor = t.color;
-                              }
+                              for (const t of defThresholds) { if (heroDef >= t.value) pinColor = t.color; }
                               return (
-                                <div
-                                  key={h.id}
-                                  className="absolute"
-                                  style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}
-                                >
-                                  <div
-                                    className="w-3 h-3 rounded-full border shadow-md"
-                                    style={{ borderColor: pinColor, backgroundColor: pinColor }}
-                                  />
+                                <div key={h.id} className="absolute" style={{ bottom: `${pct}%`, left: '50%', transform: 'translate(-50%, 50%)' }}>
+                                  <div className="w-3 h-3 rounded-full border-2 shadow-md" style={{ borderColor: pinColor, backgroundColor: pinColor }} />
                                 </div>
                               );
                             })}
                           </div>
-                          {/* Right: defense values */}
-                          <div className="flex flex-col justify-between h-64 shrink-0">
-                            {[...defThresholds].reverse().map((t, i) => {
-                              const reductions = [75, 70, 50, 0, -50];
-                              const received = 100 - reductions[i];
-                              return (
-                                <div key={t.key} className="text-right">
-                                  <span className={`text-[10px] font-mono ${t.textClass}`}>{formatNumber(t.value)}</span>
-                                  <span className={`text-[9px] font-mono ml-1 ${t.textClass} opacity-60`}>({received}%)</span>
-                                </div>
-                              );
-                            })}
-                          </div>
+                          {/* Threshold rows - aligned with bar using absolute positioning */}
+                          {defThresholds.map((t, i) => {
+                            const pct = (i / (defThresholds.length - 1)) * 100;
+                            const applied = 100 - reductions[i];
+                            return (
+                              <div key={t.key} className="absolute flex items-center gap-1.5"
+                                   style={{ bottom: `${pct}%`, left: '20px', right: 0, transform: 'translateY(50%)' }}>
+                                <span className={`text-[10px] font-mono ${t.textClass} w-8 shrink-0 text-right`}>{t.label}</span>
+                                <span className={`text-[10px] font-mono ${t.textClass} shrink-0`}>{formatNumber(t.value)}</span>
+                                <span className="text-[9px] font-mono text-muted-foreground shrink-0">({applied}%)</span>
+                              </div>
+                            );
+                          })}
                         </div>
-
-                        {/* Hero labels via SVG - lines start past defense values */}
+                        {/* Hero legend */}
                         {selectedHeroes.length > 0 && (
-                          <svg className="absolute top-0 left-0 pointer-events-none" style={{ overflow: 'visible', width: '100%', height: `${barH}px` }}>
-                            {(() => {
-                              // Sort heroes by def descending so highest is at top
-                              const sorted = selectedHeroes
-                                .map((h, hi) => ({ h, hi, def: buffedStats[hi] ? buffedStats[hi].def : (h.def || 0) }))
-                                .sort((a, b) => b.def - a.def);
-                              // Line starts after defense value column: left(32 w-8) + gap(8) + bar(12) + gap(8) + defValues(~55) = ~115px
-                              const startX = 115;
-                              const lineLen = 50;
-                              // Distribute labels evenly across the bar height to avoid overlap
-                              const labelH = 14; // approx text height
-                              const totalSlots = sorted.length;
-                              
-                              return sorted.map((item, sortIdx) => {
-                                const pct = defToBarPct(item.def);
-                                let pinColor = '#ef4444';
-                                for (const t of defThresholds) {
-                                  if (item.def >= t.value) pinColor = t.color;
-                                }
-                                const dotY = barH - (pct / 100) * barH;
-                                // Evenly space label Y positions across available height
-                                const labelY = totalSlots > 1
-                                  ? (sortIdx / (totalSlots - 1)) * (barH - labelH) + labelH / 2
-                                  : dotY;
-                                const endX = startX + lineLen;
-                                return (
-                                  <g key={item.h.id}>
-                                    {/* Horizontal line from after def values to label */}
-                                    <line x1={startX} y1={dotY} x2={startX + 10} y2={dotY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
-                                    <line x1={startX + 10} y1={dotY} x2={endX} y2={labelY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
-                                    <line x1={endX} y1={labelY} x2={endX + 8} y2={labelY} stroke={pinColor} strokeWidth="1" opacity="0.4" />
-                                    <text x={endX + 12} y={labelY + 3} fill={pinColor} fontSize="9" fontFamily="monospace">
-                                      {item.h.name} ({formatNumber(item.def)}) {Math.round(100 - getDamageReductionForDef(item.def))}%
-                                    </text>
-                                  </g>
-                                );
-                              });
-                            })()}
-                          </svg>
+                          <div className="mt-3 space-y-1 border-t border-border/20 pt-2">
+                            {selectedHeroes.map((h, hi) => {
+                              const bs = buffedStats[hi];
+                              const heroDef = bs ? bs.def : (h.def || 0);
+                              let pinColor = '#ef4444';
+                              for (const t of defThresholds) { if (heroDef >= t.value) pinColor = t.color; }
+                              const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
+                              return (
+                                <div key={h.id} className="flex items-center gap-1.5">
+                                  <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: pinColor }} />
+                                  <span className="text-[10px] text-foreground truncate flex-1">{h.name}</span>
+                                  <span className="text-[10px] font-mono text-muted-foreground">{formatNumber(heroDef)}</span>
+                                  <span className="text-[9px] font-mono ml-1" style={{ color: pinColor }}>{dmgApplied}%</span>
+                                </div>
+                              );
+                            })}
+                          </div>
                         )}
                       </div>
                     );
