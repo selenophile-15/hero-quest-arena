@@ -386,13 +386,61 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Berserker level
     heroBerserkerLevel.push(isClass(h, '광전사', '야를', 'Berserker', 'Jarl') ? Math.min(tier, 4) : 0);
 
-    // Spirits - these would need to come from equipment; default 0
-    // TODO: implement spirit reading from equipment
-    heroMundra.push(0);
-    heroShark.push(0);
-    heroDinosaur.push(0);
-    heroLizard.push(0);
-    heroArmadillo.push(0);
+    // Spirits - read from equipment slots
+    const spirits = (h.equipmentSlots || [])
+      .map(s => s.spirit)
+      .filter(Boolean);
+    const spiritNames = spirits.map((sp: any) => typeof sp === 'string' ? sp : sp?.name || '').join(',');
+    
+    const mundraVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('문드라') || name.includes('Mundra')) {
+        const val = typeof sp === 'object' ? (sp?.value || sp?.atk || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroMundra.push(mundraVal);
+    
+    const sharkVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('상어') || name.includes('Shark')) {
+        const val = typeof sp === 'object' ? (sp?.value || sp?.atk || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroShark.push(sharkVal);
+    
+    const dinoVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('공룡') || name.includes('Dinosaur') || name.includes('T-Rex') || name.includes('티렉스')) {
+        const val = typeof sp === 'object' ? (sp?.value || sp?.atk || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroDinosaur.push(dinoVal);
+    
+    const lizardVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('도마뱀') || name.includes('Lizard')) {
+        const val = typeof sp === 'object' ? (sp?.value || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroLizard.push(lizardVal);
+    
+    const armadilloVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('아르마딜로') || name.includes('Armadillo')) {
+        const val = typeof sp === 'object' ? (sp?.value || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroArmadillo.push(armadilloVal);
   }
 
   // ─── Extreme: Apply -20% evasion penalty ───
