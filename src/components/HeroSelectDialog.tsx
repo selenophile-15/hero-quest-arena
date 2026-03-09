@@ -428,7 +428,8 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 py-1">
               {filtered.map(hero => {
                 const isSelected = localIds.has(hero.id);
-                const disabled = isFull && !isSelected;
+                const isOtherChampion = hero.type === 'champion' && hasChampion && !isSelected;
+                const disabled = (isFull && !isSelected) || isOtherChampion;
                 const belowMin = hero.power > 0 && hero.power < minPower;
                 const isChampion = hero.type === 'champion';
                 const illustPath = isChampion && hero.championName
