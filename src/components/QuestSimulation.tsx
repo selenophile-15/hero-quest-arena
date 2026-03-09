@@ -295,6 +295,11 @@ export default function QuestSimulation() {
           : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
         return [...new Set(rawElements)] as string[];
       })() : [];
+      const aurasongSrc = buffSummary?.sources.find(src => {
+        if (src.type !== 'aurasong') return false;
+        if (src.note === '부스터') return false;
+        return !['전투력 부스터', '슈퍼 전투력 부스터', '메가 전투력 부스터'].includes(src.name);
+      });
       const questMonster: QuestMonster = {
         hp: currentQuest.hp,
         atk: currentQuest.atk,
@@ -314,6 +319,17 @@ export default function QuestSimulation() {
         questTypeKey: selectedQuestType,
         regionName: currentRegion.name,
         isTerrorTower,
+        aurasongBonus: aurasongSrc ? {
+          atkPct: (aurasongSrc.atkPct || 0) / 100,
+          defPct: (aurasongSrc.defPct || 0) / 100,
+          hpPct: (aurasongSrc.hpPct || 0) / 100,
+          critPct: (aurasongSrc.critPct || 0) / 100,
+          evaPct: (aurasongSrc.evaPct || 0) / 100,
+          critDmgPct: (aurasongSrc.critDmgPct || 0) / 100,
+          flatAtk: aurasongSrc.flatAtk || 0,
+          flatDef: aurasongSrc.flatDef || 0,
+          flatHp: aurasongSrc.flatHp || 0,
+        } : undefined,
       });
       setSimResult(result);
       setSimRunning(false);

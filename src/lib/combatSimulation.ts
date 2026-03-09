@@ -40,6 +40,18 @@ export interface BoosterType {
   extraCritMult?: number;
 }
 
+export interface SimulationAurasongBonus {
+  atkPct: number;
+  defPct: number;
+  hpPct: number;
+  critPct: number;
+  evaPct: number;
+  critDmgPct: number;
+  flatAtk: number;
+  flatDef: number;
+  flatHp: number;
+}
+
 export interface SimulationConfig {
   heroes: Hero[];
   monster: QuestMonster;
@@ -48,6 +60,7 @@ export interface SimulationConfig {
   questTypeKey: string;      // 'normal' | 'flash' | 'lcog' | 'tot'
   regionName: string;        // e.g. '공포'
   isTerrorTower: boolean;    // 공포의 탑 (5% damage)
+  aurasongBonus?: SimulationAurasongBonus;
   simulationCount?: number;  // Default 50000
   _isRetry?: boolean;        // Internal: prevents Fateweaver recursion
 }
