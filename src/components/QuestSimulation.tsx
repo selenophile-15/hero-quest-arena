@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
 import { getHeroes } from '@/lib/storage';
-import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
+import { getJobImagePath, getChampionImagePath, getJobIllustPath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -166,6 +166,7 @@ export default function QuestSimulation() {
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
   const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>('none');
+  const [jobDisplayMode, setJobDisplayMode] = useState<'icon' | 'illust' | 'none'>('icon');
 
   // Load quest data
   useEffect(() => {
@@ -181,14 +182,24 @@ export default function QuestSimulation() {
           map[f.key] = questResults[i];
         });
         setQuestDataMap(map);
-        // Preload all region/sub-area images
+        // Preload all region/sub-area images with fetch for better caching
+        const preloadImages: string[] = [];
         Object.values(map).forEach((qd: QuestData) => {
           qd.regions.forEach(r => {
-            if (r.areaImage) { const img = new Image(); img.src = r.areaImage; }
-            r.subAreas.forEach(s => { if (s.image) { const img = new Image(); img.src = s.image; } });
-            if (r.boss?.image) { const img = new Image(); img.src = r.boss.image; }
+            if (r.areaImage) preloadImages.push(r.areaImage);
+            r.subAreas.forEach(s => { if (s.image) preloadImages.push(s.image); });
+            if (r.boss?.image) preloadImages.push(r.boss.image);
           });
         });
+        // Preload all images in parallel
+        await Promise.all(preloadImages.map(src => 
+          new Promise<void>(resolve => {
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+            img.src = src;
+          })
+        ));
       } catch (e) {
         console.error('Failed to load quest data', e);
       } finally {
@@ -932,7 +943,18 @@ export default function QuestSimulation() {
                 </tr>
                 {/* Row: Hero circle (job image) */}
                 <tr>
-                  <td className="py-1 px-1.5 text-muted-foreground">직업</td>
+                  <td className="py-1 px-1.5">
+                    <button
+                      onClick={() => setJobDisplayMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon')}
+                      className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5 text-xs"
+                      title="클릭하여 직업 표시 방식 변경 (아이콘 → 일러스트 → 없음)"
+                    >
+                      직업
+                      <span className="text-[9px] opacity-50 ml-0.5">
+                        {jobDisplayMode === 'icon' ? '●○○' : jobDisplayMode === 'illust' ? '○●○' : '○○●'}
+                      </span>
+                    </button>
+                  </td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     if (!hero) {
@@ -949,9 +971,67 @@ export default function QuestSimulation() {
                       );
                     }
                     const belowMin = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
-                    const heroImg = hero.type === 'champion'
+                    const iconImg = hero.type === 'champion'
                       ? getChampionImagePath(hero.championName || hero.name)
                       : hero.heroClass ? getJobImagePath(hero.heroClass) : null;
+                    const illustImg = hero.type === 'champion'
+                      ? getChampionImagePath(hero.championName || hero.name)
+                      : hero.heroClass ? getJobIllustPath(hero.heroClass) : null;
+
+                    if (jobDisplayMode === 'none') {
+                      return (
+                        <td key={hero.id} className="text-center py-2">
+                          <div className="relative inline-flex flex-col items-center gap-0.5 group">
+                            {belowMin && (
+                              <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
+                            )}
+                            <button onClick={() => openSlotForEdit(slotIdx)}
+                              className={`relative w-8 h-8 rounded-full border-2 bg-secondary/50 flex items-center justify-center transition-all ${
+                                belowMin ? 'border-red-500/70' : 'border-primary/30'
+                              } hover:border-accent/70`}
+                              title={`${hero.name} (클릭하여 변경)`}>
+                              <span className="text-xs">⚔</span>
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
+                              className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="제거">✕</button>
+                          </div>
+                        </td>
+                      );
+                    }
+
+                    if (jobDisplayMode === 'illust') {
+                      return (
+                        <td key={hero.id} className="text-center py-1">
+                          <div className="relative inline-flex flex-col items-center gap-0.5 group">
+                            {belowMin && (
+                              <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
+                            )}
+                            <button onClick={() => openSlotForEdit(slotIdx)}
+                              className={`relative w-16 h-20 rounded-lg border-2 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all ${
+                                belowMin ? 'border-red-500/70' : 'border-primary/50'
+                              } hover:border-accent/70`}
+                              title={`${hero.name} (클릭하여 변경)`}>
+                              {illustImg ? (
+                                <img src={illustImg} alt="" className="w-full h-full object-cover object-top" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                              ) : (
+                                <span className="text-lg">⚔</span>
+                              )}
+                              <div className="absolute inset-0 bg-primary/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                <span className="text-foreground text-xs font-bold">변경</span>
+                              </div>
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
+                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+                              title="제거">✕</button>
+                          </div>
+                        </td>
+                      );
+                    }
+
+                    // icon mode (default)
                     return (
                       <td key={hero.id} className="text-center py-2">
                         <div className="relative inline-flex flex-col items-center gap-0.5 group">
@@ -963,8 +1043,8 @@ export default function QuestSimulation() {
                               belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
                             } hover:border-accent/70`}
                             title={`${hero.name} (클릭하여 변경)`}>
-                            {heroImg ? (
-                              <img src={heroImg} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                            {iconImg ? (
+                              <img src={iconImg} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
                             ) : (
                               <span className="text-lg">⚔</span>
                             )}
@@ -975,9 +1055,7 @@ export default function QuestSimulation() {
                           <button
                             onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
                             className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
-                            title="제거">
-                            ✕
-                          </button>
+                            title="제거">✕</button>
                         </div>
                       </td>
                     );
