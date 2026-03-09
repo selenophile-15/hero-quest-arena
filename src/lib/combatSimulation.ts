@@ -359,7 +359,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   const champName = champion?.championName || champion?.name || '';
   const champTier = champion ? getHeroTier(champion) : 0;
-  const aurasong = aurasongBonus || getAurasongBonuses(champion);
+  const aurasong = getAurasongBonuses(champion);
 
   // ─── Bjorn multiplier (flash quest zones) ───
   const bjornMult = isFlash ? 2.0 : 1.0;
