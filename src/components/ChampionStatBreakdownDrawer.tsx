@@ -112,7 +112,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
           {/* Step 2: Seeds (moved before equipment) */}
           <div>
             <h5 className="text-xs font-semibold text-primary mb-1.5">② 씨앗 보너스</h5>
-            <table className="w-full text-sm">
+            <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
                   <td className="py-1.5 text-foreground">
