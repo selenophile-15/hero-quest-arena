@@ -934,6 +934,15 @@ export default function QuestSimulation() {
             <Users className="w-5 h-5 text-primary" />
             <h3 className="font-display text-lg text-foreground">파티 구성</h3>
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
+            {selectedHeroIds.size > 0 && (
+              <button
+                onClick={() => setSelectedHeroIds(new Set())}
+                className="text-[10px] text-muted-foreground hover:text-destructive transition-colors px-1.5 py-0.5 rounded border border-border/40 hover:border-destructive/50"
+                title="파티 구성 초기화"
+              >
+                초기화
+              </button>
+            )}
           </div>
           <div className="card-fantasy p-4 overflow-x-auto">
             {currentQuest && selectedHeroes.length > 0 && (
