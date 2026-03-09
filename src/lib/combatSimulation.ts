@@ -68,18 +68,26 @@ export interface HeroSimResult {
   normalDamageTaken: number;     // Single normal hit damage
   aoeDamageTaken: number;        // Single AoE hit damage
   critDamageTakenVal: number;    // Single crit hit damage
+  // Total incoming damage (averaged across sims)
+  totalDamageTakenAvg: number;
+  avgDamageTakenPerHit: number;
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
   // Dinosaur (first turn) stats
   dinosaurNormalDmg: number;     // First turn normal damage with dinosaur
   dinosaurCritDmg: number;       // First turn crit damage with dinosaur
-  // Final stat snapshots used in simulation
+  // Spirit flags
+  hasSharkSpirit: boolean;
+  hasDinosaurSpirit: boolean;
+  isSamuraiOrDaimyo: boolean;
+  // Final stat snapshots used in simulation (ATK includes barrierMod)
   finalAtk: number;
   finalDef: number;
   finalHp: number;
   finalCritChance: number;       // %
   finalCritDmg: number;          // %
+  finalCritAttack: number;       // ATK * CRIT.D (actual crit damage)
   finalEvasion: number;          // %
   // Damage reduction value
   damageReduction: number;       // % reduction from defense
@@ -378,13 +386,61 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Berserker level
     heroBerserkerLevel.push(isClass(h, '광전사', '야를', 'Berserker', 'Jarl') ? Math.min(tier, 4) : 0);
 
-    // Spirits - these would need to come from equipment; default 0
-    // TODO: implement spirit reading from equipment
-    heroMundra.push(0);
-    heroShark.push(0);
-    heroDinosaur.push(0);
-    heroLizard.push(0);
-    heroArmadillo.push(0);
+    // Spirits - read from equipment slots
+    const spirits = (h.equipmentSlots || [])
+      .map(s => s.spirit)
+      .filter(Boolean);
+    const spiritNames = spirits.map((sp: any) => typeof sp === 'string' ? sp : sp?.name || '').join(',');
+    
+    const mundraVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('문드라') || name.includes('Mundra')) {
+        const val = typeof sp === 'object' ? (sp?.value || sp?.atk || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroMundra.push(mundraVal);
+    
+    const sharkVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('상어') || name.includes('Shark')) {
+        const val = typeof sp === 'object' ? (sp?.value || sp?.atk || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroShark.push(sharkVal);
+    
+    const dinoVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('공룡') || name.includes('Dinosaur') || name.includes('T-Rex') || name.includes('티렉스')) {
+        const val = typeof sp === 'object' ? (sp?.value || sp?.atk || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroDinosaur.push(dinoVal);
+    
+    const lizardVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('도마뱀') || name.includes('Lizard')) {
+        const val = typeof sp === 'object' ? (sp?.value || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroLizard.push(lizardVal);
+    
+    const armadilloVal = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      if (name.includes('아르마딜로') || name.includes('Armadillo')) {
+        const val = typeof sp === 'object' ? (sp?.value || 0) : 0;
+        return sum + val;
+      }
+      return sum;
+    }, 0);
+    heroArmadillo.push(armadilloVal);
   }
 
   // ─── Extreme: Apply -20% evasion penalty ───
@@ -634,6 +690,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const berserkerBelowT1 = new Float64Array(numHeroes);
   const berserkerBelowT2 = new Float64Array(numHeroes);
   const berserkerBelowT3 = new Float64Array(numHeroes);
+  // Total damage taken tracking
+  const totalDmgTakenAccum = new Float64Array(numHeroes);
+  const totalTimesHitAccum = new Float64Array(numHeroes);
 
   // Tamas random range
   const isTamas = champName.includes('타마스') || champName === 'Tamas';
@@ -655,6 +714,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const lostInnate = new Int32Array(numHeroes).fill(-5);
     const consecutiveCritBonus = new Float64Array(numHeroes);
     const hemmaBonus = new Float64Array(numHeroes);
+    const simDmgTaken = new Float64Array(numHeroes);
+    const simTimesHit = new Float64Array(numHeroes);
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
@@ -754,6 +815,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               ? Math.ceil(critDamageTaken[i] * mobAoeDmgRatio)
               : Math.ceil(damageTaken[i] * mobAoeDmgRatio);
             hp[i] -= dmg;
+            simDmgTaken[i] += dmg;
+            simTimesHit[i]++;
 
             if (hp[i] <= 0) {
               const survived = handleFatalBlow(i);
@@ -812,6 +875,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
           const dmg = isCrit ? critDamageTaken[target] : damageTaken[target];
           hp[target] -= dmg;
+          simDmgTaken[target] += dmg;
+          simTimesHit[target]++;
 
           if (hp[target] <= 0) {
             const survived = handleFatalBlow(target);
@@ -972,6 +1037,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           damageDealtMax[i] = Math.max(damageDealtMax[i], damageFight[i]);
           damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
           totalRoundsPerHero[i] += round;
+          totalDmgTakenAccum[i] += simDmgTaken[i];
+          totalTimesHitAccum[i] += simTimesHit[i];
         }
       }
 
@@ -1066,6 +1133,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       ];
     }
 
+    const effectiveAtk = Math.round(finalAtk[i] * barrierMod);
+    const effectiveCritAttack = Math.round(finalAtk[i] * heroCritMult[i] * barrierMod);
+    const avgTotalDmgTaken = totalDmgTakenAccum[i] / actualSimCount;
+    const avgTimesHit = totalTimesHitAccum[i] / actualSimCount;
+
     return {
       heroId: h.id,
       heroName: h.name,
@@ -1079,15 +1151,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       normalDamageTaken: normalHit,
       aoeDamageTaken: aoeHit,
       critDamageTakenVal: critHit,
+      totalDamageTakenAvg: Math.round(avgTotalDmgTaken),
+      avgDamageTakenPerHit: avgTimesHit > 0 ? Math.round(avgTotalDmgTaken / avgTimesHit) : 0,
       sharkNormalDmg: sharkNormal,
       sharkCritDmg: sharkCrit,
       dinosaurNormalDmg: dinoNormal,
       dinosaurCritDmg: dinoCrit,
-      finalAtk: Math.round(finalAtk[i]),
+      hasSharkSpirit: heroShark[i] > 0,
+      hasDinosaurSpirit: heroDinosaur[i] > 0,
+      isSamuraiOrDaimyo: heroIsSamurai[i] || heroIsDaimyo[i],
+      finalAtk: effectiveAtk,
       finalDef: Math.round(finalDef[i]),
       finalHp: Math.round(finalHp[i]),
       finalCritChance: Math.round(Math.min(heroCritChance[i], 1) * 100 * 10) / 10,
       finalCritDmg: Math.round(heroCritMult[i] * 100 * 10) / 10,
+      finalCritAttack: effectiveCritAttack,
       finalEvasion: Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
       damageReduction: Math.round(dmgReduction * 10) / 10,
       targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
