@@ -1469,19 +1469,22 @@ export default function QuestSimulation() {
                     mbr.type === 'dire' ? 'text-red-400' :
                     mbr.type === 'wealthy' ? 'text-yellow-400' :
                     mbr.type === 'legendary' ? 'text-purple-400' : 'text-foreground';
-                  return (
-                    <div key={mbr.type} className="bg-secondary/30 rounded p-2 text-center">
-                      <div className={`text-[10px] font-medium ${typeColor}`}>{typeLabel}</div>
-                      <div className="text-[9px] text-muted-foreground">{mbr.encounters.toLocaleString()}회</div>
-                      <div className={`text-sm font-mono font-bold ${
-                        mbr.winRate >= 90 ? 'text-green-400' :
-                        mbr.winRate >= 70 ? 'text-lime-400' :
-                        mbr.winRate >= 50 ? 'text-yellow-400' : 'text-red-400'
-                      }`}>
-                        {mbr.winRate.toFixed(1)}%
+                    return (
+                      <div key={mbr.type} className="bg-secondary/30 rounded p-2 text-center">
+                        <div className={`text-[10px] font-medium ${typeColor}`}>{typeLabel}</div>
+                        <div className="text-[9px] text-muted-foreground">{mbr.encounters.toLocaleString()}회</div>
+                        <div className={`text-sm font-mono font-bold ${
+                          mbr.winRate >= 90 ? 'text-green-400' :
+                          mbr.winRate >= 70 ? 'text-lime-400' :
+                          mbr.winRate >= 50 ? 'text-yellow-400' : 'text-red-400'
+                        }`}>
+                          {mbr.winRate.toFixed(1)}%
+                        </div>
+                        <div className="text-[9px] text-muted-foreground mt-0.5">
+                          평균 {mbr.avgRounds.toFixed(1)}R
+                        </div>
                       </div>
-                    </div>
-                  );
+                    );
                 })}
               </div>
             </div>
