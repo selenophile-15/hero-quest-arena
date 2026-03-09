@@ -367,7 +367,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const hasKiku = h.equipmentSlots?.some(s => s.item?.name === '키쿠이치몬지') || false;
     heroArtCritChanceMod.push(hasKiku ? 0 : 1);
     
-    const hasLoneWolf = h.equipmentSlots?.some(s => s.item?.name === '고독한 늑대 두건') || false;
+    const hasLoneWolf = h.equipmentSlots?.some(s => s.item?.name === '외로운 늑대 두건' || s.item?.name === '고독한 늑대 두건') || false;
     heroArtChampionMod.push(hasLoneWolf ? 0 : 1);
 
     // Class flags

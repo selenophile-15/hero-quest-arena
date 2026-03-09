@@ -72,7 +72,7 @@ function isMercenary(hero: Hero): boolean {
 }
 
 function hasLoneWolfCowl(hero: Hero): boolean {
-  return hero.equipmentSlots?.some(s => s.item?.name === '고독한 늑대 두건') || false;
+  return hero.equipmentSlots?.some(s => s.item?.name === '외로운 늑대 두건' || s.item?.name === '고독한 늑대 두건') || false;
 }
 
 function getSourcePctForStat(src: PartyBuffSource, stat: StatTab): number {
