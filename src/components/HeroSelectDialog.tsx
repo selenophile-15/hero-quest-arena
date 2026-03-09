@@ -302,7 +302,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
         </div>
 
         {/* ─── Content ─────────────────────────────────────────────────────── */}
-        <ScrollArea className="flex-1 min-h-0 px-2">
+        <ScrollArea className="flex-1 min-h-0 px-2" style={{ maxHeight: 'calc(95vh - 220px)' }}>
           {viewMode === 'table' ? (
             // ─── TABLE VIEW ───────────────────────────────────────────────────
             <table className="w-full text-xs min-w-[900px]">
