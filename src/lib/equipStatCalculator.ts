@@ -145,7 +145,7 @@ export async function loadElementStats(): Promise<Record<string, any>> {
   }
 }
 
-async function loadSpiritStats(): Promise<Record<string, any>> {
+export async function loadSpiritStats(): Promise<Record<string, any>> {
   if (spiritStatsCache) return spiritStatsCache;
   try {
     const resp = await fetch('/data/equipment/enchantment/spirit.json');
