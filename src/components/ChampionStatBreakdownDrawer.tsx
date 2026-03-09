@@ -455,23 +455,25 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
           </SheetDescription>
         </SheetHeader>
 
-        <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatTab)} className="flex-1 flex flex-col min-h-0">
-          <TabsList className="w-full justify-start shrink-0">
-            {STAT_TABS.map(tab => (
-              <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1.5 text-xs">
-                {tab.icon && <img src={tab.icon} alt="" className="w-4 h-4" />}
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <div className="flex-1 flex flex-col min-h-0 px-4 pt-2">
+          <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatTab)} className="flex-1 flex flex-col min-h-0">
+            <TabsList className="w-full justify-start shrink-0">
+              {STAT_TABS.map(tab => (
+                <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1.5 text-xs">
+                  {tab.icon && <img src={tab.icon} alt="" className="w-4 h-4" />}
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          <div className="flex-1 min-h-0 overflow-y-auto mt-2">
-            {activeTab === 'atk' && renderMultBreakdown('atk')}
-            {activeTab === 'def' && renderMultBreakdown('def')}
-            {activeTab === 'hp' && renderMultBreakdown('hp')}
-            {activeTab === 'other' && renderOtherBreakdown()}
-          </div>
-        </Tabs>
+            <div className="flex-1 min-h-0 overflow-y-auto mt-2">
+              {activeTab === 'atk' && renderMultBreakdown('atk')}
+              {activeTab === 'def' && renderMultBreakdown('def')}
+              {activeTab === 'hp' && renderMultBreakdown('hp')}
+              {activeTab === 'other' && renderOtherBreakdown()}
+            </div>
+          </Tabs>
+        </div>
       </SheetContent>
     </Sheet>
   );
