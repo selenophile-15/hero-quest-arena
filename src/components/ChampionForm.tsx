@@ -360,6 +360,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       critDmg: champCalcResult?.totalCritDmg ?? critDmg,
       evasion: champCalcResult?.totalEvasion ?? evasion,
       threat: champCalcResult?.totalThreat ?? threat,
+      element,
       elementValue: totalEquipElement || elementValue,
       skills: [],
       label,
