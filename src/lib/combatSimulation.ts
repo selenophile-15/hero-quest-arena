@@ -193,6 +193,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     return emptyResult(simCount);
   }
 
+  // For random mode: run multiple simulations per mini-boss type
+  if (miniBoss === 'random') {
+    return runRandomMiniBossSimulation(config, activeHeroes, simCount);
+  }
+
   const numHeroes = activeHeroes.length;
   const isLCoG = questTypeKey === 'lcog';
   const isFlash = questTypeKey === 'flash';
