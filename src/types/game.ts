@@ -98,8 +98,8 @@ export const HERO_STAT_COLUMNS = [
   { key: 'critDmg' as const, label: 'CRIT.D', icon: true },
   { key: 'evasion' as const, label: 'EVA', icon: true },
   { key: 'threat' as const, label: 'THREAT', icon: true },
-  { key: 'position' as const, label: '포지션' },
   { key: 'seeds' as const, label: '씨앗' },
+  { key: 'position' as const, label: '포지션' },
   { key: 'label' as const, label: '상태' },
 ];
 
