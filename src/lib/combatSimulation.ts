@@ -61,6 +61,20 @@ export interface HeroSimResult {
   avgDamageDealt: number;
   maxDamageDealt: number;
   minDamageDealt: number;
+  // Incoming damage stats (per hit, not total)
+  normalDamageTaken: number;     // Single normal hit damage
+  aoeDamageTaken: number;        // Single AoE hit damage
+  critDamageTakenVal: number;    // Single crit hit damage
+  // Shark stats
+  sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
+  sharkCritDmg: number;          // Crit attack damage when shark active
+  // Final stat snapshots used in simulation
+  finalAtk: number;
+  finalDef: number;
+  finalHp: number;
+  finalCritChance: number;       // %
+  finalCritDmg: number;          // %
+  finalEvasion: number;          // %
 }
 
 export interface SimulationResult {
