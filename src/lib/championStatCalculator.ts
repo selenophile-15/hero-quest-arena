@@ -2,16 +2,24 @@
  * Champion Stat Calculator
  * 
  * Calculates champion stats based on:
- * - Rank-based base stats (from STD2_champion_stats.json)
- * - Champion Soul (promotion): rank+2 offset + 1.5x multiplier
+ * - Rank-based base stats + Level-based stats (from STD2_champion_stats.json)
+ * - Champion Soul (promotion): rank+2 offset + 1.5x multiplier (rank stats only)
  * - Seeds: HP direct, ATK/DEF × 4
- * - Equipment stats (familiar + aurasong) with quality multiplier
+ * - Equipment stats (familiar + aurasong) with quality multiplier + element/spirit enchant
  * - Card level bonus (0=0%, 1=5%, 2=10%, 3=25%)
  * 
- * Formula: ROUND((rankStat × soulMult + equipATK + seedBonus) × (1 + cardLevelBonus%), 0)
+ * Formula: ROUND((rankStat × soulMult + levelStat + equipFinal + seedBonus) × (1 + cardLevelBonus%), 0)
  */
 
-import { QUALITY_MULTIPLIER } from './equipStatCalculator';
+import {
+  QUALITY_MULTIPLIER,
+  loadElementStats,
+  loadSpiritStats,
+  getElementEnchantStats,
+  getSpiritEnchantStats,
+  capEnchant,
+  type EnchantStats,
+} from './equipStatCalculator';
 
 export const CARD_LEVEL_BONUS: Record<number, number> = {
   0: 0,
@@ -26,12 +34,34 @@ export interface ChampionEquipSlotCalc {
   tier: number;
   quality: string;
   qualityMult: number;
+  // Base stats (common grade)
   baseAtk: number;
   baseDef: number;
   baseHp: number;
   baseCrit: number;
   baseEvasion: number;
-  finalAtk: number;         // after quality mult
+  // Quality-applied stats
+  qualityAtk: number;
+  qualityDef: number;
+  qualityHp: number;
+  // Element enchant
+  elementName: string;
+  elementRawAtk: number;
+  elementRawDef: number;
+  elementRawHp: number;
+  elementCapAtk: number;
+  elementCapDef: number;
+  elementCapHp: number;
+  // Spirit enchant
+  spiritName: string;
+  spiritRawAtk: number;
+  spiritRawDef: number;
+  spiritRawHp: number;
+  spiritCapAtk: number;
+  spiritCapDef: number;
+  spiritCapHp: number;
+  // Final slot stats (quality + capped enchants)
+  finalAtk: number;
   finalDef: number;
   finalHp: number;
   finalCrit: number;
@@ -132,7 +162,7 @@ interface LevelData {
   '기본_방어력': number;
 }
 
-export function calculateChampionStats(params: {
+export async function calculateChampionStats(params: {
   championData: any;
   rank: number;
   level: number;
@@ -145,7 +175,7 @@ export function calculateChampionStats(params: {
     element: any | null;
     spirit: any | null;
   }>;
-}): ChampionCalcResult | null {
+}): Promise<ChampionCalcResult | null> {
   const { championData, rank, level, promoted, cardLevel, seeds, equipmentSlots } = params;
   if (!championData) return null;
 
@@ -175,18 +205,24 @@ export function calculateChampionStats(params: {
   const promotedRankDef = promotedRankData ? promotedRankData['기본_방어력'] : rankBaseDef;
   const promotedRankElement = promotedRankData ? promotedRankData['기본_원소'] : rankBaseElement;
 
-  // Apply promotion multiplier to rank stats (level stats are NOT affected)
+  // Apply promotion multiplier to rank stats only (level stats NOT affected)
   const soulMult = promoted ? 1.5 : 1.0;
   const promotedHp = promotedRankHp * soulMult;
   const promotedAtk = promotedRankAtk * soulMult;
   const promotedDef = promotedRankDef * soulMult;
 
-  // Non-promoted stats (for comparison) - rank base only, level same
+  // Non-promoted stats (for comparison)
   const nonPromotedHp = rankBaseHp;
   const nonPromotedAtk = rankBaseAtk;
   const nonPromotedDef = rankBaseDef;
 
-  // Equipment calculation
+  // Load enchant data
+  const [elementData, spiritData] = await Promise.all([
+    loadElementStats(),
+    loadSpiritStats(),
+  ]);
+
+  // Equipment calculation with enchant
   const SLOT_NAMES = ['퍼밀리어', '오라의 노래'];
   const equipSlots: ChampionEquipSlotCalc[] = [];
   let totalEquipAtk = 0, totalEquipDef = 0, totalEquipHp = 0, totalEquipCrit = 0, totalEquipEvasion = 0;
@@ -197,11 +233,13 @@ export function calculateChampionStats(params: {
     if (!item) {
       equipSlots.push({
         slotName: SLOT_NAMES[i],
-        itemName: '',
-        tier: 0,
-        quality: 'common',
-        qualityMult: 1,
+        itemName: '', tier: 0, quality: 'common', qualityMult: 1,
         baseAtk: 0, baseDef: 0, baseHp: 0, baseCrit: 0, baseEvasion: 0,
+        qualityAtk: 0, qualityDef: 0, qualityHp: 0,
+        elementName: '', elementRawAtk: 0, elementRawDef: 0, elementRawHp: 0,
+        elementCapAtk: 0, elementCapDef: 0, elementCapHp: 0,
+        spiritName: '', spiritRawAtk: 0, spiritRawDef: 0, spiritRawHp: 0,
+        spiritCapAtk: 0, spiritCapDef: 0, spiritCapHp: 0,
         finalAtk: 0, finalDef: 0, finalHp: 0, finalCrit: 0, finalEvasion: 0,
       });
       continue;
@@ -210,7 +248,7 @@ export function calculateChampionStats(params: {
     const quality = slot.quality || 'common';
     const qualityMult = QUALITY_MULTIPLIER[quality] || 1;
 
-    // Extract base stats from equipment
+    // Base stats (common grade)
     const getStatVal = (key: string) => {
       const found = item.stats?.find((s: any) => s.key === key);
       return found ? found.value : 0;
@@ -222,20 +260,53 @@ export function calculateChampionStats(params: {
     const baseCrit = getStatVal('장비_치명타확률%');
     const baseEvasion = getStatVal('장비_회피%');
 
-    // Quality multiplier applies to ATK/DEF/HP, not to %
-    const finalAtk = Math.floor(baseAtk * qualityMult);
-    const finalDef = Math.floor(baseDef * qualityMult);
-    const finalHp = Math.floor(baseHp * qualityMult);
-    const finalCrit = baseCrit;      // % not affected by quality
-    const finalEvasion = baseEvasion; // % not affected by quality
+    // Quality-applied stats
+    const qualityAtk = Math.floor(baseAtk * qualityMult);
+    const qualityDef = Math.floor(baseDef * qualityMult);
+    const qualityHp = Math.floor(baseHp * qualityMult);
+
+    // Element enchantment
+    let elementRaw: EnchantStats = { atk: 0, def: 0, hp: 0 };
+    let elementName = '';
+    if (slot.element) {
+      elementRaw = getElementEnchantStats(elementData, slot.element.tier, slot.element.affinity);
+      elementName = `${slot.element.tier}티어 ${slot.element.affinity ? '(친밀)' : ''}`;
+    }
+
+    // Spirit enchantment
+    let spiritRaw: EnchantStats = { atk: 0, def: 0, hp: 0 };
+    let spiritName = '';
+    if (slot.spirit) {
+      spiritRaw = getSpiritEnchantStats(spiritData, slot.spirit.name, slot.spirit.affinity);
+      spiritName = `${slot.spirit.name} ${slot.spirit.affinity ? '(친밀)' : ''}`;
+    }
+
+    // Cap enchantments against BASE (common grade) stats
+    const elementCapAtk = capEnchant(elementRaw.atk, baseAtk);
+    const elementCapDef = capEnchant(elementRaw.def, baseDef);
+    const elementCapHp = capEnchant(elementRaw.hp, baseHp);
+    const spiritCapAtk = capEnchant(spiritRaw.atk, baseAtk);
+    const spiritCapDef = capEnchant(spiritRaw.def, baseDef);
+    const spiritCapHp = capEnchant(spiritRaw.hp, baseHp);
+
+    // Final = quality + capped enchants
+    const finalAtk = qualityAtk + elementCapAtk + spiritCapAtk;
+    const finalDef = qualityDef + elementCapDef + spiritCapDef;
+    const finalHp = qualityHp + elementCapHp + spiritCapHp;
+    const finalCrit = baseCrit;
+    const finalEvasion = baseEvasion;
 
     equipSlots.push({
       slotName: SLOT_NAMES[i],
       itemName: item.name || '',
       tier: item.tier || 0,
-      quality,
-      qualityMult,
+      quality, qualityMult,
       baseAtk, baseDef, baseHp, baseCrit, baseEvasion,
+      qualityAtk, qualityDef, qualityHp,
+      elementName, elementRawAtk: elementRaw.atk, elementRawDef: elementRaw.def, elementRawHp: elementRaw.hp,
+      elementCapAtk, elementCapDef, elementCapHp,
+      spiritName, spiritRawAtk: spiritRaw.atk, spiritRawDef: spiritRaw.def, spiritRawHp: spiritRaw.hp,
+      spiritCapAtk, spiritCapDef, spiritCapHp,
       finalAtk, finalDef, finalHp, finalCrit, finalEvasion,
     });
 
@@ -253,7 +324,7 @@ export function calculateChampionStats(params: {
   const seedAtkMult = seedAtk * 4;
   const seedDefMult = seedDef * 4;
 
-  // Subtotal (before card level bonus) — rank (with promotion) + level + equipment + seeds
+  // Subtotal (before card level bonus)
   const subtotalHp = promotedHp + levelHp + totalEquipHp + seedHp;
   const subtotalAtk = promotedAtk + levelAtk + totalEquipAtk + seedAtkMult;
   const subtotalDef = promotedDef + levelDef + totalEquipDef + seedDefMult;
@@ -291,11 +362,7 @@ export function calculateChampionStats(params: {
 
   return {
     championName: '',
-    rank,
-    level,
-    promoted,
-    cardLevel,
-    cardLevelBonusPct,
+    rank, level, promoted, cardLevel, cardLevelBonusPct,
     levelHp, levelAtk, levelDef,
     rankBaseHp, rankBaseAtk, rankBaseDef, rankBaseElement,
     promotedRankHp, promotedRankAtk, promotedRankDef, promotedRankElement,
