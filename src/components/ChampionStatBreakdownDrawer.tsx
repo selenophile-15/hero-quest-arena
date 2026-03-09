@@ -227,7 +227,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
 
           {/* Step 5: Subtotal */}
           <div className="border-t-2 border-border/60 pt-2">
-            <h5 className="text-xs font-semibold text-primary mb-1.5">⑤ 소계 (카드 보너스 적용 전)</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1.5">⑤ 소계 (공통% 적용 전)</h5>
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
@@ -240,22 +240,54 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             </table>
           </div>
 
-          {/* Step 6: Card level bonus */}
+          {/* Step 6: Common % bonus (card + spirit skill) */}
           <div>
-            <h5 className="text-xs font-semibold text-primary mb-1.5">⑥ 카드 레벨 보너스</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1.5">⑥ 공통% 보너스</h5>
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
                   <td className="py-1.5 text-foreground/70">
-                    카드 LV {r.cardLevel} → +{r.cardLevelBonusPct}%
+                    카드 LV {r.cardLevel}
                   </td>
                   <td className="py-1.5 text-right tabular-nums text-foreground">
-                    × {(1 + r.cardLevelBonusPct / 100).toFixed(2)}
+                    +{r.cardLevelBonusPct}%
                   </td>
                 </tr>
+                {(() => {
+                  const spiritPct = statType === 'atk' ? r.spiritPctAtk : statType === 'def' ? r.spiritPctDef : r.spiritPctHp;
+                  const totalPct = statType === 'atk' ? r.totalPctAtk : statType === 'def' ? r.totalPctDef : r.totalPctHp;
+                  return (
+                    <>
+                      {r.spiritSources.length > 0 && (
+                        <>
+                          {r.spiritSources.map((src, idx) => {
+                            const srcPct = statType === 'atk' ? src.pctAtk : statType === 'def' ? src.pctDef : src.pctHp;
+                            if (srcPct === 0) return null;
+                            return (
+                              <tr key={idx} className="border-b border-border/30">
+                                <td className="py-1.5 text-foreground/70">
+                                  <span className="text-purple-400">[영혼]</span> {src.name}
+                                </td>
+                                <td className="py-1.5 text-right tabular-nums text-purple-300">
+                                  +{srcPct}%
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </>
+                      )}
+                      <tr className="border-b border-border/50 bg-primary/5">
+                        <td className="py-1.5 text-foreground font-medium">합계 공통%</td>
+                        <td className="py-1.5 text-right tabular-nums text-foreground font-bold">
+                          × {(1 + totalPct / 100).toFixed(2)} (+{totalPct}%)
+                        </td>
+                      </tr>
+                    </>
+                  );
+                })()}
                 <tr>
                   <td className="py-1 text-[10px] text-muted-foreground" colSpan={2}>
-                    LV0: 0% | LV1: 5% | LV2: 10% | LV3: 25%
+                    카드: LV0=0% | LV1=5% | LV2=10% | LV3=25%
                   </td>
                 </tr>
               </tbody>

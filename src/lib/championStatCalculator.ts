@@ -6,9 +6,10 @@
  * - Champion Soul (promotion): rank+2 offset + 1.5x multiplier (rank stats only)
  * - Seeds: HP direct, ATK/DEF × 4
  * - Equipment stats (familiar + aurasong) with quality multiplier + element/spirit enchant
+ * - Spirit skill bonuses (영혼_공격력%, etc.) → added to common %
  * - Card level bonus (0=0%, 1=5%, 2=10%, 3=25%)
  * 
- * Formula: ROUND((rankStat × soulMult + levelStat + equipFinal + seedBonus) × (1 + cardLevelBonus%), 0)
+ * Formula: ROUND((rankStat × soulMult + levelStat + equipFinal + seedBonus) × (1 + cardLevel% + spiritSkill%), 0)
  */
 
 import {
@@ -20,6 +21,7 @@ import {
   capEnchant,
   type EnchantStats,
 } from './equipStatCalculator';
+import { parseSoulBonuses, type SoulBonusInput, type SkillBonusSource } from './skillBonusParser';
 
 export const CARD_LEVEL_BONUS: Record<number, number> = {
   0: 0,
@@ -114,10 +116,21 @@ export interface ChampionCalcResult {
   totalEquipCrit: number;
   totalEquipEvasion: number;
 
-  // Subtotal (before card level bonus)
+  // Subtotal (before common % bonus)
   subtotalHp: number;
   subtotalAtk: number;
   subtotalDef: number;
+
+  // Spirit skill bonuses (영혼 스킬 %)
+  spiritPctAtk: number;
+  spiritPctDef: number;
+  spiritPctHp: number;
+  spiritSources: SkillBonusSource[];
+
+  // Total common % (cardLevel + spiritSkill)
+  totalPctAtk: number;
+  totalPctDef: number;
+  totalPctHp: number;
 
   // Final stats
   finalHp: number;
@@ -324,7 +337,7 @@ export async function calculateChampionStats(params: {
   const seedAtkMult = seedAtk * 4;
   const seedDefMult = seedDef * 4;
 
-  // Subtotal (before card level bonus)
+  // Subtotal (before common % bonus)
   const subtotalHp = promotedHp + levelHp + totalEquipHp + seedHp;
   const subtotalAtk = promotedAtk + levelAtk + totalEquipAtk + seedAtkMult;
   const subtotalDef = promotedDef + levelDef + totalEquipDef + seedDefMult;
@@ -334,18 +347,38 @@ export async function calculateChampionStats(params: {
   const nonPromotedSubAtk = nonPromotedAtk + levelAtk + totalEquipAtk + seedAtkMult;
   const nonPromotedSubDef = nonPromotedDef + levelDef + totalEquipDef + seedDefMult;
 
+  // Parse spirit skill bonuses
+  const soulInputs: SoulBonusInput[] = equipmentSlots
+    .map((slot, idx) => ({
+      slotIndex: idx,
+      spiritName: slot.spirit?.name || '',
+      affinity: slot.spirit?.affinity || false,
+      isIdol: false, // Champions don't have idol equipment
+    }))
+    .filter(s => s.spiritName);
+
+  const soulBonusResult = await parseSoulBonuses(soulInputs);
+  const spiritPctAtk = soulBonusResult.summary.pctAtk;
+  const spiritPctDef = soulBonusResult.summary.pctDef;
+  const spiritPctHp = soulBonusResult.summary.pctHp;
+  const spiritSources = soulBonusResult.sources;
+
   // Card level bonus
   const cardLevelBonusPct = CARD_LEVEL_BONUS[cardLevel] || 0;
-  const cardMult = 1 + cardLevelBonusPct / 100;
+
+  // Total common % = cardLevel% + spirit skill %
+  const totalPctAtk = cardLevelBonusPct + spiritPctAtk;
+  const totalPctDef = cardLevelBonusPct + spiritPctDef;
+  const totalPctHp = cardLevelBonusPct + spiritPctHp;
 
   // Final
-  const finalHp = Math.round(subtotalHp * cardMult);
-  const finalAtk = Math.round(subtotalAtk * cardMult);
-  const finalDef = Math.round(subtotalDef * cardMult);
+  const finalHp = Math.round(subtotalHp * (1 + totalPctHp / 100));
+  const finalAtk = Math.round(subtotalAtk * (1 + totalPctAtk / 100));
+  const finalDef = Math.round(subtotalDef * (1 + totalPctDef / 100));
 
-  const nonPromotedFinalHp = Math.round(nonPromotedSubHp * cardMult);
-  const nonPromotedFinalAtk = Math.round(nonPromotedSubAtk * cardMult);
-  const nonPromotedFinalDef = Math.round(nonPromotedSubDef * cardMult);
+  const nonPromotedFinalHp = Math.round(nonPromotedSubHp * (1 + totalPctHp / 100));
+  const nonPromotedFinalAtk = Math.round(nonPromotedSubAtk * (1 + totalPctAtk / 100));
+  const nonPromotedFinalDef = Math.round(nonPromotedSubDef * (1 + totalPctDef / 100));
 
   // Fixed stats
   const fixedCrit = fixed['기본_치명타확률%'] || 5;
@@ -354,10 +387,11 @@ export async function calculateChampionStats(params: {
   const fixedThreat = fixed['기본_위협도'] || 90;
   const fixedElement = fixed['직업_원소'] || '';
 
-  const totalCrit = fixedCrit + totalEquipCrit;
-  const totalEvasion = fixedEvasion + totalEquipEvasion;
-  const totalThreat = fixedThreat;
-  const totalCritDmg = fixedCritDmg;
+  // Spirit skill adds to crit/evasion/threat too
+  const totalCrit = fixedCrit + totalEquipCrit + soulBonusResult.summary.critRate;
+  const totalEvasion = fixedEvasion + totalEquipEvasion + soulBonusResult.summary.evasion;
+  const totalThreat = fixedThreat + soulBonusResult.summary.threat;
+  const totalCritDmg = fixedCritDmg + soulBonusResult.summary.critDmg;
   const critAttack = finalAtk && totalCritDmg ? Math.floor(finalAtk * totalCritDmg / 100) : 0;
 
   return {
@@ -371,6 +405,8 @@ export async function calculateChampionStats(params: {
     equipSlots,
     totalEquipAtk, totalEquipDef, totalEquipHp, totalEquipCrit, totalEquipEvasion,
     subtotalHp, subtotalAtk, subtotalDef,
+    spiritPctAtk, spiritPctDef, spiritPctHp, spiritSources,
+    totalPctAtk, totalPctDef, totalPctHp,
     finalHp, finalAtk, finalDef,
     fixedCrit, fixedCritDmg, fixedEvasion, fixedThreat, fixedElement,
     totalCrit, totalEvasion, totalThreat, totalCritDmg, critAttack,
