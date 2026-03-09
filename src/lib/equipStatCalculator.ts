@@ -156,7 +156,7 @@ export async function loadSpiritStats(): Promise<Record<string, any>> {
   }
 }
 
-function getElementEnchantStats(
+export function getElementEnchantStats(
   elementData: Record<string, any>,
   tier: number,
   affinity: boolean
