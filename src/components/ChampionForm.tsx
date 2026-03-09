@@ -440,18 +440,30 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             </div>
           </div>
         </div>
-        {equipItem?.stats && equipItem.stats.length > 0 && (
-          <div className="flex items-center justify-center w-full mt-0.5">
-            <div className="flex gap-1.5">
-              {equipItem.stats.slice(0, 3).map((stat: any, si: number) => (
-                <div key={si} className="flex items-center gap-0.5">
-                  <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                  <span className="text-xs text-foreground font-semibold tabular-nums">{formatEquipStatVal(stat.key, stat.value)}</span>
-                </div>
-              ))}
+        {(() => {
+          // Use calculated equip stats if available
+          const calcSlot = champCalcResult?.equipSlots?.[slotIdx];
+          const hasCalcStats = calcSlot && calcSlot.itemName;
+          const displayStats = hasCalcStats ? [
+            ...(calcSlot.finalAtk ? [{ key: '장비_공격력', value: calcSlot.finalAtk }] : []),
+            ...(calcSlot.finalDef ? [{ key: '장비_방어력', value: calcSlot.finalDef }] : []),
+            ...(calcSlot.finalHp ? [{ key: '장비_체력', value: calcSlot.finalHp }] : []),
+            ...(calcSlot.finalCrit ? [{ key: '장비_치명타확률%', value: calcSlot.finalCrit }] : []),
+            ...(calcSlot.finalEvasion ? [{ key: '장비_회피%', value: calcSlot.finalEvasion }] : []),
+          ] : equipItem?.stats;
+          return displayStats && displayStats.length > 0 ? (
+            <div className="flex items-center justify-center w-full mt-0.5">
+              <div className="flex gap-1.5">
+                {displayStats.slice(0, 3).map((stat: any, si: number) => (
+                  <div key={si} className="flex items-center gap-0.5">
+                    <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
+                    <span className="text-xs text-foreground font-semibold tabular-nums">{formatEquipStatVal(stat.key, stat.value)}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          ) : null;
+        })()}
         <p className="text-sm text-foreground truncate w-full text-center leading-tight font-medium mt-0.5">{equipItem?.name || '-'}</p>
       </div>
     );
