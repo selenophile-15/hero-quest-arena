@@ -1704,7 +1704,7 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 회복 & 보호 */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">💚 회복 & 보호</div>
+                    <div className="text-sm font-semibold text-yellow-400 mb-2">💚 회복 & 보호</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
