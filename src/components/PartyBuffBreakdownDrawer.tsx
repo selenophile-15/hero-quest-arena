@@ -548,6 +548,25 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     </tr>
                   )}
 
+                  {/* Extreme penalty row (evasion only) */}
+                  {activeTab === 'evasion' && hasEvasionPenalty && (
+                    <tr className="border-b border-border/20 bg-red-900/20">
+                      <td className="py-2 px-3">
+                        <div className="text-foreground text-sm font-semibold">익스트림 페널티</div>
+                      </td>
+                      {heroes.map((h) => {
+                        const hasRockStompers = h.equipmentSlots?.some((s: any) => s.item?.name === '락 스톰퍼') || false;
+                        return (
+                          <td key={h.id} className="py-2 px-2 text-center">
+                            <div className={`text-base font-mono font-bold ${hasRockStompers ? 'text-muted-foreground' : 'text-red-400'}`}>
+                              {hasRockStompers ? '0%' : '-20%'}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  )}
+
                   {/* No buffs message */}
                   {relevantSources.length === 0 && (
                     <tr>
