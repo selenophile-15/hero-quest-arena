@@ -1255,10 +1255,6 @@ export default function QuestSimulation() {
                                 delta = 0;
                                 evasionNote = '0% 고정';
                               } else {
-                                if (hasEvasionPenalty) {
-                                  val = val - 20;
-                                  delta = delta - 20;
-                                }
                                 if (val > cap) {
                                   evasionNote = `(${val}%)`;
                                   val = cap;
