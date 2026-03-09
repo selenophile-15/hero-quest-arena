@@ -418,7 +418,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             {r.promoted && <span className="text-xs px-2 py-0.5 rounded bg-yellow-600/60 text-yellow-200">승급</span>}
           </SheetTitle>
           <SheetDescription className="text-muted-foreground text-sm">
-            랭크 {r.rank} | 카드 LV {r.cardLevel} (+{r.cardLevelBonusPct}%)
+            랭크 {r.rank} | 레벨 {r.level} | 카드 LV {r.cardLevel} (+{r.cardLevelBonusPct}%)
           </SheetDescription>
         </SheetHeader>
 
