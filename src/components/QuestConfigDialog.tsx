@@ -289,6 +289,9 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                     >
                       <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
                         {q.stage ? `${q.stage}단계` : q.difficulty}
+                        {q.isExtreme && !q.stage && (
+                          <span className="text-[9px] text-muted-foreground ml-1">(페널티: -회피 20%)</span>
+                        )}
                       </div>
                       <div className="text-[10px] text-muted-foreground mt-0.5">
                         최소 {formatNumber(q.minPower)}
