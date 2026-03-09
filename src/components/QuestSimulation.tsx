@@ -1188,10 +1188,6 @@ export default function QuestSimulation() {
                 </tr>
                 {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF, CRIT.C, EVA, THREAT */}
                 {selectedHeroes.length > 0 && (() => {
-                  const hasEvasionPenalty = currentQuest && (
-                    currentQuest.isExtreme ||
-                    (selectedQuestType === 'tot' && currentRegion?.name === '공포')
-                  );
 
                   // Check if barrier is broken
                   const barrierBroken = (() => {
