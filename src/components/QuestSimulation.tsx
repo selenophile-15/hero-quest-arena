@@ -363,7 +363,7 @@ export default function QuestSimulation() {
     setSelectedRegionIdx(sel.regionIdx);
     setSelectedSubAreaIdx(sel.subAreaIdx);
     setSelectedQuestIdx(sel.questIdx);
-    setSelectedHeroIds(new Set());
+    // 파티 구성 유지 (던전 변경시 초기화 안함)
     setSelectedMiniBoss('none');
   };
 
