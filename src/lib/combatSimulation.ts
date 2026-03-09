@@ -487,15 +487,6 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     heroArmadillo.push(armadilloVal);
   }
 
-  // ─── Extreme: Apply -20% evasion penalty ───
-  if (isExtreme) {
-    for (let i = 0; i < numHeroes; i++) {
-      if (!heroArtNoEvasion[i]) {
-        heroEvasion[i] = heroEvasion[i] - 0.20;
-      }
-    }
-  }
-
   // ─── Mundra only works on bosses ───
   if (!monster.isBoss) {
     for (let i = 0; i < numHeroes; i++) heroMundra[i] = 0;
