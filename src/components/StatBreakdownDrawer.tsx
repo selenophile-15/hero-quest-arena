@@ -788,13 +788,13 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 </table>
               </div>
               <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
-                <span className="text-sm font-bold text-foreground">최종 치명타 대미지</span>
+                <span className="text-sm font-bold text-foreground">최종 치명타 대미지%</span>
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
                   {totalCritDmg}%
                 </span>
               </div>
               <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
-                <span className="text-sm font-bold text-foreground">치명타 공격력</span>
+                <span className="text-sm font-bold text-foreground">최종 치명타 대미지</span>
                 <span className="text-xl font-bold tabular-nums text-red-400">
                   {formatNumber(totalCritAttack)}
                 </span>
@@ -803,10 +803,10 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
             <div className="px-3 pb-3">
               <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                ※ 치명타 대미지 = 기본 + 스킬/영혼 보너스
+                ※ 치명타 대미지% = 기본 + 스킬/영혼 보너스
               </p>
               <p className="text-[10px] text-muted-foreground text-center leading-relaxed mt-1">
-                ※ 치명타 공격력 = 최종 공격력 × 치명타 대미지% / 100
+                ※ 최종 치명타 대미지 = 최종 공격력 × 치명타 대미지% / 100
               </p>
             </div>
           </div>
