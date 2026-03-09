@@ -746,12 +746,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
   } // end else (no precomputed stats)
 
-  // ─── Damage taken calculation ───
+  // ─── Damage taken calculation (using actual defense thresholds) ───
   const damageTaken: number[] = [];
   const critDamageTaken: number[] = [];
+  const defThresholds: DefThresholds = monster.def;
 
   for (let i = 0; i < numHeroes; i++) {
-    const dmg = calcDamageTaken(finalDef[i], mobDamage, mobCap);
+    const dmg = calcDamageTakenWithThresholds(finalDef[i], mobDamage, defThresholds);
     damageTaken.push(dmg);
     critDamageTaken.push(calcCritDamageTaken(dmg, mobDamage));
   }
