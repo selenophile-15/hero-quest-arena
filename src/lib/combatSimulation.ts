@@ -99,8 +99,8 @@ export interface HeroSimResult {
   finalCritDmg: number;          // %
   finalCritAttack: number;       // ATK * CRIT.D (actual crit damage)
   finalEvasion: number;          // %
-  // Damage reduction value
-  damageReduction: number;       // % reduction from defense
+  // Damage application rate (% of raw damage applied after defense)
+  damageApplicationRate: number;  // e.g., 25 means 25% of raw damage
   // Targeting
   targetingRate: number;         // % of times targeted (threat-based)
   evasionRate: number;           // % of attacks evaded among targeted
