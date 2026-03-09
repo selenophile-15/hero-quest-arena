@@ -61,6 +61,20 @@ export interface HeroSimResult {
   avgDamageDealt: number;
   maxDamageDealt: number;
   minDamageDealt: number;
+  // Incoming damage stats (per hit, not total)
+  normalDamageTaken: number;     // Single normal hit damage
+  aoeDamageTaken: number;        // Single AoE hit damage
+  critDamageTakenVal: number;    // Single crit hit damage
+  // Shark stats
+  sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
+  sharkCritDmg: number;          // Crit attack damage when shark active
+  // Final stat snapshots used in simulation
+  finalAtk: number;
+  finalDef: number;
+  finalHp: number;
+  finalCritChance: number;       // %
+  finalCritDmg: number;          // %
+  finalEvasion: number;          // %
 }
 
 export interface SimulationResult {
@@ -953,16 +967,38 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     winRate = rawWinRate + (100 - rawWinRate) * (retryWinRate / 100);
   }
 
-  const heroResults: HeroSimResult[] = activeHeroes.map((h, i) => ({
-    heroId: h.id,
-    heroName: h.name,
-    survivalRate: (timesSurvived[i] / actualSimCount) * 100,
-    avgHpRemaining: hpRemainingAvg[i] / actualSimCount,
-    maxHpRemaining: hpRemainingMax[i],
-    avgDamageDealt: damageDealtAvg[i] / actualSimCount,
-    maxDamageDealt: damageDealtMax[i],
-    minDamageDealt: damageDealtMin[i] >= 1e9 ? 0 : damageDealtMin[i],
-  }));
+  // Compute incoming damage stats (single hit, not per-sim averages)
+  const heroResults: HeroSimResult[] = activeHeroes.map((h, i) => {
+    const normalHit = damageTaken[i];
+    const aoeHit = Math.ceil(normalHit * (monster.aoe / monster.atk));
+    const critHit = critDamageTaken[i];
+    // Shark: +1% per shark spirit count (heroShark is 0 here since spirits not yet wired)
+    const sharkBonus = heroShark[i] * 0.01;
+    const sharkNormal = Math.floor(finalAtk[i] * (1 + sharkBonus) * barrierMod);
+    const sharkCrit = Math.floor(finalAtk[i] * (1 + sharkBonus) * heroCritMult[i] * barrierMod);
+
+    return {
+      heroId: h.id,
+      heroName: h.name,
+      survivalRate: (timesSurvived[i] / actualSimCount) * 100,
+      avgHpRemaining: hpRemainingAvg[i] / actualSimCount,
+      maxHpRemaining: hpRemainingMax[i],
+      avgDamageDealt: damageDealtAvg[i] / actualSimCount,
+      maxDamageDealt: damageDealtMax[i],
+      minDamageDealt: damageDealtMin[i] >= 1e9 ? 0 : damageDealtMin[i],
+      normalDamageTaken: normalHit,
+      aoeDamageTaken: aoeHit,
+      critDamageTakenVal: critHit,
+      sharkNormalDmg: sharkNormal,
+      sharkCritDmg: sharkCrit,
+      finalAtk: Math.round(finalAtk[i]),
+      finalDef: Math.round(finalDef[i]),
+      finalHp: Math.round(finalHp[i]),
+      finalCritChance: Math.round(Math.min(heroCritChance[i], 1) * 100 * 10) / 10,
+      finalCritDmg: Math.round(heroCritMult[i] * 100 * 10) / 10,
+      finalEvasion: Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
+    };
+  });
 
   return {
     winRate: Math.round(winRate * 100) / 100,
