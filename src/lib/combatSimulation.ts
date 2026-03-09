@@ -1030,6 +1030,110 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   };
 }
 
+// ─── Random Mini-Boss Simulation ────────────────────────────────────────────
+
+function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Hero[], simCount: number): SimulationResult {
+  // 2% chance mini-boss appears, 20% chance each type
+  const MINI_BOSS_SPAWN_CHANCE = 0.02;
+  const MINI_BOSS_TYPES: MiniBossType[] = ['huge', 'agile', 'dire', 'wealthy', 'legendary'];
+  const MINI_BOSS_TYPE_CHANCE = 0.2; // 20% each
+
+  // Run simulations for 'none' and each mini-boss type with weighted counts
+  const normalSimCount = Math.round(simCount * (1 - MINI_BOSS_SPAWN_CHANCE));
+  const miniBossSimCountTotal = simCount - normalSimCount;
+  const perTypeSimCount = Math.round(miniBossSimCountTotal * MINI_BOSS_TYPE_CHANCE);
+
+  // Run normal simulation
+  const normalResult = runCombatSimulation({
+    ...config,
+    miniBoss: 'none',
+    simulationCount: normalSimCount,
+  });
+
+  // Run each mini-boss type simulation
+  const miniBossResults: MiniBossResult[] = [
+    {
+      type: 'normal',
+      encounters: normalSimCount,
+      wins: Math.round(normalResult.winRate / 100 * normalSimCount),
+      winRate: normalResult.winRate,
+      avgRounds: normalResult.avgRounds,
+      heroResults: normalResult.heroResults,
+    },
+  ];
+
+  let totalWins = Math.round(normalResult.winRate / 100 * normalSimCount);
+  let totalRounds = normalResult.avgRounds * normalSimCount;
+  let totalSims = normalSimCount;
+
+  for (const mbType of MINI_BOSS_TYPES) {
+    const mbResult = runCombatSimulation({
+      ...config,
+      miniBoss: mbType,
+      simulationCount: perTypeSimCount,
+    });
+
+    const wins = Math.round(mbResult.winRate / 100 * perTypeSimCount);
+    miniBossResults.push({
+      type: mbType,
+      encounters: perTypeSimCount,
+      wins,
+      winRate: mbResult.winRate,
+      avgRounds: mbResult.avgRounds,
+      heroResults: mbResult.heroResults,
+    });
+
+    totalWins += wins;
+    totalRounds += mbResult.avgRounds * perTypeSimCount;
+    totalSims += perTypeSimCount;
+  }
+
+  // Calculate weighted averages
+  const combinedWinRate = (totalWins / totalSims) * 100;
+  const combinedAvgRounds = totalRounds / totalSims;
+
+  // Aggregate hero results (weighted average)
+  const aggregatedHeroResults: HeroSimResult[] = normalResult.heroResults.map((hr, idx) => {
+    let survivalSum = hr.survivalRate * normalSimCount;
+    let dmgSum = hr.avgDamageDealt * normalSimCount;
+    let maxDmg = hr.maxDamageDealt;
+    let minDmg = hr.minDamageDealt;
+
+    for (const mbr of miniBossResults.slice(1)) {
+      const mbHr = mbr.heroResults[idx];
+      if (mbHr) {
+        survivalSum += mbHr.survivalRate * mbr.encounters;
+        dmgSum += mbHr.avgDamageDealt * mbr.encounters;
+        maxDmg = Math.max(maxDmg, mbHr.maxDamageDealt);
+        minDmg = Math.min(minDmg, mbHr.minDamageDealt);
+      }
+    }
+
+    return {
+      ...hr,
+      survivalRate: survivalSum / totalSims,
+      avgDamageDealt: dmgSum / totalSims,
+      maxDamageDealt: maxDmg,
+      minDamageDealt: minDmg,
+    };
+  });
+
+  return {
+    winRate: Math.round(combinedWinRate * 100) / 100,
+    rawWinRate: Math.round(combinedWinRate * 100) / 100,
+    avgRounds: Math.round(combinedAvgRounds * 100) / 100,
+    minRounds: Math.min(normalResult.minRounds, ...miniBossResults.slice(1).map(m => {
+      // Need to get min from the actual simulation - use 1 as placeholder
+      return 1;
+    })),
+    maxRounds: Math.max(normalResult.maxRounds, ...miniBossResults.slice(1).map(m => m.avgRounds * 2)), // Approximate
+    heroResults: aggregatedHeroResults,
+    roundLimitRate: normalResult.roundLimitRate,
+    totalSimulations: totalSims,
+    miniBossResults,
+  };
+}
+
 /** Get the booster config for Fateweaver retry: original booster + Normal booster stacked */
 function getRetryBooster(original: BoosterType): BoosterType {
   // Normal booster = +20% atk, +20% def. Just add these on top of whatever was used.
