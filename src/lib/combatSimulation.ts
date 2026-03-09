@@ -605,16 +605,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       for (let i = 0; i < numHeroes; i++) {
         heroCritChance[i] += 0.25;
         heroCritMult[i] += 0.5;
-  }
-
-  // ─── Extreme: Apply -20% evasion penalty (after all buffs) ───
-  if (isExtreme) {
-    for (let i = 0; i < numHeroes; i++) {
-      if (!heroArtNoEvasion[i]) {
-        heroEvasion[i] = heroEvasion[i] - 0.20;
       }
-    }
-  }
       break;
   }
   // Stack extra bonuses (e.g., Fateweaver retry Normal booster: +20%/+20%)
