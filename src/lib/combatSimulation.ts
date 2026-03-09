@@ -510,13 +510,38 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let lordHero = -1;
   let fateweaverPresent = false;
 
-  // Find Lord and Fateweaver
+  // Find Lord and Fateweaver (always needed for combat logic)
   for (let i = 0; i < numHeroes; i++) {
     if (heroIsLord[i]) { lordPresent = true; lordHero = i; }
     if (isClass(activeHeroes[i], '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')) {
       fateweaverPresent = true;
     }
   }
+
+  // When precomputedStats are provided, stats already include champion+aurasong+booster
+  // Skip recomputation, just apply extreme penalty and use stats directly
+  if (precomputedStats && precomputedStats.length === numHeroes) {
+    // Hemma detection still needed for per-round cumulative bonus
+    if (champName.includes('헴마') || champName === 'Hemma') {
+      hemmaWho = championIdx;
+      hemmaMult = 0.15 + champTier * 0.05;
+    }
+
+    // Extreme penalty on evasion
+    if (isExtreme) {
+      for (let i = 0; i < numHeroes; i++) {
+        if (!heroArtNoEvasion[i]) {
+          heroEvasion[i] = heroEvasion[i] - 0.20;
+        }
+      }
+    }
+
+    // Use precomputed ATK/DEF/HP directly (already includes champion+aurasong+booster)
+    var finalAtk: number[] = heroAtk.map(v => v);
+    var finalDef: number[] = heroDef.map(v => v);
+    var finalHp: number[] = heroHpMax.map(v => v);
+  } else {
+    // ─── Full champion bonus computation (fallback when no precomputed stats) ───
 
   if (champName.includes('아르곤') || champName === 'Argon') {
     champAtkBonus = 0.1 * champTier;
@@ -638,15 +663,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
 
   // Per Korean doc: final = base × (1 + (champ + aurasong) × mercMult + booster)
-  // Mercenary: champion and aurasong bonuses are multiplied by 1.25
-  const finalAtk: number[] = [];
-  const finalDef: number[] = [];
-  const finalHp: number[] = [];
+  var finalAtk: number[] = [];
+  var finalDef: number[] = [];
+  var finalHp: number[] = [];
 
   for (let i = 0; i < numHeroes; i++) {
     const mercMult = heroIsMercenary[i] ? 1.25 : 1.0;
     const champModI = heroArtChampionMod[i];
-    // Lone Wolf Cowl: +40% self atk/def when champion bonus is blocked
     const loneWolfBonus = champModI === 0 ? 0.4 : 0;
 
     finalAtk.push(
@@ -662,6 +685,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       + aurasong.flatHp
     );
   }
+  } // end else (no precomputed stats)
 
   // ─── Damage taken calculation ───
   const damageTaken: number[] = [];
