@@ -1568,6 +1568,9 @@ export default function QuestSimulation() {
             })()}
           </div>
 
+        </div>
+      )}
+
       {/* Combat Log Dialog */}
       <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
