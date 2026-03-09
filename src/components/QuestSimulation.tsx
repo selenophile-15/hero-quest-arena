@@ -1671,6 +1671,7 @@ export default function QuestSimulation() {
                               <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{hr.damageReduction.toFixed(1)}%</td>
                               <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{hr.targetingRate.toFixed(1)}%</td>
                               <td className="py-1 px-2 text-center font-mono text-teal-400 whitespace-nowrap">{hr.evasionRate.toFixed(1)}%</td>
+                              <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${hr.monsterCritChance > 10 ? 'text-red-400 font-bold' : 'text-orange-300'}`}>{hr.monsterCritChance}%</td>
                               <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.avgDamageTakenPerHit)}</td>
                               <td className="py-1 px-2 text-center font-mono text-blue-300 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
                               <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{formatNumber(hr.aoeDamageTaken)}</td>
