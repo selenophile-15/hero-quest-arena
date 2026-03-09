@@ -690,6 +690,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const berserkerBelowT1 = new Float64Array(numHeroes);
   const berserkerBelowT2 = new Float64Array(numHeroes);
   const berserkerBelowT3 = new Float64Array(numHeroes);
+  // Total damage taken tracking
+  const totalDmgTakenAccum = new Float64Array(numHeroes);
+  const totalTimesHitAccum = new Float64Array(numHeroes);
 
   // Tamas random range
   const isTamas = champName.includes('타마스') || champName === 'Tamas';
