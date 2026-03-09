@@ -1694,7 +1694,6 @@ export default function QuestSimulation() {
                               <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
                               <td className="py-1 px-2 text-center font-mono text-purple-400 whitespace-nowrap">{formatNumber(hr.critDamageTakenVal)}</td>
                               <td className="py-1 px-2 text-center font-mono text-orange-300 whitespace-nowrap">{formatNumber(hr.avgDamageTakenPerTurn)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
                               <td className="py-1 px-2 text-center font-mono text-red-400 font-bold whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
                             </tr>
                           ))}
