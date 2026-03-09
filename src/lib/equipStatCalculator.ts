@@ -182,7 +182,7 @@ export const SPIRIT_TIER: Record<string, number> = {
   '늑대': 4, '양': 4, '독수리': 4, '황소': 4, '독사': 4, '고양이': 4, '토끼': 4, '문드라': 4,
 };
 
-function getSpiritEnchantStats(
+export function getSpiritEnchantStats(
   spiritData: Record<string, any>,
   spiritName: string,
   affinity: boolean
