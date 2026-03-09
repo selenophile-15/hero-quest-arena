@@ -193,6 +193,9 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [championManualMode, setChampionManualMode] = useState(false);
   const championManualFormRef = useRef<ManualEquipmentFormRef>(null);
 
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [championRawData, setChampionRawData] = useState<any>(null);
+
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
