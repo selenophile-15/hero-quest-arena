@@ -759,21 +759,34 @@ export default function QuestSimulation() {
                       key: t.key,
                       label: t.label,
                       value: t.value,
+                      color: t.color,
+                      textClass: t.textClass,
                       pct: (i / (defThresholds.length - 1)) * 100,
                       applied: Math.round(100 - reductions[i]),
                     }));
+
+                    // Determine color for hero based on defense threshold
+                    const getHeroColor = (heroDef: number): string => {
+                      let color = defThresholds[0].color;
+                      for (const t of defThresholds) {
+                        if (heroDef >= t.value) color = t.color;
+                      }
+                      return color;
+                    };
 
                     const heroEntries = selectedHeroes.map((h, hi) => {
                       const bs = buffedStats[hi];
                       const heroDef = bs ? bs.def : (h.def || 0);
                       const pinPct = defToBarPct(heroDef);
                       const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
+                      const color = getHeroColor(heroDef);
                       return {
                         id: h.id,
                         name: h.name,
                         heroDef,
                         pinPct,
                         dmgApplied,
+                        color,
                       };
                     });
 
@@ -787,7 +800,7 @@ export default function QuestSimulation() {
                       <div className="px-1">
                         {/* 4 columns: left(-50~75), bar, right(threshold def + dmg applied), far-right(hero labels + connectors) */}
                         <div
-                          className="relative grid grid-cols-[44px_14px_140px_1fr] gap-x-2"
+                          className="relative grid grid-cols-[44px_14px_1fr] gap-x-2"
                           style={{ height: `${barH}px` }}
                         >
                           {/* Left: damage reduction labels */}
@@ -798,21 +811,22 @@ export default function QuestSimulation() {
                                 className="absolute right-0 flex items-center"
                                 style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}
                               >
-                                <span className="text-[9px] font-mono text-muted-foreground tabular-nums">{r.label}</span>
+                                <span className={`text-[9px] font-mono tabular-nums ${r.textClass}`}>{r.label}</span>
                               </div>
                             ))}
                           </div>
 
-                          {/* Center: vertical bar with party points */}
+                          {/* Center: vertical bar with threshold ticks + party points */}
                           <div className="relative">
-                            <div className="absolute inset-0 rounded-full overflow-hidden border border-border/60 bg-gradient-to-t from-muted/40 via-muted/15 to-background" />
+                            <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                            {/* Threshold ticks on bar */}
                             {rows.map(r => (
                               <div
                                 key={`tick-${r.key}`}
                                 className="absolute left-0 right-0 flex items-center pointer-events-none"
-                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}
+                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}
                               >
-                                <div className="h-px w-full bg-border/70" />
+                                <div className="h-px w-full" style={{ backgroundColor: r.color, opacity: 0.7 }} />
                               </div>
                             ))}
 
@@ -823,65 +837,62 @@ export default function QuestSimulation() {
                                 className="absolute"
                                 style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}
                               >
-                                <div className="w-2.5 h-2.5 rounded-full bg-primary border border-primary/70 shadow-sm" />
+                                <div className="w-3 h-3 rounded-full border-2 shadow-md" style={{ borderColor: h.color, backgroundColor: h.color }} />
                               </div>
                             ))}
                           </div>
 
-                          {/* Right: defense threshold values (damage applied rate) */}
-                          <div className="relative">
+                          {/* Right: threshold labels + hero labels with connectors */}
+                          <div className="relative ml-1">
+                            {/* Threshold labels: value (applied%) */}
                             {rows.map(r => (
                               <div
                                 key={`thr-${r.key}`}
-                                className="absolute left-0 right-0 flex items-center justify-between"
-                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}
+                                className="absolute left-0 flex items-center gap-1"
+                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}
                               >
-                                <span className="text-[9px] font-mono text-foreground tabular-nums">{formatNumber(r.value)}</span>
-                                <span className="text-[8px] font-mono text-muted-foreground tabular-nums">({r.applied}%)</span>
+                                <span className={`text-[9px] font-mono tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                                <span className={`text-[8px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                               </div>
                             ))}
-                          </div>
 
-                          {/* Far right: hero labels + connector lines (start AFTER threshold column) */}
-                          <div className="relative min-w-0 pl-10">
+                            {/* SVG connectors for heroes: horizontal then diagonal */}
                             <svg
-                              className="absolute inset-0"
-                              width="100%"
-                              height={barH}
-                              viewBox={`0 0 100 ${barH}`}
-                              preserveAspectRatio="none"
+                              className="absolute inset-0 overflow-visible"
+                              style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}
                             >
                               {heroLayout.map(h => {
                                 const yPin = barH - (h.pinPct / 100) * barH;
                                 const yLabel = barH - (h.labelPct / 100) * barH;
-                                const x0 = 6;
-                                const x1 = 28;
-                                const x2 = 28;
-                                const x3 = 55;
-                                const d = `M ${x0} ${yPin} L ${x1} ${yPin} L ${x2} ${yLabel} L ${x3} ${yLabel}`;
+                                // Start horizontal, then go diagonal (45 to -45 degree angle)
+                                const x0 = 0;
+                                const x1 = 16;
+                                const x2 = 36;
+                                // Diagonal from (x1, yPin) to (x2, yLabel)
+                                const d = `M ${x0} ${yPin} L ${x1} ${yPin} L ${x2} ${yLabel}`;
                                 return (
                                   <path
                                     key={`line-${h.id}`}
                                     d={d}
                                     fill="none"
-                                    stroke="hsl(var(--foreground) / 0.35)"
-                                    strokeWidth={1}
+                                    stroke={h.color}
+                                    strokeWidth={1.5}
+                                    strokeOpacity={0.8}
                                   />
                                 );
                               })}
                             </svg>
 
+                            {/* Hero labels positioned at label heights */}
                             {heroLayout.map(h => (
                               <div
                                 key={`label-${h.id}`}
-                                className="absolute left-0 right-0 flex items-center"
-                                style={{ bottom: `${h.labelPct}%`, transform: 'translateY(50%)', zIndex: 5 }}
+                                className="absolute flex items-center whitespace-nowrap"
+                                style={{ bottom: `${h.labelPct}%`, left: '106px', transform: 'translateY(50%)', zIndex: 5 }}
                               >
-                                <div className="min-w-0 flex items-baseline gap-1">
-                                  <span className="text-[10px] font-mono text-foreground truncate max-w-[90px]">{h.name}</span>
-                                  <span className="text-[10px] font-mono text-foreground tabular-nums">{formatNumber(h.heroDef)}</span>
-                                  <span className="text-[9px] font-mono text-muted-foreground tabular-nums">({h.dmgApplied}%)</span>
-                                </div>
+                                <span className="text-[10px] font-mono truncate max-w-[60px]" style={{ color: h.color }}>{h.name}</span>
+                                <span className="text-[10px] font-mono tabular-nums ml-1" style={{ color: h.color }}>{formatNumber(h.heroDef)}</span>
+                                <span className="text-[9px] font-mono tabular-nums ml-0.5 opacity-80" style={{ color: h.color }}>({h.dmgApplied}%)</span>
                               </div>
                             ))}
                           </div>
