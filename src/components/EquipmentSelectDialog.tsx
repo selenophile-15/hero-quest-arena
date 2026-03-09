@@ -566,14 +566,32 @@ export default function EquipmentSelectDialog({
                 onConfirm={(item) => {
                   const newSlots = [...slots];
                   const existingSlot = newSlots[activeSlot];
+                  const prevItem = existingSlot?.item;
+                  const prevHadUniqueElement = !!prevItem?.uniqueElement?.length;
+                  const prevHadUniqueSpirit = !!prevItem?.uniqueSpirit?.length;
+
                   let slotElement = existingSlot?.element || null;
                   let slotSpirit = existingSlot?.spirit || null;
+
+                  // Re-evaluate (or clear) enchant affinity when equipping a new item
                   if (item.uniqueElement?.length) {
                     slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
+                  } else if (prevHadUniqueElement) {
+                    slotElement = null;
+                  } else if (slotElement) {
+                    const hasAffinity = item.elementAffinity?.includes(slotElement.type) || item.elementAffinity?.includes('모든 원소');
+                    slotElement = { ...slotElement, affinity: !!hasAffinity };
                   }
+
                   if (item.uniqueSpirit?.length) {
                     slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
+                  } else if (prevHadUniqueSpirit) {
+                    slotSpirit = null;
+                  } else if (slotSpirit) {
+                    const hasAffinity = item.spiritAffinity?.includes(slotSpirit.name);
+                    slotSpirit = { ...slotSpirit, affinity: !!hasAffinity };
                   }
+
                   newSlots[activeSlot] = {
                     item: { ...item },
                     quality: existingSlot?.quality || slotQuality,
