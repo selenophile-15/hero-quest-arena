@@ -166,7 +166,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                               ({slot.itemName} T{slot.tier})
                             </span>
                           </span>
-                          <div className="text-[11px] text-foreground/60 pl-2 space-y-0.5">
+                          <div className="text-xs text-foreground/60 pl-2 space-y-0.5">
                             <div>등급 ({slot.quality} ×{slot.qualityMult}): {formatNumber(qualityVal)}</div>
                             {slot.elementName && (
                               <div className={elementVal < elementRaw ? 'text-yellow-400' : ''}>
