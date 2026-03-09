@@ -253,15 +253,15 @@ export function calculateChampionStats(params: {
   const seedAtkMult = seedAtk * 4;
   const seedDefMult = seedDef * 4;
 
-  // Subtotal (before card level bonus)
-  const subtotalHp = promotedHp + totalEquipHp + seedHp;
-  const subtotalAtk = promotedAtk + totalEquipAtk + seedAtkMult;
-  const subtotalDef = promotedDef + totalEquipDef + seedDefMult;
+  // Subtotal (before card level bonus) — rank (with promotion) + level + equipment + seeds
+  const subtotalHp = promotedHp + levelHp + totalEquipHp + seedHp;
+  const subtotalAtk = promotedAtk + levelAtk + totalEquipAtk + seedAtkMult;
+  const subtotalDef = promotedDef + levelDef + totalEquipDef + seedDefMult;
 
   // Non-promoted subtotals
-  const nonPromotedSubHp = nonPromotedHp + totalEquipHp + seedHp;
-  const nonPromotedSubAtk = nonPromotedAtk + totalEquipAtk + seedAtkMult;
-  const nonPromotedSubDef = nonPromotedDef + totalEquipDef + seedDefMult;
+  const nonPromotedSubHp = nonPromotedHp + levelHp + totalEquipHp + seedHp;
+  const nonPromotedSubAtk = nonPromotedAtk + levelAtk + totalEquipAtk + seedAtkMult;
+  const nonPromotedSubDef = nonPromotedDef + levelDef + totalEquipDef + seedDefMult;
 
   // Card level bonus
   const cardLevelBonusPct = CARD_LEVEL_BONUS[cardLevel] || 0;
