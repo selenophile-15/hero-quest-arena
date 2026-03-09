@@ -1493,7 +1493,7 @@ export default function QuestSimulation() {
           {/* Per-hero results - full width detailed table */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs text-muted-foreground font-medium">영웅별 결과</span>
+              <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
               {simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
                 <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
                   <SelectTrigger className="h-6 w-[100px] text-[10px]">
