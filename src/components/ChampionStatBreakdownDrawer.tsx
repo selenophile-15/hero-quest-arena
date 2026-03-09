@@ -213,9 +213,9 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             </table>
           </div>
 
-          {/* Step 6: Common % bonus (card + spirit skill) */}
+          {/* Step 5: Common % bonus (card + spirit skill) */}
           <div>
-            <h5 className="text-xs font-semibold text-primary mb-1.5">⑥ 공통% 보너스</h5>
+            <h5 className="text-xs font-semibold text-primary mb-1.5">⑤ 공통% 보너스</h5>
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
