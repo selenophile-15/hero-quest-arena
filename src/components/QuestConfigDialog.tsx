@@ -248,8 +248,8 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 onClick={() => { setSelSubAreaIdx(99); setStep('difficulty'); }}
                 className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all"
               >
-                <div className="bg-red-500/10 flex items-center justify-center p-1.5">
-                  <img src={region.boss.image} alt={region.boss.name} className="w-full h-auto object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                <div className="bg-red-500/10 flex items-center justify-center p-1.5 aspect-square">
+                  <img src={region.boss.image} alt={region.boss.name} className="w-full h-full object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
                 <div className="p-1 text-center">
                   <span className="text-[10px] font-medium text-red-400 flex items-center justify-center gap-0.5">

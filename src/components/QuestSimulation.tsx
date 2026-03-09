@@ -1481,7 +1481,7 @@ export default function QuestSimulation() {
                           {mbr.winRate.toFixed(1)}%
                         </div>
                         <div className="text-[9px] text-muted-foreground mt-0.5">
-                          평균 {mbr.avgRounds.toFixed(1)}R
+                          평균 {Math.round(mbr.avgRounds)}R
                         </div>
                       </div>
                     );
