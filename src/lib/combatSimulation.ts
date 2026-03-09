@@ -836,6 +836,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   const timesSurvived = new Float64Array(numHeroes);
   const damageDealtAvg = new Float64Array(numHeroes);
+  const normalDmgDealtAccum = new Float64Array(numHeroes);
+  const critDmgDealtAccum = new Float64Array(numHeroes);
   const damageDealtMax = new Float64Array(numHeroes);
   const damageDealtMin = new Float64Array(numHeroes).fill(1e9);
   const hpRemainingAvg = new Float64Array(numHeroes);
