@@ -203,7 +203,7 @@ export function getSpiritEnchantStats(
   };
 }
 
-function capEnchant(enchantVal: number, baseVal: number): number {
+export function capEnchant(enchantVal: number, baseVal: number): number {
   if (baseVal <= 0) return 0;
   return Math.min(enchantVal, baseVal);
 }
