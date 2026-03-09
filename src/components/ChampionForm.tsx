@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Hero, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
-import { CHAMPION_NAMES, lookupChampionStats, getChampionSkillsData } from '@/lib/gameData';
+import { CHAMPION_NAMES, lookupChampionStats, getChampionSkillsData, getChampionStats } from '@/lib/gameData';
+import { calculateChampionStats, ChampionCalcResult } from '@/lib/championStatCalculator';
+import ChampionStatBreakdownDrawer from './ChampionStatBreakdownDrawer';
 import { CHAMPION_NAME_MAP, getChampionImagePath, SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { formatNumber } from '@/lib/format';
 import { getElementValue } from '@/components/EnchantPickerDialog';
@@ -191,6 +193,9 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [championManualMode, setChampionManualMode] = useState(false);
   const championManualFormRef = useRef<ManualEquipmentFormRef>(null);
 
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [championRawData, setChampionRawData] = useState<any>(null);
+
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -203,6 +208,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     loadAurasongs().then(setAurasongItems);
     ensureAurasongDataLoaded();
   }, []);
+
+  useEffect(() => {
+    getChampionStats().then(data => {
+      if (data[championName]) setChampionRawData(data[championName]);
+    });
+  }, [championName]);
+
 
   useEffect(() => {
     if (!championName || !rank) return;
@@ -242,6 +254,18 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
   const totalEquipElement = Object.values(equipElements).reduce((a, b) => a + b, 0);
   const critAttack = atk && critDmg ? Math.floor(atk * critDmg / 100) : 0;
+
+  const champCalcResult = useMemo<ChampionCalcResult | null>(() => {
+    if (!championRawData || !rank) return null;
+    return calculateChampionStats({
+      championData: championRawData,
+      rank: Number(rank),
+      promoted,
+      cardLevel,
+      seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
+      equipmentSlots,
+    });
+  }, [championRawData, rank, promoted, cardLevel, seedHp, seedAtk, seedDef, equipmentSlots]);
 
   // Leader skill from champion data
   const champSkillData = championSkillsData[championName];
@@ -752,6 +776,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           {hero ? '챔피언 수정' : '새 챔피언 추가'}
         </h2>
         <div className="flex gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!champCalcResult}>📊 스탯 계산표</Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
           <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
         </div>
@@ -998,6 +1023,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             }));
             setEquipmentSlots(newSlots);
           }}
+        />
+
+        <ChampionStatBreakdownDrawer
+          open={breakdownOpen}
+          onOpenChange={setBreakdownOpen}
+          calcResult={champCalcResult}
+          championName={championName}
         />
 
       </div>
