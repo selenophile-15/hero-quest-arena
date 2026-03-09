@@ -1095,11 +1095,11 @@ export default function QuestSimulation() {
                             {belowMin && (
                               <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                             )}
-                            <button onClick={() => toggleHero(hero.id)}
+                            <button onClick={() => openSlotForEdit(slotIdx)}
                               className={`relative w-8 h-8 rounded-full border-2 bg-secondary/50 flex items-center justify-center transition-all ${
                                 belowMin ? 'border-red-500/70' : 'border-primary/30'
-                              } hover:border-destructive/70`}
-                              title={`${hero.name} (클릭하여 제거)`}>
+                              } hover:border-primary/70`}
+                              title={`${hero.name} (클릭하여 변경)`}>
                               <span className="text-xs">⚔</span>
                             </button>
                             <button
