@@ -29,7 +29,7 @@ export interface QuestMonster {
   barrierElement: string | null; // Resolved barrier element for this sub-area
 }
 
-export type MiniBossType = 'none' | 'agile' | 'dire' | 'huge' | 'wealthy' | 'legendary';
+export type MiniBossType = 'random' | 'none' | 'agile' | 'dire' | 'huge' | 'wealthy' | 'legendary';
 
 export interface BoosterType {
   type: 'none' | 'normal' | 'super' | 'mega';
@@ -58,9 +58,12 @@ export interface HeroSimResult {
   survivalRate: number;      // %
   avgHpRemaining: number;
   maxHpRemaining: number;
+  // Total damage
   avgDamageDealt: number;
   maxDamageDealt: number;
   minDamageDealt: number;
+  // Per-turn damage
+  avgDamagePerTurn: number;
   // Incoming damage stats (per hit, not total)
   normalDamageTaken: number;     // Single normal hit damage
   aoeDamageTaken: number;        // Single AoE hit damage
@@ -68,6 +71,9 @@ export interface HeroSimResult {
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
+  // Dinosaur (first turn) stats
+  dinosaurNormalDmg: number;     // First turn normal damage with dinosaur
+  dinosaurCritDmg: number;       // First turn crit damage with dinosaur
   // Final stat snapshots used in simulation
   finalAtk: number;
   finalDef: number;
@@ -75,6 +81,32 @@ export interface HeroSimResult {
   finalCritChance: number;       // %
   finalCritDmg: number;          // %
   finalEvasion: number;          // %
+  // Damage reduction value
+  damageReduction: number;       // % reduction from defense
+  // Targeting
+  targetingRate: number;         // % of times targeted (threat-based)
+  evasionRate: number;           // % of attacks evaded among targeted
+  // Berserker thresholds
+  berserkerThresholds?: { threshold: number; belowRate: number }[];
+  // Chronomancer
+  chronomancerRetries?: number;
+  chronomancerRetrySuccessRate?: number;
+  // Healing
+  totalHealingAvg: number;
+  healPerTurn: number;
+  // Lord protection
+  lordProtectionAvg: number;
+  // Crit survival (armadillo, cleric/bishop)
+  critSurvivalCount: number;
+}
+
+export interface MiniBossResult {
+  type: 'normal' | MiniBossType;
+  encounters: number;
+  wins: number;
+  winRate: number;
+  avgRounds: number;
+  heroResults: HeroSimResult[];
 }
 
 export interface SimulationResult {
@@ -88,6 +120,8 @@ export interface SimulationResult {
   roundLimitRate: number;    // % of sims hitting 499 round limit
   totalSimulations: number;
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
+  // Per mini-boss breakdown (only for random mode)
+  miniBossResults?: MiniBossResult[];
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
@@ -170,6 +204,15 @@ function calcCritDamageTaken(normalDmg: number, mobDamage: number): number {
   return Math.round(Math.max(normalDmg, mobDamage) * 1.5);
 }
 
+function getDamageReductionForDef(def: number, mobCap: number): number {
+  // Returns damage reduction % based on defense vs cap
+  // -50% at 0 def, 0% at r0 (cap), 50% at r50, 70% at r70, 75% at r75
+  if (def <= 0) return -50;
+  if (def >= mobCap) return 75; // Capped at 75%
+  // Interpolate: 0 def = -50% reduction, mobCap def = 0% reduction
+  return -50 + (def / mobCap) * 50;
+}
+
 // ─── Main Simulation ─────────────────────────────────────────────────────────
 
 export function runCombatSimulation(config: SimulationConfig): SimulationResult {
@@ -180,6 +223,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const activeHeroes = heroes.filter(h => h.hp > 0);
   if (activeHeroes.length === 0) {
     return emptyResult(simCount);
+  }
+
+  // For random mode: run multiple simulations per mini-boss type
+  if (miniBoss === 'random') {
+    return runRandomMiniBossSimulation(config, activeHeroes, simCount);
   }
 
   const numHeroes = activeHeroes.length;
@@ -576,6 +624,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const damageDealtMin = new Float64Array(numHeroes).fill(1e9);
   const hpRemainingAvg = new Float64Array(numHeroes);
   const hpRemainingMax = new Float64Array(numHeroes);
+  // Enhanced tracking
+  const totalRoundsPerHero = new Float64Array(numHeroes);
+  const timesTargeted = new Float64Array(numHeroes);
+  const timesEvaded = new Float64Array(numHeroes);
+  const totalHealing = new Float64Array(numHeroes);
+  const lordProtections = new Float64Array(numHeroes);
+  const critSurvivals = new Float64Array(numHeroes);
+  const berserkerBelowT1 = new Float64Array(numHeroes);
+  const berserkerBelowT2 = new Float64Array(numHeroes);
+  const berserkerBelowT3 = new Float64Array(numHeroes);
 
   // Tamas random range
   const isTamas = champName.includes('타마스') || champName === 'Tamas';
@@ -680,12 +738,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // AoE attack hits all alive heroes
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
+          timesTargeted[i]++;
 
           const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
           const cappedEva = Math.min(totalEva, heroEvaCap[i]);
 
           if (guaranteedEvade[i] || (Math.random() < cappedEva && !heroArtNoEvasion[i])) {
             // Evaded
+            timesEvaded[i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
             // Hit - AoE uses normal damage × aoe ratio
@@ -701,6 +761,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 // Lord save check
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
                   lordSave = false;
+                  lordProtections[i]++;
                   hp[i] += dmg; // Restore this hero
                   const lordDmg = Math.ceil(damageTaken[lordHero] * mobAoeDmgRatio);
                   hp[lordHero] -= lordDmg;
@@ -739,10 +800,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
         }
 
+        timesTargeted[target]++;
+
         const totalEva = heroEvasion[target] + berserkerStage[target] * 0.1 + ninjaEvasion[target];
         const cappedEva = Math.min(totalEva, heroEvaCap[target]);
 
         if (guaranteedEvade[target] || (Math.random() < cappedEva && !heroArtNoEvasion[target])) {
+          timesEvaded[target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
@@ -754,6 +818,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (!survived) {
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
+                lordProtections[target]++;
                 hp[target] += dmg;
                 hp[lordHero] -= damageTaken[lordHero];
                 if (hp[lordHero] <= 0) {
@@ -798,11 +863,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
       // ─── Berserker stage update ───
       for (let i = 0; i < numHeroes; i++) {
-        if (heroBerserkerLevel[i] > 0) {
+        if (heroBerserkerLevel[i] > 0 && hp[i] > 0) {
           if (hp[i] >= berserkHp1[i] * finalHp[i]) berserkerStage[i] = 0;
-          else if (hp[i] >= berserkHp2[i] * finalHp[i]) berserkerStage[i] = 1;
-          else if (hp[i] >= berserkHp3[i] * finalHp[i]) berserkerStage[i] = 2;
-          else if (hp[i] > 0) berserkerStage[i] = 3;
+          else if (hp[i] >= berserkHp2[i] * finalHp[i]) { berserkerStage[i] = 1; berserkerBelowT1[i]++; }
+          else if (hp[i] >= berserkHp3[i] * finalHp[i]) { berserkerStage[i] = 2; berserkerBelowT1[i]++; berserkerBelowT2[i]++; }
+          else { berserkerStage[i] = 3; berserkerBelowT1[i]++; berserkerBelowT2[i]++; berserkerBelowT3[i]++; }
         }
 
         // Ninja loses innate when hit
@@ -906,6 +971,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           damageDealtAvg[i] += damageFight[i];
           damageDealtMax[i] = Math.max(damageDealtMax[i], damageFight[i]);
           damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
+          totalRoundsPerHero[i] += round;
         }
       }
 
@@ -913,6 +979,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (contFight) {
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
+          const hpBefore = hp[i];
           hp[i] = Math.min(hp[i] + heroLizard[i], finalHp[i]);
           
           if (heroIsCleric[i]) {
@@ -925,6 +992,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (liluHealFlat > 0) {
             hp[i] = Math.min(hp[i] + liluHealFlat * heroArtChampionMod[i], finalHp[i]);
           }
+          totalHealing[i] += hp[i] - hpBefore;
         }
       }
 
@@ -938,6 +1006,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (Math.random() < surviveChance[idx]) {
         hp[idx] = 1;
         surviveChance[idx] = 0;
+        critSurvivals[idx]++;
         return true;
       }
       return false;
@@ -968,14 +1037,34 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
 
   // Compute incoming damage stats (single hit, not per-sim averages)
+  // Calculate threat-based targeting rates
+  const totalThreat = activeHeroes.reduce((s, h) => s + (h.threat || 1), 0);
+
   const heroResults: HeroSimResult[] = activeHeroes.map((h, i) => {
     const normalHit = damageTaken[i];
     const aoeHit = Math.ceil(normalHit * (monster.aoe / monster.atk));
     const critHit = critDamageTaken[i];
-    // Shark: +1% per shark spirit count (heroShark is 0 here since spirits not yet wired)
     const sharkBonus = heroShark[i] * 0.01;
     const sharkNormal = Math.floor(finalAtk[i] * (1 + sharkBonus) * barrierMod);
     const sharkCrit = Math.floor(finalAtk[i] * (1 + sharkBonus) * heroCritMult[i] * barrierMod);
+    // Dinosaur first turn damage
+    const dinoBonus = heroDinosaur[i] * 0.01;
+    const dinoNormal = Math.floor(finalAtk[i] * (1 + dinoBonus) * barrierMod);
+    const dinoCrit = Math.floor(finalAtk[i] * (1 + dinoBonus) * heroCritMult[i] * barrierMod);
+    // Damage reduction
+    const dmgReduction = getDamageReductionForDef(finalDef[i], monster.def.r0);
+    // Per-turn damage
+    const avgRoundsForHero = totalRoundsPerHero[i] / actualSimCount;
+    const avgDmgPerTurn = avgRoundsForHero > 0 ? (damageDealtAvg[i] / actualSimCount) / avgRoundsForHero : 0;
+    // Berserker thresholds
+    let berserkerThresholds: { threshold: number; belowRate: number }[] | undefined;
+    if (heroBerserkerLevel[i] > 0) {
+      berserkerThresholds = [
+        { threshold: Math.round(berserkHp1[i] * 100), belowRate: Math.round((berserkerBelowT1[i] / actualSimCount) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp2[i] * 100), belowRate: Math.round((berserkerBelowT2[i] / actualSimCount) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp3[i] * 100), belowRate: Math.round((berserkerBelowT3[i] / actualSimCount) * 100 * 10) / 10 },
+      ];
+    }
 
     return {
       heroId: h.id,
@@ -986,17 +1075,32 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       avgDamageDealt: damageDealtAvg[i] / actualSimCount,
       maxDamageDealt: damageDealtMax[i],
       minDamageDealt: damageDealtMin[i] >= 1e9 ? 0 : damageDealtMin[i],
+      avgDamagePerTurn: avgDmgPerTurn,
       normalDamageTaken: normalHit,
       aoeDamageTaken: aoeHit,
       critDamageTakenVal: critHit,
       sharkNormalDmg: sharkNormal,
       sharkCritDmg: sharkCrit,
+      dinosaurNormalDmg: dinoNormal,
+      dinosaurCritDmg: dinoCrit,
       finalAtk: Math.round(finalAtk[i]),
       finalDef: Math.round(finalDef[i]),
       finalHp: Math.round(finalHp[i]),
       finalCritChance: Math.round(Math.min(heroCritChance[i], 1) * 100 * 10) / 10,
       finalCritDmg: Math.round(heroCritMult[i] * 100 * 10) / 10,
       finalEvasion: Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
+      damageReduction: Math.round(dmgReduction * 10) / 10,
+      targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
+      evasionRate: timesTargeted[i] > 0 ? Math.round((timesEvaded[i] / timesTargeted[i]) * 100 * 10) / 10 : 0,
+      berserkerThresholds,
+      chronomancerRetries: fateweaverPresent && isClass(h, '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')
+        ? Math.round((actualSimCount - timesQuestWon) / actualSimCount * 100 * 10) / 10
+        : undefined,
+      chronomancerRetrySuccessRate: retryWinRate,
+      totalHealingAvg: totalHealing[i] / actualSimCount,
+      healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
+      lordProtectionAvg: lordProtections[i] / actualSimCount,
+      critSurvivalCount: critSurvivals[i] / actualSimCount,
     };
   });
 
@@ -1011,6 +1115,110 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     roundLimitRate: (roundLimitTimes / actualSimCount) * 100,
     totalSimulations: actualSimCount,
     retrySimulations,
+  };
+}
+
+// ─── Random Mini-Boss Simulation ────────────────────────────────────────────
+
+function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Hero[], simCount: number): SimulationResult {
+  // 2% chance mini-boss appears, 20% chance each type
+  const MINI_BOSS_SPAWN_CHANCE = 0.02;
+  const MINI_BOSS_TYPES: MiniBossType[] = ['huge', 'agile', 'dire', 'wealthy', 'legendary'];
+  const MINI_BOSS_TYPE_CHANCE = 0.2; // 20% each
+
+  // Run simulations for 'none' and each mini-boss type with weighted counts
+  const normalSimCount = Math.round(simCount * (1 - MINI_BOSS_SPAWN_CHANCE));
+  const miniBossSimCountTotal = simCount - normalSimCount;
+  const perTypeSimCount = Math.round(miniBossSimCountTotal * MINI_BOSS_TYPE_CHANCE);
+
+  // Run normal simulation
+  const normalResult = runCombatSimulation({
+    ...config,
+    miniBoss: 'none',
+    simulationCount: normalSimCount,
+  });
+
+  // Run each mini-boss type simulation
+  const miniBossResults: MiniBossResult[] = [
+    {
+      type: 'normal',
+      encounters: normalSimCount,
+      wins: Math.round(normalResult.winRate / 100 * normalSimCount),
+      winRate: normalResult.winRate,
+      avgRounds: normalResult.avgRounds,
+      heroResults: normalResult.heroResults,
+    },
+  ];
+
+  let totalWins = Math.round(normalResult.winRate / 100 * normalSimCount);
+  let totalRounds = normalResult.avgRounds * normalSimCount;
+  let totalSims = normalSimCount;
+
+  for (const mbType of MINI_BOSS_TYPES) {
+    const mbResult = runCombatSimulation({
+      ...config,
+      miniBoss: mbType,
+      simulationCount: perTypeSimCount,
+    });
+
+    const wins = Math.round(mbResult.winRate / 100 * perTypeSimCount);
+    miniBossResults.push({
+      type: mbType,
+      encounters: perTypeSimCount,
+      wins,
+      winRate: mbResult.winRate,
+      avgRounds: mbResult.avgRounds,
+      heroResults: mbResult.heroResults,
+    });
+
+    totalWins += wins;
+    totalRounds += mbResult.avgRounds * perTypeSimCount;
+    totalSims += perTypeSimCount;
+  }
+
+  // Calculate weighted averages
+  const combinedWinRate = (totalWins / totalSims) * 100;
+  const combinedAvgRounds = totalRounds / totalSims;
+
+  // Aggregate hero results (weighted average)
+  const aggregatedHeroResults: HeroSimResult[] = normalResult.heroResults.map((hr, idx) => {
+    let survivalSum = hr.survivalRate * normalSimCount;
+    let dmgSum = hr.avgDamageDealt * normalSimCount;
+    let maxDmg = hr.maxDamageDealt;
+    let minDmg = hr.minDamageDealt;
+
+    for (const mbr of miniBossResults.slice(1)) {
+      const mbHr = mbr.heroResults[idx];
+      if (mbHr) {
+        survivalSum += mbHr.survivalRate * mbr.encounters;
+        dmgSum += mbHr.avgDamageDealt * mbr.encounters;
+        maxDmg = Math.max(maxDmg, mbHr.maxDamageDealt);
+        minDmg = Math.min(minDmg, mbHr.minDamageDealt);
+      }
+    }
+
+    return {
+      ...hr,
+      survivalRate: survivalSum / totalSims,
+      avgDamageDealt: dmgSum / totalSims,
+      maxDamageDealt: maxDmg,
+      minDamageDealt: minDmg,
+    };
+  });
+
+  return {
+    winRate: Math.round(combinedWinRate * 100) / 100,
+    rawWinRate: Math.round(combinedWinRate * 100) / 100,
+    avgRounds: Math.round(combinedAvgRounds * 100) / 100,
+    minRounds: Math.min(normalResult.minRounds, ...miniBossResults.slice(1).map(m => {
+      // Need to get min from the actual simulation - use 1 as placeholder
+      return 1;
+    })),
+    maxRounds: Math.max(normalResult.maxRounds, ...miniBossResults.slice(1).map(m => m.avgRounds * 2)), // Approximate
+    heroResults: aggregatedHeroResults,
+    roundLimitRate: normalResult.roundLimitRate,
+    totalSimulations: totalSims,
+    miniBossResults,
   };
 }
 

@@ -160,6 +160,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
 
   const isFull = localIds.size >= maxMembers;
   const selectedHeroes = Array.from(localIds).map(id => heroMap.get(id)).filter(Boolean) as Hero[];
+  const hasChampion = selectedHeroes.some(h => h.type === 'champion');
 
   const cycleJobMode = () => setJobImageMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon');
   const jobModeLabel = jobImageMode === 'icon' ? '🎭' : jobImageMode === 'illust' ? '🖼️' : '✖';
@@ -329,7 +330,8 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
               <tbody>
                 {filtered.map(hero => {
                   const isSelected = localIds.has(hero.id);
-                  const disabled = isFull && !isSelected;
+                  const isOtherChampion = hero.type === 'champion' && hasChampion && !isSelected;
+                  const disabled = (isFull && !isSelected) || isOtherChampion;
                   const belowMin = hero.power > 0 && hero.power < minPower;
                   const iconPath = hero.type === 'champion' && hero.championName
                     ? getChampionImagePath(hero.championName)
@@ -343,7 +345,8 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       onClick={() => !disabled && handleToggle(hero.id)}
                       className={`border-b border-border/30 cursor-pointer transition-colors ${
                         isSelected ? 'bg-primary/10' : disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-secondary/30'
-                      }`}>
+                      }`}
+                      title={isOtherChampion ? '파티에 챔피언은 1명만 가능' : undefined}>
                       {/* 유형 */}
                       <td className="py-1.5 px-1.5 text-center">
                         <span className={`px-1.5 py-0.5 rounded text-[10px] ${hero.type === 'champion' ? 'bg-accent/20 text-accent' : 'bg-primary/20 text-primary'}`}>
@@ -425,7 +428,8 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 py-1">
               {filtered.map(hero => {
                 const isSelected = localIds.has(hero.id);
-                const disabled = isFull && !isSelected;
+                const isOtherChampion = hero.type === 'champion' && hasChampion && !isSelected;
+                const disabled = (isFull && !isSelected) || isOtherChampion;
                 const belowMin = hero.power > 0 && hero.power < minPower;
                 const isChampion = hero.type === 'champion';
                 const illustPath = isChampion && hero.championName
