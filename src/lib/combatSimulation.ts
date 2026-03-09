@@ -1037,6 +1037,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           damageDealtMax[i] = Math.max(damageDealtMax[i], damageFight[i]);
           damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
           totalRoundsPerHero[i] += round;
+          totalDmgTakenAccum[i] += simDmgTaken[i];
+          totalTimesHitAccum[i] += simTimesHit[i];
         }
       }
 
