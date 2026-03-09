@@ -363,10 +363,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                         {jobImageMode === 'none' ? (
                           <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
                         ) : jobImageMode === 'icon' ? (
-                          <div className="flex items-center gap-1 justify-center">
-                            {iconPath && <img src={iconPath} alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                            <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
-                          </div>
+                          <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
                         ) : (
                           <div className="flex flex-col items-center gap-0.5">
                             <div className="w-16 h-16 overflow-hidden rounded border border-border/30 bg-secondary/20">
