@@ -311,6 +311,8 @@ export default function QuestSimulation() {
         barrier: currentQuest.barrier,
         barrierElement: bElements[0] || null,
       };
+      // Boss quests never have mini-bosses
+      const effectiveMiniBoss = currentQuest.isBoss ? 'none' as MiniBossType : selectedMiniBoss;
       // Always pass precomputed stats (buffedStats includes champion + aurasong + booster)
       const precomputed = buffedStats.map(bs => ({
         atk: bs.atk,
