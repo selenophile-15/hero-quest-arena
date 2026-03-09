@@ -72,6 +72,9 @@ export interface HeroSimResult {
   avgDamageDealt: number;
   maxDamageDealt: number;
   minDamageDealt: number;
+  // Normal vs Crit damage breakdown
+  normalDmgDealtAvg: number;   // Average total normal damage
+  critDmgDealtAvg: number;     // Average total crit damage
   // Per-turn damage
   avgDamagePerTurn: number;
   // Incoming damage stats (per hit, not total)
@@ -81,6 +84,7 @@ export interface HeroSimResult {
   // Total incoming damage (averaged across sims)
   totalDamageTakenAvg: number;
   avgDamageTakenPerHit: number;
+  avgDamageTakenPerTurn: number; // Average damage taken per turn
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
@@ -832,6 +836,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
   const timesSurvived = new Float64Array(numHeroes);
   const damageDealtAvg = new Float64Array(numHeroes);
+  const normalDmgDealtAccum = new Float64Array(numHeroes);
+  const critDmgDealtAccum = new Float64Array(numHeroes);
   const damageDealtMax = new Float64Array(numHeroes);
   const damageDealtMin = new Float64Array(numHeroes).fill(1e9);
   const hpRemainingAvg = new Float64Array(numHeroes);
@@ -861,6 +867,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Per-simulation state
     const hp = new Float64Array(numHeroes);
     const damageFight = new Float64Array(numHeroes);
+    const normalDmgFight = new Float64Array(numHeroes);
+    const critDmgFight = new Float64Array(numHeroes);
     const surviveChance = new Float64Array(numHeroes);
     const berserkerStage = new Int32Array(numHeroes);
     const guaranteedCrit = new Uint8Array(numHeroes);
@@ -1149,6 +1157,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         mobHpCurrent -= damage;
         damageFight[jj] += damage;
+        if (isCrit) critDmgFight[jj] += damage;
+        else normalDmgFight[jj] += damage;
 
         // Dark Knight / Death Knight execute at 10% HP
         if (heroIsDarkKnight[jj] && mobHpCurrent < mobHp * 0.1) {
@@ -1190,6 +1200,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (!contFight) {
         for (let i = 0; i < numHeroes; i++) {
           damageDealtAvg[i] += damageFight[i];
+          normalDmgDealtAccum[i] += normalDmgFight[i];
+          critDmgDealtAccum[i] += critDmgFight[i];
           damageDealtMax[i] = Math.max(damageDealtMax[i], damageFight[i]);
           damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
           totalRoundsPerHero[i] += round;
@@ -1324,12 +1336,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       avgDamageDealt: damageDealtAvg[i] / actualSimCount,
       maxDamageDealt: damageDealtMax[i],
       minDamageDealt: damageDealtMin[i] >= 1e9 ? 0 : damageDealtMin[i],
+      normalDmgDealtAvg: normalDmgDealtAccum[i] / actualSimCount,
+      critDmgDealtAvg: critDmgDealtAccum[i] / actualSimCount,
       avgDamagePerTurn: avgDmgPerTurn,
       normalDamageTaken: normalHit,
       aoeDamageTaken: aoeHit,
       critDamageTakenVal: critHit,
       totalDamageTakenAvg: Math.round(avgTotalDmgTaken),
       avgDamageTakenPerHit: avgTimesHit > 0 ? Math.round(avgTotalDmgTaken / avgTimesHit) : 0,
+      avgDamageTakenPerTurn: avgRoundsForHero > 0 ? Math.round(avgTotalDmgTaken / avgRoundsForHero) : 0,
       sharkNormalDmg: sharkNormal,
       sharkCritDmg: sharkCrit,
       dinosaurNormalDmg: dinoNormal,
@@ -1345,7 +1360,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       finalCritAttack: effectiveCritAttack,
       finalEvasion: heroArtNoEvasion[i] ? 0 : Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
       damageApplicationRate: dmgAppRate,
-      targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
+      targetingRate: Math.round(((h.threat || 1) / totalThreat) * 100 * 10) / 10,
       evasionRate: timesTargeted[i] > 0 ? Math.round((timesEvaded[i] / timesTargeted[i]) * 100 * 10) / 10 : 0,
       monsterCritChance,
       berserkerThresholds,

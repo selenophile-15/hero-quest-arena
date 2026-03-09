@@ -311,6 +311,8 @@ export default function QuestSimulation() {
         barrier: currentQuest.barrier,
         barrierElement: bElements[0] || null,
       };
+      // Boss quests never have mini-bosses
+      const effectiveMiniBoss = currentQuest.isBoss ? 'none' as MiniBossType : selectedMiniBoss;
       // Always pass precomputed stats (buffedStats includes champion + aurasong + booster)
       const precomputed = buffedStats.map(bs => ({
         atk: bs.atk,
@@ -323,7 +325,7 @@ export default function QuestSimulation() {
       const result = runCombatSimulation({
         heroes: selectedHeroes,
         monster: questMonster,
-        miniBoss: selectedMiniBoss,
+        miniBoss: effectiveMiniBoss,
         booster: { type: selectedBooster },
         questTypeKey: selectedQuestType,
         regionName: currentRegion.name,
@@ -1464,8 +1466,8 @@ export default function QuestSimulation() {
             )}
           </div>
 
-          {/* Mini-boss breakdown (only for random mode) */}
-          {simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
+          {/* Mini-boss breakdown (only for random mode, not boss quests) */}
+          {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
             <div className="mb-4">
               <div className="text-xs text-muted-foreground mb-2 font-medium">미니보스별 결과</div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
@@ -1506,22 +1508,24 @@ export default function QuestSimulation() {
           {/* Per-hero results - full width detailed table */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
-              {simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
-                <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
-                  <SelectTrigger className="h-6 w-[100px] text-[10px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">전체</SelectItem>
-                    <SelectItem value="normal">일반</SelectItem>
-                    <SelectItem value="huge">거대한</SelectItem>
-                    <SelectItem value="agile">민첩한</SelectItem>
-                    <SelectItem value="dire">흉포한</SelectItem>
-                    <SelectItem value="wealthy">부유한</SelectItem>
-                    <SelectItem value="legendary">전설의</SelectItem>
-                  </SelectContent>
-                </Select>
+              {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
+                <>
+                  <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
+                  <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
+                    <SelectTrigger className="h-6 w-[100px] text-[10px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value="normal">일반</SelectItem>
+                      <SelectItem value="huge">거대한</SelectItem>
+                      <SelectItem value="agile">민첩한</SelectItem>
+                      <SelectItem value="dire">흉포한</SelectItem>
+                      <SelectItem value="wealthy">부유한</SelectItem>
+                      <SelectItem value="legendary">전설의</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </>
               )}
             </div>
             {(() => {
@@ -1545,6 +1549,7 @@ export default function QuestSimulation() {
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>가하는 대미지</th>
+                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>일반/치명 비중</th>
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>딜링 비중</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
@@ -1552,6 +1557,8 @@ export default function QuestSimulation() {
                             <th className="text-center py-1 px-2">턴당 평균</th>
                             <th className="text-center py-1 px-2">최소</th>
                             <th className="text-center py-1 px-2">최대</th>
+                            <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
+                            <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2 border-l border-border/20">비율</th>
                             <th className="text-center py-1 px-2 w-24">그래프</th>
                           </tr>
@@ -1567,6 +1574,17 @@ export default function QuestSimulation() {
                                 <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamagePerTurn))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.minDamageDealt))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
+                                {/* Normal/Crit damage breakdown */}
+                                {(() => {
+                                  const normalPct = hr.avgDamageDealt > 0 ? (hr.normalDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
+                                  const critPct = hr.avgDamageDealt > 0 ? (hr.critDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
+                                  return (
+                                    <>
+                                      <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{normalPct.toFixed(1)}%</td>
+                                      <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{critPct.toFixed(1)}%</td>
+                                    </>
+                                  );
+                                })()}
                                 <td className="py-1 px-2 text-center font-mono text-amber-400 border-l border-border/20 whitespace-nowrap">{dmgPct.toFixed(1)}%</td>
                                 <td className="py-1 px-2">
                                   <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
@@ -1584,7 +1602,6 @@ export default function QuestSimulation() {
                   </div>
 
                   {/* Table 1.5: 특수 대미지 (상어 / 첫턴 / 광전사) */}
-                  {displayResults.some(hr => hr.hasSharkSpirit || hr.hasDinosaurSpirit || hr.isSamuraiOrDaimyo || hr.berserkerAtkBonus) && (
                   <div>
                     <div className="text-[10px] text-muted-foreground mb-1 font-medium">🦈 특수 대미지 (상어 / 첫턴 / 광전사)</div>
                     <div className="overflow-x-auto">
@@ -1634,7 +1651,6 @@ export default function QuestSimulation() {
                       </table>
                     </div>
                   </div>
-                  )}
 
                   {/* Table 2: 생존 & 방어 (with 받는 대미지) */}
                   <div>
@@ -1650,13 +1666,13 @@ export default function QuestSimulation() {
                           <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">생존률</th>
                             <th className="text-center py-1 px-2">대미지 보정</th>
-                            <th className="text-center py-1 px-2">단일 피격률</th>
+                            <th className="text-center py-1 px-2">피격 확률</th>
                             <th className="text-center py-1 px-2">회피 비율</th>
                             <th className="text-center py-1 px-2 text-red-400">몬스터 치확</th>
-                            <th className="text-center py-1 px-2 border-l border-border/20">평균</th>
-                            <th className="text-center py-1 px-2">일반</th>
+                            <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
-                            <th className="text-center py-1 px-2">총 평균</th>
+                            <th className="text-center py-1 px-2">턴당 평균</th>
+                            <th className="text-center py-1 px-2">받은 총</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1675,10 +1691,10 @@ export default function QuestSimulation() {
                               <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{hr.targetingRate.toFixed(1)}%</td>
                               <td className="py-1 px-2 text-center font-mono text-teal-400 whitespace-nowrap">{hr.evasionRate.toFixed(1)}%</td>
                               <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${hr.monsterCritChance > 10 ? 'text-red-400 font-bold' : 'text-orange-300'}`}>{hr.monsterCritChance}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.avgDamageTakenPerHit)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-blue-300 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
                               <td className="py-1 px-2 text-center font-mono text-purple-400 whitespace-nowrap">{formatNumber(hr.critDamageTakenVal)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-orange-300 whitespace-nowrap">{formatNumber(hr.avgDamageTakenPerTurn)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-red-400 font-bold whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
                             </tr>
                           ))}
                         </tbody>
