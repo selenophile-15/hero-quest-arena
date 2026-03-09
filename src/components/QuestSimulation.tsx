@@ -1661,7 +1661,7 @@ export default function QuestSimulation() {
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>기본</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>받는 대미지</th>
+                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>받는 대미지</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">생존률</th>
@@ -1672,8 +1672,7 @@ export default function QuestSimulation() {
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2">턴당 평균</th>
-                            <th className="text-center py-1 px-2">총 평균</th>
-                            <th className="text-center py-1 px-2">받은 총 대미지</th>
+                            <th className="text-center py-1 px-2">받은 총</th>
                           </tr>
                         </thead>
                         <tbody>
