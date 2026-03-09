@@ -444,8 +444,8 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[85vh] flex flex-col overflow-hidden">
-        <SheetHeader className="shrink-0 pb-2">
+      <SheetContent side="right-wide" className="p-0 flex flex-col overflow-hidden">
+        <SheetHeader className="px-4 pt-4 pb-2 border-b border-border flex-shrink-0">
           <SheetTitle className="text-foreground flex items-center gap-2 text-lg">
             📊 챔피언 스탯 계산표 — {championName}
             {r.promoted && <span className="text-xs px-2 py-0.5 rounded bg-yellow-600/60 text-yellow-200">승급</span>}
