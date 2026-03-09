@@ -503,7 +503,7 @@ export default function QuestSimulation() {
                   </button>
                   {(['normal', 'super', 'mega'] as const).map(bType => {
                     const names: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
-                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40%, 치확 +10%', mega: '공/방 +80%, 치확 +25%, 치댐 +50%' };
+                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40%, 치확 +10%', mega: '공/방 +80%, 치확 +25%, 치명타 대미지 +50%' };
                     const bEntry = commonData?.boosters?.[names[bType]];
                     return (
                       <button
