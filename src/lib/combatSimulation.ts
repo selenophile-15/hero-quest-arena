@@ -1133,6 +1133,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       ];
     }
 
+    const effectiveAtk = Math.round(finalAtk[i] * barrierMod);
+    const effectiveCritAttack = Math.round(finalAtk[i] * heroCritMult[i] * barrierMod);
+    const avgTotalDmgTaken = totalDmgTakenAccum[i] / actualSimCount;
+    const avgTimesHit = totalTimesHitAccum[i] / actualSimCount;
+
     return {
       heroId: h.id,
       heroName: h.name,
@@ -1146,15 +1151,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       normalDamageTaken: normalHit,
       aoeDamageTaken: aoeHit,
       critDamageTakenVal: critHit,
+      totalDamageTakenAvg: Math.round(avgTotalDmgTaken),
+      avgDamageTakenPerHit: avgTimesHit > 0 ? Math.round(avgTotalDmgTaken / avgTimesHit) : 0,
       sharkNormalDmg: sharkNormal,
       sharkCritDmg: sharkCrit,
       dinosaurNormalDmg: dinoNormal,
       dinosaurCritDmg: dinoCrit,
-      finalAtk: Math.round(finalAtk[i]),
+      hasSharkSpirit: heroShark[i] > 0,
+      hasDinosaurSpirit: heroDinosaur[i] > 0,
+      isSamuraiOrDaimyo: heroIsSamurai[i] || heroIsDaimyo[i],
+      finalAtk: effectiveAtk,
       finalDef: Math.round(finalDef[i]),
       finalHp: Math.round(finalHp[i]),
       finalCritChance: Math.round(Math.min(heroCritChance[i], 1) * 100 * 10) / 10,
       finalCritDmg: Math.round(heroCritMult[i] * 100 * 10) / 10,
+      finalCritAttack: effectiveCritAttack,
       finalEvasion: Math.round(Math.min(Math.max(heroEvasion[i], 0), heroEvaCap[i]) * 100 * 10) / 10,
       damageReduction: Math.round(dmgReduction * 10) / 10,
       targetingRate: timesTargeted[i] > 0 ? Math.round((timesTargeted[i] / actualSimCount) * 100 * 10) / 10 : ((h.threat || 1) / totalThreat) * 100,
