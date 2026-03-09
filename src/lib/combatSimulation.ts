@@ -68,18 +68,26 @@ export interface HeroSimResult {
   normalDamageTaken: number;     // Single normal hit damage
   aoeDamageTaken: number;        // Single AoE hit damage
   critDamageTakenVal: number;    // Single crit hit damage
+  // Total incoming damage (averaged across sims)
+  totalDamageTakenAvg: number;
+  avgDamageTakenPerHit: number;
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
   // Dinosaur (first turn) stats
   dinosaurNormalDmg: number;     // First turn normal damage with dinosaur
   dinosaurCritDmg: number;       // First turn crit damage with dinosaur
-  // Final stat snapshots used in simulation
+  // Spirit flags
+  hasSharkSpirit: boolean;
+  hasDinosaurSpirit: boolean;
+  isSamuraiOrDaimyo: boolean;
+  // Final stat snapshots used in simulation (ATK includes barrierMod)
   finalAtk: number;
   finalDef: number;
   finalHp: number;
   finalCritChance: number;       // %
   finalCritDmg: number;          // %
+  finalCritAttack: number;       // ATK * CRIT.D (actual crit damage)
   finalEvasion: number;          // %
   // Damage reduction value
   damageReduction: number;       // % reduction from defense
