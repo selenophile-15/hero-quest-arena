@@ -464,6 +464,12 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       {flatBonus ? `+${formatNumber(flatBonus)}` : '0'}
                     </td>
                   </tr>
+                  <tr className="border-b border-border/50 bg-secondary/30">
+                    <td className="py-1.5 text-foreground font-semibold">소계 (공통% 적용 전)</td>
+                    <td className="py-1.5 text-right tabular-nums font-bold text-foreground">
+                      {formatNumber(Math.round(baseStat + seedStat + equipSlots.reduce((sum, slot, n) => sum + getSlotStatDirect(slot, finalKey as keyof EquipSlotCalc), 0) + flatBonus))}
+                    </td>
+                  </tr>
                   <tr className="border-b border-border/30">
                     <td className="py-1.5 text-foreground/80">× (1 + 공통%)</td>
                     <td className={`py-1.5 text-right tabular-nums font-medium ${pctBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
