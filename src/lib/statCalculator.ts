@@ -247,9 +247,9 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   }
 
   // Final formula: (base + seed + Σequip + flat) × (1 + pct/100)
-  const totalAtk = Math.floor((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
-  const totalDef = Math.floor((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
-  const totalHp = Math.floor((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp) * (1 + bonusSummary.pctHp / 100));
+  const totalAtk = Math.round((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
+  const totalDef = Math.round((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
+  const totalHp = Math.round((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp) * (1 + bonusSummary.pctHp / 100));
 
   // Additive stats
   let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate;
