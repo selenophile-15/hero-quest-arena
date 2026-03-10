@@ -448,20 +448,28 @@ export async function calculateEquipmentStats(
     }
 
     // Final slot stats: afterSpellknight × (1 + bonus%)
-    let finalAtk = Math.floor(afterSpellknight.atk * (1 + bonusAtkPct / 100));
-    let finalDef = Math.floor(afterSpellknight.def * (1 + bonusDefPct / 100));
-    let finalHp = Math.floor(afterSpellknight.hp * (1 + bonusHpPct / 100));
+    let finalAtk = afterSpellknight.atk * (1 + bonusAtkPct / 100);
+    let finalDef = afterSpellknight.def * (1 + bonusDefPct / 100);
+    let finalHp = afterSpellknight.hp * (1 + bonusHpPct / 100);
 
     // 화살통 보너스: 보너스 적용 후 마지막에 보너스 전 값의 30%를 더함
     let quiverBonusAtk = 0, quiverBonusDef = 0, quiverBonusHp = 0;
     if (hasQuiver && ['bow', 'crossbow', 'gun'].includes(item.type)) {
-      quiverBonusAtk = Math.floor(afterSpellknight.atk * 0.3);
-      quiverBonusDef = Math.floor(afterSpellknight.def * 0.3);
-      quiverBonusHp = Math.floor(afterSpellknight.hp * 0.3);
+      quiverBonusAtk = afterSpellknight.atk * 0.3;
+      quiverBonusDef = afterSpellknight.def * 0.3;
+      quiverBonusHp = afterSpellknight.hp * 0.3;
       finalAtk += quiverBonusAtk;
       finalDef += quiverBonusDef;
       finalHp += quiverBonusHp;
     }
+
+    // 모든 보너스 적용 후 반올림하여 정수화
+    quiverBonusAtk = Math.round(quiverBonusAtk);
+    quiverBonusDef = Math.round(quiverBonusDef);
+    quiverBonusHp = Math.round(quiverBonusHp);
+    finalAtk = Math.round(finalAtk);
+    finalDef = Math.round(finalDef);
+    finalHp = Math.round(finalHp);
     const finalCrit = baseCrit;
     const finalEvasion = baseEvasion;
 
