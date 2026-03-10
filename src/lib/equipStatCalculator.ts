@@ -173,34 +173,25 @@ export function getElementEnchantStats(
   };
 }
 
-export const SPIRIT_TIER: Record<string, number> = {
-  '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
-  '기린': 12, '크람푸스': 12, '크리스마스': 12,
-  '유니콘': 10, '피닉스': 10, '히드라': 10,
-  '드래곤': 9,
-  '곰': 7, '상어': 7, '공룡': 7, '거북이': 7, '해파리': 7,
-  '늑대': 4, '양': 4, '독수리': 4, '황소': 4, '독사': 4, '고양이': 4, '토끼': 4, '문드라': 4,
-};
-
 export function getSpiritEnchantStats(
   spiritData: Record<string, any>,
   spiritName: string,
   affinity: boolean
 ): EnchantStats {
-  const tier = SPIRIT_TIER[spiritName];
-  if (!tier) return { atk: 0, def: 0, hp: 0 };
-  const tierKey = `${tier}티어`;
-  const tierGroup = spiritData[tierKey];
-  if (!tierGroup) return { atk: 0, def: 0, hp: 0 };
-  const spiritEntry = tierGroup[spiritName];
-  if (!spiritEntry) return { atk: 0, def: 0, hp: 0 };
-  const sub = affinity ? spiritEntry['O'] : spiritEntry['X'];
-  if (!sub) return { atk: 0, def: 0, hp: 0 };
-  return {
-    atk: sub['영혼_공격력'] || 0,
-    def: sub['영혼_방어력'] || 0,
-    hp: sub['영혼_체력'] || 0,
-  };
+  // Search all tiers dynamically instead of using a hardcoded tier map
+  for (const [, tierGroup] of Object.entries(spiritData)) {
+    if (typeof tierGroup !== 'object' || tierGroup === null) continue;
+    const spiritEntry = tierGroup[spiritName];
+    if (!spiritEntry) continue;
+    const sub = affinity ? spiritEntry['O'] : spiritEntry['X'];
+    if (!sub) return { atk: 0, def: 0, hp: 0 };
+    return {
+      atk: sub['영혼_공격력'] || 0,
+      def: sub['영혼_방어력'] || 0,
+      hp: sub['영혼_체력'] || 0,
+    };
+  }
+  return { atk: 0, def: 0, hp: 0 };
 }
 
 export function capEnchant(enchantVal: number, baseVal: number): number {
