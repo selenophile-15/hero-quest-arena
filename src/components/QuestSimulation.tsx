@@ -652,7 +652,7 @@ export default function QuestSimulation() {
                           {([
                             { id: 'random', label: '랜덤', desc: '2% 확률로 미니보스 등장', color: 'text-primary' },
                             { id: 'none', label: '없음 (항상)', desc: '미니보스 없음 고정', color: '' },
-                            { id: 'huge', label: '거대한 (항상)', desc: 'HP ×2, 광역 확률 ×2', color: 'text-green-400' },
+                            { id: 'huge', label: '거대한 (항상)', desc: 'HP ×2, 광역 확률 ×3', color: 'text-green-400' },
                             { id: 'agile', label: '민첩한 (항상)', desc: '회피 40%', color: 'text-blue-400' },
                             { id: 'dire', label: '흉포한 (항상)', desc: 'HP ×1.5, 치확 30%', color: 'text-red-400' },
                             { id: 'wealthy', label: '부유한 (항상)', desc: '보상 증가', color: 'text-yellow-400' },
