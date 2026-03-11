@@ -376,9 +376,9 @@ export async function calculateEquipmentStats(
     const baseEvasion = getItemBaseStat(item, '장비_회피%');
 
     // Quality-applied stats
-    const qualityAtk = Math.floor(baseAtk * qualityMult);
-    const qualityDef = Math.floor(baseDef * qualityMult);
-    const qualityHp = Math.floor(baseHp * qualityMult);
+    const qualityAtk = Math.round(baseAtk * qualityMult);
+    const qualityDef = Math.round(baseDef * qualityMult);
+    const qualityHp = Math.round(baseHp * qualityMult);
 
     // Element enchantment
     let elementRaw: EnchantStats = { atk: 0, def: 0, hp: 0 };
