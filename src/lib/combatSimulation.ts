@@ -376,7 +376,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       break;
     case 'huge':
       mobHpMod = 2.0;
-      mobAoeChanceMod = 2.0;
+      mobAoeChanceMod = 3.0;
       break;
     case 'wealthy':
       // No stat changes, only loot bonus
