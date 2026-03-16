@@ -895,7 +895,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 { icon: STAT_ICON_MAP.atk, value: champCalcResult?.finalAtk ?? atk, suffix: '' },
                 { icon: STAT_ICON_MAP.def, value: champCalcResult?.finalDef ?? def, suffix: '' },
                 { icon: STAT_ICON_MAP.crit, value: champCalcResult?.totalCrit ?? crit, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critDmg, value: champCalcResult?.totalCritDmg ?? critDmg, suffix: ' %' },
+                { icon: STAT_ICON_MAP.critDmg, value: champCalcResult?.totalCritDmg ?? critDmg, suffix: '', isCritDmg: true },
                 { icon: STAT_ICON_MAP.critAttack, value: champCalcResult?.critAttack ?? critAttack, suffix: '' },
                 { icon: STAT_ICON_MAP.evasion, value: champCalcResult?.totalEvasion ?? evasion, suffix: ' %' },
                 { icon: STAT_ICON_MAP.threat, value: champCalcResult?.totalThreat ?? threat, suffix: '' },
@@ -903,7 +903,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 <div key={i} className="flex items-center gap-2 py-0.5 px-1">
                   <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
                   <span className="text-sm text-foreground ml-auto tabular-nums">
-                    {stat.value ? `${formatNumber(stat.value)}${stat.suffix}` : '-'}
+                    {stat.value ? ((stat as any).isCritDmg ? `x${(Number(stat.value) / 100).toFixed(1)}` : `${formatNumber(stat.value)}${stat.suffix}`) : '-'}
                   </span>
                 </div>
               ))}
