@@ -367,6 +367,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       position,
       seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
       equipmentElements: equipElements,
+      elementManual,
       equipmentSlots,
       createdAt: hero?.createdAt || new Date().toISOString(),
     });
