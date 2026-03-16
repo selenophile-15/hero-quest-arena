@@ -726,8 +726,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 { icon: STAT_ICON_MAP.atk, value: atk, suffix: '' },
                 { icon: STAT_ICON_MAP.def, value: def, suffix: '' },
                 { icon: STAT_ICON_MAP.crit, value: crit, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
+                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: '', isCritDmg: true },
+                { icon: STAT_ICON_MAP.critAttack, value: calcStats?.totalCritAttack ?? critAttack, suffix: '' },
                 { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %', isEvasion: true },
                 { icon: STAT_ICON_MAP.threat, value: threat, suffix: '' },
               ].map((stat, i) => (
