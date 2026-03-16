@@ -23,8 +23,9 @@ export interface EquipSlotCalc {
   itemType: string;       // file type (sword, shield, etc.)
   itemTypeKor: string;    // Korean type name
   category: string;       // weapon, armor, accessory
+  judgmentTypes: string[]; // For dual wield: actual weapon types for matching
 
-  // Base stats (common grade)
+  // Base stats (common grade, after unique element/spirit adjustment)
   baseAtk: number;
   baseDef: number;
   baseHp: number;
