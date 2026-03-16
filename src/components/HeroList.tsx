@@ -566,7 +566,7 @@ export default function HeroList() {
                   { icon: STAT_ICON_MAP.atk, value: hero.atk, suffix: '' },
                   { icon: STAT_ICON_MAP.def, value: hero.def, suffix: '' },
                   { icon: STAT_ICON_MAP.crit, value: hero.crit, suffix: ' %' },
-                  { icon: STAT_ICON_MAP.critDmg, value: hero.critDmg, suffix: ' %' },
+                  { icon: STAT_ICON_MAP.critDmg, value: hero.critDmg, suffix: '', isCritDmg: true },
                   { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
                   { icon: STAT_ICON_MAP.evasion, value: hero.evasion, suffix: ' %', isEvasion: true, jobName: hero.heroClass },
                   { icon: STAT_ICON_MAP.threat, value: hero.threat, suffix: '' },
