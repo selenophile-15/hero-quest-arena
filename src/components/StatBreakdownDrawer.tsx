@@ -118,10 +118,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const jobSources = bonus?.sources.filter(s => s.type === 'job') || [];
 
     // Get equipped item types to filter 해당 장비 bonuses
+    // Include judgmentTypes for dual wield items
     const equippedItemTypes = new Set(
       (calcStats?.equipResult?.slots || [])
         .filter(s => s.itemName)
-        .map(s => s.itemTypeKor)
+        .flatMap(s => s.judgmentTypes?.length ? s.judgmentTypes : [s.itemTypeKor])
     );
     const equipBonusDataRaw = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0, 해당Sources: [], 모든Sources: [] };
     // Only show 해당 장비 sources for equipment types that are actually equipped
@@ -403,7 +404,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </td>
                       </tr>
                       {/* 화살통 보너스: 보너스 적용 후 마지막에 추가 */}
-                      {slot && ['bow', 'crossbow', 'gun'].includes(slot.itemType) && 
+                      {slot && slot.itemType === 'bow' && 
                         calcStats?.equipResult?.slots?.some((s: any) => s.itemType === 'quiver') && (
                         <tr className="border-b border-border/20">
                           <td className="px-2 py-1 text-green-400 text-[11px]">
@@ -742,7 +743,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 <tbody>
                   <tr className="border-b border-border/30">
                     <td className="py-1.5 text-foreground/70">기본 치명타 대미지</td>
-                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseCritDmgVal}%</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">x{(baseCritDmgVal / 100).toFixed(1)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -768,7 +769,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+{val}%</td>
+                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+x{(val / 100).toFixed(1)}</td>
                       </tr>
                     );
                   })}
@@ -784,19 +785,19 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   <tbody>
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 text-foreground/80">기본 치명타 대미지</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground">{baseCritDmgVal}%</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">x{(baseCritDmgVal / 100).toFixed(1)}</td>
                     </tr>
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusCritDmg}%</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">+x{(bonusCritDmg / 100).toFixed(1)}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
-                <span className="text-sm font-bold text-foreground">최종 치명타 대미지%</span>
+                <span className="text-sm font-bold text-foreground">최종 치명타 대미지 계수</span>
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
-                  {totalCritDmg}%
+                  x{(totalCritDmg / 100).toFixed(1)}
                 </span>
               </div>
               <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
@@ -809,10 +810,10 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
             <div className="px-3 pb-3">
               <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                ※ 치명타 대미지% = 기본 + 스킬/영혼 보너스
+                ※ 치명타 대미지 계수 = 기본 + 스킬/영혼 보너스
               </p>
               <p className="text-[10px] text-muted-foreground text-center leading-relaxed mt-1">
-                ※ 최종 치명타 대미지 = 최종 공격력 × 치명타 대미지% / 100
+                ※ 최종 치명타 대미지 = 최종 공격력 × 치명타 대미지 계수
               </p>
             </div>
           </div>

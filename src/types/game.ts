@@ -24,6 +24,7 @@ export interface Hero {
   position?: string;  // 포지션
   seeds?: { hp: number; atk: number; def: number }; // 씨앗
   equipmentElements?: Record<string, number>; // 장비 원소 수치
+  elementManual?: boolean; // 원소량 수동 모드 여부
   // Hero-specific
   skills: string[];
   // Champion-specific

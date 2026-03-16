@@ -70,6 +70,8 @@ export default function SkillSelectDialog({
   useEffect(() => {
     if (open) {
       setSelected([...initialSelected]);
+      setGradeFilter('');
+      setStatFilter('');
     }
   }, [open, initialSelected]);
 

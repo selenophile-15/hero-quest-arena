@@ -75,7 +75,7 @@ function getJobSortKey(hero: Hero): number {
 const formatValue = (key: string, value: any): string | null => {
   if (value === undefined || value === null || value === '') return '-';
   if (key === 'crit' || key === 'evasion') return `${formatNumber(value)} %`;
-  if (key === 'critDmg') return `${formatNumber(value)} %`;
+  if (key === 'critDmg') return `x${(Number(value) / 100).toFixed(1)}`;
   if (typeof value === 'number') return formatNumber(value);
   return null;
 };
@@ -566,7 +566,7 @@ export default function HeroList() {
                   { icon: STAT_ICON_MAP.atk, value: hero.atk, suffix: '' },
                   { icon: STAT_ICON_MAP.def, value: hero.def, suffix: '' },
                   { icon: STAT_ICON_MAP.crit, value: hero.crit, suffix: ' %' },
-                  { icon: STAT_ICON_MAP.critDmg, value: hero.critDmg, suffix: ' %' },
+                  { icon: STAT_ICON_MAP.critDmg, value: hero.critDmg, suffix: '', isCritDmg: true },
                   { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
                   { icon: STAT_ICON_MAP.evasion, value: hero.evasion, suffix: ' %', isEvasion: true, jobName: hero.heroClass },
                   { icon: STAT_ICON_MAP.threat, value: hero.threat, suffix: '' },
@@ -574,6 +574,7 @@ export default function HeroList() {
                   <div key={i} className={`flex items-center gap-2 py-0.5 px-1 ${dimClass(s.value)}`}>
                     <img src={s.icon} alt="" className="w-5 h-5 flex-shrink-0" />
                     <span className="text-sm ml-auto tabular-nums">{s.value ? (() => {
+                      if ((s as any).isCritDmg) return `x${(Number(s.value) / 100).toFixed(1)}`;
                       const v = `${formatNumber(s.value)}${s.suffix}`;
                       if ((s as any).isEvasion && s.value) {
                         const cap = (s as any).jobName === '길잡이' ? 78 : 75;

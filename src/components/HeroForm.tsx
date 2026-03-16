@@ -204,7 +204,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [equipElements, setEquipElements] = useState<Record<string, number>>(
     hero?.equipmentElements || {}
   );
-  const [elementManual, setElementManual] = useState(false);
+  const [elementManual, setElementManual] = useState(hero?.elementManual || false);
 
   const [selectedSkills, setSelectedSkills] = useState<string[]>(hero?.skills?.slice(1) || []);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
@@ -554,6 +554,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       position,
       seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
       equipmentElements: equipElements,
+      elementManual,
       equipmentSlots,
       createdAt: hero?.createdAt || new Date().toISOString(),
     });
@@ -725,8 +726,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 { icon: STAT_ICON_MAP.atk, value: atk, suffix: '' },
                 { icon: STAT_ICON_MAP.def, value: def, suffix: '' },
                 { icon: STAT_ICON_MAP.crit, value: crit, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critAttack, value: critAttack, suffix: '' },
+                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: '', isCritDmg: true },
+                { icon: STAT_ICON_MAP.critAttack, value: calcStats?.totalCritAttack ?? critAttack, suffix: '' },
                 { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %', isEvasion: true },
                 { icon: STAT_ICON_MAP.threat, value: threat, suffix: '' },
               ].map((stat, i) => (
@@ -734,6 +735,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
                   <span className="text-sm text-foreground ml-auto tabular-nums">
                     {stat.value ? (() => {
+                      if ((stat as any).isCritDmg) {
+                        return `x${(Number(stat.value) / 100).toFixed(1)}`;
+                      }
                       const v = `${formatNumber(stat.value)}${stat.suffix}`;
                       if ((stat as any).isEvasion && stat.value) {
                         const cap = heroClass === '길잡이' ? 78 : 75;
