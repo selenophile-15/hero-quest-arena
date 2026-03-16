@@ -543,6 +543,7 @@ export async function calculateEquipmentStats(
 function emptySlotCalc(index: number): EquipSlotCalc {
   return {
     slotIndex: index, itemName: '', itemType: '', itemTypeKor: '', category: '',
+    judgmentTypes: [],
     baseAtk: 0, baseDef: 0, baseHp: 0, baseCrit: 0, baseEvasion: 0,
     qualityAtk: 0, qualityDef: 0, qualityHp: 0,
     elementRawAtk: 0, elementRawDef: 0, elementRawHp: 0,
