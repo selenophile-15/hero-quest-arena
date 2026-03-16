@@ -1792,7 +1792,7 @@ export default function QuestSimulation() {
                               <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(hr.finalHp)}</td>
                               <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{formatNumber(hr.finalDef)}</td>
                               <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{hr.finalCritChance}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{hr.finalCritDmg}%</td>
+                              <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">x{(hr.finalCritDmg / 100).toFixed(1)}</td>
                               <td className="py-1 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(hr.finalCritAttack)}</td>
                               <td className="py-1 px-2 text-center font-mono text-teal-400 whitespace-nowrap">{hr.finalEvasion}%</td>
                             </tr>
