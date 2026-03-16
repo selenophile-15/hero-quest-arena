@@ -118,10 +118,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const jobSources = bonus?.sources.filter(s => s.type === 'job') || [];
 
     // Get equipped item types to filter 해당 장비 bonuses
+    // Include judgmentTypes for dual wield items
     const equippedItemTypes = new Set(
       (calcStats?.equipResult?.slots || [])
         .filter(s => s.itemName)
-        .map(s => s.itemTypeKor)
+        .flatMap(s => s.judgmentTypes?.length ? s.judgmentTypes : [s.itemTypeKor])
     );
     const equipBonusDataRaw = calcStats?.equipBonuses ? getEquipBonusForStat(calcStats.equipBonuses, statType) : { 해당장비: {}, 모든장비: 0, 해당Sources: [], 모든Sources: [] };
     // Only show 해당 장비 sources for equipment types that are actually equipped
