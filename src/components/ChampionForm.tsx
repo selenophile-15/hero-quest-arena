@@ -168,7 +168,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [seedAtk, setSeedAtk] = useState(hero?.seeds?.atk || 0);
   const [seedDef, setSeedDef] = useState(hero?.seeds?.def || 0);
   const [equipElements, setEquipElements] = useState<Record<string, number>>(hero?.equipmentElements || {});
-  const [elementManual, setElementManual] = useState(false);
+  const [elementManual, setElementManual] = useState(hero?.elementManual || false);
 
   // Equipment: 2 slots - familiar (0) and aurasong (1)
   const [equipmentSlots, setEquipmentSlots] = useState<Array<{
