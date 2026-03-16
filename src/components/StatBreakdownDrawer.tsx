@@ -404,7 +404,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </td>
                       </tr>
                       {/* 화살통 보너스: 보너스 적용 후 마지막에 추가 */}
-                      {slot && ['bow', 'crossbow', 'gun'].includes(slot.itemType) && 
+                      {slot && slot.itemType === 'bow' && 
                         calcStats?.equipResult?.slots?.some((s: any) => s.itemType === 'quiver') && (
                         <tr className="border-b border-border/20">
                           <td className="px-2 py-1 text-green-400 text-[11px]">
