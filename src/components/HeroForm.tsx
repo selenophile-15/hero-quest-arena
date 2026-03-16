@@ -204,7 +204,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [equipElements, setEquipElements] = useState<Record<string, number>>(
     hero?.equipmentElements || {}
   );
-  const [elementManual, setElementManual] = useState(false);
+  const [elementManual, setElementManual] = useState(hero?.elementManual || false);
 
   const [selectedSkills, setSelectedSkills] = useState<string[]>(hero?.skills?.slice(1) || []);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
