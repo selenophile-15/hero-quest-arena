@@ -369,14 +369,33 @@ export async function calculateEquipmentStats(
     const quality = slot.quality || 'common';
     const qualityMult = QUALITY_MULTIPLIER[quality] || 1;
 
-    // Base stats (common grade)
-    const baseAtk = getItemBaseStat(item, '장비_공격력');
-    const baseDef = getItemBaseStat(item, '장비_방어력');
-    const baseHp = getItemBaseStat(item, '장비_체력');
+    // Base stats from JSON (may include baked-in unique element/spirit stats)
+    const jsonAtk = getItemBaseStat(item, '장비_공격력');
+    const jsonDef = getItemBaseStat(item, '장비_방어력');
+    const jsonHp = getItemBaseStat(item, '장비_체력');
     const baseCrit = getItemBaseStat(item, '장비_치명타확률%');
     const baseEvasion = getItemBaseStat(item, '장비_회피%');
 
-    // Quality-applied stats
+    // Adjust base for unique element (JSON stats include element_X baked in)
+    const hasUniqueElement = item.uniqueElement?.length > 0 && item.uniqueElementTier;
+    let uniqueElXStats: EnchantStats = { atk: 0, def: 0, hp: 0 };
+    if (hasUniqueElement) {
+      uniqueElXStats = getElementEnchantStats(elementData, item.uniqueElementTier, false);
+    }
+
+    // Adjust base for unique spirit (JSON stats include spirit_X baked in)
+    const hasUniqueSpirit = item.uniqueSpirit?.length > 0;
+    let uniqueSpXStats: EnchantStats = { atk: 0, def: 0, hp: 0 };
+    if (hasUniqueSpirit) {
+      uniqueSpXStats = getSpiritEnchantStats(spiritData, item.uniqueSpirit[0], false);
+    }
+
+    // True base = JSON stats minus baked-in unique element/spirit
+    const baseAtk = Math.max(0, jsonAtk - uniqueElXStats.atk - uniqueSpXStats.atk);
+    const baseDef = Math.max(0, jsonDef - uniqueElXStats.def - uniqueSpXStats.def);
+    const baseHp = Math.max(0, jsonHp - uniqueElXStats.hp - uniqueSpXStats.hp);
+
+    // Quality-applied stats (based on true base only)
     const qualityAtk = Math.round(baseAtk * qualityMult);
     const qualityDef = Math.round(baseDef * qualityMult);
     const qualityHp = Math.round(baseHp * qualityMult);
@@ -384,8 +403,7 @@ export async function calculateEquipmentStats(
     // Element enchantment
     let elementRaw: EnchantStats = { atk: 0, def: 0, hp: 0 };
     if (slot.element) {
-      const raw = getElementEnchantStats(elementData, slot.element.tier, slot.element.affinity);
-      elementRaw = raw;
+      elementRaw = getElementEnchantStats(elementData, slot.element.tier, slot.element.affinity);
     }
 
     // Spirit enchantment
@@ -394,13 +412,14 @@ export async function calculateEquipmentStats(
       spiritRaw = getSpiritEnchantStats(spiritData, slot.spirit.name, slot.spirit.affinity);
     }
 
-    // Cap enchantments against BASE (common grade) stats
-    const elementCapAtk = capEnchant(elementRaw.atk, baseAtk);
-    const elementCapDef = capEnchant(elementRaw.def, baseDef);
-    const elementCapHp = capEnchant(elementRaw.hp, baseHp);
-    const spiritCapAtk = capEnchant(spiritRaw.atk, baseAtk);
-    const spiritCapDef = capEnchant(spiritRaw.def, baseDef);
-    const spiritCapHp = capEnchant(spiritRaw.hp, baseHp);
+    // Cap enchantments against BASE stats
+    // Unique element/spirit items: skip capping (enchant is inherent)
+    const elementCapAtk = hasUniqueElement ? elementRaw.atk : capEnchant(elementRaw.atk, baseAtk);
+    const elementCapDef = hasUniqueElement ? elementRaw.def : capEnchant(elementRaw.def, baseDef);
+    const elementCapHp = hasUniqueElement ? elementRaw.hp : capEnchant(elementRaw.hp, baseHp);
+    const spiritCapAtk = hasUniqueSpirit ? spiritRaw.atk : capEnchant(spiritRaw.atk, baseAtk);
+    const spiritCapDef = hasUniqueSpirit ? spiritRaw.def : capEnchant(spiritRaw.def, baseDef);
+    const spiritCapHp = hasUniqueSpirit ? spiritRaw.hp : capEnchant(spiritRaw.hp, baseHp);
 
     // Pre-bonus stats (before spellknight multiplier)
     const preBonusAtk = qualityAtk + elementCapAtk + spiritCapAtk;
@@ -420,17 +439,27 @@ export async function calculateEquipmentStats(
     const typeKor = item.typeKor || '';
     const matchTypes = item.judgmentTypes?.length ? item.judgmentTypes : [typeKor];
     
+    // Deduplicate: each skill source should only apply once per slot even if multiple matchTypes match
+    const appliedSourceKeys = new Set<string>();
     let specificAtkPct = 0, specificDefPct = 0, specificHpPct = 0, specificAllPct = 0;
-    for (const mt of matchTypes) {
-      specificAtkPct += (skillBonuses.해당장비공격력[mt] || 0);
-      specificDefPct += (skillBonuses.해당장비방어력[mt] || 0);
-      specificHpPct += (skillBonuses.해당장비체력[mt] || 0);
-      specificAllPct += (skillBonuses.해당장비전체[mt] || 0);
+    for (const src of skillBonuses.sources) {
+      if (!src.equipType) continue; // 모든장비 handled separately
+      if (!matchTypes.includes(src.equipType)) continue;
+      // Deduplicate: same skill + same bonusKey should only apply once
+      const dedupeKey = `${src.skillName}|${src.bonusKey}`;
+      if (appliedSourceKeys.has(dedupeKey)) continue;
+      appliedSourceKeys.add(dedupeKey);
+      switch (src.bonusKey) {
+        case '해당장비공격력': specificAtkPct += src.value; break;
+        case '해당장비방어력': specificDefPct += src.value; break;
+        case '해당장비체력': specificHpPct += src.value; break;
+        case '해당장비전체': specificAllPct += src.value; break;
+      }
     }
 
-    let bonusAtkPct = specificAtkPct + specificAllPct + skillBonuses.모든장비공격력 + skillBonuses.모든장비전체;
-    let bonusDefPct = specificDefPct + specificAllPct + skillBonuses.모든장비방어력 + skillBonuses.모든장비전체;
-    let bonusHpPct = specificHpPct + specificAllPct + skillBonuses.모든장비체력 + skillBonuses.모든장비전체;
+    let bonusAtkPct = specificAtkPct + skillBonuses.모든장비공격력 + skillBonuses.모든장비전체;
+    let bonusDefPct = specificDefPct + skillBonuses.모든장비방어력 + skillBonuses.모든장비전체;
+    let bonusHpPct = specificHpPct + skillBonuses.모든장비체력 + skillBonuses.모든장비전체;
 
     // 역효과 해머: +100% to self (added to bonus pool, not multiplied separately)
     if (item.name === '역효과 해머') {
@@ -444,9 +473,9 @@ export async function calculateEquipmentStats(
     let finalDef = afterSpellknight.def * (1 + bonusDefPct / 100);
     let finalHp = afterSpellknight.hp * (1 + bonusHpPct / 100);
 
-    // 화살통 보너스: 보너스 적용 후 마지막에 보너스 전 값의 30%를 더함
+    // 화살통 보너스: 활에만 적용 (30% of pre-bonus stats)
     let quiverBonusAtk = 0, quiverBonusDef = 0, quiverBonusHp = 0;
-    if (hasQuiver && ['bow', 'crossbow', 'gun'].includes(item.type)) {
+    if (hasQuiver && item.type === 'bow') {
       quiverBonusAtk = afterSpellknight.atk * 0.3;
       quiverBonusDef = afterSpellknight.def * 0.3;
       quiverBonusHp = afterSpellknight.hp * 0.3;
@@ -485,6 +514,7 @@ export async function calculateEquipmentStats(
       itemType: item.type || '',
       itemTypeKor: typeKor,
       category: item.category || '',
+      judgmentTypes: matchTypes,
       baseAtk, baseDef, baseHp, baseCrit, baseEvasion,
       qualityAtk, qualityDef, qualityHp,
       elementRawAtk: elementRaw.atk, elementRawDef: elementRaw.def, elementRawHp: elementRaw.hp,
