@@ -795,9 +795,9 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 </table>
               </div>
               <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
-                <span className="text-sm font-bold text-foreground">최종 치명타 대미지%</span>
+                <span className="text-sm font-bold text-foreground">최종 치명타 대미지 계수</span>
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
-                  {totalCritDmg}%
+                  x{(totalCritDmg / 100).toFixed(1)}
                 </span>
               </div>
               <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
