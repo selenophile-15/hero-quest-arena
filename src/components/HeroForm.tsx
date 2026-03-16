@@ -554,6 +554,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       position,
       seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
       equipmentElements: equipElements,
+      elementManual,
       equipmentSlots,
       createdAt: hero?.createdAt || new Date().toISOString(),
     });
