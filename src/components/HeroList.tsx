@@ -75,7 +75,7 @@ function getJobSortKey(hero: Hero): number {
 const formatValue = (key: string, value: any): string | null => {
   if (value === undefined || value === null || value === '') return '-';
   if (key === 'crit' || key === 'evasion') return `${formatNumber(value)} %`;
-  if (key === 'critDmg') return `${formatNumber(value)} %`;
+  if (key === 'critDmg') return `x${(Number(value) / 100).toFixed(1)}`;
   if (typeof value === 'number') return formatNumber(value);
   return null;
 };
