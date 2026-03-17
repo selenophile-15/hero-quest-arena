@@ -451,24 +451,45 @@ export default function EquipmentSelectDialog({
           ))}
         </div>
 
-        {/* Manual mode toggle + Filters */}
+        {/* Manual mode toggle + View mode + Filters */}
         <div className="flex items-center gap-2 px-1 flex-wrap text-xs">
+          {/* View mode toggle */}
+          <div className="flex rounded border border-border overflow-hidden">
+            <button
+              onClick={() => setViewMode('album')}
+              className={`px-1.5 py-1 ${viewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
+              title="앨범"
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`px-1.5 py-1 ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
+              title="테이블"
+            >
+              <List className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           <Button
             variant={manualMode ? 'default' : 'outline'}
             size="sm"
-            className="h-7 text-xs gap-1"
+            className={`h-7 text-xs gap-1 ${!manualMode ? 'bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40' : ''}`}
             onClick={() => setManualMode(prev => !prev)}
           >
             <Wrench className="w-3 h-3" />
             수동
-           </Button>
+          </Button>
 
           {manualMode && (
             <div className="flex items-center gap-1.5 ml-auto">
               <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setManualMode(false)}>취소</Button>
               <Button size="sm" className="h-7 text-xs" onClick={() => manualFormRef.current?.triggerConfirm()}>적용</Button>
             </div>
-           )}
+          )}
+
+          {/* Spacing between manual button and filters */}
+          {!manualMode && <div className="w-3" />}
 
           {!manualMode && (
             <>
@@ -537,6 +558,13 @@ export default function EquipmentSelectDialog({
                   ))}
                 </SelectContent>
               </Select>
+              <button
+                onClick={() => setFilterSpirit('_all')}
+                className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                title="영혼 필터 초기화"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
 
               <div className="flex-1" />
 
@@ -550,7 +578,7 @@ export default function EquipmentSelectDialog({
                 </SelectContent>
               </Select>
               <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
-                일괄 적용
+                등급 일괄
               </Button>
             </>
           )}
