@@ -438,23 +438,36 @@ export async function calculateEquipmentStats(
     // For dual wield (쌍수), use judgmentTypes for matching 해당장비 bonuses
     const typeKor = item.typeKor || '';
     const matchTypes = item.judgmentTypes?.length ? item.judgmentTypes : [typeKor];
-    
-    // Deduplicate: each skill source should only apply once per slot even if multiple matchTypes match
-    const appliedSourceKeys = new Set<string>();
-    let specificAtkPct = 0, specificDefPct = 0, specificHpPct = 0, specificAllPct = 0;
-    for (const src of skillBonuses.sources) {
-      if (!src.equipType) continue; // 모든장비 handled separately
-      if (!matchTypes.includes(src.equipType)) continue;
-      // Deduplicate: same skill + same bonusKey should only apply once
-      const dedupeKey = `${src.skillName}|${src.bonusKey}`;
-      if (appliedSourceKeys.has(dedupeKey)) continue;
-      appliedSourceKeys.add(dedupeKey);
-      switch (src.bonusKey) {
-        case '해당장비공격력': specificAtkPct += src.value; break;
-        case '해당장비방어력': specificDefPct += src.value; break;
-        case '해당장비체력': specificHpPct += src.value; break;
-        case '해당장비전체': specificAllPct += src.value; break;
+    const isDualWield = matchTypes.length > 1;
+
+    let specificAtkPct = 0, specificDefPct = 0, specificHpPct = 0;
+
+    if (isDualWield) {
+      // Dual wield: use source-based dedup so each skill applies at most once
+      const appliedSourceKeys = new Set<string>();
+      for (const src of skillBonuses.sources) {
+        if (!src.equipType) continue;
+        if (!matchTypes.includes(src.equipType)) continue;
+        const dedupeKey = `${src.skillName}|${src.bonusKey}`;
+        if (appliedSourceKeys.has(dedupeKey)) continue;
+        appliedSourceKeys.add(dedupeKey);
+        switch (src.bonusKey) {
+          case '해당장비공격력': specificAtkPct += src.value; break;
+          case '해당장비방어력': specificDefPct += src.value; break;
+          case '해당장비체력': specificHpPct += src.value; break;
+          case '해당장비전체':
+            specificAtkPct += src.value;
+            specificDefPct += src.value;
+            specificHpPct += src.value;
+            break;
+        }
       }
+    } else {
+      // Normal slot: direct dictionary lookup (pre-aggregated)
+      const t = matchTypes[0];
+      specificAtkPct = (skillBonuses.해당장비공격력[t] || 0) + (skillBonuses.해당장비전체[t] || 0);
+      specificDefPct = (skillBonuses.해당장비방어력[t] || 0) + (skillBonuses.해당장비전체[t] || 0);
+      specificHpPct = (skillBonuses.해당장비체력[t] || 0) + (skillBonuses.해당장비전체[t] || 0);
     }
 
     let bonusAtkPct = specificAtkPct + skillBonuses.모든장비공격력 + skillBonuses.모든장비전체;

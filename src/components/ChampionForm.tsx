@@ -198,6 +198,11 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
   const formRef = useRef<HTMLDivElement>(null);
 
+  // Scroll to top when form mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, []);
+
   useEffect(() => {
     if (!hero) setName(championName);
   }, [championName]);

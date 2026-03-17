@@ -333,7 +333,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <tbody>
               <tr className="border-b border-border/30">
                 <td className="py-1.5 text-foreground/70">치명타 대미지 계수</td>
-                <td className="py-1.5 text-right tabular-nums text-foreground">x{(r.totalCritDmg / 100).toFixed(1)}</td>
+                <td className="py-1.5 text-right tabular-nums text-foreground">{r.totalCritDmg}% <span className="text-foreground/60">→ x{(r.totalCritDmg / 100).toFixed(1)}</span></td>
               </tr>
               <tr className="border-b border-border/30">
                 <td className="py-1.5 text-foreground/70">치명타 공격력 (ATK × x{(r.totalCritDmg / 100).toFixed(1)})</td>

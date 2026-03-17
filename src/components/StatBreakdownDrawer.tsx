@@ -743,7 +743,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 <tbody>
                   <tr className="border-b border-border/30">
                     <td className="py-1.5 text-foreground/70">기본 치명타 대미지</td>
-                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">x{(baseCritDmgVal / 100).toFixed(1)}</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseCritDmgVal}%</td>
                   </tr>
                 </tbody>
               </table>
@@ -769,7 +769,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+x{(val / 100).toFixed(1)}</td>
+                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+{val}%</td>
                       </tr>
                     );
                   })}
@@ -785,11 +785,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   <tbody>
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 text-foreground/80">기본 치명타 대미지</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground">x{(baseCritDmgVal / 100).toFixed(1)}</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">{baseCritDmgVal}%</td>
                     </tr>
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground">+x{(bonusCritDmg / 100).toFixed(1)}</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusCritDmg}%</td>
                     </tr>
                   </tbody>
                 </table>
@@ -797,7 +797,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
                 <span className="text-sm font-bold text-foreground">최종 치명타 대미지 계수</span>
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
-                  x{(totalCritDmg / 100).toFixed(1)}
+                  {totalCritDmg}% <span className="text-base text-foreground/70">→ x{(totalCritDmg / 100).toFixed(1)}</span>
                 </span>
               </div>
               <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">

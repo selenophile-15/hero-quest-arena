@@ -232,6 +232,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [calcStats, setCalcStats] = useState<CalculatedStats | null>(null);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
 
+  // Scroll to top when form mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, []);
+
   useEffect(() => {
     getCommonSkills().then(data => {
       setCommonSkillsData(data);
