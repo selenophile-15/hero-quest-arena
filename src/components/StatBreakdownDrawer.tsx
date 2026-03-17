@@ -785,11 +785,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   <tbody>
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 text-foreground/80">기본 치명타 대미지</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground">x{(baseCritDmgVal / 100).toFixed(1)}</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">{baseCritDmgVal}%</td>
                     </tr>
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 text-foreground/80">스킬/영혼 보너스</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground">+x{(bonusCritDmg / 100).toFixed(1)}</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground">+{bonusCritDmg}%</td>
                     </tr>
                   </tbody>
                 </table>
