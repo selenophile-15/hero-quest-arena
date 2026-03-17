@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { formatNumber } from '@/lib/format';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
-import { Wrench } from 'lucide-react';
+import { Wrench, LayoutGrid, List, RefreshCw } from 'lucide-react';
 import ManualEquipmentForm, { ManualEquipmentFormRef } from './ManualEquipmentForm';
 import {
   EquipmentItem,
