@@ -656,6 +656,84 @@ export default function EquipmentSelectDialog({
               </div>
             ) : filteredItems.length === 0 ? (
               <div className="flex items-center justify-center py-16 text-muted-foreground">장착 가능한 장비가 없습니다</div>
+    ) : viewMode === 'table' ? (
+              /* ─── Table View ─── */
+              <div className="overflow-x-auto h-full">
+                <table className="w-full text-xs border-collapse">
+                  <thead className="sticky top-0 bg-background z-10">
+                    <tr className="border-b-2 border-border">
+                      <th className="text-left py-2 px-2 text-foreground/60 font-semibold">이름</th>
+                      <th className="text-left py-2 px-1.5 text-foreground/60 font-semibold">타입</th>
+                      <th className="text-center py-2 px-1 text-foreground/60 font-semibold">T</th>
+                      <th className="text-right py-2 px-1.5 text-red-400/80 font-semibold">ATK</th>
+                      <th className="text-right py-2 px-1.5 text-blue-400/80 font-semibold">DEF</th>
+                      <th className="text-right py-2 px-1.5 text-orange-400/80 font-semibold">HP</th>
+                      <th className="text-right py-2 px-1 text-yellow-400/80 font-semibold">CRIT</th>
+                      <th className="text-right py-2 px-1 text-teal-400/80 font-semibold">EVA</th>
+                      <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">친밀 원소</th>
+                      <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">고유</th>
+                      <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">영혼</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredItems.map((item, idx) => {
+                      const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
+                      const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
+                      const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
+                      const defVal = item.stats.find(s => s.key === '장비_방어력')?.value || 0;
+                      const hpVal = item.stats.find(s => s.key === '장비_체력')?.value || 0;
+                      const critVal = item.stats.find(s => s.key === '장비_치명타확률%')?.value || 0;
+                      const evaVal = item.stats.find(s => s.key === '장비_회피%')?.value || 0;
+                      return (
+                        <tr
+                          key={`${item.name}-${item.tier}-${idx}`}
+                          onClick={() => !isRelicBlocked && handleSelectItem(item)}
+                          className={`border-b border-border/20 transition-colors ${
+                            isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
+                            isSelected ? 'bg-primary/20 font-medium' : 'hover:bg-secondary/30 cursor-pointer'
+                          }`}
+                        >
+                          <td className="py-1.5 px-2 text-foreground whitespace-nowrap">
+                            {item.relic && <span className="text-yellow-400 mr-1">⭐</span>}
+                            {item.name}
+                            {item.type === 'dual_wield' && item.judgmentTypes?.length > 0 && (
+                              <span className="text-muted-foreground ml-1 text-[10px]">({item.judgmentTypes.join('+')})</span>
+                            )}
+                          </td>
+                          <td className="py-1.5 px-1.5 text-muted-foreground whitespace-nowrap">{item.typeKor}</td>
+                          <td className="py-1.5 px-1 text-center tabular-nums">{item.tier}</td>
+                          <td className={`py-1.5 px-1.5 text-right tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal || '-'}</td>
+                          <td className={`py-1.5 px-1.5 text-right tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal || '-'}</td>
+                          <td className={`py-1.5 px-1.5 text-right tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal || '-'}</td>
+                          <td className={`py-1.5 px-1 text-right tabular-nums ${critVal ? 'text-yellow-400' : 'text-muted-foreground/30'}`}>{critVal ? `${critVal}%` : '-'}</td>
+                          <td className={`py-1.5 px-1 text-right tabular-nums ${evaVal ? 'text-teal-400' : 'text-muted-foreground/30'}`}>{evaVal ? `${evaVal}%` : '-'}</td>
+                          <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                            {item.elementAffinity?.length ? (
+                              <span className="text-[10px]">{item.elementAffinity.map(el => (
+                                <span key={el} className={`${ELEMENT_COLORS[el] || ''} mr-0.5`}>{el === '모든 원소' ? '전체' : el}</span>
+                              ))}</span>
+                            ) : <span className="text-muted-foreground/30">-</span>}
+                          </td>
+                          <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                            {item.uniqueElement?.length ? (
+                              <span className="text-[10px]">{item.uniqueElement.map(el => (
+                                <span key={el} className={`${ELEMENT_COLORS[el] || ''} font-semibold`}>{el}T{item.uniqueElementTier}</span>
+                              ))}</span>
+                            ) : item.uniqueSpirit?.length ? (
+                              <span className="text-[10px] text-purple-300 font-semibold">{item.uniqueSpirit.join(', ')}</span>
+                            ) : <span className="text-muted-foreground/30">-</span>}
+                          </td>
+                          <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                            {item.spiritAffinity?.length ? (
+                              <span className="text-[10px] text-muted-foreground">{item.spiritAffinity.join(', ')}</span>
+                            ) : <span className="text-muted-foreground/30">-</span>}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <TooltipProvider delayDuration={200}>
                 <div className="grid grid-cols-6 gap-3">
