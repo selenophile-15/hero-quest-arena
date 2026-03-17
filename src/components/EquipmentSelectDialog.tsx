@@ -146,6 +146,7 @@ export default function EquipmentSelectDialog({
   const [loading, setLoading] = useState(false);
   const [manualMode, setManualMode] = useState(false);
   const manualFormRef = useRef<ManualEquipmentFormRef>(null);
+  const [viewMode, setViewMode] = useState<'album' | 'table'>('album');
 
   const maxTier = getMaxTierForLevel(heroLevel || 1);
   const [filterType, setFilterType] = useState<string>('_all');
