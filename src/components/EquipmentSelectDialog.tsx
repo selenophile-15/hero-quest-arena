@@ -245,6 +245,7 @@ export default function EquipmentSelectDialog({
   useEffect(() => {
     setSlotQuality(slots[activeSlot]?.quality || 'common');
     setManualMode(!!slots[activeSlot]?.item?.manual);
+    setFilterType('_all'); // Reset type filter on slot change
     visitedSlots.current.add(activeSlot);
   }, [activeSlot]);
 
