@@ -769,7 +769,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+x{(val / 100).toFixed(1)}</td>
+                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+{val}%</td>
                       </tr>
                     );
                   })}
