@@ -160,11 +160,24 @@ export async function loadSpiritStats(): Promise<Record<string, any>> {
 export function getElementEnchantStats(
   elementData: Record<string, any>,
   tier: number,
-  affinity: boolean
+  affinity: boolean,
+  isAllElementAffinity: boolean = false
 ): EnchantStats {
   const tierKey = `${tier}티어`;
   const entry = elementData[tierKey];
   if (!entry) return { atk: 0, def: 0, hp: 0 };
+
+  // "모든 원소" affinity: 25% bonus (floor) instead of normal 50%
+  if (affinity && isAllElementAffinity) {
+    const xSub = entry['X'];
+    if (!xSub) return { atk: 0, def: 0, hp: 0 };
+    return {
+      atk: Math.floor((xSub['원소_공격력'] || 0) * 1.25),
+      def: Math.floor((xSub['원소_방어력'] || 0) * 1.25),
+      hp: Math.floor((xSub['원소_체력'] || 0) * 1.25),
+    };
+  }
+
   const sub = affinity ? entry['O'] : entry['X'];
   if (!sub) return { atk: 0, def: 0, hp: 0 };
   return {
