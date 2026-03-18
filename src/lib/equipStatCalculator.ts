@@ -416,7 +416,8 @@ export async function calculateEquipmentStats(
     // Element enchantment
     let elementRaw: EnchantStats = { atk: 0, def: 0, hp: 0 };
     if (slot.element) {
-      elementRaw = getElementEnchantStats(elementData, slot.element.tier, slot.element.affinity);
+      const isAllElAff = !!(slot.element as any).allElementAffinity;
+      elementRaw = getElementEnchantStats(elementData, slot.element.tier, slot.element.affinity, isAllElAff);
     }
 
     // Spirit enchantment

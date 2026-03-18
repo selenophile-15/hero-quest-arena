@@ -340,7 +340,7 @@ export default function EnchantPickerDialog({
                 const slot = localSlots[i];
                 const hasUniqueEl = info?.uniqueElement && info.uniqueElement.length > 0;
                 const hasItem = !!info;
-                const elValue = slot?.element ? getElementValue(slot.element.tier, slot.element.affinity) : 0;
+                const elValue = slot?.element ? getElementValue(slot.element.tier, slot.element.affinity, !!(slot.element as any).allElementAffinity) : 0;
 
                 return (
                   <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_80px] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
