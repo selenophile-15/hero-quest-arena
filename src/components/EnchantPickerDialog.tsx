@@ -163,8 +163,9 @@ export default function EnchantPickerDialog({
     const info = itemInfoPerSlot[slotIdx];
     if (info?.uniqueElement && info.uniqueElement.length > 0) return;
     const affinity = hasElementAffinity(info, elType);
+    const allElementAffinity = isAllElementAffinityOnly(info, elType);
     const newSlots = [...localSlots];
-    newSlots[slotIdx] = { ...newSlots[slotIdx], element: { type: elType, tier, affinity } };
+    newSlots[slotIdx] = { ...newSlots[slotIdx], element: { type: elType, tier, affinity, allElementAffinity } };
     setLocalSlots(newSlots);
   };
 
