@@ -20,7 +20,7 @@ import {
 interface EquipmentSlotData {
   item: EquipmentItem | null;
   quality: string;
-  element: { type: string; tier: number; affinity: boolean } | null;
+  element: { type: string; tier: number; affinity: boolean; allElementAffinity?: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
 
@@ -135,6 +135,13 @@ function getElementIconPath(el: string): string {
   return eng ? `/images/elements/${eng}.webp` : '';
 }
 
+function isAllElementAffinityOnly(elementAffinity: string[] | undefined, elType: string): boolean {
+  if (!elementAffinity) return false;
+  if (elementAffinity.includes(elType)) return false;
+  if (elementAffinity.includes('모든 원소')) return true;
+  return false;
+}
+
 export default function EquipmentSelectDialog({
   open, onClose, jobName, heroLevel, initialSlot = 0, slotCount = 6,
   currentEquipment, onConfirm,
@@ -225,22 +232,26 @@ export default function EquipmentSelectDialog({
     load();
   }, [open, jobName, slotCount]);
 
+  const resetAllFilters = useCallback(() => {
+    const mt = getMaxTierForLevel(heroLevel || 1);
+    setFilterType('_all');
+    setFilterStat('_all');
+    setFilterElement('_all');
+    setFilterSpirit('_all');
+    setFilterTierMin(Math.max(1, mt - 2));
+    setFilterTierMax(mt);
+  }, [heroLevel]);
+
   useEffect(() => {
     if (open) {
       setSlots([...currentEquipment]);
       setActiveSlot(initialSlot);
-      const mt = getMaxTierForLevel(heroLevel || 1);
-      setFilterTierMax(mt);
-      setFilterTierMin(Math.max(1, mt - 2));
       setSlotQuality(currentEquipment[initialSlot]?.quality || 'common');
-      setFilterType('_all');
-      setFilterStat('_all');
-      setFilterElement('_all');
-      setFilterSpirit('_all');
+      resetAllFilters();
       visitedSlots.current = new Set([initialSlot]);
       setManualMode(!!currentEquipment[initialSlot]?.item?.manual);
     }
-  }, [open, currentEquipment, initialSlot, heroLevel]);
+  }, [open, currentEquipment, initialSlot, heroLevel, resetAllFilters]);
 
   useEffect(() => {
     setSlotQuality(slots[activeSlot]?.quality || 'common');
@@ -322,9 +333,9 @@ export default function EquipmentSelectDialog({
     } else {
       const existing = newSlots[activeSlot]?.element || null;
       if (existing) {
-        // Update affinity based on new item's elementAffinity
         const hasAffinity = item.elementAffinity?.includes(existing.type) || item.elementAffinity?.includes('모든 원소');
-        newElement = { ...existing, affinity: !!hasAffinity };
+        const allElAff = isAllElementAffinityOnly(item.elementAffinity, existing.type);
+        newElement = { ...existing, affinity: !!hasAffinity, allElementAffinity: allElAff };
       } else {
         newElement = null;
       }
@@ -381,564 +392,588 @@ export default function EquipmentSelectDialog({
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-6xl h-[90vh] overflow-hidden flex flex-col p-5">
+      <DialogContent className="max-w-[95vw] h-[90vh] overflow-hidden flex flex-col p-5">
         <DialogHeader>
           <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
           <DialogDescription className="sr-only">슬롯별 장비를 선택하세요</DialogDescription>
         </DialogHeader>
 
-        {/* Top: Slot summary */}
-        <div className="flex items-center gap-2 pb-2 border-b border-border">
-          <div className="flex gap-1 flex-1 overflow-x-auto">
-            {slots.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  if (s.item) {
-                    const newSlots = [...slots];
-                    newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
-                    setSlots(newSlots);
-                  } else {
-                    setActiveSlot(i);
-                  }
-                }}
-                className={`flex flex-col items-center p-1.5 rounded border min-w-[64px] transition-all ${
-                  activeSlot === i ? 'border-primary ring-1 ring-primary/30' : ''
-                } ${s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-50'}`}
-                style={s.item ? {
-                  background: `radial-gradient(circle, ${QUALITY_RADIAL[s.quality]} 0%, transparent 70%)`,
-                  boxShadow: QUALITY_SHADOW[s.quality],
-                } : {}}
-              >
-                <span className={`text-[8px] flex items-center gap-1 ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>
+        <div className="flex flex-1 min-h-0 gap-4">
+          {/* ═══ Left: Slot tabs, filters, item grid ═══ */}
+          <div className="flex-1 flex flex-col min-h-0">
+            {/* Slot tabs */}
+            <div className="flex items-center gap-1 mb-1">
+              {Array.from({ length: slotCount }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveSlot(i)}
+                  className={`flex-1 text-xs py-1.5 rounded transition-all ${
+                    activeSlot === i ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'
+                  } ${slots[i]?.item ? 'text-accent font-bold' : ''}`}
+                >
                   슬롯 {i + 1}
-                  {s.item?.relic && <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-3 h-3 inline" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                  {s.item?.manual && <Wrench className="w-2.5 h-2.5 inline text-muted-foreground" />}
-                </span>
-                {s.item ? (
-                  <>
-                    {s.item.imagePath ? (
-                      <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    ) : (
-                      <span className="text-[8px] text-foreground w-9 h-9 flex items-center justify-center">{s.item.name.slice(0, 4)}</span>
-                    )}
-                    <span className="text-[8px] text-foreground truncate max-w-[58px]">{s.item.name}</span>
-                  </>
-                ) : (
-                  <span className="text-[9px] text-muted-foreground w-9 h-9 flex items-center justify-center">-</span>
-                )}
-              </button>
-            ))}
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <Button variant="outline" size="sm" onClick={onClose}>취소</Button>
-            <Button size="sm" onClick={handleConfirm}>확인</Button>
-          </div>
-        </div>
-
-        {/* Slot tabs */}
-        <div className="flex items-center gap-1 my-1">
-          {Array.from({ length: slotCount }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveSlot(i)}
-              className={`flex-1 text-xs py-1.5 rounded transition-all ${
-                activeSlot === i ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'
-              } ${slots[i]?.item ? 'text-accent font-bold' : ''}`}
-            >
-              슬롯 {i + 1}
-            </button>
-          ))}
-        </div>
-
-        {/* Manual mode toggle + View mode + Filters */}
-        <div className="flex items-center gap-2 px-1 flex-wrap text-xs">
-          {/* View mode toggle */}
-          <div className="flex rounded border border-border overflow-hidden">
-            <button
-              onClick={() => setViewMode('album')}
-              className={`px-1.5 py-1 ${viewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
-              title="앨범"
-            >
-              <LayoutGrid className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => setViewMode('table')}
-              className={`px-1.5 py-1 ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
-              title="테이블"
-            >
-              <List className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <Button
-            variant={manualMode ? 'default' : 'outline'}
-            size="sm"
-            className={`h-7 text-xs gap-1 ${!manualMode ? 'bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40' : ''}`}
-            onClick={() => setManualMode(prev => !prev)}
-          >
-            <Wrench className="w-3 h-3" />
-            수동
-          </Button>
-
-          {manualMode && (
-            <div className="flex items-center gap-1.5 ml-auto">
-              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setManualMode(false)}>취소</Button>
-              <Button size="sm" className="h-7 text-xs" onClick={() => manualFormRef.current?.triggerConfirm()}>적용</Button>
+                </button>
+              ))}
             </div>
-          )}
 
-          {/* Spacing between manual button and filters */}
-          {!manualMode && <div className="w-3" />}
-
-          {!manualMode && (
-            <>
-              <span className="text-muted-foreground">타입:</span>
-              <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="_all">전체</SelectItem>
-                  {filterTypeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                </SelectContent>
-              </Select>
-
-              <span className="text-muted-foreground">스탯:</span>
-              <Select value={filterStat} onValueChange={setFilterStat}>
-                <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="_all">전체</SelectItem>
-                  {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-
-              <span className="text-muted-foreground">티어:</span>
-              <input type="number" min={1} max={maxTier} value={filterTierMin}
-                onChange={e => {
-                  const raw = e.target.value;
-                  if (raw === '') { setFilterTierMin(''); return; }
-                  const v = parseInt(raw, 10);
-                  if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
-                }}
-                className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-              <span className="text-muted-foreground">~</span>
-              <input type="number" min={1} max={maxTier} value={filterTierMax}
-                onChange={e => {
-                  const raw = e.target.value;
-                  if (raw === '') { setFilterTierMax(''); return; }
-                  const v = parseInt(raw, 10);
-                  if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
-                }}
-                className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-
-              <span className="text-muted-foreground">원소:</span>
-              <Select value={filterElement} onValueChange={setFilterElement}>
-                <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="_all">전체</SelectItem>
-                  {ELEMENT_FILTER_OPTIONS.map(e => (
-                    <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <span className="text-muted-foreground">영혼:</span>
-              <Select value={filterSpirit} onValueChange={setFilterSpirit}>
-                <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="_all">전체</SelectItem>
-                  {spiritGroups.map((group, gi) => (
-                    <div key={gi}>
-                      {gi > 0 && <div className="border-t border-border/30 my-1" />}
-                      {group.spirits.map(sp => (
-                        <SelectItem key={sp} value={sp}>
-                          <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
-                        </SelectItem>
-                      ))}
-                    </div>
-                  ))}
-                </SelectContent>
-              </Select>
-              <button
-                onClick={() => setFilterSpirit('_all')}
-                className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
-                title="영혼 필터 초기화"
-              >
-                <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
-              </button>
-
-              <div className="flex-1" />
-
-              <span className="text-muted-foreground">아이템 등급:</span>
-              <Select value={slotQuality} onValueChange={handleQualityChange}>
-                <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {QUALITY_OPTIONS.map(q => (
-                    <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
-                등급 일괄
-              </Button>
-            </>
-          )}
-        </div>
-
-        {/* Item grid or Manual form */}
-        <div className="flex-1 min-h-0 mt-1">
-          <div className="overflow-y-auto h-full border border-border rounded p-3">
-            {manualMode ? (
-              <ManualEquipmentForm
-                ref={manualFormRef}
-                hideActions
-                initialData={slots[activeSlot]?.item?.manualData || null}
-                allowedTypes={currentAllowedTypes}
-                onConfirm={(item) => {
-                  const newSlots = [...slots];
-                  const existingSlot = newSlots[activeSlot];
-                  const prevItem = existingSlot?.item;
-                  const prevHadUniqueElement = !!prevItem?.uniqueElement?.length;
-                  const prevHadUniqueSpirit = !!prevItem?.uniqueSpirit?.length;
-
-                  let slotElement = existingSlot?.element || null;
-                  let slotSpirit = existingSlot?.spirit || null;
-
-                  // Re-evaluate (or clear) enchant affinity when equipping a new item
-                  if (item.uniqueElement?.length) {
-                    slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
-                  } else if (prevHadUniqueElement) {
-                    slotElement = null;
-                  } else if (slotElement) {
-                    const hasAffinity = item.elementAffinity?.includes(slotElement.type) || item.elementAffinity?.includes('모든 원소');
-                    slotElement = { ...slotElement, affinity: !!hasAffinity };
-                  }
-
-                  if (item.uniqueSpirit?.length) {
-                    slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
-                  } else if (prevHadUniqueSpirit) {
-                    slotSpirit = null;
-                  } else if (slotSpirit) {
-                    const hasAffinity = item.spiritAffinity?.includes(slotSpirit.name);
-                    slotSpirit = { ...slotSpirit, affinity: !!hasAffinity };
-                  }
-
-                  newSlots[activeSlot] = {
-                    item: { ...item },
-                    quality: existingSlot?.quality || slotQuality,
-                    element: slotElement,
-                    spirit: slotSpirit,
-                  };
-                  setSlots(newSlots);
-                  setManualMode(false);
-                }}
-                onCancel={() => setManualMode(false)}
-              />
-            ) : loading ? (
-              <div className="flex flex-col items-center justify-center py-16 gap-4">
-                <div className="relative w-12 h-12">
-                  <div className="absolute inset-0 border-[3px] border-dashed border-primary/30 rounded-full animate-spin" style={{ animationDuration: '2s' }} />
-                  <div className="absolute inset-1 border-[3px] border-transparent border-t-primary rounded-full animate-spin" style={{ animationDuration: '0.8s' }} />
+            {/* Filter row 1: [Album|Table] [Type] [Stat] [Element] [Spirit] [Reset] */}
+            <div className="flex items-center gap-2 px-1 text-xs mb-1">
+              <div className="flex flex-col gap-1">
+                <div className="flex rounded border border-border overflow-hidden" style={{ width: '62px' }}>
+                  <button
+                    onClick={() => setViewMode('album')}
+                    className={`flex-1 px-1.5 py-1 ${viewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
+                    title="앨범"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5 mx-auto" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('table')}
+                    className={`flex-1 px-1.5 py-1 ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
+                    title="테이블"
+                  >
+                    <List className="w-3.5 h-3.5 mx-auto" />
+                  </button>
                 </div>
-                <span className="text-muted-foreground text-sm">장비 데이터 로딩 중...</span>
-                {loadingTotal > 0 && (
-                  <div className="flex flex-col items-center gap-1.5 w-48">
-                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full transition-all duration-300"
-                        style={{ width: `${Math.round((loadingProgress / loadingTotal) * 100)}%` }}
-                      />
+                <Button
+                  variant={manualMode ? 'default' : 'outline'}
+                  size="sm"
+                  className={`h-7 text-xs gap-1 ${!manualMode ? 'bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40' : ''}`}
+                  style={{ width: '62px' }}
+                  onClick={() => setManualMode(prev => !prev)}
+                >
+                  <Wrench className="w-3 h-3" />
+                  수동
+                </Button>
+              </div>
+
+              {manualMode ? (
+                <div className="flex items-center gap-1.5 ml-auto">
+                  <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setManualMode(false)}>취소</Button>
+                  <Button size="sm" className="h-7 text-xs" onClick={() => manualFormRef.current?.triggerConfirm()}>적용</Button>
+                </div>
+              ) : (
+                <>
+                  <span className="text-muted-foreground">타입:</span>
+                  <Select value={filterType} onValueChange={setFilterType}>
+                    <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="_all">전체</SelectItem>
+                      {filterTypeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+
+                  <span className="text-muted-foreground">스탯:</span>
+                  <Select value={filterStat} onValueChange={setFilterStat}>
+                    <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="_all">전체</SelectItem>
+                      {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+
+                  <span className="text-muted-foreground">원소:</span>
+                  <Select value={filterElement} onValueChange={setFilterElement}>
+                    <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="_all">전체</SelectItem>
+                      {ELEMENT_FILTER_OPTIONS.map(e => (
+                        <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <span className="text-muted-foreground">영혼:</span>
+                  <Select value={filterSpirit} onValueChange={setFilterSpirit}>
+                    <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="_all">전체</SelectItem>
+                      {spiritGroups.map((group, gi) => (
+                        <div key={gi}>
+                          {gi > 0 && <div className="border-t border-border/30 my-1" />}
+                          {group.spirits.map(sp => (
+                            <SelectItem key={sp} value={sp}>
+                              <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
+                            </SelectItem>
+                          ))}
+                        </div>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <button
+                    onClick={resetAllFilters}
+                    className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                    title="필터 초기화"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Filter row 2: [Quality + 전체] [Tier min~max] */}
+            {!manualMode && (
+              <div className="flex items-center gap-2 px-1 text-xs mb-1">
+                <span className="text-muted-foreground">등급:</span>
+                <Select value={slotQuality} onValueChange={handleQualityChange}>
+                  <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {QUALITY_OPTIONS.map(q => (
+                      <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
+                  전체
+                </Button>
+
+                <div className="w-2" />
+
+                <span className="text-muted-foreground">티어:</span>
+                <input type="number" min={1} max={maxTier} value={filterTierMin}
+                  onChange={e => {
+                    const raw = e.target.value;
+                    if (raw === '') { setFilterTierMin(''); return; }
+                    const v = parseInt(raw, 10);
+                    if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
+                  }}
+                  className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+                <span className="text-muted-foreground">~</span>
+                <input type="number" min={1} max={maxTier} value={filterTierMax}
+                  onChange={e => {
+                    const raw = e.target.value;
+                    if (raw === '') { setFilterTierMax(''); return; }
+                    const v = parseInt(raw, 10);
+                    if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
+                  }}
+                  className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+              </div>
+            )}
+
+            {/* Item grid or Manual form */}
+            <div className="flex-1 min-h-0">
+              <div className="overflow-y-auto h-full border border-border rounded p-3">
+                {manualMode ? (
+                  <ManualEquipmentForm
+                    ref={manualFormRef}
+                    hideActions
+                    initialData={slots[activeSlot]?.item?.manualData || null}
+                    allowedTypes={currentAllowedTypes}
+                    onConfirm={(item) => {
+                      const newSlots = [...slots];
+                      const existingSlot = newSlots[activeSlot];
+                      const prevItem = existingSlot?.item;
+                      const prevHadUniqueElement = !!prevItem?.uniqueElement?.length;
+                      const prevHadUniqueSpirit = !!prevItem?.uniqueSpirit?.length;
+
+                      let slotElement = existingSlot?.element || null;
+                      let slotSpirit = existingSlot?.spirit || null;
+
+                      if (item.uniqueElement?.length) {
+                        slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
+                      } else if (prevHadUniqueElement) {
+                        slotElement = null;
+                      } else if (slotElement) {
+                        const hasAffinity = item.elementAffinity?.includes(slotElement.type) || item.elementAffinity?.includes('모든 원소');
+                        const allElAff = isAllElementAffinityOnly(item.elementAffinity, slotElement.type);
+                        slotElement = { ...slotElement, affinity: !!hasAffinity, allElementAffinity: allElAff };
+                      }
+
+                      if (item.uniqueSpirit?.length) {
+                        slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
+                      } else if (prevHadUniqueSpirit) {
+                        slotSpirit = null;
+                      } else if (slotSpirit) {
+                        const hasAffinity = item.spiritAffinity?.includes(slotSpirit.name);
+                        slotSpirit = { ...slotSpirit, affinity: !!hasAffinity };
+                      }
+
+                      newSlots[activeSlot] = {
+                        item: { ...item },
+                        quality: existingSlot?.quality || slotQuality,
+                        element: slotElement,
+                        spirit: slotSpirit,
+                      };
+                      setSlots(newSlots);
+                      setManualMode(false);
+                    }}
+                    onCancel={() => setManualMode(false)}
+                  />
+                ) : loading ? (
+                  <div className="flex flex-col items-center justify-center py-16 gap-4">
+                    <div className="relative w-12 h-12">
+                      <div className="absolute inset-0 border-[3px] border-dashed border-primary/30 rounded-full animate-spin" style={{ animationDuration: '2s' }} />
+                      <div className="absolute inset-1 border-[3px] border-transparent border-t-primary rounded-full animate-spin" style={{ animationDuration: '0.8s' }} />
                     </div>
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      {loadingProgress} / {loadingTotal} 타입 로드 완료
-                    </span>
+                    <span className="text-muted-foreground text-sm">장비 데이터 로딩 중...</span>
+                    {loadingTotal > 0 && (
+                      <div className="flex flex-col items-center gap-1.5 w-48">
+                        <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full transition-all duration-300"
+                            style={{ width: `${Math.round((loadingProgress / loadingTotal) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-muted-foreground tabular-nums">
+                          {loadingProgress} / {loadingTotal} 타입 로드 완료
+                        </span>
+                      </div>
+                    )}
                   </div>
+                ) : filteredItems.length === 0 ? (
+                  <div className="flex items-center justify-center py-16 text-muted-foreground">장착 가능한 장비가 없습니다</div>
+                ) : viewMode === 'table' ? (
+                  /* ─── Table View ─── */
+                  <div className="overflow-x-auto h-full">
+                    <table className="w-full text-xs border-collapse" style={{ tableLayout: 'fixed' }}>
+                      <colgroup>
+                        <col style={{ width: '160px' }} /> {/* 이름 */}
+                        <col style={{ width: '60px' }} />  {/* 타입 */}
+                        <col style={{ width: '36px' }} />  {/* T */}
+                        <col style={{ width: '56px' }} />  {/* ATK */}
+                        <col style={{ width: '56px' }} />  {/* DEF */}
+                        <col style={{ width: '56px' }} />  {/* HP */}
+                        <col style={{ width: '50px' }} />  {/* CRIT */}
+                        <col style={{ width: '50px' }} />  {/* EVA */}
+                        <col style={{ width: '90px' }} />  {/* 친밀 원소 */}
+                        <col style={{ width: '80px' }} />  {/* 친밀 영혼 */}
+                        <col style={{ width: '100px' }} /> {/* 고유 원소/영혼 */}
+                      </colgroup>
+                      <thead className="sticky top-0 bg-background z-10">
+                        <tr className="border-b-2 border-border">
+                          <th className="text-center py-2 px-2 text-foreground/60 font-semibold">이름</th>
+                          <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">타입</th>
+                          <th className="text-center py-2 px-1 text-foreground/60 font-semibold">T</th>
+                          <th className="text-center py-2 px-1.5 text-red-400/80 font-semibold">ATK</th>
+                          <th className="text-center py-2 px-1.5 text-blue-400/80 font-semibold">DEF</th>
+                          <th className="text-center py-2 px-1.5 text-orange-400/80 font-semibold">HP</th>
+                          <th className="text-center py-2 px-1 text-yellow-400/80 font-semibold">CRIT</th>
+                          <th className="text-center py-2 px-1 text-teal-400/80 font-semibold">EVA</th>
+                          <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">친밀 원소</th>
+                          <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">친밀 영혼</th>
+                          <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">고유 원소/영혼</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredItems.map((item, idx) => {
+                          const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
+                          const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
+                          const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
+                          const defVal = item.stats.find(s => s.key === '장비_방어력')?.value || 0;
+                          const hpVal = item.stats.find(s => s.key === '장비_체력')?.value || 0;
+                          const critVal = item.stats.find(s => s.key === '장비_치명타확률%')?.value || 0;
+                          const evaVal = item.stats.find(s => s.key === '장비_회피%')?.value || 0;
+                          return (
+                            <tr
+                              key={`${item.name}-${item.tier}-${idx}`}
+                              onClick={() => !isRelicBlocked && handleSelectItem(item)}
+                              className={`border-b border-border/20 transition-colors ${
+                                isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
+                                isSelected ? 'bg-primary/20 font-medium' : 'hover:bg-secondary/30 cursor-pointer'
+                              }`}
+                            >
+                              <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+                                {item.relic && <span className="text-yellow-400 mr-1">⭐</span>}
+                                {item.name}
+                                {item.type === 'dual_wield' && item.judgmentTypes?.length > 0 && (
+                                  <span className="text-muted-foreground ml-1">({item.judgmentTypes.join('+')})</span>
+                                )}
+                              </td>
+                              <td className="py-1.5 px-1.5 text-center text-foreground whitespace-nowrap">{item.typeKor}</td>
+                              <td className="py-1.5 px-1 text-center text-foreground tabular-nums">{item.tier}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal || '-'}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal || '-'}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal || '-'}</td>
+                              <td className={`py-1.5 px-1 text-center tabular-nums ${critVal ? 'text-yellow-400' : 'text-muted-foreground/30'}`}>{critVal ? `${critVal}%` : '-'}</td>
+                              <td className={`py-1.5 px-1 text-center tabular-nums ${evaVal ? 'text-teal-400' : 'text-muted-foreground/30'}`}>{evaVal ? `${evaVal}%` : '-'}</td>
+                              <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                                {item.elementAffinity?.length ? (
+                                  <span>{item.elementAffinity.map((el, i) => (
+                                    <span key={el}>
+                                      {i > 0 && <span className="text-muted-foreground"> / </span>}
+                                      <span className={`${ELEMENT_COLORS[el] || ''} text-foreground`}>{el === '모든 원소' ? '전체' : el}</span>
+                                    </span>
+                                  ))}</span>
+                                ) : <span className="text-muted-foreground/30">-</span>}
+                              </td>
+                              <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                                {item.spiritAffinity?.length ? (
+                                  <span className="text-foreground">{item.spiritAffinity.join(', ')}</span>
+                                ) : <span className="text-muted-foreground/30">-</span>}
+                              </td>
+                              <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                                {item.uniqueElement?.length ? (
+                                  <span>{item.uniqueElement.map(el => (
+                                    <span key={el} className={`${ELEMENT_COLORS[el] || ''} font-semibold`}>{el} (T{item.uniqueElementTier})</span>
+                                  ))}</span>
+                                ) : item.uniqueSpirit?.length ? (
+                                  <span className="text-purple-300 font-semibold">{item.uniqueSpirit.join(', ')}</span>
+                                ) : <span className="text-muted-foreground/30">-</span>}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <TooltipProvider delayDuration={200}>
+                    <div className="grid grid-cols-6 gap-3">
+                      {filteredItems.map((item, idx) => {
+                        const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
+                        const quality = slots[activeSlot]?.quality || 'common';
+                        const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
+
+                        const elemAffs = item.elementAffinity || [];
+                        const uniqueElems = item.uniqueElement || [];
+                        const spiritAffs = item.spiritAffinity || [];
+                        const uniqueSp = item.uniqueSpirit || [];
+                        const hasAffinityIcons = elemAffs.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || uniqueSp.length > 0;
+
+                        return (
+                          <Tooltip key={`${item.name}-${item.tier}-${idx}`}>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => !isRelicBlocked && handleSelectItem(item)}
+                                disabled={isRelicBlocked}
+                                className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
+                                  isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
+                                  isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
+                                }`}
+                                style={isSelected ? {
+                                  background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 70%)`,
+                                  boxShadow: QUALITY_SHADOW[quality],
+                                } : {}}
+                              >
+                                {/* Top 3/4: Tier + Image + Name at fixed 75% */}
+                                <div className="flex flex-col items-center w-full relative" style={{ height: '75%' }}>
+                                  <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">
+                                    T{item.tier}
+                                  </span>
+                                  {item.relic && (
+                                    <img src="/images/special/icon_global_artifact.webp" alt="유물" className="absolute top-1 right-1 w-4 h-4 z-10"
+                                      onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                  )}
+                                  {isRelicBlocked && (
+                                    <span className="absolute top-5 right-0 text-[7px] text-red-400 bg-background/80 rounded px-0.5 z-10">유물 중복</span>
+                                  )}
+                                  <div className="flex-1 w-full flex items-center justify-center pt-3">
+                                    {item.imagePath ? (
+                                      <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain"
+                                        onError={e => {
+                                          e.currentTarget.style.display = 'none';
+                                          const p = e.currentTarget.parentElement;
+                                          if (p) { const s = document.createElement('span'); s.className = 'text-[9px] text-muted-foreground text-center'; s.textContent = item.name.slice(0, 6); p.appendChild(s); }
+                                        }} />
+                                    ) : (
+                                      <span className="text-[9px] text-muted-foreground text-center leading-tight">{item.name.slice(0, 8)}</span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1 pb-0.5">
+                                    {item.name}
+                                  </p>
+                                </div>
+                                <div className="flex items-center justify-center gap-2 w-full" style={{ height: '25%' }}>
+                                  {hasAffinityIcons ? (
+                                    <>
+                                      <div className="flex items-center gap-0.5">
+                                        {elemAffs.map(el => (
+                                          <img key={el} src={getElementIconPath(el)} alt={el} className="w-6 h-6" title={`친밀 원소: ${el}`}
+                                            onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                        ))}
+                                        {uniqueElems.map(el => {
+                                          const eng = ELEMENT_ENG[el];
+                                          const tier = item.uniqueElementTier || 1;
+                                          return (
+                                            <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
+                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                          );
+                                        })}
+                                      </div>
+                                      {(spiritAffs.length > 0 || uniqueSp.length > 0) && (elemAffs.length > 0 || uniqueElems.length > 0) && (
+                                        <div className="w-px h-5 bg-border/50" />
+                                      )}
+                                      <div className="flex items-center gap-0.5">
+                                        {spiritAffs.map(sp => {
+                                          const eng = SPIRIT_NAME_MAP[sp];
+                                          return (
+                                            <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.webp` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
+                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                          );
+                                        })}
+                                        {uniqueSp.map(sp => {
+                                          const eng = SPIRIT_NAME_MAP[sp];
+                                          return (
+                                            <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
+                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                          );
+                                        })}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <span className="text-[7px] text-muted-foreground/30">-</span>
+                                  )}
+                                </div>
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="bottom"
+                              align="center"
+                              sideOffset={8}
+                              avoidCollisions={true}
+                              collisionPadding={16}
+                              className="max-w-xs p-3 space-y-1.5 z-50"
+                            >
+                              <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor})</span></p>
+                              {item.type === 'dual_wield' && item.judgmentTypes?.length > 0 && (
+                                <p className="text-xs text-muted-foreground">판정 타입: <span className="text-foreground font-medium">{item.judgmentTypes.join(', ')}</span></p>
+                              )}
+                              {item.relic && <p className="text-xs text-yellow-400 font-semibold">⭐ 유물</p>}
+                              {item.stats.length > 0 && (
+                                <div className="space-y-0.5">
+                                  {item.stats.map((s, si) => (
+                                    <div key={si} className="flex items-center gap-1 text-xs">
+                                      <span className={`font-medium ${STAT_COLOR[s.key] || 'text-foreground'}`}>
+                                        {STAT_FILTER_OPTIONS.find(o => o.value === s.key)?.label || s.key}:
+                                      </span>
+                                      <span className="tabular-nums">{formatEquipStat(s.key, s.value)}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {item.elementAffinity && item.elementAffinity.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">친밀 원소: </span>
+                                  {item.elementAffinity.map((el, i) => (
+                                    <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
+                                      {el}{i < item.elementAffinity!.length - 1 ? ', ' : ''}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {item.uniqueElement && item.uniqueElement.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">고유 원소: </span>
+                                  {item.uniqueElement.map((el, i) => (
+                                    <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
+                                      {el} (T{item.uniqueElementTier || 1}){i < item.uniqueElement!.length - 1 ? ', ' : ''}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {item.spiritAffinity && item.spiritAffinity.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">친밀 영혼: </span>
+                                  {item.spiritAffinity.map((sp, i) => (
+                                    <span key={sp} className="text-foreground">
+                                      {sp} (T{getSpiritTier(sp)}){i < item.spiritAffinity!.length - 1 ? ', ' : ''}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {item.uniqueSpirit && item.uniqueSpirit.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">고유 영혼: </span>
+                                  {item.uniqueSpirit.map((sp, i) => (
+                                    <span key={sp} className="text-foreground">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
+                                  ))}
+                                </div>
+                              )}
+                              {item.relic && item.relicEffect && (
+                                <div className="text-xs border-t border-border/50 pt-1 mt-1">
+                                  <span className="text-yellow-400 font-semibold">유물 효과:</span>
+                                  <p className="text-foreground/80 mt-0.5">{item.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (
+                                    <span key={li}>{li > 0 && <br />}{line}</span>
+                                  ))}</p>
+                                </div>
+                              )}
+                              {isRelicBlocked && (
+                                <div className="text-xs text-red-400 border-t border-border/50 pt-1 mt-1">
+                                  ⚠ 유물 중복 — 유물은 1개만 사용이 가능합니다.
+                                </div>
+                              )}
+                              {item.airshipPower > 0 && (
+                                <p className="text-xs text-muted-foreground">에어쉽파워: {formatNumber(item.airshipPower)}</p>
+                              )}
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                  </TooltipProvider>
                 )}
               </div>
-            ) : filteredItems.length === 0 ? (
-              <div className="flex items-center justify-center py-16 text-muted-foreground">장착 가능한 장비가 없습니다</div>
-    ) : viewMode === 'table' ? (
-              /* ─── Table View ─── */
-              <div className="overflow-x-auto h-full">
-                <table className="w-full text-xs border-collapse">
-                  <thead className="sticky top-0 bg-background z-10">
-                    <tr className="border-b-2 border-border">
-                      <th className="text-left py-2 px-2 text-foreground/60 font-semibold">이름</th>
-                      <th className="text-left py-2 px-1.5 text-foreground/60 font-semibold">타입</th>
-                      <th className="text-center py-2 px-1 text-foreground/60 font-semibold">T</th>
-                      <th className="text-right py-2 px-1.5 text-red-400/80 font-semibold">ATK</th>
-                      <th className="text-right py-2 px-1.5 text-blue-400/80 font-semibold">DEF</th>
-                      <th className="text-right py-2 px-1.5 text-orange-400/80 font-semibold">HP</th>
-                      <th className="text-right py-2 px-1 text-yellow-400/80 font-semibold">CRIT</th>
-                      <th className="text-right py-2 px-1 text-teal-400/80 font-semibold">EVA</th>
-                      <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">친밀 원소</th>
-                      <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">고유</th>
-                      <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">영혼</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredItems.map((item, idx) => {
-                      const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
-                      const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
-                      const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
-                      const defVal = item.stats.find(s => s.key === '장비_방어력')?.value || 0;
-                      const hpVal = item.stats.find(s => s.key === '장비_체력')?.value || 0;
-                      const critVal = item.stats.find(s => s.key === '장비_치명타확률%')?.value || 0;
-                      const evaVal = item.stats.find(s => s.key === '장비_회피%')?.value || 0;
-                      return (
-                        <tr
-                          key={`${item.name}-${item.tier}-${idx}`}
-                          onClick={() => !isRelicBlocked && handleSelectItem(item)}
-                          className={`border-b border-border/20 transition-colors ${
-                            isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
-                            isSelected ? 'bg-primary/20 font-medium' : 'hover:bg-secondary/30 cursor-pointer'
-                          }`}
-                        >
-                          <td className="py-1.5 px-2 text-foreground whitespace-nowrap">
-                            {item.relic && <span className="text-yellow-400 mr-1">⭐</span>}
-                            {item.name}
-                            {item.type === 'dual_wield' && item.judgmentTypes?.length > 0 && (
-                              <span className="text-muted-foreground ml-1 text-[10px]">({item.judgmentTypes.join('+')})</span>
-                            )}
-                          </td>
-                          <td className="py-1.5 px-1.5 text-muted-foreground whitespace-nowrap">{item.typeKor}</td>
-                          <td className="py-1.5 px-1 text-center tabular-nums">{item.tier}</td>
-                          <td className={`py-1.5 px-1.5 text-right tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal || '-'}</td>
-                          <td className={`py-1.5 px-1.5 text-right tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal || '-'}</td>
-                          <td className={`py-1.5 px-1.5 text-right tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal || '-'}</td>
-                          <td className={`py-1.5 px-1 text-right tabular-nums ${critVal ? 'text-yellow-400' : 'text-muted-foreground/30'}`}>{critVal ? `${critVal}%` : '-'}</td>
-                          <td className={`py-1.5 px-1 text-right tabular-nums ${evaVal ? 'text-teal-400' : 'text-muted-foreground/30'}`}>{evaVal ? `${evaVal}%` : '-'}</td>
-                          <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
-                            {item.elementAffinity?.length ? (
-                              <span className="text-[10px]">{item.elementAffinity.map(el => (
-                                <span key={el} className={`${ELEMENT_COLORS[el] || ''} mr-0.5`}>{el === '모든 원소' ? '전체' : el}</span>
-                              ))}</span>
-                            ) : <span className="text-muted-foreground/30">-</span>}
-                          </td>
-                          <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
-                            {item.uniqueElement?.length ? (
-                              <span className="text-[10px]">{item.uniqueElement.map(el => (
-                                <span key={el} className={`${ELEMENT_COLORS[el] || ''} font-semibold`}>{el}T{item.uniqueElementTier}</span>
-                              ))}</span>
-                            ) : item.uniqueSpirit?.length ? (
-                              <span className="text-[10px] text-purple-300 font-semibold">{item.uniqueSpirit.join(', ')}</span>
-                            ) : <span className="text-muted-foreground/30">-</span>}
-                          </td>
-                          <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
-                            {item.spiritAffinity?.length ? (
-                              <span className="text-[10px] text-muted-foreground">{item.spiritAffinity.join(', ')}</span>
-                            ) : <span className="text-muted-foreground/30">-</span>}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <TooltipProvider delayDuration={200}>
-                <div className="grid grid-cols-6 gap-3">
-                  {filteredItems.map((item, idx) => {
-                    const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
-                    const quality = slots[activeSlot]?.quality || 'common';
-                    const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
+            </div>
+          </div>
 
-                    const elemAffs = item.elementAffinity || [];
-                    const uniqueElems = item.uniqueElement || [];
-                    const spiritAffs = item.spiritAffinity || [];
-                    const uniqueSp = item.uniqueSpirit || [];
-                    const hasAffinityIcons = elemAffs.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || uniqueSp.length > 0;
-
-                    return (
-                      <Tooltip key={`${item.name}-${item.tier}-${idx}`}>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => !isRelicBlocked && handleSelectItem(item)}
-                            disabled={isRelicBlocked}
-                            className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
-                              isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
-                              isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
-                            }`}
-                            style={isSelected ? {
-                              background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 70%)`,
-                              boxShadow: QUALITY_SHADOW[quality],
-                            } : {}}
-                          >
-                            {/* Top 3/4: Tier + Image + Name at fixed 75% */}
-                            <div className="flex flex-col items-center w-full relative" style={{ height: '75%' }}>
-                              {/* Tier badge */}
-                              <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">
-                                T{item.tier}
-                              </span>
-
-                              {/* Relic icon */}
-                              {item.relic && (
-                                <img src="/images/special/icon_global_artifact.webp" alt="유물" className="absolute top-1 right-1 w-4 h-4 z-10"
-                                  onError={e => { e.currentTarget.style.display = 'none'; }} />
-                              )}
-
-                              {isRelicBlocked && (
-                                <span className="absolute top-5 right-0 text-[7px] text-red-400 bg-background/80 rounded px-0.5 z-10">유물 중복</span>
-                              )}
-
-                              {/* Item image - large, centered */}
-                              <div className="flex-1 w-full flex items-center justify-center pt-3">
-                                {item.imagePath ? (
-                                  <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain"
-                                    onError={e => {
-                                      e.currentTarget.style.display = 'none';
-                                      const p = e.currentTarget.parentElement;
-                                      if (p) { const s = document.createElement('span'); s.className = 'text-[9px] text-muted-foreground text-center'; s.textContent = item.name.slice(0, 6); p.appendChild(s); }
-                                    }} />
-                                ) : (
-                                  <span className="text-[9px] text-muted-foreground text-center leading-tight">{item.name.slice(0, 8)}</span>
-                                )}
-                              </div>
-
-                              {/* Item name at bottom of top section */}
-                              <p className="text-[11px] text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1 pb-0.5">
-                                {item.name}
-                              </p>
-                            </div>
-
-                            {/* Bottom 1/4: Element + Spirit icons - always positioned here */}
-                            <div className="flex items-center justify-center gap-2 w-full" style={{ height: '25%' }}>
-                              {hasAffinityIcons ? (
-                                <>
-                                  <div className="flex items-center gap-0.5">
-                                    {elemAffs.map(el => (
-                                      <img key={el} src={getElementIconPath(el)} alt={el} className="w-6 h-6" title={`친밀 원소: ${el}`}
-                                        onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                    ))}
-                                    {uniqueElems.map(el => {
-                                      const eng = ELEMENT_ENG[el];
-                                      const tier = item.uniqueElementTier || 1;
-                                      return (
-                                        <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
-                                          onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                      );
-                                    })}
-                                  </div>
-                                  {(spiritAffs.length > 0 || uniqueSp.length > 0) && (elemAffs.length > 0 || uniqueElems.length > 0) && (
-                                    <div className="w-px h-5 bg-border/50" />
-                                  )}
-                                  <div className="flex items-center gap-0.5">
-                                    {spiritAffs.map(sp => {
-                                      const eng = SPIRIT_NAME_MAP[sp];
-                                      return (
-                                        <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.webp` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
-                                          onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                      );
-                                    })}
-                                    {uniqueSp.map(sp => {
-                                      const eng = SPIRIT_NAME_MAP[sp];
-                                      return (
-                                        <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
-                                          onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                      );
-                                    })}
-                                  </div>
-                                </>
-                              ) : (
-                                /* Empty space to keep consistent layout */
-                                <span className="text-[7px] text-muted-foreground/30">-</span>
-                              )}
-                            </div>
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="bottom"
-                          align="center"
-                          sideOffset={8}
-                          avoidCollisions={true}
-                          collisionPadding={16}
-                          className="max-w-xs p-3 space-y-1.5 z-50"
-                        >
-                          <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor})</span></p>
-                          {item.type === 'dual_wield' && item.judgmentTypes?.length > 0 && (
-                            <p className="text-xs text-muted-foreground">판정 타입: <span className="text-foreground font-medium">{item.judgmentTypes.join(', ')}</span></p>
-                          )}
-                          {item.relic && <p className="text-xs text-yellow-400 font-semibold">⭐ 유물</p>}
-
-                          {item.stats.length > 0 && (
-                            <div className="space-y-0.5">
-                              {item.stats.map((s, si) => (
-                                <div key={si} className="flex items-center gap-1 text-xs">
-                                  <span className={`font-medium ${STAT_COLOR[s.key] || 'text-foreground'}`}>
-                                    {STAT_FILTER_OPTIONS.find(o => o.value === s.key)?.label || s.key}:
-                                  </span>
-                                  <span className="tabular-nums">{formatEquipStat(s.key, s.value)}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-
-                          {item.elementAffinity && item.elementAffinity.length > 0 && (
-                            <div className="text-xs">
-                              <span className="text-muted-foreground">친밀 원소: </span>
-                              {item.elementAffinity.map((el, i) => (
-                                <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
-                                  {el}{i < item.elementAffinity!.length - 1 ? ', ' : ''}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-
-                          {item.uniqueElement && item.uniqueElement.length > 0 && (
-                            <div className="text-xs">
-                              <span className="text-muted-foreground">고유 원소: </span>
-                              {item.uniqueElement.map((el, i) => (
-                                <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
-                                  {el} T{item.uniqueElementTier || 1}{i < item.uniqueElement!.length - 1 ? ', ' : ''}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-
-                          {item.spiritAffinity && item.spiritAffinity.length > 0 && (
-                            <div className="text-xs">
-                              <span className="text-muted-foreground">친밀 영혼: </span>
-                              {item.spiritAffinity.map((sp, i) => (
-                                <span key={sp} className="text-foreground">
-                                  {sp} (T{getSpiritTier(sp)}){i < item.spiritAffinity!.length - 1 ? ', ' : ''}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-
-                          {item.uniqueSpirit && item.uniqueSpirit.length > 0 && (
-                            <div className="text-xs">
-                              <span className="text-muted-foreground">고유 영혼: </span>
-                              {item.uniqueSpirit.map((sp, i) => (
-                                <span key={sp} className="text-foreground">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
-                              ))}
-                            </div>
-                          )}
-
-                          {item.relic && item.relicEffect && (
-                            <div className="text-xs border-t border-border/50 pt-1 mt-1">
-                              <span className="text-yellow-400 font-semibold">유물 효과:</span>
-                              <p className="text-foreground/80 mt-0.5">{item.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (
-                                <span key={li}>{li > 0 && <br />}{line}</span>
-                              ))}</p>
-                            </div>
-                          )}
-
-                          {isRelicBlocked && (
-                            <div className="text-xs text-red-400 border-t border-border/50 pt-1 mt-1">
-                              ⚠ 유물 중복 — 유물은 1개만 사용이 가능합니다.
-                            </div>
-                          )}
-
-                          {item.airshipPower > 0 && (
-                            <p className="text-xs text-muted-foreground">에어쉽파워: {formatNumber(item.airshipPower)}</p>
-                          )}
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
+          {/* ═══ Right: Selected equipment + Confirm/Cancel ═══ */}
+          <div className="w-60 flex flex-col border-l border-border pl-3 flex-shrink-0">
+            <h3 className="text-xs font-semibold text-muted-foreground mb-2">선택한 장비</h3>
+            <div className="flex-1 overflow-y-auto space-y-1.5">
+              {slots.map((s, i) => (
+                <div
+                  key={i}
+                  onClick={() => setActiveSlot(i)}
+                  className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-all ${
+                    activeSlot === i ? 'border-primary ring-1 ring-primary/30 bg-primary/5' :
+                    s.item ? `${QUALITY_BORDER[s.quality]} bg-secondary/10` : 'border-border/30 bg-secondary/5 opacity-60'
+                  }`}
+                >
+                  <span className="text-[10px] text-muted-foreground font-bold w-5 flex-shrink-0">{i + 1}</span>
+                  {s.item ? (
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1">
+                        {s.item.imagePath ? (
+                          <img src={s.item.imagePath} alt="" className="w-7 h-7 object-contain flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : null}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs text-foreground truncate font-medium">{s.item.name}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            T{s.item.tier} {s.item.typeKor}
+                            {s.item.relic && <span className="text-yellow-400 ml-1">⭐</span>}
+                            {s.item.manual && <Wrench className="w-2.5 h-2.5 inline ml-1 text-muted-foreground" />}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <span className={`text-[9px] ${QUALITY_OPTIONS.find(q => q.value === s.quality)?.color || 'text-gray-300'}`}>
+                          {QUALITY_OPTIONS.find(q => q.value === s.quality)?.label}
+                        </span>
+                        {s.element && (
+                          <span className={`text-[9px] ${ELEMENT_COLORS[s.element.type] || ''}`}>
+                            {s.element.type} T{s.element.tier}
+                          </span>
+                        )}
+                        {s.spirit && (
+                          <span className="text-[9px] text-purple-300">{s.spirit.name}</span>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">비어있음</span>
+                  )}
+                  {s.item && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const newSlots = [...slots];
+                        newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                        setSlots(newSlots);
+                      }}
+                      className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
+                      title="장비 해제"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
-              </TooltipProvider>
-            )}
+              ))}
+            </div>
+            <div className="flex gap-2 pt-3 mt-2 border-t border-border">
+              <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
+              <Button className="flex-1" onClick={handleConfirm}>확인</Button>
+            </div>
           </div>
         </div>
       </DialogContent>

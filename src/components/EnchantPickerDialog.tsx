@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
 
 interface EnchantSlotData {
-  element: { type: string; tier: number; affinity: boolean } | null;
+  element: { type: string; tier: number; affinity: boolean; allElementAffinity?: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
 
@@ -54,9 +54,11 @@ const ELEMENT_VALUES: Record<number, { normal: number; affinity: number }> = {
   14: { normal: 35, affinity: 45 },
 };
 
-function getElementValue(tier: number, affinity: boolean): number {
+function getElementValue(tier: number, affinity: boolean, isAllElementAffinity: boolean = false): number {
   const entry = ELEMENT_VALUES[tier];
   if (!entry) return 0;
+  // "모든 원소" affinity: always +5 instead of normal affinity bonus
+  if (affinity && isAllElementAffinity) return entry.normal + 5;
   return affinity ? entry.affinity : entry.normal;
 }
 
@@ -125,6 +127,14 @@ function hasElementAffinity(info: ItemAffinityInfo | null, elType: string): bool
   return false;
 }
 
+function isAllElementAffinityOnly(info: ItemAffinityInfo | null, elType: string): boolean {
+  if (!info) return false;
+  // Specific element match takes priority over "모든 원소"
+  if (info.elementAffinity?.includes(elType)) return false;
+  if (info.elementAffinity?.includes('모든 원소')) return true;
+  return false;
+}
+
 function hasSpiritAffinity(info: ItemAffinityInfo | null, spName: string): boolean {
   if (!info) return false;
   return info.spiritAffinity?.includes(spName) || false;
@@ -153,8 +163,9 @@ export default function EnchantPickerDialog({
     const info = itemInfoPerSlot[slotIdx];
     if (info?.uniqueElement && info.uniqueElement.length > 0) return;
     const affinity = hasElementAffinity(info, elType);
+    const allElementAffinity = isAllElementAffinityOnly(info, elType);
     const newSlots = [...localSlots];
-    newSlots[slotIdx] = { ...newSlots[slotIdx], element: { type: elType, tier, affinity } };
+    newSlots[slotIdx] = { ...newSlots[slotIdx], element: { type: elType, tier, affinity, allElementAffinity } };
     setLocalSlots(newSlots);
   };
 
@@ -190,7 +201,8 @@ export default function EnchantPickerDialog({
       if (info?.uniqueElement && info.uniqueElement.length > 0) return s;
       if (!info) return s;
       const affinity = hasElementAffinity(info, bulkElement);
-      return { ...s, element: { type: bulkElement, tier: bulkElementTier, affinity } };
+      const allElementAffinity = isAllElementAffinityOnly(info, bulkElement);
+      return { ...s, element: { type: bulkElement, tier: bulkElementTier, affinity, allElementAffinity } };
     });
     setLocalSlots(newSlots);
   };
@@ -215,7 +227,7 @@ export default function EnchantPickerDialog({
     const totals: Record<string, number> = {};
     localSlots.forEach((s) => {
       if (s.element) {
-        const val = getElementValue(s.element.tier, s.element.affinity);
+        const val = getElementValue(s.element.tier, s.element.affinity, !!(s.element as any).allElementAffinity);
         totals[s.element.type] = (totals[s.element.type] || 0) + val;
       }
     });
@@ -328,7 +340,7 @@ export default function EnchantPickerDialog({
                 const slot = localSlots[i];
                 const hasUniqueEl = info?.uniqueElement && info.uniqueElement.length > 0;
                 const hasItem = !!info;
-                const elValue = slot?.element ? getElementValue(slot.element.tier, slot.element.affinity) : 0;
+                const elValue = slot?.element ? getElementValue(slot.element.tier, slot.element.affinity, !!(slot.element as any).allElementAffinity) : 0;
 
                 return (
                   <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_80px] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
