@@ -227,7 +227,7 @@ export default function EnchantPickerDialog({
     const totals: Record<string, number> = {};
     localSlots.forEach((s) => {
       if (s.element) {
-        const val = getElementValue(s.element.tier, s.element.affinity);
+        const val = getElementValue(s.element.tier, s.element.affinity, !!(s.element as any).allElementAffinity);
         totals[s.element.type] = (totals[s.element.type] || 0) + val;
       }
     });
