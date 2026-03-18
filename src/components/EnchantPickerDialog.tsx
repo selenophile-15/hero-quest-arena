@@ -54,9 +54,11 @@ const ELEMENT_VALUES: Record<number, { normal: number; affinity: number }> = {
   14: { normal: 35, affinity: 45 },
 };
 
-function getElementValue(tier: number, affinity: boolean): number {
+function getElementValue(tier: number, affinity: boolean, isAllElementAffinity: boolean = false): number {
   const entry = ELEMENT_VALUES[tier];
   if (!entry) return 0;
+  // "모든 원소" affinity: always +5 instead of normal affinity bonus
+  if (affinity && isAllElementAffinity) return entry.normal + 5;
   return affinity ? entry.affinity : entry.normal;
 }
 
