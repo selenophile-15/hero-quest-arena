@@ -127,6 +127,14 @@ function hasElementAffinity(info: ItemAffinityInfo | null, elType: string): bool
   return false;
 }
 
+function isAllElementAffinityOnly(info: ItemAffinityInfo | null, elType: string): boolean {
+  if (!info) return false;
+  // Specific element match takes priority over "모든 원소"
+  if (info.elementAffinity?.includes(elType)) return false;
+  if (info.elementAffinity?.includes('모든 원소')) return true;
+  return false;
+}
+
 function hasSpiritAffinity(info: ItemAffinityInfo | null, spName: string): boolean {
   if (!info) return false;
   return info.spiritAffinity?.includes(spName) || false;
