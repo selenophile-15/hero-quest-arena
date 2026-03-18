@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
 
 interface EnchantSlotData {
-  element: { type: string; tier: number; affinity: boolean } | null;
+  element: { type: string; tier: number; affinity: boolean; allElementAffinity?: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
 
