@@ -201,7 +201,8 @@ export default function EnchantPickerDialog({
       if (info?.uniqueElement && info.uniqueElement.length > 0) return s;
       if (!info) return s;
       const affinity = hasElementAffinity(info, bulkElement);
-      return { ...s, element: { type: bulkElement, tier: bulkElementTier, affinity } };
+      const allElementAffinity = isAllElementAffinityOnly(info, bulkElement);
+      return { ...s, element: { type: bulkElement, tier: bulkElementTier, affinity, allElementAffinity } };
     });
     setLocalSlots(newSlots);
   };
