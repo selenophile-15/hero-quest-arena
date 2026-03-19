@@ -942,64 +942,82 @@ export default function EquipmentSelectDialog({
           <div className="w-60 flex flex-col border-l border-border pl-3 flex-shrink-0">
             <h3 className="text-xs font-semibold text-muted-foreground mb-2">선택한 장비</h3>
             <div className="flex-1 overflow-y-auto space-y-1.5">
-              {slots.map((s, i) => (
+              {slots.map((s, i) => {
+                const qualityColor: Record<string, string> = {
+                  common: 'rgba(180,180,180,0.5)',
+                  uncommon: 'rgba(74,222,128,0.6)',
+                  flawless: 'rgba(103,232,249,0.6)',
+                  epic: 'rgba(217,70,239,0.65)',
+                  legendary: 'rgba(250,204,21,0.7)',
+                };
+                const hasAffinityEl = s.element?.affinity;
+                const hasAffinitySp = s.spirit?.affinity;
+                return (
                 <div
                   key={i}
                   onClick={() => setActiveSlot(i)}
-                  className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-all ${
-                    activeSlot === i ? 'border-primary ring-1 ring-primary/30 bg-primary/5' :
-                    s.item ? `${QUALITY_BORDER[s.quality]} bg-secondary/10` : 'border-border/30 bg-secondary/5 opacity-60'
+                  className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
+                    activeSlot === i ? 'border-primary ring-1 ring-primary/30' :
+                    s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
                   }`}
+                  style={s.item ? { boxShadow: QUALITY_SHADOW[s.quality] } : {}}
                 >
-                  <span className="text-[10px] text-muted-foreground font-bold w-5 flex-shrink-0">{i + 1}</span>
+                  {/* Slot number with quality background */}
+                  <div
+                    className="w-5 flex items-center justify-center flex-shrink-0"
+                    style={{ background: s.item ? qualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
+                  >
+                    <span className="text-[10px] font-bold text-background">{i + 1}</span>
+                  </div>
                   {s.item ? (
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1">
-                        {s.item.imagePath ? (
-                          <img src={s.item.imagePath} alt="" className="w-7 h-7 object-contain flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        ) : null}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs text-foreground truncate font-medium">{s.item.name}</p>
-                          <p className="text-[10px] text-muted-foreground">
-                            T{s.item.tier} {s.item.typeKor}
-                            {s.item.relic && <span className="text-yellow-400 ml-1">⭐</span>}
-                            {s.item.manual && <Wrench className="w-2.5 h-2.5 inline ml-1 text-muted-foreground" />}
-                          </p>
+                    <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">
+                      {/* Equipment image */}
+                      {s.item.imagePath ? (
+                        <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                      ) : null}
+                      {/* Info */}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-foreground truncate font-medium">{s.item.name}</p>
+                        <p className="text-[10px] text-foreground/60">
+                          T{s.item.tier} {s.item.typeKor}
+                          {s.item.relic && <span className="text-yellow-400 ml-1">⭐</span>}
+                          {s.item.manual && <Wrench className="w-2.5 h-2.5 inline ml-1 text-muted-foreground" />}
+                        </p>
+                        <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                          {s.element && (
+                            <span className={`text-[9px] ${hasAffinityEl ? 'font-bold' : ''} ${ELEMENT_COLORS[s.element.type] || 'text-foreground/70'}`}>
+                              {hasAffinityEl && '★ '}{s.element.type} (T{s.element.tier})
+                            </span>
+                          )}
+                          {s.element && s.spirit && <span className="text-[9px] text-muted-foreground">/</span>}
+                          {s.spirit && (
+                            <span className={`text-[9px] text-purple-300 ${hasAffinitySp ? 'font-bold' : ''}`}>
+                              {hasAffinitySp && '★ '}{s.spirit.name} (T{getSpiritTier(s.spirit.name)})
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <span className={`text-[9px] ${QUALITY_OPTIONS.find(q => q.value === s.quality)?.color || 'text-gray-300'}`}>
-                          {QUALITY_OPTIONS.find(q => q.value === s.quality)?.label}
-                        </span>
-                        {s.element && (
-                          <span className={`text-[9px] ${ELEMENT_COLORS[s.element.type] || ''}`}>
-                            {s.element.type} T{s.element.tier}
-                          </span>
-                        )}
-                        {s.spirit && (
-                          <span className="text-[9px] text-purple-300">{s.spirit.name}</span>
-                        )}
-                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const newSlots = [...slots];
+                          newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                          setSlots(newSlots);
+                        }}
+                        className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
+                        title="장비 해제"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ) : (
-                    <span className="text-xs text-muted-foreground">비어있음</span>
-                  )}
-                  {s.item && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const newSlots = [...slots];
-                        newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
-                        setSlots(newSlots);
-                      }}
-                      className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
-                      title="장비 해제"
-                    >
-                      ✕
-                    </button>
+                    <div className="flex items-center p-1.5">
+                      <span className="text-xs text-muted-foreground">비어있음</span>
+                    </div>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
             <div className="flex gap-2 pt-3 mt-2 border-t border-border">
               <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
