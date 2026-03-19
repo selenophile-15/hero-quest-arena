@@ -692,7 +692,7 @@ export default function EquipmentSelectDialog({
                                   <span>{item.elementAffinity.map((el, i) => (
                                     <span key={el}>
                                       {i > 0 && <span className="text-muted-foreground"> / </span>}
-                                      <span className={`${ELEMENT_COLORS[el] || ''} text-foreground`}>{el === '모든 원소' ? '전체' : el}</span>
+                                      <span className={ELEMENT_COLORS[el] || 'text-foreground'}>{el === '모든 원소' ? '모든 원소' : el}</span>
                                     </span>
                                   ))}</span>
                                 ) : <span className="text-muted-foreground/30">-</span>}
