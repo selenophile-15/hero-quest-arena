@@ -607,7 +607,7 @@ export default function HeroList() {
                       return (
                         <span key={s.key} className="inline-flex items-center gap-0.5">
                           <img src={s.icon} alt="" className="w-4 h-4" />
-                          <span className={`text-xs tabular-nums ${seedColor(seedVal)}`}>{seedVal}</span>
+                          <span className={`text-sm tabular-nums ${seedColor(seedVal)}`}>{seedVal}</span>
                         </span>
                       );
                     })}
