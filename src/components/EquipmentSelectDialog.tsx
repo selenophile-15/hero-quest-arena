@@ -537,7 +537,7 @@ export default function EquipmentSelectDialog({
                     ))}
                   </SelectContent>
                 </Select>
-                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
+                <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={handleBatchQuality}>
                   전체
                 </Button>
 
