@@ -242,7 +242,18 @@ export default function EquipmentSelectDialog({
     setFilterSpirit('_all');
     setFilterTierMin(Math.max(1, mt - 2));
     setFilterTierMax(mt);
+    setTableSortKey('');
+    setTableSortDir('asc');
   }, [heroLevel]);
+
+  const handleTableSort = useCallback((key: string) => {
+    if (tableSortKey === key) {
+      setTableSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setTableSortKey(key);
+      setTableSortDir('asc');
+    }
+  }, [tableSortKey]);
 
   useEffect(() => {
     if (open) {
