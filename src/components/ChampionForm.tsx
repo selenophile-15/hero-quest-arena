@@ -838,7 +838,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">랭크 ({formatRank(Number(rank) || 1)})</Label>
-              <Input type="number" value={rank} onChange={handleNumericChange(setRank as any, 60)} min={1} max={60} className="h-9 text-sm" />
+              <Input type="number" value={rank} onChange={handleNumericChange(setRank as any, championMaxRank)} min={1} max={championMaxRank} className="h-9 text-sm" />
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">레벨</Label>
