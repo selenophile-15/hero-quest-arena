@@ -682,9 +682,9 @@ export default function EquipmentSelectDialog({
                               </td>
                               <td className="py-1.5 px-1.5 text-center text-foreground whitespace-nowrap">{item.typeKor}</td>
                               <td className="py-1.5 px-1 text-center text-foreground tabular-nums">{item.tier}</td>
-                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal || '-'}</td>
-                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal || '-'}</td>
-                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal || '-'}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal ? formatNumber(atkVal) : '-'}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal ? formatNumber(defVal) : '-'}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal ? formatNumber(hpVal) : '-'}</td>
                               <td className={`py-1.5 px-1 text-center tabular-nums ${critVal ? 'text-yellow-400' : 'text-muted-foreground/30'}`}>{critVal ? `${critVal}%` : '-'}</td>
                               <td className={`py-1.5 px-1 text-center tabular-nums ${evaVal ? 'text-teal-400' : 'text-muted-foreground/30'}`}>{evaVal ? `${evaVal}%` : '-'}</td>
                               <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
