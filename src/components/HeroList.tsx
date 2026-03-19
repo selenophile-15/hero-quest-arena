@@ -472,6 +472,11 @@ export default function HeroList() {
       if (ev > cap) return <span>{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
       return <span className={isDim ? 'text-foreground/20' : ''}>{formatNumber(ev)} %</span>;
     }
+    if (colKey === 'level') {
+      const lv = hero.level || 0;
+      const lvColor = lv >= 50 ? 'text-yellow-400 font-semibold' : '';
+      return <span className={lvColor}>{lv}</span>;
+    }
     const value = hero[colKey as keyof Hero];
     const formatted = formatValue(colKey, value);
     if (formatted !== null) {
