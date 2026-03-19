@@ -165,6 +165,40 @@ export default function HeroList() {
     getChampionSkillsData().then(setChampionSkillsData);
   }, []);
 
+  // Preload all skill and equipment images for smooth rendering
+  useEffect(() => {
+    const imagesToPreload = new Set<string>();
+    heroes.forEach(hero => {
+      // Skill images
+      if (hero.heroClass) {
+        imagesToPreload.add(getUniqueSkillImagePath(hero.heroClass));
+        imagesToPreload.add(getJobImagePath(hero.heroClass));
+      }
+      if (hero.type === 'champion' && hero.championName) {
+        imagesToPreload.add(getChampionImagePath(hero.championName));
+        const champEng = CHAMPION_NAME_MAP[hero.championName] || '';
+        if (champEng) {
+          for (let t = 1; t <= 4; t++) {
+            imagesToPreload.add(`/images/skills/sk_champion/${champEng}_${t}.webp`);
+          }
+        }
+      }
+      hero.skills?.forEach(sk => {
+        if (sk) imagesToPreload.add(getSkillImagePath(sk));
+      });
+      // Equipment images
+      hero.equipmentSlots?.forEach((slot: any) => {
+        if (slot?.item?.imagePath) imagesToPreload.add(slot.item.imagePath);
+      });
+    });
+    imagesToPreload.forEach(src => {
+      if (src) {
+        const img = new Image();
+        img.src = src;
+      }
+    });
+  }, [heroes]);
+
   const heroList = useMemo(() => heroes.filter(h => h.type === 'hero'), [heroes]);
   const championList = useMemo(() => heroes.filter(h => h.type === 'champion'), [heroes]);
   const activeList = listTab === 'hero' ? heroList : championList;
