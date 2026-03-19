@@ -373,7 +373,7 @@ export default function HeroList() {
       return (
         <span className="inline-flex items-center gap-1">
           <ElementIcon element={hero.element} size={20} />
-          <span className={`text-xs tabular-nums ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
+          <span className={`tabular-nums ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
       );
     }
