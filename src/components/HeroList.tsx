@@ -91,25 +91,25 @@ const ELEMENT_ENG_MAP: Record<string, string> = {
 };
 
 const QUALITY_BORDER: Record<string, string> = {
-  common: 'border-gray-300/50',
-  uncommon: 'border-green-400/60',
-  flawless: 'border-cyan-300/60',
-  epic: 'border-fuchsia-400/70',
-  legendary: 'border-yellow-400/80',
+  common: 'border-gray-300/60',
+  uncommon: 'border-green-400/70',
+  flawless: 'border-cyan-300/80',
+  epic: 'border-fuchsia-400/90',
+  legendary: 'border-yellow-400',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.28)',
-  uncommon: 'rgba(74,222,128,0.32)',
-  flawless: 'rgba(103,232,249,0.38)',
-  epic: 'rgba(217,70,239,0.42)',
-  legendary: 'rgba(250,204,21,0.5)',
+  common: 'rgba(220,220,220,0.32)',
+  uncommon: 'rgba(74,222,128,0.38)',
+  flawless: 'rgba(103,232,249,0.45)',
+  epic: 'rgba(217,70,239,0.5)',
+  legendary: 'rgba(250,204,21,0.55)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
-  common: '0 0 10px rgba(220,220,220,0.5)',
-  uncommon: '0 0 12px rgba(74,222,128,0.6)',
-  flawless: '0 0 14px rgba(103,232,249,0.6)',
-  epic: '0 0 16px rgba(217,70,239,0.7)',
-  legendary: '0 0 18px rgba(250,204,21,0.8)',
+  common: '0 0 14px rgba(220,220,220,0.6)',
+  uncommon: '0 0 16px rgba(74,222,128,0.7)',
+  flawless: '0 0 18px rgba(103,232,249,0.7)',
+  epic: '0 0 22px rgba(217,70,239,0.8)',
+  legendary: '0 0 26px rgba(250,204,21,0.9)',
 };
 
 function normalizeJobName(name: string): string {
@@ -164,6 +164,40 @@ export default function HeroList() {
     getUniqueSkills().then(setUniqueSkillsData);
     getChampionSkillsData().then(setChampionSkillsData);
   }, []);
+
+  // Preload all skill and equipment images for smooth rendering
+  useEffect(() => {
+    const imagesToPreload = new Set<string>();
+    heroes.forEach(hero => {
+      // Skill images
+      if (hero.heroClass) {
+        imagesToPreload.add(getUniqueSkillImagePath(hero.heroClass));
+        imagesToPreload.add(getJobImagePath(hero.heroClass));
+      }
+      if (hero.type === 'champion' && hero.championName) {
+        imagesToPreload.add(getChampionImagePath(hero.championName));
+        const champEng = CHAMPION_NAME_MAP[hero.championName] || '';
+        if (champEng) {
+          for (let t = 1; t <= 4; t++) {
+            imagesToPreload.add(`/images/skills/sk_champion/${champEng}_${t}.webp`);
+          }
+        }
+      }
+      hero.skills?.forEach(sk => {
+        if (sk) imagesToPreload.add(getSkillImagePath(sk));
+      });
+      // Equipment images
+      hero.equipmentSlots?.forEach((slot: any) => {
+        if (slot?.item?.imagePath) imagesToPreload.add(slot.item.imagePath);
+      });
+    });
+    imagesToPreload.forEach(src => {
+      if (src) {
+        const img = new Image();
+        img.src = src;
+      }
+    });
+  }, [heroes]);
 
   const heroList = useMemo(() => heroes.filter(h => h.type === 'hero'), [heroes]);
   const championList = useMemo(() => heroes.filter(h => h.type === 'champion'), [heroes]);
@@ -373,7 +407,7 @@ export default function HeroList() {
       return (
         <span className="inline-flex items-center gap-1">
           <ElementIcon element={hero.element} size={20} />
-          <span className={`text-xs tabular-nums ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
+          <span className={`tabular-nums ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
       );
     }
@@ -471,6 +505,11 @@ export default function HeroList() {
       const isDim = ev === 0;
       if (ev > cap) return <span>{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
       return <span className={isDim ? 'text-foreground/20' : ''}>{formatNumber(ev)} %</span>;
+    }
+    if (colKey === 'level') {
+      const lv = hero.level || 0;
+      const lvColor = lv >= 50 ? 'text-yellow-400 font-semibold' : '';
+      return <span className={lvColor}>{lv}</span>;
     }
     const value = hero[colKey as keyof Hero];
     const formatted = formatValue(colKey, value);
@@ -602,7 +641,7 @@ export default function HeroList() {
                       return (
                         <span key={s.key} className="inline-flex items-center gap-0.5">
                           <img src={s.icon} alt="" className="w-4 h-4" />
-                          <span className={`text-xs tabular-nums ${seedColor(seedVal)}`}>{seedVal}</span>
+                          <span className={`text-sm tabular-nums ${seedColor(seedVal)}`}>{seedVal}</span>
                         </span>
                       );
                     })}
@@ -761,7 +800,7 @@ export default function HeroList() {
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         )}
                         {item?.imagePath ? (
-                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain"
+                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain mt-2"
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : (
                           <span className="text-[9px] text-muted-foreground">비어있음</span>
@@ -770,14 +809,14 @@ export default function HeroList() {
                           <div className="absolute bottom-0.5 left-0.5 right-0.5 flex items-center justify-center gap-1">
                             {displayElement && (
                               <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                                className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
                             )}
                             {displaySpirit && (() => {
                               const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                             })()}
-                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                           </div>
                         )}
                       </div>

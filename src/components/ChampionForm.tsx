@@ -47,25 +47,25 @@ const ELEMENT_ENG_MAP: Record<string, string> = {
 };
 
 const QUALITY_BORDER: Record<string, string> = {
-  common: 'border-gray-300/50',
-  uncommon: 'border-green-400/60',
-  flawless: 'border-cyan-300/60',
-  epic: 'border-fuchsia-400/70',
-  legendary: 'border-yellow-400/80',
+  common: 'border-gray-300/60',
+  uncommon: 'border-green-400/70',
+  flawless: 'border-cyan-300/80',
+  epic: 'border-fuchsia-400/90',
+  legendary: 'border-yellow-400',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.28)',
-  uncommon: 'rgba(74,222,128,0.32)',
-  flawless: 'rgba(103,232,249,0.38)',
-  epic: 'rgba(217,70,239,0.42)',
-  legendary: 'rgba(250,204,21,0.5)',
+  common: 'rgba(220,220,220,0.32)',
+  uncommon: 'rgba(74,222,128,0.38)',
+  flawless: 'rgba(103,232,249,0.45)',
+  epic: 'rgba(217,70,239,0.5)',
+  legendary: 'rgba(250,204,21,0.55)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
-  common: '0 0 10px rgba(220,220,220,0.5)',
-  uncommon: '0 0 12px rgba(74,222,128,0.6)',
-  flawless: '0 0 14px rgba(103,232,249,0.6)',
-  epic: '0 0 16px rgba(217,70,239,0.7)',
-  legendary: '0 0 18px rgba(250,204,21,0.8)',
+  common: '0 0 14px rgba(220,220,220,0.6)',
+  uncommon: '0 0 16px rgba(74,222,128,0.7)',
+  flawless: '0 0 18px rgba(103,232,249,0.7)',
+  epic: '0 0 22px rgba(217,70,239,0.8)',
+  legendary: '0 0 26px rgba(250,204,21,0.9)',
 };
 
 const QUALITY_OPTIONS = [
@@ -292,6 +292,14 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     }
     return 1;
   }, [champSkillData, rank]);
+
+  // Max rank from champion data
+  const championMaxRank = useMemo(() => {
+    if (!championRawData) return 60;
+    const rankArr = championRawData['랭크별_능력치'] || [];
+    if (rankArr.length === 0) return 60;
+    return Math.max(...rankArr.map((r: any) => r['랭크'] || 1));
+  }, [championRawData]);
 
   const currentLeaderSkill = champSkillData?.[`${leaderSkillTier}티어`];
   const leaderSkillEffect = currentLeaderSkill?.['효과'] || '-';
@@ -838,7 +846,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">랭크 ({formatRank(Number(rank) || 1)})</Label>
-              <Input type="number" value={rank} onChange={handleNumericChange(setRank as any, 60)} min={1} max={60} className="h-9 text-sm" />
+              <Input type="number" value={rank} onChange={handleNumericChange(setRank as any, championMaxRank)} min={1} max={championMaxRank} className="h-9 text-sm" />
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">레벨</Label>

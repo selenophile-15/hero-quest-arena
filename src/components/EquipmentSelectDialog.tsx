@@ -44,27 +44,27 @@ const QUALITY_OPTIONS = [
 ];
 
 const QUALITY_BORDER: Record<string, string> = {
-  common: 'border-gray-300/50',
-  uncommon: 'border-green-400/60',
-  flawless: 'border-cyan-300/60',
-  epic: 'border-fuchsia-400/70',
-  legendary: 'border-yellow-400/80',
+  common: 'border-gray-300/60',
+  uncommon: 'border-green-400/70',
+  flawless: 'border-cyan-300/80',
+  epic: 'border-fuchsia-400/90',
+  legendary: 'border-yellow-400',
 };
 
 const QUALITY_RADIAL: Record<string, string> = {
-  common: 'rgba(220,220,220,0.18)',
-  uncommon: 'rgba(74,222,128,0.2)',
-  flawless: 'rgba(103,232,249,0.25)',
-  epic: 'rgba(217,70,239,0.3)',
-  legendary: 'rgba(250,204,21,0.35)',
+  common: 'rgba(220,220,220,0.22)',
+  uncommon: 'rgba(74,222,128,0.26)',
+  flawless: 'rgba(103,232,249,0.32)',
+  epic: 'rgba(217,70,239,0.38)',
+  legendary: 'rgba(250,204,21,0.42)',
 };
 
 const QUALITY_SHADOW: Record<string, string> = {
-  common: '0 0 8px rgba(220,220,220,0.4)',
-  uncommon: '0 0 10px rgba(74,222,128,0.5)',
-  flawless: '0 0 12px rgba(103,232,249,0.5)',
-  epic: '0 0 14px rgba(217,70,239,0.6)',
-  legendary: '0 0 16px rgba(250,204,21,0.7)',
+  common: '0 0 12px rgba(220,220,220,0.5)',
+  uncommon: '0 0 14px rgba(74,222,128,0.6)',
+  flawless: '0 0 16px rgba(103,232,249,0.65)',
+  epic: '0 0 20px rgba(217,70,239,0.75)',
+  legendary: '0 0 24px rgba(250,204,21,0.85)',
 };
 
 const STAT_FILTER_OPTIONS = [
@@ -154,6 +154,8 @@ export default function EquipmentSelectDialog({
   const [manualMode, setManualMode] = useState(false);
   const manualFormRef = useRef<ManualEquipmentFormRef>(null);
   const [viewMode, setViewMode] = useState<'album' | 'table'>('album');
+  const [tableSortKey, setTableSortKey] = useState<string>('');
+  const [tableSortDir, setTableSortDir] = useState<'asc' | 'desc'>('asc');
 
   const maxTier = getMaxTierForLevel(heroLevel || 1);
   const [filterType, setFilterType] = useState<string>('_all');
@@ -240,7 +242,18 @@ export default function EquipmentSelectDialog({
     setFilterSpirit('_all');
     setFilterTierMin(Math.max(1, mt - 2));
     setFilterTierMax(mt);
+    setTableSortKey('');
+    setTableSortDir('asc');
   }, [heroLevel]);
+
+  const handleTableSort = useCallback((key: string) => {
+    if (tableSortKey === key) {
+      setTableSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setTableSortKey(key);
+      setTableSortDir('asc');
+    }
+  }, [tableSortKey]);
 
   useEffect(() => {
     if (open) {
@@ -524,7 +537,7 @@ export default function EquipmentSelectDialog({
                     ))}
                   </SelectContent>
                 </Select>
-                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleBatchQuality}>
+                <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={handleBatchQuality}>
                   전체
                 </Button>
 
@@ -642,21 +655,39 @@ export default function EquipmentSelectDialog({
                       </colgroup>
                       <thead className="sticky top-0 bg-background z-10">
                         <tr className="border-b-2 border-border">
-                          <th className="text-center py-2 px-2 text-foreground/60 font-semibold">이름</th>
-                          <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">타입</th>
-                          <th className="text-center py-2 px-1 text-foreground/60 font-semibold">T</th>
-                          <th className="text-center py-2 px-1.5 text-red-400/80 font-semibold">ATK</th>
-                          <th className="text-center py-2 px-1.5 text-blue-400/80 font-semibold">DEF</th>
-                          <th className="text-center py-2 px-1.5 text-orange-400/80 font-semibold">HP</th>
-                          <th className="text-center py-2 px-1 text-yellow-400/80 font-semibold">CRIT</th>
-                          <th className="text-center py-2 px-1 text-teal-400/80 font-semibold">EVA</th>
+                          <th className="text-center py-2 px-2 text-foreground/60 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('name')}>이름 {tableSortKey === 'name' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('type')}>타입 {tableSortKey === 'type' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1 text-foreground/60 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('tier')}>T {tableSortKey === 'tier' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1.5 text-red-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('atk')}>ATK {tableSortKey === 'atk' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1.5 text-blue-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('def')}>DEF {tableSortKey === 'def' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1.5 text-orange-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('hp')}>HP {tableSortKey === 'hp' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1 text-yellow-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('crit')}>CRIT.C {tableSortKey === 'crit' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1 text-teal-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('eva')}>EVA {tableSortKey === 'eva' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
                           <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">친밀 원소</th>
                           <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">친밀 영혼</th>
                           <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">고유 원소/영혼</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredItems.map((item, idx) => {
+                        {(() => {
+                          let sortedItems = [...filteredItems];
+                          if (tableSortKey) {
+                            sortedItems.sort((a, b) => {
+                              let av: number | string = 0, bv: number | string = 0;
+                              if (tableSortKey === 'name') { av = a.name; bv = b.name; }
+                              else if (tableSortKey === 'type') { av = a.typeKor || ''; bv = b.typeKor || ''; }
+                              else if (tableSortKey === 'tier') { av = a.tier; bv = b.tier; }
+                              else if (tableSortKey === 'atk') { av = a.stats.find(s => s.key === '장비_공격력')?.value || 0; bv = b.stats.find(s => s.key === '장비_공격력')?.value || 0; }
+                              else if (tableSortKey === 'def') { av = a.stats.find(s => s.key === '장비_방어력')?.value || 0; bv = b.stats.find(s => s.key === '장비_방어력')?.value || 0; }
+                              else if (tableSortKey === 'hp') { av = a.stats.find(s => s.key === '장비_체력')?.value || 0; bv = b.stats.find(s => s.key === '장비_체력')?.value || 0; }
+                              else if (tableSortKey === 'crit') { av = a.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; bv = b.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; }
+                              else if (tableSortKey === 'eva') { av = a.stats.find(s => s.key === '장비_회피%')?.value || 0; bv = b.stats.find(s => s.key === '장비_회피%')?.value || 0; }
+                              if (typeof av === 'string' && typeof bv === 'string') return tableSortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+                              return tableSortDir === 'asc' ? (av as number) - (bv as number) : (bv as number) - (av as number);
+                            });
+                          }
+                          return sortedItems;
+                        })().map((item, idx) => {
                           const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
                           const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
                           const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
@@ -682,9 +713,9 @@ export default function EquipmentSelectDialog({
                               </td>
                               <td className="py-1.5 px-1.5 text-center text-foreground whitespace-nowrap">{item.typeKor}</td>
                               <td className="py-1.5 px-1 text-center text-foreground tabular-nums">{item.tier}</td>
-                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal || '-'}</td>
-                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal || '-'}</td>
-                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal || '-'}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal ? formatNumber(atkVal) : '-'}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal ? formatNumber(defVal) : '-'}</td>
+                              <td className={`py-1.5 px-1.5 text-center tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal ? formatNumber(hpVal) : '-'}</td>
                               <td className={`py-1.5 px-1 text-center tabular-nums ${critVal ? 'text-yellow-400' : 'text-muted-foreground/30'}`}>{critVal ? `${critVal}%` : '-'}</td>
                               <td className={`py-1.5 px-1 text-center tabular-nums ${evaVal ? 'text-teal-400' : 'text-muted-foreground/30'}`}>{evaVal ? `${evaVal}%` : '-'}</td>
                               <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
@@ -692,7 +723,7 @@ export default function EquipmentSelectDialog({
                                   <span>{item.elementAffinity.map((el, i) => (
                                     <span key={el}>
                                       {i > 0 && <span className="text-muted-foreground"> / </span>}
-                                      <span className={`${ELEMENT_COLORS[el] || ''} text-foreground`}>{el === '모든 원소' ? '전체' : el}</span>
+                                      <span className={ELEMENT_COLORS[el] || 'text-foreground'}>{el === '모든 원소' ? '모든 원소' : el}</span>
                                     </span>
                                   ))}</span>
                                 ) : <span className="text-muted-foreground/30">-</span>}
@@ -911,64 +942,82 @@ export default function EquipmentSelectDialog({
           <div className="w-60 flex flex-col border-l border-border pl-3 flex-shrink-0">
             <h3 className="text-xs font-semibold text-muted-foreground mb-2">선택한 장비</h3>
             <div className="flex-1 overflow-y-auto space-y-1.5">
-              {slots.map((s, i) => (
+              {slots.map((s, i) => {
+                const qualityColor: Record<string, string> = {
+                  common: 'rgba(180,180,180,0.5)',
+                  uncommon: 'rgba(74,222,128,0.6)',
+                  flawless: 'rgba(103,232,249,0.6)',
+                  epic: 'rgba(217,70,239,0.65)',
+                  legendary: 'rgba(250,204,21,0.7)',
+                };
+                const hasAffinityEl = s.element?.affinity;
+                const hasAffinitySp = s.spirit?.affinity;
+                return (
                 <div
                   key={i}
                   onClick={() => setActiveSlot(i)}
-                  className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-all ${
-                    activeSlot === i ? 'border-primary ring-1 ring-primary/30 bg-primary/5' :
-                    s.item ? `${QUALITY_BORDER[s.quality]} bg-secondary/10` : 'border-border/30 bg-secondary/5 opacity-60'
+                  className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
+                    activeSlot === i ? 'border-primary ring-1 ring-primary/30' :
+                    s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
                   }`}
+                  style={s.item ? { boxShadow: QUALITY_SHADOW[s.quality] } : {}}
                 >
-                  <span className="text-[10px] text-muted-foreground font-bold w-5 flex-shrink-0">{i + 1}</span>
+                  {/* Slot number with quality background */}
+                  <div
+                    className="w-5 flex items-center justify-center flex-shrink-0"
+                    style={{ background: s.item ? qualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
+                  >
+                    <span className="text-[10px] font-bold text-background">{i + 1}</span>
+                  </div>
                   {s.item ? (
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1">
-                        {s.item.imagePath ? (
-                          <img src={s.item.imagePath} alt="" className="w-7 h-7 object-contain flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        ) : null}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs text-foreground truncate font-medium">{s.item.name}</p>
-                          <p className="text-[10px] text-muted-foreground">
-                            T{s.item.tier} {s.item.typeKor}
-                            {s.item.relic && <span className="text-yellow-400 ml-1">⭐</span>}
-                            {s.item.manual && <Wrench className="w-2.5 h-2.5 inline ml-1 text-muted-foreground" />}
-                          </p>
+                    <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">
+                      {/* Equipment image */}
+                      {s.item.imagePath ? (
+                        <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                      ) : null}
+                      {/* Info */}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-foreground truncate font-medium">{s.item.name}</p>
+                        <p className="text-[10px] text-foreground/60">
+                          T{s.item.tier} {s.item.typeKor}
+                          {s.item.relic && <span className="text-yellow-400 ml-1">⭐</span>}
+                          {s.item.manual && <Wrench className="w-2.5 h-2.5 inline ml-1 text-muted-foreground" />}
+                        </p>
+                        <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                          {s.element && (
+                            <span className={`text-[9px] ${hasAffinityEl ? 'font-bold' : ''} ${ELEMENT_COLORS[s.element.type] || 'text-foreground/70'}`}>
+                              {hasAffinityEl && '★ '}{s.element.type} (T{s.element.tier})
+                            </span>
+                          )}
+                          {s.element && s.spirit && <span className="text-[9px] text-muted-foreground">/</span>}
+                          {s.spirit && (
+                            <span className={`text-[9px] text-purple-300 ${hasAffinitySp ? 'font-bold' : ''}`}>
+                              {hasAffinitySp && '★ '}{s.spirit.name} (T{getSpiritTier(s.spirit.name)})
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <span className={`text-[9px] ${QUALITY_OPTIONS.find(q => q.value === s.quality)?.color || 'text-gray-300'}`}>
-                          {QUALITY_OPTIONS.find(q => q.value === s.quality)?.label}
-                        </span>
-                        {s.element && (
-                          <span className={`text-[9px] ${ELEMENT_COLORS[s.element.type] || ''}`}>
-                            {s.element.type} T{s.element.tier}
-                          </span>
-                        )}
-                        {s.spirit && (
-                          <span className="text-[9px] text-purple-300">{s.spirit.name}</span>
-                        )}
-                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const newSlots = [...slots];
+                          newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                          setSlots(newSlots);
+                        }}
+                        className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
+                        title="장비 해제"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ) : (
-                    <span className="text-xs text-muted-foreground">비어있음</span>
-                  )}
-                  {s.item && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const newSlots = [...slots];
-                        newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
-                        setSlots(newSlots);
-                      }}
-                      className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
-                      title="장비 해제"
-                    >
-                      ✕
-                    </button>
+                    <div className="flex items-center p-1.5">
+                      <span className="text-xs text-muted-foreground">비어있음</span>
+                    </div>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
             <div className="flex gap-2 pt-3 mt-2 border-t border-border">
               <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
