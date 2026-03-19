@@ -642,14 +642,14 @@ export default function EquipmentSelectDialog({
                       </colgroup>
                       <thead className="sticky top-0 bg-background z-10">
                         <tr className="border-b-2 border-border">
-                          <th className="text-center py-2 px-2 text-foreground/60 font-semibold">이름</th>
-                          <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">타입</th>
-                          <th className="text-center py-2 px-1 text-foreground/60 font-semibold">T</th>
-                          <th className="text-center py-2 px-1.5 text-red-400/80 font-semibold">ATK</th>
-                          <th className="text-center py-2 px-1.5 text-blue-400/80 font-semibold">DEF</th>
-                          <th className="text-center py-2 px-1.5 text-orange-400/80 font-semibold">HP</th>
-                          <th className="text-center py-2 px-1 text-yellow-400/80 font-semibold">CRIT</th>
-                          <th className="text-center py-2 px-1 text-teal-400/80 font-semibold">EVA</th>
+                          <th className="text-center py-2 px-2 text-foreground/60 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('name')}>이름 {tableSortKey === 'name' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('type')}>타입 {tableSortKey === 'type' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1 text-foreground/60 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('tier')}>T {tableSortKey === 'tier' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1.5 text-red-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('atk')}>ATK {tableSortKey === 'atk' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1.5 text-blue-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('def')}>DEF {tableSortKey === 'def' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1.5 text-orange-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('hp')}>HP {tableSortKey === 'hp' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1 text-yellow-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('crit')}>CRIT.C {tableSortKey === 'crit' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th className="text-center py-2 px-1 text-teal-400/80 font-semibold cursor-pointer hover:text-primary" onClick={() => handleTableSort('eva')}>EVA {tableSortKey === 'eva' && (tableSortDir === 'asc' ? '▲' : '▼')}</th>
                           <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">친밀 원소</th>
                           <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">친밀 영혼</th>
                           <th className="text-center py-2 px-1.5 text-foreground/60 font-semibold">고유 원소/영혼</th>
