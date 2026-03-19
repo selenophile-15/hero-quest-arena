@@ -766,7 +766,7 @@ export default function HeroList() {
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         )}
                         {item?.imagePath ? (
-                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain"
+                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain mt-2"
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : (
                           <span className="text-[9px] text-muted-foreground">비어있음</span>
@@ -775,14 +775,14 @@ export default function HeroList() {
                           <div className="absolute bottom-0.5 left-0.5 right-0.5 flex items-center justify-center gap-1">
                             {displayElement && (
                               <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                                className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
                             )}
                             {displaySpirit && (() => {
                               const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                             })()}
-                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-6 h-6" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                           </div>
                         )}
                       </div>
