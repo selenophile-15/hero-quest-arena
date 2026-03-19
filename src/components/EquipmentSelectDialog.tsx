@@ -669,7 +669,25 @@ export default function EquipmentSelectDialog({
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredItems.map((item, idx) => {
+                        {(() => {
+                          let sortedItems = [...filteredItems];
+                          if (tableSortKey) {
+                            sortedItems.sort((a, b) => {
+                              let av: number | string = 0, bv: number | string = 0;
+                              if (tableSortKey === 'name') { av = a.name; bv = b.name; }
+                              else if (tableSortKey === 'type') { av = a.typeKor || ''; bv = b.typeKor || ''; }
+                              else if (tableSortKey === 'tier') { av = a.tier; bv = b.tier; }
+                              else if (tableSortKey === 'atk') { av = a.stats.find(s => s.key === '장비_공격력')?.value || 0; bv = b.stats.find(s => s.key === '장비_공격력')?.value || 0; }
+                              else if (tableSortKey === 'def') { av = a.stats.find(s => s.key === '장비_방어력')?.value || 0; bv = b.stats.find(s => s.key === '장비_방어력')?.value || 0; }
+                              else if (tableSortKey === 'hp') { av = a.stats.find(s => s.key === '장비_체력')?.value || 0; bv = b.stats.find(s => s.key === '장비_체력')?.value || 0; }
+                              else if (tableSortKey === 'crit') { av = a.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; bv = b.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; }
+                              else if (tableSortKey === 'eva') { av = a.stats.find(s => s.key === '장비_회피%')?.value || 0; bv = b.stats.find(s => s.key === '장비_회피%')?.value || 0; }
+                              if (typeof av === 'string' && typeof bv === 'string') return tableSortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+                              return tableSortDir === 'asc' ? (av as number) - (bv as number) : (bv as number) - (av as number);
+                            });
+                          }
+                          return sortedItems;
+                        })().map((item, idx) => {
                           const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
                           const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
                           const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
