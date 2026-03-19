@@ -44,27 +44,27 @@ const QUALITY_OPTIONS = [
 ];
 
 const QUALITY_BORDER: Record<string, string> = {
-  common: 'border-gray-300/50',
-  uncommon: 'border-green-400/60',
-  flawless: 'border-cyan-300/60',
-  epic: 'border-fuchsia-400/70',
-  legendary: 'border-yellow-400/80',
+  common: 'border-gray-300/60',
+  uncommon: 'border-green-400/70',
+  flawless: 'border-cyan-300/80',
+  epic: 'border-fuchsia-400/90',
+  legendary: 'border-yellow-400',
 };
 
 const QUALITY_RADIAL: Record<string, string> = {
-  common: 'rgba(220,220,220,0.18)',
-  uncommon: 'rgba(74,222,128,0.2)',
-  flawless: 'rgba(103,232,249,0.25)',
-  epic: 'rgba(217,70,239,0.3)',
-  legendary: 'rgba(250,204,21,0.35)',
+  common: 'rgba(220,220,220,0.22)',
+  uncommon: 'rgba(74,222,128,0.26)',
+  flawless: 'rgba(103,232,249,0.32)',
+  epic: 'rgba(217,70,239,0.38)',
+  legendary: 'rgba(250,204,21,0.42)',
 };
 
 const QUALITY_SHADOW: Record<string, string> = {
-  common: '0 0 8px rgba(220,220,220,0.4)',
-  uncommon: '0 0 10px rgba(74,222,128,0.5)',
-  flawless: '0 0 12px rgba(103,232,249,0.5)',
-  epic: '0 0 14px rgba(217,70,239,0.6)',
-  legendary: '0 0 16px rgba(250,204,21,0.7)',
+  common: '0 0 12px rgba(220,220,220,0.5)',
+  uncommon: '0 0 14px rgba(74,222,128,0.6)',
+  flawless: '0 0 16px rgba(103,232,249,0.65)',
+  epic: '0 0 20px rgba(217,70,239,0.75)',
+  legendary: '0 0 24px rgba(250,204,21,0.85)',
 };
 
 const STAT_FILTER_OPTIONS = [
