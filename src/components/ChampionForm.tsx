@@ -293,6 +293,14 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     return 1;
   }, [champSkillData, rank]);
 
+  // Max rank from champion data
+  const championMaxRank = useMemo(() => {
+    if (!championRawData) return 60;
+    const rankArr = championRawData['랭크별_능력치'] || [];
+    if (rankArr.length === 0) return 60;
+    return Math.max(...rankArr.map((r: any) => r['랭크'] || 1));
+  }, [championRawData]);
+
   const currentLeaderSkill = champSkillData?.[`${leaderSkillTier}티어`];
   const leaderSkillEffect = currentLeaderSkill?.['효과'] || '-';
   const champEng = CHAMPION_NAME_MAP[championName] || championName;
