@@ -585,26 +585,23 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             >오라의 노래</button>
           </div>
 
-          {/* Manual mode toggle + Filters */}
-          <div className="flex items-center gap-2 px-1 flex-wrap text-xs">
-            <Button
-              variant={championManualMode ? 'default' : 'outline'}
-              size="sm"
-              className="h-7 text-xs gap-1"
-              onClick={() => setChampionManualMode(prev => !prev)}
-            >
-              <Wrench className="w-3 h-3" />
-              수동
-            </Button>
+          {/* Filter row 1: [Album|Table] [Stat] [Element] [Spirit] [Reset] */}
+          <div className="flex items-center gap-2 px-1 text-xs mb-1">
+            <div className="flex rounded border border-border overflow-hidden" style={{ width: '62px' }}>
+              <button onClick={() => setChampViewMode('album')} className={`flex-1 px-1.5 py-1 ${champViewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`} title="앨범">
+                <LayoutGrid className="w-3.5 h-3.5 mx-auto" />
+              </button>
+              <button onClick={() => setChampViewMode('table')} className={`flex-1 px-1.5 py-1 ${champViewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`} title="테이블">
+                <List className="w-3.5 h-3.5 mx-auto" />
+              </button>
+            </div>
 
-            {championManualMode && (
+            {championManualMode ? (
               <div className="flex items-center gap-1.5 ml-auto">
                 <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setChampionManualMode(false)}>취소</Button>
                 <Button size="sm" className="h-7 text-xs" onClick={() => championManualFormRef.current?.triggerConfirm()}>적용</Button>
               </div>
-            )}
-
-            {!championManualMode && (
+            ) : (
               <>
                 <span className="text-muted-foreground">스탯:</span>
                 <Select value={equipFilterStat} onValueChange={setEquipFilterStat}>
@@ -639,28 +636,51 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   </SelectContent>
                 </Select>
 
-                <div className="flex-1" />
-
-                <span className="text-muted-foreground">아이템 등급:</span>
-                <Select value={equipSlotQuality} onValueChange={q => {
-                  setEquipSlotQuality(q);
-                  const newSlots = [...equipmentSlots];
-                  newSlots[slotIdx] = { ...newSlots[slotIdx], quality: q };
-                  setEquipmentSlots(newSlots);
-                }}>
-                  <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => {
-                  setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
-                }}>
-                  일괄 적용
-                </Button>
+                <button
+                  onClick={() => { setEquipFilterStat('_all'); setEquipFilterElement('_all'); setEquipFilterSpirit('_all'); setChampSortKey(''); setChampSortDir('asc'); }}
+                  className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                  title="필터 초기화"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
               </>
             )}
           </div>
+
+          {/* Filter row 2: [수동] [등급 + 전체] */}
+          {!championManualMode && (
+            <div className="flex items-center gap-2 px-1 text-xs mb-1">
+              <Button
+                variant={championManualMode ? 'default' : 'outline'}
+                size="sm"
+                className={`h-7 text-xs gap-1 ${!championManualMode ? 'bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40' : ''}`}
+                onClick={() => setChampionManualMode(prev => !prev)}
+              >
+                <Wrench className="w-3 h-3" />
+                수동
+              </Button>
+
+              <div className="w-4" />
+
+              <span className="text-muted-foreground">등급:</span>
+              <Select value={equipSlotQuality} onValueChange={q => {
+                setEquipSlotQuality(q);
+                const newSlots = [...equipmentSlots];
+                newSlots[slotIdx] = { ...newSlots[slotIdx], quality: q };
+                setEquipmentSlots(newSlots);
+              }}>
+                <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={() => {
+                setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
+              }}>
+                전체
+              </Button>
+            </div>
+          )}
 
           {/* Item grid or Manual form */}
           <div className="flex-1 min-h-0 mt-1">
@@ -693,6 +713,115 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   }}
                   onCancel={() => setChampionManualMode(false)}
                 />
+              ) : champViewMode === 'table' ? (
+                /* ─── Champion Table View ─── */
+                <div className="overflow-x-auto h-full">
+                  <table className="w-full text-xs border-collapse" style={{ tableLayout: 'fixed' }}>
+                    <colgroup>
+                      <col style={{ width: '180px' }} />
+                      <col style={{ width: '60px' }} />
+                      <col style={{ width: '56px' }} />
+                      <col style={{ width: '56px' }} />
+                      <col style={{ width: '56px' }} />
+                      <col style={{ width: '50px' }} />
+                      <col style={{ width: '50px' }} />
+                      <col style={{ width: '90px' }} />
+                      <col style={{ width: '80px' }} />
+                    </colgroup>
+                    <thead className="sticky top-0 bg-background z-10">
+                      <tr className="border-b-2 border-border">
+                        {[
+                          { key: 'name', label: '이름', color: 'text-foreground/60' },
+                          { key: 'tier', label: 'T', color: 'text-foreground/60' },
+                          { key: 'atk', label: 'ATK', color: 'text-red-400/80' },
+                          { key: 'def', label: 'DEF', color: 'text-blue-400/80' },
+                          { key: 'hp', label: 'HP', color: 'text-orange-400/80' },
+                          { key: 'crit', label: 'CRIT.C', color: 'text-yellow-400/80' },
+                          { key: 'eva', label: 'EVA', color: 'text-teal-400/80' },
+                          { key: '', label: '친밀 원소', color: 'text-foreground/60' },
+                          { key: '', label: '친밀 영혼', color: 'text-foreground/60' },
+                        ].map((col, ci) => (
+                          <th key={ci} className={`text-center py-2 px-1.5 ${col.color} font-semibold ${col.key ? 'cursor-pointer hover:text-primary' : ''}`}
+                            onClick={() => col.key && (() => {
+                              if (champSortKey === col.key) setChampSortDir(d => d === 'asc' ? 'desc' : 'asc');
+                              else { setChampSortKey(col.key); setChampSortDir('desc'); }
+                            })()}>
+                            {col.label} {champSortKey === col.key && (champSortDir === 'asc' ? '▲' : '▼')}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        let sorted = [...filteredItems];
+                        if (champSortKey) {
+                          sorted.sort((a, b) => {
+                            let av: number | string = 0, bv: number | string = 0;
+                            if (champSortKey === 'name') { av = a.name; bv = b.name; }
+                            else if (champSortKey === 'tier') { av = a.tier; bv = b.tier; }
+                            else if (champSortKey === 'atk') { av = a.stats.find(s => s.key === '장비_공격력')?.value || 0; bv = b.stats.find(s => s.key === '장비_공격력')?.value || 0; }
+                            else if (champSortKey === 'def') { av = a.stats.find(s => s.key === '장비_방어력')?.value || 0; bv = b.stats.find(s => s.key === '장비_방어력')?.value || 0; }
+                            else if (champSortKey === 'hp') { av = a.stats.find(s => s.key === '장비_체력')?.value || 0; bv = b.stats.find(s => s.key === '장비_체력')?.value || 0; }
+                            else if (champSortKey === 'crit') { av = a.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; bv = b.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; }
+                            else if (champSortKey === 'eva') { av = a.stats.find(s => s.key === '장비_회피%')?.value || 0; bv = b.stats.find(s => s.key === '장비_회피%')?.value || 0; }
+                            if (typeof av === 'string' && typeof bv === 'string') return champSortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+                            return champSortDir === 'asc' ? (av as number) - (bv as number) : (bv as number) - (av as number);
+                          });
+                        }
+                        return sorted;
+                      })().map((item, idx) => {
+                        const isSelected = currentItem?.name === item.name && currentItem?.tier === item.tier;
+                        const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
+                        const defVal = item.stats.find(s => s.key === '장비_방어력')?.value || 0;
+                        const hpVal = item.stats.find(s => s.key === '장비_체력')?.value || 0;
+                        const critVal = item.stats.find(s => s.key === '장비_치명타확률%')?.value || 0;
+                        const evaVal = item.stats.find(s => s.key === '장비_회피%')?.value || 0;
+                        return (
+                          <tr key={`${item.name}-${item.tier}-${idx}`}
+                            onClick={() => {
+                              const newSlots = [...equipmentSlots];
+                              if (isSelected) {
+                                newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
+                              } else {
+                                const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
+                                const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
+                                const quality = equipmentSlots[slotIdx]?.quality || 'common';
+                                newSlots[slotIdx] = { item: { ...item }, quality, element: existingEl || null, spirit: existingSp || null };
+                              }
+                              setEquipmentSlots(newSlots);
+                            }}
+                            className={`border-b border-border/20 transition-colors ${
+                              isSelected ? 'bg-primary/20 font-medium' : 'hover:bg-secondary/30 cursor-pointer'
+                            }`}
+                          >
+                            <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap overflow-hidden text-ellipsis">{item.name}</td>
+                            <td className="py-1.5 px-1 text-center text-foreground tabular-nums">{item.tier}</td>
+                            <td className={`py-1.5 px-1.5 text-center tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal ? formatNumber(atkVal) : '-'}</td>
+                            <td className={`py-1.5 px-1.5 text-center tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal ? formatNumber(defVal) : '-'}</td>
+                            <td className={`py-1.5 px-1.5 text-center tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal ? formatNumber(hpVal) : '-'}</td>
+                            <td className={`py-1.5 px-1 text-center tabular-nums ${critVal ? 'text-yellow-400' : 'text-muted-foreground/30'}`}>{critVal ? `${critVal}%` : '-'}</td>
+                            <td className={`py-1.5 px-1 text-center tabular-nums ${evaVal ? 'text-teal-400' : 'text-muted-foreground/30'}`}>{evaVal ? `${evaVal}%` : '-'}</td>
+                            <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                              {item.elementAffinity?.length ? (
+                                <span>{item.elementAffinity.map((el, i) => (
+                                  <span key={el}>
+                                    {i > 0 && <span className="text-muted-foreground"> / </span>}
+                                    <span className={ELEMENT_COLORS[el] || 'text-foreground'}>{el === '모든 원소' ? '모든 원소' : el}</span>
+                                  </span>
+                                ))}</span>
+                              ) : <span className="text-muted-foreground/30">-</span>}
+                            </td>
+                            <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                              {item.spiritAffinity?.length ? (
+                                <span className="text-foreground">{item.spiritAffinity.join(', ')}</span>
+                              ) : <span className="text-muted-foreground/30">-</span>}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               ) : (
               <TooltipProvider delayDuration={200}>
                 <div className="grid grid-cols-6 gap-3">
