@@ -942,11 +942,11 @@ export default function EquipmentSelectDialog({
             <div className="flex-1 overflow-y-auto space-y-1.5">
               {slots.map((s, i) => {
                 const qualityColor: Record<string, string> = {
-                  common: 'rgba(180,180,180,0.5)',
-                  uncommon: 'rgba(74,222,128,0.6)',
-                  flawless: 'rgba(103,232,249,0.6)',
-                  epic: 'rgba(217,70,239,0.65)',
-                  legendary: 'rgba(250,204,21,0.7)',
+                  common: 'rgba(200,200,200,0.6)',
+                  uncommon: 'rgba(74,255,128,0.75)',
+                  flawless: 'rgba(80,240,255,0.8)',
+                  epic: 'rgba(230,80,255,0.85)',
+                  legendary: 'rgba(255,215,0,0.9)',
                 };
                 const hasAffinityEl = s.element?.affinity;
                 const hasAffinitySp = s.spirit?.affinity;
