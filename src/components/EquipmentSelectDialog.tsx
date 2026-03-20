@@ -251,7 +251,7 @@ export default function EquipmentSelectDialog({
       setTableSortDir(d => d === 'asc' ? 'desc' : 'asc');
     } else {
       setTableSortKey(key);
-      setTableSortDir('asc');
+      setTableSortDir('desc');
     }
   }, [tableSortKey]);
 
