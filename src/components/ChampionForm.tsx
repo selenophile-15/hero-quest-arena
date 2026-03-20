@@ -192,6 +192,9 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [equipSlotQuality, setEquipSlotQuality] = useState<string>('common');
   const [championManualMode, setChampionManualMode] = useState(false);
   const championManualFormRef = useRef<ManualEquipmentFormRef>(null);
+  const [champViewMode, setChampViewMode] = useState<'album' | 'table'>('album');
+  const [champSortKey, setChampSortKey] = useState<string>('');
+  const [champSortDir, setChampSortDir] = useState<'asc' | 'desc'>('asc');
 
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [championRawData, setChampionRawData] = useState<any>(null);
