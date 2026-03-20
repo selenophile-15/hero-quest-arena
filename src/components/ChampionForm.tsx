@@ -565,7 +565,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               })}
             </div>
             <div className="flex gap-2 flex-shrink-0">
-              <Button variant="outline" size="sm" onClick={() => setEquipDialogType(null)}>닫기</Button>
+              <Button variant="outline" size="sm" onClick={() => setEquipDialogType(null)}>취소</Button>
+              <Button size="sm" onClick={() => setEquipDialogType(null)}>선택</Button>
             </div>
           </div>
 
