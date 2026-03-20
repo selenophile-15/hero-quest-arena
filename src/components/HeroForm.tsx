@@ -281,11 +281,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     : 0;
 
   // Trim skills when slots decrease (promotion change / level change)
+  // Don't trim when level field is empty (user is typing)
   useEffect(() => {
-    if (selectedSkills.length > maxCommonSlots) {
+    if (!level || !heroClass) return;
+    if (selectedSkills.length > maxCommonSlots && maxCommonSlots > 0) {
       setSelectedSkills(prev => prev.slice(0, maxCommonSlots));
     }
-  }, [maxCommonSlots]);
+  }, [maxCommonSlots, level, heroClass]);
 
   useEffect(() => {
     if (!classLine) { setHeroClass(''); return; }
