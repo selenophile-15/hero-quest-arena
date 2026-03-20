@@ -429,35 +429,23 @@ export default function EquipmentSelectDialog({
               ))}
             </div>
 
-            {/* Filter row 1: [Album|Table] [Type] [Stat] [Element] [Spirit] [Reset] */}
+            {/* Filter row 1: [Album|Table] [Type] [Stat] [Tier min~max] [Element] [Spirit] [Reset] */}
             <div className="flex items-center gap-2 px-1 text-xs mb-1">
-              <div className="flex flex-col gap-1">
-                <div className="flex rounded border border-border overflow-hidden" style={{ width: '62px' }}>
-                  <button
-                    onClick={() => setViewMode('album')}
-                    className={`flex-1 px-1.5 py-1 ${viewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
-                    title="앨범"
-                  >
-                    <LayoutGrid className="w-3.5 h-3.5 mx-auto" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('table')}
-                    className={`flex-1 px-1.5 py-1 ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
-                    title="테이블"
-                  >
-                    <List className="w-3.5 h-3.5 mx-auto" />
-                  </button>
-                </div>
-                <Button
-                  variant={manualMode ? 'default' : 'outline'}
-                  size="sm"
-                  className={`h-7 text-xs gap-1 ${!manualMode ? 'bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40' : ''}`}
-                  style={{ width: '62px' }}
-                  onClick={() => setManualMode(prev => !prev)}
+              <div className="flex rounded border border-border overflow-hidden" style={{ width: '62px' }}>
+                <button
+                  onClick={() => setViewMode('album')}
+                  className={`flex-1 px-1.5 py-1 ${viewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
+                  title="앨범"
                 >
-                  <Wrench className="w-3 h-3" />
-                  수동
-                </Button>
+                  <LayoutGrid className="w-3.5 h-3.5 mx-auto" />
+                </button>
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`flex-1 px-1.5 py-1 ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
+                  title="테이블"
+                >
+                  <List className="w-3.5 h-3.5 mx-auto" />
+                </button>
               </div>
 
               {manualMode ? (
@@ -484,6 +472,25 @@ export default function EquipmentSelectDialog({
                       {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
+
+                  <span className="text-muted-foreground">티어:</span>
+                  <input type="number" min={1} max={maxTier} value={filterTierMin}
+                    onChange={e => {
+                      const raw = e.target.value;
+                      if (raw === '') { setFilterTierMin(''); return; }
+                      const v = parseInt(raw, 10);
+                      if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
+                    }}
+                    className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+                  <span className="text-muted-foreground">~</span>
+                  <input type="number" min={1} max={maxTier} value={filterTierMax}
+                    onChange={e => {
+                      const raw = e.target.value;
+                      if (raw === '') { setFilterTierMax(''); return; }
+                      const v = parseInt(raw, 10);
+                      if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
+                    }}
+                    className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
 
                   <span className="text-muted-foreground">원소:</span>
                   <Select value={filterElement} onValueChange={setFilterElement}>
@@ -525,9 +532,21 @@ export default function EquipmentSelectDialog({
               )}
             </div>
 
-            {/* Filter row 2: [Quality + 전체] [Tier min~max] */}
+            {/* Filter row 2: [수동] [등급 + 전체] */}
             {!manualMode && (
               <div className="flex items-center gap-2 px-1 text-xs mb-1">
+                <Button
+                  variant={manualMode ? 'default' : 'outline'}
+                  size="sm"
+                  className={`h-7 text-xs gap-1 ${!manualMode ? 'bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40' : ''}`}
+                  onClick={() => setManualMode(prev => !prev)}
+                >
+                  <Wrench className="w-3 h-3" />
+                  수동
+                </Button>
+
+                <div className="w-4" />
+
                 <span className="text-muted-foreground">등급:</span>
                 <Select value={slotQuality} onValueChange={handleQualityChange}>
                   <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
@@ -540,27 +559,6 @@ export default function EquipmentSelectDialog({
                 <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={handleBatchQuality}>
                   전체
                 </Button>
-
-                <div className="w-2" />
-
-                <span className="text-muted-foreground">티어:</span>
-                <input type="number" min={1} max={maxTier} value={filterTierMin}
-                  onChange={e => {
-                    const raw = e.target.value;
-                    if (raw === '') { setFilterTierMin(''); return; }
-                    const v = parseInt(raw, 10);
-                    if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
-                  }}
-                  className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-                <span className="text-muted-foreground">~</span>
-                <input type="number" min={1} max={maxTier} value={filterTierMax}
-                  onChange={e => {
-                    const raw = e.target.value;
-                    if (raw === '') { setFilterTierMax(''); return; }
-                    const v = parseInt(raw, 10);
-                    if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
-                  }}
-                  className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
               </div>
             )}
 
