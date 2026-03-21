@@ -661,7 +661,22 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">레벨</Label>
-              <Input type="number" value={level} onChange={handleNumericChange(setLevel as any, 50)} min={1} max={50} className="h-9 text-sm" />
+              <Input type="number" value={levelInput} onChange={e => {
+                setLevelInput(e.target.value);
+              }} onBlur={() => {
+                const raw = levelInput;
+                if (raw === '') { setLevel(''); return; }
+                let parsed = parseInt(raw, 10);
+                if (isNaN(parsed)) { setLevelInput(level ? String(level) : ''); return; }
+                if (parsed > 50) parsed = 50;
+                if (parsed < 1) parsed = 1;
+                setLevelInput(String(parsed));
+                setLevel(parsed);
+              }} onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }} min={1} max={50} className="h-9 text-sm" />
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block">포지션</Label>
