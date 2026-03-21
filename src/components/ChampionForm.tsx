@@ -224,6 +224,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   }, [championName]);
 
 
+
   useEffect(() => {
     if (!championName || !rank) return;
     lookupChampionStats(championName, Number(rank)).then(stats => {
@@ -514,427 +515,487 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       return true;
     });
 
+    const ELEMENT_COLORS_LOCAL: Record<string, string> = {
+      '불': 'text-red-400', '물': 'text-blue-400', '공기': 'text-cyan-300',
+      '대지': 'text-lime-400', '빛': 'text-yellow-200', '어둠': 'text-purple-400',
+      '모든 원소': 'text-white', '골드': 'text-yellow-500',
+    };
+
+    const champQualityColor: Record<string, string> = {
+      common: 'rgba(200,200,200,0.6)',
+      uncommon: 'rgba(74,255,128,0.75)',
+      flawless: 'rgba(80,240,255,0.8)',
+      epic: 'rgba(230,80,255,0.85)',
+      legendary: 'rgba(255,215,0,0.9)',
+    };
+
     return (
       <Dialog open={!!equipDialogType} onOpenChange={v => !v && setEquipDialogType(null)}>
-        <DialogContent className="max-w-5xl h-[85vh] overflow-hidden flex flex-col p-5">
+        <DialogContent className="max-w-[95vw] h-[90vh] overflow-hidden flex flex-col p-5">
           <DialogHeader>
             <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
             <DialogDescription className="sr-only">퍼밀리어 또는 오라의 노래를 선택하세요</DialogDescription>
           </DialogHeader>
 
-          {/* Top: Selected items */}
-          <div className="flex items-center gap-2 pb-2 border-b border-border">
-            <div className="flex gap-1 flex-1">
-              {[0, 1].map(i => {
-                const s = equipmentSlots[i];
-                return (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      if (s.item) {
-                        const newSlots = [...equipmentSlots];
-                        newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
-                        setEquipmentSlots(newSlots);
-                      } else {
-                        setEquipDialogType(i === 0 ? 'familiar' : 'aurasong');
-                      }
-                    }}
-                    className={`flex flex-col items-center p-1.5 rounded border min-w-[64px] transition-all ${
-                      (i === 0 && equipDialogType === 'familiar') || (i === 1 && equipDialogType === 'aurasong') ? 'border-primary ring-1 ring-primary/30' : ''
-                    } ${s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-50'}`}
-                    style={s.item ? {
-                      background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[s.quality]} 0%, transparent 85%)`,
-                      boxShadow: QUALITY_SHADOW_COLOR[s.quality],
-                    } : {}}
-                  >
-                    <span className={`text-[8px] ${s.item ? 'text-accent font-bold' : 'text-muted-foreground'}`}>
-                      {i === 0 ? '퍼밀리어' : '오라의 노래'}
-                      {s.item?.manual && <Wrench className="w-2.5 h-2.5 inline ml-0.5 text-muted-foreground" />}
-                    </span>
-                    {s.item ? (
-                      <>
-                        {s.item.imagePath ? (
-                          <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        ) : (
-                          <span className="text-[8px] text-foreground w-9 h-9 flex items-center justify-center">{s.item.name.slice(0, 4)}</span>
-                        )}
-                        <span className="text-[8px] text-foreground truncate max-w-[58px]">{s.item.name}</span>
-                      </>
-                    ) : (
-                      <span className="text-[9px] text-muted-foreground w-9 h-9 flex items-center justify-center">-</span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="flex gap-2 flex-shrink-0">
-              <Button variant="outline" size="sm" onClick={() => setEquipDialogType(null)}>취소</Button>
-              <Button size="sm" onClick={() => setEquipDialogType(null)}>선택</Button>
-            </div>
-          </div>
-
-          {/* Tabs: familiar / aurasong */}
-          <div className="flex items-center gap-1 my-1">
-            <button
-              onClick={() => { setEquipDialogType('familiar'); setChampionManualMode(!!equipmentSlots[0]?.item?.manual); }}
-              className={`flex-1 text-xs py-1.5 rounded transition-all ${equipDialogType === 'familiar' ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'} ${equipmentSlots[0]?.item ? 'text-accent font-bold' : ''}`}
-            >퍼밀리어</button>
-            <button
-              onClick={() => { setEquipDialogType('aurasong'); setChampionManualMode(!!equipmentSlots[1]?.item?.manual); }}
-              className={`flex-1 text-xs py-1.5 rounded transition-all ${equipDialogType === 'aurasong' ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'} ${equipmentSlots[1]?.item ? 'text-accent font-bold' : ''}`}
-            >오라의 노래</button>
-          </div>
-
-          {/* Filter row 1: [Album|Table] [Stat] [Element] [Spirit] [Reset] */}
-          <div className="flex items-center gap-2 px-1 text-xs mb-1">
-            <div className="flex rounded border border-border overflow-hidden" style={{ width: '62px' }}>
-              <button onClick={() => setChampViewMode('album')} className={`flex-1 px-1.5 py-1 ${champViewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`} title="앨범">
-                <LayoutGrid className="w-3.5 h-3.5 mx-auto" />
-              </button>
-              <button onClick={() => setChampViewMode('table')} className={`flex-1 px-1.5 py-1 ${champViewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`} title="테이블">
-                <List className="w-3.5 h-3.5 mx-auto" />
-              </button>
-            </div>
-
-            {championManualMode ? (
-              <div className="flex items-center gap-1.5 ml-auto">
-                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setChampionManualMode(false)}>취소</Button>
-                <Button size="sm" className="h-7 text-xs" onClick={() => championManualFormRef.current?.triggerConfirm()}>적용</Button>
-              </div>
-            ) : (
-              <>
-                <span className="text-muted-foreground">스탯:</span>
-                <Select value={equipFilterStat} onValueChange={setEquipFilterStat}>
-                  <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="_all">전체</SelectItem>
-                    {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-
-                <span className="text-muted-foreground">원소:</span>
-                <Select value={equipFilterElement} onValueChange={setEquipFilterElement}>
-                  <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="_all">전체</SelectItem>
-                    {['불', '물', '공기', '대지', '빛', '어둠', '골드'].map(el => (
-                      <SelectItem key={el} value={el}>{el}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <span className="text-muted-foreground">영혼:</span>
-                <Select value={equipFilterSpirit} onValueChange={setEquipFilterSpirit}>
-                  <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="_all">전체</SelectItem>
-                    {Object.entries(SPIRIT_TIER).sort(([,a], [,b]) => b - a).map(([sp, tier]) => (
-                      <SelectItem key={sp} value={sp}>
-                        <span className="text-muted-foreground text-[10px] mr-1">T{tier})</span>{sp}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
+          <div className="flex flex-1 min-h-0 gap-4">
+            {/* ═══ Left: Slot tabs, filters, item grid ═══ */}
+            <div className="flex-1 flex flex-col min-h-0">
+              {/* Slot tabs */}
+              <div className="flex items-center gap-1 mb-1">
                 <button
-                  onClick={() => { setEquipFilterStat('_all'); setEquipFilterElement('_all'); setEquipFilterSpirit('_all'); setChampSortKey(''); setChampSortDir('asc'); }}
-                  className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
-                  title="필터 초기화"
-                >
-                  <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
-                </button>
-              </>
-            )}
-          </div>
+                  onClick={() => { setEquipDialogType('familiar'); setChampionManualMode(!!equipmentSlots[0]?.item?.manual); }}
+                  className={`flex-1 text-xs py-1.5 rounded transition-all ${equipDialogType === 'familiar' ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'} ${equipmentSlots[0]?.item ? 'text-accent font-bold' : ''}`}
+                >퍼밀리어</button>
+                <button
+                  onClick={() => { setEquipDialogType('aurasong'); setChampionManualMode(!!equipmentSlots[1]?.item?.manual); }}
+                  className={`flex-1 text-xs py-1.5 rounded transition-all ${equipDialogType === 'aurasong' ? 'bg-primary text-primary-foreground font-bold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'} ${equipmentSlots[1]?.item ? 'text-accent font-bold' : ''}`}
+                >오라의 노래</button>
+              </div>
 
-          {/* Filter row 2: [수동] [등급 + 전체] */}
-          {!championManualMode && (
-            <div className="flex items-center gap-2 px-1 text-xs mb-1">
-              <Button
-                variant={championManualMode ? 'default' : 'outline'}
-                size="sm"
-                className={`h-7 text-xs gap-1 ${!championManualMode ? 'bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40' : ''}`}
-                onClick={() => setChampionManualMode(prev => !prev)}
-              >
-                <Wrench className="w-3 h-3" />
-                수동
-              </Button>
+              {/* Filter rows */}
+              <div className="flex items-center gap-2 px-1 text-xs mb-1">
+                {championManualMode ? (
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setChampionManualMode(false)}>취소</Button>
+                    <Button size="sm" className="h-7 text-xs" onClick={() => championManualFormRef.current?.triggerConfirm()}>적용</Button>
+                  </div>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-[58px] text-xs gap-1 px-3 bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40"
+                      onClick={() => setChampionManualMode(true)}
+                    >
+                      <Wrench className="w-3.5 h-3.5" />
+                      수동
+                    </Button>
 
-              <div className="w-4" />
+                    <div className="flex flex-col gap-1 flex-1 min-w-0">
+                      {/* Sub-row 1: 스탯 원소 영혼 초기화 */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">스탯:</span>
+                        <Select value={equipFilterStat} onValueChange={setEquipFilterStat}>
+                          <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="_all">전체</SelectItem>
+                            {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
 
-              <span className="text-muted-foreground">등급:</span>
-              <Select value={equipSlotQuality} onValueChange={q => {
-                setEquipSlotQuality(q);
-                const newSlots = [...equipmentSlots];
-                newSlots[slotIdx] = { ...newSlots[slotIdx], quality: q };
-                setEquipmentSlots(newSlots);
-              }}>
-                <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
-                </SelectContent>
-              </Select>
-              <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={() => {
-                setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
-              }}>
-                전체
-              </Button>
-            </div>
-          )}
+                        <span className="text-muted-foreground">원소:</span>
+                        <Select value={equipFilterElement} onValueChange={setEquipFilterElement}>
+                          <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="_all">전체</SelectItem>
+                            {['불', '물', '공기', '대지', '빛', '어둠', '골드'].map(el => (
+                              <SelectItem key={el} value={el}>{el}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
 
-          {/* Item grid or Manual form */}
-          <div className="flex-1 min-h-0 mt-1">
-            <div className="overflow-y-auto h-full border border-border rounded p-3">
-              {championManualMode ? (
-                <ManualEquipmentForm
-                  ref={championManualFormRef}
-                  hideActions
-                  isAurasong={equipDialogType === 'aurasong'}
-                  initialData={equipmentSlots[slotIdx]?.item?.manualData || null}
-                  onConfirm={(item) => {
-                    const newSlots = [...equipmentSlots];
-                    const existingSlot = newSlots[slotIdx];
-                    let slotElement = existingSlot?.element || null;
-                    let slotSpirit = existingSlot?.spirit || null;
-                    if (item.uniqueElement?.length) {
-                      slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
-                    }
-                    if (item.uniqueSpirit?.length) {
-                      slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
-                    }
-                    newSlots[slotIdx] = {
-                      item: { ...item },
-                      quality: existingSlot?.quality || equipSlotQuality,
-                      element: slotElement,
-                      spirit: slotSpirit,
-                    };
-                    setEquipmentSlots(newSlots);
-                    setChampionManualMode(false);
-                  }}
-                  onCancel={() => setChampionManualMode(false)}
-                />
-              ) : champViewMode === 'table' ? (
-                /* ─── Champion Table View ─── */
-                <div className="overflow-x-auto h-full">
-                  <table className="w-full text-xs border-collapse" style={{ tableLayout: 'fixed' }}>
-                    <colgroup>
-                      <col style={{ width: '180px' }} />
-                      <col style={{ width: '60px' }} />
-                      <col style={{ width: '56px' }} />
-                      <col style={{ width: '56px' }} />
-                      <col style={{ width: '56px' }} />
-                      <col style={{ width: '50px' }} />
-                      <col style={{ width: '50px' }} />
-                      <col style={{ width: '90px' }} />
-                      <col style={{ width: '80px' }} />
-                    </colgroup>
-                    <thead className="sticky top-0 bg-background z-10">
-                      <tr className="border-b-2 border-border">
-                        {[
-                          { key: 'name', label: '이름', color: 'text-foreground/60' },
-                          { key: 'tier', label: 'T', color: 'text-foreground/60' },
-                          { key: 'atk', label: 'ATK', color: 'text-red-400/80' },
-                          { key: 'def', label: 'DEF', color: 'text-blue-400/80' },
-                          { key: 'hp', label: 'HP', color: 'text-orange-400/80' },
-                          { key: 'crit', label: 'CRIT.C', color: 'text-yellow-400/80' },
-                          { key: 'eva', label: 'EVA', color: 'text-teal-400/80' },
-                          { key: '', label: '친밀 원소', color: 'text-foreground/60' },
-                          { key: '', label: '친밀 영혼', color: 'text-foreground/60' },
-                        ].map((col, ci) => (
-                          <th key={ci} className={`text-center py-2 px-1.5 ${col.color} font-semibold ${col.key ? 'cursor-pointer hover:text-primary' : ''}`}
-                            onClick={() => col.key && (() => {
-                              if (champSortKey === col.key) setChampSortDir(d => d === 'asc' ? 'desc' : 'asc');
-                              else { setChampSortKey(col.key); setChampSortDir('desc'); }
-                            })()}>
-                            {col.label} {champSortKey === col.key && (champSortDir === 'asc' ? '▲' : '▼')}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(() => {
-                        let sorted = [...filteredItems];
-                        if (champSortKey) {
-                          sorted.sort((a, b) => {
-                            let av: number | string = 0, bv: number | string = 0;
-                            if (champSortKey === 'name') { av = a.name; bv = b.name; }
-                            else if (champSortKey === 'tier') { av = a.tier; bv = b.tier; }
-                            else if (champSortKey === 'atk') { av = a.stats.find(s => s.key === '장비_공격력')?.value || 0; bv = b.stats.find(s => s.key === '장비_공격력')?.value || 0; }
-                            else if (champSortKey === 'def') { av = a.stats.find(s => s.key === '장비_방어력')?.value || 0; bv = b.stats.find(s => s.key === '장비_방어력')?.value || 0; }
-                            else if (champSortKey === 'hp') { av = a.stats.find(s => s.key === '장비_체력')?.value || 0; bv = b.stats.find(s => s.key === '장비_체력')?.value || 0; }
-                            else if (champSortKey === 'crit') { av = a.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; bv = b.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; }
-                            else if (champSortKey === 'eva') { av = a.stats.find(s => s.key === '장비_회피%')?.value || 0; bv = b.stats.find(s => s.key === '장비_회피%')?.value || 0; }
-                            if (typeof av === 'string' && typeof bv === 'string') return champSortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
-                            return champSortDir === 'asc' ? (av as number) - (bv as number) : (bv as number) - (av as number);
-                          });
+                        <span className="text-muted-foreground">영혼:</span>
+                        <Select value={equipFilterSpirit} onValueChange={setEquipFilterSpirit}>
+                          <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="_all">전체</SelectItem>
+                            {Object.entries(SPIRIT_TIER).sort(([,a], [,b]) => b - a).map(([sp, tier]) => (
+                              <SelectItem key={sp} value={sp}>
+                                <span className="text-muted-foreground text-[10px] mr-1">T{tier})</span>{sp}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <button
+                          onClick={() => { setEquipFilterStat('_all'); setEquipFilterElement('_all'); setEquipFilterSpirit('_all'); setChampSortKey(''); setChampSortDir('asc'); }}
+                          className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors flex-shrink-0"
+                          title="필터 초기화"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
+                        </button>
+                      </div>
+
+                      {/* Sub-row 2: 등급 전체 ... [앨범|테이블] */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">등급:</span>
+                        <Select value={equipSlotQuality} onValueChange={q => {
+                          setEquipSlotQuality(q);
+                          const newSlots = [...equipmentSlots];
+                          newSlots[slotIdx] = { ...newSlots[slotIdx], quality: q };
+                          setEquipmentSlots(newSlots);
+                        }}>
+                          <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                        <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={() => {
+                          setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
+                        }}>
+                          전체
+                        </Button>
+
+                        <div className="flex-1" />
+
+                        <div className="flex rounded border border-border overflow-hidden flex-shrink-0" style={{ width: '62px' }}>
+                          <button onClick={() => setChampViewMode('album')} className={`flex-1 px-1.5 py-1 ${champViewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`} title="앨범">
+                            <LayoutGrid className="w-3.5 h-3.5 mx-auto" />
+                          </button>
+                          <button onClick={() => setChampViewMode('table')} className={`flex-1 px-1.5 py-1 ${champViewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`} title="테이블">
+                            <List className="w-3.5 h-3.5 mx-auto" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Item grid or Manual form */}
+              <div className="flex-1 min-h-0">
+                <div className="overflow-y-auto h-full border border-border rounded p-3">
+                  {championManualMode ? (
+                    <ManualEquipmentForm
+                      ref={championManualFormRef}
+                      hideActions
+                      isAurasong={equipDialogType === 'aurasong'}
+                      initialData={equipmentSlots[slotIdx]?.item?.manualData || null}
+                      onConfirm={(item) => {
+                        const newSlots = [...equipmentSlots];
+                        const existingSlot = newSlots[slotIdx];
+                        let slotElement = existingSlot?.element || null;
+                        let slotSpirit = existingSlot?.spirit || null;
+                        if (item.uniqueElement?.length) {
+                          slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
                         }
-                        return sorted;
-                      })().map((item, idx) => {
-                        const isSelected = currentItem?.name === item.name && currentItem?.tier === item.tier;
-                        const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
-                        const defVal = item.stats.find(s => s.key === '장비_방어력')?.value || 0;
-                        const hpVal = item.stats.find(s => s.key === '장비_체력')?.value || 0;
-                        const critVal = item.stats.find(s => s.key === '장비_치명타확률%')?.value || 0;
-                        const evaVal = item.stats.find(s => s.key === '장비_회피%')?.value || 0;
-                        return (
-                          <tr key={`${item.name}-${item.tier}-${idx}`}
-                            onClick={() => {
-                              const newSlots = [...equipmentSlots];
-                              if (isSelected) {
-                                newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
-                              } else {
-                                const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
-                                const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
-                                const quality = equipmentSlots[slotIdx]?.quality || 'common';
-                                newSlots[slotIdx] = { item: { ...item }, quality, element: existingEl || null, spirit: existingSp || null };
-                              }
-                              setEquipmentSlots(newSlots);
-                            }}
-                            className={`border-b border-border/20 transition-colors ${
-                              isSelected ? 'bg-primary/20 font-medium' : 'hover:bg-secondary/30 cursor-pointer'
-                            }`}
-                          >
-                            <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap overflow-hidden text-ellipsis">{item.name}</td>
-                            <td className="py-1.5 px-1 text-center text-foreground tabular-nums">{item.tier}</td>
-                            <td className={`py-1.5 px-1.5 text-center tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal ? formatNumber(atkVal) : '-'}</td>
-                            <td className={`py-1.5 px-1.5 text-center tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal ? formatNumber(defVal) : '-'}</td>
-                            <td className={`py-1.5 px-1.5 text-center tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal ? formatNumber(hpVal) : '-'}</td>
-                            <td className={`py-1.5 px-1 text-center tabular-nums ${critVal ? 'text-yellow-400' : 'text-muted-foreground/30'}`}>{critVal ? `${critVal}%` : '-'}</td>
-                            <td className={`py-1.5 px-1 text-center tabular-nums ${evaVal ? 'text-teal-400' : 'text-muted-foreground/30'}`}>{evaVal ? `${evaVal}%` : '-'}</td>
-                            <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
-                              {item.elementAffinity?.length ? (
-                                <span>{item.elementAffinity.map((el, i) => (
-                                  <span key={el}>
-                                    {i > 0 && <span className="text-muted-foreground"> / </span>}
-                                    <span className={ELEMENT_COLORS[el] || 'text-foreground'}>{el === '모든 원소' ? '모든 원소' : el}</span>
-                                  </span>
-                                ))}</span>
-                              ) : <span className="text-muted-foreground/30">-</span>}
-                            </td>
-                            <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
-                              {item.spiritAffinity?.length ? (
-                                <span className="text-foreground">{item.spiritAffinity.join(', ')}</span>
-                              ) : <span className="text-muted-foreground/30">-</span>}
-                            </td>
+                        if (item.uniqueSpirit?.length) {
+                          slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
+                        }
+                        newSlots[slotIdx] = {
+                          item: { ...item },
+                          quality: existingSlot?.quality || equipSlotQuality,
+                          element: slotElement,
+                          spirit: slotSpirit,
+                        };
+                        setEquipmentSlots(newSlots);
+                        setChampionManualMode(false);
+                      }}
+                      onCancel={() => setChampionManualMode(false)}
+                    />
+                  ) : champViewMode === 'table' ? (
+                    /* ─── Champion Table View ─── */
+                    <div className="overflow-x-auto h-full">
+                      <table className="w-full text-xs border-collapse" style={{ tableLayout: 'fixed' }}>
+                        <colgroup>
+                          <col style={{ width: '180px' }} />
+                          <col style={{ width: '60px' }} />
+                          <col style={{ width: '56px' }} />
+                          <col style={{ width: '56px' }} />
+                          <col style={{ width: '56px' }} />
+                          <col style={{ width: '50px' }} />
+                          <col style={{ width: '50px' }} />
+                          <col style={{ width: '90px' }} />
+                          <col style={{ width: '80px' }} />
+                          <col style={{ width: '100px' }} />
+                        </colgroup>
+                        <thead className="sticky top-0 bg-background z-10">
+                          <tr className="border-b-2 border-border">
+                            {[
+                              { key: 'name', label: '이름', color: 'text-foreground/60' },
+                              { key: 'tier', label: 'T', color: 'text-foreground/60' },
+                              { key: 'atk', label: 'ATK', color: 'text-red-400/80' },
+                              { key: 'def', label: 'DEF', color: 'text-blue-400/80' },
+                              { key: 'hp', label: 'HP', color: 'text-orange-400/80' },
+                              { key: 'crit', label: 'CRIT.C', color: 'text-yellow-400/80' },
+                              { key: 'eva', label: 'EVA', color: 'text-teal-400/80' },
+                              { key: '', label: '친밀 원소', color: 'text-foreground/60' },
+                              { key: '', label: '친밀 영혼', color: 'text-foreground/60' },
+                              { key: '', label: '고유 원소/영혼', color: 'text-foreground/60' },
+                            ].map((col, ci) => (
+                              <th key={ci} className={`text-center py-2 px-1.5 ${col.color} font-semibold ${col.key ? 'cursor-pointer hover:text-primary' : ''}`}
+                                onClick={() => col.key && (() => {
+                                  if (champSortKey === col.key) setChampSortDir(d => d === 'asc' ? 'desc' : 'asc');
+                                  else { setChampSortKey(col.key); setChampSortDir('desc'); }
+                                })()}>
+                                {col.label} {champSortKey === col.key && (champSortDir === 'asc' ? '▲' : '▼')}
+                              </th>
+                            ))}
                           </tr>
+                        </thead>
+                        <tbody>
+                          {(() => {
+                            let sorted = [...filteredItems];
+                            if (champSortKey) {
+                              sorted.sort((a, b) => {
+                                let av: number | string = 0, bv: number | string = 0;
+                                if (champSortKey === 'name') { av = a.name; bv = b.name; }
+                                else if (champSortKey === 'tier') { av = a.tier; bv = b.tier; }
+                                else if (champSortKey === 'atk') { av = a.stats.find(s => s.key === '장비_공격력')?.value || 0; bv = b.stats.find(s => s.key === '장비_공격력')?.value || 0; }
+                                else if (champSortKey === 'def') { av = a.stats.find(s => s.key === '장비_방어력')?.value || 0; bv = b.stats.find(s => s.key === '장비_방어력')?.value || 0; }
+                                else if (champSortKey === 'hp') { av = a.stats.find(s => s.key === '장비_체력')?.value || 0; bv = b.stats.find(s => s.key === '장비_체력')?.value || 0; }
+                                else if (champSortKey === 'crit') { av = a.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; bv = b.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; }
+                                else if (champSortKey === 'eva') { av = a.stats.find(s => s.key === '장비_회피%')?.value || 0; bv = b.stats.find(s => s.key === '장비_회피%')?.value || 0; }
+                                if (typeof av === 'string' && typeof bv === 'string') return champSortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+                                return champSortDir === 'asc' ? (av as number) - (bv as number) : (bv as number) - (av as number);
+                              });
+                            }
+                            return sorted;
+                          })().map((item, idx) => {
+                            const isSelected = currentItem?.name === item.name && currentItem?.tier === item.tier;
+                            const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
+                            const defVal = item.stats.find(s => s.key === '장비_방어력')?.value || 0;
+                            const hpVal = item.stats.find(s => s.key === '장비_체력')?.value || 0;
+                            const critVal = item.stats.find(s => s.key === '장비_치명타확률%')?.value || 0;
+                            const evaVal = item.stats.find(s => s.key === '장비_회피%')?.value || 0;
+                            return (
+                              <tr key={`${item.name}-${item.tier}-${idx}`}
+                                onClick={() => {
+                                  const newSlots = [...equipmentSlots];
+                                  if (isSelected) {
+                                    newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
+                                  } else {
+                                    const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
+                                    const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
+                                    const quality = equipmentSlots[slotIdx]?.quality || 'common';
+                                    newSlots[slotIdx] = { item: { ...item }, quality, element: existingEl || null, spirit: existingSp || null };
+                                  }
+                                  setEquipmentSlots(newSlots);
+                                }}
+                                className={`border-b border-border/20 transition-colors ${
+                                  isSelected ? 'bg-primary/20 font-medium' : 'hover:bg-secondary/30 cursor-pointer'
+                                }`}
+                              >
+                                <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap overflow-hidden text-ellipsis">{item.name}</td>
+                                <td className="py-1.5 px-1 text-center text-foreground tabular-nums">{item.tier}</td>
+                                <td className={`py-1.5 px-1.5 text-center tabular-nums ${atkVal ? 'text-red-400' : 'text-muted-foreground/30'}`}>{atkVal ? formatNumber(atkVal) : '-'}</td>
+                                <td className={`py-1.5 px-1.5 text-center tabular-nums ${defVal ? 'text-blue-400' : 'text-muted-foreground/30'}`}>{defVal ? formatNumber(defVal) : '-'}</td>
+                                <td className={`py-1.5 px-1.5 text-center tabular-nums ${hpVal ? 'text-orange-400' : 'text-muted-foreground/30'}`}>{hpVal ? formatNumber(hpVal) : '-'}</td>
+                                <td className={`py-1.5 px-1 text-center tabular-nums ${critVal ? 'text-yellow-400' : 'text-muted-foreground/30'}`}>{critVal ? `${critVal}%` : '-'}</td>
+                                <td className={`py-1.5 px-1 text-center tabular-nums ${evaVal ? 'text-teal-400' : 'text-muted-foreground/30'}`}>{evaVal ? `${evaVal}%` : '-'}</td>
+                                <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                                  {item.elementAffinity?.length ? (
+                                    <span>{item.elementAffinity.map((el, i) => (
+                                      <span key={el}>
+                                        {i > 0 && <span className="text-muted-foreground"> / </span>}
+                                        <span className={ELEMENT_COLORS_LOCAL[el] || 'text-foreground'}>{el === '모든 원소' ? '모든 원소' : el}</span>
+                                      </span>
+                                    ))}</span>
+                                  ) : <span className="text-muted-foreground/30">-</span>}
+                                </td>
+                                <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                                  {item.spiritAffinity?.length ? (
+                                    <span className="text-foreground">{item.spiritAffinity.join(', ')}</span>
+                                  ) : <span className="text-muted-foreground/30">-</span>}
+                                </td>
+                                <td className="py-1.5 px-1.5 text-center whitespace-nowrap">
+                                  {item.uniqueElement?.length ? (
+                                    <span>{item.uniqueElement.map(el => (
+                                      <span key={el} className={`${ELEMENT_COLORS_LOCAL[el] || ''} font-semibold`}>{el} (T{item.uniqueElementTier})</span>
+                                    ))}</span>
+                                  ) : item.uniqueSpirit?.length ? (
+                                    <span className="text-purple-300 font-semibold">{item.uniqueSpirit.join(', ')}</span>
+                                  ) : <span className="text-muted-foreground/30">-</span>}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                  <TooltipProvider delayDuration={200}>
+                    <div className="grid grid-cols-6 gap-3">
+                      {filteredItems.map((item, idx) => {
+                        const isSelected = currentItem?.name === item.name && currentItem?.tier === item.tier;
+                        const quality = equipmentSlots[slotIdx]?.quality || 'common';
+                        const elemAffs = item.elementAffinity || [];
+                        const spiritAffs = item.spiritAffinity || [];
+                        const uniqueElems = item.uniqueElement || [];
+                        const uniqueSp = item.uniqueSpirit || [];
+                        const hasAffinityIcons = elemAffs.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || uniqueSp.length > 0;
+                        return (
+                          <Tooltip key={`${item.name}-${item.tier}-${idx}`}>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => {
+                                  const newSlots = [...equipmentSlots];
+                                  if (isSelected) {
+                                    newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
+                                  } else {
+                                    const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
+                                    const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
+                                    newSlots[slotIdx] = { item: { ...item }, quality, element: existingEl || null, spirit: existingSp || null };
+                                  }
+                                  setEquipmentSlots(newSlots);
+                                }}
+                                className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
+                                  isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
+                                }`}
+                                style={isSelected ? {
+                                  background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
+                                  boxShadow: QUALITY_SHADOW_COLOR[quality],
+                                } : {}}
+                              >
+                                <div className="flex flex-col items-center w-full relative" style={{ height: '75%' }}>
+                                  <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">T{item.tier}</span>
+                                  <div className="flex-1 w-full flex items-center justify-center pt-3">
+                                    {item.imagePath ? (
+                                      <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    ) : (
+                                      <span className="text-[9px] text-muted-foreground text-center">{item.name.slice(0, 8)}</span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1 pb-0.5">{item.name}</p>
+                                </div>
+                                <div className="flex items-center justify-center gap-1 w-full" style={{ height: '25%' }}>
+                                  {hasAffinityIcons ? (
+                                    <>
+                                      <div className="flex items-center gap-0.5">
+                                        {elemAffs.map(el => (
+                                          <img key={el} src={`/images/elements/${ELEMENT_ENG_MAP[el] || el}.webp`} alt={el} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                        ))}
+                                      </div>
+                                      {spiritAffs.length > 0 && elemAffs.length > 0 && <div className="w-px h-4 bg-border/50" />}
+                                      <div className="flex items-center gap-0.5">
+                                        {spiritAffs.map(sp => {
+                                          const eng = SPIRIT_NAME_MAP[sp];
+                                          return eng ? <img key={sp} src={`/images/enchant/spirit/${eng}_1.webp`} alt={sp} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                                        })}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <span className="text-[7px] text-muted-foreground/30">-</span>
+                                  )}
+                                </div>
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom" align="center" sideOffset={8} avoidCollisions={true} collisionPadding={16} className="max-w-xs p-3 space-y-1.5 z-50">
+                              <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor || item.type})</span></p>
+                              {item.stats.length > 0 && (
+                                <div className="space-y-0.5">
+                                  {item.stats.map((s: any, si: number) => (
+                                    <div key={si} className="flex items-center gap-1 text-xs">
+                                      <span className={`font-medium ${STAT_COLOR[s.key] || 'text-foreground'}`}>
+                                        {STAT_FILTER_OPTIONS.find(o => o.value === s.key)?.label || s.key}:
+                                      </span>
+                                      <span className="tabular-nums">{formatEquipStatVal(s.key, s.value)}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {item.elementAffinity && item.elementAffinity.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">친밀 원소: </span>
+                                  {item.elementAffinity.map((el: string, ei: number) => (
+                                    <span key={ei}>{ei > 0 ? ', ' : ''}<span className={ELEMENT_COLORS_LOCAL[el] || 'text-foreground'}>{el}</span></span>
+                                  ))}
+                                </div>
+                              )}
+                              {item.spiritAffinity && item.spiritAffinity.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">친밀 영혼: </span>
+                                  {item.spiritAffinity.map((sp: string, si: number) => (
+                                    <span key={si}>{si > 0 ? ', ' : ''}{sp} (T{getSpiritTier(sp)})</span>
+                                  ))}
+                                </div>
+                              )}
+                              {equipDialogType === 'aurasong' && (() => {
+                                const effect = getAurasongSkillEffect(item.name);
+                                return effect ? (
+                                  <div className="text-xs border-t border-border/50 pt-1 mt-1">
+                                    <span className="text-primary font-semibold">오라의 노래 스킬:</span>
+                                    <p className="text-foreground/80 whitespace-pre-line mt-0.5">{effect}</p>
+                                  </div>
+                                ) : null;
+                              })()}
+                            </TooltipContent>
+                          </Tooltip>
                         );
                       })}
-                    </tbody>
-                  </table>
+                    </div>
+                  </TooltipProvider>
+                  )}
                 </div>
-              ) : (
-              <TooltipProvider delayDuration={200}>
-                <div className="grid grid-cols-6 gap-3">
-                  {filteredItems.map((item, idx) => {
-                    const isSelected = currentItem?.name === item.name && currentItem?.tier === item.tier;
-                    const quality = equipmentSlots[slotIdx]?.quality || 'common';
-                    const elemAffs = item.elementAffinity || [];
-                    const spiritAffs = item.spiritAffinity || [];
-                    const uniqueElems = item.uniqueElement || [];
-                    const uniqueSp = item.uniqueSpirit || [];
-                    const hasAffinityIcons = elemAffs.length > 0 || uniqueElems.length > 0 || spiritAffs.length > 0 || uniqueSp.length > 0;
-                    return (
-                      <Tooltip key={`${item.name}-${item.tier}-${idx}`}>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => {
-                              const newSlots = [...equipmentSlots];
-                              if (isSelected) {
-                                newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
-                              } else {
-                                const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
-                                const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
-                                newSlots[slotIdx] = { item: { ...item }, quality, element: existingEl || null, spirit: existingSp || null };
-                              }
-                              setEquipmentSlots(newSlots);
-                            }}
-                            className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
-                              isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
-                            }`}
-                            style={isSelected ? {
-                              background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
-                              boxShadow: QUALITY_SHADOW_COLOR[quality],
-                            } : {}}
-                          >
-                            <div className="flex flex-col items-center w-full relative" style={{ height: '75%' }}>
-                              <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">T{item.tier}</span>
-                              <div className="flex-1 w-full flex items-center justify-center pt-3">
-                                {item.imagePath ? (
-                                  <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                ) : (
-                                  <span className="text-[9px] text-muted-foreground text-center">{item.name.slice(0, 8)}</span>
-                                )}
-                              </div>
-                              <p className="text-[11px] text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1 pb-0.5">{item.name}</p>
-                            </div>
-                            <div className="flex items-center justify-center gap-1 w-full" style={{ height: '25%' }}>
-                              {hasAffinityIcons ? (
-                                <>
-                                  <div className="flex items-center gap-0.5">
-                                    {elemAffs.map(el => (
-                                      <img key={el} src={`/images/elements/${ELEMENT_ENG_MAP[el] || el}.webp`} alt={el} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                    ))}
-                                  </div>
-                                  {spiritAffs.length > 0 && elemAffs.length > 0 && <div className="w-px h-4 bg-border/50" />}
-                                  <div className="flex items-center gap-0.5">
-                                    {spiritAffs.map(sp => {
-                                      const eng = SPIRIT_NAME_MAP[sp];
-                                      return eng ? <img key={sp} src={`/images/enchant/spirit/${eng}_1.webp`} alt={sp} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
-                                    })}
-                                  </div>
-                                </>
-                              ) : (
-                                <span className="text-[7px] text-muted-foreground/30">-</span>
+              </div>
+            </div>
+
+            {/* ═══ Right: Selected equipment + Confirm/Cancel ═══ */}
+            <div className="w-60 flex flex-col border-l border-border pl-3 flex-shrink-0">
+              <h3 className="text-xs font-semibold text-muted-foreground mb-2">선택한 장비</h3>
+              <div className="flex-1 overflow-y-auto space-y-1.5">
+                {[0, 1].map(i => {
+                  const s = equipmentSlots[i];
+                  const hasAffinityEl = s.element?.affinity;
+                  const hasAffinitySp = s.spirit?.affinity;
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => setEquipDialogType(i === 0 ? 'familiar' : 'aurasong')}
+                      className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
+                        (i === 0 && equipDialogType === 'familiar') || (i === 1 && equipDialogType === 'aurasong') ? 'border-primary ring-1 ring-primary/30' :
+                        s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
+                      }`}
+                      style={s.item ? { boxShadow: QUALITY_SHADOW_COLOR[s.quality] } : {}}
+                    >
+                      {/* Slot number with quality background */}
+                      <div
+                        className="w-5 flex items-center justify-center flex-shrink-0"
+                        style={{ background: s.item ? champQualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
+                      >
+                        <span className="text-[10px] font-bold text-background">{i + 1}</span>
+                      </div>
+                      {s.item ? (
+                        <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">
+                          {s.item.imagePath ? (
+                            <img src={s.item.imagePath} alt="" className="w-9 h-9 object-contain flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                          ) : null}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs text-foreground truncate font-medium">{s.item.name}</p>
+                            <p className="text-[10px] text-foreground/60">
+                              T{s.item.tier} {i === 0 ? '퍼밀리어' : '오라의 노래'}
+                              {s.item.manual && <Wrench className="w-2.5 h-2.5 inline ml-1 text-muted-foreground" />}
+                            </p>
+                            <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                              {s.element && (
+                                <span className={`text-[9px] ${hasAffinityEl ? 'font-bold' : ''} ${ELEMENT_COLORS_LOCAL[s.element.type] || 'text-foreground/70'}`}>
+                                  {hasAffinityEl && '★ '}{s.element.type} (T{s.element.tier})
+                                </span>
+                              )}
+                              {s.element && s.spirit && <span className="text-[9px] text-muted-foreground">/</span>}
+                              {s.spirit && (
+                                <span className={`text-[9px] text-purple-300 ${hasAffinitySp ? 'font-bold' : ''}`}>
+                                  {hasAffinitySp && '★ '}{s.spirit.name} (T{getSpiritTier(s.spirit.name)})
+                                </span>
                               )}
                             </div>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const newSlots = [...equipmentSlots];
+                              newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                              setEquipmentSlots(newSlots);
+                            }}
+                            className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
+                            title="장비 해제"
+                          >
+                            ✕
                           </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" align="center" sideOffset={8} avoidCollisions={true} collisionPadding={16} className="max-w-xs p-3 space-y-1.5 z-50">
-                          <p className="font-bold text-sm">{item.name} <span className="text-muted-foreground font-normal">(T{item.tier}, {item.typeKor || item.type})</span></p>
-                          {item.stats.length > 0 && (
-                            <div className="space-y-0.5">
-                              {item.stats.map((s: any, si: number) => (
-                                <div key={si} className="flex items-center gap-1 text-xs">
-                                  <span className={`font-medium ${STAT_COLOR[s.key] || 'text-foreground'}`}>
-                                    {STAT_FILTER_OPTIONS.find(o => o.value === s.key)?.label || s.key}:
-                                  </span>
-                                  <span className="tabular-nums">{formatEquipStatVal(s.key, s.value)}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {item.elementAffinity && item.elementAffinity.length > 0 && (
-                            <div className="text-xs">
-                              <span className="text-muted-foreground">친밀 원소: </span>
-                              {item.elementAffinity.map((el: string, ei: number) => (
-                                <span key={ei}>{ei > 0 ? ', ' : ''}<span className={ELEMENT_COLORS[el] || 'text-foreground'}>{el}</span></span>
-                              ))}
-                            </div>
-                          )}
-                          {item.spiritAffinity && item.spiritAffinity.length > 0 && (
-                            <div className="text-xs">
-                              <span className="text-muted-foreground">친밀 영혼: </span>
-                              {item.spiritAffinity.map((sp: string, si: number) => (
-                                <span key={si}>{si > 0 ? ', ' : ''}{sp} (T{getSpiritTier(sp)})</span>
-                              ))}
-                            </div>
-                          )}
-                          {equipDialogType === 'aurasong' && (() => {
-                            const effect = getAurasongSkillEffect(item.name);
-                            return effect ? (
-                              <div className="text-xs border-t border-border/50 pt-1 mt-1">
-                                <span className="text-primary font-semibold">오라의 노래 스킬:</span>
-                                <p className="text-foreground/80 whitespace-pre-line mt-0.5">{effect}</p>
-                              </div>
-                            ) : null;
-                          })()}
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              </TooltipProvider>
-              )}
+                        </div>
+                      ) : (
+                        <div className="flex items-center p-1.5">
+                          <span className="text-xs text-muted-foreground">{i === 0 ? '퍼밀리어' : '오라의 노래'} - 비어있음</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex gap-2 pt-3 mt-2 border-t border-border">
+                <Button variant="outline" className="flex-1" onClick={() => setEquipDialogType(null)}>취소</Button>
+                <Button className="flex-1" onClick={() => setEquipDialogType(null)}>선택</Button>
+              </div>
             </div>
           </div>
         </DialogContent>

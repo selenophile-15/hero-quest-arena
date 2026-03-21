@@ -429,25 +429,8 @@ export default function EquipmentSelectDialog({
               ))}
             </div>
 
-            {/* Filter row 1: [Album|Table] [Type] [Stat] [Tier min~max] [Element] [Spirit] [Reset] */}
+            {/* Filter row 1: [수동(tall)] [타입] [스탯] [티어] [원소] [영혼] [초기화] [앨범|테이블] */}
             <div className="flex items-center gap-2 px-1 text-xs mb-1">
-              <div className="flex rounded border border-border overflow-hidden" style={{ width: '62px' }}>
-                <button
-                  onClick={() => setViewMode('album')}
-                  className={`flex-1 px-1.5 py-1 ${viewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
-                  title="앨범"
-                >
-                  <LayoutGrid className="w-3.5 h-3.5 mx-auto" />
-                </button>
-                <button
-                  onClick={() => setViewMode('table')}
-                  className={`flex-1 px-1.5 py-1 ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
-                  title="테이블"
-                >
-                  <List className="w-3.5 h-3.5 mx-auto" />
-                </button>
-              </div>
-
               {manualMode ? (
                 <div className="flex items-center gap-1.5 ml-auto">
                   <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setManualMode(false)}>취소</Button>
@@ -455,112 +438,132 @@ export default function EquipmentSelectDialog({
                 </div>
               ) : (
                 <>
-                  <span className="text-muted-foreground">타입:</span>
-                  <Select value={filterType} onValueChange={setFilterType}>
-                    <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="_all">전체</SelectItem>
-                      {filterTypeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-
-                  <span className="text-muted-foreground">스탯:</span>
-                  <Select value={filterStat} onValueChange={setFilterStat}>
-                    <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="_all">전체</SelectItem>
-                      {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-
-                  <span className="text-muted-foreground">티어:</span>
-                  <input type="number" min={1} max={maxTier} value={filterTierMin}
-                    onChange={e => {
-                      const raw = e.target.value;
-                      if (raw === '') { setFilterTierMin(''); return; }
-                      const v = parseInt(raw, 10);
-                      if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
-                    }}
-                    className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-                  <span className="text-muted-foreground">~</span>
-                  <input type="number" min={1} max={maxTier} value={filterTierMax}
-                    onChange={e => {
-                      const raw = e.target.value;
-                      if (raw === '') { setFilterTierMax(''); return; }
-                      const v = parseInt(raw, 10);
-                      if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
-                    }}
-                    className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
-
-                  <span className="text-muted-foreground">원소:</span>
-                  <Select value={filterElement} onValueChange={setFilterElement}>
-                    <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="_all">전체</SelectItem>
-                      {ELEMENT_FILTER_OPTIONS.map(e => (
-                        <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <span className="text-muted-foreground">영혼:</span>
-                  <Select value={filterSpirit} onValueChange={setFilterSpirit}>
-                    <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="_all">전체</SelectItem>
-                      {spiritGroups.map((group, gi) => (
-                        <div key={gi}>
-                          {gi > 0 && <div className="border-t border-border/30 my-1" />}
-                          {group.spirits.map(sp => (
-                            <SelectItem key={sp} value={sp}>
-                              <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
-                            </SelectItem>
-                          ))}
-                        </div>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <button
-                    onClick={resetAllFilters}
-                    className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
-                    title="필터 초기화"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-[58px] text-xs gap-1 px-3 bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40"
+                    onClick={() => setManualMode(true)}
                   >
-                    <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
-                  </button>
+                    <Wrench className="w-3.5 h-3.5" />
+                    수동
+                  </Button>
+
+                  <div className="flex flex-col gap-1 flex-1 min-w-0">
+                    {/* Sub-row 1: 타입 스탯 티어 원소 영혼 초기화 */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">타입:</span>
+                      <Select value={filterType} onValueChange={setFilterType}>
+                        <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="_all">전체</SelectItem>
+                          {filterTypeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+
+                      <span className="text-muted-foreground">스탯:</span>
+                      <Select value={filterStat} onValueChange={setFilterStat}>
+                        <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="_all">전체</SelectItem>
+                          {STAT_FILTER_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+
+                      <span className="text-muted-foreground">티어:</span>
+                      <input type="number" min={1} max={maxTier} value={filterTierMin}
+                        onChange={e => {
+                          const raw = e.target.value;
+                          if (raw === '') { setFilterTierMin(''); return; }
+                          const v = parseInt(raw, 10);
+                          if (!isNaN(v)) setFilterTierMin(Math.max(1, Math.min(maxTier, v)));
+                        }}
+                        className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+                      <span className="text-muted-foreground">~</span>
+                      <input type="number" min={1} max={maxTier} value={filterTierMax}
+                        onChange={e => {
+                          const raw = e.target.value;
+                          if (raw === '') { setFilterTierMax(''); return; }
+                          const v = parseInt(raw, 10);
+                          if (!isNaN(v)) setFilterTierMax(Math.max(1, Math.min(maxTier, v)));
+                        }}
+                        className="h-7 w-12 text-xs text-center rounded border border-border bg-background" />
+
+                      <span className="text-muted-foreground">원소:</span>
+                      <Select value={filterElement} onValueChange={setFilterElement}>
+                        <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="_all">전체</SelectItem>
+                          {ELEMENT_FILTER_OPTIONS.map(e => (
+                            <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <span className="text-muted-foreground">영혼:</span>
+                      <Select value={filterSpirit} onValueChange={setFilterSpirit}>
+                        <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="_all">전체</SelectItem>
+                          {spiritGroups.map((group, gi) => (
+                            <div key={gi}>
+                              {gi > 0 && <div className="border-t border-border/30 my-1" />}
+                              {group.spirits.map(sp => (
+                                <SelectItem key={sp} value={sp}>
+                                  <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>{sp}
+                                </SelectItem>
+                              ))}
+                            </div>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <button
+                        onClick={resetAllFilters}
+                        className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors flex-shrink-0"
+                        title="필터 초기화"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
+                      </button>
+                    </div>
+
+                    {/* Sub-row 2: 등급 전체 ... [앨범|테이블] on right */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">등급:</span>
+                      <Select value={slotQuality} onValueChange={handleQualityChange}>
+                        <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {QUALITY_OPTIONS.map(q => (
+                            <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={handleBatchQuality}>
+                        전체
+                      </Button>
+
+                      <div className="flex-1" />
+
+                      <div className="flex rounded border border-border overflow-hidden flex-shrink-0" style={{ width: '62px' }}>
+                        <button
+                          onClick={() => setViewMode('album')}
+                          className={`flex-1 px-1.5 py-1 ${viewMode === 'album' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
+                          title="앨범"
+                        >
+                          <LayoutGrid className="w-3.5 h-3.5 mx-auto" />
+                        </button>
+                        <button
+                          onClick={() => setViewMode('table')}
+                          className={`flex-1 px-1.5 py-1 ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'}`}
+                          title="테이블"
+                        >
+                          <List className="w-3.5 h-3.5 mx-auto" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </>
               )}
             </div>
-
-            {/* Filter row 2: [수동] [등급 + 전체] */}
-            {!manualMode && (
-              <div className="flex items-center gap-2 px-1 text-xs mb-1">
-                <Button
-                  variant={manualMode ? 'default' : 'outline'}
-                  size="sm"
-                  className={`h-7 text-xs gap-1 ${!manualMode ? 'bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40' : ''}`}
-                  onClick={() => setManualMode(prev => !prev)}
-                >
-                  <Wrench className="w-3 h-3" />
-                  수동
-                </Button>
-
-                <div className="w-4" />
-
-                <span className="text-muted-foreground">등급:</span>
-                <Select value={slotQuality} onValueChange={handleQualityChange}>
-                  <SelectTrigger className="h-7 w-20 text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {QUALITY_OPTIONS.map(q => (
-                      <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={handleBatchQuality}>
-                  전체
-                </Button>
-              </div>
-            )}
 
             {/* Item grid or Manual form */}
             <div className="flex-1 min-h-0">
