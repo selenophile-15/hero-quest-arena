@@ -183,6 +183,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [promoted, setPromoted] = useState(getInitialPromotion());
   const [heroClass, setHeroClass] = useState(hero?.heroClass || '');
   const [level, setLevel] = useState<number | ''>(hero?.level || '');
+  const [levelInput, setLevelInput] = useState<string>(hero?.level ? String(hero.level) : '');
   const [label, setLabel] = useState(hero?.label || '');
   const [position, setPosition] = useState(hero?.position || '');
   const [power, setPower] = useState<number | ''>(hero?.power || '');
