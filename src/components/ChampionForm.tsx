@@ -1001,6 +1001,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         </DialogContent>
       </Dialog>
     );
+  };
 
   return (
     <div className="animate-fade-in">
