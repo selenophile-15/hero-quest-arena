@@ -222,7 +222,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       if (data[championName]) setChampionRawData(data[championName]);
     });
   }, [championName]);
-
+  };
 
   useEffect(() => {
     if (!championName || !rank) return;
