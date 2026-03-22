@@ -854,7 +854,7 @@ export default function HeroList() {
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         )}
                         {item?.imagePath ? (
-                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain mt-2"
+                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain" style={{ marginTop: '-4px' }}
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : (
                           <span className="text-[9px] text-muted-foreground">비어있음</span>
