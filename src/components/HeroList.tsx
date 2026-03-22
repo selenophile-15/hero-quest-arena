@@ -148,6 +148,11 @@ export default function HeroList() {
   const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
   const [uniqueSkillsData, setUniqueSkillsData] = useState<Record<string, any>>({});
   const [championSkillsData, setChampionSkillsData] = useState<Record<string, any>>({});
+  // Bulk delete management mode
+  const [manageMode, setManageMode] = useState(false);
+  const [selectedForDelete, setSelectedForDelete] = useState<Set<string>>(new Set());
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
+  const [resetConfirm, setResetConfirm] = useState(false);
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
