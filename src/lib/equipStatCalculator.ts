@@ -167,17 +167,8 @@ export function getElementEnchantStats(
   const entry = elementData[tierKey];
   if (!entry) return { atk: 0, def: 0, hp: 0 };
 
-  // "모든 원소" affinity: 25% bonus (floor) instead of normal 50%
-  if (affinity && isAllElementAffinity) {
-    const xSub = entry['X'];
-    if (!xSub) return { atk: 0, def: 0, hp: 0 };
-    return {
-      atk: Math.floor((xSub['원소_공격력'] || 0) * 1.25),
-      def: Math.floor((xSub['원소_방어력'] || 0) * 1.25),
-      hp: Math.floor((xSub['원소_체력'] || 0) * 1.25),
-    };
-  }
-
+  // "모든 원소" affinity gets the same stat bonus as specific affinity (50%)
+  // The only penalty for "모든 원소" is on element value (+5 instead of +10), handled elsewhere
   const sub = affinity ? entry['O'] : entry['X'];
   if (!sub) return { atk: 0, def: 0, hp: 0 };
   return {
