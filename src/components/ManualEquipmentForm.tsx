@@ -447,7 +447,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
             {data.elementMode === 'affinity' && (
               <Select value={data.affinityElement || '_none'} onValueChange={v => update('affinityElement', v === '_none' ? '' : v)}>
-                <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="원소 선택" /></SelectTrigger>
+                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="원소 선택" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="_none">선택 안 함</SelectItem>
                   {ELEMENT_OPTIONS.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
