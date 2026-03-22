@@ -334,10 +334,10 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
           {/* Type */}
           {!isAurasong && (
-          <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs">
-            <span className="text-foreground">타입</span>
+          <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm">
+            <span className="text-foreground font-medium">타입</span>
             <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
-              <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="선택" /></SelectTrigger>
+              <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="선택" /></SelectTrigger>
               <SelectContent className="max-h-[240px]">
                 {typeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
               </SelectContent>
