@@ -549,10 +549,8 @@ export default function HeroList() {
     }
     if (colKey === 'position') return <span>{hero.position || '-'}</span>;
     if (colKey === 'promoted') {
-      const isPromoted = hero.promoted || false;
-      return <span className={isPromoted ? 'text-foreground font-medium' : 'text-foreground/20'}>
-        {isPromoted ? 'O' : 'X'}
-      </span>;
+      // Hide promoted column for champion - we show it via name icon now
+      return null;
     }
     if (colKey === 'airshipPower') return <span className="text-foreground/20">-</span>;
     if (colKey === 'evasion') {
