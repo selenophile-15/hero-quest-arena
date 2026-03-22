@@ -478,8 +478,8 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
           </div>
 
           {/* Spirit */}
-          <div className="space-y-1.5">
-            <span className="text-foreground text-xs font-semibold">영혼</span>
+          <div className="space-y-2">
+            <span className="text-foreground text-sm font-semibold">영혼</span>
             <RadioGroup
               value={data.spiritMode}
               onValueChange={v => {
@@ -489,19 +489,19 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                 if (mode === 'unique') update('uniqueSpirit', '문드라');
                 else update('uniqueSpirit', '');
               }}
-              className="flex gap-3 text-[11px]"
+              className="flex gap-4 text-xs"
             >
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="none" id="spirit-none" className="h-3 w-3" />
-                <label htmlFor="spirit-none" className="text-foreground cursor-pointer">없음</label>
+                <RadioGroupItem value="none" id="spirit-none" className="h-3.5 w-3.5" />
+                <label htmlFor="spirit-none" className="text-foreground cursor-pointer text-sm">없음</label>
               </div>
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="affinity" id="spirit-affinity" className="h-3 w-3" />
-                <label htmlFor="spirit-affinity" className="text-foreground cursor-pointer">친밀</label>
+                <RadioGroupItem value="affinity" id="spirit-affinity" className="h-3.5 w-3.5" />
+                <label htmlFor="spirit-affinity" className="text-foreground cursor-pointer text-sm">친밀</label>
               </div>
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="unique" id="spirit-unique" className="h-3 w-3" />
-                <label htmlFor="spirit-unique" className="text-foreground cursor-pointer">고유 (문드라)</label>
+                <RadioGroupItem value="unique" id="spirit-unique" className="h-3.5 w-3.5" />
+                <label htmlFor="spirit-unique" className="text-foreground cursor-pointer text-sm">고유 (문드라)</label>
               </div>
             </RadioGroup>
 
