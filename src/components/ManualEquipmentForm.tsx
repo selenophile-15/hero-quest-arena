@@ -524,7 +524,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             )}
 
             {data.spiritMode === 'unique' && (
-              <div className="text-xs text-muted-foreground pl-1">문드라 영혼 자동 적용</div>
+              <div className="text-sm text-muted-foreground pl-1">문드라 영혼 자동 적용</div>
             )}
           </div>
 
