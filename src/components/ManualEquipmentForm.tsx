@@ -320,10 +320,10 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
   ];
 
   return (
-    <div className="space-y-3 p-3">
+    <div className="space-y-4 p-3">
       <h3 className="text-sm font-bold text-yellow-400">수동 입력</h3>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-5">
         {/* ===== LEFT COLUMN: Name, Type, Stats ===== */}
         <div className="space-y-3">
           {/* Name */}
