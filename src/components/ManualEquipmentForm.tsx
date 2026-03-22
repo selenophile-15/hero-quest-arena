@@ -583,9 +583,9 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             {data.isRelic && (
               <div className="space-y-2 pl-2 border-l-2 border-yellow-400/30">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-yellow-400 font-semibold">유물 효과 (최대 3개)</span>
+                  <span className="text-xs text-yellow-400 font-semibold">유물 효과 (최대 3개)</span>
                   {data.relicBonuses.length < 3 && (
-                    <Button variant="ghost" size="sm" className="h-5 text-[10px] px-1.5" onClick={addRelicBonus}>
+                    <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={addRelicBonus}>
                       <Plus className="w-3 h-3 mr-0.5" />추가
                     </Button>
                   )}
