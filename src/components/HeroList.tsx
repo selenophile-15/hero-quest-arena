@@ -640,7 +640,7 @@ export default function HeroList() {
           <div className="flex gap-4">
             {/* Stats Box */}
             <div className="card-fantasy p-3 w-[200px] flex-shrink-0">
-              <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯(자동)</h4>
+              <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h4>
               {isChampion && hero.championName ? (
                 <div className="flex items-center justify-center py-1 mb-1">
                   <img src={getChampionImagePath(hero.championName)} alt="" className="w-10 h-10 object-contain rounded-full"
