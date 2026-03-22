@@ -571,7 +571,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             </div>
           ) : (
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs">
+            <div className="flex items-center gap-2 text-sm">
               <Checkbox
                 checked={data.isRelic}
                 onCheckedChange={v => update('isRelic', !!v)}
