@@ -1280,7 +1280,18 @@ export default function HeroList() {
                   <th className="px-3 py-3 text-center text-muted-foreground font-medium">
                     <div className="flex items-center justify-center gap-1">
                       <button
-                        onClick={() => { setManageMode(m => !m); if (manageMode) { setSelectedForDelete(new Set()); if (selectedForDelete.size > 0) setBulkDeleteConfirm(true); } }}
+                        onClick={() => {
+                          if (manageMode) {
+                            if (selectedForDelete.size > 0) {
+                              setBulkDeleteConfirm(true);
+                            } else {
+                              setManageMode(false);
+                            }
+                          } else {
+                            setManageMode(true);
+                            setSelectedForDelete(new Set());
+                          }
+                        }}
                         className={`text-sm font-medium transition-colors ${manageMode ? 'text-yellow-400' : 'text-muted-foreground hover:text-foreground'}`}
                       >
                         관리
