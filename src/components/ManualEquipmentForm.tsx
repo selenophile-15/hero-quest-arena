@@ -347,14 +347,14 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
           {/* Dual wield sub-types */}
           {isDualWield && (
-            <div className="text-xs">
-              <span className="text-foreground text-[10px]">쌍수 타입</span>
-              <div className="flex flex-wrap gap-1 mt-1">
+            <div className="text-sm">
+              <span className="text-foreground text-xs font-medium">쌍수 타입</span>
+              <div className="flex flex-wrap gap-1.5 mt-1">
                 {WEAPON_TYPES.map(t => (
                   <button
                     key={t}
                     onClick={() => toggleDualType(t)}
-                    className={`px-2 py-0.5 rounded text-[10px] border transition-all ${
+                    className={`px-2.5 py-1 rounded text-xs border transition-all ${
                       data.dualWieldTypes.includes(t)
                         ? 'bg-primary text-primary-foreground border-primary'
                         : 'bg-secondary/30 text-muted-foreground border-border/50 hover:border-primary/50'
@@ -363,7 +363,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                     {t}
                   </button>
                 ))}
-                <span className="text-[10px] text-muted-foreground ml-1">({data.dualWieldTypes.length}/2)</span>
+                <span className="text-xs text-muted-foreground ml-1">({data.dualWieldTypes.length}/2)</span>
               </div>
             </div>
           )}
