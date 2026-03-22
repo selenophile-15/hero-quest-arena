@@ -456,18 +456,18 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             )}
 
             {data.elementMode === 'unique' && (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Select value={data.uniqueElement || '_none'} onValueChange={v => update('uniqueElement', v === '_none' ? '' : v)}>
-                  <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="고유 원소 선택" /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="고유 원소 선택" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="_none">선택 안 함</SelectItem>
                     {UNIQUE_ELEMENT_OPTIONS.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <div className="flex items-center gap-2">
-                  <span className="text-foreground text-xs">티어</span>
+                  <span className="text-foreground text-sm">티어</span>
                   <Select value={String(data.uniqueElementTier)} onValueChange={v => update('uniqueElementTier', Number(v))}>
-                    <SelectTrigger className="h-7 text-xs w-16"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm w-20"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {UNIQUE_ELEMENT_TIERS.map(t => <SelectItem key={t} value={String(t)}>T{t}</SelectItem>)}
                     </SelectContent>
