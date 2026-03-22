@@ -409,6 +409,7 @@ export default function HeroList() {
   const renderCell = (hero: Hero, colKey: string) => {
     if (colKey === 'name') {
       const isChamp = hero.type === 'champion';
+      const isPromoted = isChamp && hero.promoted;
       return (
         <button
           onClick={(e) => { e.stopPropagation(); setExpandedId(expandedId === hero.id ? null : hero.id); }}
@@ -417,7 +418,8 @@ export default function HeroList() {
           {isChamp && hero.championName && (
             <img src={getChampionImagePath(hero.championName)} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />
           )}
-          {hero.name}
+          <span className={isPromoted ? 'text-yellow-400' : ''}>{hero.name}</span>
+          {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
         </button>
       );
     }
