@@ -395,12 +395,12 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             {/* Right: crit, evasion */}
             <div className="flex flex-col gap-1.5">
               {PCT_FIELDS.map(s => (
-                <div key={s.key} className="grid grid-cols-[56px_1fr] gap-1 items-center">
-                  <span className={`text-[10px] text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
+                <div key={s.key} className="grid grid-cols-[64px_1fr] gap-1.5 items-center">
+                  <span className={`text-xs text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
                   <div className="relative">
                     <Input
                       type="number"
-                      className="h-7 text-xs text-center pr-4"
+                      className="h-8 text-sm text-center pr-5"
                       value={rawStats[s.key] ?? (data[s.key] === 0 ? '' : String(data[s.key]))}
                       onChange={e => {
                         const v = e.target.value;
@@ -408,7 +408,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                         update(s.key, v === '' ? 0 : (parseFloat(v) || 0));
                       }}
                     />
-                    <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none">%</span>
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">%</span>
                   </div>
                 </div>
               ))}
