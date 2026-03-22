@@ -532,9 +532,9 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
           {isAurasong ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
+                <span className="text-xs text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
                 {data.relicBonuses.length < 3 && (
-                  <Button variant="ghost" size="sm" className="h-5 text-[10px] px-1.5" onClick={addRelicBonus}>
+                  <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={addRelicBonus}>
                     <Plus className="w-3 h-3 mr-0.5" />추가
                   </Button>
                 )}
