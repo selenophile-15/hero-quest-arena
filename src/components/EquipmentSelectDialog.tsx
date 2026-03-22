@@ -999,10 +999,11 @@ export default function EquipmentSelectDialog({
                         </div>
                       </div>
                       <button
-                        onClick={(e) => {
+                      onClick={(e) => {
                           e.stopPropagation();
                           const newSlots = [...slots];
-                          newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                          // Keep enchants (element/spirit) when removing equipment
+                          newSlots[i] = { item: null, quality: newSlots[i].quality, element: newSlots[i].element, spirit: newSlots[i].spirit };
                           setSlots(newSlots);
                         }}
                         className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
