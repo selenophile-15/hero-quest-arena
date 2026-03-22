@@ -325,11 +325,11 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
       <div className="grid grid-cols-2 gap-5">
         {/* ===== LEFT COLUMN: Name, Type, Stats ===== */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {/* Name */}
-          <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs">
-            <span className="text-foreground">이름</span>
-            <Input className="h-7 text-xs" value={data.name} onChange={e => update('name', e.target.value)} placeholder="장비 이름" />
+          <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm">
+            <span className="text-foreground font-medium">이름</span>
+            <Input className="h-8 text-sm" value={data.name} onChange={e => update('name', e.target.value)} placeholder="장비 이름" />
           </div>
 
           {/* Type */}
