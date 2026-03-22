@@ -507,13 +507,13 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
             {data.spiritMode === 'affinity' && (
               <Select value={data.affinitySpirit || '_none'} onValueChange={v => update('affinitySpirit', v === '_none' ? '' : v)}>
-                <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="영혼 선택" /></SelectTrigger>
+                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="영혼 선택" /></SelectTrigger>
                 <SelectContent className="max-h-[280px]">
                   <SelectItem value="_none">선택 안 함</SelectItem>
                   {SPIRIT_GROUPS.map((group, gi) => (
                     <div key={group.tier}>
                       {gi > 0 && <div className="h-1.5" />}
-                      <div className="px-2 py-0.5 text-[10px] text-muted-foreground font-semibold sticky top-0 bg-popover">T{group.tier}</div>
+                      <div className="px-2 py-0.5 text-xs text-muted-foreground font-semibold sticky top-0 bg-popover">T{group.tier}</div>
                       {group.spirits.map(sp => (
                         <SelectItem key={sp} value={sp}>{sp}</SelectItem>
                       ))}
