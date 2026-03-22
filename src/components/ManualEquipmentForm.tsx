@@ -417,10 +417,10 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
         </div>
 
         {/* ===== RIGHT COLUMN: Element, Spirit, Relic ===== */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {/* Element */}
-          <div className="space-y-1.5">
-            <span className="text-foreground text-xs font-semibold">원소</span>
+          <div className="space-y-2">
+            <span className="text-foreground text-sm font-semibold">원소</span>
             <RadioGroup
               value={data.elementMode}
               onValueChange={v => {
@@ -429,19 +429,19 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                 if (mode !== 'affinity') update('affinityElement', '');
                 if (mode !== 'unique') { update('uniqueElement', ''); update('uniqueElementTier', 4); }
               }}
-              className="flex gap-3 text-[11px]"
+              className="flex gap-4 text-xs"
             >
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="none" id="elem-none" className="h-3 w-3" />
-                <label htmlFor="elem-none" className="text-foreground cursor-pointer">없음</label>
+                <RadioGroupItem value="none" id="elem-none" className="h-3.5 w-3.5" />
+                <label htmlFor="elem-none" className="text-foreground cursor-pointer text-sm">없음</label>
               </div>
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="affinity" id="elem-affinity" className="h-3 w-3" />
-                <label htmlFor="elem-affinity" className="text-foreground cursor-pointer">친밀</label>
+                <RadioGroupItem value="affinity" id="elem-affinity" className="h-3.5 w-3.5" />
+                <label htmlFor="elem-affinity" className="text-foreground cursor-pointer text-sm">친밀</label>
               </div>
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="unique" id="elem-unique" className="h-3 w-3" />
-                <label htmlFor="elem-unique" className="text-foreground cursor-pointer">고유</label>
+                <RadioGroupItem value="unique" id="elem-unique" className="h-3.5 w-3.5" />
+                <label htmlFor="elem-unique" className="text-foreground cursor-pointer text-sm">고유</label>
               </div>
             </RadioGroup>
 
