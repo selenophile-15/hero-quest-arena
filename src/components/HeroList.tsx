@@ -299,6 +299,55 @@ export default function HeroList() {
     setDeleteTarget(null);
   };
 
+  const handleBulkDelete = () => {
+    if (selectedForDelete.size === 0) return;
+    const updated = heroes.filter(h => !selectedForDelete.has(h.id));
+    setHeroes(updated);
+    saveHeroes(updated);
+    setSelectedForDelete(new Set());
+    setManageMode(false);
+    setBulkDeleteConfirm(false);
+  };
+
+  const handleResetList = () => {
+    const otherTab = listTab === 'hero' ? heroes.filter(h => h.type !== 'hero') : heroes.filter(h => h.type !== 'champion');
+    setHeroes(otherTab);
+    saveHeroes(otherTab);
+    setResetConfirm(false);
+    setManageMode(false);
+    setSelectedForDelete(new Set());
+  };
+
+  const toggleSelectForDelete = (id: string) => {
+    setSelectedForDelete(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const handleCopyHero = (hero: Hero) => {
+    // Find the next available copy number
+    const baseName = hero.name.replace(/\s*\(\d+\)$/, '');
+    const existingNumbers = heroes
+      .filter(h => h.name.startsWith(baseName))
+      .map(h => {
+        const match = h.name.match(/\((\d+)\)$/);
+        return match ? parseInt(match[1], 10) : 0;
+      });
+    const nextNum = Math.max(0, ...existingNumbers) + 1;
+    const newName = `${baseName} (${nextNum})`;
+    const newHero: Hero = {
+      ...JSON.parse(JSON.stringify(hero)),
+      id: crypto.randomUUID(),
+      name: newName,
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [...heroes, newHero];
+    setHeroes(updated);
+    saveHeroes(updated);
+  };
+
   const toggleCol = (key: string) => {
     if (key === 'seeds') {
       setVisibleCols(prev => {
