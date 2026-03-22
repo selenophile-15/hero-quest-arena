@@ -46,7 +46,7 @@ const Index = () => {
       {/* Features */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 pb-16 grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { title: "영웅 관리", desc: "영웅과 챔피언의 스탯을 관리하고 비교하세요" },
+          { title: "리스트 관리", desc: "영웅과 챔피언의 스탯을 자동으로 확인하고 관리하세요" },
           { title: "퀘스트 시뮬레이션", desc: "던전에 파티를 보내 결과를 미리 확인하세요" },
           { title: "랭킹 시스템", desc: "다른 플레이어와 시뮬레이션 결과를 비교하세요" },
         ].map((f) => (
