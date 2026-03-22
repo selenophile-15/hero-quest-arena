@@ -762,7 +762,7 @@ export default function HeroList() {
                             <div className="flex items-center gap-1">
                               <span className="text-sm font-medium text-foreground">{baseName}</span>
                               {currentName !== baseName && <span className="text-xs text-muted-foreground">({currentName})</span>}
-                              <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-muted-foreground ml-1">Lv.{skillLevel}</span>
+                                  <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-foreground/80 ml-1">Lv.{skillLevel}</span>
                             </div>
                             <p className="text-xs text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
                           </div>
