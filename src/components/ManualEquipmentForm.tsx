@@ -369,11 +369,11 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
           )}
 
           {/* Stats */}
-          <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs mt-1">
-            <span className="text-foreground">스탯</span>
-            <span className="text-yellow-400 text-[10px] font-semibold">⚠ 일반 등급 기준</span>
+          <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm mt-1">
+            <span className="text-foreground font-medium">스탯</span>
+            <span className="text-yellow-400 text-xs font-semibold">⚠ 일반 등급 기준</span>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-2 gap-4 text-sm">
             {/* Left: atk, def, hp */}
             <div className="flex flex-col gap-1.5">
               {STAT_FIELDS.map(s => (
