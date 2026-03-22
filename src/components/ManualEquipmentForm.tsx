@@ -377,11 +377,11 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             {/* Left: atk, def, hp */}
             <div className="flex flex-col gap-1.5">
               {STAT_FIELDS.map(s => (
-                <div key={s.key} className="grid grid-cols-[56px_1fr] gap-1 items-center">
-                  <span className={`text-[10px] text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
+                <div key={s.key} className="grid grid-cols-[64px_1fr] gap-1.5 items-center">
+                  <span className={`text-xs text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
                   <Input
                     type="number"
-                    className="h-7 text-xs text-center"
+                    className="h-8 text-sm text-center"
                     value={rawStats[s.key] ?? (data[s.key] === 0 ? '' : String(data[s.key]))}
                     onChange={e => {
                       const v = e.target.value;
