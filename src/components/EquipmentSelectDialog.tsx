@@ -60,11 +60,11 @@ const QUALITY_RADIAL: Record<string, string> = {
 };
 
 const QUALITY_SHADOW: Record<string, string> = {
-  common: '0 0 12px rgba(220,220,220,0.5)',
-  uncommon: '0 0 14px rgba(74,222,128,0.6)',
-  flawless: '0 0 16px rgba(103,232,249,0.65)',
-  epic: '0 0 20px rgba(217,70,239,0.75)',
-  legendary: '0 0 24px rgba(250,204,21,0.85)',
+  common: '0 0 4px rgba(220,220,220,0.4)',
+  uncommon: '0 0 5px rgba(74,222,128,0.5)',
+  flawless: '0 0 6px rgba(103,232,249,0.5)',
+  epic: '0 0 7px rgba(217,70,239,0.6)',
+  legendary: '0 0 8px rgba(250,204,21,0.7)',
 };
 
 const STAT_FILTER_OPTIONS = [
@@ -999,10 +999,11 @@ export default function EquipmentSelectDialog({
                         </div>
                       </div>
                       <button
-                        onClick={(e) => {
+                      onClick={(e) => {
                           e.stopPropagation();
                           const newSlots = [...slots];
-                          newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                          // Keep enchants (element/spirit) when removing equipment
+                          newSlots[i] = { item: null, quality: newSlots[i].quality, element: newSlots[i].element, spirit: newSlots[i].spirit };
                           setSlots(newSlots);
                         }}
                         className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"

@@ -11,7 +11,7 @@ import ChampionForm from './ChampionForm';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown, LayoutGrid, Table2, Filter, ArrowUpDown, CircleHelp } from 'lucide-react';
+import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown, LayoutGrid, Table2, Filter, ArrowUpDown, CircleHelp, Copy, RefreshCw, Award } from 'lucide-react';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -105,11 +105,11 @@ const QUALITY_RADIAL_COLOR: Record<string, string> = {
   legendary: 'rgba(250,204,21,0.55)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
-  common: '0 0 14px rgba(220,220,220,0.6)',
-  uncommon: '0 0 16px rgba(74,222,128,0.7)',
-  flawless: '0 0 18px rgba(103,232,249,0.7)',
-  epic: '0 0 22px rgba(217,70,239,0.8)',
-  legendary: '0 0 26px rgba(250,204,21,0.9)',
+  common: '0 0 4px rgba(220,220,220,0.4)',
+  uncommon: '0 0 5px rgba(74,222,128,0.5)',
+  flawless: '0 0 6px rgba(103,232,249,0.5)',
+  epic: '0 0 7px rgba(217,70,239,0.6)',
+  legendary: '0 0 8px rgba(250,204,21,0.7)',
 };
 
 function normalizeJobName(name: string): string {
@@ -148,6 +148,11 @@ export default function HeroList() {
   const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
   const [uniqueSkillsData, setUniqueSkillsData] = useState<Record<string, any>>({});
   const [championSkillsData, setChampionSkillsData] = useState<Record<string, any>>({});
+  // Bulk delete management mode
+  const [manageMode, setManageMode] = useState(false);
+  const [selectedForDelete, setSelectedForDelete] = useState<Set<string>>(new Set());
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
+  const [resetConfirm, setResetConfirm] = useState(false);
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
@@ -294,6 +299,55 @@ export default function HeroList() {
     setDeleteTarget(null);
   };
 
+  const handleBulkDelete = () => {
+    if (selectedForDelete.size === 0) return;
+    const updated = heroes.filter(h => !selectedForDelete.has(h.id));
+    setHeroes(updated);
+    saveHeroes(updated);
+    setSelectedForDelete(new Set());
+    setManageMode(false);
+    setBulkDeleteConfirm(false);
+  };
+
+  const handleResetList = () => {
+    const otherTab = listTab === 'hero' ? heroes.filter(h => h.type !== 'hero') : heroes.filter(h => h.type !== 'champion');
+    setHeroes(otherTab);
+    saveHeroes(otherTab);
+    setResetConfirm(false);
+    setManageMode(false);
+    setSelectedForDelete(new Set());
+  };
+
+  const toggleSelectForDelete = (id: string) => {
+    setSelectedForDelete(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const handleCopyHero = (hero: Hero) => {
+    // Find the next available copy number
+    const baseName = hero.name.replace(/\s*\(\d+\)$/, '');
+    const existingNumbers = heroes
+      .filter(h => h.name.startsWith(baseName))
+      .map(h => {
+        const match = h.name.match(/\((\d+)\)$/);
+        return match ? parseInt(match[1], 10) : 0;
+      });
+    const nextNum = Math.max(0, ...existingNumbers) + 1;
+    const newName = `${baseName} (${nextNum})`;
+    const newHero: Hero = {
+      ...JSON.parse(JSON.stringify(hero)),
+      id: crypto.randomUUID(),
+      name: newName,
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [...heroes, newHero];
+    setHeroes(updated);
+    saveHeroes(updated);
+  };
+
   const toggleCol = (key: string) => {
     if (key === 'seeds') {
       setVisibleCols(prev => {
@@ -355,6 +409,7 @@ export default function HeroList() {
   const renderCell = (hero: Hero, colKey: string) => {
     if (colKey === 'name') {
       const isChamp = hero.type === 'champion';
+      const isPromoted = isChamp && hero.promoted;
       return (
         <button
           onClick={(e) => { e.stopPropagation(); setExpandedId(expandedId === hero.id ? null : hero.id); }}
@@ -363,7 +418,8 @@ export default function HeroList() {
           {isChamp && hero.championName && (
             <img src={getChampionImagePath(hero.championName)} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />
           )}
-          {hero.name}
+          <span className={isPromoted ? 'text-yellow-400' : ''}>{hero.name}</span>
+          {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
         </button>
       );
     }
@@ -493,10 +549,8 @@ export default function HeroList() {
     }
     if (colKey === 'position') return <span>{hero.position || '-'}</span>;
     if (colKey === 'promoted') {
-      const isPromoted = hero.promoted || false;
-      return <span className={isPromoted ? 'text-foreground font-medium' : 'text-foreground/20'}>
-        {isPromoted ? 'O' : 'X'}
-      </span>;
+      // Hide promoted column for champion - we show it via name icon now
+      return null;
     }
     if (colKey === 'airshipPower') return <span className="text-foreground/20">-</span>;
     if (colKey === 'evasion') {
@@ -586,7 +640,7 @@ export default function HeroList() {
           <div className="flex gap-4">
             {/* Stats Box */}
             <div className="card-fantasy p-3 w-[200px] flex-shrink-0">
-              <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯(자동)</h4>
+              <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h4>
               {isChampion && hero.championName ? (
                 <div className="flex items-center justify-center py-1 mb-1">
                   <img src={getChampionImagePath(hero.championName)} alt="" className="w-10 h-10 object-contain rounded-full"
@@ -708,7 +762,7 @@ export default function HeroList() {
                             <div className="flex items-center gap-1">
                               <span className="text-sm font-medium text-foreground">{baseName}</span>
                               {currentName !== baseName && <span className="text-xs text-muted-foreground">({currentName})</span>}
-                              <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-muted-foreground ml-1">Lv.{skillLevel}</span>
+                                  <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-foreground/80 ml-1">Lv.{skillLevel}</span>
                             </div>
                             <p className="text-xs text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
                           </div>
@@ -740,7 +794,7 @@ export default function HeroList() {
                                 <div className="flex items-center gap-1">
                                   <span className="text-sm font-medium text-foreground">{baseName}</span>
                                   {currentName !== baseName && <span className="text-xs text-muted-foreground">({currentName})</span>}
-                                  <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-muted-foreground ml-1">Lv.{skillLevel}</span>
+                                  <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-foreground/80 ml-1">Lv.{skillLevel}</span>
                                 </div>
                                 <p className="text-xs text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
                               </>
@@ -775,7 +829,7 @@ export default function HeroList() {
             {/* Equipment grid */}
             <div className="card-fantasy p-3 flex-1 overflow-y-auto">
               <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h4>
-              <div className={`grid ${isChampion ? 'grid-cols-2 max-w-[200px]' : 'grid-cols-3'} gap-2`}>
+              <div className={`grid grid-cols-3 gap-2`}>
                 {equipSlots.slice(0, isChampion ? 2 : 6).map((slot: any, i: number) => {
                   const item = slot.item;
                   const quality = slot.quality || 'common';
@@ -800,7 +854,7 @@ export default function HeroList() {
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         )}
                         {item?.imagePath ? (
-                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain mt-2"
+                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain" style={{ marginTop: '-4px' }}
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : (
                           <span className="text-[9px] text-muted-foreground">비어있음</span>
@@ -1223,7 +1277,36 @@ export default function HeroList() {
                       </span>
                     </th>
                   ))}
-                  <th className="px-3 py-3 text-center text-muted-foreground font-medium">관리</th>
+                  <th className="px-3 py-3 text-center text-muted-foreground font-medium">
+                    <div className="flex items-center justify-center gap-1">
+                      <button
+                        onClick={() => {
+                          if (manageMode) {
+                            if (selectedForDelete.size > 0) {
+                              setBulkDeleteConfirm(true);
+                            } else {
+                              setManageMode(false);
+                            }
+                          } else {
+                            setManageMode(true);
+                            setSelectedForDelete(new Set());
+                          }
+                        }}
+                        className={`text-sm font-medium transition-colors ${manageMode ? 'text-yellow-400' : 'text-muted-foreground hover:text-foreground'}`}
+                      >
+                        관리
+                      </button>
+                      {manageMode && (
+                        <button
+                          onClick={() => setResetConfirm(true)}
+                          className="w-6 h-6 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                          title="리스트 초기화"
+                        >
+                          <RefreshCw className="w-3 h-3 text-muted-foreground" />
+                        </button>
+                      )}
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -1234,28 +1317,43 @@ export default function HeroList() {
                 )}
                 {filtered.map(hero => {
                   const isExpanded = expandedId === hero.id;
+                  const isSelectedForDel = selectedForDelete.has(hero.id);
                   return (
                     <>
                       <tr key={hero.id} className={`border-b border-border/50 hover:bg-secondary/30 transition-colors ${isExpanded ? 'bg-secondary/20' : ''}`}>
                         {activeCols.map(col => {
                           // When expanded, hide non-essential columns
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-3 text-center" />;
+                            return <td key={col.key} className="px-3 py-3 text-center align-middle" />;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-3 text-center">
+                            <td key={col.key} className="px-3 py-3 text-center align-middle">
                               {renderCell(hero, col.key)}
                             </td>
                           );
                         })}
-                        <td className="px-3 py-3 text-center">
+                        <td className="px-3 py-3 text-center align-middle">
                           <div className="flex items-center justify-center gap-1">
-                            <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            {manageMode ? (
+                              <button
+                                onClick={() => toggleSelectForDelete(hero.id)}
+                                className={`p-1.5 rounded transition-colors ${isSelectedForDel ? 'text-yellow-400' : 'text-muted-foreground hover:text-destructive'}`}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            ) : (
+                              <>
+                                <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => handleCopyHero(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary" title="복사">
+                                  <Copy className="w-4 h-4" />
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -1369,6 +1467,42 @@ export default function HeroList() {
             <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/80">
               삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk delete confirmation dialog */}
+      <AlertDialog open={bulkDeleteConfirm} onOpenChange={v => !v && setBulkDeleteConfirm(false)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>일괄 삭제 확인</AlertDialogTitle>
+            <AlertDialogDescription>
+              선택한 {selectedForDelete.size}개 항목을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/80">
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reset list confirmation dialog */}
+      <AlertDialog open={resetConfirm} onOpenChange={v => !v && setResetConfirm(false)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>리스트 초기화</AlertDialogTitle>
+            <AlertDialogDescription>
+              {listTab === 'hero' ? '영웅' : '챔피언'} 목록을 전부 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleResetList} className="bg-destructive text-destructive-foreground hover:bg-destructive/80">
+              초기화
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -320,24 +320,24 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
   ];
 
   return (
-    <div className="space-y-3 p-3">
+    <div className="space-y-4 p-3">
       <h3 className="text-sm font-bold text-yellow-400">수동 입력</h3>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-5">
         {/* ===== LEFT COLUMN: Name, Type, Stats ===== */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {/* Name */}
-          <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs">
-            <span className="text-foreground">이름</span>
-            <Input className="h-7 text-xs" value={data.name} onChange={e => update('name', e.target.value)} placeholder="장비 이름" />
+          <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm">
+            <span className="text-foreground font-medium">이름</span>
+            <Input className="h-8 text-sm" value={data.name} onChange={e => update('name', e.target.value)} placeholder="장비 이름" />
           </div>
 
           {/* Type */}
           {!isAurasong && (
-          <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs">
-            <span className="text-foreground">타입</span>
+          <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm">
+            <span className="text-foreground font-medium">타입</span>
             <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
-              <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="선택" /></SelectTrigger>
+              <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="선택" /></SelectTrigger>
               <SelectContent className="max-h-[240px]">
                 {typeOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
               </SelectContent>
@@ -347,14 +347,14 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
           {/* Dual wield sub-types */}
           {isDualWield && (
-            <div className="text-xs">
-              <span className="text-foreground text-[10px]">쌍수 타입</span>
-              <div className="flex flex-wrap gap-1 mt-1">
+            <div className="text-sm">
+              <span className="text-foreground text-xs font-medium">쌍수 타입</span>
+              <div className="flex flex-wrap gap-1.5 mt-1">
                 {WEAPON_TYPES.map(t => (
                   <button
                     key={t}
                     onClick={() => toggleDualType(t)}
-                    className={`px-2 py-0.5 rounded text-[10px] border transition-all ${
+                    className={`px-2.5 py-1 rounded text-xs border transition-all ${
                       data.dualWieldTypes.includes(t)
                         ? 'bg-primary text-primary-foreground border-primary'
                         : 'bg-secondary/30 text-muted-foreground border-border/50 hover:border-primary/50'
@@ -363,25 +363,25 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                     {t}
                   </button>
                 ))}
-                <span className="text-[10px] text-muted-foreground ml-1">({data.dualWieldTypes.length}/2)</span>
+                <span className="text-xs text-muted-foreground ml-1">({data.dualWieldTypes.length}/2)</span>
               </div>
             </div>
           )}
 
           {/* Stats */}
-          <div className="grid grid-cols-[56px_1fr] gap-2 items-center text-xs mt-1">
-            <span className="text-foreground">스탯</span>
-            <span className="text-yellow-400 text-[10px] font-semibold">⚠ 일반 등급 기준</span>
+          <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm mt-1">
+            <span className="text-foreground font-medium">스탯</span>
+            <span className="text-yellow-400 text-xs font-semibold">⚠ 일반 등급 기준</span>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-2 gap-4 text-sm">
             {/* Left: atk, def, hp */}
             <div className="flex flex-col gap-1.5">
               {STAT_FIELDS.map(s => (
-                <div key={s.key} className="grid grid-cols-[56px_1fr] gap-1 items-center">
-                  <span className={`text-[10px] text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
+                <div key={s.key} className="grid grid-cols-[64px_1fr] gap-1.5 items-center">
+                  <span className={`text-xs text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
                   <Input
                     type="number"
-                    className="h-7 text-xs text-center"
+                    className="h-8 text-sm text-center"
                     value={rawStats[s.key] ?? (data[s.key] === 0 ? '' : String(data[s.key]))}
                     onChange={e => {
                       const v = e.target.value;
@@ -395,12 +395,12 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             {/* Right: crit, evasion */}
             <div className="flex flex-col gap-1.5">
               {PCT_FIELDS.map(s => (
-                <div key={s.key} className="grid grid-cols-[56px_1fr] gap-1 items-center">
-                  <span className={`text-[10px] text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
+                <div key={s.key} className="grid grid-cols-[64px_1fr] gap-1.5 items-center">
+                  <span className={`text-xs text-center ${STAT_COLORS[s.key]}`}>{s.label}</span>
                   <div className="relative">
                     <Input
                       type="number"
-                      className="h-7 text-xs text-center pr-4"
+                      className="h-8 text-sm text-center pr-5"
                       value={rawStats[s.key] ?? (data[s.key] === 0 ? '' : String(data[s.key]))}
                       onChange={e => {
                         const v = e.target.value;
@@ -408,7 +408,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                         update(s.key, v === '' ? 0 : (parseFloat(v) || 0));
                       }}
                     />
-                    <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none">%</span>
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">%</span>
                   </div>
                 </div>
               ))}
@@ -417,10 +417,10 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
         </div>
 
         {/* ===== RIGHT COLUMN: Element, Spirit, Relic ===== */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {/* Element */}
-          <div className="space-y-1.5">
-            <span className="text-foreground text-xs font-semibold">원소</span>
+          <div className="space-y-2">
+            <span className="text-foreground text-sm font-semibold">원소</span>
             <RadioGroup
               value={data.elementMode}
               onValueChange={v => {
@@ -429,25 +429,25 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                 if (mode !== 'affinity') update('affinityElement', '');
                 if (mode !== 'unique') { update('uniqueElement', ''); update('uniqueElementTier', 4); }
               }}
-              className="flex gap-3 text-[11px]"
+              className="flex gap-4 text-xs"
             >
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="none" id="elem-none" className="h-3 w-3" />
-                <label htmlFor="elem-none" className="text-foreground cursor-pointer">없음</label>
+                <RadioGroupItem value="none" id="elem-none" className="h-3.5 w-3.5" />
+                <label htmlFor="elem-none" className="text-foreground cursor-pointer text-sm">없음</label>
               </div>
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="affinity" id="elem-affinity" className="h-3 w-3" />
-                <label htmlFor="elem-affinity" className="text-foreground cursor-pointer">친밀</label>
+                <RadioGroupItem value="affinity" id="elem-affinity" className="h-3.5 w-3.5" />
+                <label htmlFor="elem-affinity" className="text-foreground cursor-pointer text-sm">친밀</label>
               </div>
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="unique" id="elem-unique" className="h-3 w-3" />
-                <label htmlFor="elem-unique" className="text-foreground cursor-pointer">고유</label>
+                <RadioGroupItem value="unique" id="elem-unique" className="h-3.5 w-3.5" />
+                <label htmlFor="elem-unique" className="text-foreground cursor-pointer text-sm">고유</label>
               </div>
             </RadioGroup>
 
             {data.elementMode === 'affinity' && (
               <Select value={data.affinityElement || '_none'} onValueChange={v => update('affinityElement', v === '_none' ? '' : v)}>
-                <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="원소 선택" /></SelectTrigger>
+                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="원소 선택" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="_none">선택 안 함</SelectItem>
                   {ELEMENT_OPTIONS.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
@@ -456,18 +456,18 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             )}
 
             {data.elementMode === 'unique' && (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Select value={data.uniqueElement || '_none'} onValueChange={v => update('uniqueElement', v === '_none' ? '' : v)}>
-                  <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="고유 원소 선택" /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="고유 원소 선택" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="_none">선택 안 함</SelectItem>
                     {UNIQUE_ELEMENT_OPTIONS.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <div className="flex items-center gap-2">
-                  <span className="text-foreground text-xs">티어</span>
+                  <span className="text-foreground text-sm">티어</span>
                   <Select value={String(data.uniqueElementTier)} onValueChange={v => update('uniqueElementTier', Number(v))}>
-                    <SelectTrigger className="h-7 text-xs w-16"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm w-20"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {UNIQUE_ELEMENT_TIERS.map(t => <SelectItem key={t} value={String(t)}>T{t}</SelectItem>)}
                     </SelectContent>
@@ -478,8 +478,8 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
           </div>
 
           {/* Spirit */}
-          <div className="space-y-1.5">
-            <span className="text-foreground text-xs font-semibold">영혼</span>
+          <div className="space-y-2">
+            <span className="text-foreground text-sm font-semibold">영혼</span>
             <RadioGroup
               value={data.spiritMode}
               onValueChange={v => {
@@ -489,31 +489,31 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
                 if (mode === 'unique') update('uniqueSpirit', '문드라');
                 else update('uniqueSpirit', '');
               }}
-              className="flex gap-3 text-[11px]"
+              className="flex gap-4 text-xs"
             >
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="none" id="spirit-none" className="h-3 w-3" />
-                <label htmlFor="spirit-none" className="text-foreground cursor-pointer">없음</label>
+                <RadioGroupItem value="none" id="spirit-none" className="h-3.5 w-3.5" />
+                <label htmlFor="spirit-none" className="text-foreground cursor-pointer text-sm">없음</label>
               </div>
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="affinity" id="spirit-affinity" className="h-3 w-3" />
-                <label htmlFor="spirit-affinity" className="text-foreground cursor-pointer">친밀</label>
+                <RadioGroupItem value="affinity" id="spirit-affinity" className="h-3.5 w-3.5" />
+                <label htmlFor="spirit-affinity" className="text-foreground cursor-pointer text-sm">친밀</label>
               </div>
               <div className="flex items-center gap-1">
-                <RadioGroupItem value="unique" id="spirit-unique" className="h-3 w-3" />
-                <label htmlFor="spirit-unique" className="text-foreground cursor-pointer">고유 (문드라)</label>
+                <RadioGroupItem value="unique" id="spirit-unique" className="h-3.5 w-3.5" />
+                <label htmlFor="spirit-unique" className="text-foreground cursor-pointer text-sm">고유 (문드라)</label>
               </div>
             </RadioGroup>
 
             {data.spiritMode === 'affinity' && (
               <Select value={data.affinitySpirit || '_none'} onValueChange={v => update('affinitySpirit', v === '_none' ? '' : v)}>
-                <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="영혼 선택" /></SelectTrigger>
+                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="영혼 선택" /></SelectTrigger>
                 <SelectContent className="max-h-[280px]">
                   <SelectItem value="_none">선택 안 함</SelectItem>
                   {SPIRIT_GROUPS.map((group, gi) => (
                     <div key={group.tier}>
                       {gi > 0 && <div className="h-1.5" />}
-                      <div className="px-2 py-0.5 text-[10px] text-muted-foreground font-semibold sticky top-0 bg-popover">T{group.tier}</div>
+                      <div className="px-2 py-0.5 text-xs text-muted-foreground font-semibold sticky top-0 bg-popover">T{group.tier}</div>
                       {group.spirits.map(sp => (
                         <SelectItem key={sp} value={sp}>{sp}</SelectItem>
                       ))}
@@ -524,7 +524,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             )}
 
             {data.spiritMode === 'unique' && (
-              <div className="text-xs text-muted-foreground pl-1">문드라 영혼 자동 적용</div>
+              <div className="text-sm text-muted-foreground pl-1">문드라 영혼 자동 적용</div>
             )}
           </div>
 
@@ -532,9 +532,9 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
           {isAurasong ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
+                <span className="text-xs text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
                 {data.relicBonuses.length < 3 && (
-                  <Button variant="ghost" size="sm" className="h-5 text-[10px] px-1.5" onClick={addRelicBonus}>
+                  <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={addRelicBonus}>
                     <Plus className="w-3 h-3 mr-0.5" />추가
                   </Button>
                 )}
@@ -571,7 +571,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             </div>
           ) : (
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs">
+            <div className="flex items-center gap-2 text-sm">
               <Checkbox
                 checked={data.isRelic}
                 onCheckedChange={v => update('isRelic', !!v)}
@@ -583,9 +583,9 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             {data.isRelic && (
               <div className="space-y-2 pl-2 border-l-2 border-yellow-400/30">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-yellow-400 font-semibold">유물 효과 (최대 3개)</span>
+                  <span className="text-xs text-yellow-400 font-semibold">유물 효과 (최대 3개)</span>
                   {data.relicBonuses.length < 3 && (
-                    <Button variant="ghost" size="sm" className="h-5 text-[10px] px-1.5" onClick={addRelicBonus}>
+                    <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={addRelicBonus}>
                       <Plus className="w-3 h-3 mr-0.5" />추가
                     </Button>
                   )}
