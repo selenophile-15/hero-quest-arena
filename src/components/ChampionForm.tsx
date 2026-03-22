@@ -1079,7 +1079,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         <div className="grid grid-cols-[200px_200px_1fr] gap-4">
           {/* Stats Panel */}
           <div className="card-fantasy p-3">
-            <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯(자동)</h3>
+            <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
             <div className="flex items-center justify-center py-2 mb-1">
               <img src={getChampionImagePath(championName)} alt={championName} className="w-12 h-12 object-contain rounded-full"
                 onError={e => { e.currentTarget.style.display = 'none'; }} />
