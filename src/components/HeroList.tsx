@@ -1277,7 +1277,25 @@ export default function HeroList() {
                       </span>
                     </th>
                   ))}
-                  <th className="px-3 py-3 text-center text-muted-foreground font-medium">관리</th>
+                  <th className="px-3 py-3 text-center text-muted-foreground font-medium">
+                    <div className="flex items-center justify-center gap-1">
+                      <button
+                        onClick={() => { setManageMode(m => !m); if (manageMode) { setSelectedForDelete(new Set()); if (selectedForDelete.size > 0) setBulkDeleteConfirm(true); } }}
+                        className={`text-sm font-medium transition-colors ${manageMode ? 'text-yellow-400' : 'text-muted-foreground hover:text-foreground'}`}
+                      >
+                        관리
+                      </button>
+                      {manageMode && (
+                        <button
+                          onClick={() => setResetConfirm(true)}
+                          className="w-6 h-6 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                          title="리스트 초기화"
+                        >
+                          <RefreshCw className="w-3 h-3 text-muted-foreground" />
+                        </button>
+                      )}
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -1288,28 +1306,43 @@ export default function HeroList() {
                 )}
                 {filtered.map(hero => {
                   const isExpanded = expandedId === hero.id;
+                  const isSelectedForDel = selectedForDelete.has(hero.id);
                   return (
                     <>
                       <tr key={hero.id} className={`border-b border-border/50 hover:bg-secondary/30 transition-colors ${isExpanded ? 'bg-secondary/20' : ''}`}>
                         {activeCols.map(col => {
                           // When expanded, hide non-essential columns
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-3 text-center" />;
+                            return <td key={col.key} className="px-3 py-3 text-center align-middle" />;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-3 text-center">
+                            <td key={col.key} className="px-3 py-3 text-center align-middle">
                               {renderCell(hero, col.key)}
                             </td>
                           );
                         })}
-                        <td className="px-3 py-3 text-center">
+                        <td className="px-3 py-3 text-center align-middle">
                           <div className="flex items-center justify-center gap-1">
-                            <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            {manageMode ? (
+                              <button
+                                onClick={() => toggleSelectForDelete(hero.id)}
+                                className={`p-1.5 rounded transition-colors ${isSelectedForDel ? 'text-yellow-400' : 'text-muted-foreground hover:text-destructive'}`}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            ) : (
+                              <>
+                                <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => handleCopyHero(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary" title="복사">
+                                  <Copy className="w-4 h-4" />
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -1423,6 +1456,42 @@ export default function HeroList() {
             <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/80">
               삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk delete confirmation dialog */}
+      <AlertDialog open={bulkDeleteConfirm} onOpenChange={v => !v && setBulkDeleteConfirm(false)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>일괄 삭제 확인</AlertDialogTitle>
+            <AlertDialogDescription>
+              선택한 {selectedForDelete.size}개 항목을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/80">
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reset list confirmation dialog */}
+      <AlertDialog open={resetConfirm} onOpenChange={v => !v && setResetConfirm(false)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>리스트 초기화</AlertDialogTitle>
+            <AlertDialogDescription>
+              {listTab === 'hero' ? '영웅' : '챔피언'} 목록을 전부 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleResetList} className="bg-destructive text-destructive-foreground hover:bg-destructive/80">
+              초기화
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
