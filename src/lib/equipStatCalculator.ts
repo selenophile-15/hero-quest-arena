@@ -439,10 +439,26 @@ export async function calculateEquipmentStats(
       uniqueSpXStats = getSpiritEnchantStats(spiritData, item.uniqueSpirit[0], false);
     }
 
-    // True base = JSON stats minus baked-in unique element/spirit
-    const baseAtk = Math.max(0, jsonAtk - uniqueElXStats.atk - uniqueSpXStats.atk);
-    const baseDef = Math.max(0, jsonDef - uniqueElXStats.def - uniqueSpXStats.def);
-    const baseHp = Math.max(0, jsonHp - uniqueElXStats.hp - uniqueSpXStats.hp);
+    // True base = reverse-engineer from JSON stats that include baked-in enchantment(s)
+    // Uses the formula: displayedStat = base + min(base, enchant)
+    let baseAtk: number, baseDef: number, baseHp: number;
+    if (hasUniqueElement && hasUniqueSpirit) {
+      baseAtk = reverseEnchantBaseDual(jsonAtk, uniqueElXStats.atk, uniqueSpXStats.atk);
+      baseDef = reverseEnchantBaseDual(jsonDef, uniqueElXStats.def, uniqueSpXStats.def);
+      baseHp = reverseEnchantBaseDual(jsonHp, uniqueElXStats.hp, uniqueSpXStats.hp);
+    } else if (hasUniqueElement) {
+      baseAtk = reverseEnchantBase(jsonAtk, uniqueElXStats.atk);
+      baseDef = reverseEnchantBase(jsonDef, uniqueElXStats.def);
+      baseHp = reverseEnchantBase(jsonHp, uniqueElXStats.hp);
+    } else if (hasUniqueSpirit) {
+      baseAtk = reverseEnchantBase(jsonAtk, uniqueSpXStats.atk);
+      baseDef = reverseEnchantBase(jsonDef, uniqueSpXStats.def);
+      baseHp = reverseEnchantBase(jsonHp, uniqueSpXStats.hp);
+    } else {
+      baseAtk = jsonAtk;
+      baseDef = jsonDef;
+      baseHp = jsonHp;
+    }
 
     // Quality-applied stats (based on true base only)
     const qualityAtk = Math.round(baseAtk * qualityMult);
@@ -462,14 +478,14 @@ export async function calculateEquipmentStats(
       spiritRaw = getSpiritEnchantStats(spiritData, slot.spirit.name, slot.spirit.affinity);
     }
 
-    // Cap enchantments against BASE stats
-    // Unique element/spirit items: skip capping (enchant is inherent)
-    const elementCapAtk = hasUniqueElement ? elementRaw.atk : capEnchant(elementRaw.atk, baseAtk);
-    const elementCapDef = hasUniqueElement ? elementRaw.def : capEnchant(elementRaw.def, baseDef);
-    const elementCapHp = hasUniqueElement ? elementRaw.hp : capEnchant(elementRaw.hp, baseHp);
-    const spiritCapAtk = hasUniqueSpirit ? spiritRaw.atk : capEnchant(spiritRaw.atk, baseAtk);
-    const spiritCapDef = hasUniqueSpirit ? spiritRaw.def : capEnchant(spiritRaw.def, baseDef);
-    const spiritCapHp = hasUniqueSpirit ? spiritRaw.hp : capEnchant(spiritRaw.hp, baseHp);
+    // Cap enchantments against true BASE stats (always cap, even for unique items)
+    // If base stat is 0, no enchantment bonus is added for that stat
+    const elementCapAtk = capEnchant(elementRaw.atk, baseAtk);
+    const elementCapDef = capEnchant(elementRaw.def, baseDef);
+    const elementCapHp = capEnchant(elementRaw.hp, baseHp);
+    const spiritCapAtk = capEnchant(spiritRaw.atk, baseAtk);
+    const spiritCapDef = capEnchant(spiritRaw.def, baseDef);
+    const spiritCapHp = capEnchant(spiritRaw.hp, baseHp);
 
     // Pre-bonus stats (before spellknight multiplier)
     const preBonusAtk = qualityAtk + elementCapAtk + spiritCapAtk;
