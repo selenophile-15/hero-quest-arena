@@ -182,6 +182,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [familiarItems, setFamiliarItems] = useState<EquipmentItem[]>([]);
   const [aurasongItems, setAurasongItems] = useState<EquipmentItem[]>([]);
   const [equipDialogType, setEquipDialogType] = useState<'familiar' | 'aurasong' | null>(null);
+  const [equipSlotsSnapshot, setEquipSlotsSnapshot] = useState<typeof equipmentSlots | null>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
   const [enchantInitialTab, setEnchantInitialTab] = useState<'element' | 'spirit'>('element');
   const [nameError, setNameError] = useState(false);
