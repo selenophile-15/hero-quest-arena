@@ -182,6 +182,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [familiarItems, setFamiliarItems] = useState<EquipmentItem[]>([]);
   const [aurasongItems, setAurasongItems] = useState<EquipmentItem[]>([]);
   const [equipDialogType, setEquipDialogType] = useState<'familiar' | 'aurasong' | null>(null);
+  const [equipSlotsSnapshot, setEquipSlotsSnapshot] = useState<typeof equipmentSlots | null>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
   const [enchantInitialTab, setEnchantInitialTab] = useState<'element' | 'spirit'>('element');
   const [nameError, setNameError] = useState(false);
@@ -419,7 +420,11 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       <div
         key={slotIdx}
         className="flex flex-col items-center gap-1 cursor-pointer"
-        onClick={() => { setEquipDialogType(slotIdx === 0 ? 'familiar' : 'aurasong'); setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual); }}
+        onClick={() => {
+          if (!equipDialogType) setEquipSlotsSnapshot(JSON.parse(JSON.stringify(equipmentSlots)));
+          setEquipDialogType(slotIdx === 0 ? 'familiar' : 'aurasong');
+          setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual);
+        }}
       >
         <div className="text-[10px] font-semibold text-primary/80 bg-primary/10 w-full text-center rounded-t py-0.5">
           {SLOT_LABELS[slotIdx]}
@@ -530,7 +535,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     };
 
     return (
-      <Dialog open={!!equipDialogType} onOpenChange={v => !v && setEquipDialogType(null)}>
+      <Dialog open={!!equipDialogType} onOpenChange={v => {
+        if (!v) {
+          if (equipSlotsSnapshot) setEquipmentSlots(equipSlotsSnapshot);
+          setEquipSlotsSnapshot(null);
+          setEquipDialogType(null);
+        }
+      }}>
         <DialogContent className="max-w-[95vw] h-[90vh] overflow-hidden flex flex-col p-5">
           <DialogHeader>
             <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
@@ -993,8 +1004,15 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 })}
               </div>
               <div className="flex gap-2 pt-3 mt-2 border-t border-border">
-                <Button variant="outline" className="flex-1" onClick={() => setEquipDialogType(null)}>취소</Button>
-                <Button className="flex-1" onClick={() => setEquipDialogType(null)}>선택</Button>
+                <Button variant="outline" className="flex-1" onClick={() => {
+                  if (equipSlotsSnapshot) setEquipmentSlots(equipSlotsSnapshot);
+                  setEquipSlotsSnapshot(null);
+                  setEquipDialogType(null);
+                }}>취소</Button>
+                <Button className="flex-1" onClick={() => {
+                  setEquipSlotsSnapshot(null);
+                  setEquipDialogType(null);
+                }}>선택</Button>
               </div>
             </div>
           </div>

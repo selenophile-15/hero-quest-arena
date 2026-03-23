@@ -19,6 +19,8 @@ import {
   getElementEnchantStats,
   getSpiritEnchantStats,
   capEnchant,
+  reverseEnchantBase,
+  reverseEnchantBaseDual,
   type EnchantStats,
 } from './equipStatCalculator';
 import { parseSoulBonuses, type SoulBonusInput, type SkillBonusSource } from './skillBonusParser';
@@ -261,19 +263,46 @@ export async function calculateChampionStats(params: {
     const quality = slot.quality || 'common';
     const qualityMult = QUALITY_MULTIPLIER[quality] || 1;
 
-    // Base stats (common grade)
+    // JSON stats (may include baked-in unique element/spirit)
     const getStatVal = (key: string) => {
       const found = item.stats?.find((s: any) => s.key === key);
       return found ? found.value : 0;
     };
 
-    const baseAtk = getStatVal('장비_공격력');
-    const baseDef = getStatVal('장비_방어력');
-    const baseHp = getStatVal('장비_체력');
+    const jsonAtk = getStatVal('장비_공격력');
+    const jsonDef = getStatVal('장비_방어력');
+    const jsonHp = getStatVal('장비_체력');
     const baseCrit = getStatVal('장비_치명타확률%');
     const baseEvasion = getStatVal('장비_회피%');
 
-    // Quality-applied stats
+    // Reverse-engineer true base if unique element/spirit baked in
+    const hasUniqueElement = item.uniqueElement?.length > 0 && item.uniqueElementTier;
+    const hasUniqueSpirit = item.uniqueSpirit?.length > 0;
+    let uniqueElXStats: EnchantStats = { atk: 0, def: 0, hp: 0 };
+    let uniqueSpXStats: EnchantStats = { atk: 0, def: 0, hp: 0 };
+    if (hasUniqueElement) uniqueElXStats = getElementEnchantStats(elementData, item.uniqueElementTier, false);
+    if (hasUniqueSpirit) uniqueSpXStats = getSpiritEnchantStats(spiritData, item.uniqueSpirit[0], false);
+
+    let baseAtk: number, baseDef: number, baseHp: number;
+    if (hasUniqueElement && hasUniqueSpirit) {
+      baseAtk = reverseEnchantBaseDual(jsonAtk, uniqueElXStats.atk, uniqueSpXStats.atk);
+      baseDef = reverseEnchantBaseDual(jsonDef, uniqueElXStats.def, uniqueSpXStats.def);
+      baseHp = reverseEnchantBaseDual(jsonHp, uniqueElXStats.hp, uniqueSpXStats.hp);
+    } else if (hasUniqueElement) {
+      baseAtk = reverseEnchantBase(jsonAtk, uniqueElXStats.atk);
+      baseDef = reverseEnchantBase(jsonDef, uniqueElXStats.def);
+      baseHp = reverseEnchantBase(jsonHp, uniqueElXStats.hp);
+    } else if (hasUniqueSpirit) {
+      baseAtk = reverseEnchantBase(jsonAtk, uniqueSpXStats.atk);
+      baseDef = reverseEnchantBase(jsonDef, uniqueSpXStats.def);
+      baseHp = reverseEnchantBase(jsonHp, uniqueSpXStats.hp);
+    } else {
+      baseAtk = jsonAtk;
+      baseDef = jsonDef;
+      baseHp = jsonHp;
+    }
+
+    // Quality-applied stats (true base only)
     const qualityAtk = Math.round(baseAtk * qualityMult);
     const qualityDef = Math.round(baseDef * qualityMult);
     const qualityHp = Math.round(baseHp * qualityMult);
@@ -294,7 +323,7 @@ export async function calculateChampionStats(params: {
       spiritName = `${slot.spirit.name} ${slot.spirit.affinity ? '(친밀)' : ''}`;
     }
 
-    // Cap enchantments against BASE (common grade) stats
+    // Cap enchantments against true BASE stats (always cap, even for unique items)
     const elementCapAtk = capEnchant(elementRaw.atk, baseAtk);
     const elementCapDef = capEnchant(elementRaw.def, baseDef);
     const elementCapHp = capEnchant(elementRaw.hp, baseHp);
