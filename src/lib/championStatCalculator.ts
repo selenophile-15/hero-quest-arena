@@ -19,6 +19,8 @@ import {
   getElementEnchantStats,
   getSpiritEnchantStats,
   capEnchant,
+  reverseEnchantBase,
+  reverseEnchantBaseDual,
   type EnchantStats,
 } from './equipStatCalculator';
 import { parseSoulBonuses, type SoulBonusInput, type SkillBonusSource } from './skillBonusParser';
