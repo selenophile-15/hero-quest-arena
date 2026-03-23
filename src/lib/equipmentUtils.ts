@@ -133,70 +133,82 @@ export async function loadEquipmentByTypes(
   const results: EquipmentItem[] = [];
   let loadedCount = 0;
 
+  // Separate cached vs uncached types
+  const uncachedTypes: { typeKor: string; file: string; category: string }[] = [];
   for (const typeKor of typeKorNames) {
     const typeInfo = EQUIP_TYPE_MAP[typeKor];
     if (!typeInfo) { loadedCount++; onProgress?.(loadedCount); continue; }
     const { file, category } = typeInfo;
-
-    // Check cache
     if (equipDataCache[file]) {
       results.push(...equipDataCache[file]);
       loadedCount++;
       onProgress?.(loadedCount);
-      continue;
+    } else {
+      uncachedTypes.push({ typeKor, file, category });
     }
+  }
 
-    try {
-      const resp = await fetch(`/data/equipment/${category}/${file}.json`);
-      const data = await resp.json();
-      const items: EquipmentItem[] = [];
+  // Fetch all uncached types in parallel
+  if (uncachedTypes.length > 0) {
+    const fetchPromises = uncachedTypes.map(async ({ typeKor, file, category }) => {
+      try {
+        const resp = await fetch(`/data/equipment/${category}/${file}.json`);
+        const data = await resp.json();
+        const items: EquipmentItem[] = [];
 
-      for (const [tierKey, tierItems] of Object.entries(data)) {
-        const tierMatch = tierKey.match(/(\d+)/);
-        if (!tierMatch) continue;
-        const tier = parseInt(tierMatch[1], 10);
+        for (const [tierKey, tierItems] of Object.entries(data)) {
+          const tierMatch = tierKey.match(/(\d+)/);
+          if (!tierMatch) continue;
+          const tier = parseInt(tierMatch[1], 10);
 
-        for (const [korName, itemData] of Object.entries(tierItems as Record<string, any>)) {
-          const engName = nameMap[file]?.[korName] || '';
-          const imagePath = engName ? `/images/equipment/${category}/${file}/${engName}.webp` : '';
+          for (const [korName, itemData] of Object.entries(tierItems as Record<string, any>)) {
+            const engName = nameMap[file]?.[korName] || '';
+            const imagePath = engName ? `/images/equipment/${category}/${file}/${engName}.webp` : '';
 
-          const stats: { key: string; value: number }[] = [];
-          if (itemData['장비_공격력']) stats.push({ key: '장비_공격력', value: itemData['장비_공격력'] });
-          if (itemData['장비_방어력']) stats.push({ key: '장비_방어력', value: itemData['장비_방어력'] });
-          if (itemData['장비_체력']) stats.push({ key: '장비_체력', value: itemData['장비_체력'] });
-          if (itemData['장비_치명타확률%']) stats.push({ key: '장비_치명타확률%', value: itemData['장비_치명타확률%'] });
-          if (itemData['장비_회피%']) stats.push({ key: '장비_회피%', value: itemData['장비_회피%'] });
+            const stats: { key: string; value: number }[] = [];
+            if (itemData['장비_공격력']) stats.push({ key: '장비_공격력', value: itemData['장비_공격력'] });
+            if (itemData['장비_방어력']) stats.push({ key: '장비_방어력', value: itemData['장비_방어력'] });
+            if (itemData['장비_체력']) stats.push({ key: '장비_체력', value: itemData['장비_체력'] });
+            if (itemData['장비_치명타확률%']) stats.push({ key: '장비_치명타확률%', value: itemData['장비_치명타확률%'] });
+            if (itemData['장비_회피%']) stats.push({ key: '장비_회피%', value: itemData['장비_회피%'] });
 
-          items.push({
-            name: korName,
-            engName,
-            type: file,
-            typeKor,
-            category,
-            tier,
-            imagePath,
-            stats,
-            quality: 'common',
-            relic: itemData['유물'] != null && itemData['유물'] !== false,
-            relicEffect: typeof itemData['유물'] === 'object' && itemData['유물']?.['효과'] ? itemData['유물']['효과'] : null,
-            airshipPower: itemData['장비_에어쉽파워'] || 0,
-            elementAffinity: itemData['원소친밀감'] || null,
-            spiritAffinity: itemData['영혼친밀감'] || null,
-            uniqueElement: itemData['고유원소종류'] || null,
-            uniqueElementTier: itemData['고유원소티어'] || null,
-            uniqueSpirit: itemData['고유영혼'] || null,
-            judgmentTypes: itemData['판정타입'] || null,
-          });
+            items.push({
+              name: korName,
+              engName,
+              type: file,
+              typeKor,
+              category,
+              tier,
+              imagePath,
+              stats,
+              quality: 'common',
+              relic: itemData['유물'] != null && itemData['유물'] !== false,
+              relicEffect: typeof itemData['유물'] === 'object' && itemData['유물']?.['효과'] ? itemData['유물']['효과'] : null,
+              airshipPower: itemData['장비_에어쉽파워'] || 0,
+              elementAffinity: itemData['원소친밀감'] || null,
+              spiritAffinity: itemData['영혼친밀감'] || null,
+              uniqueElement: itemData['고유원소종류'] || null,
+              uniqueElementTier: itemData['고유원소티어'] || null,
+              uniqueSpirit: itemData['고유영혼'] || null,
+              judgmentTypes: itemData['판정타입'] || null,
+            });
+          }
         }
-      }
 
-      equipDataCache[file] = items;
+        equipDataCache[file] = items;
+        return items;
+      } catch (e) {
+        console.warn(`Failed to load equipment: ${file}`, e);
+        return [];
+      }
+    });
+
+    const allResults = await Promise.all(fetchPromises);
+    for (const items of allResults) {
       results.push(...items);
-    } catch (e) {
-      console.warn(`Failed to load equipment: ${file}`, e);
+      loadedCount++;
+      onProgress?.(loadedCount);
     }
-    loadedCount++;
-    onProgress?.(loadedCount);
   }
 
   // Sort by tier descending
