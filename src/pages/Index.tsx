@@ -48,7 +48,7 @@ const Index = () => {
         {[
           { title: "리스트 관리", desc: "영웅과 챔피언의 스탯을 자동으로 확인하고 관리하세요" },
           { title: "퀘스트 시뮬레이션", desc: "던전에 파티를 보내 결과를 미리 확인하세요" },
-          { title: "랭킹 시스템", desc: "다른 플레이어와 시뮬레이션 결과를 비교하세요" },
+          { title: "랭킹", desc: "다른 플레이어와 시뮬레이션 결과를 비교하세요" },
         ].map((f) => (
           <div key={f.title} className="card-fantasy p-5">
             <h3 className="font-display text-primary text-sm mb-2">{f.title}</h3>
