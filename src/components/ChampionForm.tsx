@@ -998,8 +998,15 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 })}
               </div>
               <div className="flex gap-2 pt-3 mt-2 border-t border-border">
-                <Button variant="outline" className="flex-1" onClick={() => setEquipDialogType(null)}>취소</Button>
-                <Button className="flex-1" onClick={() => setEquipDialogType(null)}>선택</Button>
+                <Button variant="outline" className="flex-1" onClick={() => {
+                  if (equipSlotsSnapshot) setEquipmentSlots(equipSlotsSnapshot);
+                  setEquipSlotsSnapshot(null);
+                  setEquipDialogType(null);
+                }}>취소</Button>
+                <Button className="flex-1" onClick={() => {
+                  setEquipSlotsSnapshot(null);
+                  setEquipDialogType(null);
+                }}>선택</Button>
               </div>
             </div>
           </div>
