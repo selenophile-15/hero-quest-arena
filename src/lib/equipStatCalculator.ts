@@ -204,6 +204,51 @@ export function capEnchant(enchantVal: number, baseVal: number): number {
   return Math.min(enchantVal, baseVal);
 }
 
+/**
+ * Reverse-engineer the true base stat from a displayed JSON stat value
+ * that includes baked-in enchantment(s).
+ * 
+ * The game adds min(base, enchant) to base, so:
+ *   displayedStat = base + min(base, enchant)
+ * 
+ * Solving for base:
+ *   if displayedStat <= enchant * 2 → base = displayedStat / 2
+ *   else → base = displayedStat - enchant
+ * 
+ * If displayedStat is 0, base is 0 (stat doesn't exist on item).
+ */
+export function reverseEnchantBase(jsonStat: number, enchantStat: number): number {
+  if (jsonStat <= 0) return 0;
+  if (enchantStat <= 0) return jsonStat;
+  if (jsonStat <= enchantStat * 2) return jsonStat / 2;
+  return jsonStat - enchantStat;
+}
+
+/**
+ * Reverse-engineer base stat from displayed value with TWO baked-in enchantments.
+ * displayedStat = base + min(base, e1) + min(base, e2)
+ */
+export function reverseEnchantBaseDual(jsonStat: number, enchant1: number, enchant2: number): number {
+  if (jsonStat <= 0) return 0;
+  if (enchant1 <= 0 && enchant2 <= 0) return jsonStat;
+  if (enchant1 <= 0) return reverseEnchantBase(jsonStat, enchant2);
+  if (enchant2 <= 0) return reverseEnchantBase(jsonStat, enchant1);
+
+  const maxE = Math.max(enchant1, enchant2);
+  const minE = Math.min(enchant1, enchant2);
+
+  // Case 1: base >= max(e1, e2) → displayed = base + e1 + e2
+  const baseCase1 = jsonStat - enchant1 - enchant2;
+  if (baseCase1 >= maxE) return baseCase1;
+
+  // Case 2: base < min(e1, e2) → displayed = 3 * base
+  const baseCase2 = jsonStat / 3;
+  if (baseCase2 < minE) return baseCase2;
+
+  // Case 3: minE <= base < maxE → displayed = 2*base + minE
+  return (jsonStat - minE) / 2;
+}
+
 function getItemBaseStat(item: any, key: string): number {
   if (!item?.stats) return 0;
   const found = item.stats.find((s: any) => s.key === key);
