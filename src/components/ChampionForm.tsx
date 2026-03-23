@@ -535,7 +535,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     };
 
     return (
-      <Dialog open={!!equipDialogType} onOpenChange={v => !v && setEquipDialogType(null)}>
+      <Dialog open={!!equipDialogType} onOpenChange={v => {
+        if (!v) {
+          if (equipSlotsSnapshot) setEquipmentSlots(equipSlotsSnapshot);
+          setEquipSlotsSnapshot(null);
+          setEquipDialogType(null);
+        }
+      }}>
         <DialogContent className="max-w-[95vw] h-[90vh] overflow-hidden flex flex-col p-5">
           <DialogHeader>
             <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
