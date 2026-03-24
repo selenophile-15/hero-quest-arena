@@ -189,10 +189,11 @@ function migrateData(d: any): ManualEquipmentData {
   };
 }
 
-const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFormProps>(({ initialData, allowedTypes, isAurasong, hideActions, onConfirm, onCancel }, ref) => {
+const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFormProps>(({ initialData, allowedTypes, isAurasong, isFamiliar, hideActions, onConfirm, onCancel }, ref) => {
   const [data, setData] = useState<ManualEquipmentData>(() => {
     const d = initialData ? migrateData(initialData) : emptyData();
     if (isAurasong && !d.type) d.type = '오라의 노래';
+    if (isFamiliar && !d.type) d.type = '퍼밀리어';
     return d;
   });
   const [rawStats, setRawStats] = useState<Record<string, string>>({});
