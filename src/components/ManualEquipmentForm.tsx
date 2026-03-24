@@ -307,7 +307,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
   useImperativeHandle(ref, () => ({
     triggerConfirm: handleConfirm,
-    isValid: () => !!(data.name.trim() && (isAurasong || data.type)),
+    isValid: () => !!(data.name.trim() && (isAurasong || isFamiliar || data.type)),
   }));
 
   const STAT_FIELDS = [
