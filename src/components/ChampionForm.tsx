@@ -985,7 +985,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                             onClick={(e) => {
                               e.stopPropagation();
                               const newSlots = [...equipmentSlots];
-                              newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                              // Preserve enchantments when removing item
+                              newSlots[i] = { ...newSlots[i], item: null };
                               setEquipmentSlots(newSlots);
                             }}
                             className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
