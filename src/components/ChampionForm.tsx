@@ -764,7 +764,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                 onClick={() => {
                                   const newSlots = [...equipmentSlots];
                                   if (isSelected) {
-                                    newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
+                                    // Preserve enchantments when deselecting
+                                    newSlots[slotIdx] = { ...newSlots[slotIdx], item: null };
                                   } else {
                                     const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
                                     const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
