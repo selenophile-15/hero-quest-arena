@@ -240,12 +240,12 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
   };
 
   const handleConfirm = () => {
-    if (!data.name.trim() || (!isAurasong && !data.type)) return;
+    if (!data.name.trim() || (!isAurasong && !isFamiliar && !data.type)) return;
 
-    const effectiveType = isAurasong ? '오라의 노래' : data.type;
+    const effectiveType = isAurasong ? '오라의 노래' : (isFamiliar ? '퍼밀리어' : data.type);
     const typeInfo = EQUIP_TYPE_MAP[effectiveType];
-    const fileType = isAurasong ? 'aurasong' : (typeInfo?.file || 'unknown');
-    const category = isAurasong ? 'champion' : (typeInfo?.category || 'unknown');
+    const fileType = isAurasong ? 'aurasong' : (isFamiliar ? 'familiar' : (typeInfo?.file || 'unknown'));
+    const category = (isAurasong || isFamiliar) ? 'champion' : (typeInfo?.category || 'unknown');
 
     const stats: { key: string; value: number }[] = [];
     if (data.atk) stats.push({ key: '장비_공격력', value: data.atk });
