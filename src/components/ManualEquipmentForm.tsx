@@ -532,44 +532,58 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
           {/* Relic / Aura Song Skills */}
           {isAurasong ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
-                {data.relicBonuses.length < 3 && (
-                  <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={addRelicBonus}>
-                    <Plus className="w-3 h-3 mr-0.5" />추가
-                  </Button>
-                )}
-              </div>
-              {data.relicBonuses.map((b, i) => (
-                <div key={i} className="flex items-center gap-1.5 flex-wrap">
-                  <Select value={b.stat} onValueChange={v => updateBonus(i, 'stat', v)}>
-                    <SelectTrigger className="h-7 text-[10px] w-[160px]"><SelectValue /></SelectTrigger>
-                    <SelectContent className="max-h-[200px]">
-                      {AURA_STAT_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
-                    <SelectTrigger className="h-7 text-[10px] w-[72px]"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    type="number"
-                    className="h-7 text-[10px] w-16 text-center"
-                    value={rawRelicValues[i] ?? (b.value === 0 ? '' : String(b.value))}
-                    onChange={e => {
-                      const v = e.target.value;
-                      setRawRelicValues(prev => ({ ...prev, [i]: v }));
-                      updateBonus(i, 'value', v === '' ? 0 : (parseFloat(v) || 0));
-                    }}
-                  />
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => removeRelicBonus(i)}>
-                    <Trash2 className="w-3 h-3 text-destructive" />
-                  </Button>
+            <div className="space-y-3">
+              {/* Aura Song Skill */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
+                  {data.relicBonuses.length < 3 && (
+                    <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={addRelicBonus}>
+                      <Plus className="w-3 h-3 mr-0.5" />추가
+                    </Button>
+                  )}
                 </div>
-              ))}
+                {data.relicBonuses.map((b, i) => (
+                  <div key={i} className="flex items-center gap-1.5 flex-wrap">
+                    <Select value={b.stat} onValueChange={v => updateBonus(i, 'stat', v)}>
+                      <SelectTrigger className="h-7 text-[10px] w-[160px]"><SelectValue /></SelectTrigger>
+                      <SelectContent className="max-h-[200px]">
+                        {AURA_STAT_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
+                      <SelectTrigger className="h-7 text-[10px] w-[72px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      type="number"
+                      className="h-7 text-[10px] w-16 text-center"
+                      value={rawRelicValues[i] ?? (b.value === 0 ? '' : String(b.value))}
+                      onChange={e => {
+                        const v = e.target.value;
+                        setRawRelicValues(prev => ({ ...prev, [i]: v }));
+                        updateBonus(i, 'value', v === '' ? 0 : (parseFloat(v) || 0));
+                      }}
+                    />
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => removeRelicBonus(i)}>
+                      <Trash2 className="w-3 h-3 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              {/* Relic for aurasong */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Checkbox
+                    checked={data.isRelic}
+                    onCheckedChange={v => update('isRelic', !!v)}
+                    id="manual-relic-aura"
+                  />
+                  <label htmlFor="manual-relic-aura" className="text-foreground cursor-pointer">유물</label>
+                </div>
+              </div>
             </div>
           ) : (
           <div className="space-y-2">
