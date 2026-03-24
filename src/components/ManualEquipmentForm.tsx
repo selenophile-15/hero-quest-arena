@@ -141,6 +141,7 @@ interface ManualEquipmentFormProps {
   initialData?: ManualEquipmentData | null;
   allowedTypes?: string[];
   isAurasong?: boolean;
+  isFamiliar?: boolean;
   hideActions?: boolean;
   onConfirm: (item: EquipmentItem, manualData: ManualEquipmentData) => void;
   onCancel: () => void;
