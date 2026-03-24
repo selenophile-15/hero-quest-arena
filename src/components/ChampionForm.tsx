@@ -1028,7 +1028,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     <div className="animate-fade-in">
       {/* Sticky top bar with title + save/cancel */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
-        <h2 className="font-display text-xl text-primary tracking-wide">
+        <h2 className="text-xl text-primary tracking-wide font-bold">
           {hero ? '챔피언 수정' : '새 챔피언 추가'}
         </h2>
         <div className="flex gap-2">

@@ -51,7 +51,7 @@ const Index = () => {
           { title: "랭킹", desc: "다른 플레이어와 시뮬레이션 결과를 비교하세요" },
         ].map((f) => (
           <div key={f.title} className="card-fantasy p-5">
-            <h3 className="font-display text-primary text-sm mb-2">{f.title}</h3>
+            <h3 className="text-primary text-sm mb-2 font-bold">{f.title}</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
           </div>
         ))}

@@ -1205,7 +1205,7 @@ export default function HeroList() {
     <div className="animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-display text-2xl text-primary">영웅 &amp; 챔피언 리스트</h2>
+        <h2 className="text-2xl text-primary font-bold">영웅 &amp; 챔피언 리스트</h2>
         <div className="flex gap-2">
           <Button onClick={() => setAddingType('hero')} className="gap-2 text-sm font-medium">
             <Shield className="w-4 h-4" /> 새 영웅 추가

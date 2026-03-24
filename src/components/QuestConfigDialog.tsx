@@ -166,7 +166,7 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-display flex items-center gap-2">
+          <DialogTitle className="font-bold flex items-center gap-2">
             {step !== 'type' && (
               <button onClick={goBack} className="p-1 rounded hover:bg-secondary/50 transition-colors">
                 <ChevronLeft className="w-5 h-5 text-muted-foreground" />
