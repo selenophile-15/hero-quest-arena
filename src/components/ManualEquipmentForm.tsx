@@ -646,7 +646,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
       {!hideActions && (
       <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
         <Button variant="outline" size="sm" className="text-xs" onClick={onCancel}>취소</Button>
-        <Button size="sm" className="text-xs" onClick={handleConfirm} disabled={!data.name.trim() || (!isAurasong && !data.type)}>
+        <Button size="sm" className="text-xs" onClick={handleConfirm} disabled={!data.name.trim() || (!isAurasong && !isFamiliar && !data.type)}>
           적용
         </Button>
       </div>
