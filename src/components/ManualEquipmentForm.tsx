@@ -327,7 +327,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
       <div className="grid grid-cols-2 gap-5">
         {/* ===== LEFT COLUMN: Name, Type, Stats ===== */}
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Name */}
           <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm">
             <span className="text-foreground font-medium">이름</span>
