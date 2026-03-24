@@ -419,7 +419,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
         </div>
 
         {/* ===== RIGHT COLUMN: Element, Spirit, Relic ===== */}
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Element */}
           <div className="space-y-2">
             <span className="text-foreground text-sm font-semibold">원소</span>
