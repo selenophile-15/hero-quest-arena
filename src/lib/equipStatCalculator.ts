@@ -425,11 +425,12 @@ export async function calculateEquipmentStats(
     const baseCrit = getItemBaseStat(item, '장비_치명타확률%');
     const baseEvasion = getItemBaseStat(item, '장비_회피%');
 
-    // Adjust base for unique element (JSON stats include element_X baked in)
+    // Adjust base for unique element (JSON stats include affinity-applied element baked in)
     const hasUniqueElement = item.uniqueElement?.length > 0 && item.uniqueElementTier;
     let uniqueElXStats: EnchantStats = { atk: 0, def: 0, hp: 0 };
     if (hasUniqueElement) {
-      uniqueElXStats = getElementEnchantStats(elementData, item.uniqueElementTier, false);
+      // Unique element items always have affinity applied in data, so use affinity=true (O column)
+      uniqueElXStats = getElementEnchantStats(elementData, item.uniqueElementTier, true);
     }
 
     // Adjust base for unique spirit (JSON stats include spirit_X baked in)
