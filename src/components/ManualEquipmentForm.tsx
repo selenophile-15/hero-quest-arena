@@ -334,8 +334,8 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
             <Input className="h-8 text-sm" value={data.name} onChange={e => update('name', e.target.value)} placeholder="장비 이름" />
           </div>
 
-          {/* Type */}
-          {!isAurasong && (
+          {/* Type - hide for aurasong and familiar since slot IS the type */}
+          {!isAurasong && !isFamiliar && (
           <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm">
             <span className="text-foreground font-medium">타입</span>
             <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
