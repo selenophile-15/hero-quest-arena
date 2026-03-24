@@ -671,6 +671,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       ref={championManualFormRef}
                       hideActions
                       isAurasong={equipDialogType === 'aurasong'}
+                      isFamiliar={equipDialogType === 'familiar'}
                       initialData={equipmentSlots[slotIdx]?.item?.manualData || null}
                       onConfirm={(item) => {
                         const newSlots = [...equipmentSlots];
