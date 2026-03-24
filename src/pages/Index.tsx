@@ -23,7 +23,7 @@ const Index = () => {
             <span className="text-sm text-primary font-medium">Quest Simulator</span>
           </div>
 
-          <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-gold-gradient mb-4 leading-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl text-gold-gradient mb-4 leading-tight font-bold">
             샵타이탄
             <br />
             퀘스트 시뮬레이터
