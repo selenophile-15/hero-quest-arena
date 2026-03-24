@@ -280,7 +280,8 @@ export async function calculateChampionStats(params: {
     const hasUniqueSpirit = item.uniqueSpirit?.length > 0;
     let uniqueElXStats: EnchantStats = { atk: 0, def: 0, hp: 0 };
     let uniqueSpXStats: EnchantStats = { atk: 0, def: 0, hp: 0 };
-    if (hasUniqueElement) uniqueElXStats = getElementEnchantStats(elementData, item.uniqueElementTier, false);
+    // Unique element items always have affinity applied in data, so use affinity=true (O column)
+    if (hasUniqueElement) uniqueElXStats = getElementEnchantStats(elementData, item.uniqueElementTier, true);
     if (hasUniqueSpirit) uniqueSpXStats = getSpiritEnchantStats(spiritData, item.uniqueSpirit[0], false);
 
     let baseAtk: number, baseDef: number, baseHp: number;

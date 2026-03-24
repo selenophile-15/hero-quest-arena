@@ -671,6 +671,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       ref={championManualFormRef}
                       hideActions
                       isAurasong={equipDialogType === 'aurasong'}
+                      isFamiliar={equipDialogType === 'familiar'}
                       initialData={equipmentSlots[slotIdx]?.item?.manualData || null}
                       onConfirm={(item) => {
                         const newSlots = [...equipmentSlots];
@@ -764,7 +765,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                 onClick={() => {
                                   const newSlots = [...equipmentSlots];
                                   if (isSelected) {
-                                    newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
+                                    // Preserve enchantments when deselecting
+                                    newSlots[slotIdx] = { ...newSlots[slotIdx], item: null };
                                   } else {
                                     const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
                                     const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
@@ -832,7 +834,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                 onClick={() => {
                                   const newSlots = [...equipmentSlots];
                                   if (isSelected) {
-                                    newSlots[slotIdx] = { item: null, quality: 'common', element: null, spirit: null };
+                                    // Preserve enchantments when deselecting
+                                    newSlots[slotIdx] = { ...newSlots[slotIdx], item: null };
                                   } else {
                                     const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
                                     const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
@@ -985,7 +988,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                             onClick={(e) => {
                               e.stopPropagation();
                               const newSlots = [...equipmentSlots];
-                              newSlots[i] = { item: null, quality: 'common', element: null, spirit: null };
+                              // Preserve enchantments when removing item
+                              newSlots[i] = { ...newSlots[i], item: null };
                               setEquipmentSlots(newSlots);
                             }}
                             className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
@@ -1025,7 +1029,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     <div className="animate-fade-in">
       {/* Sticky top bar with title + save/cancel */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
-        <h2 className="font-display text-xl text-primary tracking-wide">
+        <h2 className="text-xl text-primary tracking-wide font-bold">
           {hero ? '챔피언 수정' : '새 챔피언 추가'}
         </h2>
         <div className="flex gap-2">

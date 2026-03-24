@@ -1035,7 +1035,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right-wide" className="p-0 flex flex-col overflow-hidden">
         <SheetHeader className="px-4 pt-4 pb-2 border-b border-border flex-shrink-0">
-          <SheetTitle className="text-lg font-display text-primary">
+          <SheetTitle className="text-lg font-bold text-primary">
             스탯 상세 계산표
           </SheetTitle>
           <SheetDescription className="text-xs text-muted-foreground">

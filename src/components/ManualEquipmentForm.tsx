@@ -141,6 +141,7 @@ interface ManualEquipmentFormProps {
   initialData?: ManualEquipmentData | null;
   allowedTypes?: string[];
   isAurasong?: boolean;
+  isFamiliar?: boolean;
   hideActions?: boolean;
   onConfirm: (item: EquipmentItem, manualData: ManualEquipmentData) => void;
   onCancel: () => void;
@@ -188,10 +189,11 @@ function migrateData(d: any): ManualEquipmentData {
   };
 }
 
-const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFormProps>(({ initialData, allowedTypes, isAurasong, hideActions, onConfirm, onCancel }, ref) => {
+const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFormProps>(({ initialData, allowedTypes, isAurasong, isFamiliar, hideActions, onConfirm, onCancel }, ref) => {
   const [data, setData] = useState<ManualEquipmentData>(() => {
     const d = initialData ? migrateData(initialData) : emptyData();
     if (isAurasong && !d.type) d.type = '오라의 노래';
+    if (isFamiliar && !d.type) d.type = '퍼밀리어';
     return d;
   });
   const [rawStats, setRawStats] = useState<Record<string, string>>({});
@@ -238,12 +240,12 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
   };
 
   const handleConfirm = () => {
-    if (!data.name.trim() || (!isAurasong && !data.type)) return;
+    if (!data.name.trim() || (!isAurasong && !isFamiliar && !data.type)) return;
 
-    const effectiveType = isAurasong ? '오라의 노래' : data.type;
+    const effectiveType = isAurasong ? '오라의 노래' : (isFamiliar ? '퍼밀리어' : data.type);
     const typeInfo = EQUIP_TYPE_MAP[effectiveType];
-    const fileType = isAurasong ? 'aurasong' : (typeInfo?.file || 'unknown');
-    const category = isAurasong ? 'champion' : (typeInfo?.category || 'unknown');
+    const fileType = isAurasong ? 'aurasong' : (isFamiliar ? 'familiar' : (typeInfo?.file || 'unknown'));
+    const category = (isAurasong || isFamiliar) ? 'champion' : (typeInfo?.category || 'unknown');
 
     const stats: { key: string; value: number }[] = [];
     if (data.atk) stats.push({ key: '장비_공격력', value: data.atk });
@@ -305,7 +307,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
   useImperativeHandle(ref, () => ({
     triggerConfirm: handleConfirm,
-    isValid: () => !!(data.name.trim() && (isAurasong || data.type)),
+    isValid: () => !!(data.name.trim() && (isAurasong || isFamiliar || data.type)),
   }));
 
   const STAT_FIELDS = [
@@ -320,20 +322,20 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
   ];
 
   return (
-    <div className="space-y-4 p-3">
+    <div className="space-y-5 p-3">
       <h3 className="text-sm font-bold text-yellow-400">수동 입력</h3>
 
       <div className="grid grid-cols-2 gap-5">
         {/* ===== LEFT COLUMN: Name, Type, Stats ===== */}
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Name */}
           <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm">
             <span className="text-foreground font-medium">이름</span>
             <Input className="h-8 text-sm" value={data.name} onChange={e => update('name', e.target.value)} placeholder="장비 이름" />
           </div>
 
-          {/* Type */}
-          {!isAurasong && (
+          {/* Type - hide for aurasong and familiar since slot IS the type */}
+          {!isAurasong && !isFamiliar && (
           <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm">
             <span className="text-foreground font-medium">타입</span>
             <Select value={data.type} onValueChange={v => { update('type', v); if (v !== '쌍수') update('dualWieldTypes', []); }}>
@@ -417,7 +419,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
         </div>
 
         {/* ===== RIGHT COLUMN: Element, Spirit, Relic ===== */}
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Element */}
           <div className="space-y-2">
             <span className="text-foreground text-sm font-semibold">원소</span>
@@ -530,44 +532,58 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
 
           {/* Relic / Aura Song Skills */}
           {isAurasong ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
-                {data.relicBonuses.length < 3 && (
-                  <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={addRelicBonus}>
-                    <Plus className="w-3 h-3 mr-0.5" />추가
-                  </Button>
-                )}
-              </div>
-              {data.relicBonuses.map((b, i) => (
-                <div key={i} className="flex items-center gap-1.5 flex-wrap">
-                  <Select value={b.stat} onValueChange={v => updateBonus(i, 'stat', v)}>
-                    <SelectTrigger className="h-7 text-[10px] w-[160px]"><SelectValue /></SelectTrigger>
-                    <SelectContent className="max-h-[200px]">
-                      {AURA_STAT_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
-                    <SelectTrigger className="h-7 text-[10px] w-[72px]"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    type="number"
-                    className="h-7 text-[10px] w-16 text-center"
-                    value={rawRelicValues[i] ?? (b.value === 0 ? '' : String(b.value))}
-                    onChange={e => {
-                      const v = e.target.value;
-                      setRawRelicValues(prev => ({ ...prev, [i]: v }));
-                      updateBonus(i, 'value', v === '' ? 0 : (parseFloat(v) || 0));
-                    }}
-                  />
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => removeRelicBonus(i)}>
-                    <Trash2 className="w-3 h-3 text-destructive" />
-                  </Button>
+            <div className="space-y-3">
+              {/* Aura Song Skill */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-primary font-semibold">🎵 오라의 노래 스킬 (최대 3개)</span>
+                  {data.relicBonuses.length < 3 && (
+                    <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={addRelicBonus}>
+                      <Plus className="w-3 h-3 mr-0.5" />추가
+                    </Button>
+                  )}
                 </div>
-              ))}
+                {data.relicBonuses.map((b, i) => (
+                  <div key={i} className="flex items-center gap-1.5 flex-wrap">
+                    <Select value={b.stat} onValueChange={v => updateBonus(i, 'stat', v)}>
+                      <SelectTrigger className="h-7 text-[10px] w-[160px]"><SelectValue /></SelectTrigger>
+                      <SelectContent className="max-h-[200px]">
+                        {AURA_STAT_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Select value={b.op} onValueChange={v => updateBonus(i, 'op', v)}>
+                      <SelectTrigger className="h-7 text-[10px] w-[72px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {RELIC_OP_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      type="number"
+                      className="h-7 text-[10px] w-16 text-center"
+                      value={rawRelicValues[i] ?? (b.value === 0 ? '' : String(b.value))}
+                      onChange={e => {
+                        const v = e.target.value;
+                        setRawRelicValues(prev => ({ ...prev, [i]: v }));
+                        updateBonus(i, 'value', v === '' ? 0 : (parseFloat(v) || 0));
+                      }}
+                    />
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => removeRelicBonus(i)}>
+                      <Trash2 className="w-3 h-3 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              {/* Relic for aurasong */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Checkbox
+                    checked={data.isRelic}
+                    onCheckedChange={v => update('isRelic', !!v)}
+                    id="manual-relic-aura"
+                  />
+                  <label htmlFor="manual-relic-aura" className="text-foreground cursor-pointer">유물</label>
+                </div>
+              </div>
             </div>
           ) : (
           <div className="space-y-2">
@@ -630,7 +646,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
       {!hideActions && (
       <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
         <Button variant="outline" size="sm" className="text-xs" onClick={onCancel}>취소</Button>
-        <Button size="sm" className="text-xs" onClick={handleConfirm} disabled={!data.name.trim() || (!isAurasong && !data.type)}>
+        <Button size="sm" className="text-xs" onClick={handleConfirm} disabled={!data.name.trim() || (!isAurasong && !isFamiliar && !data.type)}>
           적용
         </Button>
       </div>

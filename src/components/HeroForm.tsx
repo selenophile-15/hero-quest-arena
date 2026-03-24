@@ -606,7 +606,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     <div className="animate-fade-in relative">
       {/* Sticky top bar with title + save/cancel */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
-        <h2 className="font-display text-xl text-primary tracking-wide">
+        <h2 className="text-xl text-primary tracking-wide font-bold">
           {hero ? '영웅 수정' : '새 영웅 추가'}
         </h2>
          <div className="flex gap-2">

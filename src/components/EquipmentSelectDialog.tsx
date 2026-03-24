@@ -230,6 +230,13 @@ export default function EquipmentSelectDialog({
       });
       setAllItems(items);
       setLoading(false);
+      // Preload all equipment images so slot switching is instant
+      items.forEach(item => {
+        if (item.imagePath) {
+          const img = new Image();
+          img.src = item.imagePath;
+        }
+      });
     };
     load();
   }, [open, jobName, slotCount]);

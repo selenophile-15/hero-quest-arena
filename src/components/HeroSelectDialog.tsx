@@ -216,7 +216,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
       <DialogContent className="sm:max-w-7xl w-[98vw] max-h-[95vh] overflow-hidden flex flex-col p-0 gap-0" hideCloseButton>
         {/* ─── Header ───────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
-          <h2 className="font-display text-lg text-primary">파티원 선택</h2>
+          <h2 className="text-lg text-primary font-bold">파티원 선택</h2>
           <div className="flex gap-1">
             <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
               <Table2 className="w-4 h-4" />

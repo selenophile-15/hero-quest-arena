@@ -177,7 +177,7 @@ export default function Ranking() {
   return (
     <div className="animate-fade-in space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl text-primary">랭킹</h2>
+        <h2 className="text-2xl text-primary font-bold">랭킹</h2>
         <span className="text-[10px] text-muted-foreground">최근 갱신: 3분 전</span>
       </div>
 

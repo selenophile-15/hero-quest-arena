@@ -12,7 +12,7 @@
     --card: 230 15% 12%;
     --card-foreground: 40 20% 90%;
 
-    --popover: 230 15% 17%;
+    --popover: 230 15% 20%;
     --popover-foreground: 40 20% 90%;
 
     --primary: 40 85% 55%;
@@ -66,7 +66,8 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
   }
 }
 

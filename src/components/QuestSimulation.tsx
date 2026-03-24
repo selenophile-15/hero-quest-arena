@@ -491,7 +491,7 @@ export default function QuestSimulation() {
         <div className="w-full lg:w-80 shrink-0">
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-5 h-5 text-primary" />
-            <h3 className="font-display text-lg text-foreground">몬스터 정보</h3>
+            <h3 className="text-lg text-foreground font-bold">몬스터 정보</h3>
             {currentQuest && (
               <button
                 onClick={() => {
@@ -953,7 +953,7 @@ export default function QuestSimulation() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-3">
             <Users className="w-5 h-5 text-primary" />
-            <h3 className="font-display text-lg text-foreground">파티 구성</h3>
+            <h3 className="text-lg text-foreground font-bold">파티 구성</h3>
             <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
             {selectedHeroIds.size > 0 && (
               <button
@@ -1348,7 +1348,7 @@ export default function QuestSimulation() {
         <div className="w-full lg:w-72 shrink-0">
           <div className="flex items-center gap-2 mb-3">
             <Clock className="w-5 h-5 text-primary" />
-            <h3 className="font-display text-lg text-foreground">시간 설정</h3>
+            <h3 className="text-lg text-foreground font-bold">시간 설정</h3>
           </div>
           <div className="card-fantasy p-3">
             {/* Quest Time Reduction */}
