@@ -126,6 +126,13 @@ const ELEMENT_COLORS: Record<string, string> = {
   '모든 원소': 'text-white',
 };
 
+function isAllElementAffinityOnly(elementAffinity: string[] | undefined, elType: string): boolean {
+  if (!elementAffinity) return false;
+  if (elementAffinity.includes(elType)) return false;
+  if (elementAffinity.includes('모든 원소')) return true;
+  return false;
+}
+
 function formatRank(rank: number): string {
   if (rank <= 11) return String(rank);
   return `11(+${rank - 11})`;
