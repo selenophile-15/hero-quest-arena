@@ -78,13 +78,22 @@ const Index = () => {
             <div className="w-10 h-px" style={{ background: 'linear-gradient(90deg, hsl(40 50% 35%), transparent)' }} />
           </div>
 
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl mb-3 leading-tight font-bold" style={{
-            color: 'hsl(40 20% 90%)',
-            textShadow: '0 0 100px rgba(200, 147, 10, 0.3), 0 0 200px rgba(160, 80, 20, 0.15)',
-          }}>
-            <span className="text-gold-gradient font-black">샵타이탄</span>
-            <br />
-            퀘스트 시뮬레이터
+          <h1 className="mb-4 leading-tight">
+            <span className="block text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight" style={{
+              background: 'linear-gradient(135deg, hsl(40 90% 60%), hsl(30 85% 50%), hsl(40 80% 45%))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              filter: 'drop-shadow(0 0 30px rgba(200, 147, 10, 0.3))',
+            }}>
+              샵타이탄
+            </span>
+            <span className="block text-3xl md:text-5xl lg:text-6xl font-semibold mt-1" style={{
+              color: 'hsl(40 15% 80%)',
+              letterSpacing: '-0.02em',
+            }}>
+              퀘스트 시뮬레이터
+            </span>
           </h1>
 
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">

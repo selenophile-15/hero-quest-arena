@@ -389,27 +389,57 @@ export async function calculateChampionStats(params: {
     .filter(s => s.spiritName);
 
   const soulBonusResult = await parseSoulBonuses(soulInputs);
-  const spiritPctAtk = soulBonusResult.summary.pctAtk;
-  const spiritPctDef = soulBonusResult.summary.pctDef;
-  const spiritPctHp = soulBonusResult.summary.pctHp;
+  let spiritPctAtk = soulBonusResult.summary.pctAtk;
+  let spiritPctDef = soulBonusResult.summary.pctDef;
+  let spiritPctHp = soulBonusResult.summary.pctHp;
   const spiritSources = soulBonusResult.sources;
+
+  // Process aurasong manual relic bonuses (오라의 노래 스킬 효과)
+  let relicFlatAtk = 0, relicFlatDef = 0, relicFlatHp = 0;
+  let relicCritRate = 0, relicCritDmg = 0, relicEvasion = 0, relicThreat = 0;
+  for (const slot of equipmentSlots) {
+    const item = slot?.item;
+    if (!item?.relicStatBonuses?.length) continue;
+    for (const b of item.relicStatBonuses) {
+      const sign = b.op === '감소' ? -1 : 1;
+      const v = (b.value || 0) * sign;
+      switch (b.stat) {
+        case '깡공격력': relicFlatAtk += v; break;
+        case '깡방어력': relicFlatDef += v; break;
+        case '깡체력': relicFlatHp += v; break;
+        case '공격력%': spiritPctAtk += v; break;
+        case '방어력%': spiritPctDef += v; break;
+        case '체력%': spiritPctHp += v; break;
+        case '치명타확률%': relicCritRate += v; break;
+        case '치명타데미지%': relicCritDmg += v; break;
+        case '회피%': relicEvasion += v; break;
+        case '위협도': relicThreat += v; break;
+        // 해당장비/모든장비 bonuses are not applicable for champion aurasong context
+      }
+    }
+  }
 
   // Card level bonus
   const cardLevelBonusPct = CARD_LEVEL_BONUS[cardLevel] || 0;
 
-  // Total common % = cardLevel% + spirit skill %
+  // Total common % = cardLevel% + spirit skill % + aurasong relic %
   const totalPctAtk = cardLevelBonusPct + spiritPctAtk;
   const totalPctDef = cardLevelBonusPct + spiritPctDef;
   const totalPctHp = cardLevelBonusPct + spiritPctHp;
 
-  // Final
-  const finalHp = Math.round(subtotalHp * (1 + totalPctHp / 100));
-  const finalAtk = Math.round(subtotalAtk * (1 + totalPctAtk / 100));
-  const finalDef = Math.round(subtotalDef * (1 + totalPctDef / 100));
+  // Subtotals include relic flat bonuses
+  const adjSubHp = subtotalHp + relicFlatHp;
+  const adjSubAtk = subtotalAtk + relicFlatAtk;
+  const adjSubDef = subtotalDef + relicFlatDef;
 
-  const nonPromotedFinalHp = Math.round(nonPromotedSubHp * (1 + totalPctHp / 100));
-  const nonPromotedFinalAtk = Math.round(nonPromotedSubAtk * (1 + totalPctAtk / 100));
-  const nonPromotedFinalDef = Math.round(nonPromotedSubDef * (1 + totalPctDef / 100));
+  // Final
+  const finalHp = Math.round(adjSubHp * (1 + totalPctHp / 100));
+  const finalAtk = Math.round(adjSubAtk * (1 + totalPctAtk / 100));
+  const finalDef = Math.round(adjSubDef * (1 + totalPctDef / 100));
+
+  const nonPromotedFinalHp = Math.round((nonPromotedSubHp + relicFlatHp) * (1 + totalPctHp / 100));
+  const nonPromotedFinalAtk = Math.round((nonPromotedSubAtk + relicFlatAtk) * (1 + totalPctAtk / 100));
+  const nonPromotedFinalDef = Math.round((nonPromotedSubDef + relicFlatDef) * (1 + totalPctDef / 100));
 
   // Fixed stats
   const fixedCrit = fixed['기본_치명타확률%'] || 5;
@@ -418,11 +448,11 @@ export async function calculateChampionStats(params: {
   const fixedThreat = fixed['기본_위협도'] || 90;
   const fixedElement = fixed['직업_원소'] || '';
 
-  // Spirit skill adds to crit/evasion/threat too
-  const totalCrit = fixedCrit + totalEquipCrit + soulBonusResult.summary.critRate;
-  const totalEvasion = fixedEvasion + totalEquipEvasion + soulBonusResult.summary.evasion;
-  const totalThreat = fixedThreat + soulBonusResult.summary.threat;
-  const totalCritDmg = fixedCritDmg + soulBonusResult.summary.critDmg;
+  // Spirit skill + relic adds to crit/evasion/threat too
+  const totalCrit = fixedCrit + totalEquipCrit + soulBonusResult.summary.critRate + relicCritRate;
+  const totalEvasion = fixedEvasion + totalEquipEvasion + soulBonusResult.summary.evasion + relicEvasion;
+  const totalThreat = fixedThreat + soulBonusResult.summary.threat + relicThreat;
+  const totalCritDmg = fixedCritDmg + soulBonusResult.summary.critDmg + relicCritDmg;
   const critAttack = finalAtk && totalCritDmg ? Math.floor(finalAtk * totalCritDmg / 100) : 0;
 
   return {
