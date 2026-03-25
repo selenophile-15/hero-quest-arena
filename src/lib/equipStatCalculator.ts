@@ -433,11 +433,12 @@ export async function calculateEquipmentStats(
       uniqueElXStats = getElementEnchantStats(elementData, item.uniqueElementTier, true);
     }
 
-    // Adjust base for unique spirit (JSON stats include spirit_X baked in)
+    // Adjust base for unique spirit (JSON stats include spirit with affinity baked in)
     const hasUniqueSpirit = item.uniqueSpirit?.length > 0;
     let uniqueSpXStats: EnchantStats = { atk: 0, def: 0, hp: 0 };
     if (hasUniqueSpirit) {
-      uniqueSpXStats = getSpiritEnchantStats(spiritData, item.uniqueSpirit[0], false);
+      // Unique spirit items (like Mundra) have affinity-applied stats baked into JSON data
+      uniqueSpXStats = getSpiritEnchantStats(spiritData, item.uniqueSpirit[0], true);
     }
 
     // True base = reverse-engineer from JSON stats that include baked-in enchantment(s)
