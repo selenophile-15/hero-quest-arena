@@ -775,10 +775,43 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                     // Preserve enchantments when deselecting
                                     newSlots[slotIdx] = { ...newSlots[slotIdx], item: null };
                                   } else {
-                                    const existingEl = item.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : newSlots[slotIdx]?.element;
-                                    const existingSp = item.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : newSlots[slotIdx]?.spirit;
+                                    const prevItem = newSlots[slotIdx]?.item;
+                                    const prevHadUniqueElement = prevItem?.uniqueElement?.length > 0;
+                                    const prevHadUniqueSpirit = prevItem?.uniqueSpirit?.length > 0;
+
+                                    let newElement: typeof newSlots[0]['element'];
+                                    if (item.uniqueElement?.length) {
+                                      newElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true };
+                                    } else if (prevHadUniqueElement) {
+                                      newElement = null;
+                                    } else {
+                                      const existing = newSlots[slotIdx]?.element || null;
+                                      if (existing) {
+                                        const hasAff = item.elementAffinity?.includes(existing.type) || item.elementAffinity?.includes('모든 원소');
+                                        const allElAff = isAllElementAffinityOnly(item.elementAffinity, existing.type);
+                                        newElement = { ...existing, affinity: !!hasAff, allElementAffinity: allElAff };
+                                      } else {
+                                        newElement = null;
+                                      }
+                                    }
+
+                                    let newSpirit: typeof newSlots[0]['spirit'];
+                                    if (item.uniqueSpirit?.length) {
+                                      newSpirit = { name: item.uniqueSpirit[0], affinity: true };
+                                    } else if (prevHadUniqueSpirit) {
+                                      newSpirit = null;
+                                    } else {
+                                      const existing = newSlots[slotIdx]?.spirit || null;
+                                      if (existing) {
+                                        const hasAff = item.spiritAffinity?.includes(existing.name);
+                                        newSpirit = { ...existing, affinity: !!hasAff };
+                                      } else {
+                                        newSpirit = null;
+                                      }
+                                    }
+
                                     const quality = equipmentSlots[slotIdx]?.quality || 'common';
-                                    newSlots[slotIdx] = { item: { ...item }, quality, element: existingEl || null, spirit: existingSp || null };
+                                    newSlots[slotIdx] = { item: { ...item }, quality, element: newElement, spirit: newSpirit };
                                   }
                                   setEquipmentSlots(newSlots);
                                 }}
