@@ -435,7 +435,7 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
         {ELEMENT_ORDER.map(el => (
           <DistBar
             key={el}
-            labelNode={<><ElementIcon element={el} size={14} /><span className="text-xs text-foreground">{el}</span></>}
+            labelNode={<><ElementIcon element={el} size={16} /><span className="text-xs font-medium text-foreground">{el}</span></>}
             owned={data[el].owned}
             planned={data[el].planned}
             maxCount={maxCount}
