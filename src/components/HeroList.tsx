@@ -161,8 +161,8 @@ export default function HeroList() {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const albumContentRef = useRef<HTMLDivElement>(null);
-  const [screenshotDialogOpen, setScreenshotDialogOpen] = useState(false);
-  const [screenshotCols, setScreenshotCols] = useState<Set<string>>(new Set());
+  const tableContentRef = useRef<HTMLDivElement>(null);
+  const [screenshotLoading, setScreenshotLoading] = useState(false);
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
@@ -191,60 +191,27 @@ export default function HeroList() {
     }
   }, [expandedId]);
 
-  // Album screenshot handler
-  const handleAlbumScreenshot = useCallback(async () => {
-    if (!albumContentRef.current) return;
+  // Screenshot handler (shared for table & album)
+  const handleScreenshot = useCallback(async (targetRef: React.RefObject<HTMLDivElement | null>, prefix: string) => {
+    if (!targetRef.current) return;
+    setScreenshotLoading(true);
     try {
-      const canvas = await html2canvas(albumContentRef.current, {
+      const canvas = await html2canvas(targetRef.current, {
         backgroundColor: '#1a1a2e',
         scale: 2,
         useCORS: true,
         logging: false,
       });
       const link = document.createElement('a');
-      link.download = `album_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
+      link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     } catch (e) {
       console.error('Screenshot failed:', e);
+    } finally {
+      setScreenshotLoading(false);
     }
   }, [listTab]);
-
-  // Helper to get plain text for screenshot cells
-  const getScreenshotCellText = useCallback((hero: Hero, colKey: string): string => {
-    if (colKey === 'name') return hero.name;
-    if (colKey === 'heroClass') return hero.heroClass || '-';
-    if (colKey === 'championName') return hero.championName || '-';
-    if (colKey === 'classLine') return hero.classLine || '-';
-    if (colKey === 'level') return String(hero.level || 0);
-    if (colKey === 'rank') {
-      const r = hero.rank || 1;
-      return r <= 11 ? String(r) : `${r} (11+${r - 11})`;
-    }
-    if (colKey === 'element') return `${hero.element || '-'} ${hero.elementValue || 0}`;
-    if (colKey === 'position') return hero.position || '-';
-    if (colKey === 'label') return (hero as any).label || '-';
-    if (colKey === 'type') return hero.type === 'champion' ? '챔피언' : '영웅';
-    if (colKey === 'promoted') return hero.promoted ? '○' : '-';
-    if (colKey === 'crit') return hero.crit ? `${formatNumber(hero.crit)} %` : '0';
-    if (colKey === 'critDmg') return hero.critDmg ? `x${(hero.critDmg / 100).toFixed(1)}` : '-';
-    if (colKey === 'critAttack') {
-      const val = hero.atk && hero.critDmg ? Math.floor(hero.atk * hero.critDmg / 100) : 0;
-      return val ? formatNumber(val) : '0';
-    }
-    if (colKey === 'evasion') return hero.evasion ? `${formatNumber(hero.evasion)} %` : '0';
-    if (colKey === 'threat') return hero.threat ? formatNumber(hero.threat) : '0';
-    if (colKey === 'skills') return '-';
-    if (colKey === 'equipment') return '-';
-    if (colKey === 'seeds') {
-      if (!hero.seeds) return '-';
-      return `${hero.seeds.hp || 0}/${hero.seeds.atk || 0}/${hero.seeds.def || 0}`;
-    }
-    if (colKey === 'airshipPower') return '-';
-    const value = hero[colKey as keyof Hero];
-    if (typeof value === 'number') return formatNumber(value);
-    return String(value ?? '-');
-  }, []);
 
   // Export handler
   const handleExport = useCallback(() => {
@@ -394,104 +361,6 @@ export default function HeroList() {
     return list;
   }, [activeList, albumSortKey, albumSortDir, albumFilterClassLine, albumFilterElement, albumFilterJob]);
 
-  // Premium table screenshot
-  const handleTableScreenshot = useCallback(async () => {
-    const cols = activeColumns.filter(c => screenshotCols.has(c.key));
-    if (cols.length === 0) return;
-
-    const container = document.createElement('div');
-    const colW = cols.some(c => ['seeds', 'element', 'name', 'heroClass', 'championName'].includes(c.key)) ? 110 : 90;
-    const baseW = cols.length * colW + 64;
-    const containerW = Math.max(360, baseW);
-
-    container.style.cssText = `
-      position: fixed; left: -9999px; top: 0;
-      width: ${containerW}px;
-      background: linear-gradient(160deg, #0f1420 0%, #151d2e 40%, #1a1530 70%, #0f1420 100%);
-      padding: 28px 32px 24px;
-      font-family: 'Noto Sans KR', sans-serif;
-      color: #e8dcc8;
-    `;
-
-    const topAccent = document.createElement('div');
-    topAccent.style.cssText = 'height: 2px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin-bottom: 24px; border-radius: 1px;';
-    container.appendChild(topAccent);
-
-    const header = document.createElement('div');
-    header.style.cssText = 'display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px;';
-    header.innerHTML = `
-      <div>
-        <div style="font-family: Cinzel, serif; font-size: 16px; color: #d4af37; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">Quest Simulator</div>
-        <div style="font-size: 11px; color: #8a7e6b; margin-top: 6px; letter-spacing: 0.5px;">${listTab === 'hero' ? '영웅' : '챔피언'} 리스트 · ${filtered.length}명</div>
-      </div>
-      <div style="font-size: 10px; color: #5a5245; letter-spacing: 1px;">${new Date().toLocaleDateString('ko-KR')}</div>
-    `;
-    container.appendChild(header);
-
-    const sep = document.createElement('div');
-    sep.style.cssText = 'height: 1px; background: rgba(212,175,55,0.2); margin-bottom: 4px;';
-    container.appendChild(sep);
-
-    const table = document.createElement('table');
-    table.style.cssText = 'width: 100%; border-collapse: collapse; font-size: 12px;';
-
-    const thead = document.createElement('thead');
-    const headRow = document.createElement('tr');
-    cols.forEach(col => {
-      const th = document.createElement('th');
-      th.style.cssText = 'padding: 10px 8px; text-align: center; color: #d4af37; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(212,175,55,0.25);';
-      th.textContent = col.label;
-      headRow.appendChild(th);
-    });
-    thead.appendChild(headRow);
-    table.appendChild(thead);
-
-    const tbody = document.createElement('tbody');
-    filtered.forEach((hero, idx) => {
-      const tr = document.createElement('tr');
-      tr.style.cssText = `border-bottom: 1px solid rgba(255,255,255,0.04); ${idx % 2 === 0 ? 'background: rgba(255,255,255,0.015);' : ''}`;
-      cols.forEach(col => {
-        const td = document.createElement('td');
-        td.style.cssText = 'padding: 7px 8px; text-align: center; vertical-align: middle; height: 36px; white-space: nowrap; font-size: 12px; color: #d6ccb8;';
-        const text = getScreenshotCellText(hero, col.key);
-        if (text === '0' || text === '0 %' || text === '-') {
-          td.style.color = 'rgba(214,204,184,0.2)';
-        }
-        td.textContent = text;
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-    container.appendChild(table);
-
-    const bottomAccent = document.createElement('div');
-    bottomAccent.style.cssText = 'height: 1px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent); margin-top: 16px;';
-    container.appendChild(bottomAccent);
-
-    const footer = document.createElement('div');
-    footer.style.cssText = 'margin-top: 12px; text-align: right; font-family: Cinzel, serif; font-size: 9px; color: #3d3828; letter-spacing: 2px;';
-    footer.textContent = 'QUEST SIMULATOR';
-    container.appendChild(footer);
-
-    document.body.appendChild(container);
-
-    try {
-      const canvas = await html2canvas(container, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
-      const link = document.createElement('a');
-      link.download = `list_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } finally {
-      document.body.removeChild(container);
-    }
-    setScreenshotDialogOpen(false);
-  }, [screenshotCols, activeColumns, filtered, listTab, getScreenshotCellText]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
@@ -613,6 +482,7 @@ export default function HeroList() {
   }
 
   const activeCols = activeColumns.filter(c => visibleCols.has(c.key));
+  const tableMaxWidth = (activeCols.length + 1) * 150;
   const EXPANDED_VISIBLE_KEYS = new Set(['heroClass', 'championName', 'name', 'level', 'rank', 'position', 'label', 'promoted']);
 
   const renderHeaderLabel = (col: { key: string; label: string; icon?: boolean }) => {
@@ -1322,12 +1192,11 @@ export default function HeroList() {
             </label>
             <Button onClick={() => {
               if (viewMode === 'table') {
-                setScreenshotCols(new Set(visibleCols));
-                setScreenshotDialogOpen(true);
+                handleScreenshot(tableContentRef, 'list');
               } else {
-                handleAlbumScreenshot();
+                handleScreenshot(albumContentRef, 'album');
               }
-            }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장">
+            }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장" disabled={screenshotLoading}>
               <Camera className="w-3.5 h-3.5" />
             </Button>
             <div className="w-px h-5 bg-border mx-1" />
@@ -1361,7 +1230,7 @@ export default function HeroList() {
           </div>
 
           {/* Table View */}
-          <div className="card-fantasy overflow-x-auto scrollbar-fantasy">
+          <div ref={tableContentRef} className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
@@ -1426,13 +1295,15 @@ export default function HeroList() {
                         }`}
                         style={{ height: '52px' }}
                       >
-                        {activeCols.map(col => {
+                      {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-3 text-center align-middle" />;
+                            return <td key={col.key} className="px-3 py-1 text-center align-middle"><div className="h-[36px]" /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-3 text-center align-middle">
-                              {renderCell(hero, col.key)}
+                            <td key={col.key} className="px-3 py-1 text-center align-middle">
+                              <div className="flex items-center justify-center h-[36px]">
+                                {renderCell(hero, col.key)}
+                              </div>
                             </td>
                           );
                         })}
@@ -1558,61 +1429,15 @@ export default function HeroList() {
         </>
       )}
 
-      {/* Screenshot settings dialog */}
-      <AlertDialog open={screenshotDialogOpen} onOpenChange={setScreenshotDialogOpen}>
-        <AlertDialogContent className="max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle>스크린샷 설정</AlertDialogTitle>
-            <AlertDialogDescription>
-              저장할 항목을 선택하세요. 선택한 항목에 맞게 이미지가 생성됩니다.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="py-3">
-            <div className="flex flex-wrap gap-3">
-              {activeColumns.filter(c => c.key !== 'skills' && c.key !== 'equipment').map(col => (
-                <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
-                  <Checkbox
-                    checked={screenshotCols.has(col.key)}
-                    onCheckedChange={() => {
-                      setScreenshotCols(prev => {
-                        const next = new Set(prev);
-                        if (next.has(col.key)) next.delete(col.key);
-                        else next.add(col.key);
-                        return next;
-                      });
-                    }}
-                  />
-                  {col.label}
-                </label>
-              ))}
-            </div>
-            <div className="flex gap-2 mt-3">
-              <button
-                onClick={() => {
-                  const all = new Set(activeColumns.filter(c => c.key !== 'skills' && c.key !== 'equipment').map(c => c.key));
-                  setScreenshotCols(all);
-                }}
-                className="text-xs text-primary hover:underline"
-              >
-                전체 선택
-              </button>
-              <button
-                onClick={() => setScreenshotCols(new Set())}
-                className="text-xs text-muted-foreground hover:underline"
-              >
-                전체 해제
-              </button>
-            </div>
+      {/* Screenshot loading overlay */}
+      {screenshotLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+          <div className="flex items-center gap-3 bg-card px-6 py-4 rounded-lg border border-border shadow-lg">
+            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm text-foreground">스크린샷 저장 중...</span>
           </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={handleTableScreenshot} disabled={screenshotCols.size === 0}>
-              <Camera className="w-4 h-4 mr-1" />
-              저장
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        </div>
+      )}
 
       {/* Import confirmation dialog */}
       <AlertDialog open={!!importPreview && saveLoadOpen} onOpenChange={v => { if (!v) { setImportPreview(null); setSaveLoadOpen(false); } }}>
