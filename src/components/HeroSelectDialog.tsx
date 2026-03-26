@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { LayoutGrid, Table2, Filter, ChevronUp, ChevronDown, X, HelpCircle } from 'lucide-react';
+import { LayoutGrid, Table2, Filter, X, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_MAP, SPIRIT_NAME_MAP } from '@/lib/nameMap';
