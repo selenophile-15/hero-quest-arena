@@ -433,42 +433,85 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual);
         }}
       >
+        <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
+          <span className="text-sm font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
+        </div>
         <div
-          className={`relative w-full aspect-square rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
+          className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
           style={equipItem ? {
             background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
             boxShadow: QUALITY_SHADOW_COLOR[quality],
           } : { background: 'hsl(var(--secondary) / 0.3)' }}
         >
-          <div className="flex items-center justify-between px-1 pt-0.5 flex-shrink-0" style={{ minHeight: '18px' }}>
-            <span className="text-[9px] font-bold text-primary bg-card/80 rounded px-0.5">{SLOT_LABELS[slotIdx]}</span>
-            {equipItem ? <span className="text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{equipItem.tier}</span> : <span />}
-            {equipItem?.relic ? <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span />}
-          </div>
-          <div className="flex-1 flex items-start justify-center pt-0.5">
+          {equipItem && (
+            <div className="w-full flex items-center justify-between px-1.5 pt-1">
+              <span className="text-sm font-bold text-foreground/90 bg-background/80 rounded px-1.5 py-0.5">T{equipItem.tier}</span>
+              {equipItem?.relic && (
+                <img
+                  src="/images/special/icon_global_artifact.webp"
+                  alt="유물"
+                  className="w-5 h-5"
+                  onError={e => { e.currentTarget.style.display = 'none'; }}
+                />
+              )}
+            </div>
+          )}
+          <div className="w-full flex items-center justify-center relative" style={{ aspectRatio: '1' }}>
             {equipItem?.imagePath ? (
-              <img src={equipItem.imagePath} alt={equipItem.name} className="w-[55%] object-contain"
-                onError={e => { e.currentTarget.style.display = 'none'; }} />
+              <img
+                src={equipItem.imagePath}
+                alt={equipItem.name}
+                className="w-4/5 h-4/5 object-contain"
+                onError={e => { e.currentTarget.style.display = 'none'; }}
+              />
             ) : (
-              <span className="text-[9px] text-muted-foreground mt-6">비어있음</span>
+              <span className="text-[10px] text-muted-foreground">비어있음</span>
             )}
           </div>
-          {equipItem ? (
-            <div className="flex items-center justify-center gap-1 pb-1 flex-shrink-0" style={{ minHeight: '34px' }}>
-              {displayElement && (
-                <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                  className="w-8 h-8 cursor-pointer" alt=""
-                  onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
-                  onError={e => { e.currentTarget.style.display = 'none'; }} />
-              )}
-              {displaySpirit && (() => {
-                const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-8 h-8 cursor-pointer" alt="" onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }} onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-8 h-8 cursor-pointer" alt="" onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }} onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
-              })()}
-              {typeFile && <img src={`/images/type/${typeFile}.webp`} className="w-8 h-8" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+          <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5">
+            <div
+              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
+              onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
+            >
+              {displayElement ? (
+                <img
+                  src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
+                  className="w-[80%] h-[80%] object-cover"
+                  alt=""
+                  onError={e => { e.currentTarget.style.display = 'none'; }}
+                />
+              ) : <span className="text-[6px] text-muted-foreground">원소</span>}
             </div>
-          ) : null}
+            <div
+              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
+              onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }}
+            >
+              {displaySpirit ? (() => {
+                const eng = SPIRIT_NAME_MAP[displaySpirit.name];
+                if (displaySpirit.name === '문드라') {
+                  return <img src="/images/enchant/spirit/mundra.webp" className="w-[80%] h-[80%] object-cover" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                }
+                return eng ? (
+                  <img
+                    src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`}
+                    className="w-[80%] h-[80%] object-cover"
+                    alt=""
+                    onError={e => { e.currentTarget.style.display = 'none'; }}
+                  />
+                ) : <span className="text-[6px] text-foreground">{displaySpirit.name}</span>;
+              })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
+            </div>
+            <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden">
+              {typeFile ? (
+                <img
+                  src={`/images/type/${typeFile}.webp`}
+                  className="w-[80%] h-[80%] object-contain"
+                  alt=""
+                  onError={e => { e.currentTarget.style.display = 'none'; }}
+                />
+              ) : <span className="text-[6px] text-muted-foreground">타입</span>}
+            </div>
+          </div>
         </div>
         {(() => {
           const calcSlot = champCalcResult?.equipSlots?.[slotIdx];
@@ -493,7 +536,11 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             </div>
           ) : null;
         })()}
-        <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5">{equipItem?.name || '-'}</p>
+        <div className={`w-full text-center rounded-b py-1 mt-0.5 ${equipItem ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
+          <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {equipItem?.name || '-'}
+          </p>
+        </div>
       </div>
     );
   };
