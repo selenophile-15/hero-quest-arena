@@ -656,6 +656,15 @@ export default function HeroList() {
     return <span>{String(value ?? '-')}</span>;
   };
 
+  const skillLevelColorClass = (lvl: number | string) => {
+    if (typeof lvl !== 'number') return 'bg-secondary text-foreground/80';
+    if (lvl >= 5) return 'bg-yellow-500/70 text-yellow-50';
+    if (lvl >= 4) return 'bg-purple-500/70 text-purple-50';
+    if (lvl >= 3) return 'bg-blue-500/70 text-blue-50';
+    if (lvl >= 2) return 'bg-green-500/70 text-green-50';
+    return 'bg-secondary text-foreground/80';
+  };
+
   const renderExpandedRow = (hero: Hero) => {
     const isChampion = hero.type === 'champion';
     const elementVal = hero.elementValue || 0;
