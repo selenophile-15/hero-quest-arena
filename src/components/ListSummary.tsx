@@ -253,6 +253,8 @@ function MatrixTable({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
     return { owned: o, planned: p };
   }, [colTotals]);
 
+  if (all.length === 0) return null;
+
   return (
     <div className="card-fantasy p-3 overflow-x-auto">
       <h3 className="text-sm font-semibold text-primary mb-3">속성 × 계열 분포</h3>
