@@ -998,20 +998,21 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     }
                   }}
                 >
-                  <div className="relative z-10 w-full text-center rounded-t-md py-0.5 bg-card/80 border border-b-0 border-border/60">
-                    <span className="text-xs font-bold text-primary tracking-wide">{slotLabel}</span>
-                  </div>
-
                   <div
-                    className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
+                    className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
                     style={equipItem ? {
                       background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                       boxShadow: QUALITY_SHADOW_COLOR[quality],
                     } : { background: 'hsl(var(--secondary) / 0.3)' }}
                   >
-                    {equipItem && (
-                      <div className="w-full flex items-center justify-between px-1.5 pt-1">
-                        <span className="text-xs font-bold text-foreground/90 bg-background/80 rounded px-1 py-0.5">T{equipItem.tier}</span>
+                    <div className="w-full flex items-center justify-between gap-1 px-1.5 pt-1">
+                      <div className="rounded bg-card/80 border border-border/40 px-1.5 py-0.5">
+                        <span className="text-xs font-bold text-primary tracking-wide">{slotLabel}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {equipItem && (
+                          <span className="text-xs font-bold text-foreground/90 bg-background/80 rounded border border-border/40 px-1 py-0.5">T{equipItem.tier}</span>
+                        )}
                         {equipItem?.relic && (
                           <img
                             src="/images/special/icon_global_artifact.webp"
@@ -1021,7 +1022,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                           />
                         )}
                       </div>
-                    )}
+                    </div>
 
                     <div className="w-full flex items-center justify-center" style={{ aspectRatio: '1' }}>
                       {equipItem?.imagePath ? (
@@ -1036,7 +1037,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       )}
                     </div>
 
-                    <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5">
+                    <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5 self-center">
                       <div
                         className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
                         title="원소 선택"
@@ -1120,12 +1121,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                         </div>
                       </div>
                     )}
-                  </div>
 
-                  <div className={`w-full text-center rounded-b py-0.5 ${equipItem ? 'bg-card/80 border border-t-0 border-border/40' : ''}`}>
-                    <p className={`text-xs truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {equipItem?.name || '-'}
-                    </p>
+                    <div className="mx-1 mt-1 mb-1 rounded bg-card/80 border border-border/40 py-1 text-center">
+                      <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {equipItem?.name || '-'}
+                      </p>
+                    </div>
                   </div>
                 </div>
               );
