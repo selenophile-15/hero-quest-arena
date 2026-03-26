@@ -1396,16 +1396,21 @@ export default function HeroList() {
                       >
                       {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-1 text-center align-middle"><div className="h-[36px]" /></td>;
+                            return <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-1 text-center align-middle">
-                              <div className="flex items-center justify-center h-[36px]">
-                                {renderCell(hero, col.key)}
-                              </div>
+                            <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}>
+                              {captureMode ? (
+                                renderCell(hero, col.key, true)
+                              ) : (
+                                <div className="flex items-center justify-center h-[36px]">
+                                  {renderCell(hero, col.key)}
+                                </div>
+                              )}
                             </td>
                           );
                         })}
+                        {!captureMode && (
                         <td className="px-3 py-3 text-center align-middle">
                           <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
                             {manageMode ? (
@@ -1430,6 +1435,7 @@ export default function HeroList() {
                             )}
                           </div>
                         </td>
+                        )}
                       </tr>
                       {isExpanded && renderExpandedRow(hero)}
                     </Fragment>
