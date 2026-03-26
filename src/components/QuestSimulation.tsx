@@ -420,23 +420,56 @@ export default function QuestSimulation() {
     setConfigOpen(true);
   };
 
-  if (loading) {
-    return (
-      <div className="animate-fade-in text-center py-20">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-muted-foreground">퀘스트 데이터 로딩 중...</p>
-      </div>
-    );
-  }
+  // Save current simulation result
+  const handleSaveResult = () => {
+    if (!simResult || !currentQuest || !currentRegion) return;
+    const selectedHeroList = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    const questData = questDataMap[selectedQuestType];
+    const regionName = currentRegion.name;
+    const diffLabel = currentQuest.difficulty !== '없음' ? ` ${currentQuest.difficulty}` : '';
+    const autoName = `${questData?.questType || ''} ${regionName}${diffLabel}`;
 
-  if (allHeroes.length === 0) {
-    return (
-      <div className="animate-fade-in text-center py-20">
-        <Swords className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-        <p className="text-muted-foreground">먼저 리스트 관리에서 영웅을 추가해주세요</p>
-      </div>
-    );
-  }
+    const heroSummaries = simResult.heroResults.map(hr => ({
+      heroId: hr.heroId,
+      heroName: hr.heroName,
+      heroClass: selectedHeroList.find(h => h.id === hr.heroId)?.heroClass || '',
+      survivalRate: hr.survivalRate,
+      avgDamageDealt: hr.totalDamageDealtAvg,
+      damageShare: hr.damageShare,
+    }));
+
+    saveSimulationResult({
+      id: crypto.randomUUID(),
+      name: autoName,
+      savedAt: Date.now(),
+      questTypeKey: selectedQuestType,
+      regionIdx: selectedRegionIdx,
+      subAreaIdx: selectedSubAreaIdx,
+      questIdx: selectedQuestIdx,
+      heroIds: Array.from(selectedHeroIds),
+      booster: selectedBooster,
+      miniBoss: selectedMiniBoss,
+      winRate: simResult.winRate,
+      avgRounds: simResult.avgRounds,
+      minRounds: simResult.minRounds,
+      maxRounds: simResult.maxRounds,
+      heroSummaries,
+    });
+
+    toast({ title: '결과 저장 완료', description: autoName });
+  };
+
+  // Load a saved simulation
+  const handleLoadSimulation = (sim: SavedSimulationSummary) => {
+    setSelectedQuestType(sim.questTypeKey);
+    setSelectedRegionIdx(sim.regionIdx);
+    setSelectedSubAreaIdx(sim.subAreaIdx);
+    setSelectedQuestIdx(sim.questIdx);
+    setSelectedHeroIds(new Set(sim.heroIds));
+    setSelectedBooster(sim.booster as any);
+    setSelectedMiniBoss(sim.miniBoss as MiniBossType);
+    setSubTab('simulation');
+  };
 
   // Get barrier elements for display
   const barrierElements = currentQuest?.barrier ? (() => {
@@ -492,12 +525,68 @@ export default function QuestSimulation() {
     return -50;
   };
 
+  // Check if barrier is broken (for warning)
+  const barrierBrokenGlobal = (() => {
+    if (!currentQuest?.barrier || barrierElements.length === 0) return true;
+    return barrierElements.every(el => {
+      const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
+      return heroSum >= currentQuest.barrier!.hp;
+    });
+  })();
+
   const questTimeSettings = timeSettings.filter(s => s.category === 'quest');
   const restTimeSettings = timeSettings.filter(s => s.category === 'rest');
 
   return (
     <div className="animate-fade-in">
-      {/* Full-width 3-column layout */}
+      {/* Sub-tabs */}
+      <div className="flex gap-1 mb-4 border-b border-border/30 pb-1">
+        {QUEST_SUB_TABS.map(tab => {
+          const Icon = tab.icon;
+          const isActive = subTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setSubTab(tab.id)}
+              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 -mb-[5px]
+                transition-all duration-200
+                ${isActive
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
+                }`}
+            >
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'scale-110' : ''}`} />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Tab: Saved Results */}
+      <div style={{ display: subTab === 'saved' ? 'block' : 'none' }}>
+        <SavedResults onLoadSimulation={handleLoadSimulation} />
+      </div>
+
+      {/* Tab: Compare */}
+      <div style={{ display: subTab === 'compare' ? 'block' : 'none' }}>
+        <CompareAnalysis />
+      </div>
+
+      {/* Tab: Simulation */}
+      <div style={{ display: subTab === 'simulation' ? 'block' : 'none' }}>
+
+      {loading ? (
+        <div className="text-center py-20">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">퀘스트 데이터 로딩 중...</p>
+        </div>
+      ) : allHeroes.length === 0 ? (
+        <div className="text-center py-20">
+          <Swords className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">먼저 리스트 관리에서 영웅을 추가해주세요</p>
+        </div>
+      ) : (
+      <>
       <div className="flex gap-4 flex-col lg:flex-row">
 
         {/* LEFT: Monster Info */}
