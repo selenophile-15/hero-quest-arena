@@ -125,6 +125,7 @@ export interface HeroSimResult {
   lordProtectionAvg: number;
   // Crit survival (armadillo, cleric/bishop)
   critSurvivalCount: number;
+  tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
 }
 
 export interface MiniBossResult {
@@ -855,6 +856,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Total damage taken tracking
   const totalDmgTakenAccum = new Float64Array(numHeroes);
   const totalTimesHitAccum = new Float64Array(numHeroes);
+  const singleTargetHitsTotal = new Float64Array(numHeroes);
 
   // Tamas random range
   const isTamas = champName.includes('타마스') || champName === 'Tamas';
@@ -880,6 +882,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const hemmaBonus = new Float64Array(numHeroes);
     const simDmgTaken = new Float64Array(numHeroes);
     const simTimesHit = new Float64Array(numHeroes);
+    const singleHitsTaken = new Float64Array(numHeroes);
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
@@ -1041,6 +1044,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           hp[target] -= dmg;
           simDmgTaken[target] += dmg;
           simTimesHit[target]++;
+          singleHitsTaken[target]++;
 
           if (hp[target] <= 0) {
             const survived = handleFatalBlow(target);
@@ -1048,6 +1052,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
                 lordProtections[target]++;
+                singleHitsTaken[target]--;
+                singleHitsTaken[lordHero]++;
                 hp[target] += dmg;
                 hp[lordHero] -= damageTaken[lordHero];
                 if (hp[lordHero] <= 0) {
@@ -1210,6 +1216,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           totalRoundsPerHero[i] += round;
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
+          singleTargetHitsTotal[i] += singleHitsTaken[i];
         }
       }
 
@@ -1277,6 +1284,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Compute incoming damage stats (single hit, not per-sim averages)
   // Calculate threat-based targeting rates
   const totalThreat = activeHeroes.reduce((s, h) => s + (h.threat || 1), 0);
+  const totalAllSingleHits = Array.from(singleTargetHitsTotal).reduce((s, v) => s + v, 0);
 
   const heroResults: HeroSimResult[] = activeHeroes.map((h, i) => {
     const normalHit = damageTaken[i];
@@ -1377,6 +1385,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
       lordProtectionAvg: lordProtections[i] / actualSimCount,
       critSurvivalCount: critSurvivals[i] / actualSimCount,
+      tankingRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
     };
   });
 

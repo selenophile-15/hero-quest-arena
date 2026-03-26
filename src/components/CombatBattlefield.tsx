@@ -1,26 +1,70 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { CombatLogEntry } from '@/lib/combatSimulation';
 import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices } from 'lucide-react';
+import { formatNumber } from '@/lib/format';
 
 interface Props {
   log: CombatLogEntry[];
   heroes: Hero[];
   monsterHp: number;
   monsterName: string;
+  onNewBattle?: () => void;
 }
 
-export default function CombatBattlefield({ log, heroes, monsterHp, monsterName }: Props) {
+export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, onNewBattle }: Props) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Track state at each step
   const activeHeroes = heroes.filter(h => h.hp > 0);
+
+  // Parse per-hero stats from log
+  const heroStatsData = useMemo(() => {
+    const stats: Record<string, { dmg: number; targeted: number; dodged: number; singleHits: number }> = {};
+    activeHeroes.forEach(h => { stats[h.name] = { dmg: 0, targeted: 0, dodged: 0, singleHits: 0 }; });
+
+    // Identify AoE rounds
+    const aoeRounds = new Set<number>();
+    for (const entry of log) {
+      if (entry.type === 'monster_attack' && entry.detail === '광역 공격!') {
+        aoeRounds.add(entry.round);
+      }
+    }
+
+    for (const entry of log) {
+      if (entry.type === 'hero_attack') {
+        const dmgMatch = entry.detail.match(/([\d,]+) 대미지/);
+        if (dmgMatch && stats[entry.actor]) {
+          stats[entry.actor].dmg += parseInt(dmgMatch[1].replace(/,/g, ''));
+        }
+      }
+      if (entry.type === 'monster_attack' && entry.target && stats[entry.target]) {
+        stats[entry.target].targeted++;
+        if (!aoeRounds.has(entry.round)) {
+          stats[entry.target].singleHits++;
+        }
+      }
+      if (entry.type === 'event' && entry.detail.includes('회피') && stats[entry.actor]) {
+        stats[entry.actor].dodged++;
+        stats[entry.actor].targeted++;
+      }
+    }
+
+    const totalDmg = Object.values(stats).reduce((s, v) => s + v.dmg, 0);
+    const totalSingleHits = Object.values(stats).reduce((s, v) => s + v.singleHits, 0);
+
+    return activeHeroes.map(h => ({
+      name: h.name,
+      ...stats[h.name],
+      dmgPct: totalDmg > 0 ? (stats[h.name].dmg / totalDmg) * 100 : 0,
+      tankPct: totalSingleHits > 0 ? (stats[h.name].singleHits / totalSingleHits) * 100 : 0,
+    })).sort((a, b) => b.dmg - a.dmg);
+  }, [log]);
 
   // Parse states from log up to currentIdx
   const getState = () => {
@@ -40,7 +84,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName 
       currentRound = entry.round;
       lastAction = entry;
 
-      // Parse HP from detail
       if (entry.type === 'monster_attack' && entry.target) {
         const hpMatch = entry.detail.match(/잔여 HP: ([\d,\-]+)/);
         if (hpMatch) {
@@ -104,7 +147,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName 
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [playing, speed, log.length]);
 
-  // Scroll log to current entry
   useEffect(() => {
     if (scrollRef.current) {
       const el = scrollRef.current.querySelector(`[data-idx="${currentIdx}"]`);
@@ -116,11 +158,21 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName 
   const isResult = state.lastAction?.type === 'result';
   const isWin = isResult && state.lastAction?.detail.includes('승리');
 
+  const barColors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
+
   return (
     <div className="space-y-3">
+      {/* New Battle button */}
+      {onNewBattle && (
+        <div className="flex justify-end">
+          <Button variant="outline" size="sm" className="text-xs gap-1.5 border-blue-500/40 text-blue-400 hover:bg-blue-500/10" onClick={() => { onNewBattle(); setCurrentIdx(0); setPlaying(false); }}>
+            <Dices className="w-3.5 h-3.5" /> 새로운 전투
+          </Button>
+        </div>
+      )}
+
       {/* Battlefield */}
       <div className="relative bg-secondary/30 rounded-lg p-4 border border-border/30">
-        {/* Round indicator */}
         <div className="text-center mb-3">
           <span className="text-xs text-muted-foreground">라운드</span>
           <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
@@ -183,20 +235,13 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName 
           {/* Monster side */}
           <div className="w-40 shrink-0">
             <div className={`p-2 rounded-lg border border-red-500/20 bg-red-500/5 ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
-              <div className="text-center mb-1">
-                <span className="text-2xl">👹</span>
-              </div>
-              <div className="text-center mb-1.5">
-                <span className="text-xs text-foreground font-medium">{monsterName}</span>
-              </div>
+              <div className="text-center mb-1"><span className="text-2xl">👹</span></div>
+              <div className="text-center mb-1.5"><span className="text-xs text-foreground font-medium">{monsterName}</span></div>
               <div className="text-center text-[9px] font-mono text-muted-foreground mb-1">
                 {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()} / {monsterHp.toLocaleString()}
               </div>
               <div className="h-3 bg-secondary rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-red-500 rounded-full transition-all duration-300"
-                  style={{ width: `${mobHpPct}%` }}
-                />
+                <div className="h-full bg-red-500 rounded-full transition-all duration-300" style={{ width: `${mobHpPct}%` }} />
               </div>
               {state.actionEffects.find(e => e.target === '__monster__') && (
                 <div className="text-center mt-1">
@@ -236,6 +281,42 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName 
           <option value={100}>4x</option>
         </select>
         <span className="text-[9px] text-muted-foreground">{currentIdx + 1}/{log.length}</span>
+      </div>
+
+      {/* Combat Stats Summary */}
+      <div className="rounded border border-border/30 bg-secondary/20 p-3">
+        <div className="text-xs font-bold text-foreground mb-2">📊 전투 통계</div>
+        <table className="w-full text-[10px]">
+          <thead>
+            <tr className="border-b border-border/30">
+              <th className="text-left py-1 px-1.5 text-muted-foreground font-medium">영웅</th>
+              <th className="text-right py-1 px-1.5 text-red-400 font-medium">대미지</th>
+              <th className="text-right py-1 px-1.5 text-orange-400 font-medium">비율</th>
+              <th className="text-center py-1 px-1.5 text-yellow-400 font-medium">타겟팅</th>
+              <th className="text-center py-1 px-1.5 text-teal-400 font-medium">회피</th>
+              <th className="text-right py-1 px-1.5 text-blue-400 font-medium">탱킹</th>
+            </tr>
+          </thead>
+          <tbody>
+            {heroStatsData.map((hs, idx) => (
+              <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                <td className="py-1.5 px-1.5 text-foreground font-medium">{hs.name}</td>
+                <td className="py-1.5 px-1.5 text-right font-mono text-red-400">{formatNumber(hs.dmg)}</td>
+                <td className="py-1.5 px-1.5 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <div className="w-12 bg-secondary/30 rounded-full h-2 overflow-hidden">
+                      <div className={`h-full rounded-full ${barColors[idx % barColors.length]}`} style={{ width: `${hs.dmgPct}%` }} />
+                    </div>
+                    <span className="font-mono text-orange-400 w-10 text-right">{hs.dmgPct.toFixed(1)}%</span>
+                  </div>
+                </td>
+                <td className="py-1.5 px-1.5 text-center font-mono text-yellow-400">{hs.targeted}</td>
+                <td className="py-1.5 px-1.5 text-center font-mono text-teal-400">{hs.dodged}</td>
+                <td className="py-1.5 px-1.5 text-right font-mono text-blue-400">{hs.tankPct.toFixed(1)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Log with highlight */}

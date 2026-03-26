@@ -30,7 +30,11 @@ function CompareCell({ a, b, suffix = '', higher = 'better' }: { a: number; b: n
   );
 }
 
-export default function CompareAnalysis() {
+interface CompareProps {
+  refreshKey?: number;
+}
+
+export default function CompareAnalysis({ refreshKey }: CompareProps) {
   const [saved, setSaved] = useState<SavedSimulationSummary[]>([]);
   const [leftId, setLeftId] = useState('');
   const [rightId, setRightId] = useState('');
@@ -38,7 +42,7 @@ export default function CompareAnalysis() {
 
   useEffect(() => {
     setSaved(getSavedSimulations());
-  }, []);
+  }, [refreshKey]);
 
   const left = saved.find(s => s.id === leftId);
   const right = saved.find(s => s.id === rightId);
