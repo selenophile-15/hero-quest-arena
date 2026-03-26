@@ -813,7 +813,7 @@ export default function HeroList() {
     const seedColor = (val: number) => val === 80 ? 'text-orange-400 font-semibold' : val === 40 ? 'text-yellow-400 font-semibold' : val === 0 ? 'text-foreground/20' : '';
 
     return (
-      <tr id={`expanded-${hero.id}`} className="bg-muted/40">
+      <tr id={`expanded-${hero.id}`} className="bg-muted/40 expand-enter">
         <td colSpan={activeCols.length + 1} className="px-4 py-4">
           <div className="flex gap-4">
             {/* Stats Box */}
