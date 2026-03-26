@@ -210,7 +210,6 @@ export default function HeroList() {
         useCORS: true,
         allowTaint: true,
         logging: false,
-        foreignObjectRendering: true,
       });
 
       const link = document.createElement('a');
@@ -517,7 +516,7 @@ export default function HeroList() {
     }
   };
   const manageColumnWidth = 90;
-  const tableMaxWidth = activeCols.reduce((sum, col) => sum + getTableColumnWidth(col.key), 0) + (captureMode ? 0 : manageColumnWidth);
+  const captureTableWidth = activeCols.reduce((sum, col) => sum + getTableColumnWidth(col.key), 0);
 
   const handleResetCols = () => {
     const allCols = [...HERO_STAT_COLUMNS, ...CHAMPION_STAT_COLUMNS];
@@ -1356,16 +1355,17 @@ export default function HeroList() {
           </div>
 
           {/* Table View */}
-          <div ref={tableContentRef} className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
-            <table className="w-full text-sm">
+          <div ref={tableContentRef} className="card-fantasy overflow-x-auto scrollbar-fantasy">
+            <div className={captureMode ? '' : 'w-fit mx-auto'} style={captureMode ? { width: `${captureTableWidth}px` } : undefined}>
+            <table className="text-sm" style={captureMode ? { width: `${captureTableWidth}px`, tableLayout: 'fixed' } : undefined}>
               <thead>
                 <tr className="border-b border-border">
                   {activeCols.map(col => (
                     <th key={col.key} onClick={() => handleSort(col.key)}
-                      style={{ width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` }}
-                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center ${
-                        col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
-                      } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[100px]' : 'min-w-[170px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
+                      style={captureMode ? { width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` } : undefined}
+                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center whitespace-nowrap ${captureMode ? (
+                        `${col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''} ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[100px]' : 'min-w-[170px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`
+                      ) : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
                         {renderHeaderLabel(col)}
                         {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
@@ -1426,10 +1426,10 @@ export default function HeroList() {
                       >
                       {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle', width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
+                            return <td key={col.key} className="px-3 py-1 text-center" style={captureMode ? { verticalAlign: 'middle', width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` } : { verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle', width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` }}>
+                            <td key={col.key} className="px-3 py-1 text-center" style={captureMode ? { verticalAlign: 'middle', width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` } : { verticalAlign: 'middle' }}>
                               {captureMode ? (
                                 renderCell(hero, col.key, true)
                               ) : (
@@ -1473,6 +1473,7 @@ export default function HeroList() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       ) : (
