@@ -788,10 +788,7 @@ export default function QuestSimulation() {
                   </div>
                 )}
 
-                {/* Line 3: Total time (white) */}
-                <div className="text-center">
-                  <span className="text-sm text-foreground">⏱ {formatTime(currentQuest.time.total)}</span>
-                </div>
+                {/* (time display removed) */}
 
                 {/* Line 4: Element Barrier */}
                 {barrierElements.length > 0 && currentQuest.barrier && (
