@@ -5,7 +5,7 @@ import { HERO_CLASS_MAP, getCommonSkills, getUniqueSkills, getChampionSkillsData
 import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
 import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_MAP, JOB_NAME_MAP, SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
-import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect } from '@/lib/championEquipUtils';
+import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
 import ElementIcon from './ElementIcon';
