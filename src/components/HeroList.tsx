@@ -1242,13 +1242,19 @@ export default function HeroList() {
           {/* Column visibility - table only */}
           <div className="card-fantasy p-3 mb-3">
             <div className="flex flex-wrap gap-3">
-              <span className="text-sm text-muted-foreground">표시 항목:</span>
               {activeColumns.map(col => (
                 <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
                   <Checkbox checked={visibleCols.has(col.key)} onCheckedChange={() => toggleCol(col.key)} />
                   {col.label}
                 </label>
               ))}
+            </div>
+            <div className="flex gap-2 mt-2">
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={handleResetCols}>초기화</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleSelectAllCols(true)}>전체 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleSelectAllCols(false)}>전체 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleToggleStatCols(true)}>스탯 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleToggleStatCols(false)}>스탯 해제</Button>
             </div>
           </div>
 
