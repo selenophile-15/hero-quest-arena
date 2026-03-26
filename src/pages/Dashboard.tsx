@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
