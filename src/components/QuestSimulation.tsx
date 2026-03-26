@@ -639,9 +639,9 @@ export default function QuestSimulation() {
             className="text-xs gap-1 px-2 border-purple-500/40 text-purple-400 hover:bg-purple-500/10"
             onClick={() => {
               import('html2canvas').then(({ default: html2canvas }) => {
-                const el = document.querySelector('[data-quest-sim]');
+                const el = document.querySelector('[data-quest-screenshot]');
                 if (!el) return;
-                html2canvas(el as HTMLElement, { backgroundColor: '#1a1a2e' }).then(canvas => {
+                html2canvas(el as HTMLElement, { backgroundColor: '#1a1a2e', useCORS: true, scrollY: -window.scrollY }).then(canvas => {
                   const link = document.createElement('a');
                   link.download = `quest-sim-${Date.now()}.png`;
                   link.href = canvas.toDataURL();
@@ -659,6 +659,7 @@ export default function QuestSimulation() {
         </div>
       )}
 
+      <div data-quest-screenshot>
       <div className="flex gap-4 flex-col lg:flex-row" data-quest-sim>
 
         {/* LEFT: Monster Info */}
@@ -976,7 +977,7 @@ export default function QuestSimulation() {
                     return 0;
                   };
 
-                  const barH = 220;
+                  const barH = 260;
                   const reductions = [-50, 0, 50, 70, 75];
                   const rows = defThresholds.map((t, i) => ({
                     key: t.key, label: t.label, value: t.value, color: t.color, textClass: t.textClass,
@@ -1006,15 +1007,15 @@ export default function QuestSimulation() {
 
                   return (
                     <div className="mt-4 pt-4 border-t border-border/30">
-                      <div className="flex items-center gap-1.5 mb-3">
+                      <div className="flex items-center gap-1.5 px-1 mb-1">
                         <Shield className="w-3.5 h-3.5 text-blue-400" />
                         <span className="text-xs font-bold text-foreground">방어력 기준치</span>
                       </div>
-                      <div className="relative grid grid-cols-[44px_14px_1fr] gap-x-1" style={{ height: `${barH}px` }}>
+                      <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5 pt-6 pb-4" style={{ height: `${barH}px` }}>
                         <div className="relative">
                           {rows.map(r => (
                             <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
-                              <span className={`text-[10px] font-mono font-semibold tabular-nums ${r.textClass}`}>{r.label}</span>
+                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{r.label}</span>
                             </div>
                           ))}
                         </div>
@@ -1029,18 +1030,18 @@ export default function QuestSimulation() {
                           ))}
                           {heroEntries.map(h => (
                             <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
-                              <div className="w-3.5 h-3.5 rounded-full border-2 shadow-[0_0_6px_rgba(255,255,255,0.5)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
+                              <div className="w-4 h-4 rounded-full border-[2.5px] shadow-[0_0_8px_rgba(255,255,255,0.6)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
                             </div>
                           ))}
                         </div>
-                        <div className="relative ml-1">
+                        <div className="relative ml-1.5">
                           {rows.map(r => (
-                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[10px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
-                              <span className={`text-[9px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
+                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1.5" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                              <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          <svg className="absolute inset-0 overflow-visible" style={{ left: '60px', width: 'calc(100% - 60px)', height: '100%' }}>
+                          <svg className="absolute inset-0 overflow-visible" style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}>
                             {heroLayout.map(h => {
                               const yPin = barH - (h.pinPct / 100) * barH;
                               const yLabel = barH - (h.labelPct / 100) * barH;
@@ -1049,9 +1050,9 @@ export default function QuestSimulation() {
                             })}
                           </svg>
                           {heroLayout.map(h => (
-                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '90px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[10px] font-semibold truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
-                              <span className="text-[9px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
+                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '100px', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[11px] font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                              <span className="text-[10px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
                             </div>
@@ -1470,12 +1471,16 @@ export default function QuestSimulation() {
         <div className="w-full lg:w-80 shrink-0">
           {currentQuest && simResult && selectedHeroes.length > 0 && (
             <>
-              {/* Turn Stats */}
+              {/* Main Results */}
               <div className="flex items-center gap-2 mb-3">
-                <Clock className="w-5 h-5 text-primary" />
-                <h3 className="text-lg text-foreground font-bold">턴 수</h3>
+                <Crown className="w-5 h-5 text-primary" />
+                <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
               </div>
               <div className="card-fantasy p-4 mb-3">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Clock className="w-3.5 h-3.5 text-blue-400" />
+                  <span className="text-sm font-bold text-foreground">턴 수</span>
+                </div>
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="bg-secondary/30 rounded p-2">
                     <div className="text-[10px] text-muted-foreground">최소</div>
@@ -1483,7 +1488,7 @@ export default function QuestSimulation() {
                   </div>
                   <div className="bg-secondary/30 rounded p-2">
                     <div className="text-[10px] text-muted-foreground">평균</div>
-                    <div className="text-lg font-bold font-mono text-foreground">{Math.round(simResult.avgRounds)}</div>
+                    <div className="text-lg font-bold font-mono text-primary">{Math.round(simResult.avgRounds)}</div>
                   </div>
                   <div className="bg-secondary/30 rounded p-2">
                     <div className="text-[10px] text-muted-foreground">최대</div>
@@ -1499,23 +1504,27 @@ export default function QuestSimulation() {
 
               {/* Damage Contribution */}
               <div className="card-fantasy p-4 mb-3">
-                <div className="text-sm font-bold text-foreground mb-3">💥 대미지 기여도</div>
+                <div className="flex items-center gap-1.5 mb-3">
+                  <Swords className="w-3.5 h-3.5 text-red-400" />
+                  <span className="text-sm font-bold text-foreground">대미지 기여도</span>
+                </div>
                 {(() => {
                   const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                   const sorted = [...simResult.heroResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
-                  const barColors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
+                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-green-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
+                  const getTextColor = (pct: number) => pct >= 81 ? 'text-green-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
                     <div className="space-y-2">
-                      {sorted.map((hr, idx) => {
+                      {sorted.map((hr) => {
                         const pct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
                         return (
                           <div key={hr.heroId}>
                             <div className="flex items-center justify-between mb-0.5">
                               <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">{hr.heroName}</span>
-                              <span className="text-[11px] font-mono text-orange-400">{pct.toFixed(1)}%</span>
+                              <span className={`text-[11px] font-mono ${getTextColor(pct)}`}>{pct.toFixed(1)}%</span>
                             </div>
                             <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
-                              <div className={`h-full rounded-full ${barColors[idx % barColors.length]} transition-all`} style={{ width: `${pct}%` }} />
+                              <div className={`h-full rounded-full ${getBarColor(pct)} transition-all`} style={{ width: `${pct}%` }} />
                             </div>
                           </div>
                         );
@@ -1527,20 +1536,24 @@ export default function QuestSimulation() {
 
               {/* Tanking Contribution */}
               <div className="card-fantasy p-4 mb-3">
-                <div className="text-sm font-bold text-foreground mb-3">🛡 탱킹 기여도</div>
+                <div className="flex items-center gap-1.5 mb-3">
+                  <Shield className="w-3.5 h-3.5 text-blue-400" />
+                  <span className="text-sm font-bold text-foreground">탱킹 기여도</span>
+                </div>
                 {(() => {
                   const sorted = [...simResult.heroResults].sort((a, b) => b.tankingRate - a.tankingRate);
-                  const tankColors = ['bg-blue-500', 'bg-cyan-500', 'bg-teal-500', 'bg-indigo-500', 'bg-violet-500'];
+                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-green-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
+                  const getTextColor = (pct: number) => pct >= 81 ? 'text-green-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
                     <div className="space-y-2">
-                      {sorted.map((hr, idx) => (
+                      {sorted.map((hr) => (
                         <div key={hr.heroId}>
                           <div className="flex items-center justify-between mb-0.5">
                             <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">{hr.heroName}</span>
-                            <span className="text-[11px] font-mono text-blue-400">{hr.tankingRate.toFixed(1)}%</span>
+                            <span className={`text-[11px] font-mono ${getTextColor(hr.tankingRate)}`}>{hr.tankingRate.toFixed(1)}%</span>
                           </div>
                           <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
-                            <div className={`h-full rounded-full ${tankColors[idx % tankColors.length]} transition-all`} style={{ width: `${hr.tankingRate}%` }} />
+                            <div className={`h-full rounded-full ${getBarColor(hr.tankingRate)} transition-all`} style={{ width: `${hr.tankingRate}%` }} />
                           </div>
                         </div>
                       ))}
@@ -1555,10 +1568,12 @@ export default function QuestSimulation() {
 
       {/* Full-width Simulation Details Box */}
       {currentQuest && selectedHeroes.length > 0 && simResult && (
-        <div className="mt-4 card-fantasy p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <h3 className="text-lg font-bold text-foreground">📋 상세 정보</h3>
+        <>
+          <div className="flex items-center gap-2 mt-4 mb-3">
+            <ListChecks className="w-5 h-5 text-primary" />
+            <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
           </div>
+          <div className="card-fantasy p-4">
 
           {/* Mini-boss breakdown (only for random mode, not boss quests) */}
           {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
@@ -1901,7 +1916,10 @@ export default function QuestSimulation() {
           </div>
 
         </div>
+        </>
       )}
+      </div> {/* end data-quest-screenshot */}
+
 
       {/* Combat Log Dialog */}
       <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
