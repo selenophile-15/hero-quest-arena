@@ -96,12 +96,16 @@ const Index = () => {
           50% { transform: translateY(-8px); }
         }
         @keyframes glowPulse {
-          0%, 100% { filter: drop-shadow(0 0 20px rgba(200,147,10,0.3)) drop-shadow(0 0 40px rgba(200,147,10,0.1)); }
-          50% { filter: drop-shadow(0 0 30px rgba(200,147,10,0.5)) drop-shadow(0 0 60px rgba(200,147,10,0.2)); }
+          0%, 100% { filter: drop-shadow(0 0 15px rgba(180,200,255,0.4)) drop-shadow(0 0 40px rgba(120,160,255,0.15)) drop-shadow(0 0 60px rgba(200,147,10,0.1)); }
+          50% { filter: drop-shadow(0 0 25px rgba(180,200,255,0.7)) drop-shadow(0 0 50px rgba(120,160,255,0.3)) drop-shadow(0 0 80px rgba(200,147,10,0.2)); }
         }
         @keyframes subtitleReveal {
           0% { opacity: 0; letter-spacing: 0.5em; }
           100% { opacity: 1; letter-spacing: 0.2em; }
+        }
+        @keyframes starSparkle {
+          0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+          50% { opacity: 1; transform: scale(1.3) rotate(180deg); }
         }
         @keyframes btnShine {
           0% { left: -100%; }
@@ -151,32 +155,49 @@ const Index = () => {
         <div className="text-center px-4 py-20" style={{
           opacity: Math.max(0, 1 - scrollY / 600),
         }}>
-          <div className="mb-6" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
+          <div className="mb-6 relative" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
+            {/* Decorative star sparkles around title */}
+            <div className="absolute -top-4 -left-8 w-3 h-3 text-blue-200" style={{ animation: 'starSparkle 3s ease-in-out infinite' }}>✦</div>
+            <div className="absolute -top-2 -right-6 w-2 h-2 text-amber-200" style={{ animation: 'starSparkle 4s ease-in-out infinite 1s' }}>✧</div>
+            <div className="absolute -bottom-2 -left-4 w-2 h-2 text-blue-300/60" style={{ animation: 'starSparkle 3.5s ease-in-out infinite 0.5s' }}>✦</div>
+            <div className="absolute -bottom-4 -right-10 w-2 h-2 text-amber-300/50" style={{ animation: 'starSparkle 5s ease-in-out infinite 2s' }}>✧</div>
+
             <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{
-              color: 'hsl(40 50% 45%)',
+              color: 'hsl(220 40% 65%)',
               animation: 'subtitleReveal 1.5s ease-out forwards',
+              textShadow: '0 0 12px rgba(140,170,255,0.3)',
             }}>
-              셀레노필 제작
+              ⚔ 셀레노필 제작 ⚔
             </span>
+
+            {/* Main title - moonlit silver-gold gradient with starlight glow */}
             <h1
-              className="mx-auto select-none"
+              className="mx-auto select-none relative"
               style={{
                 fontFamily: "'Noto Sans KR', sans-serif",
                 fontWeight: 900,
-                fontSize: 'clamp(2rem, 6vw, 3.5rem)',
-                lineHeight: 1.2,
-                letterSpacing: '0.04em',
-                background: 'linear-gradient(180deg, #ffd97a 0%, #e8b830 30%, #c8930a 60%, #a06818 100%)',
+                fontSize: 'clamp(2.2rem, 7vw, 4rem)',
+                lineHeight: 1.15,
+                letterSpacing: '0.06em',
+                background: 'linear-gradient(180deg, #e8efff 0%, #c8d8ff 15%, #ffd97a 40%, #e8b830 60%, #c8930a 80%, #8a6010 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 textShadow: 'none',
-                filter: 'drop-shadow(0 2px 8px rgba(200,147,10,0.5)) drop-shadow(0 0 40px rgba(200,147,10,0.15))',
+                filter: 'drop-shadow(0 2px 8px rgba(140,170,255,0.4)) drop-shadow(0 0 30px rgba(200,147,10,0.3))',
                 animation: 'glowPulse 4s ease-in-out infinite',
                 maxWidth: '80vw',
               }}
             >
               샵타이탄<br />퀘스트 시뮬레이터
             </h1>
+
+            {/* Subtitle tagline */}
+            <p className="mt-3 text-[12px] tracking-[0.15em]" style={{
+              color: 'hsl(220 30% 60%)',
+              textShadow: '0 0 8px rgba(140,170,255,0.2)',
+            }}>
+              ─── DUNGEON QUEST SIMULATOR ───
+            </p>
           </div>
 
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
@@ -189,15 +210,24 @@ const Index = () => {
             onClick={() => navigate("/dashboard")}
             className="btn-shine text-base px-12 py-7 font-display tracking-wider relative group
               transition-all duration-300 ease-out
-              hover:scale-105 hover:shadow-[0_0_30px_rgba(200,147,10,0.4),0_0_60px_rgba(200,147,10,0.15)]
+              hover:scale-105 hover:shadow-[0_0_30px_rgba(140,170,255,0.3),0_0_60px_rgba(200,147,10,0.2)]
               active:scale-95"
             style={{
-              background: 'linear-gradient(135deg, hsl(40 85% 45%), hsl(30 80% 40%))',
-              boxShadow: '0 0 20px rgba(200,147,10,0.2), 0 4px 20px rgba(0,0,0,0.3)',
+              background: 'linear-gradient(135deg, hsl(225 40% 30%), hsl(230 35% 25%))',
+              boxShadow: '0 0 20px rgba(140,170,255,0.15), 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(180,200,255,0.2)',
+              border: '1px solid rgba(140,170,255,0.2)',
             }}
           >
-            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" />
-            <span style={{ fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 700, letterSpacing: '0.15em', fontSize: '1.1rem' }}>시작하기</span>
+            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" style={{ color: '#c8d8ff' }} />
+            <span style={{
+              fontFamily: "'Noto Sans KR', sans-serif",
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              fontSize: '1.1rem',
+              background: 'linear-gradient(180deg, #e8efff, #ffd97a)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>모험 시작</span>
           </Button>
 
           <div className="mt-20 animate-bounce opacity-40">
