@@ -229,8 +229,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <div className="w-40 shrink-0">
               <div className={`p-2 rounded-lg border border-red-500/20 bg-red-500/5 ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
                 <div className="text-center mb-1"><span className="text-2xl">👹</span></div>
-                <div className="text-center mb-1.5"><span className="text-xs text-foreground font-medium">{monsterName}</span></div>
-                <div className="text-center text-[9px] font-mono text-muted-foreground mb-1">
+                <div className="text-center mb-1.5"><span className="text-xs text-foreground font-semibold">{monsterName}</span></div>
+                <div className="text-center text-[10px] font-mono text-foreground/80 mb-1">
                   {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()} / {monsterHp.toLocaleString()}
                 </div>
                 <div className="h-3 bg-secondary rounded-full overflow-hidden">
