@@ -212,7 +212,7 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
     <Dialog open={open} onOpenChange={v => { if (!v) onClose(); }}>
       <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>영웅 선택</DialogTitle>
+          <DialogTitle className="sr-only">선택</DialogTitle>
         </DialogHeader>
         {/* Mode toggle */}
         <div className="flex gap-1 mb-2 bg-secondary/30 rounded-lg p-1">
