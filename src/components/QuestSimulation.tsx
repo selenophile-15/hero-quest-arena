@@ -1903,6 +1903,8 @@ export default function QuestSimulation() {
 
         </div>
       )}
+      </div> {/* end data-quest-screenshot */}
+
 
       {/* Combat Log Dialog */}
       <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
