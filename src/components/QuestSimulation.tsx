@@ -565,7 +565,7 @@ export default function QuestSimulation() {
 
       {/* Tab: Saved Results */}
       <div style={{ display: subTab === 'saved' ? 'block' : 'none' }}>
-        <SavedResults onLoadSimulation={handleLoadSimulation} />
+        <SavedResults onLoadSimulation={handleLoadSimulation} refreshKey={subTab === 'saved' ? Date.now() : 0} />
       </div>
 
       {/* Tab: Compare */}
