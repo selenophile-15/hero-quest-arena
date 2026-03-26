@@ -1902,6 +1902,32 @@ export default function QuestSimulation() {
               heroes={selectedHeroes}
               monsterHp={currentQuest?.hp || 0}
               monsterName={locationName}
+              onNewBattle={() => {
+                if (!currentQuest || !currentRegion) return;
+                const isTerrorTower2 = selectedQuestType === 'tot' && currentRegion.name === '공포';
+                const bElements2 = currentQuest?.barrier ? (() => {
+                  const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                  const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                    ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
+                    : null;
+                  const rawElements = barrierElement2
+                    ? [barrierElement2]
+                    : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+                  return [...new Set(rawElements)] as string[];
+                })() : [];
+                const questMonster2: QuestMonster = {
+                  hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
+                  aoeChance: currentQuest.aoeChance, def: currentQuest.def,
+                  isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
+                  barrier: currentQuest.barrier, barrierElement: bElements2[0] || null,
+                };
+                const entries = runSingleCombatLog({
+                  heroes: selectedHeroes, monster: questMonster2,
+                  miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
+                  questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower: isTerrorTower2,
+                });
+                setCombatLog(entries);
+              }}
             />
           )}
         </DialogContent>
