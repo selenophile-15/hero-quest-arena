@@ -1554,57 +1554,8 @@ export default function QuestSimulation() {
       {/* Save button + Full-width Simulation Details Box */}
       {currentQuest && selectedHeroes.length > 0 && simResult && (
         <div className="mt-4 card-fantasy p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs gap-1"
-                onClick={handleSaveResult}
-              >
-                <Save className="w-3.5 h-3.5" /> 결과 저장
-              </Button>
-              <span className="text-[8px] text-muted-foreground/50">
-                {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs gap-1"
-                onClick={() => {
-                  if (!currentQuest || !currentRegion) return;
-                  const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
-                  const bElements = currentQuest?.barrier ? (() => {
-                    const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
-                    const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-                      ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
-                      : null;
-                    const rawElements = barrierElement2
-                      ? [barrierElement2]
-                      : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
-                    return [...new Set(rawElements)] as string[];
-                  })() : [];
-                  const questMonster: QuestMonster = {
-                    hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
-                    aoeChance: currentQuest.aoeChance, def: currentQuest.def,
-                    isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
-                    barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
-                  };
-                  const entries = runSingleCombatLog({
-                    heroes: selectedHeroes, monster: questMonster,
-                    miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
-                    questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
-                  });
-                  setCombatLog(entries);
-                  setCombatLogDialogOpen(true);
-                }}
-              >
-                🎲 1회 전투 로그
-              </Button>
-            </div>
+          <div className="flex items-center gap-2 mb-3">
+            <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
           </div>
 
           {/* Rounds info */}
