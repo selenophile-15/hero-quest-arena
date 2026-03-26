@@ -542,9 +542,9 @@ export default function HeroList() {
       const elVal = hero.elementValue || 0;
       const isDimEl = elVal === 0;
       return (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-1 h-5 leading-none">
           <ElementIcon element={hero.element} size={20} />
-          <span className={`tabular-nums ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
+          <span className={`tabular-nums leading-none ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
       );
     }
