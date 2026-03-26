@@ -1441,7 +1441,7 @@ export default function QuestSimulation() {
                       ))}
                       {/* Targeting chance row (threat-based) */}
                       <tr className="border-b border-border/20 bg-muted/20">
-                        <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
+                        <td className="py-1.5 px-1.5 text-foreground/70 font-medium text-sm">피격 확률</td>
                         {(() => {
                           const totalThreat = selectedHeroes.reduce((sum, h) => sum + (h.threat || 1), 0);
                           return Array.from({ length: maxMembers }).map((_, slotIdx) => {
