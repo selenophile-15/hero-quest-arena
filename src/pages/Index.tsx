@@ -145,11 +145,11 @@ const Index = () => {
         }} />
       </div>
 
-      {/* Background image - positioned lower, visible on scroll */}
-      <div className="fixed inset-0 z-[1] pointer-events-none" style={{
-        transform: `translateY(${-parallaxOffset * 0.3 + 200}px)`
+      {/* Background image - scrolls naturally with content */}
+      <div className="absolute inset-x-0 z-[1] pointer-events-none" style={{
+        top: '70vh',
       }}>
-        <div className="absolute bottom-0 left-0 right-0" style={{ height: '80vh' }}>
+        <div className="relative w-full" style={{ height: '130vh' }}>
           <img src={landingBg} alt="" className="w-full h-full object-cover" style={{ opacity: 0.7 }} />
           {/* Top gradient blend into sky */}
           <div className="absolute top-0 left-0 right-0 h-[40%]" style={{
