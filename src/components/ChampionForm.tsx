@@ -433,19 +433,21 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual);
         }}
       >
-        <div className="relative z-10 w-full text-center rounded-t-md py-0.5 bg-card/80 border border-b-0 border-border/60">
-          <span className="text-xs font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
-        </div>
         <div
-          className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
+          className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
           style={equipItem ? {
             background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
             boxShadow: QUALITY_SHADOW_COLOR[quality],
           } : { background: 'hsl(var(--secondary) / 0.3)' }}
         >
-          {equipItem && (
-            <div className="w-full flex items-center justify-between px-1.5 pt-1">
-              <span className="text-xs font-bold text-foreground/90 bg-background/80 rounded px-1 py-0.5">T{equipItem.tier}</span>
+          <div className="w-full flex items-center justify-between gap-1 px-1.5 pt-1">
+            <div className="rounded bg-card/80 border border-border/40 px-1.5 py-0.5">
+              <span className="text-xs font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              {equipItem && (
+                <span className="text-xs font-bold text-foreground/90 bg-background/80 rounded border border-border/40 px-1 py-0.5">T{equipItem.tier}</span>
+              )}
               {equipItem?.relic && (
                 <img
                   src="/images/special/icon_global_artifact.webp"
@@ -455,7 +457,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                 />
               )}
             </div>
-          )}
+          </div>
+
           <div className="w-full flex items-center justify-center relative" style={{ aspectRatio: '1' }}>
             {equipItem?.imagePath ? (
               <img
@@ -468,7 +471,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               <span className="text-[10px] text-muted-foreground">비어있음</span>
             )}
           </div>
-          <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5">
+
+          <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5 self-center">
             <div
               className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
               onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
@@ -512,34 +516,36 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               ) : <span className="text-[6px] text-muted-foreground">타입</span>}
             </div>
           </div>
-        </div>
-        {(() => {
-          const calcSlot = champCalcResult?.equipSlots?.[slotIdx];
-          const hasCalcStats = calcSlot && calcSlot.itemName;
-          const displayStats = hasCalcStats ? [
-            ...(calcSlot.finalAtk ? [{ key: '장비_공격력', value: calcSlot.finalAtk }] : []),
-            ...(calcSlot.finalDef ? [{ key: '장비_방어력', value: calcSlot.finalDef }] : []),
-            ...(calcSlot.finalHp ? [{ key: '장비_체력', value: calcSlot.finalHp }] : []),
-            ...(calcSlot.finalCrit ? [{ key: '장비_치명타확률%', value: calcSlot.finalCrit }] : []),
-            ...(calcSlot.finalEvasion ? [{ key: '장비_회피%', value: calcSlot.finalEvasion }] : []),
-          ] : equipItem?.stats;
-          return displayStats && displayStats.length > 0 ? (
-            <div className="flex items-center justify-center w-full mt-0.5">
-              <div className="flex gap-1.5">
-                {displayStats.slice(0, 3).map((stat: any, si: number) => (
-                  <div key={si} className="flex items-center gap-0.5">
-                    <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                    <span className="text-xs text-foreground font-semibold tabular-nums">{formatEquipStatVal(stat.key, stat.value)}</span>
-                  </div>
-                ))}
+        
+          {(() => {
+            const calcSlot = champCalcResult?.equipSlots?.[slotIdx];
+            const hasCalcStats = calcSlot && calcSlot.itemName;
+            const displayStats = hasCalcStats ? [
+              ...(calcSlot.finalAtk ? [{ key: '장비_공격력', value: calcSlot.finalAtk }] : []),
+              ...(calcSlot.finalDef ? [{ key: '장비_방어력', value: calcSlot.finalDef }] : []),
+              ...(calcSlot.finalHp ? [{ key: '장비_체력', value: calcSlot.finalHp }] : []),
+              ...(calcSlot.finalCrit ? [{ key: '장비_치명타확률%', value: calcSlot.finalCrit }] : []),
+              ...(calcSlot.finalEvasion ? [{ key: '장비_회피%', value: calcSlot.finalEvasion }] : []),
+            ] : equipItem?.stats;
+            return displayStats && displayStats.length > 0 ? (
+              <div className="w-full px-1 pb-1 border-t border-border/20 mt-0.5">
+                <div className="flex items-center justify-center gap-1.5 pt-0.5">
+                  {displayStats.slice(0, 3).map((stat: any, si: number) => (
+                    <div key={si} className="flex items-center gap-0.5">
+                      <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
+                      <span className="text-xs text-foreground font-semibold tabular-nums">{formatEquipStatVal(stat.key, stat.value)}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : null;
-        })()}
-        <div className={`w-full text-center rounded-b py-0.5 mt-0.5 ${equipItem ? 'bg-card/80 border border-t-0 border-border/40' : ''}`}>
-          <p className={`text-xs truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
-            {equipItem?.name || '-'}
-          </p>
+            ) : null;
+          })()}
+
+          <div className="mx-1 mt-1 mb-1 rounded bg-card/80 border border-border/40 py-1 text-center">
+            <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+              {equipItem?.name || '-'}
+            </p>
+          </div>
         </div>
       </div>
     );
