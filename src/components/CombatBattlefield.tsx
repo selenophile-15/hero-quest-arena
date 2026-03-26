@@ -195,9 +195,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                       {heroImg && <img src={heroImg} alt="" className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-foreground font-medium truncate">{h.name}</span>
-                        <span className="text-[9px] font-mono text-muted-foreground">
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs text-foreground font-semibold truncate">{h.name}</span>
+                        <span className="text-[10px] font-mono text-foreground/80">
                           {Math.round(hp).toLocaleString()}/{Math.round(maxHp).toLocaleString()}
                         </span>
                       </div>
