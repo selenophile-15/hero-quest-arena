@@ -1217,11 +1217,13 @@ export default function HeroList() {
           </div>
         )}
 
-        <div className="flex items-center gap-1 mt-auto album-delete-btn">
-          <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
+        {!captureMode && (
+          <div className="flex items-center gap-1 mt-auto album-delete-btn">
+            <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       </div>
     );
   };
