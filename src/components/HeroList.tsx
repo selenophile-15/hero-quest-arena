@@ -1578,6 +1578,41 @@ export default function HeroList() {
         </>
       )}
 
+      {/* Import confirmation dialog */}
+      <AlertDialog open={!!importPreview && saveLoadOpen} onOpenChange={v => { if (!v) { setImportPreview(null); setSaveLoadOpen(false); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>데이터 불러오기</AlertDialogTitle>
+            <AlertDialogDescription>
+              {importPreview?.length || 0}개의 항목이 포함된 파일입니다.
+              (영웅 {importPreview?.filter(h => h.type === 'hero').length || 0}명, 챔피언 {importPreview?.filter(h => h.type === 'champion').length || 0}명)
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex flex-col gap-2 py-2">
+            <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border hover:bg-secondary/20">
+              <input type="radio" name="importMode" checked={importMode === 'replace'} onChange={() => setImportMode('replace')} />
+              <div>
+                <span className="text-sm font-medium text-foreground">덮어쓰기</span>
+                <p className="text-xs text-muted-foreground">기존 리스트를 삭제하고 파일 데이터로 교체합니다</p>
+              </div>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border hover:bg-secondary/20">
+              <input type="radio" name="importMode" checked={importMode === 'merge'} onChange={() => setImportMode('merge')} />
+              <div>
+                <span className="text-sm font-medium text-foreground">합치기</span>
+                <p className="text-xs text-muted-foreground">기존 리스트에 파일 데이터를 추가합니다</p>
+              </div>
+            </label>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setImportPreview(null); setSaveLoadOpen(false); }}>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleImportConfirm}>
+              적용
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Delete confirmation dialog */}
       <AlertDialog open={!!deleteTarget} onOpenChange={v => !v && setDeleteTarget(null)}>
         <AlertDialogContent>
