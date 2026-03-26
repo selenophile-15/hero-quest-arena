@@ -98,6 +98,11 @@
   .card-fantasy {
     @apply bg-card border border-border rounded-lg;
     box-shadow: 0 0 20px hsl(40 85% 55% / 0.05);
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .card-fantasy:hover {
+    box-shadow: 0 0 25px hsl(40 85% 55% / 0.08), 0 4px 16px rgba(0,0,0,0.2);
   }
 
   .scrollbar-fantasy {
@@ -127,5 +132,25 @@
   .ring-spellcaster:focus-within {
     --tw-ring-color: hsl(210 70% 55%);
     border-color: hsl(210 70% 55% / 0.5);
+  }
+
+  /* Interactive hover utilities */
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .hover-lift:active {
+    transform: translateY(0);
+  }
+
+  .hover-glow {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .hover-glow:hover {
+    box-shadow: 0 0 16px hsl(40 85% 55% / 0.15);
+    border-color: hsl(40 85% 55% / 0.3);
   }
 }

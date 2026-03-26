@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   const handleLogoClick = () => {
     setActiveTab('list');
-    setListResetKey(k => k + 1); // Force HeroList to reset to list view
+    setListResetKey(k => k + 1);
   };
 
   return (
@@ -28,9 +28,9 @@ export default function Dashboard() {
         <div className="w-full px-6 h-14 flex items-center">
           <button
             onClick={handleLogoClick}
-            className="font-display text-lg text-primary tracking-wide hover:text-primary/80 transition-colors"
+            className="font-display text-lg text-primary tracking-wide transition-all duration-300 hover:text-primary/80 hover:scale-105 active:scale-95"
           >
-            Quest Simulator
+            셀레노필
           </button>
         </div>
       </header>
@@ -40,17 +40,20 @@ export default function Dashboard() {
         <div className="w-full px-6 flex gap-1">
           {TABS.map(tab => {
             const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-[1px] ${
-                  activeTab === tab.id
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-[1px]
+                  transition-all duration-300 ease-out
+                  hover:translate-y-[-1px]
+                  ${isActive
                     ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : ''}`} />
                 {tab.label}
               </button>
             );
@@ -59,7 +62,7 @@ export default function Dashboard() {
       </div>
 
       {/* Content */}
-      <main className="w-full px-6 py-6">
+      <main className="w-full px-6 py-6 animate-fade-in">
         <div style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
           <HeroList key={listResetKey} />
         </div>
