@@ -433,8 +433,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual);
         }}
       >
-        <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
-          <span className="text-sm font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
+        <div className="relative z-10 w-full text-center rounded-t-md py-0.5 bg-card/80 border border-b-0 border-border/60">
+          <span className="text-xs font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
         </div>
         <div
           className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
