@@ -20,9 +20,9 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-fantasy-gradient">
+    <div className="min-h-screen bg-animated-gradient">
       {/* Top Bar */}
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-10">
         <div className="w-full px-6 h-14 flex items-center">
           <button
             onClick={() => navigate('/')}
@@ -34,7 +34,7 @@ export default function Dashboard() {
       </header>
 
       {/* Tabs */}
-      <div className="border-b border-border bg-card/40">
+      <div className="border-b border-border bg-card/40 backdrop-blur-sm">
         <div className="w-full px-6 flex gap-1">
           {TABS.map(tab => {
             const Icon = tab.icon;
@@ -43,12 +43,10 @@ export default function Dashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-[1px]
-                  transition-all duration-300 ease-out
-                  hover:translate-y-[-1px]
+                className={`tab-interactive flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-[1px]
                   ${isActive
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
+                    ? 'tab-active border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                   }`}
               >
                 <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : ''}`} />
