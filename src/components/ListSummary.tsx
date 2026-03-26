@@ -56,37 +56,99 @@ const POSITION_TEXT_COLORS: Record<string, string> = {
   '좀비': 'text-purple-400',
   '기타': 'text-muted-foreground',
 };
+const POSITION_BAR_STYLE: Record<string, string> = {
+  '퓨어 탱커': '#3b82f6',
+  '회피 탱커': '#14b8a6',
+  '딜탱': '#f97316',
+  '치명 딜러': '#ef4444',
+  '일반 딜러': '#eab308',
+  '회피 딜러': '#22d3ee',
+  '좀비': '#a855f7',
+  '기타': '#6b7280',
+};
 
 const ELEMENT_ORDER = ['불', '물', '공기', '대지', '빛', '어둠', '모든 원소'];
 const CLASS_LINE_ORDER = ['전사', '로그', '주문술사'];
 
-/* ── Hero picker dialog with duplicate prevention ── */
-function HeroPicker({ open, onClose, allHeroes, selectedIds, excludeIds, onConfirm, title }: {
+// Element bar colors
+const ELEMENT_BAR_COLORS: Record<string, string> = {
+  '불': '#ef4444',
+  '물': '#3b82f6',
+  '공기': '#22c55e',
+  '대지': '#a16207',
+  '빛': '#eab308',
+  '어둠': '#a855f7',
+  '모든 원소': '#ec4899',
+};
+
+/* ── Hero picker dialog — shows ALL heroes, cross-group toggle ── */
+function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, target, onConfirm, title }: {
   open: boolean;
   onClose: () => void;
   allHeroes: Hero[];
-  selectedIds: string[];
-  excludeIds: string[];
-  onConfirm: (ids: string[]) => void;
+  ownedIds: string[];
+  plannedIds: string[];
+  target: 'owned' | 'planned';
+  onConfirm: (owned: string[], planned: string[]) => void;
   title: string;
 }) {
-  const [checked, setChecked] = useState<Set<string>>(new Set(selectedIds));
-  const excludeSet = useMemo(() => new Set(excludeIds), [excludeIds]);
+  const [localOwned, setLocalOwned] = useState<Set<string>>(new Set(ownedIds));
+  const [localPlanned, setLocalPlanned] = useState<Set<string>>(new Set(plannedIds));
 
   const toggle = useCallback((id: string) => {
-    setChecked(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
-  }, []);
+    if (target === 'owned') {
+      setLocalOwned(prev => {
+        const next = new Set(prev);
+        if (next.has(id)) {
+          next.delete(id);
+        } else {
+          next.add(id);
+          // Remove from other group
+          setLocalPlanned(p => { const n = new Set(p); n.delete(id); return n; });
+        }
+        return next;
+      });
+    } else {
+      setLocalPlanned(prev => {
+        const next = new Set(prev);
+        if (next.has(id)) {
+          next.delete(id);
+        } else {
+          next.add(id);
+          // Remove from other group
+          setLocalOwned(p => { const n = new Set(p); n.delete(id); return n; });
+        }
+        return next;
+      });
+    }
+  }, [target]);
 
-  const available = useMemo(() => allHeroes.filter(h => !excludeSet.has(h.id)), [allHeroes, excludeSet]);
-  const heroItems = useMemo(() => available.filter(h => h.type === 'hero'), [available]);
-  const champItems = useMemo(() => available.filter(h => h.type === 'champion'), [available]);
+  const isChecked = (id: string) => target === 'owned' ? localOwned.has(id) : localPlanned.has(id);
+  const otherLabel = (id: string) => {
+    if (target === 'owned' && localPlanned.has(id)) return '추가 예정';
+    if (target === 'planned' && localOwned.has(id)) return '보유 중';
+    return null;
+  };
 
-  const selectAll = () => setChecked(new Set(available.map(h => h.id)));
-  const deselectAll = () => setChecked(new Set());
+  const heroItems = useMemo(() => allHeroes.filter(h => h.type === 'hero'), [allHeroes]);
+  const champItems = useMemo(() => allHeroes.filter(h => h.type === 'champion'), [allHeroes]);
+
+  const selectAll = () => {
+    const ids = new Set(allHeroes.map(h => h.id));
+    if (target === 'owned') {
+      setLocalOwned(ids);
+      setLocalPlanned(new Set());
+    } else {
+      setLocalPlanned(ids);
+      setLocalOwned(new Set());
+    }
+  };
+  const deselectAll = () => {
+    if (target === 'owned') setLocalOwned(new Set());
+    else setLocalPlanned(new Set());
+  };
+
+  const currentCount = target === 'owned' ? localOwned.size : localPlanned.size;
 
   return (
     <Dialog open={open} onOpenChange={v => { if (!v) onClose(); }}>
@@ -97,25 +159,26 @@ function HeroPicker({ open, onClose, allHeroes, selectedIds, excludeIds, onConfi
         <div className="flex gap-2 mb-2">
           <Button variant="outline" size="sm" onClick={selectAll}>전체 선택</Button>
           <Button variant="outline" size="sm" onClick={deselectAll}>전체 해제</Button>
-          <span className="ml-auto text-sm text-muted-foreground">{checked.size}명 선택</span>
+          <span className="ml-auto text-sm text-muted-foreground">{currentCount}명 선택</span>
         </div>
-        {excludeIds.length > 0 && (
-          <p className="text-xs text-muted-foreground mb-1">※ 다른 그룹에 이미 선택된 항목은 표시되지 않습니다.</p>
-        )}
         <div className="flex-1 overflow-y-auto space-y-3 pr-1">
           {heroItems.length > 0 && (
             <div>
               <p className="text-xs font-semibold text-muted-foreground mb-1">영웅</p>
               <div className="space-y-0.5">
-                {heroItems.map(h => (
-                  <label key={h.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-secondary/40 cursor-pointer">
-                    <Checkbox checked={checked.has(h.id)} onCheckedChange={() => toggle(h.id)} />
-                    <ElementIcon element={h.element} size={16} />
-                    <span className={`text-sm ${CLASS_LINE_COLORS[h.classLine] || ''}`}>{h.heroClass}</span>
-                    <span className="text-sm text-foreground">{h.name}</span>
-                    {h.position && <span className="ml-auto text-xs text-muted-foreground">{h.position}</span>}
-                  </label>
-                ))}
+                {heroItems.map(h => {
+                  const other = otherLabel(h.id);
+                  return (
+                    <label key={h.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-secondary/40 cursor-pointer">
+                      <Checkbox checked={isChecked(h.id)} onCheckedChange={() => toggle(h.id)} />
+                      <ElementIcon element={h.element} size={16} />
+                      <span className={`text-sm ${CLASS_LINE_COLORS[h.classLine] || ''}`}>{h.heroClass}</span>
+                      <span className="text-sm text-foreground">{h.name}</span>
+                      {h.position && <span className="text-xs text-muted-foreground">{h.position}</span>}
+                      {other && <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">{other}</span>}
+                    </label>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -123,36 +186,84 @@ function HeroPicker({ open, onClose, allHeroes, selectedIds, excludeIds, onConfi
             <div>
               <p className="text-xs font-semibold text-muted-foreground mb-1">챔피언</p>
               <div className="space-y-0.5">
-                {champItems.map(h => (
-                  <label key={h.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-secondary/40 cursor-pointer">
-                    <Checkbox checked={checked.has(h.id)} onCheckedChange={() => toggle(h.id)} />
-                    <ElementIcon element={h.element} size={16} />
-                    <span className="text-sm text-foreground">{h.championName || h.name}</span>
-                    {h.position && <span className="ml-auto text-xs text-muted-foreground">{h.position}</span>}
-                  </label>
-                ))}
+                {champItems.map(h => {
+                  const other = otherLabel(h.id);
+                  return (
+                    <label key={h.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-secondary/40 cursor-pointer">
+                      <Checkbox checked={isChecked(h.id)} onCheckedChange={() => toggle(h.id)} />
+                      <ElementIcon element={h.element} size={16} />
+                      <span className="text-sm text-foreground">{h.championName || h.name}</span>
+                      {h.position && <span className="text-xs text-muted-foreground">{h.position}</span>}
+                      {other && <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">{other}</span>}
+                    </label>
+                  );
+                })}
               </div>
             </div>
           )}
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>취소</Button>
-          <Button onClick={() => { onConfirm(Array.from(checked)); onClose(); }}>확인</Button>
+          <Button onClick={() => { onConfirm(Array.from(localOwned), Array.from(localPlanned)); onClose(); }}>확인</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
 
-/* ── Group table (보유 중 / 추가 예정) ── */
-function GroupTable({ label, icon, heroes, onAdd, onRemove, accentClass }: {
+/* ── Matrix grid table (element × classLine) ── */
+// Fixed cell sizes: hero rows fit 6, champion row fits 4
+const HERO_CELL_MIN_H = 'min-h-[160px]'; // ~6 entries
+const CHAMP_CELL_MIN_H = 'min-h-[110px]'; // ~4 entries
+
+function MatrixGrid({ heroes, label, icon, onAdd, accentClass, isPlanned }: {
+  heroes: Hero[];
   label: string;
   icon: React.ReactNode;
-  heroes: Hero[];
   onAdd: () => void;
-  onRemove: (id: string) => void;
   accentClass: string;
+  isPlanned?: boolean;
 }) {
+  // Build matrix
+  type CellEntry = Hero;
+  const matrix = useMemo(() => {
+    const m: Record<string, Record<string, CellEntry[]>> = {};
+    const lines = [...CLASS_LINE_ORDER, '챔피언'];
+    lines.forEach(cl => { m[cl] = {}; ELEMENT_ORDER.forEach(el => { m[cl][el] = []; }); });
+    heroes.forEach(h => {
+      const cl = h.type === 'champion' ? '챔피언' : (h.classLine || '기타');
+      const el = h.element || '기타';
+      if (!m[cl]) { m[cl] = {}; ELEMENT_ORDER.forEach(e => { m[cl][e] = []; }); }
+      if (!m[cl][el]) m[cl][el] = [];
+      m[cl][el].push(h);
+    });
+    return m;
+  }, [heroes]);
+
+  const classLines = useMemo(() => {
+    const lines = [...CLASS_LINE_ORDER, '챔피언'];
+    return lines.filter(cl => matrix[cl] && ELEMENT_ORDER.some(el => matrix[cl][el]?.length > 0));
+  }, [matrix]);
+
+  // Row/col totals
+  const rowTotals = useMemo(() => {
+    const t: Record<string, number> = {};
+    classLines.forEach(cl => {
+      t[cl] = ELEMENT_ORDER.reduce((s, el) => s + (matrix[cl][el]?.length || 0), 0);
+    });
+    return t;
+  }, [matrix, classLines]);
+
+  const colTotals = useMemo(() => {
+    const t: Record<string, number> = {};
+    ELEMENT_ORDER.forEach(el => {
+      t[el] = classLines.reduce((s, cl) => s + (matrix[cl]?.[el]?.length || 0), 0);
+    });
+    return t;
+  }, [matrix, classLines]);
+
+  const grandTotal = heroes.length;
+
   return (
     <div className="card-fantasy p-4">
       <div className="flex items-center justify-between mb-3">
@@ -167,244 +278,85 @@ function GroupTable({ label, icon, heroes, onAdd, onRemove, accentClass }: {
       </div>
 
       {heroes.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-4">
+        <p className="text-sm text-muted-foreground text-center py-6">
           아직 추가된 항목이 없습니다. 위 버튼을 눌러 리스트에서 선택하세요.
         </p>
       ) : (
-        <div className="flex flex-wrap gap-1.5">
-          {heroes.map(h => (
-            <div key={h.id} className="flex items-center gap-1 bg-secondary/30 border border-border/40 rounded-md pl-2 pr-1 py-1 text-sm group">
-              <ElementIcon element={h.element} size={14} />
-              {h.type === 'hero' && (
-                <span className={`${CLASS_LINE_COLORS[h.classLine] || ''} text-xs`}>{h.heroClass}</span>
-              )}
-              <span className="text-foreground">{h.type === 'champion' ? (h.championName || h.name) : h.name}</span>
-              {h.position && <span className={`text-[10px] ml-0.5 ${POSITION_TEXT_COLORS[h.position] || 'text-muted-foreground'}`}>{h.position}</span>}
-              <button onClick={() => onRemove(h.id)} className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive">
-                <X size={12} />
-              </button>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="py-2 px-2 text-left text-muted-foreground font-medium w-20"></th>
+                {ELEMENT_ORDER.map(el => (
+                  <th key={el} className="py-2 px-1 text-center" style={{ minWidth: '120px' }}>
+                    <div className="flex items-center justify-center gap-1">
+                      <ElementIcon element={el} size={16} />
+                      <span className="text-foreground font-medium">{el}</span>
+                    </div>
+                  </th>
+                ))}
+                <th className="py-2 px-2 text-center text-muted-foreground font-medium w-14">인원</th>
+              </tr>
+            </thead>
+            <tbody>
+              {classLines.map(cl => {
+                const isChamp = cl === '챔피언';
+                const cellH = isChamp ? CHAMP_CELL_MIN_H : HERO_CELL_MIN_H;
+                return (
+                  <tr key={cl} className="border-b border-border/30">
+                    <td className={`py-2 px-2 font-bold whitespace-nowrap text-sm ${isChamp ? 'text-yellow-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')} ${CLASS_LINE_BG[cl] || ''}`}>
+                      {cl}
+                    </td>
+                    {ELEMENT_ORDER.map(el => {
+                      const cells = matrix[cl]?.[el] || [];
+                      return (
+                        <td key={el} className={`py-1.5 px-1.5 align-top border-l border-border/20 ${cellH}`}>
+                          <div className="flex flex-col items-center gap-1">
+                            {cells.map(h => (
+                              <div key={h.id} className={`flex flex-col items-center ${isPlanned ? 'opacity-60' : ''}`}>
+                                {h.type === 'hero' ? (
+                                  <span className={`text-sm font-semibold ${CLASS_LINE_COLORS[h.classLine] || 'text-foreground'}`}>{h.heroClass}</span>
+                                ) : (
+                                  <span className="text-sm font-semibold text-yellow-400">{h.championName || h.name}</span>
+                                )}
+                                {h.position && (
+                                  <span className={`text-xs font-bold px-1.5 rounded ${POSITION_COLORS[h.position] || 'bg-secondary'} text-white`}>
+                                    {h.position}
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                      );
+                    })}
+                    <td className="py-2 px-2 text-center font-bold text-foreground text-sm border-l border-border/40">
+                      {rowTotals[cl]}
+                    </td>
+                  </tr>
+                );
+              })}
+              {/* Column totals */}
+              <tr className="border-t-2 border-border bg-secondary/10">
+                <td className="py-2 px-2 font-semibold text-muted-foreground">인원</td>
+                {ELEMENT_ORDER.map(el => (
+                  <td key={el} className="py-2 px-1 text-center font-bold text-foreground border-l border-border/20">
+                    {colTotals[el] || ''}
+                  </td>
+                ))}
+                <td className="py-2 px-2 text-center font-bold text-primary border-l border-border/40">
+                  {grandTotal}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       )}
     </div>
   );
 }
 
-/* ── Matrix table: element columns × class line rows ── */
-function MatrixTable({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
-  const all = useMemo(() => [...owned, ...planned], [owned, planned]);
-  const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
-
-  // Build matrix: classLine → element → heroes[]
-  type CellData = { hero: Hero; isOwned: boolean }[];
-  const matrix = useMemo(() => {
-    const m: Record<string, Record<string, CellData>> = {};
-    // Add "챔피언" as a virtual class line
-    const lines = [...CLASS_LINE_ORDER, '챔피언'];
-    lines.forEach(cl => {
-      m[cl] = {};
-      ELEMENT_ORDER.forEach(el => { m[cl][el] = []; });
-    });
-    all.forEach(h => {
-      const cl = h.type === 'champion' ? '챔피언' : (h.classLine || '기타');
-      const el = h.element || '기타';
-      if (!m[cl]) { m[cl] = {}; ELEMENT_ORDER.forEach(e => { m[cl][e] = []; }); }
-      if (!m[cl][el]) m[cl][el] = [];
-      m[cl][el].push({ hero: h, isOwned: ownedSet.has(h.id) });
-    });
-    return m;
-  }, [all, ownedSet]);
-
-  const classLines = useMemo(() => {
-    const lines = [...CLASS_LINE_ORDER, '챔피언'];
-    return lines.filter(cl => matrix[cl] && ELEMENT_ORDER.some(el => matrix[cl][el]?.length > 0));
-  }, [matrix]);
-
-  // Row totals per class line
-  const rowTotals = useMemo(() => {
-    const t: Record<string, { owned: number; planned: number }> = {};
-    classLines.forEach(cl => {
-      let o = 0, p = 0;
-      ELEMENT_ORDER.forEach(el => {
-        matrix[cl][el]?.forEach(d => { if (d.isOwned) o++; else p++; });
-      });
-      t[cl] = { owned: o, planned: p };
-    });
-    return t;
-  }, [matrix, classLines]);
-
-  // Column totals per element
-  const colTotals = useMemo(() => {
-    const t: Record<string, { owned: number; planned: number }> = {};
-    ELEMENT_ORDER.forEach(el => {
-      let o = 0, p = 0;
-      classLines.forEach(cl => {
-        matrix[cl][el]?.forEach(d => { if (d.isOwned) o++; else p++; });
-      });
-      t[el] = { owned: o, planned: p };
-    });
-    return t;
-  }, [matrix, classLines]);
-
-  const grandTotal = useMemo(() => {
-    let o = 0, p = 0;
-    Object.values(colTotals).forEach(v => { o += v.owned; p += v.planned; });
-    return { owned: o, planned: p };
-  }, [colTotals]);
-
-  if (all.length === 0) return null;
-
-  return (
-    <div className="card-fantasy p-3 overflow-x-auto">
-      <h3 className="text-sm font-semibold text-primary mb-3">속성 × 계열 분포</h3>
-      <table className="w-full text-xs border-collapse">
-        <thead>
-          <tr className="border-b border-border">
-            <th className="py-2 px-2 text-left text-muted-foreground font-medium w-16"></th>
-            {ELEMENT_ORDER.map(el => (
-              <th key={el} className="py-2 px-1 text-center min-w-[100px]">
-                <div className="flex items-center justify-center gap-1">
-                  <ElementIcon element={el} size={16} />
-                  <span className="text-foreground font-medium">{el}</span>
-                </div>
-              </th>
-            ))}
-            <th className="py-2 px-2 text-center text-muted-foreground font-medium w-14">인원</th>
-          </tr>
-        </thead>
-        <tbody>
-          {classLines.map(cl => (
-            <tr key={cl} className="border-b border-border/30">
-              <td className={`py-2 px-2 font-semibold whitespace-nowrap ${cl === '챔피언' ? 'text-yellow-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')} ${CLASS_LINE_BG[cl] || ''}`}>
-                {cl}
-              </td>
-              {ELEMENT_ORDER.map(el => {
-                const cells = matrix[cl]?.[el] || [];
-                return (
-                  <td key={el} className="py-1.5 px-1 align-top border-l border-border/20">
-                    {cells.length > 0 ? (
-                      <div className="space-y-0.5">
-                        {cells.map(({ hero: h, isOwned }) => (
-                          <div key={h.id} className="flex items-center gap-1 flex-wrap">
-                            {h.type === 'hero' && (
-                              <span className={`${CLASS_LINE_COLORS[h.classLine] || ''} text-[10px]`}>{h.heroClass}</span>
-                            )}
-                            <span className={`text-foreground text-[11px] ${!isOwned ? 'opacity-50 italic' : ''}`}>
-                              {h.type === 'champion' ? (h.championName || h.name) : h.name}
-                            </span>
-                            {h.position && (
-                              <span className={`text-[9px] px-1 rounded ${
-                                POSITION_COLORS[h.position]?.replace('bg-', 'bg-') || 'bg-secondary'
-                              } text-white font-medium`}>
-                                {h.position}
-                              </span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    ) : null}
-                  </td>
-                );
-              })}
-              <td className="py-2 px-2 text-center font-bold text-foreground border-l border-border/40">
-                {rowTotals[cl].owned + rowTotals[cl].planned}
-                {rowTotals[cl].planned > 0 && (
-                  <div className="text-[9px] text-muted-foreground font-normal">
-                    +{rowTotals[cl].planned}
-                  </div>
-                )}
-              </td>
-            </tr>
-          ))}
-          {/* Column totals row */}
-          <tr className="border-t-2 border-border bg-secondary/10">
-            <td className="py-2 px-2 font-semibold text-muted-foreground">인원</td>
-            {ELEMENT_ORDER.map(el => {
-              const t = colTotals[el];
-              return (
-                <td key={el} className="py-2 px-1 text-center font-bold text-foreground border-l border-border/20">
-                  {t.owned + t.planned}
-                  {t.planned > 0 && (
-                    <span className="text-[9px] text-muted-foreground font-normal ml-0.5">
-                      (+{t.planned})
-                    </span>
-                  )}
-                </td>
-              );
-            })}
-            <td className="py-2 px-2 text-center font-bold text-primary border-l border-border/40">
-              {grandTotal.owned + grandTotal.planned}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div className="mt-2 flex gap-4 text-[10px] text-muted-foreground">
-        <span>■ 일반 = 보유 중</span>
-        <span className="opacity-50 italic">■ 흐린 글씨 = 추가 예정</span>
-      </div>
-    </div>
-  );
-}
-
-/* ── Position distribution bar chart ── */
-function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
-  const all = useMemo(() => [...owned, ...planned], [owned, planned]);
-  const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
-
-  const posData = useMemo(() => {
-    const map: Record<string, { owned: number; planned: number }> = {};
-    all.forEach(h => {
-      const pos = h.position || '미지정';
-      if (!map[pos]) map[pos] = { owned: 0, planned: 0 };
-      if (ownedSet.has(h.id)) map[pos].owned++;
-      else map[pos].planned++;
-    });
-    return Object.entries(map).sort(([, a], [, b]) => (b.owned + b.planned) - (a.owned + a.planned));
-  }, [all, ownedSet]);
-
-  if (posData.length === 0) return null;
-  const maxCount = Math.max(...posData.map(([, d]) => d.owned + d.planned), 1);
-
-  return (
-    <div className="card-fantasy p-3">
-      <h3 className="text-sm font-semibold text-primary mb-3">포지션 분포</h3>
-      <div className="space-y-2">
-        {posData.map(([pos, d]) => {
-          const total = d.owned + d.planned;
-          const ownedPct = (d.owned / maxCount) * 100;
-          const plannedPct = (d.planned / maxCount) * 100;
-          const bgClass = POSITION_COLORS[pos] || 'bg-secondary';
-          return (
-            <div key={pos} className="flex items-center gap-2">
-              <span className={`text-xs font-medium w-20 text-right ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>
-                {pos}
-              </span>
-              <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
-                {d.owned > 0 && (
-                  <div className={`h-full ${bgClass} transition-all`} style={{ width: `${ownedPct}%` }} />
-                )}
-                {d.planned > 0 && (
-                  <div className={`h-full ${bgClass} opacity-40 transition-all`} style={{ width: `${plannedPct}%` }} />
-                )}
-              </div>
-              <span className="text-xs font-bold text-foreground tabular-nums w-8 text-right">{total}</span>
-              {d.planned > 0 && (
-                <span className="text-[9px] text-muted-foreground tabular-nums w-10">(+{d.planned})</span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      <div className="mt-2 flex gap-4 text-[10px] text-muted-foreground">
-        <span>■ 진한 = 보유 중</span>
-        <span className="opacity-40">■ 흐린 = 추가 예정</span>
-      </div>
-    </div>
-  );
-}
-
-/* ── Element distribution summary ── */
+/* ── Element distribution bar chart with element-specific colors ── */
 function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
   const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
   const all = useMemo(() => [...owned, ...planned], [owned, planned]);
@@ -434,6 +386,7 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
           const total = d.owned + d.planned;
           const ownedPct = (d.owned / maxCount) * 100;
           const plannedPct = (d.planned / maxCount) * 100;
+          const color = ELEMENT_BAR_COLORS[el] || '#6b7280';
           return (
             <div key={el} className="flex items-center gap-2">
               <div className="flex items-center gap-1 w-20 justify-end">
@@ -442,10 +395,10 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
               </div>
               <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
                 {d.owned > 0 && (
-                  <div className="h-full bg-primary transition-all" style={{ width: `${ownedPct}%` }} />
+                  <div className="h-full transition-all" style={{ width: `${ownedPct}%`, backgroundColor: color }} />
                 )}
                 {d.planned > 0 && (
-                  <div className="h-full bg-primary/40 transition-all" style={{ width: `${plannedPct}%` }} />
+                  <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />
                 )}
               </div>
               <span className="text-xs font-bold text-foreground tabular-nums w-8 text-right">{total}</span>
@@ -478,13 +431,12 @@ function ClassLineSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }
   }, [heroesOnly, ownedSet]);
 
   const maxCount = Math.max(...Object.values(data).map(d => d.owned + d.planned), 1);
-
   if (heroesOnly.length === 0) return null;
 
   const clBarColors: Record<string, string> = {
-    '전사': 'bg-red-500',
-    '로그': 'bg-lime-500',
-    '주문술사': 'bg-sky-500',
+    '전사': '#ef4444',
+    '로그': '#84cc16',
+    '주문술사': '#38bdf8',
   };
 
   return (
@@ -496,16 +448,16 @@ function ClassLineSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }
           const total = d.owned + d.planned;
           const ownedPct = (d.owned / maxCount) * 100;
           const plannedPct = (d.planned / maxCount) * 100;
-          const bg = clBarColors[cl] || 'bg-secondary';
+          const color = clBarColors[cl] || '#6b7280';
           return (
             <div key={cl} className="flex items-center gap-2">
               <span className={`text-xs font-medium w-20 text-right ${CLASS_LINE_COLORS[cl]}`}>{cl}</span>
               <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
                 {d.owned > 0 && (
-                  <div className={`h-full ${bg} transition-all`} style={{ width: `${ownedPct}%` }} />
+                  <div className="h-full transition-all" style={{ width: `${ownedPct}%`, backgroundColor: color }} />
                 )}
                 {d.planned > 0 && (
-                  <div className={`h-full ${bg} opacity-40 transition-all`} style={{ width: `${plannedPct}%` }} />
+                  <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />
                 )}
               </div>
               <span className="text-xs font-bold text-foreground tabular-nums w-8 text-right">{total}</span>
@@ -515,6 +467,63 @@ function ClassLineSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+/* ── Position distribution chart ── */
+function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
+  const all = useMemo(() => [...owned, ...planned], [owned, planned]);
+  const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
+
+  const posData = useMemo(() => {
+    const map: Record<string, { owned: number; planned: number }> = {};
+    all.forEach(h => {
+      const pos = h.position || '미지정';
+      if (!map[pos]) map[pos] = { owned: 0, planned: 0 };
+      if (ownedSet.has(h.id)) map[pos].owned++;
+      else map[pos].planned++;
+    });
+    return Object.entries(map).sort(([, a], [, b]) => (b.owned + b.planned) - (a.owned + a.planned));
+  }, [all, ownedSet]);
+
+  if (posData.length === 0) return null;
+  const maxCount = Math.max(...posData.map(([, d]) => d.owned + d.planned), 1);
+
+  return (
+    <div className="card-fantasy p-3">
+      <h3 className="text-sm font-semibold text-primary mb-3">포지션 분포</h3>
+      <div className="space-y-2">
+        {posData.map(([pos, d]) => {
+          const total = d.owned + d.planned;
+          const ownedPct = (d.owned / maxCount) * 100;
+          const plannedPct = (d.planned / maxCount) * 100;
+          const color = POSITION_BAR_STYLE[pos] || '#6b7280';
+          return (
+            <div key={pos} className="flex items-center gap-2">
+              <span className={`text-xs font-medium w-20 text-right ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>
+                {pos}
+              </span>
+              <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
+                {d.owned > 0 && (
+                  <div className="h-full transition-all" style={{ width: `${ownedPct}%`, backgroundColor: color }} />
+                )}
+                {d.planned > 0 && (
+                  <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />
+                )}
+              </div>
+              <span className="text-xs font-bold text-foreground tabular-nums w-8 text-right">{total}</span>
+              {d.planned > 0 && (
+                <span className="text-[9px] text-muted-foreground tabular-nums w-10">(+{d.planned})</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-2 flex gap-4 text-[10px] text-muted-foreground">
+        <span>■ 진한 = 보유 중</span>
+        <span style={{ opacity: 0.4 }}>■ 흐린 = 추가 예정</span>
       </div>
     </div>
   );
@@ -536,48 +545,47 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
     return heroes.filter(h => idSet.has(h.id));
   }, [heroes, plannedIds]);
 
-  const updateOwned = useCallback((ids: string[]) => {
-    setOwnedIds(ids);
-    saveIds(STORAGE_KEY_OWNED, ids);
-  }, []);
-  const updatePlanned = useCallback((ids: string[]) => {
-    setPlannedIds(ids);
-    saveIds(STORAGE_KEY_PLANNED, ids);
+  const handlePickerConfirm = useCallback((newOwned: string[], newPlanned: string[]) => {
+    setOwnedIds(newOwned);
+    setPlannedIds(newPlanned);
+    saveIds(STORAGE_KEY_OWNED, newOwned);
+    saveIds(STORAGE_KEY_PLANNED, newPlanned);
   }, []);
 
   const removeOwned = useCallback((id: string) => {
-    updateOwned(ownedIds.filter(i => i !== id));
-  }, [ownedIds, updateOwned]);
+    const next = ownedIds.filter(i => i !== id);
+    setOwnedIds(next);
+    saveIds(STORAGE_KEY_OWNED, next);
+  }, [ownedIds]);
+
   const removePlanned = useCallback((id: string) => {
-    updatePlanned(plannedIds.filter(i => i !== id));
-  }, [plannedIds, updatePlanned]);
+    const next = plannedIds.filter(i => i !== id);
+    setPlannedIds(next);
+    saveIds(STORAGE_KEY_PLANNED, next);
+  }, [plannedIds]);
 
   return (
     <div className="space-y-4">
-      {/* ── 보유 중 ── */}
-      <GroupTable
+      {/* ── 보유 중 표 ── */}
+      <MatrixGrid
+        heroes={ownedHeroes}
         label="보유 중"
         icon={<Users size={14} />}
-        heroes={ownedHeroes}
         onAdd={() => setPickerTarget('owned')}
-        onRemove={removeOwned}
-        accentClass="bg-primary text-primary-foreground hover:bg-primary/90"
+        accentClass="bg-emerald-600 text-white hover:bg-emerald-700"
       />
 
-      {/* ── 추가 예정 ── */}
-      <GroupTable
+      {/* ── 추가 예정 표 ── */}
+      <MatrixGrid
+        heroes={plannedHeroes}
         label="추가 예정"
         icon={<TrendingUp size={14} />}
-        heroes={plannedHeroes}
         onAdd={() => setPickerTarget('planned')}
-        onRemove={removePlanned}
-        accentClass="bg-accent text-accent-foreground hover:bg-accent/90"
+        accentClass="bg-amber-600 text-white hover:bg-amber-700"
+        isPlanned
       />
 
-      {/* ── 매트릭스 표 ── */}
-      <MatrixTable owned={ownedHeroes} planned={plannedHeroes} />
-
-      {/* ── 전체 분포 (합산) ── */}
+      {/* ── 전체 분포 ── */}
       {(ownedHeroes.length > 0 || plannedHeroes.length > 0) && (
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-primary border-b border-border pb-1">
@@ -597,9 +605,10 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
           open
           onClose={() => setPickerTarget(null)}
           allHeroes={heroes}
-          selectedIds={pickerTarget === 'owned' ? ownedIds : plannedIds}
-          excludeIds={pickerTarget === 'owned' ? plannedIds : ownedIds}
-          onConfirm={ids => pickerTarget === 'owned' ? updateOwned(ids) : updatePlanned(ids)}
+          ownedIds={ownedIds}
+          plannedIds={plannedIds}
+          target={pickerTarget}
+          onConfirm={handlePickerConfirm}
           title={pickerTarget === 'owned' ? '보유 중 영웅 선택' : '추가 예정 영웅 선택'}
         />
       )}
