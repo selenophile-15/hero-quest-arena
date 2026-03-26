@@ -1450,7 +1450,7 @@ export default function QuestSimulation() {
                             const threat = hero.threat || 1;
                             const targetChance = totalThreat > 0 ? (threat / totalThreat) * 100 : 0;
                             return (
-                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono">
+                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm">
                                 <span className={targetChance >= 40 ? 'text-red-400' : targetChance >= 25 ? 'text-yellow-400' : 'text-green-400'}>
                                   {targetChance.toFixed(1)}%
                                 </span>
