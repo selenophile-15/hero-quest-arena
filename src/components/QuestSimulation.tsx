@@ -1311,15 +1311,15 @@ export default function QuestSimulation() {
                 </tr>
                 {/* Row: Name */}
                 <tr className="border-b border-border/30">
-                  <td className="py-1 px-1.5 text-muted-foreground">이름</td>
+                  <td className="py-1 px-1.5 text-foreground/70 text-sm">이름</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     return (
                       <td key={hero?.id || `name-empty-${slotIdx}`} className="text-center py-1">
                         {hero && (
                           <div>
-                            <div className="text-xs text-foreground font-medium truncate">{hero.name}</div>
-                            <div className="text-[10px] text-muted-foreground">{hero.heroClass || hero.championName || ''}</div>
+                            <div className="text-sm text-foreground font-medium truncate">{hero.name}</div>
+                            <div className="text-xs text-foreground/60">{hero.heroClass || hero.championName || ''}</div>
                           </div>
                         )}
                       </td>
