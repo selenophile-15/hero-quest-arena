@@ -35,6 +35,18 @@ const CLASS_LINE_SHADOW: Record<string, string> = {
   '주문술사': '0 0 12px rgba(56,189,248,0.3)',
 };
 
+const POSITION_BG_COLORS: Record<string, string> = {
+  '퓨어 탱커': 'bg-blue-500',
+  '회피 탱커': 'bg-emerald-600',
+  '딜탱': 'bg-orange-500',
+  '치명 딜러': 'bg-red-500',
+  '일반 딜러': 'bg-yellow-500',
+  '회피 딜러': 'bg-cyan-500',
+  '좀비': 'bg-purple-500',
+  '첫 턴 극딜': 'bg-pink-500',
+  '기타': 'bg-secondary',
+};
+
 const CLASS_LINE_ORDER: Record<string, number> = { '전사': 0, '로그': 1, '주문술사': 2 };
 
 const JOB_ORDER: Record<string, number> = {};
