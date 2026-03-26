@@ -1015,7 +1015,7 @@ export default function QuestSimulation() {
                         <div className="relative">
                           {rows.map(r => (
                             <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
-                              <span className={`text-[10px] font-mono font-semibold tabular-nums ${r.textClass}`}>{r.label}</span>
+                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{r.label}</span>
                             </div>
                           ))}
                         </div>
@@ -1030,18 +1030,18 @@ export default function QuestSimulation() {
                           ))}
                           {heroEntries.map(h => (
                             <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
-                              <div className="w-3.5 h-3.5 rounded-full border-2 shadow-[0_0_6px_rgba(255,255,255,0.5)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
+                              <div className="w-4 h-4 rounded-full border-[2.5px] shadow-[0_0_8px_rgba(255,255,255,0.6)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
                             </div>
                           ))}
                         </div>
-                        <div className="relative ml-1">
+                        <div className="relative ml-1.5">
                           {rows.map(r => (
-                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[10px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
-                              <span className={`text-[9px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
+                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1.5" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                              <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          <svg className="absolute inset-0 overflow-visible" style={{ left: '60px', width: 'calc(100% - 60px)', height: '100%' }}>
+                          <svg className="absolute inset-0 overflow-visible" style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}>
                             {heroLayout.map(h => {
                               const yPin = barH - (h.pinPct / 100) * barH;
                               const yLabel = barH - (h.labelPct / 100) * barH;
@@ -1050,9 +1050,9 @@ export default function QuestSimulation() {
                             })}
                           </svg>
                           {heroLayout.map(h => (
-                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '90px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[10px] font-semibold truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
-                              <span className="text-[9px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
+                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '100px', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[11px] font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                              <span className="text-[10px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
                             </div>
