@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Swords, Shield, Trophy } from "lucide-react";
 import selenofilLogo from "@/assets/selenofil-logo.png";
 import landingBg from "@/assets/landing-bg.jpg";
+import featureList from "@/assets/feature-list.jpg";
+import featureQuest from "@/assets/feature-quest.jpg";
+import featureRanking from "@/assets/feature-ranking.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -27,7 +30,7 @@ const Index = () => {
         const s = document.createElement('div');
         const size = Math.random() * 2 + 0.5;
         const brightness = Math.random() > 0.9 ? 1 : Math.random() * 0.6 + 0.1;
-        s.style.cssText = `position:absolute;background:#fff;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*60}%;width:${size}px;height:${size}px;animation:twinkle ${2+Math.random()*5}s ease-in-out infinite;animation-delay:${Math.random()*6}s;opacity:${brightness}`;
+        s.style.cssText = `position:absolute;background:#fff;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;animation:twinkle ${2+Math.random()*5}s ease-in-out infinite;animation-delay:${Math.random()*6}s;opacity:${brightness}`;
         starsEl.appendChild(s);
       }
     }
@@ -58,14 +61,17 @@ const Index = () => {
         setTimeout(() => star.remove(), duration * 1000 + 100);
       };
       const interval = setInterval(() => createShootingStar(), 2000 + Math.random() * 3000);
-      // Initial shooting stars
       setTimeout(createShootingStar, 500);
       setTimeout(createShootingStar, 1500);
       return () => clearInterval(interval);
     }
   }, []);
 
-  const parallaxOffset = scrollY * 0.4;
+  const features = [
+    { num: '01', title: "리스트 관리", desc: "영웅과 챔피언의 스탯을 정밀하게 관리하고 비교하세요", icon: Shield, color: '#3b82f6', img: featureList },
+    { num: '02', title: "퀘스트 시뮬레이션", desc: "던전에 파티를 보내 결과를 미리 확인하세요", icon: Swords, color: '#ef4444', img: featureQuest },
+    { num: '03', title: "랭킹", desc: "다른 플레이어와 시뮬레이션 결과를 비교하세요", icon: Trophy, color: '#eab308', img: featureRanking },
+  ];
 
   return (
     <div className="min-h-[200vh] bg-background relative overflow-hidden">
@@ -97,10 +103,6 @@ const Index = () => {
           0% { opacity: 0; letter-spacing: 0.5em; }
           100% { opacity: 1; letter-spacing: 0.2em; }
         }
-        @keyframes featureGlow {
-          0%, 100% { box-shadow: inset 0 1px 0 rgba(200,147,10,0.1), 0 0 0 rgba(200,147,10,0); }
-          50% { box-shadow: inset 0 1px 0 rgba(200,147,10,0.2), 0 0 20px rgba(200,147,10,0.05); }
-        }
         @keyframes btnShine {
           0% { left: -100%; }
           100% { left: 200%; }
@@ -118,76 +120,51 @@ const Index = () => {
         }
       `}</style>
 
-      {/* Fixed night sky background with parallax */}
-      <div className="fixed inset-0 z-0">
-        {/* Sky gradient */}
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, #0a0e1a 0%, #0d1428 30%, #111d3a 50%, #1a2a4a 70%, #1e3050 100%)'
-        }} />
-        
-        {/* Stars layer */}
-        <div ref={starsRef} className="absolute inset-0 pointer-events-none" style={{
-          transform: `translateY(${parallaxOffset * 0.2}px)`
-        }} />
-        
-        {/* Shooting stars */}
-        <div ref={shootingStarsRef} className="absolute inset-0 pointer-events-none" />
-        
-        {/* Moon */}
-        <div className="absolute pointer-events-none" style={{
-          top: `${8 + parallaxOffset * 0.05}%`,
-          right: '18%',
-          width: '80px',
-          height: '80px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, #f5f0d0 0%, #e8deb5 40%, #d4c98a 70%, transparent 100%)',
-          boxShadow: '0 0 40px rgba(245,240,208,0.4), 0 0 80px rgba(245,240,208,0.2), 0 0 120px rgba(245,240,208,0.1)',
-        }} />
-      </div>
-
-      {/* Background image - scrolls naturally with content */}
-      <div className="absolute inset-x-0 z-[1] pointer-events-none" style={{
-        top: '70vh',
-      }}>
-        <div className="relative w-full" style={{ height: '130vh' }}>
-          <img src={landingBg} alt="" className="w-full h-full object-cover" style={{ opacity: 0.7 }} />
-          {/* Top gradient blend into sky */}
-          <div className="absolute top-0 left-0 right-0 h-[40%]" style={{
-            background: 'linear-gradient(180deg, #111d3a 0%, transparent 100%)'
+      {/* Background image - single, scrolls with page */}
+      <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
+        <div className="relative w-full" style={{ height: '200vh' }}>
+          <img src={landingBg} alt="" className="w-full h-full object-cover" width={1920} height={1280} />
+          {/* Dark overlay on top portion for title readability */}
+          <div className="absolute top-0 left-0 right-0 h-[50%]" style={{
+            background: 'linear-gradient(180deg, rgba(5,8,20,0.85) 0%, rgba(10,15,30,0.6) 40%, transparent 100%)'
           }} />
-          {/* Bottom warm glow */}
-          <div className="absolute bottom-0 left-0 right-0 h-[30%]" style={{
-            background: 'linear-gradient(0deg, rgba(30,10,5,0.9) 0%, rgba(40,20,10,0.4) 40%, transparent 100%)'
+          {/* Bottom fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-[20%]" style={{
+            background: 'linear-gradient(0deg, rgba(10,10,15,0.95) 0%, transparent 100%)'
           }} />
         </div>
       </div>
 
-      {/* Rising particles (embers) - absolute so they scroll with page */}
-      <div ref={particlesRef} className="absolute inset-0 z-[3] pointer-events-none" style={{ top: '80vh', height: '120vh' }} />
+      {/* Stars overlay */}
+      <div ref={starsRef} className="fixed inset-0 z-[1] pointer-events-none" style={{
+        opacity: Math.max(0, 1 - scrollY / 1200),
+      }} />
+
+      {/* Shooting stars */}
+      <div ref={shootingStarsRef} className="fixed inset-0 z-[1] pointer-events-none" />
+
+      {/* Rising particles (embers) */}
+      <div ref={particlesRef} className="absolute inset-x-0 z-[3] pointer-events-none" style={{ top: '60vh', height: '140vh' }} />
 
       {/* ===== HERO SECTION ===== */}
       <div className="relative z-10 min-h-screen flex items-center justify-center">
         <div className="text-center px-4 py-20" style={{
-          transform: `translateY(${parallaxOffset * -0.15}px)`,
           opacity: Math.max(0, 1 - scrollY / 600),
         }}>
-          {/* Title area */}
           <div className="mb-6" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
-            {/* "셀레노필이 제작한" small label */}
-            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{ 
+            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{
               color: 'hsl(40 50% 45%)',
               animation: 'subtitleReveal 1.5s ease-out forwards',
             }}>
               Selenofil Presents
             </span>
-            {/* Logo image */}
-            <img 
-              src={selenofilLogo} 
-              alt="샵타이탄 퀘스트 시뮬레이터" 
+            <img
+              src={selenofilLogo}
+              alt="샵타이탄 퀘스트 시뮬레이터"
               className="mx-auto"
               width={500}
               height={280}
-              style={{ 
+              style={{
                 animation: 'glowPulse 4s ease-in-out infinite',
                 maxWidth: '80vw',
               }}
@@ -215,7 +192,6 @@ const Index = () => {
             시작하기
           </Button>
 
-          {/* Scroll indicator */}
           <div className="mt-20 animate-bounce opacity-40">
             <div className="w-6 h-10 rounded-full border-2 border-foreground/30 mx-auto flex justify-center pt-2">
               <div className="w-1 h-3 bg-foreground/40 rounded-full" />
@@ -225,20 +201,14 @@ const Index = () => {
       </div>
 
       {/* ===== FEATURES SECTION ===== */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 pb-32" style={{
-        marginTop: '-4rem',
-      }}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { num: '01', title: "리스트 관리", desc: "영웅과 챔피언의 스탯을 정밀하게 관리하고 비교하세요", icon: Shield, color: '#3b82f6' },
-            { num: '02', title: "퀘스트 시뮬레이션", desc: "던전에 파티를 보내 결과를 미리 확인하세요", icon: Swords, color: '#ef4444' },
-            { num: '03', title: "랭킹", desc: "다른 플레이어와 시뮬레이션 결과를 비교하세요", icon: Trophy, color: '#eab308' },
-          ].map((f, i) => {
+      <div className="relative z-10 max-w-5xl mx-auto px-6 pb-32" style={{ marginTop: '-4rem' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {features.map((f, i) => {
             const Icon = f.icon;
             const isHovered = hoveredFeature === i;
             return (
-              <div 
-                key={f.title} 
+              <div
+                key={f.title}
                 className="relative cursor-pointer select-none"
                 onMouseEnter={() => setHoveredFeature(i)}
                 onMouseLeave={() => setHoveredFeature(null)}
@@ -248,40 +218,50 @@ const Index = () => {
                   transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 }}
               >
-                <div 
-                  className="rounded-xl p-6 text-center relative overflow-hidden"
+                <div
+                  className="rounded-xl overflow-hidden relative"
                   style={{
-                    background: isHovered 
-                      ? `linear-gradient(135deg, rgba(${f.color === '#3b82f6' ? '59,130,246' : f.color === '#ef4444' ? '239,68,68' : '234,179,8'},0.15), hsl(230 15% 14%))` 
-                      : 'hsl(230 15% 12%)',
-                    border: `1px solid ${isHovered ? f.color + '60' : 'hsl(230 12% 22%)'}`,
-                    boxShadow: isHovered 
-                      ? `0 8px 32px rgba(0,0,0,0.3), 0 0 20px ${f.color}20, inset 0 1px 0 ${f.color}30`
-                      : '0 2px 8px rgba(0,0,0,0.2)',
-                    animation: 'featureGlow 4s ease-in-out infinite',
-                    animationDelay: `${i * 0.5}s`,
+                    border: `1px solid ${isHovered ? f.color + '80' : 'hsl(230 12% 22%)'}`,
+                    boxShadow: isHovered
+                      ? `0 8px 32px rgba(0,0,0,0.4), 0 0 24px ${f.color}30`
+                      : '0 2px 8px rgba(0,0,0,0.3)',
                     transition: 'all 0.3s ease',
                   }}
                 >
-                  {/* Top accent line */}
-                  <div className="absolute top-0 left-0 right-0 h-[2px]" style={{
-                    background: `linear-gradient(90deg, transparent, ${f.color}${isHovered ? 'cc' : '40'}, transparent)`,
-                    transition: 'all 0.3s ease',
-                  }} />
-
-                  <div className="mb-3 flex justify-center">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
-                      background: `${f.color}20`,
-                      border: `1px solid ${f.color}30`,
+                  {/* Card background image */}
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={f.img}
+                      alt={f.title}
+                      className="w-full h-full object-cover transition-transform duration-500"
+                      loading="lazy"
+                      style={{
+                        transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+                      }}
+                    />
+                    <div className="absolute inset-0" style={{
+                      background: `linear-gradient(180deg, transparent 30%, rgba(15,15,25,0.95) 100%)`,
+                    }} />
+                    {/* Top accent line */}
+                    <div className="absolute top-0 left-0 right-0 h-[2px]" style={{
+                      background: `linear-gradient(90deg, transparent, ${f.color}${isHovered ? 'cc' : '40'}, transparent)`,
                       transition: 'all 0.3s ease',
-                      transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                    }} />
+                    {/* Icon overlay */}
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center" style={{
+                      background: 'rgba(0,0,0,0.5)',
+                      border: `1px solid ${f.color}40`,
                     }}>
-                      <Icon className="w-5 h-5" style={{ color: f.color, transition: 'all 0.3s ease' }} />
+                      <Icon className="w-4 h-4" style={{ color: f.color }} />
                     </div>
                   </div>
-                  <span className="font-display text-[10px] tracking-[0.3em] block mb-2" style={{ color: f.color + '60' }}>{f.num}</span>
-                  <h3 className="text-sm mb-2 font-bold" style={{ color: isHovered ? f.color : 'hsl(40 85% 55%)' , transition: 'color 0.3s ease' }}>{f.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
+
+                  {/* Card content */}
+                  <div className="p-4" style={{ background: 'hsl(230 15% 10%)' }}>
+                    <span className="font-display text-[10px] tracking-[0.3em] block mb-1" style={{ color: f.color + '60' }}>{f.num}</span>
+                    <h3 className="text-sm mb-1.5 font-bold" style={{ color: isHovered ? f.color : 'hsl(40 85% 55%)', transition: 'color 0.3s ease' }}>{f.title}</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">{f.desc}</p>
+                  </div>
                 </div>
               </div>
             );

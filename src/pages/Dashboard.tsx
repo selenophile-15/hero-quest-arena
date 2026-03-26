@@ -16,10 +16,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
   const [listResetKey, setListResetKey] = useState(0);
 
-  const handleLogoClick = () => {
-    setActiveTab('list');
-    setListResetKey(k => k + 1);
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-fantasy-gradient">
