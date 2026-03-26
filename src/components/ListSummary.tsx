@@ -200,7 +200,7 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
           </>
         )}
         {isInOther && (
-          <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded font-medium ${other === 'owned' ? 'bg-yellow-500/30 text-yellow-300' : 'bg-amber-600/30 text-amber-400'}`}>
+          <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded font-medium ${other === 'owned' ? 'bg-yellow-500/30 text-yellow-300' : 'bg-lime-500/30 text-lime-300'}`}>
             {other === 'owned' ? '보유 중' : '추가 예정'}
           </span>
         )}
