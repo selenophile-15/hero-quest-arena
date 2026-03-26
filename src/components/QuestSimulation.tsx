@@ -1916,6 +1916,7 @@ export default function QuestSimulation() {
           </div>
 
         </div>
+        </>
       )}
       </div> {/* end data-quest-screenshot */}
 
