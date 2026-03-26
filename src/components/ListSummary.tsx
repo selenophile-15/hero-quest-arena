@@ -35,7 +35,7 @@ const CLASS_LINE_COLORS: Record<string, string> = {
 
 const POSITION_COLORS: Record<string, string> = {
   '퓨어 탱커': 'bg-blue-500',
-  '회피 탱커': 'bg-teal-500',
+  '회피 탱커': 'bg-emerald-600',
   '딜탱': 'bg-orange-500',
   '치명 딜러': 'bg-red-500',
   '일반 딜러': 'bg-yellow-500',
@@ -45,7 +45,7 @@ const POSITION_COLORS: Record<string, string> = {
 };
 const POSITION_TEXT_COLORS: Record<string, string> = {
   '퓨어 탱커': 'text-blue-400',
-  '회피 탱커': 'text-teal-400',
+  '회피 탱커': 'text-emerald-400',
   '딜탱': 'text-orange-400',
   '치명 딜러': 'text-red-400',
   '일반 딜러': 'text-yellow-400',
@@ -56,7 +56,7 @@ const POSITION_TEXT_COLORS: Record<string, string> = {
 };
 const POSITION_BAR_STYLE: Record<string, string> = {
   '퓨어 탱커': '#3b82f6',
-  '회피 탱커': '#14b8a6',
+  '회피 탱커': '#059669',
   '딜탱': '#f97316',
   '치명 딜러': '#ef4444',
   '일반 딜러': '#eab308',
@@ -308,12 +308,11 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
   const grandTotal = all.length;
 
   return (
-    <div className="card-fantasy p-4">
+    <div className="card-fantasy p-4" style={{ backgroundColor: 'hsl(230 15% 14%)' }}>
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-primary flex items-center gap-1.5">
           <Users size={14} />
           전체
-          <span className="text-muted-foreground font-normal ml-1">({all.length}명)</span>
         </h3>
         <Button size="sm" onClick={onAdd} className="gap-1 bg-yellow-500 text-black hover:bg-yellow-400 font-semibold">
           <Plus size={14} /> 추가
@@ -321,19 +320,18 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-xs border-collapse">
+        <table className="w-full text-xs border-collapse table-fixed">
           <thead>
             <tr className="border-b-2 border-border">
-              <th className="py-2 px-2 text-center text-muted-foreground font-medium w-20"></th>
+              <th className="py-2 px-2 text-center text-muted-foreground font-medium" style={{ width: '80px' }}></th>
               {ELEMENT_ORDER.map(el => (
-                <th key={el} className="py-2 px-1 text-center border-l border-border" style={{ minWidth: '110px' }}>
+                <th key={el} className="py-2 px-1 text-center border-l border-border">
                   <div className="flex items-center justify-center gap-1">
                     <ElementIcon element={el} size={16} />
                     <span className="text-foreground font-medium">{el}</span>
                   </div>
                 </th>
               ))}
-              <th className="py-2 px-2 text-center text-muted-foreground font-medium w-14 border-l border-border">인원</th>
             </tr>
           </thead>
           <tbody>
@@ -343,7 +341,6 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
               const maxInRow = Math.max(...ELEMENT_ORDER.map(el => matrix[cl]?.[el]?.length || 0));
               const capacity = 4;
               const dynamicH = maxInRow > capacity ? maxInRow * 26 + 12 : rowH;
-              // Add thicker border before champion row
               const topBorderClass = isChamp ? 'border-t-2 border-border' : (clIdx > 0 ? 'border-t border-border' : '');
               return (
                 <tr key={cl} className={topBorderClass}>
@@ -357,16 +354,15 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
                         <div className="flex flex-col items-center justify-center gap-0.5 h-full">
                           {cells.map(h => {
                             const isPlanned = plannedIds.has(h.id);
+                            const pos = h.position || '미지정';
                             return (
-                              <div key={h.id} className={`flex items-center gap-1 justify-center ${isPlanned ? 'opacity-50' : ''}`}>
+                              <div key={h.id} className={`flex items-center gap-1 justify-center ${isPlanned ? 'italic opacity-60' : ''}`}>
                                 <span className="text-[11px] font-semibold text-white">
                                   {h.type === 'hero' ? h.heroClass : (h.championName || h.name)}
                                 </span>
-                                {h.position && (
-                                  <span className={`text-[10px] font-bold px-1 rounded ${POSITION_COLORS[h.position] || 'bg-secondary'} text-white`}>
-                                    {h.position}
-                                  </span>
-                                )}
+                                <span className={`text-[10px] font-bold px-1 rounded text-white ${pos === '미지정' ? 'bg-gray-600' : (POSITION_COLORS[pos] || 'bg-secondary')}`}>
+                                  {pos}
+                                </span>
                               </div>
                             );
                           })}
@@ -374,24 +370,9 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
                       </td>
                     );
                   })}
-                  <td className="py-2 px-2 text-center font-bold text-foreground text-sm border-l border-border">
-                    {rowTotals[cl] || 0}
-                  </td>
                 </tr>
               );
             })}
-            {/* Column totals */}
-            <tr className="border-t-2 border-border bg-secondary/10">
-              <td className="py-2 px-2 font-semibold text-muted-foreground text-center">인원</td>
-              {ELEMENT_ORDER.map(el => (
-                <td key={el} className="py-2 px-1 text-center font-bold text-foreground border-l border-border">
-                  {colTotals[el] || 0}
-                </td>
-              ))}
-              <td className="py-2 px-2 text-center font-bold text-primary border-l border-border">
-                {grandTotal}
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -420,9 +401,9 @@ function DistBar({ label, labelNode, owned, planned, maxCount, color }: {
         {owned > 0 && <div className="h-full transition-all" style={{ width: `${ownedPct}%`, backgroundColor: color }} />}
         {planned > 0 && <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />}
       </div>
-      <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{total}</span>
-      <span className="text-[9px] text-muted-foreground tabular-nums w-10 text-right">
-        {planned > 0 ? `(+${planned})` : ''}
+      <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{owned}</span>
+      <span className="text-xs font-bold text-muted-foreground tabular-nums w-6 text-right">
+        {planned > 0 ? `${planned}` : ''}
       </span>
     </div>
   );
