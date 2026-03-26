@@ -720,7 +720,7 @@ export default function QuestSimulation() {
               </button>
             )}
           </div>
-          <div className="card-fantasy p-4 relative min-h-[400px]">
+          <div className="card-fantasy p-4 pb-8 relative min-h-[440px]">
             {/* Region icon - top left, bigger */}
             {currentRegion && (
               <button
