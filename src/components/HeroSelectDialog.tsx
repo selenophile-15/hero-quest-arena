@@ -566,7 +566,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
               })}
             </div>
           )}
-        </ScrollArea>
+        </div>
 
         {/* ─── Footer ──────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-border shrink-0">
