@@ -990,7 +990,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               return (
                 <div
                   key={i}
-                  className="flex flex-col items-center gap-1 cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer"
                   onClick={() => {
                     if (heroClass) {
                       setEquipInitialSlot(i);
@@ -998,30 +998,31 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     }
                   }}
                 >
-                  <div className="text-[10px] font-semibold text-primary/80 bg-primary/10 w-full text-center rounded-t py-0.5">
-                    {slotLabel}
+                  {/* Slot label - elevated above glow */}
+                  <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
+                    <span className="text-sm font-bold text-primary tracking-wide">{slotLabel}</span>
                   </div>
 
                   <div
-                    className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
+                    className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
                     style={equipItem ? {
                       background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                       boxShadow: QUALITY_SHADOW_COLOR[quality],
                     } : { background: 'hsl(var(--secondary) / 0.3)' }}
                   >
+                    {/* Tier + Relic row */}
+                    {equipItem && (
+                      <div className="w-full flex items-center justify-between px-1.5 pt-1">
+                        <span className="text-sm font-bold text-foreground/90 bg-background/80 rounded px-1.5 py-0.5">T{equipItem.tier}</span>
+                        {equipItem?.relic && (
+                          <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-5 h-5"
+                            onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        )}
+                      </div>
+                    )}
+
                     {/* Item image area */}
-                    <div className="w-full flex items-center justify-center relative" style={{ aspectRatio: '1' }}>
-                      {/* Tier badge top-left */}
-                      {equipItem && (
-                        <span className="absolute top-0.5 left-0.5 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">
-                          T{equipItem.tier}
-                        </span>
-                      )}
-                      {/* Relic icon top-right, bigger */}
-                      {equipItem?.relic && (
-                        <img src="/images/special/icon_global_artifact.webp" alt="유물" className="absolute top-0.5 right-0.5 w-5 h-5 z-10"
-                          onError={e => { e.currentTarget.style.display = 'none'; }} />
-                      )}
+                    <div className="w-full flex items-center justify-center" style={{ aspectRatio: '1' }}>
                       {equipItem?.imagePath ? (
                         <img src={equipItem.imagePath} alt={equipItem.name} className="w-4/5 h-4/5 object-contain"
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
@@ -1066,7 +1067,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                       </div>
                     </div>
 
-                    {/* Stats inside the glow box - use final calculated values */}
+                    {/* Stats */}
                     {equipItem?.stats && equipItem.stats.length > 0 && (
                       <div className="w-full px-1 pb-1 border-t border-border/20 mt-0.5">
                         <div className="flex items-center justify-center gap-1.5 pt-0.5">
@@ -1076,7 +1077,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                             if (isQuiverZero) {
                               statVal = 0;
                             } else if (slotCalc) {
-                              // Use final calculated values from equipStatCalculator
                               if (stat.key === '장비_공격력') statVal = slotCalc.finalAtk || 0;
                               else if (stat.key === '장비_방어력') statVal = slotCalc.finalDef || 0;
                               else if (stat.key === '장비_체력') statVal = slotCalc.finalHp || 0;
@@ -1100,9 +1100,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     )}
                   </div>
 
-                  {/* Item name below with accent background */}
-                  <div className={`w-full text-center rounded-b ${equipItem ? 'bg-primary/10' : ''}`}>
-                    <p className={`text-sm truncate leading-tight font-medium px-0.5 py-0.5 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  {/* Item name - elevated style */}
+                  <div className={`w-full text-center rounded-b py-1 ${equipItem ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
+                    <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {equipItem?.name || '-'}
                     </p>
                   </div>

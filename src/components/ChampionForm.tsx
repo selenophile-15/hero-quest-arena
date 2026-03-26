@@ -426,27 +426,32 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
     return (
       <div
         key={slotIdx}
-        className="flex flex-col items-center gap-1 cursor-pointer"
+        className="flex flex-col items-center cursor-pointer"
         onClick={() => {
           if (!equipDialogType) setEquipSlotsSnapshot(JSON.parse(JSON.stringify(equipmentSlots)));
           setEquipDialogType(slotIdx === 0 ? 'familiar' : 'aurasong');
           setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual);
         }}
       >
-        <div className="text-[10px] font-semibold text-primary/80 bg-primary/10 w-full text-center rounded-t py-0.5">
-          {SLOT_LABELS[slotIdx]}
+        {/* Slot label - elevated above glow */}
+        <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
+          <span className="text-sm font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
         </div>
         <div
-          className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
+          className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
           style={equipItem ? {
             background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
             boxShadow: QUALITY_SHADOW_COLOR[quality],
           } : { background: 'hsl(var(--secondary) / 0.3)' }}
         >
+          {/* Tier badge */}
+          {equipItem && (
+            <div className="w-full flex items-center justify-between px-1.5 pt-1">
+              <span className="text-sm font-bold text-foreground/90 bg-background/80 rounded px-1.5 py-0.5">T{equipItem.tier}</span>
+              {equipItem?.relic && <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+            </div>
+          )}
           <div className="w-full flex items-center justify-center relative" style={{ aspectRatio: '1' }}>
-            {equipItem && (
-              <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">T{equipItem.tier}</span>
-            )}
             {equipItem?.imagePath ? (
               <img src={equipItem.imagePath} alt={equipItem.name} className="w-4/5 h-4/5 object-contain"
                 onError={e => { e.currentTarget.style.display = 'none'; }} />
@@ -476,7 +481,6 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           </div>
         </div>
         {(() => {
-          // Use calculated equip stats if available
           const calcSlot = champCalcResult?.equipSlots?.[slotIdx];
           const hasCalcStats = calcSlot && calcSlot.itemName;
           const displayStats = hasCalcStats ? [
@@ -499,7 +503,12 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             </div>
           ) : null;
         })()}
-        <p className="text-sm text-foreground truncate w-full text-center leading-tight font-medium mt-0.5">{equipItem?.name || '-'}</p>
+        {/* Item name - elevated style */}
+        <div className={`w-full text-center rounded-b py-1 mt-0.5 ${equipItem ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
+          <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {equipItem?.name || '-'}
+          </p>
+        </div>
       </div>
     );
   };
