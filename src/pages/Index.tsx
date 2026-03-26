@@ -156,7 +156,7 @@ const Index = () => {
               color: 'hsl(40 50% 45%)',
               animation: 'subtitleReveal 1.5s ease-out forwards',
             }}>
-              Selenofil Presents
+              셀레노필 제작
             </span>
             <img
               src={selenofilLogo}
