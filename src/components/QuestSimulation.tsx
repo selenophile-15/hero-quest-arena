@@ -136,11 +136,20 @@ const DEFAULT_TIME_SETTINGS: TimeSettingItem[] = [
   { id: 'rest_guild_boost', label: '길드) 퀘스트, 휴식 부스트', category: 'rest', enabled: false, value: null },
 ];
 
+type QuestSubTab = 'simulation' | 'saved' | 'compare';
+
+const QUEST_SUB_TABS = [
+  { id: 'simulation' as const, label: '퀘스트 시뮬레이션', icon: Swords },
+  { id: 'saved' as const, label: '내 결과', icon: ListChecks },
+  { id: 'compare' as const, label: '비교 분석실', icon: GitCompare },
+];
+
 export default function QuestSimulation() {
   const allHeroes = getHeroes();
   const [questDataMap, setQuestDataMap] = useState<Record<string, QuestData>>({});
   const [commonData, setCommonData] = useState<QuestCommon | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subTab, setSubTab] = useState<QuestSubTab>('simulation');
 
   // Selection state
   const [selectedQuestType, setSelectedQuestType] = useState<string>('');
