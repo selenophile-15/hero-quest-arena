@@ -927,14 +927,22 @@ export default function HeroList() {
                   {/* Common skills */}
                   {hero.skills?.slice(1, 5).map((sk, idx) => {
                     const skData = commonSkillsData[sk];
-                    const skLevel = (hero as any).skillLevels?.[idx + 1] ?? 1;
+                    // Calculate skill level from element value thresholds
+                    let skLevel = 1;
+                    if (skData) {
+                      const skThresholds: number[] = skData['원소_기준치']?.map((v: unknown) => Number(v)).filter((v: number) => Number.isFinite(v)) || [];
+                      for (let t = 0; t < skThresholds.length; t++) {
+                        if (elementVal >= skThresholds[t]) skLevel = t + 1;
+                      }
+                    }
+                    const skLevelName = skData?.['레벨별_스킬명']?.[skLevel - 1] || sk;
                     return (
                       <div key={idx} className="flex items-start gap-2">
                         <img src={getSkillImagePath(sk)} alt="" className="w-10 h-10 flex-shrink-0"
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1">
-                            <p className="text-xs font-semibold text-foreground truncate">{sk}</p>
+                            <p className="text-xs font-semibold text-foreground truncate">{skLevelName}</p>
                             <span className={`text-[10px] px-1 py-0.5 rounded ${skillLevelColorClass(skLevel)}`}>Lv.{skLevel}</span>
                           </div>
                           {skData?.[`${skLevel}레벨`] && (
