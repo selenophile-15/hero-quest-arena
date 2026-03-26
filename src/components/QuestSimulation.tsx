@@ -197,7 +197,7 @@ export default function QuestSimulation() {
           map[f.key] = questResults[i];
         });
         setQuestDataMap(map);
-        // Preload all region/sub-area images with fetch for better caching
+        // Preload all region/sub-area images + hero job/champion images
         const preloadImages: string[] = [];
         Object.values(map).forEach((qd: QuestData) => {
           qd.regions.forEach(r => {
@@ -206,15 +206,28 @@ export default function QuestSimulation() {
             if (r.boss?.image) preloadImages.push(r.boss.image);
           });
         });
-        // Preload all images in parallel
-        await Promise.all(preloadImages.map(src => 
-          new Promise<void>(resolve => {
-            const img = new Image();
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-            img.src = src;
-          })
-        ));
+        // Preload hero job icons and illustrations
+        allHeroes.forEach(h => {
+          if (h.type === 'champion') {
+            const p = getChampionImagePath(h.championName || h.name);
+            if (p) preloadImages.push(p);
+          } else if (h.heroClass) {
+            const p1 = getJobImagePath(h.heroClass);
+            const p2 = getJobIllustPath(h.heroClass);
+            if (p1) preloadImages.push(p1);
+            if (p2) preloadImages.push(p2);
+          }
+        });
+        // Preload booster images
+        if (commonRes?.boosters) {
+          Object.values(commonRes.boosters).forEach((b: any) => { if (b?.image) preloadImages.push(b.image); });
+        }
+        // Deduplicate and preload all in parallel (non-blocking)
+        const unique = [...new Set(preloadImages)];
+        unique.forEach(src => {
+          const img = new Image();
+          img.src = src;
+        });
       } catch (e) {
         console.error('Failed to load quest data', e);
       } finally {
