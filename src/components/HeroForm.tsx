@@ -1073,12 +1073,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     )}
                   </div>
 
-                  {/* Item name - elevated style */}
-                  <div className={`w-full text-center rounded-b py-1 ${equipItem ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
-                    <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {equipItem?.name || '-'}
-                    </p>
-                  </div>
+                  <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5">{equipItem?.name || '-'}</p>
                 </div>
               );
             })}
