@@ -615,7 +615,7 @@ export default function QuestSimulation() {
           <Button
             variant="outline"
             size="sm"
-            className="text-xs gap-1"
+            className="text-xs gap-1 border-green-500/40 text-green-400 hover:bg-green-500/10"
             onClick={handleSaveResult}
           >
             <Save className="w-3.5 h-3.5" /> 결과 저장
@@ -623,7 +623,7 @@ export default function QuestSimulation() {
           <Button
             variant="outline"
             size="sm"
-            className="text-xs gap-1 px-2"
+            className="text-xs gap-1 px-2 border-purple-500/40 text-purple-400 hover:bg-purple-500/10"
             onClick={() => {
               import('html2canvas').then(({ default: html2canvas }) => {
                 const el = document.querySelector('[data-quest-sim]');
