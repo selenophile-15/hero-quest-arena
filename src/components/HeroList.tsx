@@ -909,21 +909,31 @@ export default function HeroList() {
               ) : (
                 <>
                   {/* Unique skill */}
-                  {hero.heroClass && uniqueSkill && (
-                    <div className="flex items-start gap-2 pb-2 border-b border-border/30">
-                      <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-10 h-10 flex-shrink-0"
-                        onError={e => { e.currentTarget.style.display = 'none'; }} />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1">
-                          <p className="text-xs font-semibold text-foreground truncate">{uniqueSkill['스킬_이름'] || hero.skills?.[0]}</p>
-                          <span className={`text-[10px] px-1 py-0.5 rounded ${skillLevelColorClass(uniqueLevelIdx + 1)}`}>Lv.{uniqueLevelIdx + 1}</span>
+                  {hero.heroClass && uniqueSkill && (() => {
+                    const uLevelNames = uniqueSkill['레벨별_스킬명'] || [];
+                    const uDescs = uniqueSkill['스킬_설명'] || [];
+                    const uCurrentName = uLevelNames[uniqueLevelIdx] || uLevelNames[0] || hero.skills?.[0] || '';
+                    const uBaseName = uLevelNames[0] || '';
+                    const uDesc = uDescs[uniqueLevelIdx] || '';
+                    return (
+                      <div className="flex items-start gap-2 pb-2 border-b border-border/30">
+                        <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-10 h-10 flex-shrink-0"
+                          onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1 flex-wrap">
+                            <p className="text-xs font-semibold text-foreground">{uCurrentName}</p>
+                            {uBaseName && uBaseName !== uCurrentName && (
+                              <span className="text-xs text-foreground/50">({uBaseName})</span>
+                            )}
+                            <span className={`text-[10px] px-1 py-0.5 rounded ${skillLevelColorClass(uniqueLevelIdx + 1)}`}>Lv.{uniqueLevelIdx + 1}</span>
+                          </div>
+                          {uDesc && (
+                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{uDesc}</p>
+                          )}
                         </div>
-                        {uniqueSkill[`${uniqueLevelIdx + 1}레벨`] && (
-                          <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{uniqueSkill[`${uniqueLevelIdx + 1}레벨`]}</p>
-                        )}
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                   {/* Common skills */}
                   {hero.skills?.slice(1, 5).map((sk, idx) => {
                     const skData = commonSkillsData[sk];
@@ -935,18 +945,25 @@ export default function HeroList() {
                         if (elementVal >= skThresholds[t]) skLevel = t + 1;
                       }
                     }
-                    const skLevelName = skData?.['레벨별_스킬명']?.[skLevel - 1] || sk;
+                    const cLevelNames = skData?.['레벨별_스킬명'] || [];
+                    const cDescs = skData?.['스킬_설명'] || [];
+                    const cCurrentName = cLevelNames[skLevel - 1] || sk;
+                    const cBaseName = cLevelNames[0] || sk;
+                    const cDesc = cDescs[skLevel - 1] || '';
                     return (
                       <div key={idx} className="flex items-start gap-2">
                         <img src={getSkillImagePath(sk)} alt="" className="w-10 h-10 flex-shrink-0"
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1">
-                            <p className="text-xs font-semibold text-foreground truncate">{skLevelName}</p>
+                          <div className="flex items-center gap-1 flex-wrap">
+                            <p className="text-xs font-semibold text-foreground">{cCurrentName}</p>
+                            {cBaseName !== cCurrentName && (
+                              <span className="text-xs text-foreground/50">({cBaseName})</span>
+                            )}
                             <span className={`text-[10px] px-1 py-0.5 rounded ${skillLevelColorClass(skLevel)}`}>Lv.{skLevel}</span>
                           </div>
-                          {skData?.[`${skLevel}레벨`] && (
-                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{skData[`${skLevel}레벨`]}</p>
+                          {cDesc && (
+                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{cDesc}</p>
                           )}
                         </div>
                       </div>
