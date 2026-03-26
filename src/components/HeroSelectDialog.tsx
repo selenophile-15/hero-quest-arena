@@ -212,7 +212,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-7xl w-[98vw] max-h-[95vh] overflow-hidden flex flex-col p-0 gap-0" hideCloseButton>
+      <DialogContent className="sm:max-w-7xl w-[98vw] h-[95vh] max-h-[95vh] overflow-hidden flex flex-col p-0 gap-0" hideCloseButton>
         {/* ─── Header ───────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
           <h2 className="text-lg text-primary font-bold">파티원 선택</h2>
