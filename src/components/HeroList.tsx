@@ -1427,10 +1427,14 @@ export default function HeroList() {
                   const isExpanded = expandedId === hero.id;
                   const isSelectedForDel = selectedForDelete.has(hero.id);
                   return (
-                    <>
-                      <tr key={hero.id} className={`border-b border-border/50 hover:bg-secondary/30 transition-colors ${isExpanded ? 'bg-secondary/20' : ''}`}>
+                    <Fragment key={hero.id}>
+                      <tr
+                        onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
+                        className={`border-b border-border/50 transition-colors cursor-pointer select-none ${
+                          isExpanded ? 'bg-primary/15' : 'hover:bg-secondary/20'
+                        }`}
+                      >
                         {activeCols.map(col => {
-                          // When expanded, hide non-essential columns
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
                             return <td key={col.key} className="px-3 py-3 text-center align-middle" />;
                           }
@@ -1441,7 +1445,7 @@ export default function HeroList() {
                           );
                         })}
                         <td className="px-3 py-3 text-center align-middle">
-                          <div className="flex items-center justify-center gap-1">
+                          <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
                             {manageMode ? (
                               <button
                                 onClick={() => toggleSelectForDelete(hero.id)}
@@ -1466,7 +1470,7 @@ export default function HeroList() {
                         </td>
                       </tr>
                       {isExpanded && renderExpandedRow(hero)}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>
