@@ -25,10 +25,10 @@ export default function Dashboard() {
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="w-full px-6 h-14 flex items-center">
           <button
-            onClick={handleLogoClick}
+            onClick={() => navigate('/')}
             className="font-display text-lg text-primary tracking-wide transition-all duration-300 hover:text-primary/80 hover:scale-105 active:scale-95"
           >
-            셀레노필
+            QUEST SIMULATOR
           </button>
         </div>
       </header>
