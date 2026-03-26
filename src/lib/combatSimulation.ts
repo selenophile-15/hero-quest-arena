@@ -1044,6 +1044,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           hp[target] -= dmg;
           simDmgTaken[target] += dmg;
           simTimesHit[target]++;
+          singleHitsTaken[target]++;
 
           if (hp[target] <= 0) {
             const survived = handleFatalBlow(target);
