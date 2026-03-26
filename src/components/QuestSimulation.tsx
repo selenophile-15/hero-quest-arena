@@ -1515,6 +1515,14 @@ export default function QuestSimulation() {
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1"
+                onClick={handleSaveResult}
+              >
+                <Save className="w-3.5 h-3.5" /> 결과 저장
+              </Button>
               <span className="text-[8px] text-muted-foreground/50">
                 {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
               </span>
