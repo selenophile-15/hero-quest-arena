@@ -1299,13 +1299,15 @@ export default function HeroList() {
                         }`}
                         style={{ height: '52px' }}
                       >
-                        {activeCols.map(col => {
+                      {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-3 text-center align-middle" />;
+                            return <td key={col.key} className="px-3 py-1 text-center align-middle"><div className="h-[36px]" /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-3 text-center align-middle">
-                              {renderCell(hero, col.key)}
+                            <td key={col.key} className="px-3 py-1 text-center align-middle">
+                              <div className="flex items-center justify-center h-[36px]">
+                                {renderCell(hero, col.key)}
+                              </div>
                             </td>
                           );
                         })}
