@@ -1295,8 +1295,123 @@ export default function QuestSimulation() {
           </div>
         </div>
 
-        {/* RIGHT: Time & Rest Settings */}
+        {/* RIGHT: Defense Reference + Time Settings */}
         <div className="w-full lg:w-72 shrink-0">
+          {/* Defense Reference */}
+          {currentQuest && (
+            <>
+              <div className="flex items-center gap-2 mb-3">
+                <Shield className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg text-foreground font-bold">방어력 기준치</h3>
+              </div>
+              <div className="card-fantasy p-3 mb-3">
+                {(() => {
+                  const defToBarPct = (def: number) => {
+                    for (let i = defThresholds.length - 1; i >= 1; i--) {
+                      const upper = defThresholds[i];
+                      const lower = defThresholds[i - 1];
+                      if (def >= lower.value) {
+                        const segPct = upper.value > lower.value ? (def - lower.value) / (upper.value - lower.value) : 0;
+                        const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
+                        const upperPos = (i / (defThresholds.length - 1)) * 100;
+                        return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
+                      }
+                    }
+                    return 0;
+                  };
+
+                  const barH = 240;
+                  const reductions = [-50, 0, 50, 70, 75];
+                  const rows = defThresholds.map((t, i) => ({
+                    key: t.key,
+                    label: t.label,
+                    value: t.value,
+                    color: t.color,
+                    textClass: t.textClass,
+                    pct: (i / (defThresholds.length - 1)) * 100,
+                    applied: Math.round(100 - reductions[i]),
+                  }));
+
+                  const getHeroColor = (heroDef: number): string => {
+                    let color = defThresholds[0].color;
+                    for (const t of defThresholds) {
+                      if (heroDef >= t.value) color = t.color;
+                    }
+                    return color;
+                  };
+
+                  const heroEntries = selectedHeroes.map((h, hi) => {
+                    const bs = buffedStats[hi];
+                    const heroDef = bs ? bs.def : (h.def || 0);
+                    const pinPct = defToBarPct(heroDef);
+                    const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
+                    const color = getHeroColor(heroDef);
+                    return { id: h.id, name: h.name, heroDef, pinPct, dmgApplied, color };
+                  });
+
+                  const n = heroEntries.length;
+                  const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
+                  const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
+                  const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
+
+                  return (
+                    <div className="px-1">
+                      <div
+                        className="relative grid grid-cols-[44px_14px_1fr] gap-x-2"
+                        style={{ height: `${barH}px` }}
+                      >
+                        <div className="relative">
+                          {rows.map(r => (
+                            <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
+                              <span className={`text-[10px] font-mono tabular-nums ${r.textClass}`}>{r.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="relative">
+                          <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                          {rows.map(r => (
+                            <div key={`tick-${r.key}`} className="absolute left-0 right-0 flex items-center pointer-events-none" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
+                              <div className="h-px w-full" style={{ backgroundColor: r.color, opacity: 0.7 }} />
+                            </div>
+                          ))}
+                          {heroEntries.map(h => (
+                            <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
+                              <div className="w-3 h-3 rounded-full border-2 shadow-md" style={{ borderColor: h.color, backgroundColor: h.color }} />
+                            </div>
+                          ))}
+                        </div>
+                        <div className="relative ml-1">
+                          {rows.map(r => (
+                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[10px] font-mono tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                              <span className={`text-[9px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
+                            </div>
+                          ))}
+                          <svg className="absolute inset-0 overflow-visible" style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}>
+                            {heroLayout.map(h => {
+                              const yPin = barH - (h.pinPct / 100) * barH;
+                              const yLabel = barH - (h.labelPct / 100) * barH;
+                              const d = `M 0 ${yPin} L 16 ${yPin} L 36 ${yLabel}`;
+                              return <path key={`line-${h.id}`} d={d} fill="none" stroke={h.color} strokeWidth={1.5} strokeOpacity={0.8} />;
+                            })}
+                          </svg>
+                          {heroLayout.map(h => (
+                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '106px', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[11px] font-mono truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                              <span className="text-[10px] font-mono tabular-nums leading-tight" style={{ color: h.color }}>
+                                {formatNumber(h.heroDef)} ({h.dmgApplied}%)
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </>
+          )}
+
           <div className="flex items-center gap-2 mb-3">
             <Clock className="w-5 h-5 text-primary" />
             <h3 className="text-lg text-foreground font-bold">시간 설정</h3>
@@ -1306,11 +1421,11 @@ export default function QuestSimulation() {
             <div className="mb-3">
               <div className="flex items-center gap-1.5 mb-2">
                 <Clock className="w-3.5 h-3.5 text-yellow-400" />
-                <span className="text-xs font-medium text-foreground">퀘스트 시간 감소</span>
+                <span className="text-sm font-medium text-foreground">퀘스트 시간 감소</span>
               </div>
               <div className="space-y-1">
                 {questTimeSettings.map(item => (
-                  <div key={item.id} className="flex items-center gap-2 text-[11px]">
+                  <div key={item.id} className="flex items-center gap-2 text-xs">
                     <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                       item.enabled ? 'border-primary bg-primary/20' : 'border-border bg-secondary/30'
                     }`}>
@@ -1327,11 +1442,11 @@ export default function QuestSimulation() {
             <div className="border-t border-border/30 pt-3">
               <div className="flex items-center gap-1.5 mb-2">
                 <Coffee className="w-3.5 h-3.5 text-green-400" />
-                <span className="text-xs font-medium text-foreground">휴식 시간 감소</span>
+                <span className="text-sm font-medium text-foreground">휴식 시간 감소</span>
               </div>
               <div className="space-y-1">
                 {restTimeSettings.map(item => (
-                  <div key={item.id} className="flex items-center gap-2 text-[11px]">
+                  <div key={item.id} className="flex items-center gap-2 text-xs">
                     <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                       item.enabled ? 'border-primary bg-primary/20' : 'border-border bg-secondary/30'
                     }`}>
