@@ -495,16 +495,13 @@ export default function HeroList() {
       const isChamp = hero.type === 'champion';
       const isPromoted = isChamp && hero.promoted;
       return (
-        <button
-          onClick={(e) => { e.stopPropagation(); setExpandedId(expandedId === hero.id ? null : hero.id); }}
-          className="font-medium text-foreground hover:text-primary transition-colors text-center w-full inline-flex items-center gap-1 justify-center"
-        >
+        <span className="font-medium text-foreground text-center w-full inline-flex items-center gap-1 justify-center">
           {isChamp && hero.championName && (
-            <img src={getChampionImagePath(hero.championName)} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />
+            <img src={getChampionImagePath(hero.championName)} alt="" className="w-5 h-5 rounded-full" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
           )}
           <span className={isPromoted ? 'text-yellow-400' : ''}>{hero.name}</span>
           {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
-        </button>
+        </span>
       );
     }
     if (colKey === 'type') {
