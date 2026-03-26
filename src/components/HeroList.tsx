@@ -1342,6 +1342,7 @@ export default function HeroList() {
                       </span>
                     </th>
                   ))}
+                  {!captureMode && (
                   <th className="px-3 py-3 text-center text-muted-foreground font-medium">
                     <div className="flex items-center justify-center gap-1">
                       <button
@@ -1372,6 +1373,7 @@ export default function HeroList() {
                       )}
                     </div>
                   </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
