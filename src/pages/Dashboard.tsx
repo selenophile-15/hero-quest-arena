@@ -3,7 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
-import { Sword, Swords, Trophy } from 'lucide-react';
+import { Sword, Swords, Trophy, Palette } from 'lucide-react';
+import { useTheme, ThemeMode } from '@/hooks/use-theme';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const TABS = [
   { id: 'list', label: '리스트 관리', icon: Sword },
@@ -13,9 +20,14 @@ const TABS = [
 
 type TabId = typeof TABS[number]['id'];
 
+const THEMES: { id: ThemeMode; label: string; desc: string }[] = [
+  { id: 'gold', label: '🔥 골드', desc: '따뜻한 황금빛' },
+  { id: 'moonlight', label: '🌙 문라이트', desc: '은은한 푸른빛 + 연보랏빛' },
+];
+
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
-  
+  const { theme, setTheme } = useTheme();
 
   const navigate = useNavigate();
 
@@ -23,13 +35,34 @@ export default function Dashboard() {
     <div className="min-h-screen bg-fantasy-gradient">
       {/* Top Bar */}
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="w-full px-6 h-14 flex items-center">
+        <div className="w-full px-6 h-14 flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
             className="font-display text-lg text-primary tracking-wide transition-all duration-300 hover:text-primary/80 hover:scale-105 active:scale-95"
           >
             QUEST SIMULATOR
           </button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
+                <Palette className="w-4 h-4" />
+                <span className="hidden sm:inline">{THEMES.find(t => t.id === theme)?.label}</span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {THEMES.map(t => (
+                <DropdownMenuItem
+                  key={t.id}
+                  onClick={() => setTheme(t.id)}
+                  className={`flex flex-col items-start gap-0.5 cursor-pointer ${theme === t.id ? 'bg-primary/10 text-primary' : ''}`}
+                >
+                  <span className="font-medium">{t.label}</span>
+                  <span className="text-xs text-muted-foreground">{t.desc}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
