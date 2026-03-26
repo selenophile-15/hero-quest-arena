@@ -639,9 +639,9 @@ export default function QuestSimulation() {
             className="text-xs gap-1 px-2 border-purple-500/40 text-purple-400 hover:bg-purple-500/10"
             onClick={() => {
               import('html2canvas').then(({ default: html2canvas }) => {
-                const el = document.querySelector('[data-quest-sim]');
+                const el = document.querySelector('[data-quest-screenshot]');
                 if (!el) return;
-                html2canvas(el as HTMLElement, { backgroundColor: '#1a1a2e' }).then(canvas => {
+                html2canvas(el as HTMLElement, { backgroundColor: '#1a1a2e', useCORS: true, scrollY: -window.scrollY }).then(canvas => {
                   const link = document.createElement('a');
                   link.download = `quest-sim-${Date.now()}.png`;
                   link.href = canvas.toDataURL();
