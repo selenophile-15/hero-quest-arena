@@ -1449,13 +1449,13 @@ export default function HeroList() {
                               </button>
                             ) : (
                               <>
-                                <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                                <button onClick={() => setEditing(hero)} className="action-btn p-1.5 rounded hover:bg-secondary text-muted-foreground hover:text-primary">
                                   <Pencil className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                                <button onClick={() => setDeleteTarget(hero)} className="action-btn p-1.5 rounded hover:bg-destructive/20 text-muted-foreground hover:text-destructive">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => handleCopyHero(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary" title="복사">
+                                <button onClick={() => handleCopyHero(hero)} className="action-btn p-1.5 rounded hover:bg-secondary text-muted-foreground hover:text-primary" title="복사">
                                   <Copy className="w-4 h-4" />
                                 </button>
                               </>
