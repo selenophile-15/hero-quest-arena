@@ -1433,61 +1433,15 @@ export default function HeroList() {
         </>
       )}
 
-      {/* Screenshot settings dialog */}
-      <AlertDialog open={screenshotDialogOpen} onOpenChange={setScreenshotDialogOpen}>
-        <AlertDialogContent className="max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle>스크린샷 설정</AlertDialogTitle>
-            <AlertDialogDescription>
-              저장할 항목을 선택하세요. 선택한 항목에 맞게 이미지가 생성됩니다.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="py-3">
-            <div className="flex flex-wrap gap-3">
-              {activeColumns.filter(c => c.key !== 'skills' && c.key !== 'equipment').map(col => (
-                <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
-                  <Checkbox
-                    checked={screenshotCols.has(col.key)}
-                    onCheckedChange={() => {
-                      setScreenshotCols(prev => {
-                        const next = new Set(prev);
-                        if (next.has(col.key)) next.delete(col.key);
-                        else next.add(col.key);
-                        return next;
-                      });
-                    }}
-                  />
-                  {col.label}
-                </label>
-              ))}
-            </div>
-            <div className="flex gap-2 mt-3">
-              <button
-                onClick={() => {
-                  const all = new Set(activeColumns.filter(c => c.key !== 'skills' && c.key !== 'equipment').map(c => c.key));
-                  setScreenshotCols(all);
-                }}
-                className="text-xs text-primary hover:underline"
-              >
-                전체 선택
-              </button>
-              <button
-                onClick={() => setScreenshotCols(new Set())}
-                className="text-xs text-muted-foreground hover:underline"
-              >
-                전체 해제
-              </button>
-            </div>
+      {/* Screenshot loading overlay */}
+      {screenshotLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+          <div className="flex items-center gap-3 bg-card px-6 py-4 rounded-lg border border-border shadow-lg">
+            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm text-foreground">스크린샷 저장 중...</span>
           </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={handleTableScreenshot} disabled={screenshotCols.size === 0}>
-              <Camera className="w-4 h-4 mr-1" />
-              저장
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        </div>
+      )}
 
       {/* Import confirmation dialog */}
       <AlertDialog open={!!importPreview && saveLoadOpen} onOpenChange={v => { if (!v) { setImportPreview(null); setSaveLoadOpen(false); } }}>
