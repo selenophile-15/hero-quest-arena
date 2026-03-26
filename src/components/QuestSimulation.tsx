@@ -581,7 +581,7 @@ export default function QuestSimulation() {
           <Button
             variant="outline"
             size="sm"
-            className="text-xs gap-1"
+            className="text-xs gap-1 border-blue-500/40 text-blue-400 hover:bg-blue-500/10"
             onClick={() => {
               if (!currentQuest || !currentRegion) return;
               const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
