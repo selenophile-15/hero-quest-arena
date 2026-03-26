@@ -158,46 +158,40 @@ const Index = () => {
         }}>
           <div className="mb-6 relative" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
             {/* Decorative star sparkles around title */}
-            <div className="absolute -top-4 -left-8 w-3 h-3 text-blue-200" style={{ animation: 'starSparkle 3s ease-in-out infinite' }}>✦</div>
-            <div className="absolute -top-2 -right-6 w-2 h-2 text-amber-200" style={{ animation: 'starSparkle 4s ease-in-out infinite 1s' }}>✧</div>
-            <div className="absolute -bottom-2 -left-4 w-2 h-2 text-blue-300/60" style={{ animation: 'starSparkle 3.5s ease-in-out infinite 0.5s' }}>✦</div>
-            <div className="absolute -bottom-4 -right-10 w-2 h-2 text-amber-300/50" style={{ animation: 'starSparkle 5s ease-in-out infinite 2s' }}>✧</div>
+            <div className="absolute -top-6 -left-12 text-blue-200 text-lg" style={{ animation: 'starSparkle 3s ease-in-out infinite' }}>✦</div>
+            <div className="absolute -top-4 -right-10 text-purple-200 text-sm" style={{ animation: 'starSparkle 4s ease-in-out infinite 1s' }}>✧</div>
+            <div className="absolute -bottom-4 -left-8 text-purple-300/60 text-sm" style={{ animation: 'starSparkle 3.5s ease-in-out infinite 0.5s' }}>✦</div>
+            <div className="absolute -bottom-6 -right-14 text-blue-300/50 text-base" style={{ animation: 'starSparkle 5s ease-in-out infinite 2s' }}>✧</div>
 
             <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{
-              color: 'hsl(220 40% 65%)',
+              color: 'hsl(260 40% 65%)',
               animation: 'subtitleReveal 1.5s ease-out forwards',
-              textShadow: '0 0 12px rgba(140,170,255,0.3)',
+              textShadow: '0 0 12px rgba(160,130,255,0.3)',
             }}>
               ⚔ 셀레노필 제작 ⚔
             </span>
 
-            {/* Main title - moonlit silver-gold gradient with starlight glow */}
-            <h1
-              className="mx-auto select-none relative"
+            {/* Game logo image */}
+            <img
+              src={titleLogo}
+              alt="샵타이탄 퀘스트 시뮬레이터"
+              className="mx-auto select-none"
+              width={1584}
+              height={672}
               style={{
-                fontFamily: "'Noto Sans KR', sans-serif",
-                fontWeight: 900,
-                fontSize: 'clamp(2.2rem, 7vw, 4rem)',
-                lineHeight: 1.15,
-                letterSpacing: '0.06em',
-                background: 'linear-gradient(180deg, #e8efff 0%, #c8d8ff 15%, #ffd97a 40%, #e8b830 60%, #c8930a 80%, #8a6010 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                textShadow: 'none',
-                filter: 'drop-shadow(0 2px 8px rgba(140,170,255,0.4)) drop-shadow(0 0 30px rgba(200,147,10,0.3))',
+                maxWidth: 'min(520px, 85vw)',
+                height: 'auto',
+                filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
                 animation: 'glowPulse 4s ease-in-out infinite',
-                maxWidth: '80vw',
               }}
-            >
-              샵타이탄<br />퀘스트 시뮬레이터
-            </h1>
+            />
 
             {/* Subtitle tagline */}
             <p className="mt-3 text-[12px] tracking-[0.15em]" style={{
-              color: 'hsl(220 30% 60%)',
-              textShadow: '0 0 8px rgba(140,170,255,0.2)',
+              color: 'hsl(260 30% 60%)',
+              textShadow: '0 0 8px rgba(160,130,255,0.2)',
             }}>
-              ─── DUNGEON QUEST SIMULATOR ───
+              ─── SHOP TITANS QUEST SIMULATOR ───
             </p>
           </div>
 
