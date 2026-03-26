@@ -815,7 +815,7 @@ export default function HeroList() {
                     </div>
                     <div className="border-t border-border/30" />
                     {/* Aura Song Skill */}
-                    <div className="flex items-start gap-2 min-h-[48px]">
+                    <div className="flex items-start gap-2 min-h-[56px]">
                       <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
                         {aurasongSkillIcon ? <img src={aurasongSkillIcon} alt="" className="w-12 h-12 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                       </div>
