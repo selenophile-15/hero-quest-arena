@@ -15,7 +15,7 @@ type TabId = typeof TABS[number]['id'];
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
-  const [listResetKey, setListResetKey] = useState(0);
+  
 
   const navigate = useNavigate();
 
