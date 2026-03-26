@@ -164,14 +164,14 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
     const isInOther = other !== null;
     let rowBg = '';
     if (checked) {
-      rowBg = target === 'owned' ? 'bg-yellow-500/15' : 'bg-amber-500/15';
+      rowBg = target === 'owned' ? 'bg-yellow-500/15' : 'bg-lime-500/15';
     } else if (isInOther) {
-      rowBg = other === 'owned' ? 'bg-yellow-500/10' : 'bg-amber-500/10';
+      rowBg = other === 'owned' ? 'bg-yellow-500/10' : 'bg-lime-500/10';
     }
     const checkboxClass = isInOther
-      ? (other === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-amber-600 [&_[data-state=checked]]:border-amber-600')
+      ? (other === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-lime-500 [&_[data-state=checked]]:border-lime-500')
       : checked
-        ? (target === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-amber-600 [&_[data-state=checked]]:border-amber-600')
+        ? (target === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-lime-500 [&_[data-state=checked]]:border-lime-500')
         : '';
 
     const imgPath = h.type === 'champion' && h.championName
