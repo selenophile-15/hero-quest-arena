@@ -1444,7 +1444,7 @@ export default function QuestSimulation() {
                           ))}
                           {heroEntries.map(h => (
                             <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
-                              <div className="w-3.5 h-3.5 rounded-full border-2 shadow-md" style={{ borderColor: h.color, backgroundColor: h.color }} />
+                              <div className="w-4 h-4 rounded-full border-2 shadow-[0_0_6px_rgba(255,255,255,0.5)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
                             </div>
                           ))}
                         </div>
