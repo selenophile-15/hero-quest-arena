@@ -196,12 +196,37 @@ export default function HeroList() {
     if (!targetRef.current) return;
     setScreenshotLoading(true);
     try {
-      const canvas = await html2canvas(targetRef.current, {
+      // Clone and strip management column / delete buttons for clean screenshot
+      const clone = targetRef.current.cloneNode(true) as HTMLElement;
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      clone.style.top = '0';
+      document.body.appendChild(clone);
+
+      // Hide last <th> and last <td> in each row (management column) for table screenshots
+      clone.querySelectorAll('thead tr, tbody tr').forEach(row => {
+        const cells = row.querySelectorAll('th, td');
+        if (cells.length > 0) {
+          const last = cells[cells.length - 1] as HTMLElement;
+          // Check if it contains 관리 text or action buttons
+          if (last.textContent?.includes('관리') || last.querySelector('button')) {
+            last.style.display = 'none';
+          }
+        }
+      });
+
+      // Hide delete buttons in album cards
+      clone.querySelectorAll('.album-delete-btn').forEach(el => {
+        (el as HTMLElement).style.display = 'none';
+      });
+
+      const canvas = await html2canvas(clone, {
         backgroundColor: '#1a1a2e',
         scale: 2,
         useCORS: true,
         logging: false,
       });
+      document.body.removeChild(clone);
       const link = document.createElement('a');
       link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -481,8 +506,31 @@ export default function HeroList() {
     return <ChampionForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); setExpandedId(null); setSortKey('heroClass'); setSortDir('asc'); }} />;
   }
 
+  const STAT_KEYS = new Set(['power', 'airshipPower', 'hp', 'atk', 'def', 'crit', 'critDmg', 'critAttack', 'evasion', 'threat']);
   const activeCols = activeColumns.filter(c => visibleCols.has(c.key));
+  const activeColsNoManage = activeCols.filter(c => c.key !== 'label');
   const tableMaxWidth = (activeCols.length + 1) * 150;
+
+  const handleResetCols = () => {
+    const allCols = [...HERO_STAT_COLUMNS, ...CHAMPION_STAT_COLUMNS];
+    const all = new Set<string>(allCols.map(c => c.key));
+    DEFAULT_HIDDEN_COLS.forEach(k => all.delete(k));
+    setVisibleCols(all);
+  };
+  const handleSelectAllCols = (select: boolean) => {
+    if (select) {
+      setVisibleCols(new Set(activeColumns.map(c => c.key)));
+    } else {
+      setVisibleCols(new Set());
+    }
+  };
+  const handleToggleStatCols = (select: boolean) => {
+    setVisibleCols(prev => {
+      const next = new Set(prev);
+      STAT_KEYS.forEach(k => { if (select) next.add(k); else next.delete(k); });
+      return next;
+    });
+  };
   const EXPANDED_VISIBLE_KEYS = new Set(['heroClass', 'championName', 'name', 'level', 'rank', 'position', 'label', 'promoted']);
 
   const renderHeaderLabel = (col: { key: string; label: string; icon?: boolean }) => {
@@ -980,11 +1028,11 @@ export default function HeroList() {
           </div>
         </div>
         <div className="text-center w-full">
-          <p className={`text-sm font-bold truncate inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
+          <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
             {hero.name}
             {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />}
           </p>
-          <p className="text-xs text-foreground/60 truncate">
+          <p className="text-xs text-foreground/60">
             {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
           </p>
         </div>
@@ -1126,7 +1174,7 @@ export default function HeroList() {
           </div>
         )}
 
-        <div className="flex items-center gap-1 mt-auto">
+        <div className="flex items-center gap-1 mt-auto album-delete-btn">
           <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -1219,13 +1267,19 @@ export default function HeroList() {
           {/* Column visibility - table only */}
           <div className="card-fantasy p-3 mb-3">
             <div className="flex flex-wrap gap-3">
-              <span className="text-sm text-muted-foreground">표시 항목:</span>
               {activeColumns.map(col => (
                 <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
                   <Checkbox checked={visibleCols.has(col.key)} onCheckedChange={() => toggleCol(col.key)} />
                   {col.label}
                 </label>
               ))}
+            </div>
+            <div className="flex gap-2 mt-2">
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={handleResetCols}>초기화</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleSelectAllCols(true)}>전체 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleSelectAllCols(false)}>전체 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleToggleStatCols(true)}>스탯 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleToggleStatCols(false)}>스탯 해제</Button>
             </div>
           </div>
 
@@ -1236,7 +1290,7 @@ export default function HeroList() {
                 <tr className="border-b border-border">
                   {activeCols.map(col => (
                     <th key={col.key} onClick={() => handleSort(col.key)}
-                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-muted-foreground text-center ${
+                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
                       } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[100px]' : 'min-w-[170px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
