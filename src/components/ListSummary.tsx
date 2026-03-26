@@ -73,7 +73,7 @@ const ELEMENT_BAR_COLORS: Record<string, string> = {
   '불': '#ef4444',
   '물': '#3b82f6',
   '공기': '#2dd4bf',
-  '대지': '#15803d',
+  '대지': '#65a30d',
   '빛': '#fde68a',
   '어둠': '#a855f7',
   '모든 원소': '#e5e7eb',
@@ -164,14 +164,14 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
     const isInOther = other !== null;
     let rowBg = '';
     if (checked) {
-      rowBg = target === 'owned' ? 'bg-yellow-500/15' : 'bg-amber-500/15';
+      rowBg = target === 'owned' ? 'bg-yellow-500/15' : 'bg-lime-500/15';
     } else if (isInOther) {
-      rowBg = other === 'owned' ? 'bg-yellow-500/10' : 'bg-amber-500/10';
+      rowBg = other === 'owned' ? 'bg-yellow-500/10' : 'bg-lime-500/10';
     }
     const checkboxClass = isInOther
-      ? (other === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-amber-600 [&_[data-state=checked]]:border-amber-600')
+      ? (other === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-lime-500 [&_[data-state=checked]]:border-lime-500')
       : checked
-        ? (target === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-amber-600 [&_[data-state=checked]]:border-amber-600')
+        ? (target === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-lime-500 [&_[data-state=checked]]:border-lime-500')
         : '';
 
     const imgPath = h.type === 'champion' && h.championName
@@ -200,7 +200,7 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
           </>
         )}
         {isInOther && (
-          <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded font-medium ${other === 'owned' ? 'bg-yellow-500/30 text-yellow-300' : 'bg-amber-600/30 text-amber-400'}`}>
+          <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded font-medium ${other === 'owned' ? 'bg-yellow-500/30 text-yellow-300' : 'bg-lime-500/30 text-lime-300'}`}>
             {other === 'owned' ? '보유 중' : '추가 예정'}
           </span>
         )}
@@ -212,7 +212,7 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
     <Dialog open={open} onOpenChange={v => { if (!v) onClose(); }}>
       <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>영웅 선택</DialogTitle>
+          <DialogTitle className="sr-only">선택</DialogTitle>
         </DialogHeader>
         {/* Mode toggle */}
         <div className="flex gap-1 mb-2 bg-secondary/30 rounded-lg p-1">
@@ -220,13 +220,13 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
             className={`flex-1 text-sm py-1.5 rounded-md font-medium transition-colors ${target === 'owned' ? 'bg-yellow-500/20 text-yellow-300 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             onClick={() => setTarget('owned')}
           >
-            보유 중 선택
+            보유 중
           </button>
           <button
-            className={`flex-1 text-sm py-1.5 rounded-md font-medium transition-colors ${target === 'planned' ? 'bg-amber-600/20 text-amber-400 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`flex-1 text-sm py-1.5 rounded-md font-medium transition-colors ${target === 'planned' ? 'bg-lime-500/20 text-lime-300 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             onClick={() => setTarget('planned')}
           >
-            추가 예정 선택
+            추가 예정
           </button>
         </div>
         <div className="flex gap-2 mb-2">
@@ -402,8 +402,8 @@ function DistBar({ label, labelNode, owned, planned, maxCount, color }: {
         {planned > 0 && <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />}
       </div>
       <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{owned}</span>
-      <span className="text-xs font-bold text-muted-foreground tabular-nums w-6 text-right">
-        {planned > 0 ? `${planned}` : ''}
+      <span className="text-xs font-bold text-muted-foreground tabular-nums w-8 text-right">
+        {planned > 0 ? `(${planned})` : ''}
       </span>
     </div>
   );
@@ -554,11 +554,9 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
       />
 
       {(ownedHeroes.length > 0 || plannedHeroes.length > 0) && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ElementSummary owned={ownedHeroes} planned={plannedHeroes} />
-            <ClassLineSummary owned={ownedHeroes} planned={plannedHeroes} />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <ElementSummary owned={ownedHeroes} planned={plannedHeroes} />
+          <ClassLineSummary owned={ownedHeroes} planned={plannedHeroes} />
           <PositionChart owned={ownedHeroes} planned={plannedHeroes} />
         </div>
       )}
