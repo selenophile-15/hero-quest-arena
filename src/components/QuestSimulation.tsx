@@ -977,7 +977,7 @@ export default function QuestSimulation() {
                     return 0;
                   };
 
-                  const barH = 220;
+                  const barH = 260;
                   const reductions = [-50, 0, 50, 70, 75];
                   const rows = defThresholds.map((t, i) => ({
                     key: t.key, label: t.label, value: t.value, color: t.color, textClass: t.textClass,
@@ -1007,11 +1007,11 @@ export default function QuestSimulation() {
 
                   return (
                     <div className="mt-4 pt-4 border-t border-border/30">
-                      <div className="flex items-center gap-1.5 mb-3">
+                      <div className="flex items-center gap-1.5 px-1 mb-1">
                         <Shield className="w-3.5 h-3.5 text-blue-400" />
                         <span className="text-xs font-bold text-foreground">방어력 기준치</span>
                       </div>
-                      <div className="relative grid grid-cols-[44px_14px_1fr] gap-x-1" style={{ height: `${barH}px` }}>
+                      <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5 pt-6 pb-4" style={{ height: `${barH}px` }}>
                         <div className="relative">
                           {rows.map(r => (
                             <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
