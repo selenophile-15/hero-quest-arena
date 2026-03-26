@@ -171,35 +171,32 @@ const Index = () => {
           transform: `translateY(${parallaxOffset * -0.15}px)`,
           opacity: Math.max(0, 1 - scrollY / 600),
         }}>
-          {/* Logo image */}
+          {/* Title area */}
           <div className="mb-6" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
-            <img 
-              src={selenofilLogo} 
-              alt="셀레노필" 
-              className="mx-auto"
-              width={500}
-              height={280}
-              style={{ 
-                animation: 'glowPulse 4s ease-in-out infinite',
-                maxWidth: '80vw',
-              }}
-            />
-          </div>
-
-          {/* Subtitle */}
-          <div className="mb-4">
+            {/* "셀레노필이 제작한" small label */}
             <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-3" style={{ 
               color: 'hsl(40 50% 45%)',
               animation: 'subtitleReveal 1.5s ease-out forwards',
             }}>
-              셀레노필
+              Selenofil Presents
             </span>
-            <p className="text-2xl md:text-3xl font-semibold" style={{
+            {/* Main title: 샵타이탄 퀘스트 시뮬레이터 */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight" style={{
+              background: 'linear-gradient(135deg, hsl(40 90% 65%), hsl(35 85% 50%), hsl(40 90% 70%))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              animation: 'glowPulse 4s ease-in-out infinite',
+              textShadow: 'none',
+              lineHeight: 1.2,
+            }}>
+              샵타이탄
+            </h1>
+            <h2 className="text-2xl md:text-3xl font-semibold mt-1" style={{
               color: 'hsl(40 15% 80%)',
-              letterSpacing: '-0.01em',
+              letterSpacing: '0.05em',
             }}>
               퀘스트 시뮬레이터
-            </p>
+            </h2>
           </div>
 
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
