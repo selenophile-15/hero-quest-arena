@@ -1345,11 +1345,11 @@ export default function HeroList() {
               ))}
             </div>
             <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={handleResetCols}>초기화</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleSelectAllCols(true)}>전체 선택</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleSelectAllCols(false)}>전체 해제</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleToggleStatCols(true)}>스탯 선택</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2" onClick={() => handleToggleStatCols(false)}>스탯 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={handleResetCols}>초기화</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleSelectAllCols(true)}>전체 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleSelectAllCols(false)}>전체 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleToggleStatCols(true)}>스탯 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleToggleStatCols(false)}>스탯 해제</Button>
             </div>
           </div>
 
