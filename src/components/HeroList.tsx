@@ -1593,6 +1593,7 @@ export default function HeroList() {
                         className={`border-b border-border/50 transition-colors cursor-pointer select-none ${
                           isExpanded ? 'bg-primary/15' : 'hover:bg-secondary/20'
                         }`}
+                        style={{ height: '52px' }}
                       >
                         {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
