@@ -196,8 +196,8 @@ const Index = () => {
               boxShadow: '0 0 20px rgba(200,147,10,0.2), 0 4px 20px rgba(0,0,0,0.3)',
             }}
           >
-            <Swords className="w-5 h-5 mr-1 transition-transform duration-300 group-hover:rotate-12" />
-            시작하기
+            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" />
+            <span style={{ fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 700, letterSpacing: '0.15em', fontSize: '1.1rem' }}>시작하기</span>
           </Button>
 
           <div className="mt-20 animate-bounce opacity-40">
