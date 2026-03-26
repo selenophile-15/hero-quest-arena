@@ -1049,7 +1049,7 @@ export default function QuestSimulation() {
                             {icons.map(b => (
                               <div key={b.el} className="flex flex-col items-center">
                                 {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-5 h-5" />}
-                                <span className="text-[10px] font-mono font-bold text-purple-300">{formatNumber(b.val)}</span>
+                                <span className="text-xs font-mono font-bold text-purple-300">{formatNumber(b.val)}</span>
                               </div>
                             ))}
                           </div>
