@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Swords, Shield, Trophy } from "lucide-react";
-import selenofilLogo from "@/assets/selenofil-logo.png";
+
 import landingBg from "@/assets/landing-bg.png";
 import featureList from "@/assets/feature-list.jpg";
 import featureQuest from "@/assets/feature-quest.jpg";
@@ -158,17 +158,25 @@ const Index = () => {
             }}>
               셀레노필 제작
             </span>
-            <img
-              src={selenofilLogo}
-              alt="샵타이탄 퀘스트 시뮬레이터"
-              className="mx-auto"
-              width={500}
-              height={280}
+            <h1
+              className="mx-auto select-none"
               style={{
+                fontFamily: "'Noto Sans KR', sans-serif",
+                fontWeight: 900,
+                fontSize: 'clamp(2rem, 6vw, 3.5rem)',
+                lineHeight: 1.2,
+                letterSpacing: '0.04em',
+                background: 'linear-gradient(180deg, #ffd97a 0%, #e8b830 30%, #c8930a 60%, #a06818 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: 'none',
+                filter: 'drop-shadow(0 2px 8px rgba(200,147,10,0.5)) drop-shadow(0 0 40px rgba(200,147,10,0.15))',
                 animation: 'glowPulse 4s ease-in-out infinite',
                 maxWidth: '80vw',
               }}
-            />
+            >
+              샵타이탄<br />퀘스트 시뮬레이터
+            </h1>
           </div>
 
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
@@ -188,8 +196,8 @@ const Index = () => {
               boxShadow: '0 0 20px rgba(200,147,10,0.2), 0 4px 20px rgba(0,0,0,0.3)',
             }}
           >
-            <Swords className="w-5 h-5 mr-1 transition-transform duration-300 group-hover:rotate-12" />
-            시작하기
+            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" />
+            <span style={{ fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 700, letterSpacing: '0.15em', fontSize: '1.1rem' }}>시작하기</span>
           </Button>
 
           <div className="mt-20 animate-bounce opacity-40">
