@@ -448,9 +448,11 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       {/* 회피 */}
                       <td className="py-1.5 px-1 text-center font-mono text-teal-400">{hero.evasion > 0 ? `${formatNumber(hero.evasion)}%` : '-'}</td>
                       {/* 포지션 */}
-                      <td className="py-1.5 px-1 text-center text-foreground/70 text-[10px] whitespace-nowrap">{hero.position || '-'}</td>
-                      {/* 상태 */}
-                      <td className="py-1.5 px-1 text-center text-foreground/70 text-[10px] whitespace-nowrap">{hero.label || '-'}</td>
+                      <td className="py-1.5 px-1 text-center text-[10px] whitespace-nowrap">
+                        {hero.position ? (
+                          <span className={`px-1.5 py-0.5 rounded ${POSITION_BG_COLORS[hero.position] || 'bg-secondary'} text-white`}>{hero.position}</span>
+                        ) : '-'}
+                      </td>
                     </tr>
                   );
                 })}
