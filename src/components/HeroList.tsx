@@ -213,42 +213,6 @@ export default function HeroList() {
     }
   }, [listTab]);
 
-  // Helper to get plain text for screenshot cells
-  const getScreenshotCellText = useCallback((hero: Hero, colKey: string): string => {
-    if (colKey === 'name') return hero.name;
-    if (colKey === 'heroClass') return hero.heroClass || '-';
-    if (colKey === 'championName') return hero.championName || '-';
-    if (colKey === 'classLine') return hero.classLine || '-';
-    if (colKey === 'level') return String(hero.level || 0);
-    if (colKey === 'rank') {
-      const r = hero.rank || 1;
-      return r <= 11 ? String(r) : `${r} (11+${r - 11})`;
-    }
-    if (colKey === 'element') return `${hero.element || '-'} ${hero.elementValue || 0}`;
-    if (colKey === 'position') return hero.position || '-';
-    if (colKey === 'label') return (hero as any).label || '-';
-    if (colKey === 'type') return hero.type === 'champion' ? '챔피언' : '영웅';
-    if (colKey === 'promoted') return hero.promoted ? '○' : '-';
-    if (colKey === 'crit') return hero.crit ? `${formatNumber(hero.crit)} %` : '0';
-    if (colKey === 'critDmg') return hero.critDmg ? `x${(hero.critDmg / 100).toFixed(1)}` : '-';
-    if (colKey === 'critAttack') {
-      const val = hero.atk && hero.critDmg ? Math.floor(hero.atk * hero.critDmg / 100) : 0;
-      return val ? formatNumber(val) : '0';
-    }
-    if (colKey === 'evasion') return hero.evasion ? `${formatNumber(hero.evasion)} %` : '0';
-    if (colKey === 'threat') return hero.threat ? formatNumber(hero.threat) : '0';
-    if (colKey === 'skills') return '-';
-    if (colKey === 'equipment') return '-';
-    if (colKey === 'seeds') {
-      if (!hero.seeds) return '-';
-      return `${hero.seeds.hp || 0}/${hero.seeds.atk || 0}/${hero.seeds.def || 0}`;
-    }
-    if (colKey === 'airshipPower') return '-';
-    const value = hero[colKey as keyof Hero];
-    if (typeof value === 'number') return formatNumber(value);
-    return String(value ?? '-');
-  }, []);
-
   // Export handler
   const handleExport = useCallback(() => {
     const data = JSON.stringify(heroes, null, 2);
