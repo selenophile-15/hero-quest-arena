@@ -194,8 +194,6 @@ function GroupTable({ label, icon, heroes, onAdd, onRemove, accentClass }: {
 /* ── Matrix table: element columns × class line rows ── */
 function MatrixTable({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
   const all = useMemo(() => [...owned, ...planned], [owned, planned]);
-  if (all.length === 0) return null;
-
   const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
 
   // Build matrix: classLine → element → heroes[]
