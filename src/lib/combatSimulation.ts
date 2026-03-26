@@ -1216,6 +1216,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           totalRoundsPerHero[i] += round;
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
+          singleTargetHitsTotal[i] += singleHitsTaken[i];
         }
       }
 
