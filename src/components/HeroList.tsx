@@ -482,6 +482,7 @@ export default function HeroList() {
   }
 
   const activeCols = activeColumns.filter(c => visibleCols.has(c.key));
+  const tableMaxWidth = (activeCols.length + 1) * 150;
   const EXPANDED_VISIBLE_KEYS = new Set(['heroClass', 'championName', 'name', 'level', 'rank', 'position', 'label', 'promoted']);
 
   const renderHeaderLabel = (col: { key: string; label: string; icon?: boolean }) => {
