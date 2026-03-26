@@ -653,15 +653,24 @@ export default function QuestSimulation() {
                 allCells.forEach(cell => {
                   (cell as HTMLElement).style.verticalAlign = 'middle';
                 });
-                const canvas = await html2canvas(el, {
+              const canvas = await html2canvas(el, {
                   backgroundColor: '#1a1a2e',
                   useCORS: true,
                   scrollY: -window.scrollY,
+                  scrollX: 0,
                   scale: 2,
                   logging: false,
+                  windowWidth: el.scrollWidth,
+                  windowHeight: el.scrollHeight,
+                  width: el.scrollWidth,
+                  height: el.scrollHeight,
                   onclone: (doc) => {
                     const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
                     if (clonedEl) {
+                      // Ensure full height is rendered (no clipping)
+                      clonedEl.style.overflow = 'visible';
+                      clonedEl.style.height = 'auto';
+                      clonedEl.style.maxHeight = 'none';
                       // Fix vertical alignment in cloned document
                       clonedEl.querySelectorAll('td, th').forEach(cell => {
                         (cell as HTMLElement).style.verticalAlign = 'middle';
