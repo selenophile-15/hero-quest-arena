@@ -163,6 +163,7 @@ export default function HeroList() {
   const albumContentRef = useRef<HTMLDivElement>(null);
   const tableContentRef = useRef<HTMLDivElement>(null);
   const [screenshotLoading, setScreenshotLoading] = useState(false);
+  const [captureMode, setCaptureMode] = useState(false);
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
