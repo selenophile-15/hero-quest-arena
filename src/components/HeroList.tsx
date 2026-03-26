@@ -990,7 +990,7 @@ export default function HeroList() {
             </div>
 
             {/* Equipment grid */}
-            <div className="card-fantasy p-3 flex-1 overflow-y-auto">
+            <div className="card-fantasy p-3 w-[260px] flex-shrink-0 overflow-y-auto">
               <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h4>
               <div className={`grid grid-cols-3 gap-2`}>
                 {equipSlots.slice(0, isChampion ? 2 : 6).map((slot: any, i: number) => {
