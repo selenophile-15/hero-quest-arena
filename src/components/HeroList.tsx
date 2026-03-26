@@ -163,6 +163,7 @@ export default function HeroList() {
   const albumContentRef = useRef<HTMLDivElement>(null);
   const tableContentRef = useRef<HTMLDivElement>(null);
   const [screenshotLoading, setScreenshotLoading] = useState(false);
+  const [captureMode, setCaptureMode] = useState(false);
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
@@ -195,78 +196,27 @@ export default function HeroList() {
   const handleScreenshot = useCallback(async (targetRef: React.RefObject<HTMLDivElement | null>, prefix: string) => {
     if (!targetRef.current) return;
     setScreenshotLoading(true);
+    setCaptureMode(true);
     try {
-      // Clone and strip management column / delete buttons for clean screenshot
-      const clone = targetRef.current.cloneNode(true) as HTMLElement;
-      clone.style.position = 'absolute';
-      clone.style.left = '-9999px';
-      clone.style.top = '0';
-      document.body.appendChild(clone);
+      // Wait for React re-render with captureMode=true
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
 
-      // Hide last <th> and last <td> in each row (management column) for table screenshots
-      clone.querySelectorAll('thead tr, tbody tr').forEach(row => {
-        const cells = row.querySelectorAll('th, td');
-        if (cells.length > 0) {
-          const last = cells[cells.length - 1] as HTMLElement;
-          if (last.textContent?.includes('관리') || last.querySelector('button')) {
-            last.style.display = 'none';
-          }
-        }
-      });
-
-      // Force uniform row height and vertical centering for table screenshots
-      // html2canvas doesn't reliably render flexbox alignment, so use table-cell + vertical-align
-      clone.querySelectorAll('tbody tr').forEach(row => {
-        (row as HTMLElement).style.height = '52px';
-        row.querySelectorAll('td').forEach(td => {
-          const el = td as HTMLElement;
-          el.style.height = '52px';
-          el.style.verticalAlign = 'middle';
-          el.style.textAlign = 'center';
-          // Convert inner flex wrappers to inline-block with vertical-align for html2canvas compat
-          el.querySelectorAll('div, span').forEach(child => {
-            const c = child as HTMLElement;
-            if (c.style.display === 'none') return;
-            c.style.verticalAlign = 'middle';
-          });
-          // Force the direct child div (h-[36px] flex wrapper) to use inline display
-          const directDiv = el.querySelector(':scope > div');
-          if (directDiv) {
-            const d = directDiv as HTMLElement;
-            d.style.display = 'inline-flex';
-            d.style.alignItems = 'center';
-            d.style.justifyContent = 'center';
-            d.style.verticalAlign = 'middle';
-            d.style.height = '36px';
-          }
-        });
-      });
-      // Also fix thead alignment
-      clone.querySelectorAll('thead th').forEach(th => {
-        (th as HTMLElement).style.verticalAlign = 'middle';
-        (th as HTMLElement).style.textAlign = 'center';
-      });
-
-      // Hide delete buttons in album cards
-      clone.querySelectorAll('.album-delete-btn').forEach(el => {
-        (el as HTMLElement).style.display = 'none';
-      });
-
-      const canvas = await html2canvas(clone, {
+      const canvas = await html2canvas(targetRef.current, {
         backgroundColor: '#1a1a2e',
         scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
       });
-      document.body.removeChild(clone);
+
       const link = document.createElement('a');
-      link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg', 0.92);
       link.click();
     } catch (e) {
       console.error('Screenshot failed:', e);
     } finally {
+      setCaptureMode(false);
       setScreenshotLoading(false);
     }
   }, [listTab]);
@@ -574,61 +524,73 @@ export default function HeroList() {
     return <span>{col.label}</span>;
   };
 
-  const renderCell = (hero: Hero, colKey: string) => {
+  const renderCell = (hero: Hero, colKey: string, capture = false) => {
+    // Capture-mode classes: use inline-block + align-middle + leading-none for html2canvas compat
+    const lh = capture ? 'leading-none' : 'leading-[20px]';
+    const iconCls = capture ? 'inline-block align-middle w-5 h-5' : 'w-5 h-5 flex-shrink-0';
+    const wrapCls = capture
+      ? 'inline-block whitespace-nowrap align-middle leading-none'
+      : 'inline-flex items-center gap-1';
+    const spacer = capture ? <span className="inline-block w-1" /> : null;
+
     if (colKey === 'name') {
       const isChamp = hero.type === 'champion';
       const isPromoted = isChamp && hero.promoted;
       return (
-        <span className="font-medium text-foreground text-center w-full inline-flex items-center gap-1 justify-center leading-[20px]">
+        <span className={`font-medium text-foreground text-center w-full ${wrapCls} justify-center ${lh}`}>
           {isChamp && hero.championName && (
-            <img src={getChampionImagePath(hero.championName)} alt="" className="w-5 h-5 rounded-full flex-shrink-0" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
+            <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
           )}
-          <span className={isPromoted ? 'text-yellow-400' : ''}>{hero.name}</span>
+          {isChamp && hero.championName && spacer}
+          <span className={`${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'text-yellow-400' : ''}`}>{hero.name}</span>
           {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
         </span>
       );
     }
     if (colKey === 'type') {
       return (
-        <span className={hero.type === 'champion' ? 'text-primary font-medium leading-[20px]' : 'text-red-400 font-medium leading-[20px]'}>
+        <span className={`${hero.type === 'champion' ? 'text-primary font-medium' : 'text-red-400 font-medium'} ${lh}`}>
           {hero.type === 'champion' ? '챔피언' : '영웅'}
         </span>
       );
     }
     if (colKey === 'classLine') {
       if (!hero.classLine) return <span className="text-muted-foreground">-</span>;
-      return <span className={`leading-[20px] ${CLASS_LINE_COLORS[hero.classLine] || 'text-foreground'}`}>{hero.classLine}</span>;
+      return <span className={`${lh} ${CLASS_LINE_COLORS[hero.classLine] || 'text-foreground'}`}>{hero.classLine}</span>;
     }
     if (colKey === 'heroClass') {
       if (!hero.heroClass) return <span className="text-muted-foreground">-</span>;
       return (
-        <span className="inline-flex items-center gap-1 leading-[20px]">
-          <img src={getJobImagePath(hero.heroClass)} alt="" className="w-5 h-5 flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
-          <span className="whitespace-nowrap">{hero.heroClass}</span>
+        <span className={`${wrapCls} ${lh}`}>
+          <img src={getJobImagePath(hero.heroClass)} alt="" className={iconCls} onError={e => { e.currentTarget.style.display = 'none'; }} />
+          {spacer}
+          <span className={`whitespace-nowrap ${capture ? 'inline-block align-middle leading-none' : ''}`}>{hero.heroClass}</span>
         </span>
       );
     }
     if (colKey === 'championName') {
       if (!hero.championName) return <span className="text-muted-foreground">-</span>;
       return (
-        <span className="inline-flex items-center gap-1 leading-[20px]">
-          <img src={getChampionImagePath(hero.championName)} alt="" className="w-5 h-5 rounded-full flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
-          <span>{hero.championName}</span>
+        <span className={`${wrapCls} ${lh}`}>
+          <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { e.currentTarget.style.display = 'none'; }} />
+          {spacer}
+          <span className={capture ? 'inline-block align-middle leading-none' : ''}>{hero.championName}</span>
         </span>
       );
     }
     if (colKey === 'rank') {
       const r = hero.rank || 1;
-      if (r <= 11) return <span className="leading-[20px]">{r}</span>;
-      return <span className="leading-[20px]">{r} (11+{r - 11})</span>;
+      if (r <= 11) return <span className={lh}>{r}</span>;
+      return <span className={lh}>{r} (11+{r - 11})</span>;
     }
     if (colKey === 'element') {
       const elVal = hero.elementValue || 0;
       const isDimEl = elVal === 0;
       return (
-        <span className="inline-flex items-center gap-1 leading-[20px]">
+        <span className={`${wrapCls} ${lh}`}>
           <ElementIcon element={hero.element} size={20} />
-          <span className={`tabular-nums ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
+          {spacer}
+          <span className={`tabular-nums ${capture ? 'inline-block align-middle leading-none' : ''} ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
       );
     }
@@ -646,6 +608,15 @@ export default function HeroList() {
         const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${leaderTier}.webp` : '';
         const aurasongItem = hero.equipmentSlots?.[1]?.item;
         const auraIcon = aurasongItem ? getAurasongSkillIconPath(aurasongItem.name) : '';
+        if (capture) {
+          return (
+            <span className="inline-block whitespace-nowrap align-middle leading-none">
+              {leaderIcon && <img src={leaderIcon} alt="리더" className="inline-block align-middle w-9 h-9" title="리더 스킬" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+              {auraIcon && <img src={auraIcon} alt="오라" className="inline-block align-middle w-9 h-9" title="오라의 노래" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+              {!leaderIcon && !auraIcon && <span className="text-muted-foreground">-</span>}
+            </span>
+          );
+        }
         return (
           <div className="flex items-center gap-0.5 justify-center h-[36px]">
             {leaderIcon && <img src={leaderIcon} alt="리더" className="w-9 h-9" title="리더 스킬" onError={e => { e.currentTarget.style.display = 'none'; }} />}
@@ -656,6 +627,18 @@ export default function HeroList() {
       }
       const uniqueImgPath = hero.heroClass ? getUniqueSkillImagePath(hero.heroClass) : '';
       const commonSkills = hero.skills?.slice(1) || [];
+      if (capture) {
+        return (
+          <span className="inline-block whitespace-nowrap align-middle leading-none">
+            {uniqueImgPath && <img src={uniqueImgPath} alt="고유" className="inline-block align-middle w-9 h-9" title={hero.skills?.[0] || '고유 스킬'} onError={e => { e.currentTarget.style.display = 'none'; }} />}
+            <span className="inline-block align-middle w-px h-5 bg-border/50 mx-0.5" style={{ verticalAlign: 'middle' }} />
+            {Array.from({ length: 4 }).map((_, i) => {
+              const sk = commonSkills[i];
+              return sk ? <img key={i} src={getSkillImagePath(sk)} alt={sk} className="inline-block align-middle w-9 h-9" title={sk} onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span key={i} className="inline-block align-middle w-9 h-9" />;
+            })}
+          </span>
+        );
+      }
       return (
         <div className="flex items-center gap-0.5 justify-center h-[36px]">
           <div className="w-9 h-9 flex-shrink-0">
@@ -681,6 +664,17 @@ export default function HeroList() {
     }
     if (colKey === 'equipment') {
       const slots = hero.equipmentSlots || [];
+      if (capture) {
+        return (
+          <span className="inline-block whitespace-nowrap align-middle leading-none">
+            {slots.slice(0, 2).map((slot: any, i: number) => {
+              const item = slot?.item;
+              if (!item?.imagePath) return <span key={i} className="inline-block align-middle w-9 h-9 rounded border border-border/30 text-center leading-[36px] text-[7px] text-muted-foreground">-</span>;
+              return <img key={i} src={item.imagePath} alt={item.name} className="inline-block align-middle w-9 h-9 object-contain" title={item.name} onError={e => { e.currentTarget.style.display = 'none'; }} />;
+            })}
+          </span>
+        );
+      }
       return (
         <div className="flex items-center gap-1 justify-center h-[36px]">
           {slots.slice(0, 2).map((slot: any, i: number) => {
@@ -693,10 +687,26 @@ export default function HeroList() {
     }
     if (colKey === 'critAttack') {
       const val = hero.atk && hero.critDmg ? Math.floor(hero.atk * hero.critDmg / 100) : 0;
-      return <span className={`leading-[20px] ${!val ? 'text-foreground/20' : ''}`}>{val ? formatNumber(val) : '0'}</span>;
+      return <span className={`${lh} ${!val ? 'text-foreground/20' : ''}`}>{val ? formatNumber(val) : '0'}</span>;
     }
     if (colKey === 'seeds') {
       if (!hero.seeds) return <span className="text-muted-foreground">-</span>;
+      if (capture) {
+        return (
+          <span className="inline-block whitespace-nowrap align-middle leading-none">
+            {SEED_ICONS.map(s => {
+              const seedVal = hero.seeds?.[s.key as keyof typeof hero.seeds] || 0;
+              const seedColor = seedVal === 80 ? 'text-orange-400 font-semibold' : seedVal === 40 ? 'text-yellow-400 font-semibold' : seedVal === 0 ? 'text-foreground/20' : '';
+              return (
+                <span key={s.key} className="inline-block align-middle mx-0.5">
+                  <img src={s.icon} alt="" className="inline-block align-middle w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                  <span className={`inline-block align-middle text-xs tabular-nums leading-none ${seedColor}`}>{seedVal}</span>
+                </span>
+              );
+            })}
+          </span>
+        );
+      }
       return (
         <div className="flex items-center gap-1 justify-center h-[20px]">
           {SEED_ICONS.map(s => {
@@ -712,29 +722,29 @@ export default function HeroList() {
         </div>
       );
     }
-    if (colKey === 'position') return <span className="leading-[20px]">{hero.position || '-'}</span>;
+    if (colKey === 'position') return <span className={lh}>{hero.position || '-'}</span>;
     if (colKey === 'promoted') return null;
-    if (colKey === 'airshipPower') return <span className="text-foreground/20 leading-[20px]">-</span>;
+    if (colKey === 'airshipPower') return <span className={`text-foreground/20 ${lh}`}>-</span>;
     if (colKey === 'evasion') {
       const ev = typeof hero.evasion === 'number' ? hero.evasion : 0;
       const cap = hero.heroClass === '길잡이' ? 78 : 75;
       const isDim = ev === 0;
-      if (ev > cap) return <span className="leading-[20px]">{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
-      return <span className={`leading-[20px] ${isDim ? 'text-foreground/20' : ''}`}>{formatNumber(ev)} %</span>;
+      if (ev > cap) return <span className={lh}>{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
+      return <span className={`${lh} ${isDim ? 'text-foreground/20' : ''}`}>{formatNumber(ev)} %</span>;
     }
     if (colKey === 'level') {
       const lv = hero.level || 0;
       const lvColor = lv >= 50 ? 'text-yellow-400 font-semibold' : '';
-      return <span className={`leading-[20px] ${lvColor}`}>{lv}</span>;
+      return <span className={`${lh} ${lvColor}`}>{lv}</span>;
     }
     const value = hero[colKey as keyof Hero];
     const formatted = formatValue(colKey, value);
     if (formatted !== null) {
       const numVal = typeof value === 'number' ? value : 0;
       const isDim = numVal === 0 || formatted === '0' || formatted === '0 %';
-      return <span className={`leading-[20px] ${isDim ? 'text-foreground/20' : ''}`}>{formatted}</span>;
+      return <span className={`${lh} ${isDim ? 'text-foreground/20' : ''}`}>{formatted}</span>;
     }
-    return <span className="leading-[20px]">{String(value ?? '-')}</span>;
+    return <span className={lh}>{String(value ?? '-')}</span>;
   };
 
   const skillLevelColorClass = (lvl: number | string) => {
@@ -1207,11 +1217,13 @@ export default function HeroList() {
           </div>
         )}
 
-        <div className="flex items-center gap-1 mt-auto album-delete-btn">
-          <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
+        {!captureMode && (
+          <div className="flex items-center gap-1 mt-auto album-delete-btn">
+            <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -1332,6 +1344,7 @@ export default function HeroList() {
                       </span>
                     </th>
                   ))}
+                  {!captureMode && (
                   <th className="px-3 py-3 text-center text-muted-foreground font-medium">
                     <div className="flex items-center justify-center gap-1">
                       <button
@@ -1362,6 +1375,7 @@ export default function HeroList() {
                       )}
                     </div>
                   </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -1384,16 +1398,21 @@ export default function HeroList() {
                       >
                       {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-1 text-center align-middle"><div className="h-[36px]" /></td>;
+                            return <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-1 text-center align-middle">
-                              <div className="flex items-center justify-center h-[36px]">
-                                {renderCell(hero, col.key)}
-                              </div>
+                            <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}>
+                              {captureMode ? (
+                                renderCell(hero, col.key, true)
+                              ) : (
+                                <div className="flex items-center justify-center h-[36px]">
+                                  {renderCell(hero, col.key)}
+                                </div>
+                              )}
                             </td>
                           );
                         })}
+                        {!captureMode && (
                         <td className="px-3 py-3 text-center align-middle">
                           <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
                             {manageMode ? (
@@ -1418,6 +1437,7 @@ export default function HeroList() {
                             )}
                           </div>
                         </td>
+                        )}
                       </tr>
                       {isExpanded && renderExpandedRow(hero)}
                     </Fragment>
