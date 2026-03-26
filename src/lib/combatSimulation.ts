@@ -1052,6 +1052,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
                 lordProtections[target]++;
+                singleHitsTaken[target]--;
+                singleHitsTaken[lordHero]++;
                 hp[target] += dmg;
                 hp[lordHero] -= damageTaken[lordHero];
                 if (hp[lordHero] <= 0) {
