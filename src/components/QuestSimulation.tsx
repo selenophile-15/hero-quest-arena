@@ -546,19 +546,19 @@ export default function QuestSimulation() {
           const Icon = tab.icon;
           const isActive = subTab === tab.id;
           return (
-            <button
-              key={tab.id}
-              onClick={() => setSubTab(tab.id)}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 -mb-[5px]
-                transition-all duration-200
-                ${isActive
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
-                }`}
-            >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'scale-110' : ''}`} />
-              {tab.label}
-            </button>
+              <button
+                key={tab.id}
+                onClick={() => setSubTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-[5px]
+                  transition-all duration-200
+                  ${isActive
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'scale-110' : ''}`} />
+                {tab.label}
+              </button>
           );
         })}
       </div>
