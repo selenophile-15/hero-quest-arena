@@ -210,15 +210,24 @@ const Index = () => {
             onClick={() => navigate("/dashboard")}
             className="btn-shine text-base px-12 py-7 font-display tracking-wider relative group
               transition-all duration-300 ease-out
-              hover:scale-105 hover:shadow-[0_0_30px_rgba(200,147,10,0.4),0_0_60px_rgba(200,147,10,0.15)]
+              hover:scale-105 hover:shadow-[0_0_30px_rgba(140,170,255,0.3),0_0_60px_rgba(200,147,10,0.2)]
               active:scale-95"
             style={{
-              background: 'linear-gradient(135deg, hsl(40 85% 45%), hsl(30 80% 40%))',
-              boxShadow: '0 0 20px rgba(200,147,10,0.2), 0 4px 20px rgba(0,0,0,0.3)',
+              background: 'linear-gradient(135deg, hsl(225 40% 30%), hsl(230 35% 25%))',
+              boxShadow: '0 0 20px rgba(140,170,255,0.15), 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(180,200,255,0.2)',
+              border: '1px solid rgba(140,170,255,0.2)',
             }}
           >
-            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" />
-            <span style={{ fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 700, letterSpacing: '0.15em', fontSize: '1.1rem' }}>시작하기</span>
+            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" style={{ color: '#c8d8ff' }} />
+            <span style={{
+              fontFamily: "'Noto Sans KR', sans-serif",
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              fontSize: '1.1rem',
+              background: 'linear-gradient(180deg, #e8efff, #ffd97a)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>모험 시작</span>
           </Button>
 
           <div className="mt-20 animate-bounce opacity-40">
