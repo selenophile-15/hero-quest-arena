@@ -73,7 +73,7 @@ const ELEMENT_BAR_COLORS: Record<string, string> = {
   '불': '#ef4444',
   '물': '#3b82f6',
   '공기': '#2dd4bf',
-  '대지': '#15803d',
+  '대지': '#65a30d',
   '빛': '#fde68a',
   '어둠': '#a855f7',
   '모든 원소': '#e5e7eb',
