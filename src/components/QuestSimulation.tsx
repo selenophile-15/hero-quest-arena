@@ -676,7 +676,17 @@ export default function QuestSimulation() {
             {/* Quest select button - centered, larger with less cropping */}
             <div className="flex justify-center pt-2 mb-4">
               <button
-                onClick={() => openConfigAtStep(hasSubAreas ? 'subarea' : 'difficulty')}
+                onClick={() => {
+                  if (!currentQuest) {
+                    // 아무것도 선택 안 된 상태: 처음부터
+                    setConfigInitialStep(undefined);
+                    setConfigInitialState(undefined);
+                    setConfigOpen(true);
+                  } else {
+                    // 이미 선택된 상태: 세부 지역부터
+                    openConfigAtStep(hasSubAreas ? 'subarea' : 'difficulty');
+                  }
+                }}
                 className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
                   currentQuest
                     ? 'border-primary/60 glow-gold'
