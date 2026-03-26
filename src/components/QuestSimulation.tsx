@@ -1600,6 +1600,61 @@ export default function QuestSimulation() {
                   );
                 })()}
               </div>
+
+              {/* Equipment Grade Score */}
+              <div className="card-fantasy p-4 mb-3">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <img src="/images/stats/power.webp" alt="" className="w-3.5 h-3.5" />
+                  <span className="text-sm font-bold text-foreground">장비 등급</span>
+                </div>
+                {(() => {
+                  const qualityScore: Record<string, number> = {
+                    '일반': 1, '고급': 1.25, '최고급': 1.5, '에픽': 2, '전설': 3,
+                  };
+                  const heroGrades = selectedHeroes.map(h => {
+                    const slots = h.equipmentSlots || [];
+                    const maxSlots = h.type === 'champion' ? 2 : 6;
+                    let totalScore = 0;
+                    let equipped = 0;
+                    slots.forEach(s => {
+                      if (s.item) {
+                        equipped++;
+                        totalScore += qualityScore[s.quality] || 1;
+                      }
+                    });
+                    const avg = equipped > 0 ? totalScore / equipped : 0;
+                    return { name: h.name, avg, equipped, maxSlots };
+                  });
+                  const partyTotal = heroGrades.reduce((s, g) => s + g.avg, 0);
+                  const partyAvg = heroGrades.length > 0 ? partyTotal / heroGrades.length : 0;
+                  const getGradeColor = (score: number) => score >= 2.5 ? 'text-purple-400' : score >= 2 ? 'text-yellow-400' : score >= 1.5 ? 'text-blue-400' : score >= 1.25 ? 'text-green-400' : 'text-muted-foreground';
+                  const getBarColor = (score: number) => score >= 2.5 ? 'bg-purple-500' : score >= 2 ? 'bg-yellow-500' : score >= 1.5 ? 'bg-blue-500' : score >= 1.25 ? 'bg-green-500' : 'bg-muted';
+                  return (
+                    <div className="space-y-2">
+                      {heroGrades.map(g => (
+                        <div key={g.name}>
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">{g.name}</span>
+                            <span className={`text-[11px] font-mono ${getGradeColor(g.avg)}`}>
+                              {g.avg > 0 ? g.avg.toFixed(2) : '-'}
+                              <span className="text-muted-foreground/60 ml-1">({g.equipped}/{g.maxSlots})</span>
+                            </span>
+                          </div>
+                          <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
+                            <div className={`h-full rounded-full ${getBarColor(g.avg)} transition-all`} style={{ width: `${Math.min(100, (g.avg / 3) * 100)}%` }} />
+                          </div>
+                        </div>
+                      ))}
+                      <div className="border-t border-border/30 pt-2 mt-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] text-foreground font-bold">파티 평균</span>
+                          <span className={`text-sm font-mono font-bold ${getGradeColor(partyAvg)}`}>{partyAvg > 0 ? partyAvg.toFixed(2) : '-'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
             </>
           )}
         </div>
