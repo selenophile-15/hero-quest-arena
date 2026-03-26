@@ -947,7 +947,107 @@ export default function QuestSimulation() {
                   );
                 })()}
 
-                {/* Defense Reference */}
+                {/* Defense Reference - inside monster info */}
+                {selectedHeroes.length > 0 && buffedStats.length > 0 && (() => {
+                  const defToBarPct = (def: number) => {
+                    for (let i = defThresholds.length - 1; i >= 1; i--) {
+                      const upper = defThresholds[i];
+                      const lower = defThresholds[i - 1];
+                      if (def >= lower.value) {
+                        const segPct = upper.value > lower.value ? (def - lower.value) / (upper.value - lower.value) : 0;
+                        const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
+                        const upperPos = (i / (defThresholds.length - 1)) * 100;
+                        return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
+                      }
+                    }
+                    return 0;
+                  };
+
+                  const barH = 220;
+                  const reductions = [-50, 0, 50, 70, 75];
+                  const rows = defThresholds.map((t, i) => ({
+                    key: t.key, label: t.label, value: t.value, color: t.color, textClass: t.textClass,
+                    pct: (i / (defThresholds.length - 1)) * 100,
+                    applied: Math.round(100 - reductions[i]),
+                  }));
+
+                  const getHeroColor = (heroDef: number): string => {
+                    let color = defThresholds[0].color;
+                    for (const t of defThresholds) { if (heroDef >= t.value) color = t.color; }
+                    return color;
+                  };
+
+                  const heroEntries = selectedHeroes.map((h, hi) => {
+                    const bs = buffedStats[hi];
+                    const heroDef = bs ? bs.def : (h.def || 0);
+                    const pinPct = defToBarPct(heroDef);
+                    const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
+                    const color = getHeroColor(heroDef);
+                    return { id: h.id, name: h.name, heroDef, pinPct, dmgApplied, color };
+                  });
+
+                  const n = heroEntries.length;
+                  const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
+                  const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
+                  const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
+
+                  return (
+                    <div className="mt-4 pt-4 border-t border-border/30">
+                      <div className="flex items-center gap-1.5 mb-3">
+                        <Shield className="w-3.5 h-3.5 text-blue-400" />
+                        <span className="text-xs font-bold text-foreground">방어력 기준치</span>
+                      </div>
+                      <div className="relative grid grid-cols-[44px_14px_1fr] gap-x-1" style={{ height: `${barH}px` }}>
+                        <div className="relative">
+                          {rows.map(r => (
+                            <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
+                              <span className={`text-[10px] font-mono font-semibold tabular-nums ${r.textClass}`}>{r.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="relative">
+                          <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
+                            background: 'linear-gradient(to top, #7f1d1d 0%, #a16207 25%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
+                          }} />
+                          {rows.map(r => (
+                            <div key={`tick-${r.key}`} className="absolute left-0 right-0 flex items-center pointer-events-none" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
+                              <div className="h-[2px] w-full" style={{ backgroundColor: r.color, opacity: 0.9 }} />
+                            </div>
+                          ))}
+                          {heroEntries.map(h => (
+                            <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
+                              <div className="w-3.5 h-3.5 rounded-full border-2 shadow-[0_0_6px_rgba(255,255,255,0.5)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
+                            </div>
+                          ))}
+                        </div>
+                        <div className="relative ml-1">
+                          {rows.map(r => (
+                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[10px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                              <span className={`text-[9px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
+                            </div>
+                          ))}
+                          <svg className="absolute inset-0 overflow-visible" style={{ left: '60px', width: 'calc(100% - 60px)', height: '100%' }}>
+                            {heroLayout.map(h => {
+                              const yPin = barH - (h.pinPct / 100) * barH;
+                              const yLabel = barH - (h.labelPct / 100) * barH;
+                              const d = `M 0 ${yPin} L 12 ${yPin} L 28 ${yLabel}`;
+                              return <path key={`line-${h.id}`} d={d} fill="none" stroke={h.color} strokeWidth={1.5} strokeOpacity={0.8} />;
+                            })}
+                          </svg>
+                          {heroLayout.map(h => (
+                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '90px', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[10px] font-semibold truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                              <span className="text-[9px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
+                                {formatNumber(h.heroDef)} ({h.dmgApplied}%)
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             ) : (
               <div className="text-center py-4">
