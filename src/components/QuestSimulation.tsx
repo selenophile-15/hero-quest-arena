@@ -1568,10 +1568,12 @@ export default function QuestSimulation() {
 
       {/* Full-width Simulation Details Box */}
       {currentQuest && selectedHeroes.length > 0 && simResult && (
-        <div className="mt-4 card-fantasy p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <h3 className="text-lg font-bold text-foreground">📋 상세 정보</h3>
+        <>
+          <div className="flex items-center gap-2 mt-4 mb-3">
+            <ListChecks className="w-5 h-5 text-primary" />
+            <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
           </div>
+          <div className="card-fantasy p-4">
 
           {/* Mini-boss breakdown (only for random mode, not boss quests) */}
           {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
