@@ -637,17 +637,52 @@ export default function QuestSimulation() {
             variant="outline"
             size="sm"
             className="text-xs gap-1 px-2 border-purple-500/40 text-purple-400 hover:bg-purple-500/10"
-            onClick={() => {
-              import('html2canvas').then(({ default: html2canvas }) => {
-                const el = document.querySelector('[data-quest-screenshot]');
-                if (!el) return;
-                html2canvas(el as HTMLElement, { backgroundColor: '#1a1a2e', useCORS: true, scrollY: -window.scrollY }).then(canvas => {
-                  const link = document.createElement('a');
-                  link.download = `quest-sim-${Date.now()}.png`;
-                  link.href = canvas.toDataURL();
-                  link.click();
+            onClick={async () => {
+              const el = document.querySelector('[data-quest-screenshot]') as HTMLElement;
+              if (!el) return;
+              // Show loading overlay
+              const overlay = document.createElement('div');
+              overlay.id = 'screenshot-overlay';
+              overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
+              overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+              document.body.appendChild(overlay);
+              try {
+                const { default: html2canvas } = await import('html2canvas');
+                // Force all flex items to use proper alignment for html2canvas
+                const allCells = el.querySelectorAll('td, th');
+                allCells.forEach(cell => {
+                  (cell as HTMLElement).style.verticalAlign = 'middle';
                 });
-              });
+                const canvas = await html2canvas(el, {
+                  backgroundColor: '#1a1a2e',
+                  useCORS: true,
+                  scrollY: -window.scrollY,
+                  scale: 2,
+                  logging: false,
+                  onclone: (doc) => {
+                    const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
+                    if (clonedEl) {
+                      // Fix vertical alignment in cloned document
+                      clonedEl.querySelectorAll('td, th').forEach(cell => {
+                        (cell as HTMLElement).style.verticalAlign = 'middle';
+                      });
+                      clonedEl.querySelectorAll('.flex').forEach(flex => {
+                        (flex as HTMLElement).style.alignItems = (flex as HTMLElement).style.alignItems || 'center';
+                      });
+                    }
+                  }
+                });
+                // Restore
+                allCells.forEach(cell => {
+                  (cell as HTMLElement).style.verticalAlign = '';
+                });
+                const link = document.createElement('a');
+                link.download = `quest-sim-${Date.now()}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.92);
+                link.click();
+              } finally {
+                overlay.remove();
+              }
             }}
             title="스크린샷 저장"
           >
