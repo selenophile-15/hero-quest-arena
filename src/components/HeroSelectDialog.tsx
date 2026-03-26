@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { LayoutGrid, Table2, Filter, ChevronUp, ChevronDown, X, HelpCircle } from 'lucide-react';
+import { LayoutGrid, Table2, Filter, X, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_MAP, SPIRIT_NAME_MAP } from '@/lib/nameMap';
@@ -33,6 +33,18 @@ const CLASS_LINE_SHADOW: Record<string, string> = {
   '전사': '0 0 12px rgba(239,68,68,0.3)',
   '로그': '0 0 12px rgba(132,204,22,0.3)',
   '주문술사': '0 0 12px rgba(56,189,248,0.3)',
+};
+
+const POSITION_BG_COLORS: Record<string, string> = {
+  '퓨어 탱커': 'bg-blue-500',
+  '회피 탱커': 'bg-emerald-600',
+  '딜탱': 'bg-orange-500',
+  '치명 딜러': 'bg-red-500',
+  '일반 딜러': 'bg-yellow-500',
+  '회피 딜러': 'bg-cyan-500',
+  '좀비': 'bg-purple-500',
+  '첫 턴 극딜': 'bg-pink-500',
+  '기타': 'bg-secondary',
 };
 
 const CLASS_LINE_ORDER: Record<string, number> = { '전사': 0, '로그': 1, '주문술사': 2 };
@@ -292,22 +304,6 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
               </SelectContent>
             </Select>
           )}
-          <div className="w-px h-5 bg-border/50" />
-          <Select value={sortKey} onValueChange={v => setSortKey(v as SortKey)}>
-            <SelectTrigger className="w-[90px] h-7 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="heroClass">직업순</SelectItem>
-              <SelectItem value="name">이름순</SelectItem>
-              <SelectItem value="level">레벨순</SelectItem>
-              <SelectItem value="power">전투력순</SelectItem>
-              <SelectItem value="atk">공격력순</SelectItem>
-              <SelectItem value="def">방어력순</SelectItem>
-              <SelectItem value="hp">체력순</SelectItem>
-            </SelectContent>
-          </Select>
-          <button onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')} className="p-1 rounded hover:bg-secondary">
-            {sortDir === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
         </div>
 
         {/* ─── Content ─────────────────────────────────────────────────────── */}
@@ -318,10 +314,10 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
               <thead className="sticky top-0 bg-background z-10">
                 <tr className="border-b border-border text-muted-foreground">
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">유형</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">이름</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => { setSortKey('heroClass'); setSortDir(d => d === 'asc' ? 'desc' : 'asc'); }} title="직업순 정렬">
                     직업
                   </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap">이름</th>
                   <th className="text-center py-2 px-1.5">Lv</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">원소</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">스킬</th>
@@ -333,7 +329,6 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                   <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400">치명타 대미지</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap text-teal-400">회피</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">포지션</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">상태</th>
                 </tr>
               </thead>
               <tbody>
@@ -353,7 +348,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                     <tr key={hero.id}
                       onClick={() => !disabled && handleToggle(hero.id)}
                       className={`border-b border-border/30 cursor-pointer transition-colors ${
-                        isSelected ? 'bg-primary/10' : disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-secondary/30'
+                        isSelected ? 'bg-primary/30 border-primary/50' : disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-secondary/30'
                       }`}
                       title={isOtherChampion ? '파티에 챔피언은 1명만 가능' : undefined}>
                       {/* 유형 */}
@@ -361,14 +356,6 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                         <span className={`px-1.5 py-0.5 rounded text-[10px] ${hero.type === 'champion' ? 'bg-accent/20 text-accent' : 'bg-primary/20 text-primary'}`}>
                           {hero.type === 'champion' ? '챔피언' : '영웅'}
                         </span>
-                      </td>
-                      {/* 이름 */}
-                      <td className="py-1.5 px-1.5 text-center font-medium text-foreground">
-                        <div className="flex items-center gap-1 justify-center">
-                          {belowMin && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
-                          {iconPath && <img src={iconPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                          <span className="whitespace-nowrap">{hero.name}</span>
-                        </div>
                       </td>
                       {/* 직업 with toggle */}
                       <td className="py-1.5 px-1 text-center text-muted-foreground">
@@ -386,6 +373,14 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                             <span className="text-[10px] whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
                           </div>
                         )}
+                      </td>
+                      {/* 이름 */}
+                      <td className="py-1.5 px-1.5 text-center font-medium text-foreground">
+                        <div className="flex items-center gap-1 justify-center">
+                          {belowMin && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
+                          {iconPath && <img src={iconPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                          <span className="whitespace-nowrap">{hero.type === 'champion' ? (hero.championName || hero.name) : hero.name}</span>
+                        </div>
                       </td>
                       {/* Lv */}
                       <td className="py-1.5 px-1 text-center text-muted-foreground">{hero.level}</td>
@@ -449,9 +444,11 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       {/* 회피 */}
                       <td className="py-1.5 px-1 text-center font-mono text-teal-400">{hero.evasion > 0 ? `${formatNumber(hero.evasion)}%` : '-'}</td>
                       {/* 포지션 */}
-                      <td className="py-1.5 px-1 text-center text-foreground/70 text-[10px] whitespace-nowrap">{hero.position || '-'}</td>
-                      {/* 상태 */}
-                      <td className="py-1.5 px-1 text-center text-foreground/70 text-[10px] whitespace-nowrap">{hero.label || '-'}</td>
+                      <td className="py-1.5 px-1 text-center text-[10px] whitespace-nowrap">
+                        {hero.position ? (
+                          <span className={`px-1.5 py-0.5 rounded ${POSITION_BG_COLORS[hero.position] || 'bg-secondary'} text-white`}>{hero.position}</span>
+                        ) : '-'}
+                      </td>
                     </tr>
                   );
                 })}
