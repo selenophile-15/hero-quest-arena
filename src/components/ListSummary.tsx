@@ -554,11 +554,9 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
       />
 
       {(ownedHeroes.length > 0 || plannedHeroes.length > 0) && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ElementSummary owned={ownedHeroes} planned={plannedHeroes} />
-            <ClassLineSummary owned={ownedHeroes} planned={plannedHeroes} />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <ElementSummary owned={ownedHeroes} planned={plannedHeroes} />
+          <ClassLineSummary owned={ownedHeroes} planned={plannedHeroes} />
           <PositionChart owned={ownedHeroes} planned={plannedHeroes} />
         </div>
       )}
