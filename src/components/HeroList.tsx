@@ -1496,7 +1496,14 @@ export default function HeroList() {
                 <span><Upload className="w-3.5 h-3.5" /></span>
               </Button>
             </label>
-            <Button onClick={handleScreenshot} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장">
+            <Button onClick={() => {
+              if (viewMode === 'table') {
+                setScreenshotCols(new Set(visibleCols));
+                setScreenshotDialogOpen(true);
+              } else {
+                handleAlbumScreenshot();
+              }
+            }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장">
               <Camera className="w-3.5 h-3.5" />
             </Button>
             <div className="w-px h-5 bg-border mx-1" />
