@@ -191,22 +191,25 @@ export default function HeroList() {
     }
   }, [expandedId]);
 
-  // Album screenshot handler
-  const handleAlbumScreenshot = useCallback(async () => {
-    if (!albumContentRef.current) return;
+  // Screenshot handler (shared for table & album)
+  const handleScreenshot = useCallback(async (targetRef: React.RefObject<HTMLDivElement | null>, prefix: string) => {
+    if (!targetRef.current) return;
+    setScreenshotLoading(true);
     try {
-      const canvas = await html2canvas(albumContentRef.current, {
+      const canvas = await html2canvas(targetRef.current, {
         backgroundColor: '#1a1a2e',
         scale: 2,
         useCORS: true,
         logging: false,
       });
       const link = document.createElement('a');
-      link.download = `album_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
+      link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     } catch (e) {
       console.error('Screenshot failed:', e);
+    } finally {
+      setScreenshotLoading(false);
     }
   }, [listTab]);
 
