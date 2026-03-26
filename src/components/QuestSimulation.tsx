@@ -1971,5 +1971,8 @@ export default function QuestSimulation() {
         hasEvasionPenalty={!!(currentQuest && (currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')))}
       />
     </div>
+      )}
+      </div> {/* end simulation tab */}
+    </div>
   );
 }
