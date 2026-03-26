@@ -162,8 +162,8 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Rising particles (embers) */}
-      <div ref={particlesRef} className="fixed inset-0 z-[3] pointer-events-none" />
+      {/* Rising particles (embers) - absolute so they scroll with page */}
+      <div ref={particlesRef} className="absolute inset-0 z-[3] pointer-events-none" style={{ top: '80vh', height: '120vh' }} />
 
       {/* ===== HERO SECTION ===== */}
       <div className="relative z-10 min-h-screen flex items-center justify-center">
