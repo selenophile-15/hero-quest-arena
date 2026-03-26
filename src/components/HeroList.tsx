@@ -1297,7 +1297,6 @@ export default function HeroList() {
 
 
 
-
   return (
     <div className="animate-fade-in">
       {/* Header */}
@@ -1325,37 +1324,49 @@ export default function HeroList() {
         </div>
       </div>
 
-      {/* Tab: Hero / Champion + View mode */}
+      {/* Tab: Hero / Champion / Summary + View mode */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex gap-1">
           <button
-            onClick={() => setListTab('hero')}
+            onClick={() => { setListTab('hero'); setSummaryOpen(false); }}
             className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
-              listTab === 'hero' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+              listTab === 'hero' && !summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Shield className="w-4 h-4 inline mr-1" />영웅 목록 ({heroList.length})
           </button>
           <button
-            onClick={() => setListTab('champion')}
+            onClick={() => { setListTab('champion'); setSummaryOpen(false); }}
             className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
-              listTab === 'champion' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+              listTab === 'champion' && !summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Crown className="w-4 h-4 inline mr-1" />챔피언 목록 ({championList.length})
           </button>
-        </div>
-        <div className="flex gap-1">
-          <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-            <Table2 className="w-4 h-4" />
+          <button
+            onClick={() => setSummaryOpen(true)}
+            className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
+              summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4 inline mr-1" />리스트 요약
           </button>
-          <button onClick={() => setViewMode('album')} className={`p-2 rounded ${viewMode === 'album' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-            <LayoutGrid className="w-4 h-4" />
-          </button>
         </div>
+        {!summaryOpen && (
+          <div className="flex gap-1">
+            <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+              <Table2 className="w-4 h-4" />
+            </button>
+            <button onClick={() => setViewMode('album')} className={`p-2 rounded ${viewMode === 'album' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
-      {viewMode === 'table' ? (
+      {summaryOpen ? (
+        <ListSummary heroes={heroes} />
+      ) : viewMode === 'table' ? (
         <>
           {/* Column visibility - table only */}
           <div className="card-fantasy p-3 mb-3">
