@@ -1193,11 +1193,11 @@ export default function QuestSimulation() {
                   <td className="py-1 px-1.5">
                     <button
                       onClick={() => setJobDisplayMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon')}
-                      className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5 text-xs"
+                      className="text-foreground/70 hover:text-foreground transition-colors flex items-center gap-0.5 text-sm"
                       title="클릭하여 직업 표시 방식 변경 (아이콘 → 일러스트 → 없음)"
                     >
                       직업
-                      <span className="text-[9px] opacity-50 ml-0.5">
+                      <span className="text-[10px] opacity-50 ml-0.5">
                         {jobDisplayMode === 'icon' ? '●○○' : jobDisplayMode === 'illust' ? '○●○' : '○○●'}
                       </span>
                     </button>
