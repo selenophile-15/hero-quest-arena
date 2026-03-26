@@ -659,6 +659,7 @@ export default function QuestSimulation() {
         </div>
       )}
 
+      <div data-quest-screenshot>
       <div className="flex gap-4 flex-col lg:flex-row" data-quest-sim>
 
         {/* LEFT: Monster Info */}
