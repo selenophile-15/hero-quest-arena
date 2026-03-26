@@ -30,13 +30,28 @@ const CLASS_LINE_COLORS: Record<string, string> = {
   '로그': 'text-lime-400',
   '주문술사': 'text-sky-400',
 };
+const CLASS_LINE_BG: Record<string, string> = {
+  '전사': 'bg-red-500/15',
+  '로그': 'bg-lime-500/15',
+  '주문술사': 'bg-sky-500/15',
+};
 
 const POSITION_COLORS: Record<string, string> = {
+  '퓨어 탱커': 'bg-blue-500',
+  '회피 탱커': 'bg-teal-500',
+  '딜탱': 'bg-orange-500',
+  '치명 딜러': 'bg-red-500',
+  '일반 딜러': 'bg-yellow-500',
+  '회피 딜러': 'bg-cyan-500',
+  '좀비': 'bg-purple-500',
+  '기타': 'bg-secondary',
+};
+const POSITION_TEXT_COLORS: Record<string, string> = {
   '퓨어 탱커': 'text-blue-400',
   '회피 탱커': 'text-teal-400',
   '딜탱': 'text-orange-400',
-  '치명 딜러': 'text-yellow-400',
-  '일반 딜러': 'text-red-400',
+  '치명 딜러': 'text-red-400',
+  '일반 딜러': 'text-yellow-400',
   '회피 딜러': 'text-cyan-300',
   '좀비': 'text-purple-400',
   '기타': 'text-muted-foreground',
@@ -45,47 +60,18 @@ const POSITION_COLORS: Record<string, string> = {
 const ELEMENT_ORDER = ['불', '물', '공기', '대지', '빛', '어둠', '모든 원소'];
 const CLASS_LINE_ORDER = ['전사', '로그', '주문술사'];
 
-/* ── Distribution calculator ── */
-function calcDistribution(list: Hero[]) {
-  const heroList = list.filter(h => h.type === 'hero');
-  const champList = list.filter(h => h.type === 'champion');
-
-  const elementDist: Record<string, { hero: number; champ: number }> = {};
-  ELEMENT_ORDER.forEach(e => { elementDist[e] = { hero: 0, champ: 0 }; });
-  list.forEach(h => {
-    if (!h.element) return;
-    if (!elementDist[h.element]) elementDist[h.element] = { hero: 0, champ: 0 };
-    if (h.type === 'hero') elementDist[h.element].hero++;
-    else elementDist[h.element].champ++;
-  });
-
-  const classLineDist: Record<string, number> = {};
-  CLASS_LINE_ORDER.forEach(cl => { classLineDist[cl] = 0; });
-  heroList.forEach(h => {
-    if (h.classLine) classLineDist[h.classLine] = (classLineDist[h.classLine] || 0) + 1;
-  });
-
-  const positionDist: Record<string, { hero: number; champ: number }> = {};
-  list.forEach(h => {
-    const pos = h.position || '미지정';
-    if (!positionDist[pos]) positionDist[pos] = { hero: 0, champ: 0 };
-    if (h.type === 'hero') positionDist[pos].hero++;
-    else positionDist[pos].champ++;
-  });
-
-  return { heroList, champList, elementDist, classLineDist, positionDist };
-}
-
-/* ── Hero picker dialog ── */
-function HeroPicker({ open, onClose, allHeroes, selectedIds, onConfirm, title }: {
+/* ── Hero picker dialog with duplicate prevention ── */
+function HeroPicker({ open, onClose, allHeroes, selectedIds, excludeIds, onConfirm, title }: {
   open: boolean;
   onClose: () => void;
   allHeroes: Hero[];
   selectedIds: string[];
+  excludeIds: string[];
   onConfirm: (ids: string[]) => void;
   title: string;
 }) {
   const [checked, setChecked] = useState<Set<string>>(new Set(selectedIds));
+  const excludeSet = useMemo(() => new Set(excludeIds), [excludeIds]);
 
   const toggle = useCallback((id: string) => {
     setChecked(prev => {
@@ -95,10 +81,11 @@ function HeroPicker({ open, onClose, allHeroes, selectedIds, onConfirm, title }:
     });
   }, []);
 
-  const heroItems = useMemo(() => allHeroes.filter(h => h.type === 'hero'), [allHeroes]);
-  const champItems = useMemo(() => allHeroes.filter(h => h.type === 'champion'), [allHeroes]);
+  const available = useMemo(() => allHeroes.filter(h => !excludeSet.has(h.id)), [allHeroes, excludeSet]);
+  const heroItems = useMemo(() => available.filter(h => h.type === 'hero'), [available]);
+  const champItems = useMemo(() => available.filter(h => h.type === 'champion'), [available]);
 
-  const selectAll = () => setChecked(new Set(allHeroes.map(h => h.id)));
+  const selectAll = () => setChecked(new Set(available.map(h => h.id)));
   const deselectAll = () => setChecked(new Set());
 
   return (
@@ -112,6 +99,9 @@ function HeroPicker({ open, onClose, allHeroes, selectedIds, onConfirm, title }:
           <Button variant="outline" size="sm" onClick={deselectAll}>전체 해제</Button>
           <span className="ml-auto text-sm text-muted-foreground">{checked.size}명 선택</span>
         </div>
+        {excludeIds.length > 0 && (
+          <p className="text-xs text-muted-foreground mb-1">※ 다른 그룹에 이미 선택된 항목은 표시되지 않습니다.</p>
+        )}
         <div className="flex-1 overflow-y-auto space-y-3 pr-1">
           {heroItems.length > 0 && (
             <div>
@@ -155,16 +145,14 @@ function HeroPicker({ open, onClose, allHeroes, selectedIds, onConfirm, title }:
 }
 
 /* ── Group table (보유 중 / 추가 예정) ── */
-function GroupTable({ label, icon, heroes, onAdd, onRemove }: {
+function GroupTable({ label, icon, heroes, onAdd, onRemove, accentClass }: {
   label: string;
   icon: React.ReactNode;
   heroes: Hero[];
   onAdd: () => void;
   onRemove: (id: string) => void;
+  accentClass: string;
 }) {
-  const heroItems = heroes.filter(h => h.type === 'hero');
-  const champItems = heroes.filter(h => h.type === 'champion');
-
   return (
     <div className="card-fantasy p-4">
       <div className="flex items-center justify-between mb-3">
@@ -173,7 +161,7 @@ function GroupTable({ label, icon, heroes, onAdd, onRemove }: {
           {label}
           <span className="text-muted-foreground font-normal ml-1">({heroes.length}명)</span>
         </h3>
-        <Button variant="outline" size="sm" onClick={onAdd} className="gap-1">
+        <Button size="sm" onClick={onAdd} className={`gap-1 ${accentClass}`}>
           <Plus size={14} /> 추가
         </Button>
       </div>
@@ -183,160 +171,350 @@ function GroupTable({ label, icon, heroes, onAdd, onRemove }: {
           아직 추가된 항목이 없습니다. 위 버튼을 눌러 리스트에서 선택하세요.
         </p>
       ) : (
-        <div className="space-y-2">
-          {heroItems.length > 0 && (
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">영웅 ({heroItems.length})</p>
-              <div className="flex flex-wrap gap-1.5">
-                {heroItems.map(h => (
-                  <div key={h.id} className="flex items-center gap-1 bg-secondary/30 border border-border/40 rounded-md pl-2 pr-1 py-1 text-sm group">
-                    <ElementIcon element={h.element} size={14} />
-                    <span className={`${CLASS_LINE_COLORS[h.classLine] || ''} text-xs`}>{h.heroClass}</span>
-                    <span className="text-foreground">{h.name}</span>
-                    {h.position && <span className={`text-[10px] ml-0.5 ${POSITION_COLORS[h.position] || 'text-muted-foreground'}`}>{h.position}</span>}
-                    <button onClick={() => onRemove(h.id)} className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive">
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
+        <div className="flex flex-wrap gap-1.5">
+          {heroes.map(h => (
+            <div key={h.id} className="flex items-center gap-1 bg-secondary/30 border border-border/40 rounded-md pl-2 pr-1 py-1 text-sm group">
+              <ElementIcon element={h.element} size={14} />
+              {h.type === 'hero' && (
+                <span className={`${CLASS_LINE_COLORS[h.classLine] || ''} text-xs`}>{h.heroClass}</span>
+              )}
+              <span className="text-foreground">{h.type === 'champion' ? (h.championName || h.name) : h.name}</span>
+              {h.position && <span className={`text-[10px] ml-0.5 ${POSITION_TEXT_COLORS[h.position] || 'text-muted-foreground'}`}>{h.position}</span>}
+              <button onClick={() => onRemove(h.id)} className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive">
+                <X size={12} />
+              </button>
             </div>
-          )}
-          {champItems.length > 0 && (
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">챔피언 ({champItems.length})</p>
-              <div className="flex flex-wrap gap-1.5">
-                {champItems.map(h => (
-                  <div key={h.id} className="flex items-center gap-1 bg-secondary/30 border border-border/40 rounded-md pl-2 pr-1 py-1 text-sm group">
-                    <ElementIcon element={h.element} size={14} />
-                    <span className="text-foreground">{h.championName || h.name}</span>
-                    {h.position && <span className={`text-[10px] ml-0.5 ${POSITION_COLORS[h.position] || 'text-muted-foreground'}`}>{h.position}</span>}
-                    <button onClick={() => onRemove(h.id)} className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive">
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          ))}
         </div>
       )}
     </div>
   );
 }
 
-/* ── Distribution section ── */
-function DistributionSection({ title, heroes, totalHeroes }: { title: string; heroes: Hero[]; totalHeroes: number }) {
-  const { heroList, champList, elementDist, classLineDist, positionDist } = useMemo(() => calcDistribution(heroes), [heroes]);
-  const hCount = heroList.length;
-  const cCount = champList.length;
+/* ── Matrix table: element columns × class line rows ── */
+function MatrixTable({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
+  const all = useMemo(() => [...owned, ...planned], [owned, planned]);
+  const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
 
-  if (heroes.length === 0) return null;
+  // Build matrix: classLine → element → heroes[]
+  type CellData = { hero: Hero; isOwned: boolean }[];
+  const matrix = useMemo(() => {
+    const m: Record<string, Record<string, CellData>> = {};
+    // Add "챔피언" as a virtual class line
+    const lines = [...CLASS_LINE_ORDER, '챔피언'];
+    lines.forEach(cl => {
+      m[cl] = {};
+      ELEMENT_ORDER.forEach(el => { m[cl][el] = []; });
+    });
+    all.forEach(h => {
+      const cl = h.type === 'champion' ? '챔피언' : (h.classLine || '기타');
+      const el = h.element || '기타';
+      if (!m[cl]) { m[cl] = {}; ELEMENT_ORDER.forEach(e => { m[cl][e] = []; }); }
+      if (!m[cl][el]) m[cl][el] = [];
+      m[cl][el].push({ hero: h, isOwned: ownedSet.has(h.id) });
+    });
+    return m;
+  }, [all, ownedSet]);
+
+  const classLines = useMemo(() => {
+    const lines = [...CLASS_LINE_ORDER, '챔피언'];
+    return lines.filter(cl => matrix[cl] && ELEMENT_ORDER.some(el => matrix[cl][el]?.length > 0));
+  }, [matrix]);
+
+  // Row totals per class line
+  const rowTotals = useMemo(() => {
+    const t: Record<string, { owned: number; planned: number }> = {};
+    classLines.forEach(cl => {
+      let o = 0, p = 0;
+      ELEMENT_ORDER.forEach(el => {
+        matrix[cl][el]?.forEach(d => { if (d.isOwned) o++; else p++; });
+      });
+      t[cl] = { owned: o, planned: p };
+    });
+    return t;
+  }, [matrix, classLines]);
+
+  // Column totals per element
+  const colTotals = useMemo(() => {
+    const t: Record<string, { owned: number; planned: number }> = {};
+    ELEMENT_ORDER.forEach(el => {
+      let o = 0, p = 0;
+      classLines.forEach(cl => {
+        matrix[cl][el]?.forEach(d => { if (d.isOwned) o++; else p++; });
+      });
+      t[el] = { owned: o, planned: p };
+    });
+    return t;
+  }, [matrix, classLines]);
+
+  const grandTotal = useMemo(() => {
+    let o = 0, p = 0;
+    Object.values(colTotals).forEach(v => { o += v.owned; p += v.planned; });
+    return { owned: o, planned: p };
+  }, [colTotals]);
+
+  if (all.length === 0) return null;
 
   return (
-    <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-primary border-b border-border pb-1">{title} 분포 ({heroes.length}명)</h3>
-
-      {/* Counts */}
-      <div className="flex gap-6 text-sm">
-        <div className="flex items-center gap-1.5">
-          <span className="text-foreground/70">영웅</span>
-          <span className="font-bold text-foreground">{hCount}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-foreground/70">챔피언</span>
-          <span className="font-bold text-foreground">{cCount}</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        {/* Element */}
-        <div className="card-fantasy p-3">
-          <h4 className="text-xs font-semibold text-muted-foreground mb-2">속성별</h4>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-muted-foreground text-xs">
-                <th className="py-1 text-left">속성</th>
-                <th className="py-1 text-center w-12">영웅</th>
-                <th className="py-1 text-center w-12">챔피언</th>
-                <th className="py-1 text-center w-12">합계</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ELEMENT_ORDER.map(el => {
-                const d = elementDist[el] || { hero: 0, champ: 0 };
-                const total = d.hero + d.champ;
-                return (
-                  <tr key={el} className="border-b border-border/30">
-                    <td className="py-1 flex items-center gap-1.5">
-                      <ElementIcon element={el} size={16} />
-                      <span className="text-foreground text-xs">{el}</span>
-                    </td>
-                    <td className={`py-1 text-center tabular-nums text-xs ${d.hero === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{d.hero}</td>
-                    <td className={`py-1 text-center tabular-nums text-xs ${d.champ === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{d.champ}</td>
-                    <td className={`py-1 text-center tabular-nums text-xs font-semibold ${total === 0 ? 'text-foreground/20' : 'text-primary'}`}>{total}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Class line */}
-        <div className="card-fantasy p-3">
-          <h4 className="text-xs font-semibold text-muted-foreground mb-2">계열별 (영웅)</h4>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-muted-foreground text-xs">
-                <th className="py-1 text-left">계열</th>
-                <th className="py-1 text-center w-12">인원</th>
-                <th className="py-1 text-left">비율</th>
-              </tr>
-            </thead>
-            <tbody>
-              {CLASS_LINE_ORDER.map(cl => {
-                const count = classLineDist[cl] || 0;
-                const pct = hCount > 0 ? Math.round((count / hCount) * 100) : 0;
-                return (
-                  <tr key={cl} className="border-b border-border/30">
-                    <td className={`py-1 font-medium text-xs ${CLASS_LINE_COLORS[cl] || ''}`}>{cl}</td>
-                    <td className={`py-1 text-center tabular-nums text-xs ${count === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{count}</td>
-                    <td className="py-1">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1.5 bg-secondary/30 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full transition-all" style={{
-                            width: `${pct}%`,
-                            backgroundColor: cl === '전사' ? '#ef4444' : cl === '로그' ? '#84cc16' : '#38bdf8',
-                          }} />
-                        </div>
-                        <span className="text-[10px] text-muted-foreground tabular-nums w-8 text-right">{pct}%</span>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Position */}
-      <div className="card-fantasy p-3">
-        <h4 className="text-xs font-semibold text-muted-foreground mb-2">포지션별</h4>
-        <div className="grid grid-cols-4 gap-2">
-          {Object.entries(positionDist)
-            .sort(([, a], [, b]) => (b.hero + b.champ) - (a.hero + a.champ))
-            .map(([pos, d]) => {
-              const total = d.hero + d.champ;
-              return (
-                <div key={pos} className="border border-border/30 rounded-lg p-2 bg-secondary/10">
-                  <p className={`text-xs font-medium ${POSITION_COLORS[pos] || 'text-foreground'}`}>{pos}</p>
-                  <p className="text-base font-bold text-foreground mt-0.5">{total}</p>
-                  <p className="text-[10px] text-muted-foreground">영웅 {d.hero} / 챔피언 {d.champ}</p>
+    <div className="card-fantasy p-3 overflow-x-auto">
+      <h3 className="text-sm font-semibold text-primary mb-3">속성 × 계열 분포</h3>
+      <table className="w-full text-xs border-collapse">
+        <thead>
+          <tr className="border-b border-border">
+            <th className="py-2 px-2 text-left text-muted-foreground font-medium w-16"></th>
+            {ELEMENT_ORDER.map(el => (
+              <th key={el} className="py-2 px-1 text-center min-w-[100px]">
+                <div className="flex items-center justify-center gap-1">
+                  <ElementIcon element={el} size={16} />
+                  <span className="text-foreground font-medium">{el}</span>
                 </div>
+              </th>
+            ))}
+            <th className="py-2 px-2 text-center text-muted-foreground font-medium w-14">인원</th>
+          </tr>
+        </thead>
+        <tbody>
+          {classLines.map(cl => (
+            <tr key={cl} className="border-b border-border/30">
+              <td className={`py-2 px-2 font-semibold whitespace-nowrap ${cl === '챔피언' ? 'text-yellow-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')} ${CLASS_LINE_BG[cl] || ''}`}>
+                {cl}
+              </td>
+              {ELEMENT_ORDER.map(el => {
+                const cells = matrix[cl]?.[el] || [];
+                return (
+                  <td key={el} className="py-1.5 px-1 align-top border-l border-border/20">
+                    {cells.length > 0 ? (
+                      <div className="space-y-0.5">
+                        {cells.map(({ hero: h, isOwned }) => (
+                          <div key={h.id} className="flex items-center gap-1 flex-wrap">
+                            {h.type === 'hero' && (
+                              <span className={`${CLASS_LINE_COLORS[h.classLine] || ''} text-[10px]`}>{h.heroClass}</span>
+                            )}
+                            <span className={`text-foreground text-[11px] ${!isOwned ? 'opacity-50 italic' : ''}`}>
+                              {h.type === 'champion' ? (h.championName || h.name) : h.name}
+                            </span>
+                            {h.position && (
+                              <span className={`text-[9px] px-1 rounded ${
+                                POSITION_COLORS[h.position]?.replace('bg-', 'bg-') || 'bg-secondary'
+                              } text-white font-medium`}>
+                                {h.position}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                  </td>
+                );
+              })}
+              <td className="py-2 px-2 text-center font-bold text-foreground border-l border-border/40">
+                {rowTotals[cl].owned + rowTotals[cl].planned}
+                {rowTotals[cl].planned > 0 && (
+                  <div className="text-[9px] text-muted-foreground font-normal">
+                    +{rowTotals[cl].planned}
+                  </div>
+                )}
+              </td>
+            </tr>
+          ))}
+          {/* Column totals row */}
+          <tr className="border-t-2 border-border bg-secondary/10">
+            <td className="py-2 px-2 font-semibold text-muted-foreground">인원</td>
+            {ELEMENT_ORDER.map(el => {
+              const t = colTotals[el];
+              return (
+                <td key={el} className="py-2 px-1 text-center font-bold text-foreground border-l border-border/20">
+                  {t.owned + t.planned}
+                  {t.planned > 0 && (
+                    <span className="text-[9px] text-muted-foreground font-normal ml-0.5">
+                      (+{t.planned})
+                    </span>
+                  )}
+                </td>
               );
             })}
-        </div>
+            <td className="py-2 px-2 text-center font-bold text-primary border-l border-border/40">
+              {grandTotal.owned + grandTotal.planned}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="mt-2 flex gap-4 text-[10px] text-muted-foreground">
+        <span>■ 일반 = 보유 중</span>
+        <span className="opacity-50 italic">■ 흐린 글씨 = 추가 예정</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Position distribution bar chart ── */
+function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
+  const all = useMemo(() => [...owned, ...planned], [owned, planned]);
+  const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
+
+  const posData = useMemo(() => {
+    const map: Record<string, { owned: number; planned: number }> = {};
+    all.forEach(h => {
+      const pos = h.position || '미지정';
+      if (!map[pos]) map[pos] = { owned: 0, planned: 0 };
+      if (ownedSet.has(h.id)) map[pos].owned++;
+      else map[pos].planned++;
+    });
+    return Object.entries(map).sort(([, a], [, b]) => (b.owned + b.planned) - (a.owned + a.planned));
+  }, [all, ownedSet]);
+
+  if (posData.length === 0) return null;
+  const maxCount = Math.max(...posData.map(([, d]) => d.owned + d.planned), 1);
+
+  return (
+    <div className="card-fantasy p-3">
+      <h3 className="text-sm font-semibold text-primary mb-3">포지션 분포</h3>
+      <div className="space-y-2">
+        {posData.map(([pos, d]) => {
+          const total = d.owned + d.planned;
+          const ownedPct = (d.owned / maxCount) * 100;
+          const plannedPct = (d.planned / maxCount) * 100;
+          const bgClass = POSITION_COLORS[pos] || 'bg-secondary';
+          return (
+            <div key={pos} className="flex items-center gap-2">
+              <span className={`text-xs font-medium w-20 text-right ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>
+                {pos}
+              </span>
+              <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
+                {d.owned > 0 && (
+                  <div className={`h-full ${bgClass} transition-all`} style={{ width: `${ownedPct}%` }} />
+                )}
+                {d.planned > 0 && (
+                  <div className={`h-full ${bgClass} opacity-40 transition-all`} style={{ width: `${plannedPct}%` }} />
+                )}
+              </div>
+              <span className="text-xs font-bold text-foreground tabular-nums w-8 text-right">{total}</span>
+              {d.planned > 0 && (
+                <span className="text-[9px] text-muted-foreground tabular-nums w-10">(+{d.planned})</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-2 flex gap-4 text-[10px] text-muted-foreground">
+        <span>■ 진한 = 보유 중</span>
+        <span className="opacity-40">■ 흐린 = 추가 예정</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Element distribution summary ── */
+function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
+  const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
+  const all = useMemo(() => [...owned, ...planned], [owned, planned]);
+
+  const data = useMemo(() => {
+    const map: Record<string, { owned: number; planned: number }> = {};
+    ELEMENT_ORDER.forEach(el => { map[el] = { owned: 0, planned: 0 }; });
+    all.forEach(h => {
+      const el = h.element || '기타';
+      if (!map[el]) map[el] = { owned: 0, planned: 0 };
+      if (ownedSet.has(h.id)) map[el].owned++;
+      else map[el].planned++;
+    });
+    return map;
+  }, [all, ownedSet]);
+
+  const maxCount = Math.max(...Object.values(data).map(d => d.owned + d.planned), 1);
+
+  if (all.length === 0) return null;
+
+  return (
+    <div className="card-fantasy p-3">
+      <h3 className="text-sm font-semibold text-primary mb-3">속성 분포</h3>
+      <div className="space-y-2">
+        {ELEMENT_ORDER.map(el => {
+          const d = data[el];
+          const total = d.owned + d.planned;
+          const ownedPct = (d.owned / maxCount) * 100;
+          const plannedPct = (d.planned / maxCount) * 100;
+          return (
+            <div key={el} className="flex items-center gap-2">
+              <div className="flex items-center gap-1 w-20 justify-end">
+                <ElementIcon element={el} size={14} />
+                <span className="text-xs text-foreground">{el}</span>
+              </div>
+              <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
+                {d.owned > 0 && (
+                  <div className="h-full bg-primary transition-all" style={{ width: `${ownedPct}%` }} />
+                )}
+                {d.planned > 0 && (
+                  <div className="h-full bg-primary/40 transition-all" style={{ width: `${plannedPct}%` }} />
+                )}
+              </div>
+              <span className="text-xs font-bold text-foreground tabular-nums w-8 text-right">{total}</span>
+              {d.planned > 0 && (
+                <span className="text-[9px] text-muted-foreground tabular-nums w-10">(+{d.planned})</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ── Class line distribution ── */
+function ClassLineSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
+  const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
+  const heroesOnly = useMemo(() => [...owned, ...planned].filter(h => h.type === 'hero'), [owned, planned]);
+
+  const data = useMemo(() => {
+    const map: Record<string, { owned: number; planned: number }> = {};
+    CLASS_LINE_ORDER.forEach(cl => { map[cl] = { owned: 0, planned: 0 }; });
+    heroesOnly.forEach(h => {
+      const cl = h.classLine || '기타';
+      if (!map[cl]) map[cl] = { owned: 0, planned: 0 };
+      if (ownedSet.has(h.id)) map[cl].owned++;
+      else map[cl].planned++;
+    });
+    return map;
+  }, [heroesOnly, ownedSet]);
+
+  const maxCount = Math.max(...Object.values(data).map(d => d.owned + d.planned), 1);
+
+  if (heroesOnly.length === 0) return null;
+
+  const clBarColors: Record<string, string> = {
+    '전사': 'bg-red-500',
+    '로그': 'bg-lime-500',
+    '주문술사': 'bg-sky-500',
+  };
+
+  return (
+    <div className="card-fantasy p-3">
+      <h3 className="text-sm font-semibold text-primary mb-3">계열 분포 (영웅)</h3>
+      <div className="space-y-2">
+        {CLASS_LINE_ORDER.map(cl => {
+          const d = data[cl];
+          const total = d.owned + d.planned;
+          const ownedPct = (d.owned / maxCount) * 100;
+          const plannedPct = (d.planned / maxCount) * 100;
+          const bg = clBarColors[cl] || 'bg-secondary';
+          return (
+            <div key={cl} className="flex items-center gap-2">
+              <span className={`text-xs font-medium w-20 text-right ${CLASS_LINE_COLORS[cl]}`}>{cl}</span>
+              <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
+                {d.owned > 0 && (
+                  <div className={`h-full ${bg} transition-all`} style={{ width: `${ownedPct}%` }} />
+                )}
+                {d.planned > 0 && (
+                  <div className={`h-full ${bg} opacity-40 transition-all`} style={{ width: `${plannedPct}%` }} />
+                )}
+              </div>
+              <span className="text-xs font-bold text-foreground tabular-nums w-8 text-right">{total}</span>
+              {d.planned > 0 && (
+                <span className="text-[9px] text-muted-foreground tabular-nums w-10">(+{d.planned})</span>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -357,8 +535,6 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
     const idSet = new Set(plannedIds);
     return heroes.filter(h => idSet.has(h.id));
   }, [heroes, plannedIds]);
-
-  const combinedHeroes = useMemo(() => [...ownedHeroes, ...plannedHeroes], [ownedHeroes, plannedHeroes]);
 
   const updateOwned = useCallback((ids: string[]) => {
     setOwnedIds(ids);
@@ -385,6 +561,7 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
         heroes={ownedHeroes}
         onAdd={() => setPickerTarget('owned')}
         onRemove={removeOwned}
+        accentClass="bg-primary text-primary-foreground hover:bg-primary/90"
       />
 
       {/* ── 추가 예정 ── */}
@@ -394,16 +571,25 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
         heroes={plannedHeroes}
         onAdd={() => setPickerTarget('planned')}
         onRemove={removePlanned}
+        accentClass="bg-accent text-accent-foreground hover:bg-accent/90"
       />
 
-      {/* ── 분포 ── */}
-      <div className="space-y-6">
-        <DistributionSection title="보유 중" heroes={ownedHeroes} totalHeroes={ownedHeroes.length} />
-        <DistributionSection title="추가 예정" heroes={plannedHeroes} totalHeroes={plannedHeroes.length} />
-        {ownedHeroes.length > 0 && plannedHeroes.length > 0 && (
-          <DistributionSection title="합산 (보유 + 추가 예정)" heroes={combinedHeroes} totalHeroes={combinedHeroes.length} />
-        )}
-      </div>
+      {/* ── 매트릭스 표 ── */}
+      <MatrixTable owned={ownedHeroes} planned={plannedHeroes} />
+
+      {/* ── 전체 분포 (합산) ── */}
+      {(ownedHeroes.length > 0 || plannedHeroes.length > 0) && (
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-primary border-b border-border pb-1">
+            전체 분포 ({ownedHeroes.length + plannedHeroes.length}명)
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ElementSummary owned={ownedHeroes} planned={plannedHeroes} />
+            <ClassLineSummary owned={ownedHeroes} planned={plannedHeroes} />
+          </div>
+          <PositionChart owned={ownedHeroes} planned={plannedHeroes} />
+        </div>
+      )}
 
       {/* ── Picker dialog ── */}
       {pickerTarget && (
@@ -412,6 +598,7 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
           onClose={() => setPickerTarget(null)}
           allHeroes={heroes}
           selectedIds={pickerTarget === 'owned' ? ownedIds : plannedIds}
+          excludeIds={pickerTarget === 'owned' ? plannedIds : ownedIds}
           onConfirm={ids => pickerTarget === 'owned' ? updateOwned(ids) : updatePlanned(ids)}
           title={pickerTarget === 'owned' ? '보유 중 영웅 선택' : '추가 예정 영웅 선택'}
         />
