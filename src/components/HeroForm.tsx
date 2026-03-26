@@ -998,49 +998,98 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     }
                   }}
                 >
+                  <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
+                    <span className="text-sm font-bold text-primary tracking-wide">{slotLabel}</span>
+                  </div>
+
                   <div
-                    className={`relative w-full aspect-square rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
+                    className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
                     style={equipItem ? {
                       background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                       boxShadow: QUALITY_SHADOW_COLOR[quality],
                     } : { background: 'hsl(var(--secondary) / 0.3)' }}
                   >
-                    {/* Slot label + Tier row */}
-                    <div className="flex items-center justify-between px-1 pt-0.5 flex-shrink-0" style={{ minHeight: '18px' }}>
-                      <span className="text-[9px] font-bold text-primary bg-card/80 rounded px-0.5">{slotLabel}</span>
-                      {equipItem ? <span className="text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{equipItem.tier}</span> : <span />}
-                      {equipItem?.relic ? <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span />}
-                    </div>
+                    {equipItem && (
+                      <div className="w-full flex items-center justify-between px-1.5 pt-1">
+                        <span className="text-sm font-bold text-foreground/90 bg-background/80 rounded px-1.5 py-0.5">T{equipItem.tier}</span>
+                        {equipItem?.relic && (
+                          <img
+                            src="/images/special/icon_global_artifact.webp"
+                            alt="유물"
+                            className="w-5 h-5"
+                            onError={e => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        )}
+                      </div>
+                    )}
 
-                    {/* Item image area */}
-                    <div className="flex-1 flex items-start justify-center pt-0.5">
+                    <div className="w-full flex items-center justify-center" style={{ aspectRatio: '1' }}>
                       {equipItem?.imagePath ? (
-                        <img src={equipItem.imagePath} alt={equipItem.name} className="w-[55%] object-contain"
-                          onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        <img
+                          src={equipItem.imagePath}
+                          alt={equipItem.name}
+                          className="w-4/5 h-4/5 object-contain"
+                          onError={e => { e.currentTarget.style.display = 'none'; }}
+                        />
                       ) : (
-                        <span className="text-[9px] text-muted-foreground mt-6">비어있음</span>
+                        <span className="text-[10px] text-muted-foreground">비어있음</span>
                       )}
                     </div>
 
-                    {/* Element + Spirit + Type row */}
-                    {equipItem ? (
-                      <div className="flex items-center justify-center gap-1 pb-1 flex-shrink-0" style={{ minHeight: '34px' }}>
-                        {displayElement && (
-                          <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                            className="w-8 h-8 cursor-pointer" alt={displayElement.type}
-                            onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
-                            onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        )}
-                        {displaySpirit && (() => {
-                          const eng = SPIRIT_NAME_MAP_LOCAL[displaySpirit.name];
-                          if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-8 h-8 cursor-pointer" alt="" onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }} onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                          return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-8 h-8 cursor-pointer" alt="" onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }} onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
-                        })()}
-                        {typeFile && <img src={getTypeImgPath(typeFile)} className="w-8 h-8" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                    <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5">
+                      <div
+                        className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
+                        title="원소 선택"
+                        onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
+                      >
+                        {displayElement ? (
+                          <img
+                            src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
+                            className="w-[80%] h-[80%] object-cover"
+                            alt={displayElement.type}
+                            onError={e => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        ) : <span className="text-[6px] text-muted-foreground">원소</span>}
                       </div>
-                    ) : null}
+                      <div
+                        className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
+                        title="영혼 선택"
+                        onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }}
+                      >
+                        {displaySpirit ? (() => {
+                          const eng = SPIRIT_NAME_MAP_LOCAL[displaySpirit.name];
+                          if (displaySpirit.name === '문드라') {
+                            return (
+                              <img
+                                src="/images/enchant/spirit/mundra.webp"
+                                className="w-[80%] h-[80%] object-cover"
+                                alt="문드라"
+                                onError={e => { e.currentTarget.style.display = 'none'; }}
+                              />
+                            );
+                          }
+                          return eng ? (
+                            <img
+                              src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`}
+                              className="w-[80%] h-[80%] object-cover"
+                              alt={displaySpirit.name}
+                              onError={e => { e.currentTarget.style.display = 'none'; }}
+                            />
+                          ) : <span className="text-[6px] text-foreground">{displaySpirit.name}</span>;
+                        })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
+                      </div>
+                      <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden" title="타입">
+                        {typeFile ? (
+                          <img
+                            src={getTypeImgPath(typeFile)}
+                            className="w-[80%] h-[80%] object-contain"
+                            alt=""
+                            onError={e => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        ) : <span className="text-[6px] text-muted-foreground">타입</span>}
+                      </div>
+                    </div>
 
-                    {/* Stats */}
                     {equipItem?.stats && equipItem.stats.length > 0 && (
                       <div className="w-full px-1 pb-1 border-t border-border/20 mt-0.5">
                         <div className="flex items-center justify-center gap-1.5 pt-0.5">
@@ -1073,7 +1122,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     )}
                   </div>
 
-                  <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5">{equipItem?.name || '-'}</p>
+                  <div className={`w-full text-center rounded-b py-1 ${equipItem ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
+                    <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {equipItem?.name || '-'}
+                    </p>
+                  </div>
                 </div>
               );
             })}
