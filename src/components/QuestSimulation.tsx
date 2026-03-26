@@ -361,19 +361,6 @@ export default function QuestSimulation() {
 
   const toggleHero = (id: string) => {
     if (!currentRegion) return;
-    if (editingSlotIdx !== null) {
-      setSelectedHeroIds(prev => {
-        const arr = Array.from(prev);
-        const existingIdx = arr.indexOf(id);
-        if (existingIdx !== -1) arr.splice(existingIdx, 1);
-        if (editingSlotIdx < arr.length) arr[editingSlotIdx] = id;
-        else arr.push(id);
-        return new Set(arr);
-      });
-      setEditingSlotIdx(null);
-      setHeroSelectOpen(false);
-      return;
-    }
     setSelectedHeroIds(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
