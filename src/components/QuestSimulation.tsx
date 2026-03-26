@@ -1158,7 +1158,7 @@ export default function QuestSimulation() {
                 )}
                 {/* Row: Face - based on death count, using face images */}
                 <tr>
-                  <td className="py-1 px-1.5 text-muted-foreground">표정</td>
+                  <td className="py-1 px-1.5 text-foreground/70 text-sm">표정</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
