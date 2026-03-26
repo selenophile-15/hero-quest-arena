@@ -161,8 +161,8 @@ export default function HeroList() {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const albumContentRef = useRef<HTMLDivElement>(null);
-  const [screenshotDialogOpen, setScreenshotDialogOpen] = useState(false);
-  const [screenshotCols, setScreenshotCols] = useState<Set<string>>(new Set());
+  const tableContentRef = useRef<HTMLDivElement>(null);
+  const [screenshotLoading, setScreenshotLoading] = useState(false);
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
