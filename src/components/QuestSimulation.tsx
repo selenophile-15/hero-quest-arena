@@ -1540,35 +1540,11 @@ export default function QuestSimulation() {
         </div>
       </div>
 
-      {/* Save button + Full-width Simulation Details Box */}
+      {/* Full-width Simulation Details Box */}
       {currentQuest && selectedHeroes.length > 0 && simResult && (
         <div className="mt-4 card-fantasy p-4">
           <div className="flex items-center gap-2 mb-3">
-            <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
-          </div>
-
-          {/* Rounds info */}
-          <div className="mb-4">
-            <div className="text-xs text-muted-foreground mb-2 font-medium">라운드 정보</div>
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="bg-secondary/30 rounded p-2">
-                <div className="text-[9px] text-muted-foreground">최소</div>
-                <div className="text-sm font-mono text-foreground font-bold">{simResult.minRounds}</div>
-              </div>
-              <div className="bg-secondary/30 rounded p-2">
-                <div className="text-[9px] text-muted-foreground">평균</div>
-                <div className="text-sm font-mono text-foreground font-bold">{Math.round(simResult.avgRounds)}</div>
-              </div>
-              <div className="bg-secondary/30 rounded p-2">
-                <div className="text-[9px] text-muted-foreground">최대</div>
-                <div className="text-sm font-mono text-foreground font-bold">{simResult.maxRounds}</div>
-              </div>
-            </div>
-            {simResult.roundLimitRate > 0 && (
-              <div className="mt-2 text-center text-[10px] text-red-400">
-                ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
-              </div>
-            )}
+            <h3 className="text-lg font-bold text-foreground">📋 상세 정보</h3>
           </div>
 
           {/* Mini-boss breakdown (only for random mode, not boss quests) */}
