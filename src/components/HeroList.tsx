@@ -796,12 +796,12 @@ export default function HeroList() {
 
             {/* Skills Box */}
             <div className="card-fantasy p-3 flex-1 overflow-y-auto">
-              <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬셋</h4>
-              <div className="space-y-2">
+              <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬</h4>
+              <div className="space-y-3">
                 {isChampion ? (
                   <>
                     {/* Leader Skill */}
-                    <div className="flex items-start gap-2 min-h-[48px]">
+                    <div className="flex items-start gap-2 min-h-[56px]">
                       <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
                         {leaderSkillIcon && <img src={leaderSkillIcon} alt="" className="w-12 h-12 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                       </div>
