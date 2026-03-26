@@ -23,20 +23,22 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
   const activeHeroes = heroes.filter(h => h.hp > 0);
 
-  // Parse per-hero stats from log
+  // Parse per-hero stats from log UP TO currentIdx (real-time)
   const heroStatsData = useMemo(() => {
     const stats: Record<string, { dmg: number; targeted: number; dodged: number; singleHits: number }> = {};
     activeHeroes.forEach(h => { stats[h.name] = { dmg: 0, targeted: 0, dodged: 0, singleHits: 0 }; });
 
-    // Identify AoE rounds
+    // Identify AoE rounds up to currentIdx
     const aoeRounds = new Set<number>();
-    for (const entry of log) {
+    for (let i = 0; i <= currentIdx && i < log.length; i++) {
+      const entry = log[i];
       if (entry.type === 'monster_attack' && entry.detail === '광역 공격!') {
         aoeRounds.add(entry.round);
       }
     }
 
-    for (const entry of log) {
+    for (let i = 0; i <= currentIdx && i < log.length; i++) {
+      const entry = log[i];
       if (entry.type === 'hero_attack') {
         const dmgMatch = entry.detail.match(/([\d,]+) 대미지/);
         if (dmgMatch && stats[entry.actor]) {
@@ -64,7 +66,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       dmgPct: totalDmg > 0 ? (stats[h.name].dmg / totalDmg) * 100 : 0,
       tankPct: totalSingleHits > 0 ? (stats[h.name].singleHits / totalSingleHits) * 100 : 0,
     })).sort((a, b) => b.dmg - a.dmg);
-  }, [log]);
+  }, [log, currentIdx]);
 
   // Parse states from log up to currentIdx
   const getState = () => {
@@ -158,19 +160,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const isResult = state.lastAction?.type === 'result';
   const isWin = isResult && state.lastAction?.detail.includes('승리');
 
-  const barColors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
-
   return (
     <div className="space-y-3">
-      {/* New Battle button */}
-      {onNewBattle && (
-        <div className="flex justify-end">
-          <Button variant="outline" size="sm" className="text-xs gap-1.5 border-blue-500/40 text-blue-400 hover:bg-blue-500/10" onClick={() => { onNewBattle(); setCurrentIdx(0); setPlaying(false); }}>
-            <Dices className="w-3.5 h-3.5" /> 새로운 전투
-          </Button>
-        </div>
-      )}
-
       {/* Battlefield */}
       <div className="relative bg-secondary/30 rounded-lg p-4 border border-border/30">
         <div className="text-center mb-3">
@@ -280,73 +271,74 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           <option value={250}>2x</option>
           <option value={100}>4x</option>
         </select>
-        <span className="text-[9px] text-muted-foreground">{currentIdx + 1}/{log.length}</span>
+        {onNewBattle && (
+          <Button variant="outline" size="sm" className="text-xs gap-1.5 border-blue-500/40 text-blue-400 hover:bg-blue-500/10" onClick={() => { onNewBattle(); setCurrentIdx(0); setPlaying(false); }}>
+            <Dices className="w-3.5 h-3.5" /> 새로운 전투
+          </Button>
+        )}
+        <span className="text-[9px] text-muted-foreground ml-1">{currentIdx + 1}/{log.length}</span>
       </div>
 
-      {/* Combat Stats Summary */}
-      <div className="rounded border border-border/30 bg-secondary/20 p-3">
-        <div className="text-xs font-bold text-foreground mb-2">📊 전투 통계</div>
-        <table className="w-full text-[10px]">
-          <thead>
-            <tr className="border-b border-border/30">
-              <th className="text-left py-1 px-1.5 text-muted-foreground font-medium">영웅</th>
-              <th className="text-right py-1 px-1.5 text-red-400 font-medium">대미지</th>
-              <th className="text-right py-1 px-1.5 text-orange-400 font-medium">비율</th>
-              <th className="text-center py-1 px-1.5 text-yellow-400 font-medium">타겟팅</th>
-              <th className="text-center py-1 px-1.5 text-teal-400 font-medium">회피</th>
-              <th className="text-right py-1 px-1.5 text-blue-400 font-medium">탱킹</th>
-            </tr>
-          </thead>
-          <tbody>
-            {heroStatsData.map((hs, idx) => (
-              <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                <td className="py-1.5 px-1.5 text-foreground font-medium">{hs.name}</td>
-                <td className="py-1.5 px-1.5 text-right font-mono text-red-400">{formatNumber(hs.dmg)}</td>
-                <td className="py-1.5 px-1.5 text-right">
-                  <div className="flex items-center justify-end gap-1">
-                    <div className="w-12 bg-secondary/30 rounded-full h-2 overflow-hidden">
-                      <div className={`h-full rounded-full ${barColors[idx % barColors.length]}`} style={{ width: `${hs.dmgPct}%` }} />
-                    </div>
-                    <span className="font-mono text-orange-400 w-10 text-right">{hs.dmgPct.toFixed(1)}%</span>
-                  </div>
-                </td>
-                <td className="py-1.5 px-1.5 text-center font-mono text-yellow-400">{hs.targeted}</td>
-                <td className="py-1.5 px-1.5 text-center font-mono text-teal-400">{hs.dodged}</td>
-                <td className="py-1.5 px-1.5 text-right font-mono text-blue-400">{hs.tankPct.toFixed(1)}%</td>
+      {/* Two-column: Stats left, Log right */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Combat Stats Summary */}
+        <div className="rounded border border-border/30 bg-secondary/20 p-3">
+          <div className="text-xs font-bold text-foreground mb-2">📊 전투 통계</div>
+          <table className="w-full text-[10px]">
+            <thead>
+              <tr className="border-b border-border/30">
+                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium w-[70px]">영웅</th>
+                <th className="text-right py-1.5 px-2 text-red-400 font-medium">대미지</th>
+                <th className="text-right py-1.5 px-2 text-orange-400 font-medium">비율</th>
+                <th className="text-center py-1.5 px-2 text-yellow-400 font-medium">타겟팅</th>
+                <th className="text-center py-1.5 px-2 text-teal-400 font-medium">회피</th>
+                <th className="text-right py-1.5 px-2 text-blue-400 font-medium">탱킹</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {heroStatsData.map((hs, idx) => (
+                <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                  <td className="py-2 px-2 text-foreground font-medium">{hs.name}</td>
+                  <td className="py-2 px-2 text-right font-mono text-red-400">{formatNumber(hs.dmg)}</td>
+                  <td className="py-2 px-2 text-right font-mono text-orange-400">{hs.dmgPct.toFixed(1)}%</td>
+                  <td className="py-2 px-2 text-center font-mono text-yellow-400">{hs.targeted}</td>
+                  <td className="py-2 px-2 text-center font-mono text-teal-400">{hs.dodged}</td>
+                  <td className="py-2 px-2 text-right font-mono text-blue-400">{hs.tankPct.toFixed(1)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Log with highlight */}
-      <div ref={scrollRef} className="max-h-40 overflow-y-auto rounded border border-border/30 bg-secondary/20 p-2 space-y-0.5 text-[10px] font-mono">
-        {log.map((entry, idx) => {
-          let color = 'text-muted-foreground';
-          let icon = '';
-          if (entry.type === 'monster_attack') { color = 'text-red-400'; icon = '⚔️'; }
-          else if (entry.type === 'hero_attack') { color = 'text-blue-400'; icon = '🗡️'; }
-          else if (entry.type === 'heal') { color = 'text-green-400'; icon = '💚'; }
-          else if (entry.type === 'result') { color = entry.detail.includes('승리') ? 'text-green-400' : 'text-red-400'; icon = '🏁'; }
-          else { color = 'text-yellow-400'; icon = '⚡'; }
+        {/* Log */}
+        <div ref={scrollRef} className="max-h-[300px] overflow-y-auto rounded border border-border/30 bg-secondary/20 p-2 space-y-0.5 text-[10px] font-mono">
+          {log.map((entry, idx) => {
+            let color = 'text-muted-foreground';
+            let icon = '';
+            if (entry.type === 'monster_attack') { color = 'text-red-400'; icon = '⚔️'; }
+            else if (entry.type === 'hero_attack') { color = 'text-blue-400'; icon = '🗡️'; }
+            else if (entry.type === 'heal') { color = 'text-green-400'; icon = '💚'; }
+            else if (entry.type === 'result') { color = entry.detail.includes('승리') ? 'text-green-400' : 'text-red-400'; icon = '🏁'; }
+            else { color = 'text-yellow-400'; icon = '⚡'; }
 
-          return (
-            <div
-              key={idx}
-              data-idx={idx}
-              onClick={() => { setCurrentIdx(idx); setPlaying(false); }}
-              className={`${color} leading-relaxed cursor-pointer rounded px-1 ${
-                idx === currentIdx ? 'bg-primary/10 ring-1 ring-primary/30' : 'hover:bg-secondary/50'
-              } ${idx > currentIdx ? 'opacity-30' : ''}`}
-            >
-              <span className="text-muted-foreground/50 mr-1">[R{entry.round}]</span>
-              <span className="mr-1">{icon}</span>
-              <span className="text-foreground/80 font-semibold mr-1">{entry.actor}</span>
-              {entry.target && <span className="text-muted-foreground mr-1">→ {entry.target}</span>}
-              <span>{entry.detail}</span>
-            </div>
-          );
-        })}
+            return (
+              <div
+                key={idx}
+                data-idx={idx}
+                onClick={() => { setCurrentIdx(idx); setPlaying(false); }}
+                className={`${color} leading-relaxed cursor-pointer rounded px-1 ${
+                  idx === currentIdx ? 'bg-primary/10 ring-1 ring-primary/30' : 'hover:bg-secondary/50'
+                } ${idx > currentIdx ? 'opacity-30' : ''}`}
+              >
+                <span className="text-muted-foreground/50 mr-1">[R{entry.round}]</span>
+                <span className="mr-1">{icon}</span>
+                <span className="text-foreground/80 font-semibold mr-1">{entry.actor}</span>
+                {entry.target && <span className="text-muted-foreground mr-1">→ {entry.target}</span>}
+                <span>{entry.detail}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -546,19 +546,19 @@ export default function QuestSimulation() {
           const Icon = tab.icon;
           const isActive = subTab === tab.id;
           return (
-            <button
-              key={tab.id}
-              onClick={() => setSubTab(tab.id)}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 -mb-[5px]
-                transition-all duration-200
-                ${isActive
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
-                }`}
-            >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'scale-110' : ''}`} />
-              {tab.label}
-            </button>
+              <button
+                key={tab.id}
+                onClick={() => setSubTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-[5px]
+                  transition-all duration-200
+                  ${isActive
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'scale-110' : ''}`} />
+                {tab.label}
+              </button>
           );
         })}
       </div>
@@ -637,17 +637,52 @@ export default function QuestSimulation() {
             variant="outline"
             size="sm"
             className="text-xs gap-1 px-2 border-purple-500/40 text-purple-400 hover:bg-purple-500/10"
-            onClick={() => {
-              import('html2canvas').then(({ default: html2canvas }) => {
-                const el = document.querySelector('[data-quest-screenshot]');
-                if (!el) return;
-                html2canvas(el as HTMLElement, { backgroundColor: '#1a1a2e', useCORS: true, scrollY: -window.scrollY }).then(canvas => {
-                  const link = document.createElement('a');
-                  link.download = `quest-sim-${Date.now()}.png`;
-                  link.href = canvas.toDataURL();
-                  link.click();
+            onClick={async () => {
+              const el = document.querySelector('[data-quest-screenshot]') as HTMLElement;
+              if (!el) return;
+              // Show loading overlay
+              const overlay = document.createElement('div');
+              overlay.id = 'screenshot-overlay';
+              overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
+              overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+              document.body.appendChild(overlay);
+              try {
+                const { default: html2canvas } = await import('html2canvas');
+                // Force all flex items to use proper alignment for html2canvas
+                const allCells = el.querySelectorAll('td, th');
+                allCells.forEach(cell => {
+                  (cell as HTMLElement).style.verticalAlign = 'middle';
                 });
-              });
+                const canvas = await html2canvas(el, {
+                  backgroundColor: '#1a1a2e',
+                  useCORS: true,
+                  scrollY: -window.scrollY,
+                  scale: 2,
+                  logging: false,
+                  onclone: (doc) => {
+                    const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
+                    if (clonedEl) {
+                      // Fix vertical alignment in cloned document
+                      clonedEl.querySelectorAll('td, th').forEach(cell => {
+                        (cell as HTMLElement).style.verticalAlign = 'middle';
+                      });
+                      clonedEl.querySelectorAll('.flex').forEach(flex => {
+                        (flex as HTMLElement).style.alignItems = (flex as HTMLElement).style.alignItems || 'center';
+                      });
+                    }
+                  }
+                });
+                // Restore
+                allCells.forEach(cell => {
+                  (cell as HTMLElement).style.verticalAlign = '';
+                });
+                const link = document.createElement('a');
+                link.download = `quest-sim-${Date.now()}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.92);
+                link.click();
+              } finally {
+                overlay.remove();
+              }
             }}
             title="스크린샷 저장"
           >
@@ -1007,11 +1042,13 @@ export default function QuestSimulation() {
 
                   return (
                     <div className="mt-4 pt-4 border-t border-border/30">
-                      <div className="flex items-center gap-1.5 px-1 mb-1">
-                        <Shield className="w-3.5 h-3.5 text-blue-400" />
-                        <span className="text-xs font-bold text-foreground">방어력 기준치</span>
+                      <div className="flex items-center justify-between px-1 mb-1">
+                        <div className="flex items-center gap-1.5">
+                          <Shield className="w-3.5 h-3.5 text-blue-400" />
+                          <span className="text-xs text-foreground">방어력 기준치</span>
+                        </div>
                       </div>
-                      <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5 pt-6 pb-4" style={{ height: `${barH}px` }}>
+                      <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5" style={{ height: `${barH}px` }}>
                         <div className="relative">
                           {rows.map(r => (
                             <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
@@ -1041,11 +1078,11 @@ export default function QuestSimulation() {
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          <svg className="absolute inset-0 overflow-visible" style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}>
+                          <svg className="absolute overflow-visible pointer-events-none" style={{ left: '70px', top: 0, width: 'calc(100% - 70px)', height: '100%' }}>
                             {heroLayout.map(h => {
-                              const yPin = barH - (h.pinPct / 100) * barH;
-                              const yLabel = barH - (h.labelPct / 100) * barH;
-                              const d = `M 0 ${yPin} L 12 ${yPin} L 28 ${yLabel}`;
+                              const yPin = (1 - h.pinPct / 100) * barH;
+                              const yLabel = (1 - h.labelPct / 100) * barH;
+                              const d = `M 0 ${yPin} C 14 ${yPin}, 14 ${yLabel}, 28 ${yLabel}`;
                               return <path key={`line-${h.id}`} d={d} fill="none" stroke={h.color} strokeWidth={1.5} strokeOpacity={0.8} />;
                             })}
                           </svg>
@@ -1347,7 +1384,7 @@ export default function QuestSimulation() {
                     { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400', labelColor: 'text-red-400' },
                     { label: 'DEF', key: 'def', bKey: 'def', dKey: 'deltaDef', color: 'text-blue-400', labelColor: 'text-blue-400' },
                     { label: 'CRIT.C', key: 'crit', bKey: 'crit', dKey: 'deltaCrit', color: 'text-yellow-400', suffix: '%', labelColor: 'text-yellow-400' },
-                    { label: 'CRIT.DMG', key: 'critAttack', bKey: 'critAttack', dKey: null, color: 'text-yellow-400', computed: true, labelColor: 'text-yellow-400' },
+                    { label: 'CRIT.D', key: 'critAttack', bKey: 'critAttack', dKey: null, color: 'text-yellow-400', computed: true, labelColor: 'text-yellow-400' },
                     { label: 'EVA', key: 'evasion', bKey: 'evasion', dKey: 'deltaEvasion', color: 'text-teal-400', suffix: '%', labelColor: 'text-teal-400' },
                     { label: 'THREAT', key: 'threat', bKey: 'threat', dKey: null, color: 'text-foreground', labelColor: 'text-foreground/70' },
                   ];
@@ -1923,7 +1960,7 @@ export default function QuestSimulation() {
 
       {/* Combat Log Dialog */}
       <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-sm">🎲 1회 전투 시각화</DialogTitle>
           </DialogHeader>
