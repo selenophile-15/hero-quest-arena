@@ -1362,7 +1362,7 @@ export default function QuestSimulation() {
                 <Shield className="w-5 h-5 text-blue-400" />
                 <h3 className="text-lg text-foreground font-bold">방어력 기준치</h3>
               </div>
-              <div className="card-fantasy p-5 mb-3">
+              <div className="card-fantasy p-5 pt-8 pb-8 mb-3">
                 {(() => {
                   const defToBarPct = (def: number) => {
                     for (let i = defThresholds.length - 1; i >= 1; i--) {
