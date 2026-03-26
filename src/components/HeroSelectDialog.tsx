@@ -163,29 +163,13 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
   }, [heroes, filterType, filterClassLine, filterElement, filterJob, filterPosition, sortKey, sortDir]);
 
   const handleToggle = (heroId: string) => {
-    if (editingSlotIdx !== null) {
-      // In editing mode: just toggle selection, don't auto-confirm
-      setLocalIds(prev => {
-        const next = new Set(prev);
-        if (next.has(heroId)) {
-          next.delete(heroId);
-        } else {
-          // Replace the slot being edited
-          const arr = Array.from(prev);
-          const existingIdx = arr.indexOf(heroId);
-          if (existingIdx !== -1) arr.splice(existingIdx, 1);
-          if (editingSlotIdx < arr.length) arr[editingSlotIdx] = heroId;
-          else arr.push(heroId);
-          return new Set(arr);
-        }
-        return next;
-      });
-      return;
-    }
     setLocalIds(prev => {
       const next = new Set(prev);
-      if (next.has(heroId)) next.delete(heroId);
-      else if (next.size < maxMembers) next.add(heroId);
+      if (next.has(heroId)) {
+        next.delete(heroId);
+      } else if (next.size < maxMembers) {
+        next.add(heroId);
+      }
       return next;
     });
   };
