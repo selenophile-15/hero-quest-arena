@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Fragment, useRef, useCallback } from 'react';
 import { Hero, HERO_STAT_COLUMNS, CHAMPION_STAT_COLUMNS, STAT_ICON_MAP, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
 import { HERO_CLASS_MAP, getCommonSkills, getUniqueSkills, getChampionSkillsData } from '@/lib/gameData';
