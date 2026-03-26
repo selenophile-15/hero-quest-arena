@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Swords, Shield, Trophy } from "lucide-react";
 
 import landingBg from "@/assets/landing-bg.png";
+import titleLogo from "@/assets/title-logo.png";
 import featureList from "@/assets/feature-list.jpg";
 import featureQuest from "@/assets/feature-quest.jpg";
 import featureRanking from "@/assets/feature-ranking.jpg";
