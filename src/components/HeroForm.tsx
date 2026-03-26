@@ -998,8 +998,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     }
                   }}
                 >
-                  <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
-                    <span className="text-sm font-bold text-primary tracking-wide">{slotLabel}</span>
+                  <div className="relative z-10 w-full text-center rounded-t-md py-0.5 bg-card/80 border border-b-0 border-border/60">
+                    <span className="text-xs font-bold text-primary tracking-wide">{slotLabel}</span>
                   </div>
 
                   <div
