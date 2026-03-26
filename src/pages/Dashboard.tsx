@@ -62,7 +62,7 @@ export default function Dashboard() {
       {/* Content */}
       <main className="w-full px-6 py-6 animate-fade-in">
         <div style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
-          <HeroList key={listResetKey} />
+          <HeroList />
         </div>
         <div style={{ display: activeTab === 'quest' ? 'block' : 'none' }}>
           <QuestSimulation />
