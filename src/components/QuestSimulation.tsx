@@ -1134,7 +1134,7 @@ export default function QuestSimulation() {
                 {/* Row: Element barrier icons */}
                 {barrierElements.length > 0 && (
                   <tr>
-                    <td className="py-1 px-1.5 text-muted-foreground">원소</td>
+                    <td className="py-1 px-1.5 text-foreground/70 text-sm">원소</td>
                     {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                       const hero = selectedHeroes[slotIdx];
                       if (!hero) return <td key={`el-empty-${slotIdx}`} className="text-center py-1" />;
