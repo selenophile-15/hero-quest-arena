@@ -1357,7 +1357,7 @@ export default function HeroList() {
 
           {/* Table View */}
           <div ref={tableContentRef} className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
-            <table className="text-sm mx-auto" style={{ width: `${tableMaxWidth}px` }}>
+            <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
                   {activeCols.map(col => (
