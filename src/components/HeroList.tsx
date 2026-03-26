@@ -975,7 +975,7 @@ export default function HeroList() {
             {/* Equipment grid */}
             <div className="card-fantasy p-3 flex-1 overflow-y-auto">
               <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비</h4>
-              <div className={`grid grid-cols-3 gap-2`}>
+              <div className={`grid ${isChampion ? 'grid-cols-2' : 'grid-cols-3'} gap-3`}>
                 {equipSlots.slice(0, isChampion ? 2 : 6).map((slot: any, i: number) => {
                   const item = slot.item;
                   const quality = slot.quality || 'common';
@@ -984,25 +984,29 @@ export default function HeroList() {
                   const itemType = item?.type || '';
                   return (
                     <div key={i} className="flex flex-col items-center">
+                      {/* Slot label */}
+                      <div className="relative z-10 w-full text-center rounded-t-md py-0.5 bg-card border border-b-0 border-border/60">
+                        <span className="text-[10px] font-bold text-primary">{isChampion ? (i === 0 ? '퍼밀리어' : '오라의 노래') : `슬롯 ${i + 1}`}</span>
+                      </div>
                       <div
-                        className={`relative w-full aspect-square rounded-lg border-2 ${item ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden`}
+                        className={`relative w-full rounded-b-lg border-2 border-t-0 ${item ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden`}
                         style={item ? {
                           background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                           boxShadow: QUALITY_SHADOW_COLOR[quality],
                         } : { background: 'hsl(var(--secondary) / 0.3)' }}
                       >
                         <div className="flex items-center justify-between px-1 pt-0.5 flex-shrink-0" style={{ minHeight: '18px' }}>
-                          {item ? <span className="text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span> : <span />}
-                          {item?.relic ? <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} /> : <span />}
+                          {item ? <span className="text-[9px] font-bold text-muted-foreground bg-card/80 rounded px-0.5 relative z-10">T{item.tier}</span> : <span />}
+                          {item?.relic ? <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4 relative z-10" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} /> : <span />}
                         </div>
-                        <div className="flex-1 flex items-start justify-center pt-0.5">
+                        <div className="flex-1 flex items-center justify-center" style={{ aspectRatio: '1' }}>
                           {item?.manual ? (
-                            <CircleHelp className="w-9 h-9 text-yellow-400/60" />
+                            <CircleHelp className="w-12 h-12 text-yellow-400/60" />
                           ) : item?.imagePath ? (
-                            <img src={item.imagePath} alt={item.name} className="w-[55%] object-contain"
+                            <img src={item.imagePath} alt={item.name} className="w-[65%] object-contain"
                               onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
                           ) : (
-                            <span className="text-[9px] text-muted-foreground mt-6">비어있음</span>
+                            <span className="text-[9px] text-muted-foreground">비어있음</span>
                           )}
                         </div>
                         {item ? (
@@ -1020,7 +1024,10 @@ export default function HeroList() {
                           </div>
                         ) : null}
                       </div>
-                      <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
+                      {/* Item name - elevated box */}
+                      <div className={`w-full text-center rounded-b py-0.5 ${item ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
+                        <p className={`text-[11px] truncate leading-tight font-bold px-1 ${item ? 'text-foreground' : 'text-muted-foreground'}`}>{item?.name || '-'}</p>
+                      </div>
                     </div>
                   );
                 })}
