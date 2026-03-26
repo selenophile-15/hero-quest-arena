@@ -1358,7 +1358,7 @@ export default function QuestSimulation() {
                     <>
                       {statRows.map(stat => (
                         <tr key={stat.key} className="border-b border-border/20">
-                          <td className="py-1.5 px-1.5 text-muted-foreground font-medium">{stat.label}</td>
+                          <td className={`py-1.5 px-1.5 font-medium text-sm ${(stat as any).labelColor || 'text-foreground/70'}`}>{stat.label}</td>
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
                             if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
