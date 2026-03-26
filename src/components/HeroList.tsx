@@ -1490,7 +1490,7 @@ export default function HeroList() {
               </tbody>
             </table>
           </div>
-        </>
+        </div>
       ) : (
         <>
           {/* Album controls: sort + filter */}
