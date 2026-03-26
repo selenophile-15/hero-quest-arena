@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
@@ -14,12 +15,9 @@ type TabId = typeof TABS[number]['id'];
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
-  const [listResetKey, setListResetKey] = useState(0);
+  
 
-  const handleLogoClick = () => {
-    setActiveTab('list');
-    setListResetKey(k => k + 1);
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-fantasy-gradient">
@@ -27,10 +25,10 @@ export default function Dashboard() {
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="w-full px-6 h-14 flex items-center">
           <button
-            onClick={handleLogoClick}
+            onClick={() => navigate('/')}
             className="font-display text-lg text-primary tracking-wide transition-all duration-300 hover:text-primary/80 hover:scale-105 active:scale-95"
           >
-            셀레노필
+            QUEST SIMULATOR
           </button>
         </div>
       </header>
@@ -64,7 +62,7 @@ export default function Dashboard() {
       {/* Content */}
       <main className="w-full px-6 py-6 animate-fade-in">
         <div style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
-          <HeroList key={listResetKey} />
+          <HeroList />
         </div>
         <div style={{ display: activeTab === 'quest' ? 'block' : 'none' }}>
           <QuestSimulation />
