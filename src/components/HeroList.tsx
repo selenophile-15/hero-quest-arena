@@ -196,78 +196,27 @@ export default function HeroList() {
   const handleScreenshot = useCallback(async (targetRef: React.RefObject<HTMLDivElement | null>, prefix: string) => {
     if (!targetRef.current) return;
     setScreenshotLoading(true);
+    setCaptureMode(true);
     try {
-      // Clone and strip management column / delete buttons for clean screenshot
-      const clone = targetRef.current.cloneNode(true) as HTMLElement;
-      clone.style.position = 'absolute';
-      clone.style.left = '-9999px';
-      clone.style.top = '0';
-      document.body.appendChild(clone);
+      // Wait for React re-render with captureMode=true
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
 
-      // Hide last <th> and last <td> in each row (management column) for table screenshots
-      clone.querySelectorAll('thead tr, tbody tr').forEach(row => {
-        const cells = row.querySelectorAll('th, td');
-        if (cells.length > 0) {
-          const last = cells[cells.length - 1] as HTMLElement;
-          if (last.textContent?.includes('관리') || last.querySelector('button')) {
-            last.style.display = 'none';
-          }
-        }
-      });
-
-      // Force uniform row height and vertical centering for table screenshots
-      // html2canvas doesn't reliably render flexbox alignment, so use table-cell + vertical-align
-      clone.querySelectorAll('tbody tr').forEach(row => {
-        (row as HTMLElement).style.height = '52px';
-        row.querySelectorAll('td').forEach(td => {
-          const el = td as HTMLElement;
-          el.style.height = '52px';
-          el.style.verticalAlign = 'middle';
-          el.style.textAlign = 'center';
-          // Convert inner flex wrappers to inline-block with vertical-align for html2canvas compat
-          el.querySelectorAll('div, span').forEach(child => {
-            const c = child as HTMLElement;
-            if (c.style.display === 'none') return;
-            c.style.verticalAlign = 'middle';
-          });
-          // Force the direct child div (h-[36px] flex wrapper) to use inline display
-          const directDiv = el.querySelector(':scope > div');
-          if (directDiv) {
-            const d = directDiv as HTMLElement;
-            d.style.display = 'inline-flex';
-            d.style.alignItems = 'center';
-            d.style.justifyContent = 'center';
-            d.style.verticalAlign = 'middle';
-            d.style.height = '36px';
-          }
-        });
-      });
-      // Also fix thead alignment
-      clone.querySelectorAll('thead th').forEach(th => {
-        (th as HTMLElement).style.verticalAlign = 'middle';
-        (th as HTMLElement).style.textAlign = 'center';
-      });
-
-      // Hide delete buttons in album cards
-      clone.querySelectorAll('.album-delete-btn').forEach(el => {
-        (el as HTMLElement).style.display = 'none';
-      });
-
-      const canvas = await html2canvas(clone, {
+      const canvas = await html2canvas(targetRef.current, {
         backgroundColor: '#1a1a2e',
         scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
       });
-      document.body.removeChild(clone);
+
       const link = document.createElement('a');
-      link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg', 0.92);
       link.click();
     } catch (e) {
       console.error('Screenshot failed:', e);
     } finally {
+      setCaptureMode(false);
       setScreenshotLoading(false);
     }
   }, [listTab]);
