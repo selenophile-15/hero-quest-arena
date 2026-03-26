@@ -606,10 +606,10 @@ export default function QuestSimulation() {
                   setSelectedBooster('none');
                   setSimResult(null);
                 }}
-                className="ml-auto text-[10px] text-muted-foreground hover:text-destructive transition-colors px-1.5 py-0.5 rounded border border-border/40 hover:border-destructive/50"
+                className="ml-auto p-1.5 rounded-md bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-colors"
                 title="몬스터 정보 초기화"
               >
-                초기화
+                <RotateCcw className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
