@@ -1699,8 +1699,8 @@ export default function QuestSimulation() {
                     mbr.type === 'legendary' ? 'text-purple-400' : 'text-foreground';
                     return (
                       <div key={mbr.type} className="bg-secondary/30 rounded p-2 text-center">
-                        <div className={`text-[10px] font-medium ${typeColor}`}>{typeLabel}</div>
-                        <div className="text-[9px] text-muted-foreground">{mbr.encounters.toLocaleString()}회</div>
+                        <div className={`text-[12px] font-medium ${typeColor}`}>{typeLabel}</div>
+                        <div className="text-[11px] text-muted-foreground">{mbr.encounters.toLocaleString()}회</div>
                         <div className={`text-sm font-mono font-bold ${
                           mbr.winRate >= 90 ? 'text-green-400' :
                           mbr.winRate >= 70 ? 'text-lime-400' :
@@ -1708,7 +1708,7 @@ export default function QuestSimulation() {
                         }`}>
                           {mbr.winRate.toFixed(1)}%
                         </div>
-                        <div className="text-[9px] text-muted-foreground mt-0.5">
+                        <div className="text-[11px] text-muted-foreground mt-0.5">
                           평균 {Math.round(mbr.avgRounds)}R
                         </div>
                       </div>
@@ -1725,7 +1725,7 @@ export default function QuestSimulation() {
                 <>
                   <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
                   <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
-                    <SelectTrigger className="h-6 w-[100px] text-[10px]">
+                    <SelectTrigger className="h-6 w-[100px] text-[12px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1757,7 +1757,7 @@ export default function QuestSimulation() {
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                         return (
-                      <table className="w-full text-[11px] border-collapse">
+                      <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
@@ -1765,7 +1765,7 @@ export default function QuestSimulation() {
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>일반/치명 비중</th>
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>딜링 비중</th>
                           </tr>
-                          <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
+                          <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">총 평균</th>
                             <th className="text-center py-1 px-2">턴당 평균</th>
                             <th className="text-center py-1 px-2">최소</th>
@@ -1818,7 +1818,7 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-yellow-400 mb-2">🦈 특수 대미지 (상어 / 첫턴 / 광전사)</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[11px] border-collapse">
+                      <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
@@ -1826,7 +1826,7 @@ export default function QuestSimulation() {
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦕 첫 턴</th>
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={3}>⚡ 광전사 보너스</th>
                           </tr>
-                          <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
+                          <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
@@ -1869,14 +1869,14 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-yellow-400 mb-2">🛡 생존 & 방어</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[11px] border-collapse">
+                      <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>기본</th>
                             <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>받는 대미지</th>
                           </tr>
-                          <tr className="border-b border-border/30 text-[10px] text-muted-foreground/70">
+                          <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">생존률</th>
                             <th className="text-center py-1 px-2">대미지 보정</th>
                             <th className="text-center py-1 px-2">피격 확률</th>
@@ -1919,7 +1919,7 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-yellow-400 mb-2">💚 회복 & 보호</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[11px] border-collapse">
+                      <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20">영웅</th>
@@ -1953,7 +1953,7 @@ export default function QuestSimulation() {
                           {displayResults.map(hr => {
                             if (!hr.berserkerThresholds && hr.chronomancerRetries === undefined) return null;
                             return (
-                              <div key={hr.heroId} className="bg-secondary/20 rounded p-2 text-[11px]">
+                              <div key={hr.heroId} className="bg-secondary/20 rounded p-2 text-[13px]">
                                 <span className="text-foreground font-medium">{hr.heroName}</span>
                                 {hr.berserkerThresholds && (
                                   <div className="mt-1 flex flex-wrap gap-3">
@@ -1984,7 +1984,7 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-yellow-400 mb-2">📊 시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[11px] border-collapse">
+                      <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20">영웅</th>
