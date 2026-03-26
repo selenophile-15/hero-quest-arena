@@ -1081,7 +1081,7 @@ export default function HeroList() {
     return (
       <div
         key={hero.id}
-        className="card-fantasy p-3 border-2 rounded-xl flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-all"
+        className="card-fantasy p-3 border-2 rounded-xl flex flex-col items-center gap-1.5 cursor-pointer hover-lift hover-glow transition-all"
         style={{ borderColor, boxShadow: borderShadow }}
         onClick={() => setEditing(hero)}
       >
