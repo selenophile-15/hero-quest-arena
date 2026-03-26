@@ -1423,7 +1423,7 @@ export default function QuestSimulation() {
                             }
                             
                             return (
-                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${displayColor}`}>
+                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono text-sm ${displayColor}`}>
                                 <div className="flex flex-col items-center">
                                   <span>
                                     {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
