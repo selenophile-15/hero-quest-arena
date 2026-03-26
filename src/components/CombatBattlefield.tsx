@@ -284,10 +284,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         {/* Combat Stats Summary */}
         <div className="rounded border border-border/30 bg-secondary/20 p-3 flex-1">
           <div className="text-xs font-bold text-foreground mb-2">📊 전투 통계</div>
-          <table className="w-full text-[10px]">
+          <table className="w-full text-[11px]">
             <thead>
               <tr className="border-b border-border/30">
-                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium w-[70px]">영웅</th>
+                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium w-[90px]">영웅</th>
                 <th className="text-right py-1.5 px-2 text-red-400 font-medium">대미지</th>
                 <th className="text-right py-1.5 px-2 text-orange-400 font-medium">비율</th>
                 <th className="text-center py-1.5 px-2 text-yellow-400 font-medium">타겟팅</th>
@@ -298,7 +298,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <tbody>
               {heroStatsData.map((hs, idx) => (
                 <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                  <td className="py-2 px-2 text-foreground font-medium">{hs.name}</td>
+                  <td className="py-2 px-2 text-foreground font-medium truncate max-w-[90px]">{hs.name}</td>
                   <td className="py-2 px-2 text-right font-mono text-red-400">{formatNumber(hs.dmg)}</td>
                   <td className="py-2 px-2 text-right font-mono text-orange-400">{hs.dmgPct.toFixed(1)}%</td>
                   <td className="py-2 px-2 text-center font-mono text-yellow-400">{hs.targeted}</td>

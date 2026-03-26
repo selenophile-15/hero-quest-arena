@@ -1609,6 +1609,7 @@ export default function QuestSimulation() {
                 </div>
                 {(() => {
                   const qualityScore: Record<string, number> = {
+                    'common': 1, 'uncommon': 1.25, 'flawless': 1.5, 'epic': 2, 'legendary': 3,
                     '일반': 1, '고급': 1.25, '최고급': 1.5, '에픽': 2, '전설': 3,
                   };
                   const heroGrades = selectedHeroes.map(h => {
