@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { LayoutGrid, Table2, Filter, ChevronUp, ChevronDown, X, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -213,7 +212,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-7xl w-[98vw] max-h-[95vh] overflow-hidden flex flex-col p-0 gap-0" hideCloseButton>
+      <DialogContent className="sm:max-w-7xl w-[98vw] h-[95vh] max-h-[95vh] overflow-hidden flex flex-col p-0 gap-0" hideCloseButton>
         {/* ─── Header ───────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
           <h2 className="text-lg text-primary font-bold">파티원 선택</h2>
@@ -312,7 +311,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
         </div>
 
         {/* ─── Content ─────────────────────────────────────────────────────── */}
-        <ScrollArea className="flex-1 min-h-0 px-2" style={{ maxHeight: 'calc(95vh - 220px)' }}>
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto px-2 overscroll-contain">
           {viewMode === 'table' ? (
             // ─── TABLE VIEW ───────────────────────────────────────────────────
             <table className="w-full text-xs min-w-[900px]">
@@ -567,7 +566,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
               })}
             </div>
           )}
-        </ScrollArea>
+        </div>
 
         {/* ─── Footer ──────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-border shrink-0">
