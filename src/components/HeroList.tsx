@@ -1,17 +1,18 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Fragment, useRef, useCallback } from 'react';
 import { Hero, HERO_STAT_COLUMNS, CHAMPION_STAT_COLUMNS, STAT_ICON_MAP, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
 import { HERO_CLASS_MAP, getCommonSkills, getUniqueSkills, getChampionSkillsData } from '@/lib/gameData';
 import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
 import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_MAP, JOB_NAME_MAP, SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
-import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect } from '@/lib/championEquipUtils';
+import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown, LayoutGrid, Table2, Filter, ArrowUpDown, CircleHelp, Copy, RefreshCw, Award } from 'lucide-react';
+import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown, LayoutGrid, Table2, Filter, ArrowUpDown, CircleHelp, Copy, RefreshCw, Award, Download, Upload, Camera, BarChart3 } from 'lucide-react';
+import html2canvas from 'html2canvas';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -153,6 +154,11 @@ export default function HeroList() {
   const [selectedForDelete, setSelectedForDelete] = useState<Set<string>>(new Set());
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
+  const [saveLoadOpen, setSaveLoadOpen] = useState(false);
+  const [importMode, setImportMode] = useState<'replace' | 'merge'>('replace');
+  const [importPreview, setImportPreview] = useState<Hero[] | null>(null);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
@@ -168,7 +174,85 @@ export default function HeroList() {
     });
     getUniqueSkills().then(setUniqueSkillsData);
     getChampionSkillsData().then(setChampionSkillsData);
+    ensureAurasongDataLoaded();
   }, []);
+
+  // Scroll to expanded row
+  useEffect(() => {
+    if (expandedId) {
+      setTimeout(() => {
+        const el = document.getElementById(`expanded-${expandedId}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+  }, [expandedId]);
+
+  // Screenshot handler
+  const handleScreenshot = useCallback(async () => {
+    if (!listRef.current) return;
+    try {
+      const canvas = await html2canvas(listRef.current, {
+        backgroundColor: '#1a1a2e',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      const link = document.createElement('a');
+      link.download = `list_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e) {
+      console.error('Screenshot failed:', e);
+    }
+  }, [listTab]);
+
+  // Export handler
+  const handleExport = useCallback(() => {
+    const data = JSON.stringify(heroes, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = `quest_sim_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [heroes]);
+
+  // Import handler
+  const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target?.result as string);
+        if (!Array.isArray(parsed)) throw new Error('Invalid format');
+        // Basic validation
+        const valid = parsed.every((h: any) => h.id && h.name && (h.type === 'hero' || h.type === 'champion'));
+        if (!valid) throw new Error('Invalid hero data');
+        setImportPreview(parsed);
+        setSaveLoadOpen(true);
+      } catch {
+        alert('파일 형식이 올바르지 않습니다. JSON 형식의 백업 파일을 사용해주세요.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }, []);
+
+  const handleImportConfirm = useCallback(() => {
+    if (!importPreview) return;
+    if (importMode === 'replace') {
+      setHeroes(importPreview);
+      saveHeroes(importPreview);
+    } else {
+      const merged = [...heroes, ...importPreview.map(h => ({ ...h, id: crypto.randomUUID() }))];
+      setHeroes(merged);
+      saveHeroes(merged);
+    }
+    setImportPreview(null);
+    setSaveLoadOpen(false);
+  }, [importPreview, importMode, heroes]);
 
   // Preload all skill and equipment images for smooth rendering
   useEffect(() => {
@@ -411,16 +495,13 @@ export default function HeroList() {
       const isChamp = hero.type === 'champion';
       const isPromoted = isChamp && hero.promoted;
       return (
-        <button
-          onClick={(e) => { e.stopPropagation(); setExpandedId(expandedId === hero.id ? null : hero.id); }}
-          className="font-medium text-foreground hover:text-primary transition-colors text-center w-full inline-flex items-center gap-1 justify-center"
-        >
+        <span className="font-medium text-foreground text-center w-full inline-flex items-center gap-1 justify-center">
           {isChamp && hero.championName && (
-            <img src={getChampionImagePath(hero.championName)} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />
+            <img src={getChampionImagePath(hero.championName)} alt="" className="w-5 h-5 rounded-full" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
           )}
           <span className={isPromoted ? 'text-yellow-400' : ''}>{hero.name}</span>
           {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
-        </button>
+        </span>
       );
     }
     if (colKey === 'type') {
@@ -461,9 +542,9 @@ export default function HeroList() {
       const elVal = hero.elementValue || 0;
       const isDimEl = elVal === 0;
       return (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-1 h-5 leading-none">
           <ElementIcon element={hero.element} size={20} />
-          <span className={`tabular-nums ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
+          <span className={`tabular-nums leading-none ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
       );
     }
@@ -575,6 +656,15 @@ export default function HeroList() {
     return <span>{String(value ?? '-')}</span>;
   };
 
+  const skillLevelColorClass = (lvl: number | string) => {
+    if (typeof lvl !== 'number') return 'bg-secondary text-foreground/80';
+    if (lvl >= 5) return 'bg-yellow-500/70 text-yellow-50';
+    if (lvl >= 4) return 'bg-purple-500/70 text-purple-50';
+    if (lvl >= 3) return 'bg-blue-500/70 text-blue-50';
+    if (lvl >= 2) return 'bg-green-500/70 text-green-50';
+    return 'bg-secondary text-foreground/80';
+  };
+
   const renderExpandedRow = (hero: Hero) => {
     const isChampion = hero.type === 'champion';
     const elementVal = hero.elementValue || 0;
@@ -635,7 +725,7 @@ export default function HeroList() {
     const seedColor = (val: number) => val === 80 ? 'text-orange-400 font-semibold' : val === 40 ? 'text-yellow-400 font-semibold' : val === 0 ? 'text-foreground/20' : '';
 
     return (
-      <tr className="bg-secondary/20">
+      <tr id={`expanded-${hero.id}`} className="bg-muted/40">
         <td colSpan={activeCols.length + 1} className="px-4 py-4">
           <div className="flex gap-4">
             {/* Stats Box */}
@@ -706,12 +796,12 @@ export default function HeroList() {
 
             {/* Skills Box */}
             <div className="card-fantasy p-3 flex-1 overflow-y-auto">
-              <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬셋</h4>
-              <div className="space-y-2">
+              <h4 className="text-xs font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬</h4>
+              <div className="space-y-3">
                 {isChampion ? (
                   <>
                     {/* Leader Skill */}
-                    <div className="flex items-start gap-2 min-h-[48px]">
+                    <div className="flex items-start gap-2 min-h-[56px]">
                       <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
                         {leaderSkillIcon && <img src={leaderSkillIcon} alt="" className="w-12 h-12 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                       </div>
@@ -725,7 +815,7 @@ export default function HeroList() {
                     </div>
                     <div className="border-t border-border/30" />
                     {/* Aura Song Skill */}
-                    <div className="flex items-start gap-2 min-h-[48px]">
+                    <div className="flex items-start gap-2 min-h-[56px]">
                       <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
                         {aurasongSkillIcon ? <img src={aurasongSkillIcon} alt="" className="w-12 h-12 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                       </div>
@@ -754,7 +844,7 @@ export default function HeroList() {
                       const imgPath = hero.heroClass ? getUniqueSkillImagePath(hero.heroClass) : '';
                       const skillLevel = uniqueSkill ? uniqueLevelIdx + 1 : '-';
                       return (
-                        <div className="flex items-start gap-2 min-h-[48px]">
+                        <div className="flex items-start gap-2 min-h-[56px]">
                           <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
                             {imgPath ? <img src={imgPath} alt="" className="w-12 h-12 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                           </div>
@@ -762,7 +852,7 @@ export default function HeroList() {
                             <div className="flex items-center gap-1">
                               <span className="text-sm font-medium text-foreground">{baseName}</span>
                               {currentName !== baseName && <span className="text-xs text-muted-foreground">({currentName})</span>}
-                                  <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-foreground/80 ml-1">Lv.{skillLevel}</span>
+                                  <span className={`text-[10px] px-1 py-0.5 rounded ml-1 font-semibold ${skillLevelColorClass(skillLevel)}`}>Lv.{skillLevel}</span>
                             </div>
                             <p className="text-xs text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
                           </div>
@@ -784,7 +874,7 @@ export default function HeroList() {
                       const desc = skData?.['스킬_설명']?.[lvIdx] || '-';
                       const skillLevel = sk ? lvIdx + 1 : '-';
                       return (
-                        <div key={i} className="flex items-start gap-2 min-h-[48px]">
+                        <div key={i} className="flex items-start gap-2 min-h-[56px]">
                           <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
                             {sk ? <img src={getSkillImagePath(sk)} alt="" className="w-12 h-12 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                           </div>
@@ -794,7 +884,7 @@ export default function HeroList() {
                                 <div className="flex items-center gap-1">
                                   <span className="text-sm font-medium text-foreground">{baseName}</span>
                                   {currentName !== baseName && <span className="text-xs text-muted-foreground">({currentName})</span>}
-                                  <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-foreground/80 ml-1">Lv.{skillLevel}</span>
+                                  <span className={`text-[10px] px-1 py-0.5 rounded ml-1 font-semibold ${skillLevelColorClass(skillLevel)}`}>Lv.{skillLevel}</span>
                                 </div>
                                 <p className="text-xs text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
                               </>
@@ -833,48 +923,51 @@ export default function HeroList() {
                 {equipSlots.slice(0, isChampion ? 2 : 6).map((slot: any, i: number) => {
                   const item = slot.item;
                   const quality = slot.quality || 'common';
-                  const radialStop = '85%';
                   const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
                   const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
                   const itemType = item?.type || '';
                   return (
                     <div key={i} className="flex flex-col items-center">
                       <div
-                        className={`relative w-full aspect-square rounded-lg border-2 ${item ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center justify-center overflow-hidden`}
+                        className={`relative w-full aspect-square rounded-lg border-2 ${item ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden`}
                         style={item ? {
-                          background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent ${radialStop})`,
+                          background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                           boxShadow: QUALITY_SHADOW_COLOR[quality],
                         } : { background: 'hsl(var(--secondary) / 0.3)' }}
                       >
-                        {item && (
-                          <span className="absolute top-0.5 left-0.5 text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5 z-10">T{item.tier}</span>
-                        )}
-                        {item?.relic && (
-                          <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0.5 right-0.5 w-4 h-4 z-10"
-                            onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        )}
-                        {item?.imagePath ? (
-                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain" style={{ marginTop: '-4px' }}
-                            onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        ) : (
-                          <span className="text-[9px] text-muted-foreground">비어있음</span>
-                        )}
-                        {item && (
-                          <div className="absolute bottom-0.5 left-0.5 right-0.5 flex items-center justify-center gap-1">
+                        {/* Tier + Relic header */}
+                        <div className="flex items-center justify-between px-1 pt-0.5 flex-shrink-0" style={{ minHeight: '18px' }}>
+                          {item ? <span className="text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span> : <span />}
+                          {item?.relic ? <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} /> : <span />}
+                        </div>
+                        {/* Image area - shifted toward top */}
+                        <div className="flex-1 flex items-start justify-center pt-0.5">
+                          {item?.manual ? (
+                            <CircleHelp className="w-9 h-9 text-yellow-400/60" />
+                          ) : item?.imagePath ? (
+                            <img src={item.imagePath} alt={item.name} className="w-[55%] object-contain"
+                              onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
+                          ) : (
+                            <span className="text-[9px] text-muted-foreground mt-6">비어있음</span>
+                          )}
+                        </div>
+                        {/* Enchant/Type footer */}
+                        {item ? (
+                          <div className="flex items-center justify-center gap-1 pb-1 flex-shrink-0" style={{ minHeight: '34px' }}>
                             {displayElement && (
                               <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                                className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
                             )}
                             {displaySpirit && (() => {
                               const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />;
+                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} /> : null;
                             })()}
-                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />}
                           </div>
-                        )}
+                        ) : null}
                       </div>
-                      <p className="text-sm text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
+                      <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
                     </div>
                   );
                 })}
@@ -936,7 +1029,10 @@ export default function HeroList() {
           </div>
         </div>
         <div className="text-center w-full">
-          <p className="text-sm font-bold text-foreground truncate">{hero.name}</p>
+          <p className={`text-sm font-bold truncate inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
+            {hero.name}
+            {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />}
+          </p>
           <p className="text-xs text-foreground/60 truncate">
             {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
           </p>
@@ -1207,6 +1303,18 @@ export default function HeroList() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl text-primary font-bold">영웅 &amp; 챔피언 리스트</h2>
         <div className="flex gap-2">
+          <Button onClick={handleExport} variant="outline" size="sm" className="gap-1.5 text-xs" title="리스트 내보내기">
+            <Download className="w-3.5 h-3.5" /> 내보내기
+          </Button>
+          <label className="inline-flex">
+            <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
+            <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs cursor-pointer" title="리스트 불러오기">
+              <span><Upload className="w-3.5 h-3.5" /> 불러오기</span>
+            </Button>
+          </label>
+          <Button onClick={handleScreenshot} variant="outline" size="sm" className="gap-1.5 text-xs" title="스크린샷 저장">
+            <Camera className="w-3.5 h-3.5" /> 스크린샷
+          </Button>
           <Button onClick={() => setAddingType('hero')} className="gap-2 text-sm font-medium">
             <Shield className="w-4 h-4" /> 새 영웅 추가
           </Button>
@@ -1319,10 +1427,14 @@ export default function HeroList() {
                   const isExpanded = expandedId === hero.id;
                   const isSelectedForDel = selectedForDelete.has(hero.id);
                   return (
-                    <>
-                      <tr key={hero.id} className={`border-b border-border/50 hover:bg-secondary/30 transition-colors ${isExpanded ? 'bg-secondary/20' : ''}`}>
+                    <Fragment key={hero.id}>
+                      <tr
+                        onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
+                        className={`border-b border-border/50 transition-colors cursor-pointer select-none ${
+                          isExpanded ? 'bg-primary/15' : 'hover:bg-secondary/20'
+                        }`}
+                      >
                         {activeCols.map(col => {
-                          // When expanded, hide non-essential columns
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
                             return <td key={col.key} className="px-3 py-3 text-center align-middle" />;
                           }
@@ -1333,7 +1445,7 @@ export default function HeroList() {
                           );
                         })}
                         <td className="px-3 py-3 text-center align-middle">
-                          <div className="flex items-center justify-center gap-1">
+                          <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
                             {manageMode ? (
                               <button
                                 onClick={() => toggleSelectForDelete(hero.id)}
@@ -1358,7 +1470,7 @@ export default function HeroList() {
                         </td>
                       </tr>
                       {isExpanded && renderExpandedRow(hero)}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>

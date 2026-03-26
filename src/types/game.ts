@@ -86,9 +86,9 @@ export const HERO_STAT_COLUMNS = [
   { key: 'classLine' as const, label: '계열' },
   { key: 'heroClass' as const, label: '직업' },
   { key: 'name' as const, label: '이름' },
-  { key: 'level' as const, label: 'LV' },
+  { key: 'level' as const, label: 'Lv' },
   { key: 'element' as const, label: '원소' },
-  { key: 'skills' as const, label: '스킬셋' },
+  { key: 'skills' as const, label: '스킬' },
   { key: 'power' as const, label: '전투력', icon: true },
   { key: 'airshipPower' as const, label: '에어쉽', icon: true },
   { key: 'hp' as const, label: 'HP', icon: true },
@@ -106,7 +106,7 @@ export const HERO_STAT_COLUMNS = [
 
 export const CHAMPION_STAT_COLUMNS = [
   { key: 'name' as const, label: '이름' },
-  { key: 'level' as const, label: 'LV' },
+  { key: 'level' as const, label: 'Lv' },
   { key: 'rank' as const, label: '랭크' },
   { key: 'element' as const, label: '원소' },
   { key: 'skills' as const, label: '스킬' },
