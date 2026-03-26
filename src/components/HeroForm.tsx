@@ -1009,12 +1009,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     <div className="flex items-center justify-between px-1 pt-0.5 flex-shrink-0" style={{ minHeight: '18px' }}>
                       <span className="text-[9px] font-bold text-primary bg-card/80 rounded px-0.5">{slotLabel}</span>
                       {equipItem ? <span className="text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{equipItem.tier}</span> : <span />}
-                        {equipItem?.relic && (
-                          <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-5 h-5"
-                            onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        )}
-                      </div>
-                    )}
+                      {equipItem?.relic ? <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span />}
+                    </div>
 
                     {/* Item image area */}
                     <div className="w-full flex items-center justify-center" style={{ aspectRatio: '1' }}>
