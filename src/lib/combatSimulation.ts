@@ -1385,6 +1385,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
       lordProtectionAvg: lordProtections[i] / actualSimCount,
       critSurvivalCount: critSurvivals[i] / actualSimCount,
+      tankingRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
     };
   });
 
