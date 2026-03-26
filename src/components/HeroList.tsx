@@ -196,12 +196,37 @@ export default function HeroList() {
     if (!targetRef.current) return;
     setScreenshotLoading(true);
     try {
-      const canvas = await html2canvas(targetRef.current, {
+      // Clone and strip management column / delete buttons for clean screenshot
+      const clone = targetRef.current.cloneNode(true) as HTMLElement;
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      clone.style.top = '0';
+      document.body.appendChild(clone);
+
+      // Hide last <th> and last <td> in each row (management column) for table screenshots
+      clone.querySelectorAll('thead tr, tbody tr').forEach(row => {
+        const cells = row.querySelectorAll('th, td');
+        if (cells.length > 0) {
+          const last = cells[cells.length - 1] as HTMLElement;
+          // Check if it contains 관리 text or action buttons
+          if (last.textContent?.includes('관리') || last.querySelector('button')) {
+            last.style.display = 'none';
+          }
+        }
+      });
+
+      // Hide delete buttons in album cards
+      clone.querySelectorAll('.album-delete-btn').forEach(el => {
+        (el as HTMLElement).style.display = 'none';
+      });
+
+      const canvas = await html2canvas(clone, {
         backgroundColor: '#1a1a2e',
         scale: 2,
         useCORS: true,
         logging: false,
       });
+      document.body.removeChild(clone);
       const link = document.createElement('a');
       link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
       link.href = canvas.toDataURL('image/png');
