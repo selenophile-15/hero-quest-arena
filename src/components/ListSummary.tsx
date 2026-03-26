@@ -45,7 +45,7 @@ const POSITION_COLORS: Record<string, string> = {
 };
 const POSITION_TEXT_COLORS: Record<string, string> = {
   '퓨어 탱커': 'text-blue-400',
-  '회피 탱커': 'text-teal-400',
+  '회피 탱커': 'text-emerald-400',
   '딜탱': 'text-orange-400',
   '치명 딜러': 'text-red-400',
   '일반 딜러': 'text-yellow-400',
