@@ -883,7 +883,7 @@ export default function HeroList() {
             </div>
 
             {/* Skills Box */}
-            <div className="card-fantasy p-3 w-[260px] flex-shrink-0 flex flex-col gap-2">
+            <div className="card-fantasy p-3 flex-1 flex flex-col gap-2">
               <h4 className="text-xs font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬</h4>
               {isChampion ? (
                 <div className="flex flex-col gap-2">
