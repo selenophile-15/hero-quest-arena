@@ -1013,12 +1013,12 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     </div>
 
                     {/* Item image area */}
-                    <div className="w-full flex items-center justify-center" style={{ aspectRatio: '1' }}>
+                    <div className="flex-1 flex items-start justify-center pt-0.5">
                       {equipItem?.imagePath ? (
-                        <img src={equipItem.imagePath} alt={equipItem.name} className="w-4/5 h-4/5 object-contain"
+                        <img src={equipItem.imagePath} alt={equipItem.name} className="w-[55%] object-contain"
                           onError={e => { e.currentTarget.style.display = 'none'; }} />
                       ) : (
-                        <span className="text-[10px] text-muted-foreground">비어있음</span>
+                        <span className="text-[9px] text-muted-foreground mt-6">비어있음</span>
                       )}
                     </div>
 
