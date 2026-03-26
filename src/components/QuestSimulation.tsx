@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2 } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -16,6 +16,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 import CombatBattlefield from '@/components/CombatBattlefield';
+import SavedResults from '@/components/SavedResults';
+import CompareAnalysis from '@/components/CompareAnalysis';
+import { saveSimulationResult, SavedSimulationSummary } from '@/lib/savedSimulations';
+import { toast } from '@/hooks/use-toast';
 
 // Quest data types
 interface QuestTime {
@@ -132,11 +136,20 @@ const DEFAULT_TIME_SETTINGS: TimeSettingItem[] = [
   { id: 'rest_guild_boost', label: '길드) 퀘스트, 휴식 부스트', category: 'rest', enabled: false, value: null },
 ];
 
+type QuestSubTab = 'simulation' | 'saved' | 'compare';
+
+const QUEST_SUB_TABS = [
+  { id: 'simulation' as const, label: '퀘스트 시뮬레이션', icon: Swords },
+  { id: 'saved' as const, label: '내 결과', icon: ListChecks },
+  { id: 'compare' as const, label: '비교 분석실', icon: GitCompare },
+];
+
 export default function QuestSimulation() {
   const allHeroes = getHeroes();
   const [questDataMap, setQuestDataMap] = useState<Record<string, QuestData>>({});
   const [commonData, setCommonData] = useState<QuestCommon | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subTab, setSubTab] = useState<QuestSubTab>('simulation');
 
   // Selection state
   const [selectedQuestType, setSelectedQuestType] = useState<string>('');
@@ -407,23 +420,57 @@ export default function QuestSimulation() {
     setConfigOpen(true);
   };
 
-  if (loading) {
-    return (
-      <div className="animate-fade-in text-center py-20">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-muted-foreground">퀘스트 데이터 로딩 중...</p>
-      </div>
-    );
-  }
+  // Save current simulation result
+  const handleSaveResult = () => {
+    if (!simResult || !currentQuest || !currentRegion) return;
+    const selectedHeroList = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    const questData = questDataMap[selectedQuestType];
+    const regionName = currentRegion.name;
+    const diffLabel = currentQuest.difficulty !== '없음' ? ` ${currentQuest.difficulty}` : '';
+    const autoName = `${questData?.questType || ''} ${regionName}${diffLabel}`;
 
-  if (allHeroes.length === 0) {
-    return (
-      <div className="animate-fade-in text-center py-20">
-        <Swords className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-        <p className="text-muted-foreground">먼저 리스트 관리에서 영웅을 추가해주세요</p>
-      </div>
-    );
-  }
+    const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
+    const heroSummaries = simResult.heroResults.map(hr => ({
+      heroId: hr.heroId,
+      heroName: hr.heroName,
+      heroClass: selectedHeroList.find(h => h.id === hr.heroId)?.heroClass || '',
+      survivalRate: hr.survivalRate,
+      avgDamageDealt: hr.avgDamageDealt,
+      damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg * 100) : 0,
+    }));
+
+    saveSimulationResult({
+      id: crypto.randomUUID(),
+      name: autoName,
+      savedAt: Date.now(),
+      questTypeKey: selectedQuestType,
+      regionIdx: selectedRegionIdx,
+      subAreaIdx: selectedSubAreaIdx,
+      questIdx: selectedQuestIdx,
+      heroIds: Array.from(selectedHeroIds),
+      booster: selectedBooster,
+      miniBoss: selectedMiniBoss,
+      winRate: simResult.winRate,
+      avgRounds: simResult.avgRounds,
+      minRounds: simResult.minRounds,
+      maxRounds: simResult.maxRounds,
+      heroSummaries,
+    });
+
+    toast({ title: '결과 저장 완료', description: autoName });
+  };
+
+  // Load a saved simulation
+  const handleLoadSimulation = (sim: SavedSimulationSummary) => {
+    setSelectedQuestType(sim.questTypeKey);
+    setSelectedRegionIdx(sim.regionIdx);
+    setSelectedSubAreaIdx(sim.subAreaIdx);
+    setSelectedQuestIdx(sim.questIdx);
+    setSelectedHeroIds(new Set(sim.heroIds));
+    setSelectedBooster(sim.booster as any);
+    setSelectedMiniBoss(sim.miniBoss as MiniBossType);
+    setSubTab('simulation');
+  };
 
   // Get barrier elements for display
   const barrierElements = currentQuest?.barrier ? (() => {
@@ -479,12 +526,68 @@ export default function QuestSimulation() {
     return -50;
   };
 
+  // Check if barrier is broken (for warning)
+  const barrierBrokenGlobal = (() => {
+    if (!currentQuest?.barrier || barrierElements.length === 0) return true;
+    return barrierElements.every(el => {
+      const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
+      return heroSum >= currentQuest.barrier!.hp;
+    });
+  })();
+
   const questTimeSettings = timeSettings.filter(s => s.category === 'quest');
   const restTimeSettings = timeSettings.filter(s => s.category === 'rest');
 
   return (
     <div className="animate-fade-in">
-      {/* Full-width 3-column layout */}
+      {/* Sub-tabs */}
+      <div className="flex gap-1 mb-4 border-b border-border/30 pb-1">
+        {QUEST_SUB_TABS.map(tab => {
+          const Icon = tab.icon;
+          const isActive = subTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setSubTab(tab.id)}
+              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 -mb-[5px]
+                transition-all duration-200
+                ${isActive
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
+                }`}
+            >
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'scale-110' : ''}`} />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Tab: Saved Results */}
+      <div style={{ display: subTab === 'saved' ? 'block' : 'none' }}>
+        <SavedResults onLoadSimulation={handleLoadSimulation} />
+      </div>
+
+      {/* Tab: Compare */}
+      <div style={{ display: subTab === 'compare' ? 'block' : 'none' }}>
+        <CompareAnalysis />
+      </div>
+
+      {/* Tab: Simulation */}
+      <div style={{ display: subTab === 'simulation' ? 'block' : 'none' }}>
+
+      {loading ? (
+        <div className="text-center py-20">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">퀘스트 데이터 로딩 중...</p>
+        </div>
+      ) : allHeroes.length === 0 ? (
+        <div className="text-center py-20">
+          <Swords className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">먼저 리스트 관리에서 영웅을 추가해주세요</p>
+        </div>
+      ) : (
+      <>
       <div className="flex gap-4 flex-col lg:flex-row">
 
         {/* LEFT: Monster Info */}
@@ -503,10 +606,10 @@ export default function QuestSimulation() {
                   setSelectedBooster('none');
                   setSimResult(null);
                 }}
-                className="ml-auto text-[10px] text-muted-foreground hover:text-destructive transition-colors px-1.5 py-0.5 rounded border border-border/40 hover:border-destructive/50"
+                className="ml-auto p-1.5 rounded-md bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-colors"
                 title="몬스터 정보 초기화"
               >
-                초기화
+                <RotateCcw className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -514,9 +617,9 @@ export default function QuestSimulation() {
             {/* Region icon - top left, bigger */}
             {currentRegion && (
               <button
-                onClick={() => openConfigAtStep(hasSubAreas ? 'subarea' : 'difficulty')}
+                onClick={() => openConfigAtStep('region')}
                 className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 hover:border-primary/70 transition-all cursor-pointer"
-                title={hasSubAreas ? "세부 지역 변경" : "난이도 변경"}
+                title="지역 변경"
               >
                 <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
               </button>
@@ -573,7 +676,7 @@ export default function QuestSimulation() {
             {/* Quest select button - centered, larger with less cropping */}
             <div className="flex justify-center pt-2 mb-4">
               <button
-                onClick={() => setConfigOpen(true)}
+                onClick={() => openConfigAtStep(hasSubAreas ? 'subarea' : 'difficulty')}
                 className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
                   currentQuest
                     ? 'border-primary/60 glow-gold'
@@ -682,21 +785,30 @@ export default function QuestSimulation() {
 
                 {/* Line 4: Element Barrier */}
                 {barrierElements.length > 0 && currentQuest.barrier && (
-                  <div className="flex items-center justify-center gap-4">
-                    {barrierElements.map((el, i) => {
-                      const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                      const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
-                      const required = currentQuest.barrier!.hp;
-                      const isMet = heroSum >= required;
-                      return (
-                        <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-purple-500/30 bg-purple-500/10'}`}>
-                          {iconPath && <img src={iconPath} alt="" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                          <span className={`text-sm font-mono font-bold ${isMet ? 'text-green-400' : 'text-purple-300'}`}>
-                            {formatNumber(heroSum)} / {formatNumber(required)}
-                          </span>
-                        </div>
-                      );
-                    })}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-center gap-4">
+                      {barrierElements.map((el, i) => {
+                        const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                        const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
+                        const required = currentQuest.barrier!.hp;
+                        const isMet = heroSum >= required;
+                        return (
+                          <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
+                            {iconPath && <img src={iconPath} alt="" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            <span className={`text-sm font-mono font-bold ${isMet ? 'text-green-400' : 'text-red-400'}`}>
+                              {formatNumber(heroSum)} / {formatNumber(required)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {!barrierBrokenGlobal && selectedHeroes.length > 0 && (
+                      <div className="text-center">
+                        <span className="text-[10px] text-red-400 font-medium">
+                          ⚠ 배리어 미충족: 대미지 20%로 감소
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -741,10 +853,10 @@ export default function QuestSimulation() {
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                          <span className="text-xs text-foreground">광역 공격 ({displayAoeChance}%)</span>
+                          <span className="text-xs text-foreground">광역 공격</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAoeMod || isAtkMod ? 'text-yellow-400' : 'text-foreground'}`}>
-                          {formatNumber(displayAoe)}
+                          {displayAoeChance}% / {formatNumber(displayAoe)}
                           {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(확률 ×{aoeMod})</span>}
                         </span>
                       </div>
@@ -921,16 +1033,17 @@ export default function QuestSimulation() {
                               })}
                             </svg>
 
-                            {/* Hero labels positioned at label heights */}
+                            {/* Hero labels positioned at label heights - two lines */}
                             {heroLayout.map(h => (
                               <div
                                 key={`label-${h.id}`}
-                                className="absolute flex items-center whitespace-nowrap"
+                                className="absolute flex flex-col whitespace-nowrap"
                                 style={{ bottom: `${h.labelPct}%`, left: '106px', transform: 'translateY(50%)', zIndex: 5 }}
                               >
-                                <span className="text-[10px] font-mono truncate max-w-[60px]" style={{ color: h.color }}>{h.name}</span>
-                                <span className="text-[10px] font-mono tabular-nums ml-1" style={{ color: h.color }}>{formatNumber(h.heroDef)}</span>
-                                <span className="text-[9px] font-mono tabular-nums ml-0.5 opacity-80" style={{ color: h.color }}>({h.dmgApplied}%)</span>
+                                <span className="text-[10px] font-mono truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                                <span className="text-[9px] font-mono tabular-nums leading-tight" style={{ color: h.color }}>
+                                  {formatNumber(h.heroDef)} ({h.dmgApplied}%)
+                                </span>
                               </div>
                             ))}
                           </div>
@@ -1402,6 +1515,14 @@ export default function QuestSimulation() {
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1"
+                onClick={handleSaveResult}
+              >
+                <Save className="w-3.5 h-3.5" /> 결과 저장
+              </Button>
               <span className="text-[8px] text-muted-foreground/50">
                 {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
               </span>
@@ -1868,6 +1989,9 @@ export default function QuestSimulation() {
         buffedStats={buffedStats}
         hasEvasionPenalty={!!(currentQuest && (currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')))}
       />
+    </>
+      )}
+      </div> {/* end simulation tab */}
     </div>
   );
 }

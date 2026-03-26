@@ -86,10 +86,10 @@ const getDifficultyColor = (diff: string) => {
 
 const getDifficultyBorder = (diff: string) => {
   switch (diff) {
-    case '쉬움': return 'border-green-400/30 hover:border-green-400/60';
-    case '보통': return 'border-blue-400/30 hover:border-blue-400/60';
-    case '어려움': return 'border-orange-400/30 hover:border-orange-400/60';
-    case '익스트림': return 'border-purple-400/30 hover:border-purple-400/60';
+    case '쉬움': return 'border-green-400/50 hover:border-green-400/80';
+    case '보통': return 'border-blue-400/50 hover:border-blue-400/80';
+    case '어려움': return 'border-orange-400/50 hover:border-orange-400/80';
+    case '익스트림': return 'border-purple-400/50 hover:border-purple-400/80';
     default: return 'border-border hover:border-primary/30';
   }
 };
@@ -280,25 +280,15 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
             {((!hasSubAreas || (selSubAreaIdx >= 0 && selSubAreaIdx !== 99)) && questGroups.normal.length > 0) && (
               <div>
                 <span className="text-xs text-muted-foreground mb-2 block">일반</span>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-4 gap-2">
                   {questGroups.normal.map(q => (
                     <button
                       key={q.originalIdx}
                       onClick={() => selectQuest(q.originalIdx)}
-                      className={`p-3 rounded-lg border text-left transition-all ${getDifficultyBorder(q.difficulty)}`}
+                      className={`p-3 rounded-lg border-2 text-center transition-all ${getDifficultyBorder(q.difficulty)}`}
                     >
                       <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
                         {q.stage ? `${q.stage}단계` : q.difficulty}
-                      </div>
-                      {q.isExtreme && (
-                        <div className="text-[9px] text-muted-foreground mt-0.5">
-                          {selType === 'tot' && region?.name === '공포'
-                            ? '(페널티: -회피 20%, 대미지 5%로 적용)'
-                            : '(페널티: -회피 20%)'}
-                        </div>
-                      )}
-                      <div className="text-[10px] text-muted-foreground mt-0.5">
-                        최소 {formatNumber(q.minPower)}
                       </div>
                     </button>
                   ))}
@@ -311,25 +301,15 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                 <span className="text-xs text-muted-foreground mb-2 block flex items-center gap-1">
                   <Crown className="w-3 h-3" /> 보스
                 </span>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-4 gap-2">
                   {questGroups.boss.map(q => (
                     <button
                       key={q.originalIdx}
                       onClick={() => selectQuest(q.originalIdx)}
-                      className={`p-3 rounded-lg border text-left transition-all ${getDifficultyBorder(q.difficulty)}`}
+                      className={`p-3 rounded-lg border-2 text-center transition-all ${getDifficultyBorder(q.difficulty)}`}
                     >
                       <div className={`text-sm font-medium ${getDifficultyColor(q.difficulty)}`}>
                         {q.stage ? `${q.stage}단계` : q.difficulty}
-                      </div>
-                      {q.isExtreme && (
-                        <div className="text-[9px] text-muted-foreground mt-0.5">
-                          {selType === 'tot' && region?.name === '공포'
-                            ? '(페널티: -회피 20%, 대미지 5%로 적용)'
-                            : '(페널티: -회피 20%)'}
-                        </div>
-                      )}
-                      <div className="text-[10px] text-muted-foreground mt-0.5">
-                        최소 {formatNumber(q.minPower)}
                       </div>
                     </button>
                   ))}
