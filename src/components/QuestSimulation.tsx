@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -361,19 +361,6 @@ export default function QuestSimulation() {
 
   const toggleHero = (id: string) => {
     if (!currentRegion) return;
-    if (editingSlotIdx !== null) {
-      setSelectedHeroIds(prev => {
-        const arr = Array.from(prev);
-        const existingIdx = arr.indexOf(id);
-        if (existingIdx !== -1) arr.splice(existingIdx, 1);
-        if (editingSlotIdx < arr.length) arr[editingSlotIdx] = id;
-        else arr.push(id);
-        return new Set(arr);
-      });
-      setEditingSlotIdx(null);
-      setHeroSelectOpen(false);
-      return;
-    }
     setSelectedHeroIds(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -588,7 +575,78 @@ export default function QuestSimulation() {
         </div>
       ) : (
       <>
-      <div className="flex gap-4 flex-col lg:flex-row">
+      {/* Action buttons row above monster info */}
+      {currentQuest && selectedHeroes.length > 0 && simResult && (
+        <div className="flex items-center gap-2 mb-3">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1"
+            onClick={() => {
+              if (!currentQuest || !currentRegion) return;
+              const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
+              const bElements = currentQuest?.barrier ? (() => {
+                const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                  ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
+                  : null;
+                const rawElements = barrierElement2
+                  ? [barrierElement2]
+                  : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+                return [...new Set(rawElements)] as string[];
+              })() : [];
+              const questMonster: QuestMonster = {
+                hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
+                aoeChance: currentQuest.aoeChance, def: currentQuest.def,
+                isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
+                barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
+              };
+              const entries = runSingleCombatLog({
+                heroes: selectedHeroes, monster: questMonster,
+                miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
+                questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
+              });
+              setCombatLog(entries);
+              setCombatLogDialogOpen(true);
+            }}
+          >
+            🎲 1회 추적 로그
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1"
+            onClick={handleSaveResult}
+          >
+            <Save className="w-3.5 h-3.5" /> 결과 저장
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1 px-2"
+            onClick={() => {
+              import('html2canvas').then(({ default: html2canvas }) => {
+                const el = document.querySelector('[data-quest-sim]');
+                if (!el) return;
+                html2canvas(el as HTMLElement, { backgroundColor: '#1a1a2e' }).then(canvas => {
+                  const link = document.createElement('a');
+                  link.download = `quest-sim-${Date.now()}.png`;
+                  link.href = canvas.toDataURL();
+                  link.click();
+                });
+              });
+            }}
+            title="스크린샷 저장"
+          >
+            <Camera className="w-3.5 h-3.5" />
+          </Button>
+          <span className="text-[8px] text-muted-foreground/50 ml-auto">
+            {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
+          </span>
+        </div>
+      )}
+
+      <div className="flex gap-4 flex-col lg:flex-row" data-quest-sim>
 
         {/* LEFT: Monster Info */}
         <div className="w-full lg:w-80 shrink-0">
@@ -978,7 +1036,7 @@ export default function QuestSimulation() {
                             {icons.map(b => (
                               <div key={b.el} className="flex flex-col items-center">
                                 {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-5 h-5" />}
-                                <span className="text-[10px] font-mono font-bold text-purple-300">{formatNumber(b.val)}</span>
+                                <span className="text-xs font-mono font-bold text-purple-300">{formatNumber(b.val)}</span>
                               </div>
                             ))}
                           </div>
@@ -1295,8 +1353,8 @@ export default function QuestSimulation() {
           </div>
         </div>
 
-        {/* RIGHT: Defense Reference + Time Settings */}
-        <div className="w-full lg:w-72 shrink-0">
+        {/* RIGHT: Defense Reference */}
+        <div className="w-full lg:w-80 shrink-0">
           {/* Defense Reference */}
           {currentQuest && (
             <>
@@ -1304,7 +1362,7 @@ export default function QuestSimulation() {
                 <Shield className="w-5 h-5 text-blue-400" />
                 <h3 className="text-lg text-foreground font-bold">방어력 기준치</h3>
               </div>
-              <div className="card-fantasy p-3 mb-3">
+              <div className="card-fantasy p-5 mb-3">
                 {(() => {
                   const defToBarPct = (def: number) => {
                     for (let i = defThresholds.length - 1; i >= 1; i--) {
@@ -1320,7 +1378,7 @@ export default function QuestSimulation() {
                     return 0;
                   };
 
-                  const barH = 240;
+                  const barH = 260;
                   const reductions = [-50, 0, 50, 70, 75];
                   const rows = defThresholds.map((t, i) => ({
                     key: t.key,
@@ -1354,37 +1412,47 @@ export default function QuestSimulation() {
                   const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
                   const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
 
+                  // Chart data for x/y graph
+                  const chartPoints = defThresholds.map((t, i) => ({
+                    def: t.value,
+                    reduction: reductions[i],
+                    color: t.color,
+                  }));
+
                   return (
-                    <div className="px-1">
+                    <div className="px-0">
+                      {/* Vertical bar chart */}
                       <div
-                        className="relative grid grid-cols-[44px_14px_1fr] gap-x-2"
+                        className="relative grid grid-cols-[48px_16px_1fr] gap-x-1"
                         style={{ height: `${barH}px` }}
                       >
                         <div className="relative">
                           {rows.map(r => (
                             <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
-                              <span className={`text-[10px] font-mono tabular-nums ${r.textClass}`}>{r.label}</span>
+                              <span className={`text-xs font-mono font-semibold tabular-nums ${r.textClass}`}>{r.label}</span>
                             </div>
                           ))}
                         </div>
                         <div className="relative">
-                          <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                          <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
+                            background: 'linear-gradient(to top, #7f1d1d 0%, #a16207 25%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
+                          }} />
                           {rows.map(r => (
                             <div key={`tick-${r.key}`} className="absolute left-0 right-0 flex items-center pointer-events-none" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
-                              <div className="h-px w-full" style={{ backgroundColor: r.color, opacity: 0.7 }} />
+                              <div className="h-[2px] w-full" style={{ backgroundColor: r.color, opacity: 0.9 }} />
                             </div>
                           ))}
                           {heroEntries.map(h => (
                             <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
-                              <div className="w-3 h-3 rounded-full border-2 shadow-md" style={{ borderColor: h.color, backgroundColor: h.color }} />
+                              <div className="w-3.5 h-3.5 rounded-full border-2 shadow-md" style={{ borderColor: h.color, backgroundColor: h.color }} />
                             </div>
                           ))}
                         </div>
                         <div className="relative ml-1">
                           {rows.map(r => (
                             <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[10px] font-mono tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
-                              <span className={`text-[9px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
+                              <span className={`text-xs font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                              <span className={`text-[11px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
                           <svg className="absolute inset-0 overflow-visible" style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}>
@@ -1397,125 +1465,84 @@ export default function QuestSimulation() {
                           </svg>
                           {heroLayout.map(h => (
                             <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '106px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[11px] font-mono truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
-                              <span className="text-[10px] font-mono tabular-nums leading-tight" style={{ color: h.color }}>
+                              <span className="text-xs font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                              <span className="text-[11px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
                             </div>
                           ))}
                         </div>
                       </div>
+
+                      {/* X/Y Axis Graph below bar */}
+                      {(() => {
+                        const graphW = 260;
+                        const graphH = 120;
+                        const padL = 36;
+                        const padB = 22;
+                        const padR = 8;
+                        const padT = 8;
+                        const w = graphW - padL - padR;
+                        const h = graphH - padT - padB;
+                        const maxDef = chartPoints[chartPoints.length - 1].def || 1;
+                        const minRed = -50;
+                        const maxRed = 75;
+                        const rangeRed = maxRed - minRed;
+
+                        const toX = (def: number) => padL + (def / maxDef) * w;
+                        const toY = (red: number) => padT + h - ((red - minRed) / rangeRed) * h;
+
+                        const pathD = chartPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${toX(p.def).toFixed(1)} ${toY(p.reduction).toFixed(1)}`).join(' ');
+
+                        return (
+                          <div className="mt-4 pt-3 border-t border-border/30">
+                            <div className="text-[11px] text-muted-foreground mb-1 font-semibold">방어력 — 감소율 그래프</div>
+                            <svg width={graphW} height={graphH} className="overflow-visible">
+                              {/* Axes */}
+                              <line x1={padL} y1={padT} x2={padL} y2={graphH - padB} stroke="currentColor" strokeOpacity={0.3} />
+                              <line x1={padL} y1={graphH - padB} x2={graphW - padR} y2={graphH - padB} stroke="currentColor" strokeOpacity={0.3} />
+                              {/* Y axis labels */}
+                              {[-50, 0, 50, 75].map(v => (
+                                <text key={`y-${v}`} x={padL - 4} y={toY(v)} textAnchor="end" dominantBaseline="middle" className="fill-muted-foreground" fontSize={9}>{v}%</text>
+                              ))}
+                              {/* Grid lines */}
+                              {[-50, 0, 50, 75].map(v => (
+                                <line key={`grid-${v}`} x1={padL} y1={toY(v)} x2={graphW - padR} y2={toY(v)} stroke="currentColor" strokeOpacity={0.1} strokeDasharray="3,3" />
+                              ))}
+                              {/* Path */}
+                              <path d={pathD} fill="none" stroke="#60a5fa" strokeWidth={2} />
+                              {/* Points */}
+                              {chartPoints.map((p, i) => (
+                                <g key={i}>
+                                  <circle cx={toX(p.def)} cy={toY(p.reduction)} r={4} fill={p.color} stroke="#000" strokeWidth={1} />
+                                  <text x={toX(p.def)} y={graphH - padB + 14} textAnchor="middle" className="fill-muted-foreground" fontSize={8}>{formatNumber(p.def)}</text>
+                                </g>
+                              ))}
+                              {/* Hero markers */}
+                              {heroEntries.map(he => {
+                                const red = getDamageReductionForDef(he.heroDef);
+                                return (
+                                  <circle key={`hero-${he.id}`} cx={Math.min(toX(he.heroDef), graphW - padR)} cy={toY(red)} r={3} fill={he.color} stroke="#fff" strokeWidth={1} opacity={0.9} />
+                                );
+                              })}
+                            </svg>
+                          </div>
+                        );
+                      })()}
                     </div>
                   );
                 })()}
               </div>
             </>
           )}
-
-          <div className="flex items-center gap-2 mb-3">
-            <Clock className="w-5 h-5 text-primary" />
-            <h3 className="text-lg text-foreground font-bold">시간 설정</h3>
-          </div>
-          <div className="card-fantasy p-3">
-            {/* Quest Time Reduction */}
-            <div className="mb-3">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Clock className="w-3.5 h-3.5 text-yellow-400" />
-                <span className="text-sm font-medium text-foreground">퀘스트 시간 감소</span>
-              </div>
-              <div className="space-y-1">
-                {questTimeSettings.map(item => (
-                  <div key={item.id} className="flex items-center gap-2 text-xs">
-                    <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                      item.enabled ? 'border-primary bg-primary/20' : 'border-border bg-secondary/30'
-                    }`}>
-                      {item.enabled && <span className="text-primary text-[10px]">✓</span>}
-                    </div>
-                    <span className={`flex-1 ${item.color || 'text-foreground/80'}`}>{item.label}</span>
-                    <span className="text-muted-foreground/50 text-[10px]">-</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Rest Time Reduction */}
-            <div className="border-t border-border/30 pt-3">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Coffee className="w-3.5 h-3.5 text-green-400" />
-                <span className="text-sm font-medium text-foreground">휴식 시간 감소</span>
-              </div>
-              <div className="space-y-1">
-                {restTimeSettings.map(item => (
-                  <div key={item.id} className="flex items-center gap-2 text-xs">
-                    <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                      item.enabled ? 'border-primary bg-primary/20' : 'border-border bg-secondary/30'
-                    }`}>
-                      {item.enabled && <span className="text-primary text-[10px]">✓</span>}
-                    </div>
-                    <span className={`flex-1 ${item.color || 'text-foreground/80'}`}>{item.label}</span>
-                    <span className="text-muted-foreground/50 text-[10px]">-</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Save button + Full-width Simulation Details Box */}
       {currentQuest && selectedHeroes.length > 0 && simResult && (
         <div className="mt-4 card-fantasy p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs gap-1"
-                onClick={handleSaveResult}
-              >
-                <Save className="w-3.5 h-3.5" /> 결과 저장
-              </Button>
-              <span className="text-[8px] text-muted-foreground/50">
-                {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs gap-1"
-                onClick={() => {
-                  if (!currentQuest || !currentRegion) return;
-                  const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
-                  const bElements = currentQuest?.barrier ? (() => {
-                    const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
-                    const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-                      ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
-                      : null;
-                    const rawElements = barrierElement2
-                      ? [barrierElement2]
-                      : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
-                    return [...new Set(rawElements)] as string[];
-                  })() : [];
-                  const questMonster: QuestMonster = {
-                    hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
-                    aoeChance: currentQuest.aoeChance, def: currentQuest.def,
-                    isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
-                    barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
-                  };
-                  const entries = runSingleCombatLog({
-                    heroes: selectedHeroes, monster: questMonster,
-                    miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
-                    questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
-                  });
-                  setCombatLog(entries);
-                  setCombatLogDialogOpen(true);
-                }}
-              >
-                🎲 1회 전투 로그
-              </Button>
-            </div>
+          <div className="flex items-center gap-2 mb-3">
+            <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
           </div>
 
           {/* Rounds info */}
