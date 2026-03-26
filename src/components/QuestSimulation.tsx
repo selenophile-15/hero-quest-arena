@@ -1048,7 +1048,7 @@ export default function QuestSimulation() {
                           <span className="text-xs text-foreground">방어력 기준치</span>
                         </div>
                       </div>
-                      <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5 pt-6 pb-4" style={{ height: `${barH}px` }}>
+                      <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5" style={{ height: `${barH}px` }}>
                         <div className="relative">
                           {rows.map(r => (
                             <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
@@ -1078,11 +1078,11 @@ export default function QuestSimulation() {
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          <svg className="absolute inset-0 overflow-visible" style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}>
+                          <svg className="absolute overflow-visible pointer-events-none" style={{ left: '70px', top: 0, width: 'calc(100% - 70px)', height: '100%' }}>
                             {heroLayout.map(h => {
-                              const yPin = barH - (h.pinPct / 100) * barH;
-                              const yLabel = barH - (h.labelPct / 100) * barH;
-                              const d = `M 0 ${yPin} L 12 ${yPin} L 28 ${yLabel}`;
+                              const yPin = (1 - h.pinPct / 100) * barH;
+                              const yLabel = (1 - h.labelPct / 100) * barH;
+                              const d = `M 0 ${yPin} C 14 ${yPin}, 14 ${yLabel}, 28 ${yLabel}`;
                               return <path key={`line-${h.id}`} d={d} fill="none" stroke={h.color} strokeWidth={1.5} strokeOpacity={0.8} />;
                             })}
                           </svg>
