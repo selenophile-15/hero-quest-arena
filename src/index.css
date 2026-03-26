@@ -102,6 +102,103 @@
 
     font-family: 'Noto Sans KR', sans-serif;
   }
+
+  /* ===== LIGHT MODE ===== */
+  :root[data-color-mode="light"] {
+    --background: 40 30% 96%;
+    --foreground: 230 15% 15%;
+
+    --card: 40 20% 98%;
+    --card-foreground: 230 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 15% 15%;
+
+    --primary: 40 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 15% 90%;
+    --secondary-foreground: 230 15% 25%;
+
+    --muted: 40 10% 92%;
+    --muted-foreground: 230 10% 45%;
+
+    --accent: 25 80% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 40 15% 82%;
+    --input: 40 15% 85%;
+    --ring: 40 85% 45%;
+
+    --sidebar-background: 40 20% 95%;
+    --sidebar-foreground: 230 15% 25%;
+    --sidebar-primary: 40 85% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 15% 90%;
+    --sidebar-accent-foreground: 230 15% 25%;
+    --sidebar-border: 40 15% 82%;
+    --sidebar-ring: 40 85% 45%;
+
+    --gold-glow: 40 85% 45%;
+    --gold-dim: 40 40% 50%;
+    --fantasy-purple: 270 40% 55%;
+    --fantasy-blue: 210 60% 50%;
+    --hero-gradient: linear-gradient(135deg, hsl(40 85% 45%), hsl(25 80% 50%));
+    --card-glow: 0 0 20px hsl(40 85% 45% / 0.08);
+
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  :root[data-color-mode="light"][data-theme="moonlight"] {
+    --background: 245 20% 96%;
+    --foreground: 245 15% 15%;
+
+    --card: 250 15% 98%;
+    --card-foreground: 245 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 245 15% 15%;
+
+    --primary: 245 45% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 250 15% 90%;
+    --secondary-foreground: 250 15% 25%;
+
+    --muted: 250 10% 92%;
+    --muted-foreground: 250 10% 45%;
+
+    --accent: 270 35% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 250 15% 82%;
+    --input: 250 15% 85%;
+    --ring: 245 45% 55%;
+
+    --sidebar-background: 250 15% 95%;
+    --sidebar-foreground: 250 15% 25%;
+    --sidebar-primary: 245 45% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 250 15% 90%;
+    --sidebar-accent-foreground: 250 15% 25%;
+    --sidebar-border: 250 15% 82%;
+    --sidebar-ring: 245 45% 55%;
+
+    --gold-glow: 245 45% 55%;
+    --gold-dim: 260 30% 50%;
+    --fantasy-purple: 270 35% 55%;
+    --fantasy-blue: 240 35% 55%;
+    --hero-gradient: linear-gradient(135deg, hsl(240 40% 55%), hsl(270 35% 55%));
+    --card-glow: 0 0 20px hsl(245 45% 55% / 0.08);
+
+    font-family: 'Noto Sans KR', sans-serif;
+  }
 }
 
 @layer base {
@@ -140,7 +237,7 @@
   }
 
   .bg-fantasy-gradient {
-    background: linear-gradient(180deg, hsl(230 15% 8%) 0%, hsl(230 20% 12%) 100%);
+    background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%);
   }
 
   .card-fantasy {
