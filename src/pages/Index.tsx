@@ -96,12 +96,16 @@ const Index = () => {
           50% { transform: translateY(-8px); }
         }
         @keyframes glowPulse {
-          0%, 100% { filter: drop-shadow(0 0 20px rgba(200,147,10,0.3)) drop-shadow(0 0 40px rgba(200,147,10,0.1)); }
-          50% { filter: drop-shadow(0 0 30px rgba(200,147,10,0.5)) drop-shadow(0 0 60px rgba(200,147,10,0.2)); }
+          0%, 100% { filter: drop-shadow(0 0 15px rgba(180,200,255,0.4)) drop-shadow(0 0 40px rgba(120,160,255,0.15)) drop-shadow(0 0 60px rgba(200,147,10,0.1)); }
+          50% { filter: drop-shadow(0 0 25px rgba(180,200,255,0.7)) drop-shadow(0 0 50px rgba(120,160,255,0.3)) drop-shadow(0 0 80px rgba(200,147,10,0.2)); }
         }
         @keyframes subtitleReveal {
           0% { opacity: 0; letter-spacing: 0.5em; }
           100% { opacity: 1; letter-spacing: 0.2em; }
+        }
+        @keyframes starSparkle {
+          0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+          50% { opacity: 1; transform: scale(1.3) rotate(180deg); }
         }
         @keyframes btnShine {
           0% { left: -100%; }
