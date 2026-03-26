@@ -1033,16 +1033,17 @@ export default function QuestSimulation() {
                               })}
                             </svg>
 
-                            {/* Hero labels positioned at label heights */}
+                            {/* Hero labels positioned at label heights - two lines */}
                             {heroLayout.map(h => (
                               <div
                                 key={`label-${h.id}`}
-                                className="absolute flex items-center whitespace-nowrap"
+                                className="absolute flex flex-col whitespace-nowrap"
                                 style={{ bottom: `${h.labelPct}%`, left: '106px', transform: 'translateY(50%)', zIndex: 5 }}
                               >
-                                <span className="text-[10px] font-mono truncate max-w-[60px]" style={{ color: h.color }}>{h.name}</span>
-                                <span className="text-[10px] font-mono tabular-nums ml-1" style={{ color: h.color }}>{formatNumber(h.heroDef)}</span>
-                                <span className="text-[9px] font-mono tabular-nums ml-0.5 opacity-80" style={{ color: h.color }}>({h.dmgApplied}%)</span>
+                                <span className="text-[10px] font-mono truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                                <span className="text-[9px] font-mono tabular-nums leading-tight" style={{ color: h.color }}>
+                                  {formatNumber(h.heroDef)} ({h.dmgApplied}%)
+                                </span>
                               </div>
                             ))}
                           </div>
