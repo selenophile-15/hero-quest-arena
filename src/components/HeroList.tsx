@@ -1196,12 +1196,11 @@ export default function HeroList() {
             </label>
             <Button onClick={() => {
               if (viewMode === 'table') {
-                setScreenshotCols(new Set(visibleCols));
-                setScreenshotDialogOpen(true);
+                handleScreenshot(tableContentRef, 'list');
               } else {
-                handleAlbumScreenshot();
+                handleScreenshot(albumContentRef, 'album');
               }
-            }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장">
+            }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장" disabled={screenshotLoading}>
               <Camera className="w-3.5 h-3.5" />
             </Button>
             <div className="w-px h-5 bg-border mx-1" />
