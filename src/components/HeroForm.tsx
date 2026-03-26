@@ -1011,7 +1011,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   >
                     {equipItem && (
                       <div className="w-full flex items-center justify-between px-1.5 pt-1">
-                        <span className="text-sm font-bold text-foreground/90 bg-background/80 rounded px-1.5 py-0.5">T{equipItem.tier}</span>
+                        <span className="text-xs font-bold text-foreground/90 bg-background/80 rounded px-1 py-0.5">T{equipItem.tier}</span>
                         {equipItem?.relic && (
                           <img
                             src="/images/special/icon_global_artifact.webp"
