@@ -966,7 +966,7 @@ export default function HeroList() {
                   {/* Common skills */}
                   {hero.skills?.slice(1, 5).map((sk, idx) => {
                     const skData = commonSkillsData[sk];
-                    const skLevel = hero.skillLevels?.[idx + 1] ?? 1;
+                    const skLevel = (hero as any).skillLevels?.[idx + 1] ?? 1;
                     return (
                       <div key={idx} className="flex items-start gap-2">
                         <img src={getSkillImagePath(sk)} alt="" className="w-10 h-10 flex-shrink-0"
