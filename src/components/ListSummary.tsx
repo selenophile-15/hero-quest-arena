@@ -220,13 +220,13 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
             className={`flex-1 text-sm py-1.5 rounded-md font-medium transition-colors ${target === 'owned' ? 'bg-yellow-500/20 text-yellow-300 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             onClick={() => setTarget('owned')}
           >
-            보유 중 선택
+            보유 중
           </button>
           <button
-            className={`flex-1 text-sm py-1.5 rounded-md font-medium transition-colors ${target === 'planned' ? 'bg-amber-600/20 text-amber-400 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`flex-1 text-sm py-1.5 rounded-md font-medium transition-colors ${target === 'planned' ? 'bg-lime-500/20 text-lime-300 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             onClick={() => setTarget('planned')}
           >
-            추가 예정 선택
+            추가 예정
           </button>
         </div>
         <div className="flex gap-2 mb-2">
