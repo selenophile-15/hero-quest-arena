@@ -361,14 +361,6 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           {hero.type === 'champion' ? '챔피언' : '영웅'}
                         </span>
                       </td>
-                      {/* 이름 */}
-                      <td className="py-1.5 px-1.5 text-center font-medium text-foreground">
-                        <div className="flex items-center gap-1 justify-center">
-                          {belowMin && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
-                          {iconPath && <img src={iconPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                          <span className="whitespace-nowrap">{hero.name}</span>
-                        </div>
-                      </td>
                       {/* 직업 with toggle */}
                       <td className="py-1.5 px-1 text-center text-muted-foreground">
                         {jobImageMode === 'none' ? (
@@ -385,6 +377,14 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                             <span className="text-[10px] whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
                           </div>
                         )}
+                      </td>
+                      {/* 이름 */}
+                      <td className="py-1.5 px-1.5 text-center font-medium text-foreground">
+                        <div className="flex items-center gap-1 justify-center">
+                          {belowMin && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
+                          {iconPath && <img src={iconPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                          <span className="whitespace-nowrap">{hero.type === 'champion' ? (hero.championName || hero.name) : hero.name}</span>
+                        </div>
                       </td>
                       {/* Lv */}
                       <td className="py-1.5 px-1 text-center text-muted-foreground">{hero.level}</td>
