@@ -1547,6 +1547,7 @@ export default function QuestSimulation() {
                 })()}
               </div>
             </>
+          )}
         </div>
       </div>
 
