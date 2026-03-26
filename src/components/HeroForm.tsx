@@ -1013,7 +1013,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     {/* Tier + Relic row */}
                     {equipItem && (
                       <div className="w-full flex items-center justify-between px-1.5 pt-1">
-                        <span className="text-sm font-bold text-foreground/90 bg-background/80 rounded px-1.5 py-0.5">T{equipItem.tier}</span>
+                        <span className="text-sm font-bold text-foreground/90 bg-card/80 rounded px-1.5 py-0.5 relative z-10">T{equipItem.tier}</span>
                         {equipItem?.relic && (
                           <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-5 h-5"
                             onError={e => { e.currentTarget.style.display = 'none'; }} />
