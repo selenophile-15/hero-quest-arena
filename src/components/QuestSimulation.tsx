@@ -676,7 +676,7 @@ export default function QuestSimulation() {
             {/* Quest select button - centered, larger with less cropping */}
             <div className="flex justify-center pt-2 mb-4">
               <button
-                onClick={() => setConfigOpen(true)}
+                onClick={() => openConfigAtStep(hasSubAreas ? 'subarea' : 'difficulty')}
                 className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
                   currentQuest
                     ? 'border-primary/60 glow-gold'
