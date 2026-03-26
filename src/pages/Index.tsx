@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Swords, Shield, Trophy } from "lucide-react";
 import selenofilLogo from "@/assets/selenofil-logo.png";
-import landingBg from "@/assets/landing-bg.jpg";
+import landingBg from "@/assets/landing-bg.png";
 import featureList from "@/assets/feature-list.jpg";
 import featureQuest from "@/assets/feature-quest.jpg";
 import featureRanking from "@/assets/feature-ranking.jpg";
