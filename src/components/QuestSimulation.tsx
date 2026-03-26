@@ -1536,20 +1536,24 @@ export default function QuestSimulation() {
 
               {/* Tanking Contribution */}
               <div className="card-fantasy p-4 mb-3">
-                <div className="text-sm font-bold text-foreground mb-3">🛡 탱킹 기여도</div>
+                <div className="flex items-center gap-1.5 mb-3">
+                  <Shield className="w-3.5 h-3.5 text-blue-400" />
+                  <span className="text-sm font-bold text-foreground">탱킹 기여도</span>
+                </div>
                 {(() => {
                   const sorted = [...simResult.heroResults].sort((a, b) => b.tankingRate - a.tankingRate);
-                  const tankColors = ['bg-blue-500', 'bg-cyan-500', 'bg-teal-500', 'bg-indigo-500', 'bg-violet-500'];
+                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-green-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
+                  const getTextColor = (pct: number) => pct >= 81 ? 'text-green-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
                     <div className="space-y-2">
-                      {sorted.map((hr, idx) => (
+                      {sorted.map((hr) => (
                         <div key={hr.heroId}>
                           <div className="flex items-center justify-between mb-0.5">
                             <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">{hr.heroName}</span>
-                            <span className="text-[11px] font-mono text-blue-400">{hr.tankingRate.toFixed(1)}%</span>
+                            <span className={`text-[11px] font-mono ${getTextColor(hr.tankingRate)}`}>{hr.tankingRate.toFixed(1)}%</span>
                           </div>
                           <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
-                            <div className={`h-full rounded-full ${tankColors[idx % tankColors.length]} transition-all`} style={{ width: `${hr.tankingRate}%` }} />
+                            <div className={`h-full rounded-full ${getBarColor(hr.tankingRate)} transition-all`} style={{ width: `${hr.tankingRate}%` }} />
                           </div>
                         </div>
                       ))}
