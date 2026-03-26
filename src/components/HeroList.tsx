@@ -361,11 +361,6 @@ export default function HeroList() {
     return list;
   }, [activeList, albumSortKey, albumSortDir, albumFilterClassLine, albumFilterElement, albumFilterJob]);
 
-  // Adaptive table max width based on visible columns
-  const tableMaxWidth = useMemo(() => {
-    const COL_W = 150;
-    return (activeCols.length + 1) * COL_W;
-  }, [activeCols.length]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
