@@ -174,7 +174,85 @@ export default function HeroList() {
     });
     getUniqueSkills().then(setUniqueSkillsData);
     getChampionSkillsData().then(setChampionSkillsData);
+    ensureAurasongDataLoaded();
   }, []);
+
+  // Scroll to expanded row
+  useEffect(() => {
+    if (expandedId) {
+      setTimeout(() => {
+        const el = document.getElementById(`expanded-${expandedId}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+  }, [expandedId]);
+
+  // Screenshot handler
+  const handleScreenshot = useCallback(async () => {
+    if (!listRef.current) return;
+    try {
+      const canvas = await html2canvas(listRef.current, {
+        backgroundColor: '#1a1a2e',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      const link = document.createElement('a');
+      link.download = `list_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e) {
+      console.error('Screenshot failed:', e);
+    }
+  }, [listTab]);
+
+  // Export handler
+  const handleExport = useCallback(() => {
+    const data = JSON.stringify(heroes, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = `quest_sim_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [heroes]);
+
+  // Import handler
+  const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target?.result as string);
+        if (!Array.isArray(parsed)) throw new Error('Invalid format');
+        // Basic validation
+        const valid = parsed.every((h: any) => h.id && h.name && (h.type === 'hero' || h.type === 'champion'));
+        if (!valid) throw new Error('Invalid hero data');
+        setImportPreview(parsed);
+        setSaveLoadOpen(true);
+      } catch {
+        alert('파일 형식이 올바르지 않습니다. JSON 형식의 백업 파일을 사용해주세요.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }, []);
+
+  const handleImportConfirm = useCallback(() => {
+    if (!importPreview) return;
+    if (importMode === 'replace') {
+      setHeroes(importPreview);
+      saveHeroes(importPreview);
+    } else {
+      const merged = [...heroes, ...importPreview.map(h => ({ ...h, id: crypto.randomUUID() }))];
+      setHeroes(merged);
+      saveHeroes(merged);
+    }
+    setImportPreview(null);
+    setSaveLoadOpen(false);
+  }, [importPreview, importMode, heroes]);
 
   // Preload all skill and equipment images for smooth rendering
   useEffect(() => {
