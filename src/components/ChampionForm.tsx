@@ -536,8 +536,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             </div>
           ) : null;
         })()}
-        <div className={`w-full text-center rounded-b py-1 mt-0.5 ${equipItem ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
-          <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+        <div className={`w-full text-center rounded-b py-0.5 mt-0.5 ${equipItem ? 'bg-card/80 border border-t-0 border-border/40' : ''}`}>
+          <p className={`text-xs truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
             {equipItem?.name || '-'}
           </p>
         </div>
