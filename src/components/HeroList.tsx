@@ -1259,11 +1259,11 @@ export default function HeroList() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl text-primary font-bold">영웅 &amp; 챔피언 리스트</h2>
-        <div className="flex gap-2">
-          <Button onClick={() => setAddingType('hero')} className="gap-2 text-sm font-medium">
+        <div className="flex gap-2 stagger-children">
+          <Button onClick={() => setAddingType('hero')} className="gap-2 text-sm font-medium btn-pulse hover-lift">
             <Shield className="w-4 h-4" /> 새 영웅 추가
           </Button>
-          <Button onClick={() => setAddingType('champion')} variant="secondary" className="gap-2 text-sm font-medium">
+          <Button onClick={() => setAddingType('champion')} variant="secondary" className="gap-2 text-sm font-medium hover-lift">
             <Crown className="w-4 h-4" /> 새 챔피언 추가
           </Button>
         </div>
