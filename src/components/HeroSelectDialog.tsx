@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { LayoutGrid, Table2, Filter, ChevronUp, ChevronDown, X, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
