@@ -154,6 +154,11 @@ export default function HeroList() {
   const [selectedForDelete, setSelectedForDelete] = useState<Set<string>>(new Set());
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
+  const [saveLoadOpen, setSaveLoadOpen] = useState(false);
+  const [importMode, setImportMode] = useState<'replace' | 'merge'>('replace');
+  const [importPreview, setImportPreview] = useState<Hero[] | null>(null);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
