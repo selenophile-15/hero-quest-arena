@@ -1471,12 +1471,16 @@ export default function QuestSimulation() {
         <div className="w-full lg:w-80 shrink-0">
           {currentQuest && simResult && selectedHeroes.length > 0 && (
             <>
-              {/* Turn Stats */}
+              {/* Main Results */}
               <div className="flex items-center gap-2 mb-3">
-                <Clock className="w-5 h-5 text-primary" />
-                <h3 className="text-lg text-foreground font-bold">턴 수</h3>
+                <Crown className="w-5 h-5 text-primary" />
+                <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
               </div>
               <div className="card-fantasy p-4 mb-3">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Clock className="w-3.5 h-3.5 text-blue-400" />
+                  <span className="text-sm font-bold text-foreground">턴 수</span>
+                </div>
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="bg-secondary/30 rounded p-2">
                     <div className="text-[10px] text-muted-foreground">최소</div>
@@ -1484,7 +1488,7 @@ export default function QuestSimulation() {
                   </div>
                   <div className="bg-secondary/30 rounded p-2">
                     <div className="text-[10px] text-muted-foreground">평균</div>
-                    <div className="text-lg font-bold font-mono text-foreground">{Math.round(simResult.avgRounds)}</div>
+                    <div className="text-lg font-bold font-mono text-primary">{Math.round(simResult.avgRounds)}</div>
                   </div>
                   <div className="bg-secondary/30 rounded p-2">
                     <div className="text-[10px] text-muted-foreground">최대</div>
@@ -1500,23 +1504,27 @@ export default function QuestSimulation() {
 
               {/* Damage Contribution */}
               <div className="card-fantasy p-4 mb-3">
-                <div className="text-sm font-bold text-foreground mb-3">💥 대미지 기여도</div>
+                <div className="flex items-center gap-1.5 mb-3">
+                  <Swords className="w-3.5 h-3.5 text-red-400" />
+                  <span className="text-sm font-bold text-foreground">대미지 기여도</span>
+                </div>
                 {(() => {
                   const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                   const sorted = [...simResult.heroResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
-                  const barColors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
+                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-green-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
+                  const getTextColor = (pct: number) => pct >= 81 ? 'text-green-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
                     <div className="space-y-2">
-                      {sorted.map((hr, idx) => {
+                      {sorted.map((hr) => {
                         const pct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
                         return (
                           <div key={hr.heroId}>
                             <div className="flex items-center justify-between mb-0.5">
                               <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">{hr.heroName}</span>
-                              <span className="text-[11px] font-mono text-orange-400">{pct.toFixed(1)}%</span>
+                              <span className={`text-[11px] font-mono ${getTextColor(pct)}`}>{pct.toFixed(1)}%</span>
                             </div>
                             <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
-                              <div className={`h-full rounded-full ${barColors[idx % barColors.length]} transition-all`} style={{ width: `${pct}%` }} />
+                              <div className={`h-full rounded-full ${getBarColor(pct)} transition-all`} style={{ width: `${pct}%` }} />
                             </div>
                           </div>
                         );
