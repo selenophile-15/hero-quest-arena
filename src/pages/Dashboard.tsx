@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
-import { Sword, Swords, Trophy, Palette } from 'lucide-react';
+import { Sword, Swords, Trophy, Palette, Sun, Moon } from 'lucide-react';
 import { useTheme, ThemeMode } from '@/hooks/use-theme';
 import {
   DropdownMenu,
@@ -27,7 +27,7 @@ const THEMES: { id: ThemeMode; label: string; desc: string }[] = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, colorMode, setColorMode } = useTheme();
 
   const navigate = useNavigate();
 
@@ -43,26 +43,46 @@ export default function Dashboard() {
             QUEST SIMULATOR
           </button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
-                <Palette className="w-4 h-4" />
-                <span className="hidden sm:inline">{THEMES.find(t => t.id === theme)?.label}</span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {THEMES.map(t => (
-                <DropdownMenuItem
-                  key={t.id}
-                  onClick={() => setTheme(t.id)}
-                  className={`flex flex-col items-start gap-0.5 cursor-pointer ${theme === t.id ? 'bg-primary/10 text-primary' : ''}`}
-                >
-                  <span className="font-medium">{t.label}</span>
-                  <span className="text-xs text-muted-foreground">{t.desc}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            {/* Light/Dark Toggle */}
+            <button
+              onClick={() => setColorMode(colorMode === 'dark' ? 'light' : 'dark')}
+              className="flex items-center gap-0 rounded-full border border-border bg-secondary/50 p-0.5 transition-colors"
+            >
+              <span className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300 ${
+                colorMode === 'light' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+              }`}>
+                <Sun className="w-3.5 h-3.5" />
+              </span>
+              <span className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300 ${
+                colorMode === 'dark' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+              }`}>
+                <Moon className="w-3.5 h-3.5" />
+              </span>
+            </button>
+
+            {/* Theme Color Picker */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
+                  <Palette className="w-4 h-4" />
+                  <span className="hidden sm:inline">{THEMES.find(t => t.id === theme)?.label}</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {THEMES.map(t => (
+                  <DropdownMenuItem
+                    key={t.id}
+                    onClick={() => setTheme(t.id)}
+                    className={`flex flex-col items-start gap-0.5 cursor-pointer ${theme === t.id ? 'bg-primary/10 text-primary' : ''}`}
+                  >
+                    <span className="font-medium">{t.label}</span>
+                    <span className="text-xs text-muted-foreground">{t.desc}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </header>
 
