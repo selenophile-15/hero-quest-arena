@@ -3,11 +3,12 @@ import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Users, TrendingUp } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { HERO_CLASS_MAP } from '@/lib/gameData';
+import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 
 interface ListSummaryProps {
   heroes: Hero[];
@@ -71,11 +72,11 @@ const CLASS_LINE_ORDER = ['전사', '로그', '주문술사'];
 const ELEMENT_BAR_COLORS: Record<string, string> = {
   '불': '#ef4444',
   '물': '#3b82f6',
-  '공기': '#2dd4bf',     // 민트/옥색
-  '대지': '#15803d',     // 짙은 녹색
-  '빛': '#fde68a',       // 밝고 옅은 노란색
+  '공기': '#2dd4bf',
+  '대지': '#15803d',
+  '빛': '#fde68a',
   '어둠': '#a855f7',
-  '모든 원소': '#e5e7eb', // 흰색 계열
+  '모든 원소': '#e5e7eb',
 };
 
 const POSITION_ORDER = ['퓨어 탱커', '회피 탱커', '딜탱', '일반 딜러', '치명 딜러', '회피 딜러', '미지정'];
@@ -88,16 +89,15 @@ Object.values(HERO_CLASS_MAP).forEach(classes => {
 });
 
 /* ── Hero picker dialog ── */
-function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, target, onConfirm, title }: {
+function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm }: {
   open: boolean;
   onClose: () => void;
   allHeroes: Hero[];
   ownedIds: string[];
   plannedIds: string[];
-  target: 'owned' | 'planned';
   onConfirm: (owned: string[], planned: string[]) => void;
-  title: string;
 }) {
+  const [target, setTarget] = useState<'owned' | 'planned'>('owned');
   const [localOwned, setLocalOwned] = useState<Set<string>>(new Set(ownedIds));
   const [localPlanned, setLocalPlanned] = useState<Set<string>>(new Set(plannedIds));
 
@@ -133,7 +133,6 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, target, on
   // Sort by class order
   const sorted = useMemo(() => {
     return [...allHeroes].sort((a, b) => {
-      // Heroes before champions
       if (a.type !== b.type) return a.type === 'hero' ? -1 : 1;
       if (a.type === 'hero' && b.type === 'hero') {
         const aIdx = CLASS_SORT_ORDER[a.heroClass] ?? 999;
@@ -163,17 +162,21 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, target, on
     const checked = isChecked(h.id);
     const other = otherGroup(h.id);
     const isInOther = other !== null;
-    // Row bg color based on which group it's checked in
     let rowBg = '';
     if (checked) {
-      rowBg = target === 'owned' ? 'bg-emerald-500/15' : 'bg-amber-500/15';
+      rowBg = target === 'owned' ? 'bg-yellow-500/15' : 'bg-amber-500/15';
     } else if (isInOther) {
-      rowBg = other === 'owned' ? 'bg-emerald-500/10' : 'bg-amber-500/10';
+      rowBg = other === 'owned' ? 'bg-yellow-500/10' : 'bg-amber-500/10';
     }
-    // Checkbox accent
     const checkboxClass = isInOther
-      ? (other === 'owned' ? '[&_[data-state=checked]]:bg-emerald-600 [&_[data-state=checked]]:border-emerald-600' : '[&_[data-state=checked]]:bg-amber-600 [&_[data-state=checked]]:border-amber-600')
-      : '';
+      ? (other === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-amber-600 [&_[data-state=checked]]:border-amber-600')
+      : checked
+        ? (target === 'owned' ? '[&_[data-state=checked]]:bg-yellow-500 [&_[data-state=checked]]:border-yellow-500' : '[&_[data-state=checked]]:bg-amber-600 [&_[data-state=checked]]:border-amber-600')
+        : '';
+
+    const imgPath = h.type === 'champion' && h.championName
+      ? getChampionImagePath(h.championName)
+      : h.heroClass ? getJobImagePath(h.heroClass) : '';
 
     return (
       <label key={h.id} className={`flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-secondary/40 ${rowBg}`}>
@@ -182,18 +185,22 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, target, on
           onCheckedChange={() => toggle(h.id)}
           className={checkboxClass}
         />
-        <ElementIcon element={h.element} size={16} />
+        {imgPath && (
+          <img src={imgPath} alt="" className="w-5 h-5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+        )}
         {h.type === 'hero' ? (
           <>
-            <span className={`text-sm ${CLASS_LINE_COLORS[h.classLine] || ''}`}>{h.heroClass}</span>
-            <span className="text-sm text-foreground">{h.name}</span>
+            <span className="text-sm text-foreground font-medium">{h.heroClass}</span>
+            <span className="text-sm text-muted-foreground">{h.name}</span>
           </>
         ) : (
-          <span className="text-sm text-foreground">{h.championName || h.name}</span>
+          <>
+            <span className="text-sm text-foreground font-medium">{h.championName || h.name}</span>
+            <span className="text-sm text-muted-foreground">{h.name !== h.championName ? h.name : ''}</span>
+          </>
         )}
-        {h.position && <span className="text-xs text-muted-foreground">{h.position}</span>}
         {isInOther && (
-          <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded font-medium ${other === 'owned' ? 'bg-emerald-600/30 text-emerald-400' : 'bg-amber-600/30 text-amber-400'}`}>
+          <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded font-medium ${other === 'owned' ? 'bg-yellow-500/30 text-yellow-300' : 'bg-amber-600/30 text-amber-400'}`}>
             {other === 'owned' ? '보유 중' : '추가 예정'}
           </span>
         )}
@@ -205,8 +212,23 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, target, on
     <Dialog open={open} onOpenChange={v => { if (!v) onClose(); }}>
       <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>영웅 선택</DialogTitle>
         </DialogHeader>
+        {/* Mode toggle */}
+        <div className="flex gap-1 mb-2 bg-secondary/30 rounded-lg p-1">
+          <button
+            className={`flex-1 text-sm py-1.5 rounded-md font-medium transition-colors ${target === 'owned' ? 'bg-yellow-500/20 text-yellow-300 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            onClick={() => setTarget('owned')}
+          >
+            보유 중 선택
+          </button>
+          <button
+            className={`flex-1 text-sm py-1.5 rounded-md font-medium transition-colors ${target === 'planned' ? 'bg-amber-600/20 text-amber-400 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            onClick={() => setTarget('planned')}
+          >
+            추가 예정 선택
+          </button>
+        </div>
         <div className="flex gap-2 mb-2">
           <Button variant="outline" size="sm" onClick={selectAll}>전체 선택</Button>
           <Button variant="outline" size="sm" onClick={deselectAll}>전체 해제</Button>
@@ -236,23 +258,26 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, target, on
 }
 
 /* ── Matrix grid table (element × classLine) ── */
-// Fixed row heights — always show grid even when empty
-const HERO_ROW_H = 168; // fits ~6 entries (6 * 24px + padding)
-const CHAMP_ROW_H = 112; // fits ~4 entries
+// Fixed row heights — always show grid; 4 entries per cell
+const HERO_ROW_H = 116; // fits ~4 entries (4 * 24px + padding)
+const CHAMP_ROW_H = 116; // fits ~4 entries
 
-function MatrixGrid({ heroes, label, icon, onAdd, accentClass, isPlanned }: {
-  heroes: Hero[];
-  label: string;
-  icon: React.ReactNode;
+function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
+  allHeroes: Hero[];
+  ownedIds: Set<string>;
+  plannedIds: Set<string>;
   onAdd: () => void;
-  accentClass: string;
-  isPlanned?: boolean;
 }) {
+  const all = useMemo(() => {
+    const combined = new Set([...Array.from(ownedIds), ...Array.from(plannedIds)]);
+    return allHeroes.filter(h => combined.has(h.id));
+  }, [allHeroes, ownedIds, plannedIds]);
+
   const matrix = useMemo(() => {
     const m: Record<string, Record<string, Hero[]>> = {};
     const lines = [...CLASS_LINE_ORDER, '챔피언'];
     lines.forEach(cl => { m[cl] = {}; ELEMENT_ORDER.forEach(el => { m[cl][el] = []; }); });
-    heroes.forEach(h => {
+    all.forEach(h => {
       const cl = h.type === 'champion' ? '챔피언' : (h.classLine || '기타');
       const el = h.element || '기타';
       if (!m[cl]) { m[cl] = {}; ELEMENT_ORDER.forEach(e => { m[cl][e] = []; }); }
@@ -260,11 +285,10 @@ function MatrixGrid({ heroes, label, icon, onAdd, accentClass, isPlanned }: {
       m[cl][el].push(h);
     });
     return m;
-  }, [heroes]);
+  }, [all]);
 
   const allLines = [...CLASS_LINE_ORDER, '챔피언'];
 
-  // Row/col totals
   const rowTotals = useMemo(() => {
     const t: Record<string, number> = {};
     allLines.forEach(cl => {
@@ -281,17 +305,17 @@ function MatrixGrid({ heroes, label, icon, onAdd, accentClass, isPlanned }: {
     return t;
   }, [matrix]);
 
-  const grandTotal = heroes.length;
+  const grandTotal = all.length;
 
   return (
     <div className="card-fantasy p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-primary flex items-center gap-1.5">
-          {icon}
-          {label}
-          <span className="text-muted-foreground font-normal ml-1">({heroes.length}명)</span>
+          <Users size={14} />
+          전체
+          <span className="text-muted-foreground font-normal ml-1">({all.length}명)</span>
         </h3>
-        <Button size="sm" onClick={onAdd} className={`gap-1 ${accentClass}`}>
+        <Button size="sm" onClick={onAdd} className="gap-1 bg-yellow-500 text-black hover:bg-yellow-400 font-semibold">
           <Plus size={14} /> 추가
         </Button>
       </div>
@@ -299,54 +323,58 @@ function MatrixGrid({ heroes, label, icon, onAdd, accentClass, isPlanned }: {
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="border-b border-border">
+            <tr className="border-b-2 border-border">
               <th className="py-2 px-2 text-center text-muted-foreground font-medium w-20"></th>
               {ELEMENT_ORDER.map(el => (
-                <th key={el} className="py-2 px-1 text-center" style={{ minWidth: '110px' }}>
+                <th key={el} className="py-2 px-1 text-center border-l border-border" style={{ minWidth: '110px' }}>
                   <div className="flex items-center justify-center gap-1">
                     <ElementIcon element={el} size={16} />
                     <span className="text-foreground font-medium">{el}</span>
                   </div>
                 </th>
               ))}
-              <th className="py-2 px-2 text-center text-muted-foreground font-medium w-14">인원</th>
+              <th className="py-2 px-2 text-center text-muted-foreground font-medium w-14 border-l border-border">인원</th>
             </tr>
           </thead>
           <tbody>
-            {allLines.map(cl => {
+            {allLines.map((cl, clIdx) => {
               const isChamp = cl === '챔피언';
               const rowH = isChamp ? CHAMP_ROW_H : HERO_ROW_H;
-              // Compute dynamic height if more entries than default capacity
               const maxInRow = Math.max(...ELEMENT_ORDER.map(el => matrix[cl]?.[el]?.length || 0));
-              const capacity = isChamp ? 4 : 6;
+              const capacity = 4;
               const dynamicH = maxInRow > capacity ? maxInRow * 26 + 12 : rowH;
+              // Add thicker border before champion row
+              const topBorderClass = isChamp ? 'border-t-2 border-border' : (clIdx > 0 ? 'border-t border-border' : '');
               return (
-                <tr key={cl} className="border-b border-border/30">
+                <tr key={cl} className={topBorderClass}>
                   <td className={`py-2 px-2 font-bold whitespace-nowrap text-sm text-center ${isChamp ? 'text-yellow-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')}`}>
                     {cl}
                   </td>
                   {ELEMENT_ORDER.map(el => {
                     const cells = matrix[cl]?.[el] || [];
                     return (
-                      <td key={el} className="py-1 px-1 align-middle border-l border-border/20" style={{ height: dynamicH }}>
+                      <td key={el} className="py-1 px-1 align-middle border-l border-border" style={{ height: dynamicH }}>
                         <div className="flex flex-col items-center justify-center gap-0.5 h-full">
-                          {cells.map(h => (
-                            <div key={h.id} className={`flex items-center gap-1 justify-center ${isPlanned ? 'opacity-60' : ''}`}>
-                              <span className="text-[11px] font-semibold text-white">
-                                {h.type === 'hero' ? h.heroClass : (h.championName || h.name)}
-                              </span>
-                              {h.position && (
-                                <span className={`text-[10px] font-bold px-1 rounded ${POSITION_COLORS[h.position] || 'bg-secondary'} text-white`}>
-                                  {h.position}
+                          {cells.map(h => {
+                            const isPlanned = plannedIds.has(h.id);
+                            return (
+                              <div key={h.id} className={`flex items-center gap-1 justify-center ${isPlanned ? 'opacity-50' : ''}`}>
+                                <span className="text-[11px] font-semibold text-white">
+                                  {h.type === 'hero' ? h.heroClass : (h.championName || h.name)}
                                 </span>
-                              )}
-                            </div>
-                          ))}
+                                {h.position && (
+                                  <span className={`text-[10px] font-bold px-1 rounded ${POSITION_COLORS[h.position] || 'bg-secondary'} text-white`}>
+                                    {h.position}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       </td>
                     );
                   })}
-                  <td className="py-2 px-2 text-center font-bold text-foreground text-sm border-l border-border/40">
+                  <td className="py-2 px-2 text-center font-bold text-foreground text-sm border-l border-border">
                     {rowTotals[cl] || 0}
                   </td>
                 </tr>
@@ -356,11 +384,11 @@ function MatrixGrid({ heroes, label, icon, onAdd, accentClass, isPlanned }: {
             <tr className="border-t-2 border-border bg-secondary/10">
               <td className="py-2 px-2 font-semibold text-muted-foreground text-center">인원</td>
               {ELEMENT_ORDER.map(el => (
-                <td key={el} className="py-2 px-1 text-center font-bold text-foreground border-l border-border/20">
+                <td key={el} className="py-2 px-1 text-center font-bold text-foreground border-l border-border">
                   {colTotals[el] || 0}
                 </td>
               ))}
-              <td className="py-2 px-2 text-center font-bold text-primary border-l border-border/40">
+              <td className="py-2 px-2 text-center font-bold text-primary border-l border-border">
                 {grandTotal}
               </td>
             </tr>
@@ -520,17 +548,13 @@ function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
 export default function ListSummary({ heroes }: ListSummaryProps) {
   const [ownedIds, setOwnedIds] = useState<string[]>(() => loadIds(STORAGE_KEY_OWNED));
   const [plannedIds, setPlannedIds] = useState<string[]>(() => loadIds(STORAGE_KEY_PLANNED));
-  const [pickerTarget, setPickerTarget] = useState<'owned' | 'planned' | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
-  const ownedHeroes = useMemo(() => {
-    const idSet = new Set(ownedIds);
-    return heroes.filter(h => idSet.has(h.id));
-  }, [heroes, ownedIds]);
+  const ownedSet = useMemo(() => new Set(ownedIds), [ownedIds]);
+  const plannedSet = useMemo(() => new Set(plannedIds), [plannedIds]);
 
-  const plannedHeroes = useMemo(() => {
-    const idSet = new Set(plannedIds);
-    return heroes.filter(h => idSet.has(h.id));
-  }, [heroes, plannedIds]);
+  const ownedHeroes = useMemo(() => heroes.filter(h => ownedSet.has(h.id)), [heroes, ownedSet]);
+  const plannedHeroes = useMemo(() => heroes.filter(h => plannedSet.has(h.id)), [heroes, plannedSet]);
 
   const handlePickerConfirm = useCallback((newOwned: string[], newPlanned: string[]) => {
     setOwnedIds(newOwned);
@@ -542,19 +566,10 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
   return (
     <div className="space-y-4">
       <MatrixGrid
-        heroes={ownedHeroes}
-        label="보유 중"
-        icon={<Users size={14} />}
-        onAdd={() => setPickerTarget('owned')}
-        accentClass="bg-emerald-600 text-white hover:bg-emerald-700"
-      />
-      <MatrixGrid
-        heroes={plannedHeroes}
-        label="추가 예정"
-        icon={<TrendingUp size={14} />}
-        onAdd={() => setPickerTarget('planned')}
-        accentClass="bg-amber-600 text-white hover:bg-amber-700"
-        isPlanned
+        allHeroes={heroes}
+        ownedIds={ownedSet}
+        plannedIds={plannedSet}
+        onAdd={() => setPickerOpen(true)}
       />
 
       {(ownedHeroes.length > 0 || plannedHeroes.length > 0) && (
@@ -567,16 +582,14 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
         </div>
       )}
 
-      {pickerTarget && (
+      {pickerOpen && (
         <HeroPicker
           open
-          onClose={() => setPickerTarget(null)}
+          onClose={() => setPickerOpen(false)}
           allHeroes={heroes}
           ownedIds={ownedIds}
           plannedIds={plannedIds}
-          target={pickerTarget}
           onConfirm={handlePickerConfirm}
-          title={pickerTarget === 'owned' ? '보유 중 영웅 선택' : '추가 예정 영웅 선택'}
         />
       )}
     </div>
