@@ -8,6 +8,7 @@ import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '
 import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
+import ListSummary from './ListSummary';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -1296,7 +1297,6 @@ export default function HeroList() {
 
 
 
-
   return (
     <div className="animate-fade-in">
       {/* Header */}
@@ -1324,38 +1324,52 @@ export default function HeroList() {
         </div>
       </div>
 
-      {/* Tab: Hero / Champion + View mode */}
+      {/* Tab: Hero / Champion / Summary + View mode */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex gap-1">
           <button
-            onClick={() => setListTab('hero')}
+            onClick={() => { setListTab('hero'); setSummaryOpen(false); }}
             className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
-              listTab === 'hero' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+              listTab === 'hero' && !summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Shield className="w-4 h-4 inline mr-1" />영웅 목록 ({heroList.length})
           </button>
           <button
-            onClick={() => setListTab('champion')}
+            onClick={() => { setListTab('champion'); setSummaryOpen(false); }}
             className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
-              listTab === 'champion' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+              listTab === 'champion' && !summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Crown className="w-4 h-4 inline mr-1" />챔피언 목록 ({championList.length})
           </button>
-        </div>
-        <div className="flex gap-1">
-          <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-            <Table2 className="w-4 h-4" />
+          <button
+            onClick={() => setSummaryOpen(true)}
+            className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
+              summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4 inline mr-1" />리스트 요약
           </button>
-          <button onClick={() => setViewMode('album')} className={`p-2 rounded ${viewMode === 'album' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-            <LayoutGrid className="w-4 h-4" />
-          </button>
         </div>
+        {!summaryOpen && (
+          <div className="flex gap-1">
+            <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+              <Table2 className="w-4 h-4" />
+            </button>
+            <button onClick={() => setViewMode('album')} className={`p-2 rounded ${viewMode === 'album' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
-      {viewMode === 'table' ? (
-        <>
+      {summaryOpen ? (
+        <div ref={listRef}>
+          <ListSummary heroes={heroes} />
+        </div>
+      ) : viewMode === 'table' ? (
+        <div ref={listRef}>
           {/* Column visibility - table only */}
           <div className="card-fantasy p-3 mb-3">
             <div className="flex flex-wrap gap-3">
@@ -1476,7 +1490,7 @@ export default function HeroList() {
               </tbody>
             </table>
           </div>
-        </>
+        </div>
       ) : (
         <>
           {/* Album controls: sort + filter */}
@@ -1565,6 +1579,41 @@ export default function HeroList() {
           </div>
         </>
       )}
+
+      {/* Import confirmation dialog */}
+      <AlertDialog open={!!importPreview && saveLoadOpen} onOpenChange={v => { if (!v) { setImportPreview(null); setSaveLoadOpen(false); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>데이터 불러오기</AlertDialogTitle>
+            <AlertDialogDescription>
+              {importPreview?.length || 0}개의 항목이 포함된 파일입니다.
+              (영웅 {importPreview?.filter(h => h.type === 'hero').length || 0}명, 챔피언 {importPreview?.filter(h => h.type === 'champion').length || 0}명)
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex flex-col gap-2 py-2">
+            <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border hover:bg-secondary/20">
+              <input type="radio" name="importMode" checked={importMode === 'replace'} onChange={() => setImportMode('replace')} />
+              <div>
+                <span className="text-sm font-medium text-foreground">덮어쓰기</span>
+                <p className="text-xs text-muted-foreground">기존 리스트를 삭제하고 파일 데이터로 교체합니다</p>
+              </div>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border hover:bg-secondary/20">
+              <input type="radio" name="importMode" checked={importMode === 'merge'} onChange={() => setImportMode('merge')} />
+              <div>
+                <span className="text-sm font-medium text-foreground">합치기</span>
+                <p className="text-xs text-muted-foreground">기존 리스트에 파일 데이터를 추가합니다</p>
+              </div>
+            </label>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setImportPreview(null); setSaveLoadOpen(false); }}>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleImportConfirm}>
+              적용
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete confirmation dialog */}
       <AlertDialog open={!!deleteTarget} onOpenChange={v => !v && setDeleteTarget(null)}>
