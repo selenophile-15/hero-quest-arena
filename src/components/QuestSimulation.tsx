@@ -581,7 +581,7 @@ export default function QuestSimulation() {
           <Button
             variant="outline"
             size="sm"
-            className="text-xs gap-1"
+            className="text-xs gap-1 border-blue-500/40 text-blue-400 hover:bg-blue-500/10"
             onClick={() => {
               if (!currentQuest || !currentRegion) return;
               const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
@@ -615,7 +615,7 @@ export default function QuestSimulation() {
           <Button
             variant="outline"
             size="sm"
-            className="text-xs gap-1"
+            className="text-xs gap-1 border-green-500/40 text-green-400 hover:bg-green-500/10"
             onClick={handleSaveResult}
           >
             <Save className="w-3.5 h-3.5" /> 결과 저장
@@ -623,7 +623,7 @@ export default function QuestSimulation() {
           <Button
             variant="outline"
             size="sm"
-            className="text-xs gap-1 px-2"
+            className="text-xs gap-1 px-2 border-purple-500/40 text-purple-400 hover:bg-purple-500/10"
             onClick={() => {
               import('html2canvas').then(({ default: html2canvas }) => {
                 const el = document.querySelector('[data-quest-sim]');
@@ -1362,7 +1362,7 @@ export default function QuestSimulation() {
                 <Shield className="w-5 h-5 text-blue-400" />
                 <h3 className="text-lg text-foreground font-bold">방어력 기준치</h3>
               </div>
-              <div className="card-fantasy p-5 mb-3">
+              <div className="card-fantasy p-5 pt-8 pb-8 mb-3">
                 {(() => {
                   const defToBarPct = (def: number) => {
                     for (let i = defThresholds.length - 1; i >= 1; i--) {
@@ -1444,7 +1444,7 @@ export default function QuestSimulation() {
                           ))}
                           {heroEntries.map(h => (
                             <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
-                              <div className="w-3.5 h-3.5 rounded-full border-2 shadow-md" style={{ borderColor: h.color, backgroundColor: h.color }} />
+                              <div className="w-4 h-4 rounded-full border-2 shadow-[0_0_6px_rgba(255,255,255,0.5)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
                             </div>
                           ))}
                         </div>
@@ -1474,61 +1474,6 @@ export default function QuestSimulation() {
                         </div>
                       </div>
 
-                      {/* X/Y Axis Graph below bar */}
-                      {(() => {
-                        const graphW = 260;
-                        const graphH = 120;
-                        const padL = 36;
-                        const padB = 22;
-                        const padR = 8;
-                        const padT = 8;
-                        const w = graphW - padL - padR;
-                        const h = graphH - padT - padB;
-                        const maxDef = chartPoints[chartPoints.length - 1].def || 1;
-                        const minRed = -50;
-                        const maxRed = 75;
-                        const rangeRed = maxRed - minRed;
-
-                        const toX = (def: number) => padL + (def / maxDef) * w;
-                        const toY = (red: number) => padT + h - ((red - minRed) / rangeRed) * h;
-
-                        const pathD = chartPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${toX(p.def).toFixed(1)} ${toY(p.reduction).toFixed(1)}`).join(' ');
-
-                        return (
-                          <div className="mt-4 pt-3 border-t border-border/30">
-                            <div className="text-[11px] text-muted-foreground mb-1 font-semibold">방어력 — 감소율 그래프</div>
-                            <svg width={graphW} height={graphH} className="overflow-visible">
-                              {/* Axes */}
-                              <line x1={padL} y1={padT} x2={padL} y2={graphH - padB} stroke="currentColor" strokeOpacity={0.3} />
-                              <line x1={padL} y1={graphH - padB} x2={graphW - padR} y2={graphH - padB} stroke="currentColor" strokeOpacity={0.3} />
-                              {/* Y axis labels */}
-                              {[-50, 0, 50, 75].map(v => (
-                                <text key={`y-${v}`} x={padL - 4} y={toY(v)} textAnchor="end" dominantBaseline="middle" className="fill-muted-foreground" fontSize={9}>{v}%</text>
-                              ))}
-                              {/* Grid lines */}
-                              {[-50, 0, 50, 75].map(v => (
-                                <line key={`grid-${v}`} x1={padL} y1={toY(v)} x2={graphW - padR} y2={toY(v)} stroke="currentColor" strokeOpacity={0.1} strokeDasharray="3,3" />
-                              ))}
-                              {/* Path */}
-                              <path d={pathD} fill="none" stroke="#60a5fa" strokeWidth={2} />
-                              {/* Points */}
-                              {chartPoints.map((p, i) => (
-                                <g key={i}>
-                                  <circle cx={toX(p.def)} cy={toY(p.reduction)} r={4} fill={p.color} stroke="#000" strokeWidth={1} />
-                                  <text x={toX(p.def)} y={graphH - padB + 14} textAnchor="middle" className="fill-muted-foreground" fontSize={8}>{formatNumber(p.def)}</text>
-                                </g>
-                              ))}
-                              {/* Hero markers */}
-                              {heroEntries.map(he => {
-                                const red = getDamageReductionForDef(he.heroDef);
-                                return (
-                                  <circle key={`hero-${he.id}`} cx={Math.min(toX(he.heroDef), graphW - padR)} cy={toY(red)} r={3} fill={he.color} stroke="#fff" strokeWidth={1} opacity={0.9} />
-                                );
-                              })}
-                            </svg>
-                          </div>
-                        );
-                      })()}
                     </div>
                   );
                 })()}
