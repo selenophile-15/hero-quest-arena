@@ -1142,7 +1142,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               <Input type="number" value={level} onChange={handleNumericChange(setLevel as any, 50)} min={1} max={50} className="h-9 text-sm" />
             </div>
             <div>
-              <Label className="text-foreground/80 text-xs mb-1 block">카드 LV</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block">카드 Lv</Label>
               <Select value={String(cardLevel)} onValueChange={v => setCardLevel(Number(v))}>
                 <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
