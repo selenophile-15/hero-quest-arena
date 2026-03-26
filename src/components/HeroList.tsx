@@ -874,7 +874,7 @@ export default function HeroList() {
                       const desc = skData?.['스킬_설명']?.[lvIdx] || '-';
                       const skillLevel = sk ? lvIdx + 1 : '-';
                       return (
-                        <div key={i} className="flex items-start gap-2 min-h-[48px]">
+                        <div key={i} className="flex items-start gap-2 min-h-[56px]">
                           <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
                             {sk ? <img src={getSkillImagePath(sk)} alt="" className="w-12 h-12 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
                           </div>
@@ -884,7 +884,7 @@ export default function HeroList() {
                                 <div className="flex items-center gap-1">
                                   <span className="text-sm font-medium text-foreground">{baseName}</span>
                                   {currentName !== baseName && <span className="text-xs text-muted-foreground">({currentName})</span>}
-                                  <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-foreground/80 ml-1">Lv.{skillLevel}</span>
+                                  <span className={`text-[10px] px-1 py-0.5 rounded ml-1 font-semibold ${skillLevelColorClass(skillLevel)}`}>Lv.{skillLevel}</span>
                                 </div>
                                 <p className="text-xs text-foreground/70 leading-tight whitespace-pre-line mt-0.5">{desc}</p>
                               </>
