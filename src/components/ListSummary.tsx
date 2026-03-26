@@ -56,7 +56,7 @@ const POSITION_TEXT_COLORS: Record<string, string> = {
 };
 const POSITION_BAR_STYLE: Record<string, string> = {
   '퓨어 탱커': '#3b82f6',
-  '회피 탱커': '#14b8a6',
+  '회피 탱커': '#059669',
   '딜탱': '#f97316',
   '치명 딜러': '#ef4444',
   '일반 딜러': '#eab308',
