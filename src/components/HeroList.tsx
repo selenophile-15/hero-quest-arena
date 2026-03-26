@@ -208,11 +208,20 @@ export default function HeroList() {
         const cells = row.querySelectorAll('th, td');
         if (cells.length > 0) {
           const last = cells[cells.length - 1] as HTMLElement;
-          // Check if it contains 관리 text or action buttons
           if (last.textContent?.includes('관리') || last.querySelector('button')) {
             last.style.display = 'none';
           }
         }
+      });
+
+      // Force uniform row height for table screenshots
+      clone.querySelectorAll('tbody tr').forEach(row => {
+        (row as HTMLElement).style.height = '52px';
+        row.querySelectorAll('td').forEach(td => {
+          (td as HTMLElement).style.height = '52px';
+          (td as HTMLElement).style.verticalAlign = 'middle';
+          (td as HTMLElement).style.lineHeight = '36px';
+        });
       });
 
       // Hide delete buttons in album cards
@@ -224,6 +233,7 @@ export default function HeroList() {
         backgroundColor: '#1a1a2e',
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         logging: false,
       });
       document.body.removeChild(clone);
