@@ -1048,14 +1048,8 @@ export default function QuestSimulation() {
                   const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
                   const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
 
-                  return (
+                    return (
                     <div className="mt-4 pt-4 border-t border-border/30">
-                      <div className="flex items-center justify-between px-1 mb-1">
-                        <div className="flex items-center gap-1.5">
-                          <Shield className="w-3.5 h-3.5 text-blue-400" />
-                          <span className="text-xs text-foreground">방어력 기준치</span>
-                        </div>
-                      </div>
                       <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5" style={{ height: `${barH}px` }}>
                         <div className="relative">
                           {rows.map(r => (
