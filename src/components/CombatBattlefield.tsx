@@ -195,9 +195,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                       {heroImg && <img src={heroImg} alt="" className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-foreground font-medium truncate">{h.name}</span>
-                        <span className="text-[9px] font-mono text-muted-foreground">
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs text-foreground font-semibold truncate">{h.name}</span>
+                        <span className="text-[10px] font-mono text-foreground/80">
                           {Math.round(hp).toLocaleString()}/{Math.round(maxHp).toLocaleString()}
                         </span>
                       </div>
@@ -229,8 +229,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <div className="w-40 shrink-0">
               <div className={`p-2 rounded-lg border border-red-500/20 bg-red-500/5 ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
                 <div className="text-center mb-1"><span className="text-2xl">👹</span></div>
-                <div className="text-center mb-1.5"><span className="text-xs text-foreground font-medium">{monsterName}</span></div>
-                <div className="text-center text-[9px] font-mono text-muted-foreground mb-1">
+                <div className="text-center mb-1.5"><span className="text-xs text-foreground font-semibold">{monsterName}</span></div>
+                <div className="text-center text-[10px] font-mono text-foreground/80 mb-1">
                   {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()} / {monsterHp.toLocaleString()}
                 </div>
                 <div className="h-3 bg-secondary rounded-full overflow-hidden">
@@ -284,10 +284,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         {/* Combat Stats Summary */}
         <div className="rounded border border-border/30 bg-secondary/20 p-3 flex-1">
           <div className="text-xs font-bold text-foreground mb-2">📊 전투 통계</div>
-          <table className="w-full text-[10px]">
+          <table className="w-full text-[11px]">
             <thead>
               <tr className="border-b border-border/30">
-                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium w-[70px]">영웅</th>
+                <th className="text-left py-1.5 px-2 text-muted-foreground font-medium w-[90px]">영웅</th>
                 <th className="text-right py-1.5 px-2 text-red-400 font-medium">대미지</th>
                 <th className="text-right py-1.5 px-2 text-orange-400 font-medium">비율</th>
                 <th className="text-center py-1.5 px-2 text-yellow-400 font-medium">타겟팅</th>
@@ -298,7 +298,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <tbody>
               {heroStatsData.map((hs, idx) => (
                 <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                  <td className="py-2 px-2 text-foreground font-medium">{hs.name}</td>
+                  <td className="py-2 px-2 text-foreground font-medium truncate max-w-[90px]">{hs.name}</td>
                   <td className="py-2 px-2 text-right font-mono text-red-400">{formatNumber(hs.dmg)}</td>
                   <td className="py-2 px-2 text-right font-mono text-orange-400">{hs.dmgPct.toFixed(1)}%</td>
                   <td className="py-2 px-2 text-center font-mono text-yellow-400">{hs.targeted}</td>
