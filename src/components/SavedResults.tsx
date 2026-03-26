@@ -8,15 +8,16 @@ import { getHeroes } from '@/lib/storage';
 
 interface Props {
   onLoadSimulation: (sim: SavedSimulationSummary) => void;
+  refreshKey?: number;
 }
 
-export default function SavedResults({ onLoadSimulation }: Props) {
+export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const [saved, setSaved] = useState<SavedSimulationSummary[]>([]);
   const allHeroes = getHeroes();
 
   useEffect(() => {
     setSaved(getSavedSimulations());
-  }, []);
+  }, [refreshKey]);
 
   const handleDelete = (id: string) => {
     deleteSavedSimulation(id);

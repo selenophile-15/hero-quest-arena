@@ -565,7 +565,7 @@ export default function QuestSimulation() {
 
       {/* Tab: Saved Results */}
       <div style={{ display: subTab === 'saved' ? 'block' : 'none' }}>
-        <SavedResults onLoadSimulation={handleLoadSimulation} />
+        <SavedResults onLoadSimulation={handleLoadSimulation} refreshKey={subTab === 'saved' ? Date.now() : 0} />
       </div>
 
       {/* Tab: Compare */}
@@ -788,10 +788,7 @@ export default function QuestSimulation() {
                   </div>
                 )}
 
-                {/* Line 3: Total time (white) */}
-                <div className="text-center">
-                  <span className="text-sm text-foreground">⏱ {formatTime(currentQuest.time.total)}</span>
-                </div>
+                {/* (time display removed) */}
 
                 {/* Line 4: Element Barrier */}
                 {barrierElements.length > 0 && currentQuest.barrier && (
@@ -893,175 +890,6 @@ export default function QuestSimulation() {
                 })()}
 
                 {/* Defense Reference */}
-                <div className="pt-2 border-t border-border/30">
-                  <div className="flex items-center gap-1.5 mb-3 px-1">
-                    <Shield className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-xs text-foreground font-medium">방어력 기준치 (대미지 적용률)</span>
-                  </div>
-                  {(() => {
-                    const defToBarPct = (def: number) => {
-                      for (let i = defThresholds.length - 1; i >= 1; i--) {
-                        const upper = defThresholds[i];
-                        const lower = defThresholds[i - 1];
-                        if (def >= lower.value) {
-                          const segPct = upper.value > lower.value ? (def - lower.value) / (upper.value - lower.value) : 0;
-                          const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
-                          const upperPos = (i / (defThresholds.length - 1)) * 100;
-                          return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
-                        }
-                      }
-                      return 0;
-                    };
-
-                    const barH = 200;
-                    const reductions = [-50, 0, 50, 70, 75];
-                    const rows = defThresholds.map((t, i) => ({
-                      key: t.key,
-                      label: t.label,
-                      value: t.value,
-                      color: t.color,
-                      textClass: t.textClass,
-                      pct: (i / (defThresholds.length - 1)) * 100,
-                      applied: Math.round(100 - reductions[i]),
-                    }));
-
-                    // Determine color for hero based on defense threshold
-                    const getHeroColor = (heroDef: number): string => {
-                      let color = defThresholds[0].color;
-                      for (const t of defThresholds) {
-                        if (heroDef >= t.value) color = t.color;
-                      }
-                      return color;
-                    };
-
-                    const heroEntries = selectedHeroes.map((h, hi) => {
-                      const bs = buffedStats[hi];
-                      const heroDef = bs ? bs.def : (h.def || 0);
-                      const pinPct = defToBarPct(heroDef);
-                      const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
-                      const color = getHeroColor(heroDef);
-                      return {
-                        id: h.id,
-                        name: h.name,
-                        heroDef,
-                        pinPct,
-                        dmgApplied,
-                        color,
-                      };
-                    });
-
-                    // Evenly distribute label positions across the bar height to avoid overlaps
-                    const n = heroEntries.length;
-                    const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
-                    const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
-                    const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
-
-                    return (
-                      <div className="px-1">
-                        {/* 4 columns: left(-50~75), bar, right(threshold def + dmg applied), far-right(hero labels + connectors) */}
-                        <div
-                          className="relative grid grid-cols-[44px_14px_1fr] gap-x-2"
-                          style={{ height: `${barH}px` }}
-                        >
-                          {/* Left: damage reduction labels */}
-                          <div className="relative">
-                            {rows.map(r => (
-                              <div
-                                key={r.key}
-                                className="absolute right-0 flex items-center"
-                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}
-                              >
-                                <span className={`text-[9px] font-mono tabular-nums ${r.textClass}`}>{r.label}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Center: vertical bar with threshold ticks + party points */}
-                          <div className="relative">
-                            <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
-                            {/* Threshold ticks on bar */}
-                            {rows.map(r => (
-                              <div
-                                key={`tick-${r.key}`}
-                                className="absolute left-0 right-0 flex items-center pointer-events-none"
-                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}
-                              >
-                                <div className="h-px w-full" style={{ backgroundColor: r.color, opacity: 0.7 }} />
-                              </div>
-                            ))}
-
-                            {/* Party points */}
-                            {heroEntries.map(h => (
-                              <div
-                                key={`pin-${h.id}`}
-                                className="absolute"
-                                style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}
-                              >
-                                <div className="w-3 h-3 rounded-full border-2 shadow-md" style={{ borderColor: h.color, backgroundColor: h.color }} />
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Right: threshold labels + hero labels with connectors */}
-                          <div className="relative ml-1">
-                            {/* Threshold labels: value (applied%) */}
-                            {rows.map(r => (
-                              <div
-                                key={`thr-${r.key}`}
-                                className="absolute left-0 flex items-center gap-1"
-                                style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}
-                              >
-                                <span className={`text-[9px] font-mono tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
-                                <span className={`text-[8px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
-                              </div>
-                            ))}
-
-                            {/* SVG connectors for heroes: horizontal then diagonal */}
-                            <svg
-                              className="absolute inset-0 overflow-visible"
-                              style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}
-                            >
-                              {heroLayout.map(h => {
-                                const yPin = barH - (h.pinPct / 100) * barH;
-                                const yLabel = barH - (h.labelPct / 100) * barH;
-                                // Start horizontal, then go diagonal (45 to -45 degree angle)
-                                const x0 = 0;
-                                const x1 = 16;
-                                const x2 = 36;
-                                // Diagonal from (x1, yPin) to (x2, yLabel)
-                                const d = `M ${x0} ${yPin} L ${x1} ${yPin} L ${x2} ${yLabel}`;
-                                return (
-                                  <path
-                                    key={`line-${h.id}`}
-                                    d={d}
-                                    fill="none"
-                                    stroke={h.color}
-                                    strokeWidth={1.5}
-                                    strokeOpacity={0.8}
-                                  />
-                                );
-                              })}
-                            </svg>
-
-                            {/* Hero labels positioned at label heights - two lines */}
-                            {heroLayout.map(h => (
-                              <div
-                                key={`label-${h.id}`}
-                                className="absolute flex flex-col whitespace-nowrap"
-                                style={{ bottom: `${h.labelPct}%`, left: '106px', transform: 'translateY(50%)', zIndex: 5 }}
-                              >
-                                <span className="text-[10px] font-mono truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
-                                <span className="text-[9px] font-mono tabular-nums leading-tight" style={{ color: h.color }}>
-                                  {formatNumber(h.heroDef)} ({h.dmgApplied}%)
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
               </div>
             ) : (
               <div className="text-center py-4">
@@ -1081,10 +909,10 @@ export default function QuestSimulation() {
             {selectedHeroIds.size > 0 && (
               <button
                 onClick={() => setSelectedHeroIds(new Set())}
-                className="text-[10px] text-muted-foreground hover:text-destructive transition-colors px-1.5 py-0.5 rounded border border-border/40 hover:border-destructive/50"
+                className="ml-1 p-1.5 rounded-md bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-colors"
                 title="파티 구성 초기화"
               >
-                초기화
+                <RotateCcw className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -1137,7 +965,7 @@ export default function QuestSimulation() {
                 {/* Row: Element barrier icons */}
                 {barrierElements.length > 0 && (
                   <tr>
-                    <td className="py-1 px-1.5 text-muted-foreground">원소</td>
+                    <td className="py-1 px-1.5 text-foreground/70 text-sm">원소</td>
                     {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                       const hero = selectedHeroes[slotIdx];
                       if (!hero) return <td key={`el-empty-${slotIdx}`} className="text-center py-1" />;
@@ -1161,7 +989,7 @@ export default function QuestSimulation() {
                 )}
                 {/* Row: Face - based on death count, using face images */}
                 <tr>
-                  <td className="py-1 px-1.5 text-muted-foreground">표정</td>
+                  <td className="py-1 px-1.5 text-foreground/70 text-sm">표정</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
@@ -1196,11 +1024,11 @@ export default function QuestSimulation() {
                   <td className="py-1 px-1.5">
                     <button
                       onClick={() => setJobDisplayMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon')}
-                      className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5 text-xs"
+                      className="text-foreground/70 hover:text-foreground transition-colors flex items-center gap-0.5 text-sm"
                       title="클릭하여 직업 표시 방식 변경 (아이콘 → 일러스트 → 없음)"
                     >
                       직업
-                      <span className="text-[9px] opacity-50 ml-0.5">
+                      <span className="text-[10px] opacity-50 ml-0.5">
                         {jobDisplayMode === 'icon' ? '●○○' : jobDisplayMode === 'illust' ? '○●○' : '○○●'}
                       </span>
                     </button>
@@ -1259,7 +1087,7 @@ export default function QuestSimulation() {
                               <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
                             )}
                             <button onClick={() => openSlotForEdit(slotIdx)}
-                              className="relative w-32 h-32 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all hover:opacity-80 rounded"
+                              className="relative w-36 h-36 flex items-center justify-center overflow-hidden transition-all hover:opacity-80 rounded"
                               title={`${hero.name} (클릭하여 변경)`}>
                               {illustImg ? (
                                 <img src={illustImg} alt="" className="w-full h-full object-cover object-center" onError={e => { e.currentTarget.style.display = 'none'; }} />
@@ -1311,15 +1139,15 @@ export default function QuestSimulation() {
                 </tr>
                 {/* Row: Name */}
                 <tr className="border-b border-border/30">
-                  <td className="py-1 px-1.5 text-muted-foreground">이름</td>
+                  <td className="py-1 px-1.5 text-foreground/70 text-sm">이름</td>
                   {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                     const hero = selectedHeroes[slotIdx];
                     return (
                       <td key={hero?.id || `name-empty-${slotIdx}`} className="text-center py-1">
                         {hero && (
                           <div>
-                            <div className="text-xs text-foreground font-medium truncate">{hero.name}</div>
-                            <div className="text-[10px] text-muted-foreground">{hero.heroClass || hero.championName || ''}</div>
+                            <div className="text-sm text-foreground font-medium truncate">{hero.name}</div>
+                            <div className="text-xs text-foreground/60">{hero.heroClass || hero.championName || ''}</div>
                           </div>
                         )}
                       </td>
@@ -1343,13 +1171,13 @@ export default function QuestSimulation() {
                   })();
 
                   const statRows = [
-                    { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-400' },
-                    { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400' },
-                    { label: 'DEF', key: 'def', bKey: 'def', dKey: 'deltaDef', color: 'text-blue-400' },
-                    { label: 'CRIT.C', key: 'crit', bKey: 'crit', dKey: 'deltaCrit', color: 'text-yellow-400', suffix: '%' },
-                    { label: 'CRIT.DMG', key: 'critAttack', bKey: 'critAttack', dKey: null, color: 'text-yellow-400', computed: true },
-                    { label: 'EVA', key: 'evasion', bKey: 'evasion', dKey: 'deltaEvasion', color: 'text-teal-400', suffix: '%' },
-                    { label: 'THREAT', key: 'threat', bKey: 'threat', dKey: null, color: 'text-foreground' },
+                    { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-400', labelColor: 'text-orange-400' },
+                    { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400', labelColor: 'text-red-400' },
+                    { label: 'DEF', key: 'def', bKey: 'def', dKey: 'deltaDef', color: 'text-blue-400', labelColor: 'text-blue-400' },
+                    { label: 'CRIT.C', key: 'crit', bKey: 'crit', dKey: 'deltaCrit', color: 'text-yellow-400', suffix: '%', labelColor: 'text-yellow-400' },
+                    { label: 'CRIT.DMG', key: 'critAttack', bKey: 'critAttack', dKey: null, color: 'text-yellow-400', computed: true, labelColor: 'text-yellow-400' },
+                    { label: 'EVA', key: 'evasion', bKey: 'evasion', dKey: 'deltaEvasion', color: 'text-teal-400', suffix: '%', labelColor: 'text-teal-400' },
+                    { label: 'THREAT', key: 'threat', bKey: 'threat', dKey: null, color: 'text-foreground', labelColor: 'text-foreground/70' },
                   ];
 
                   const hasBuffs = buffSummary && buffSummary.sources.length > 0;
@@ -1358,7 +1186,7 @@ export default function QuestSimulation() {
                     <>
                       {statRows.map(stat => (
                         <tr key={stat.key} className="border-b border-border/20">
-                          <td className="py-1.5 px-1.5 text-muted-foreground font-medium">{stat.label}</td>
+                          <td className={`py-1.5 px-1.5 font-medium text-sm ${(stat as any).labelColor || 'text-foreground/70'}`}>{stat.label}</td>
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
                             if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
@@ -1423,7 +1251,7 @@ export default function QuestSimulation() {
                             }
                             
                             return (
-                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono ${displayColor}`}>
+                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono text-sm ${displayColor}`}>
                                 <div className="flex flex-col items-center">
                                   <span>
                                     {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
@@ -1441,7 +1269,7 @@ export default function QuestSimulation() {
                       ))}
                       {/* Targeting chance row (threat-based) */}
                       <tr className="border-b border-border/20 bg-muted/20">
-                        <td className="py-1.5 px-1.5 text-muted-foreground font-medium">피격 확률</td>
+                        <td className="py-1.5 px-1.5 text-foreground/70 font-medium text-sm">피격 확률</td>
                         {(() => {
                           const totalThreat = selectedHeroes.reduce((sum, h) => sum + (h.threat || 1), 0);
                           return Array.from({ length: maxMembers }).map((_, slotIdx) => {
@@ -1450,7 +1278,7 @@ export default function QuestSimulation() {
                             const threat = hero.threat || 1;
                             const targetChance = totalThreat > 0 ? (threat / totalThreat) * 100 : 0;
                             return (
-                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono">
+                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm">
                                 <span className={targetChance >= 40 ? 'text-red-400' : targetChance >= 25 ? 'text-yellow-400' : 'text-green-400'}>
                                   {targetChance.toFixed(1)}%
                                 </span>
@@ -1467,8 +1295,123 @@ export default function QuestSimulation() {
           </div>
         </div>
 
-        {/* RIGHT: Time & Rest Settings */}
+        {/* RIGHT: Defense Reference + Time Settings */}
         <div className="w-full lg:w-72 shrink-0">
+          {/* Defense Reference */}
+          {currentQuest && (
+            <>
+              <div className="flex items-center gap-2 mb-3">
+                <Shield className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg text-foreground font-bold">방어력 기준치</h3>
+              </div>
+              <div className="card-fantasy p-3 mb-3">
+                {(() => {
+                  const defToBarPct = (def: number) => {
+                    for (let i = defThresholds.length - 1; i >= 1; i--) {
+                      const upper = defThresholds[i];
+                      const lower = defThresholds[i - 1];
+                      if (def >= lower.value) {
+                        const segPct = upper.value > lower.value ? (def - lower.value) / (upper.value - lower.value) : 0;
+                        const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
+                        const upperPos = (i / (defThresholds.length - 1)) * 100;
+                        return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
+                      }
+                    }
+                    return 0;
+                  };
+
+                  const barH = 240;
+                  const reductions = [-50, 0, 50, 70, 75];
+                  const rows = defThresholds.map((t, i) => ({
+                    key: t.key,
+                    label: t.label,
+                    value: t.value,
+                    color: t.color,
+                    textClass: t.textClass,
+                    pct: (i / (defThresholds.length - 1)) * 100,
+                    applied: Math.round(100 - reductions[i]),
+                  }));
+
+                  const getHeroColor = (heroDef: number): string => {
+                    let color = defThresholds[0].color;
+                    for (const t of defThresholds) {
+                      if (heroDef >= t.value) color = t.color;
+                    }
+                    return color;
+                  };
+
+                  const heroEntries = selectedHeroes.map((h, hi) => {
+                    const bs = buffedStats[hi];
+                    const heroDef = bs ? bs.def : (h.def || 0);
+                    const pinPct = defToBarPct(heroDef);
+                    const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
+                    const color = getHeroColor(heroDef);
+                    return { id: h.id, name: h.name, heroDef, pinPct, dmgApplied, color };
+                  });
+
+                  const n = heroEntries.length;
+                  const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
+                  const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
+                  const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
+
+                  return (
+                    <div className="px-1">
+                      <div
+                        className="relative grid grid-cols-[44px_14px_1fr] gap-x-2"
+                        style={{ height: `${barH}px` }}
+                      >
+                        <div className="relative">
+                          {rows.map(r => (
+                            <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
+                              <span className={`text-[10px] font-mono tabular-nums ${r.textClass}`}>{r.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="relative">
+                          <div className="absolute inset-0 rounded-full overflow-hidden bg-gradient-to-t from-red-900/60 via-yellow-900/30 to-white/20 border border-border/50" />
+                          {rows.map(r => (
+                            <div key={`tick-${r.key}`} className="absolute left-0 right-0 flex items-center pointer-events-none" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
+                              <div className="h-px w-full" style={{ backgroundColor: r.color, opacity: 0.7 }} />
+                            </div>
+                          ))}
+                          {heroEntries.map(h => (
+                            <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
+                              <div className="w-3 h-3 rounded-full border-2 shadow-md" style={{ borderColor: h.color, backgroundColor: h.color }} />
+                            </div>
+                          ))}
+                        </div>
+                        <div className="relative ml-1">
+                          {rows.map(r => (
+                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[10px] font-mono tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                              <span className={`text-[9px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
+                            </div>
+                          ))}
+                          <svg className="absolute inset-0 overflow-visible" style={{ left: '70px', width: 'calc(100% - 70px)', height: '100%' }}>
+                            {heroLayout.map(h => {
+                              const yPin = barH - (h.pinPct / 100) * barH;
+                              const yLabel = barH - (h.labelPct / 100) * barH;
+                              const d = `M 0 ${yPin} L 16 ${yPin} L 36 ${yLabel}`;
+                              return <path key={`line-${h.id}`} d={d} fill="none" stroke={h.color} strokeWidth={1.5} strokeOpacity={0.8} />;
+                            })}
+                          </svg>
+                          {heroLayout.map(h => (
+                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '106px', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[11px] font-mono truncate max-w-[80px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                              <span className="text-[10px] font-mono tabular-nums leading-tight" style={{ color: h.color }}>
+                                {formatNumber(h.heroDef)} ({h.dmgApplied}%)
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </>
+          )}
+
           <div className="flex items-center gap-2 mb-3">
             <Clock className="w-5 h-5 text-primary" />
             <h3 className="text-lg text-foreground font-bold">시간 설정</h3>
@@ -1478,11 +1421,11 @@ export default function QuestSimulation() {
             <div className="mb-3">
               <div className="flex items-center gap-1.5 mb-2">
                 <Clock className="w-3.5 h-3.5 text-yellow-400" />
-                <span className="text-xs font-medium text-foreground">퀘스트 시간 감소</span>
+                <span className="text-sm font-medium text-foreground">퀘스트 시간 감소</span>
               </div>
               <div className="space-y-1">
                 {questTimeSettings.map(item => (
-                  <div key={item.id} className="flex items-center gap-2 text-[11px]">
+                  <div key={item.id} className="flex items-center gap-2 text-xs">
                     <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                       item.enabled ? 'border-primary bg-primary/20' : 'border-border bg-secondary/30'
                     }`}>
@@ -1499,11 +1442,11 @@ export default function QuestSimulation() {
             <div className="border-t border-border/30 pt-3">
               <div className="flex items-center gap-1.5 mb-2">
                 <Coffee className="w-3.5 h-3.5 text-green-400" />
-                <span className="text-xs font-medium text-foreground">휴식 시간 감소</span>
+                <span className="text-sm font-medium text-foreground">휴식 시간 감소</span>
               </div>
               <div className="space-y-1">
                 {restTimeSettings.map(item => (
-                  <div key={item.id} className="flex items-center gap-2 text-[11px]">
+                  <div key={item.id} className="flex items-center gap-2 text-xs">
                     <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                       item.enabled ? 'border-primary bg-primary/20' : 'border-border bg-secondary/30'
                     }`}>
@@ -1519,11 +1462,10 @@ export default function QuestSimulation() {
         </div>
       </div>
 
-      {/* Full-width Simulation Details Box */}
+      {/* Save button + Full-width Simulation Details Box */}
       {currentQuest && selectedHeroes.length > 0 && simResult && (
         <div className="mt-4 card-fantasy p-4">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -1536,6 +1478,9 @@ export default function QuestSimulation() {
               <span className="text-[8px] text-muted-foreground/50">
                 {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
               </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-medium text-foreground">📋 시뮬레이션 상세 정보</h4>
               <Button
                 variant="outline"
                 size="sm"

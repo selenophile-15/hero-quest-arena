@@ -70,7 +70,7 @@ const JOB_FILTER_ORDER = [
   '마법사', '대마법사', '성직자', '비숍', '드루이드', '아크 드루이드', '소서러', '워록', '마법검', '스펠나이트', '풍수사', '아스트라맨서', '크로노맨서', '페이트위버',
 ];
 
-type SortKey = 'heroClass' | 'level' | 'power' | 'atk' | 'def' | 'hp' | 'name';
+type SortKey = 'heroClass' | 'level' | 'power' | 'atk' | 'def' | 'hp' | 'name' | 'crit' | 'critDmg' | 'evasion' | 'element' | 'position';
 type JobImageMode = 'icon' | 'illust' | 'none';
 
 // Equipment quality styles
@@ -125,6 +125,15 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
     return Array.from(set).sort();
   }, [heroes]);
 
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(d => d === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortKey(key);
+      setSortDir('desc'); // 내림차순부터
+    }
+  };
+
   const filtered = useMemo(() => {
     let list = [...heroes];
     if (filterType !== 'all') list = list.filter(h => h.type === filterType);
@@ -136,6 +145,17 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
       list.sort((a, b) => { const ak = getJobSortKey(a), bk = getJobSortKey(b); return sortDir === 'asc' ? ak - bk : bk - ak; });
     } else if (sortKey === 'name') {
       list.sort((a, b) => sortDir === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+    } else if (sortKey === 'element') {
+      list.sort((a, b) => sortDir === 'asc' ? (a.element || '').localeCompare(b.element || '') : (b.element || '').localeCompare(a.element || ''));
+    } else if (sortKey === 'position') {
+      list.sort((a, b) => sortDir === 'asc' ? (a.position || '').localeCompare(b.position || '') : (b.position || '').localeCompare(a.position || ''));
+    } else if (sortKey === 'critDmg') {
+      // Sort by computed crit damage (atk * critDmg / 100)
+      list.sort((a, b) => {
+        const av = a.critDmg > 0 ? Math.round(a.atk * a.critDmg / 100) : 0;
+        const bv = b.critDmg > 0 ? Math.round(b.atk * b.critDmg / 100) : 0;
+        return sortDir === 'asc' ? av - bv : bv - av;
+      });
     } else {
       list.sort((a, b) => { const av = (a as any)[sortKey] ?? 0, bv = (b as any)[sortKey] ?? 0; return sortDir === 'asc' ? av - bv : bv - av; });
     }
@@ -144,22 +164,22 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
 
   const handleToggle = (heroId: string) => {
     if (editingSlotIdx !== null) {
+      // In editing mode: just toggle selection, don't auto-confirm
       setLocalIds(prev => {
-        const arr = Array.from(prev);
-        const existingIdx = arr.indexOf(heroId);
-        if (existingIdx !== -1) arr.splice(existingIdx, 1);
-        if (editingSlotIdx < arr.length) arr[editingSlotIdx] = heroId;
-        else arr.push(heroId);
-        return new Set(arr);
+        const next = new Set(prev);
+        if (next.has(heroId)) {
+          next.delete(heroId);
+        } else {
+          // Replace the slot being edited
+          const arr = Array.from(prev);
+          const existingIdx = arr.indexOf(heroId);
+          if (existingIdx !== -1) arr.splice(existingIdx, 1);
+          if (editingSlotIdx < arr.length) arr[editingSlotIdx] = heroId;
+          else arr.push(heroId);
+          return new Set(arr);
+        }
+        return next;
       });
-      onConfirm((() => {
-        const arr = Array.from(localIds);
-        const existingIdx = arr.indexOf(heroId);
-        if (existingIdx !== -1) arr.splice(existingIdx, 1);
-        if (editingSlotIdx < arr.length) arr[editingSlotIdx] = heroId;
-        else arr.push(heroId);
-        return new Set(arr);
-      })());
       return;
     }
     setLocalIds(prev => {
@@ -176,6 +196,9 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
 
   const cycleJobMode = () => setJobImageMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon');
   const jobModeLabel = jobImageMode === 'icon' ? '🎭' : jobImageMode === 'illust' ? '🖼️' : '✖';
+
+  // Sort indicator
+  const sortIndicator = (key: SortKey) => sortKey === key ? (sortDir === 'desc' ? ' ▼' : ' ▲') : '';
 
   // ─── Manual overlay helper ────────────────────────────────────────────────
   const ManualOverlay = () => (
@@ -259,7 +282,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
           </div>
         )}
 
-        {/* ─── Filters + Sort ──────────────────────────────────────────────── */}
+        {/* ─── Filters ──────────────────────────────────────────────── */}
         <div className="px-5 pb-2 flex flex-wrap items-center gap-2 shrink-0">
           <Filter className="w-3.5 h-3.5 text-muted-foreground" />
           <Select value={filterType} onValueChange={setFilterType}>
@@ -314,21 +337,43 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
               <thead className="sticky top-0 bg-background z-10">
                 <tr className="border-b border-border text-muted-foreground">
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">유형</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => { setSortKey('heroClass'); setSortDir(d => d === 'asc' ? 'desc' : 'asc'); }} title="직업순 정렬">
-                    직업
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => handleSort('heroClass')}>
+                    직업{sortIndicator('heroClass')}
                   </th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">이름</th>
-                  <th className="text-center py-2 px-1.5">Lv</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">원소</th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => handleSort('name')}>
+                    이름{sortIndicator('name')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 cursor-pointer hover:text-primary select-none" onClick={() => handleSort('level')}>
+                    Lv{sortIndicator('level')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => handleSort('element')}>
+                    원소{sortIndicator('element')}
+                  </th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap">스킬</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">전투력</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">공격력</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">방어력</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">체력</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400">치확</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400">치명타 대미지</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap text-teal-400">회피</th>
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">포지션</th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none text-yellow-400" onClick={() => handleSort('power')}>
+                    전투력{sortIndicator('power')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none text-red-400" onClick={() => handleSort('atk')}>
+                    공격력{sortIndicator('atk')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none text-blue-400" onClick={() => handleSort('def')}>
+                    방어력{sortIndicator('def')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none text-orange-400" onClick={() => handleSort('hp')}>
+                    체력{sortIndicator('hp')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400 cursor-pointer hover:text-primary select-none" onClick={() => handleSort('crit')}>
+                    치확{sortIndicator('crit')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap text-yellow-400 cursor-pointer hover:text-primary select-none" onClick={() => handleSort('critDmg')}>
+                    치명타 대미지{sortIndicator('critDmg')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap text-teal-400 cursor-pointer hover:text-primary select-none" onClick={() => handleSort('evasion')}>
+                    회피{sortIndicator('evasion')}
+                  </th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => handleSort('position')}>
+                    포지션{sortIndicator('position')}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -337,9 +382,13 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                   const isOtherChampion = hero.type === 'champion' && hasChampion && !isSelected;
                   const disabled = (isFull && !isSelected) || isOtherChampion;
                   const belowMin = hero.power > 0 && hero.power < minPower;
-                  const iconPath = hero.type === 'champion' && hero.championName
+                  // 직업 column: hero=job icon+name, champion=champion icon+name
+                  const jobIconPath = hero.type === 'champion' && hero.championName
                     ? getChampionImagePath(hero.championName)
                     : hero.heroClass ? getJobImagePath(hero.heroClass) : '';
+                  const jobLabel = hero.type === 'champion'
+                    ? (hero.championName || hero.name)
+                    : (hero.heroClass || '-');
                   const illustPath = hero.type === 'champion' && hero.championName
                     ? getChampionImagePath(hero.championName)
                     : hero.heroClass ? getJobIllustPath(hero.heroClass) : '';
@@ -357,29 +406,29 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           {hero.type === 'champion' ? '챔피언' : '영웅'}
                         </span>
                       </td>
-                      {/* 직업 with toggle */}
-                      <td className="py-1.5 px-1 text-center text-muted-foreground">
-                        {jobImageMode === 'none' ? (
-                          <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
-                        ) : jobImageMode === 'icon' ? (
-                          <span className="text-xs whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
-                        ) : (
+                      {/* 직업: hero=job icon+name, champion=champion icon+name */}
+                      <td className="py-1.5 px-1 text-center">
+                        {jobImageMode === 'illust' ? (
                           <div className="flex flex-col items-center gap-0.5">
                             <div className="w-28 h-28 overflow-hidden rounded border border-border/30 bg-secondary/20">
                               {illustPath
                                 ? <img src={illustPath} alt="" className="w-full h-full object-cover" onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }} />
                                 : null}
                             </div>
-                            <span className="text-[10px] whitespace-nowrap">{hero.heroClass || hero.championName || '-'}</span>
+                            <span className="text-[10px] whitespace-nowrap text-muted-foreground">{jobLabel}</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1 justify-center">
+                            {jobIconPath && <img src={jobIconPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            <span className="text-xs whitespace-nowrap text-muted-foreground">{jobLabel}</span>
                           </div>
                         )}
                       </td>
-                      {/* 이름 */}
+                      {/* 이름: just name text, no icon */}
                       <td className="py-1.5 px-1.5 text-center font-medium text-foreground">
                         <div className="flex items-center gap-1 justify-center">
                           {belowMin && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
-                          {iconPath && <img src={iconPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                          <span className="whitespace-nowrap">{hero.type === 'champion' ? (hero.championName || hero.name) : hero.name}</span>
+                          <span className="whitespace-nowrap">{hero.name}</span>
                         </div>
                       </td>
                       {/* Lv */}
