@@ -125,6 +125,7 @@ export interface HeroSimResult {
   lordProtectionAvg: number;
   // Crit survival (armadillo, cleric/bishop)
   critSurvivalCount: number;
+  tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
 }
 
 export interface MiniBossResult {
