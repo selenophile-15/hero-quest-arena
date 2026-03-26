@@ -856,6 +856,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Total damage taken tracking
   const totalDmgTakenAccum = new Float64Array(numHeroes);
   const totalTimesHitAccum = new Float64Array(numHeroes);
+  const singleTargetHitsTotal = new Float64Array(numHeroes);
 
   // Tamas random range
   const isTamas = champName.includes('타마스') || champName === 'Tamas';
