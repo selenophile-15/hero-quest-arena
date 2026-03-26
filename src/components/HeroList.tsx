@@ -1365,9 +1365,11 @@ export default function HeroList() {
       </div>
 
       {summaryOpen ? (
-        <ListSummary heroes={heroes} />
+        <div ref={listRef}>
+          <ListSummary heroes={heroes} />
+        </div>
       ) : viewMode === 'table' ? (
-        <>
+        <div ref={listRef}>
           {/* Column visibility - table only */}
           <div className="card-fantasy p-3 mb-3">
             <div className="flex flex-wrap gap-3">
