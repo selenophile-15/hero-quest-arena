@@ -429,13 +429,14 @@ export default function QuestSimulation() {
     const diffLabel = currentQuest.difficulty !== '없음' ? ` ${currentQuest.difficulty}` : '';
     const autoName = `${questData?.questType || ''} ${regionName}${diffLabel}`;
 
+    const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
     const heroSummaries = simResult.heroResults.map(hr => ({
       heroId: hr.heroId,
       heroName: hr.heroName,
       heroClass: selectedHeroList.find(h => h.id === hr.heroId)?.heroClass || '',
       survivalRate: hr.survivalRate,
-      avgDamageDealt: hr.totalDamageDealtAvg,
-      damageShare: hr.damageShare,
+      avgDamageDealt: hr.avgDamageDealt,
+      damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg * 100) : 0,
     }));
 
     saveSimulationResult({
