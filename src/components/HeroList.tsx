@@ -923,48 +923,51 @@ export default function HeroList() {
                 {equipSlots.slice(0, isChampion ? 2 : 6).map((slot: any, i: number) => {
                   const item = slot.item;
                   const quality = slot.quality || 'common';
-                  const radialStop = '85%';
                   const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
                   const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
                   const itemType = item?.type || '';
                   return (
                     <div key={i} className="flex flex-col items-center">
                       <div
-                        className={`relative w-full aspect-square rounded-lg border-2 ${item ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center justify-center overflow-hidden`}
+                        className={`relative w-full aspect-square rounded-lg border-2 ${item ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden`}
                         style={item ? {
-                          background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent ${radialStop})`,
+                          background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                           boxShadow: QUALITY_SHADOW_COLOR[quality],
                         } : { background: 'hsl(var(--secondary) / 0.3)' }}
                       >
-                        {item && (
-                          <span className="absolute top-0.5 left-0.5 text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5 z-10">T{item.tier}</span>
-                        )}
-                        {item?.relic && (
-                          <img src="/images/special/icon_global_artifact.webp" alt="" className="absolute top-0.5 right-0.5 w-4 h-4 z-10"
-                            onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        )}
-                        {item?.imagePath ? (
-                          <img src={item.imagePath} alt={item.name} className="w-3/5 h-3/5 object-contain" style={{ marginTop: '-4px' }}
-                            onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        ) : (
-                          <span className="text-[9px] text-muted-foreground">비어있음</span>
-                        )}
-                        {item && (
-                          <div className="absolute bottom-0.5 left-0.5 right-0.5 flex items-center justify-center gap-1">
+                        {/* Tier + Relic header */}
+                        <div className="flex items-center justify-between px-1 pt-0.5 flex-shrink-0" style={{ minHeight: '18px' }}>
+                          {item ? <span className="text-[9px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span> : <span />}
+                          {item?.relic ? <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} /> : <span />}
+                        </div>
+                        {/* Image area - shifted toward top */}
+                        <div className="flex-1 flex items-start justify-center pt-0.5">
+                          {item?.manual ? (
+                            <CircleHelp className="w-9 h-9 text-yellow-400/60" />
+                          ) : item?.imagePath ? (
+                            <img src={item.imagePath} alt={item.name} className="w-[55%] object-contain"
+                              onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
+                          ) : (
+                            <span className="text-[9px] text-muted-foreground mt-6">비어있음</span>
+                          )}
+                        </div>
+                        {/* Enchant/Type footer */}
+                        {item ? (
+                          <div className="flex items-center justify-center gap-1 pb-1 flex-shrink-0" style={{ minHeight: '34px' }}>
                             {displayElement && (
                               <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                                className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
                             )}
                             {displaySpirit && (() => {
                               const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />;
+                              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} /> : null;
                             })()}
-                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-7 h-7" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />}
                           </div>
-                        )}
+                        ) : null}
                       </div>
-                      <p className="text-sm text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
+                      <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
                     </div>
                   );
                 })}
