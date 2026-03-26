@@ -588,7 +588,78 @@ export default function QuestSimulation() {
         </div>
       ) : (
       <>
-      <div className="flex gap-4 flex-col lg:flex-row">
+      {/* Action buttons row above monster info */}
+      {currentQuest && selectedHeroes.length > 0 && simResult && (
+        <div className="flex items-center gap-2 mb-3">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1"
+            onClick={() => {
+              if (!currentQuest || !currentRegion) return;
+              const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
+              const bElements = currentQuest?.barrier ? (() => {
+                const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                  ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
+                  : null;
+                const rawElements = barrierElement2
+                  ? [barrierElement2]
+                  : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+                return [...new Set(rawElements)] as string[];
+              })() : [];
+              const questMonster: QuestMonster = {
+                hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
+                aoeChance: currentQuest.aoeChance, def: currentQuest.def,
+                isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
+                barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
+              };
+              const entries = runSingleCombatLog({
+                heroes: selectedHeroes, monster: questMonster,
+                miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
+                questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
+              });
+              setCombatLog(entries);
+              setCombatLogDialogOpen(true);
+            }}
+          >
+            🎲 1회 추적 로그
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1"
+            onClick={handleSaveResult}
+          >
+            <Save className="w-3.5 h-3.5" /> 결과 저장
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1 px-2"
+            onClick={() => {
+              import('html2canvas').then(({ default: html2canvas }) => {
+                const el = document.querySelector('[data-quest-sim]');
+                if (!el) return;
+                html2canvas(el as HTMLElement, { backgroundColor: '#1a1a2e' }).then(canvas => {
+                  const link = document.createElement('a');
+                  link.download = `quest-sim-${Date.now()}.png`;
+                  link.href = canvas.toDataURL();
+                  link.click();
+                });
+              });
+            }}
+            title="스크린샷 저장"
+          >
+            <Camera className="w-3.5 h-3.5" />
+          </Button>
+          <span className="text-[8px] text-muted-foreground/50 ml-auto">
+            {simResult.totalSimulations.toLocaleString()}회 시뮬레이션
+          </span>
+        </div>
+      )}
+
+      <div className="flex gap-4 flex-col lg:flex-row" data-quest-sim>
 
         {/* LEFT: Monster Info */}
         <div className="w-full lg:w-80 shrink-0">
