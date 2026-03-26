@@ -998,8 +998,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     }
                   }}
                 >
-                  <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
-                    <span className="text-sm font-bold text-primary tracking-wide">{slotLabel}</span>
+                  <div className="relative z-10 w-full text-center rounded-t-md py-0.5 bg-card/80 border border-b-0 border-border/60">
+                    <span className="text-xs font-bold text-primary tracking-wide">{slotLabel}</span>
                   </div>
 
                   <div
@@ -1011,7 +1011,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   >
                     {equipItem && (
                       <div className="w-full flex items-center justify-between px-1.5 pt-1">
-                        <span className="text-sm font-bold text-foreground/90 bg-background/80 rounded px-1.5 py-0.5">T{equipItem.tier}</span>
+                        <span className="text-xs font-bold text-foreground/90 bg-background/80 rounded px-1 py-0.5">T{equipItem.tier}</span>
                         {equipItem?.relic && (
                           <img
                             src="/images/special/icon_global_artifact.webp"
@@ -1122,8 +1122,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                     )}
                   </div>
 
-                  <div className={`w-full text-center rounded-b py-1 ${equipItem ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
-                    <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <div className={`w-full text-center rounded-b py-0.5 ${equipItem ? 'bg-card/80 border border-t-0 border-border/40' : ''}`}>
+                    <p className={`text-xs truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {equipItem?.name || '-'}
                     </p>
                   </div>

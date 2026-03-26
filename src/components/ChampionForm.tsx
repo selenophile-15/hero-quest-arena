@@ -433,8 +433,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           setChampionManualMode(!!equipmentSlots[slotIdx]?.item?.manual);
         }}
       >
-        <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
-          <span className="text-sm font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
+        <div className="relative z-10 w-full text-center rounded-t-md py-0.5 bg-card/80 border border-b-0 border-border/60">
+          <span className="text-xs font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
         </div>
         <div
           className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
@@ -445,7 +445,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         >
           {equipItem && (
             <div className="w-full flex items-center justify-between px-1.5 pt-1">
-              <span className="text-sm font-bold text-foreground/90 bg-background/80 rounded px-1.5 py-0.5">T{equipItem.tier}</span>
+              <span className="text-xs font-bold text-foreground/90 bg-background/80 rounded px-1 py-0.5">T{equipItem.tier}</span>
               {equipItem?.relic && (
                 <img
                   src="/images/special/icon_global_artifact.webp"
@@ -536,8 +536,8 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             </div>
           ) : null;
         })()}
-        <div className={`w-full text-center rounded-b py-1 mt-0.5 ${equipItem ? 'bg-card/90 border border-t-0 border-border/40' : ''}`}>
-          <p className={`text-sm truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
+        <div className={`w-full text-center rounded-b py-0.5 mt-0.5 ${equipItem ? 'bg-card/80 border border-t-0 border-border/40' : ''}`}>
+          <p className={`text-xs truncate leading-tight font-bold px-1 ${equipItem ? 'text-foreground' : 'text-muted-foreground'}`}>
             {equipItem?.name || '-'}
           </p>
         </div>
