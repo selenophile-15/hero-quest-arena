@@ -174,29 +174,24 @@ const Index = () => {
           {/* Title area */}
           <div className="mb-6" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
             {/* "셀레노필이 제작한" small label */}
-            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-3" style={{ 
+            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{ 
               color: 'hsl(40 50% 45%)',
               animation: 'subtitleReveal 1.5s ease-out forwards',
             }}>
               Selenofil Presents
             </span>
-            {/* Main title: 샵타이탄 퀘스트 시뮬레이터 */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight" style={{
-              background: 'linear-gradient(135deg, hsl(40 90% 65%), hsl(35 85% 50%), hsl(40 90% 70%))',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              animation: 'glowPulse 4s ease-in-out infinite',
-              textShadow: 'none',
-              lineHeight: 1.2,
-            }}>
-              샵타이탄
-            </h1>
-            <h2 className="text-2xl md:text-3xl font-semibold mt-1" style={{
-              color: 'hsl(40 15% 80%)',
-              letterSpacing: '0.05em',
-            }}>
-              퀘스트 시뮬레이터
-            </h2>
+            {/* Logo image */}
+            <img 
+              src={selenofilLogo} 
+              alt="샵타이탄 퀘스트 시뮬레이터" 
+              className="mx-auto"
+              width={500}
+              height={280}
+              style={{ 
+                animation: 'glowPulse 4s ease-in-out infinite',
+                maxWidth: '80vw',
+              }}
+            />
           </div>
 
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
