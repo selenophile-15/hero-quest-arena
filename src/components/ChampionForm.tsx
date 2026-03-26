@@ -453,26 +453,22 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               <span className="text-[9px] text-muted-foreground mt-6">비어있음</span>
             )}
           </div>
-          <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5">
-            <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
-              onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}>
-              {displayElement ? (
-                <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`} className="w-[80%] h-[80%] object-cover" alt=""
+          {equipItem ? (
+            <div className="flex items-center justify-center gap-1 pb-1 flex-shrink-0" style={{ minHeight: '34px' }}>
+              {displayElement && (
+                <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
+                  className="w-8 h-8 cursor-pointer" alt=""
+                  onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
                   onError={e => { e.currentTarget.style.display = 'none'; }} />
-              ) : <span className="text-[6px] text-muted-foreground">원소</span>}
-            </div>
-            <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
-              onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }}>
-              {displaySpirit ? (() => {
+              )}
+              {displaySpirit && (() => {
                 const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-[80%] h-[80%] object-cover" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-[80%] h-[80%] object-cover" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-foreground">{displaySpirit.name}</span>;
-              })() : <span className="text-[6px] text-muted-foreground">영혼</span>}
+                if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-8 h-8 cursor-pointer" alt="" onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }} onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-8 h-8 cursor-pointer" alt="" onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }} onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+              })()}
+              {typeFile && <img src={`/images/type/${typeFile}.webp`} className="w-8 h-8" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
             </div>
-            <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden">
-              {typeFile ? <img src={`/images/type/${typeFile}.webp`} className="w-[80%] h-[80%] object-contain" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="text-[6px] text-muted-foreground">타입</span>}
-            </div>
-          </div>
+          ) : null}
         </div>
         {(() => {
           const calcSlot = champCalcResult?.equipSlots?.[slotIdx];
