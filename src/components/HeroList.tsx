@@ -481,8 +481,31 @@ export default function HeroList() {
     return <ChampionForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); setExpandedId(null); setSortKey('heroClass'); setSortDir('asc'); }} />;
   }
 
+  const STAT_KEYS = new Set(['power', 'airshipPower', 'hp', 'atk', 'def', 'crit', 'critDmg', 'critAttack', 'evasion', 'threat']);
   const activeCols = activeColumns.filter(c => visibleCols.has(c.key));
+  const activeColsNoManage = activeCols.filter(c => c.key !== 'label');
   const tableMaxWidth = (activeCols.length + 1) * 150;
+
+  const handleResetCols = () => {
+    const allCols = [...HERO_STAT_COLUMNS, ...CHAMPION_STAT_COLUMNS];
+    const all = new Set<string>(allCols.map(c => c.key));
+    DEFAULT_HIDDEN_COLS.forEach(k => all.delete(k));
+    setVisibleCols(all);
+  };
+  const handleSelectAllCols = (select: boolean) => {
+    if (select) {
+      setVisibleCols(new Set(activeColumns.map(c => c.key)));
+    } else {
+      setVisibleCols(new Set());
+    }
+  };
+  const handleToggleStatCols = (select: boolean) => {
+    setVisibleCols(prev => {
+      const next = new Set(prev);
+      STAT_KEYS.forEach(k => { if (select) next.add(k); else next.delete(k); });
+      return next;
+    });
+  };
   const EXPANDED_VISIBLE_KEYS = new Set(['heroClass', 'championName', 'name', 'level', 'rank', 'position', 'label', 'promoted']);
 
   const renderHeaderLabel = (col: { key: string; label: string; icon?: boolean }) => {
