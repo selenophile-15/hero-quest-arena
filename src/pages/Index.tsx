@@ -145,11 +145,11 @@ const Index = () => {
         }} />
       </div>
 
-      {/* Background image - positioned lower, visible on scroll */}
-      <div className="fixed inset-0 z-[1] pointer-events-none" style={{
-        transform: `translateY(${-parallaxOffset * 0.3 + 200}px)`
+      {/* Background image - scrolls naturally with content */}
+      <div className="absolute inset-x-0 z-[1] pointer-events-none" style={{
+        top: '70vh',
       }}>
-        <div className="absolute bottom-0 left-0 right-0" style={{ height: '80vh' }}>
+        <div className="relative w-full" style={{ height: '130vh' }}>
           <img src={landingBg} alt="" className="w-full h-full object-cover" style={{ opacity: 0.7 }} />
           {/* Top gradient blend into sky */}
           <div className="absolute top-0 left-0 right-0 h-[40%]" style={{
@@ -162,8 +162,8 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Rising particles (embers) */}
-      <div ref={particlesRef} className="fixed inset-0 z-[3] pointer-events-none" />
+      {/* Rising particles (embers) - absolute so they scroll with page */}
+      <div ref={particlesRef} className="absolute inset-0 z-[3] pointer-events-none" style={{ top: '80vh', height: '120vh' }} />
 
       {/* ===== HERO SECTION ===== */}
       <div className="relative z-10 min-h-screen flex items-center justify-center">
@@ -171,11 +171,19 @@ const Index = () => {
           transform: `translateY(${parallaxOffset * -0.15}px)`,
           opacity: Math.max(0, 1 - scrollY / 600),
         }}>
-          {/* Logo image */}
+          {/* Title area */}
           <div className="mb-6" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
+            {/* "셀레노필이 제작한" small label */}
+            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{ 
+              color: 'hsl(40 50% 45%)',
+              animation: 'subtitleReveal 1.5s ease-out forwards',
+            }}>
+              Selenofil Presents
+            </span>
+            {/* Logo image */}
             <img 
               src={selenofilLogo} 
-              alt="셀레노필" 
+              alt="샵타이탄 퀘스트 시뮬레이터" 
               className="mx-auto"
               width={500}
               height={280}
@@ -184,22 +192,6 @@ const Index = () => {
                 maxWidth: '80vw',
               }}
             />
-          </div>
-
-          {/* Subtitle */}
-          <div className="mb-4">
-            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-3" style={{ 
-              color: 'hsl(40 50% 45%)',
-              animation: 'subtitleReveal 1.5s ease-out forwards',
-            }}>
-              셀레노필
-            </span>
-            <p className="text-2xl md:text-3xl font-semibold" style={{
-              color: 'hsl(40 15% 80%)',
-              letterSpacing: '-0.01em',
-            }}>
-              퀘스트 시뮬레이터
-            </p>
           </div>
 
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
