@@ -1284,6 +1284,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Compute incoming damage stats (single hit, not per-sim averages)
   // Calculate threat-based targeting rates
   const totalThreat = activeHeroes.reduce((s, h) => s + (h.threat || 1), 0);
+  const totalAllSingleHits = Array.from(singleTargetHitsTotal).reduce((s, v) => s + v, 0);
 
   const heroResults: HeroSimResult[] = activeHeroes.map((h, i) => {
     const normalHit = damageTaken[i];
