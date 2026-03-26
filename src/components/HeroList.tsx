@@ -361,104 +361,11 @@ export default function HeroList() {
     return list;
   }, [activeList, albumSortKey, albumSortDir, albumFilterClassLine, albumFilterElement, albumFilterJob]);
 
-  // Premium table screenshot
-  const handleTableScreenshot = useCallback(async () => {
-    const cols = activeColumns.filter(c => screenshotCols.has(c.key));
-    if (cols.length === 0) return;
-
-    const container = document.createElement('div');
-    const colW = cols.some(c => ['seeds', 'element', 'name', 'heroClass', 'championName'].includes(c.key)) ? 110 : 90;
-    const baseW = cols.length * colW + 64;
-    const containerW = Math.max(360, baseW);
-
-    container.style.cssText = `
-      position: fixed; left: -9999px; top: 0;
-      width: ${containerW}px;
-      background: linear-gradient(160deg, #0f1420 0%, #151d2e 40%, #1a1530 70%, #0f1420 100%);
-      padding: 28px 32px 24px;
-      font-family: 'Noto Sans KR', sans-serif;
-      color: #e8dcc8;
-    `;
-
-    const topAccent = document.createElement('div');
-    topAccent.style.cssText = 'height: 2px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin-bottom: 24px; border-radius: 1px;';
-    container.appendChild(topAccent);
-
-    const header = document.createElement('div');
-    header.style.cssText = 'display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px;';
-    header.innerHTML = `
-      <div>
-        <div style="font-family: Cinzel, serif; font-size: 16px; color: #d4af37; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">Quest Simulator</div>
-        <div style="font-size: 11px; color: #8a7e6b; margin-top: 6px; letter-spacing: 0.5px;">${listTab === 'hero' ? '영웅' : '챔피언'} 리스트 · ${filtered.length}명</div>
-      </div>
-      <div style="font-size: 10px; color: #5a5245; letter-spacing: 1px;">${new Date().toLocaleDateString('ko-KR')}</div>
-    `;
-    container.appendChild(header);
-
-    const sep = document.createElement('div');
-    sep.style.cssText = 'height: 1px; background: rgba(212,175,55,0.2); margin-bottom: 4px;';
-    container.appendChild(sep);
-
-    const table = document.createElement('table');
-    table.style.cssText = 'width: 100%; border-collapse: collapse; font-size: 12px;';
-
-    const thead = document.createElement('thead');
-    const headRow = document.createElement('tr');
-    cols.forEach(col => {
-      const th = document.createElement('th');
-      th.style.cssText = 'padding: 10px 8px; text-align: center; color: #d4af37; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(212,175,55,0.25);';
-      th.textContent = col.label;
-      headRow.appendChild(th);
-    });
-    thead.appendChild(headRow);
-    table.appendChild(thead);
-
-    const tbody = document.createElement('tbody');
-    filtered.forEach((hero, idx) => {
-      const tr = document.createElement('tr');
-      tr.style.cssText = `border-bottom: 1px solid rgba(255,255,255,0.04); ${idx % 2 === 0 ? 'background: rgba(255,255,255,0.015);' : ''}`;
-      cols.forEach(col => {
-        const td = document.createElement('td');
-        td.style.cssText = 'padding: 7px 8px; text-align: center; vertical-align: middle; height: 36px; white-space: nowrap; font-size: 12px; color: #d6ccb8;';
-        const text = getScreenshotCellText(hero, col.key);
-        if (text === '0' || text === '0 %' || text === '-') {
-          td.style.color = 'rgba(214,204,184,0.2)';
-        }
-        td.textContent = text;
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-    container.appendChild(table);
-
-    const bottomAccent = document.createElement('div');
-    bottomAccent.style.cssText = 'height: 1px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent); margin-top: 16px;';
-    container.appendChild(bottomAccent);
-
-    const footer = document.createElement('div');
-    footer.style.cssText = 'margin-top: 12px; text-align: right; font-family: Cinzel, serif; font-size: 9px; color: #3d3828; letter-spacing: 2px;';
-    footer.textContent = 'QUEST SIMULATOR';
-    container.appendChild(footer);
-
-    document.body.appendChild(container);
-
-    try {
-      const canvas = await html2canvas(container, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
-      const link = document.createElement('a');
-      link.download = `list_${listTab}_${new Date().toISOString().slice(0, 10)}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } finally {
-      document.body.removeChild(container);
-    }
-    setScreenshotDialogOpen(false);
-  }, [screenshotCols, activeColumns, filtered, listTab, getScreenshotCellText]);
+  // Adaptive table max width based on visible columns
+  const tableMaxWidth = useMemo(() => {
+    const COL_W = 150;
+    return (activeCols.length + 1) * COL_W;
+  }, [activeCols.length]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
