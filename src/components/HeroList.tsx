@@ -1303,18 +1303,6 @@ export default function HeroList() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl text-primary font-bold">영웅 &amp; 챔피언 리스트</h2>
         <div className="flex gap-2">
-          <Button onClick={handleExport} variant="outline" size="sm" className="gap-1.5 text-xs" title="리스트 내보내기">
-            <Download className="w-3.5 h-3.5" /> 내보내기
-          </Button>
-          <label className="inline-flex">
-            <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
-            <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs cursor-pointer" title="리스트 불러오기">
-              <span><Upload className="w-3.5 h-3.5" /> 불러오기</span>
-            </Button>
-          </label>
-          <Button onClick={handleScreenshot} variant="outline" size="sm" className="gap-1.5 text-xs" title="스크린샷 저장">
-            <Camera className="w-3.5 h-3.5" /> 스크린샷
-          </Button>
           <Button onClick={() => setAddingType('hero')} className="gap-2 text-sm font-medium">
             <Shield className="w-4 h-4" /> 새 영웅 추가
           </Button>
