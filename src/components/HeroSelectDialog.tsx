@@ -292,22 +292,6 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
               </SelectContent>
             </Select>
           )}
-          <div className="w-px h-5 bg-border/50" />
-          <Select value={sortKey} onValueChange={v => setSortKey(v as SortKey)}>
-            <SelectTrigger className="w-[90px] h-7 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="heroClass">직업순</SelectItem>
-              <SelectItem value="name">이름순</SelectItem>
-              <SelectItem value="level">레벨순</SelectItem>
-              <SelectItem value="power">전투력순</SelectItem>
-              <SelectItem value="atk">공격력순</SelectItem>
-              <SelectItem value="def">방어력순</SelectItem>
-              <SelectItem value="hp">체력순</SelectItem>
-            </SelectContent>
-          </Select>
-          <button onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')} className="p-1 rounded hover:bg-secondary">
-            {sortDir === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
         </div>
 
         {/* ─── Content ─────────────────────────────────────────────────────── */}
