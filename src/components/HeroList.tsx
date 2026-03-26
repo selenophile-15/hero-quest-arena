@@ -200,6 +200,9 @@ export default function HeroList() {
     try {
       // Wait for React re-render with captureMode=true
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
 
       const canvas = await html2canvas(targetRef.current, {
         backgroundColor: '#1a1a2e',
@@ -207,11 +210,12 @@ export default function HeroList() {
         useCORS: true,
         allowTaint: true,
         logging: false,
+        foreignObjectRendering: true,
       });
 
       const link = document.createElement('a');
       link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.jpg`;
-      link.href = canvas.toDataURL('image/jpeg', 0.92);
+      link.href = canvas.toDataURL('image/jpeg', 0.9);
       link.click();
     } catch (e) {
       console.error('Screenshot failed:', e);
@@ -492,7 +496,28 @@ export default function HeroList() {
   const STAT_KEYS = new Set(['power', 'airshipPower', 'hp', 'atk', 'def', 'crit', 'critDmg', 'critAttack', 'evasion', 'threat']);
   const activeCols = activeColumns.filter(c => visibleCols.has(c.key));
   const activeColsNoManage = activeCols.filter(c => c.key !== 'label');
-  const tableMaxWidth = (activeCols.length + 1) * 150;
+  const getTableColumnWidth = (colKey: string) => {
+    switch (colKey) {
+      case 'heroClass':
+      case 'name':
+        return 110;
+      case 'championName':
+        return 100;
+      case 'skills':
+        return listTab === 'champion' ? 100 : 170;
+      case 'equipment':
+        return 80;
+      case 'seeds':
+        return 120;
+      case 'position':
+      case 'label':
+        return 90;
+      default:
+        return 84;
+    }
+  };
+  const manageColumnWidth = 90;
+  const tableMaxWidth = activeCols.reduce((sum, col) => sum + getTableColumnWidth(col.key), 0) + (captureMode ? 0 : manageColumnWidth);
 
   const handleResetCols = () => {
     const allCols = [...HERO_STAT_COLUMNS, ...CHAMPION_STAT_COLUMNS];
@@ -531,6 +556,8 @@ export default function HeroList() {
     const wrapCls = capture
       ? 'inline-block whitespace-nowrap align-middle leading-none'
       : 'inline-flex items-center gap-1';
+    const captureTextClass = capture ? 'capture-text inline-block align-middle leading-none' : '';
+    const captureTextStyle = capture ? { transform: 'translateY(-2px)', lineHeight: 1, verticalAlign: 'middle' as const } : undefined;
     const spacer = capture ? <span className="inline-block w-1" /> : null;
 
     if (colKey === 'name') {
@@ -542,21 +569,21 @@ export default function HeroList() {
             <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
           )}
           {isChamp && hero.championName && spacer}
-          <span className={`${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'text-yellow-400' : ''}`}>{hero.name}</span>
-          {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
+          <span className={`${captureTextClass} ${isPromoted ? 'text-yellow-400' : ''}`} style={captureTextStyle}>{hero.name}</span>
+          {isPromoted && <Award className={`w-3.5 h-3.5 text-yellow-400 ${capture ? 'inline-block align-middle ml-1' : ''}`} />}
         </span>
       );
     }
     if (colKey === 'type') {
       return (
-        <span className={`${hero.type === 'champion' ? 'text-primary font-medium' : 'text-red-400 font-medium'} ${lh}`}>
+        <span className={`${hero.type === 'champion' ? 'text-primary font-medium' : 'text-red-400 font-medium'} ${lh} ${captureTextClass}`} style={captureTextStyle}>
           {hero.type === 'champion' ? '챔피언' : '영웅'}
         </span>
       );
     }
     if (colKey === 'classLine') {
       if (!hero.classLine) return <span className="text-muted-foreground">-</span>;
-      return <span className={`${lh} ${CLASS_LINE_COLORS[hero.classLine] || 'text-foreground'}`}>{hero.classLine}</span>;
+      return <span className={`${lh} ${CLASS_LINE_COLORS[hero.classLine] || 'text-foreground'} ${captureTextClass}`} style={captureTextStyle}>{hero.classLine}</span>;
     }
     if (colKey === 'heroClass') {
       if (!hero.heroClass) return <span className="text-muted-foreground">-</span>;
@@ -564,7 +591,7 @@ export default function HeroList() {
         <span className={`${wrapCls} ${lh}`}>
           <img src={getJobImagePath(hero.heroClass)} alt="" className={iconCls} onError={e => { e.currentTarget.style.display = 'none'; }} />
           {spacer}
-          <span className={`whitespace-nowrap ${capture ? 'inline-block align-middle leading-none' : ''}`}>{hero.heroClass}</span>
+          <span className={`whitespace-nowrap ${captureTextClass}`} style={captureTextStyle}>{hero.heroClass}</span>
         </span>
       );
     }
@@ -574,14 +601,14 @@ export default function HeroList() {
         <span className={`${wrapCls} ${lh}`}>
           <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { e.currentTarget.style.display = 'none'; }} />
           {spacer}
-          <span className={capture ? 'inline-block align-middle leading-none' : ''}>{hero.championName}</span>
+          <span className={captureTextClass} style={captureTextStyle}>{hero.championName}</span>
         </span>
       );
     }
     if (colKey === 'rank') {
       const r = hero.rank || 1;
-      if (r <= 11) return <span className={lh}>{r}</span>;
-      return <span className={lh}>{r} (11+{r - 11})</span>;
+      if (r <= 11) return <span className={`${lh} ${captureTextClass}`} style={captureTextStyle}>{r}</span>;
+      return <span className={`${lh} ${captureTextClass}`} style={captureTextStyle}>{r} (11+{r - 11})</span>;
     }
     if (colKey === 'element') {
       const elVal = hero.elementValue || 0;
@@ -590,7 +617,7 @@ export default function HeroList() {
         <span className={`${wrapCls} ${lh}`}>
           <ElementIcon element={hero.element} size={20} />
           {spacer}
-          <span className={`tabular-nums ${capture ? 'inline-block align-middle leading-none' : ''} ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
+          <span className={`tabular-nums ${captureTextClass} ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`} style={captureTextStyle}>{formatNumber(elVal)}</span>
         </span>
       );
     }
@@ -700,7 +727,7 @@ export default function HeroList() {
               return (
                 <span key={s.key} className="inline-block align-middle mx-0.5">
                   <img src={s.icon} alt="" className="inline-block align-middle w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                  <span className={`inline-block align-middle text-xs tabular-nums leading-none ${seedColor}`}>{seedVal}</span>
+                  <span className={`inline-block align-middle text-xs tabular-nums leading-none capture-text ${seedColor}`} style={captureTextStyle}>{seedVal}</span>
                 </span>
               );
             })}
@@ -722,29 +749,29 @@ export default function HeroList() {
         </div>
       );
     }
-    if (colKey === 'position') return <span className={lh}>{hero.position || '-'}</span>;
+    if (colKey === 'position') return <span className={`${lh} ${captureTextClass}`} style={captureTextStyle}>{hero.position || '-'}</span>;
     if (colKey === 'promoted') return null;
-    if (colKey === 'airshipPower') return <span className={`text-foreground/20 ${lh}`}>-</span>;
+    if (colKey === 'airshipPower') return <span className={`text-foreground/20 ${lh} ${captureTextClass}`} style={captureTextStyle}>-</span>;
     if (colKey === 'evasion') {
       const ev = typeof hero.evasion === 'number' ? hero.evasion : 0;
       const cap = hero.heroClass === '길잡이' ? 78 : 75;
       const isDim = ev === 0;
-      if (ev > cap) return <span className={lh}>{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
-      return <span className={`${lh} ${isDim ? 'text-foreground/20' : ''}`}>{formatNumber(ev)} %</span>;
+      if (ev > cap) return <span className={`${lh} ${captureTextClass}`} style={captureTextStyle}>{formatNumber(ev)} % <span className={`text-xs text-muted-foreground ${captureTextClass}`} style={captureTextStyle}>({cap}%)</span></span>;
+      return <span className={`${lh} ${captureTextClass} ${isDim ? 'text-foreground/20' : ''}`} style={captureTextStyle}>{formatNumber(ev)} %</span>;
     }
     if (colKey === 'level') {
       const lv = hero.level || 0;
       const lvColor = lv >= 50 ? 'text-yellow-400 font-semibold' : '';
-      return <span className={`${lh} ${lvColor}`}>{lv}</span>;
+      return <span className={`${lh} ${captureTextClass} ${lvColor}`} style={captureTextStyle}>{lv}</span>;
     }
     const value = hero[colKey as keyof Hero];
     const formatted = formatValue(colKey, value);
     if (formatted !== null) {
       const numVal = typeof value === 'number' ? value : 0;
       const isDim = numVal === 0 || formatted === '0' || formatted === '0 %';
-      return <span className={`${lh} ${isDim ? 'text-foreground/20' : ''}`}>{formatted}</span>;
+      return <span className={`${lh} ${captureTextClass} ${isDim ? 'text-foreground/20' : ''}`} style={captureTextStyle}>{formatted}</span>;
     }
-    return <span className={lh}>{String(value ?? '-')}</span>;
+    return <span className={`${lh} ${captureTextClass}`} style={captureTextStyle}>{String(value ?? '-')}</span>;
   };
 
   const skillLevelColorClass = (lvl: number | string) => {
@@ -1330,11 +1357,12 @@ export default function HeroList() {
 
           {/* Table View */}
           <div ref={tableContentRef} className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
-            <table className="w-full text-sm">
+            <table className="text-sm mx-auto" style={{ width: `${tableMaxWidth}px` }}>
               <thead>
                 <tr className="border-b border-border">
                   {activeCols.map(col => (
                     <th key={col.key} onClick={() => handleSort(col.key)}
+                      style={{ width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` }}
                       className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
                       } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[100px]' : 'min-w-[170px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
@@ -1345,7 +1373,7 @@ export default function HeroList() {
                     </th>
                   ))}
                   {!captureMode && (
-                  <th className="px-3 py-3 text-center text-muted-foreground font-medium">
+                  <th className="px-3 py-3 text-center text-muted-foreground font-medium" style={{ width: `${manageColumnWidth}px`, minWidth: `${manageColumnWidth}px` }}>
                     <div className="flex items-center justify-center gap-1">
                       <button
                         onClick={() => {
@@ -1398,10 +1426,10 @@ export default function HeroList() {
                       >
                       {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
+                            return <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle', width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}>
+                            <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle', width: `${getTableColumnWidth(col.key)}px`, minWidth: `${getTableColumnWidth(col.key)}px` }}>
                               {captureMode ? (
                                 renderCell(hero, col.key, true)
                               ) : (
@@ -1413,7 +1441,7 @@ export default function HeroList() {
                           );
                         })}
                         {!captureMode && (
-                        <td className="px-3 py-3 text-center align-middle">
+                        <td className="px-3 py-3 text-center align-middle" style={{ width: `${manageColumnWidth}px`, minWidth: `${manageColumnWidth}px` }}>
                           <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
                             {manageMode ? (
                               <button
