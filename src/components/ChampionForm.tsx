@@ -434,11 +434,11 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         }}
       >
         {/* Slot label - elevated above glow */}
-        <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60">
+        <div className="relative z-10 w-full text-center rounded-t-md py-1 bg-card border border-b-0 border-border/60" style={{ marginBottom: '-2px' }}>
           <span className="text-sm font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
         </div>
         <div
-          className={`relative w-full rounded-b-lg border-2 border-t-0 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-hidden hover:border-primary/50 transition-all`}
+          className={`relative w-full rounded-b-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-center overflow-visible hover:border-primary/50 transition-all`}
           style={equipItem ? {
             background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
             boxShadow: QUALITY_SHADOW_COLOR[quality],
