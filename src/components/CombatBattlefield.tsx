@@ -19,16 +19,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const logScrollRef = useRef<HTMLDivElement>(null);
 
   const activeHeroes = heroes.filter(h => h.hp > 0);
 
-  // Parse per-hero stats from log UP TO currentIdx (real-time)
   const heroStatsData = useMemo(() => {
     const stats: Record<string, { dmg: number; targeted: number; dodged: number; singleHits: number }> = {};
     activeHeroes.forEach(h => { stats[h.name] = { dmg: 0, targeted: 0, dodged: 0, singleHits: 0 }; });
 
-    // Identify AoE rounds up to currentIdx
     const aoeRounds = new Set<number>();
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
       const entry = log[i];
@@ -68,7 +66,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     })).sort((a, b) => b.dmg - a.dmg);
   }, [log, currentIdx]);
 
-  // Parse states from log up to currentIdx
   const getState = () => {
     const heroHp: Record<string, number> = {};
     const heroMaxHp: Record<string, number> = {};
@@ -149,9 +146,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [playing, speed, log.length]);
 
+  // Auto-scroll log internally
   useEffect(() => {
-    if (scrollRef.current) {
-      const el = scrollRef.current.querySelector(`[data-idx="${currentIdx}"]`);
+    if (logScrollRef.current) {
+      const el = logScrollRef.current.querySelector(`[data-idx="${currentIdx}"]`);
       el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
   }, [currentIdx]);
@@ -161,10 +159,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const isWin = isResult && state.lastAction?.detail.includes('승리');
 
   return (
-    <div className="grid grid-cols-2 gap-4" style={{ minHeight: '500px' }}>
+    <div className="grid grid-cols-2 gap-4 overflow-y-auto" style={{ height: '75vh' }}>
       {/* LEFT: Battlefield + Stats */}
       <div className="flex flex-col space-y-3">
-        {/* Battlefield */}
+        {/* Battlefield - no title, content moved up */}
         <div className="relative bg-secondary/30 rounded-lg p-4 border border-border/30">
           <div className="text-center mb-3">
             <span className="text-xs text-muted-foreground">라운드</span>
@@ -311,8 +309,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         </div>
       </div>
 
-      {/* RIGHT: Log */}
-      <div ref={scrollRef} className="overflow-y-auto rounded border border-border/30 bg-secondary/20 p-2 space-y-0.5 text-[10px] font-mono" style={{ maxHeight: '100%' }}>
+      {/* RIGHT: Log - fixed height with internal scroll */}
+      <div
+        ref={logScrollRef}
+        className="overflow-y-auto rounded border border-border/30 bg-secondary/20 p-2 space-y-0.5 text-[10px] font-mono"
+        style={{ height: '75vh' }}
+      >
         {log.map((entry, idx) => {
           let color = 'text-muted-foreground';
           let icon = '';
