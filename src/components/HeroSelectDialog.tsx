@@ -336,7 +336,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                     <tr key={hero.id}
                       onClick={() => !disabled && handleToggle(hero.id)}
                       className={`border-b border-border/30 cursor-pointer transition-colors ${
-                        isSelected ? 'bg-primary/10' : disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-secondary/30'
+                        isSelected ? 'bg-primary/30 border-primary/50' : disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-secondary/30'
                       }`}
                       title={isOtherChampion ? '파티에 챔피언은 1명만 가능' : undefined}>
                       {/* 유형 */}
