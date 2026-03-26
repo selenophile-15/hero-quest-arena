@@ -214,14 +214,37 @@ export default function HeroList() {
         }
       });
 
-      // Force uniform row height for table screenshots
+      // Force uniform row height and vertical centering for table screenshots
+      // html2canvas doesn't reliably render flexbox alignment, so use table-cell + vertical-align
       clone.querySelectorAll('tbody tr').forEach(row => {
         (row as HTMLElement).style.height = '52px';
         row.querySelectorAll('td').forEach(td => {
-          (td as HTMLElement).style.height = '52px';
-          (td as HTMLElement).style.verticalAlign = 'middle';
-          (td as HTMLElement).style.lineHeight = '36px';
+          const el = td as HTMLElement;
+          el.style.height = '52px';
+          el.style.verticalAlign = 'middle';
+          el.style.textAlign = 'center';
+          // Convert inner flex wrappers to inline-block with vertical-align for html2canvas compat
+          el.querySelectorAll('div, span').forEach(child => {
+            const c = child as HTMLElement;
+            if (c.style.display === 'none') return;
+            c.style.verticalAlign = 'middle';
+          });
+          // Force the direct child div (h-[36px] flex wrapper) to use inline display
+          const directDiv = el.querySelector(':scope > div');
+          if (directDiv) {
+            const d = directDiv as HTMLElement;
+            d.style.display = 'inline-flex';
+            d.style.alignItems = 'center';
+            d.style.justifyContent = 'center';
+            d.style.verticalAlign = 'middle';
+            d.style.height = '36px';
+          }
         });
+      });
+      // Also fix thead alignment
+      clone.querySelectorAll('thead th').forEach(th => {
+        (th as HTMLElement).style.verticalAlign = 'middle';
+        (th as HTMLElement).style.textAlign = 'center';
       });
 
       // Hide delete buttons in album cards
