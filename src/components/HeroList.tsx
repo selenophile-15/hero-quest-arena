@@ -1722,7 +1722,7 @@ export default function HeroList() {
           </div>
 
           {/* Album Grid */}
-          <div className="grid grid-cols-6 gap-3">
+          <div ref={albumContentRef} className="grid grid-cols-6 gap-3">
             {albumFiltered.length === 0 ? (
               <div className="col-span-6 text-center py-12 text-muted-foreground">
                 {listTab === 'hero' ? '영웅을 추가해주세요' : '챔피언을 추가해주세요'}
