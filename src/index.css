@@ -56,49 +56,49 @@
   }
 
   :root[data-theme="moonlight"] {
-    --background: 235 20% 8%;
-    --foreground: 220 30% 90%;
+    --background: 245 15% 8%;
+    --foreground: 240 15% 88%;
 
-    --card: 235 20% 12%;
-    --card-foreground: 220 30% 90%;
+    --card: 245 14% 12%;
+    --card-foreground: 240 15% 88%;
 
-    --popover: 235 20% 18%;
-    --popover-foreground: 220 30% 90%;
+    --popover: 245 14% 18%;
+    --popover-foreground: 240 15% 88%;
 
-    --primary: 225 60% 65%;
-    --primary-foreground: 235 20% 8%;
+    --primary: 245 35% 72%;
+    --primary-foreground: 245 15% 8%;
 
-    --secondary: 250 15% 18%;
-    --secondary-foreground: 230 30% 85%;
+    --secondary: 255 12% 18%;
+    --secondary-foreground: 250 20% 82%;
 
-    --muted: 240 12% 16%;
-    --muted-foreground: 230 15% 60%;
+    --muted: 250 10% 16%;
+    --muted-foreground: 250 10% 58%;
 
-    --accent: 265 45% 55%;
-    --accent-foreground: 230 30% 95%;
+    --accent: 270 30% 58%;
+    --accent-foreground: 250 20% 95%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 15% 22%;
-    --input: 240 15% 20%;
-    --ring: 225 60% 65%;
+    --border: 250 12% 22%;
+    --input: 250 12% 20%;
+    --ring: 245 35% 72%;
 
-    --sidebar-background: 235 20% 10%;
-    --sidebar-foreground: 230 30% 85%;
-    --sidebar-primary: 225 60% 65%;
-    --sidebar-primary-foreground: 235 20% 8%;
-    --sidebar-accent: 250 15% 18%;
-    --sidebar-accent-foreground: 230 30% 85%;
-    --sidebar-border: 240 15% 22%;
-    --sidebar-ring: 225 60% 65%;
+    --sidebar-background: 245 15% 10%;
+    --sidebar-foreground: 250 20% 82%;
+    --sidebar-primary: 245 35% 72%;
+    --sidebar-primary-foreground: 245 15% 8%;
+    --sidebar-accent: 255 12% 18%;
+    --sidebar-accent-foreground: 250 20% 82%;
+    --sidebar-border: 250 12% 22%;
+    --sidebar-ring: 245 35% 72%;
 
-    --gold-glow: 225 60% 65%;
-    --gold-dim: 250 30% 40%;
-    --fantasy-purple: 265 45% 50%;
-    --fantasy-blue: 225 60% 50%;
-    --hero-gradient: linear-gradient(135deg, hsl(225 60% 65%), hsl(265 45% 55%));
-    --card-glow: 0 0 20px hsl(225 60% 65% / 0.1);
+    --gold-glow: 245 35% 72%;
+    --gold-dim: 260 25% 40%;
+    --fantasy-purple: 270 30% 50%;
+    --fantasy-blue: 240 30% 55%;
+    --hero-gradient: linear-gradient(135deg, hsl(240 30% 72%), hsl(270 30% 60%));
+    --card-glow: 0 0 20px hsl(245 35% 72% / 0.1);
 
     font-family: 'Noto Sans KR', sans-serif;
   }
