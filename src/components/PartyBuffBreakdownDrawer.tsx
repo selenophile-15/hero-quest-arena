@@ -170,7 +170,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="h-[85vh] flex flex-col bg-card border-t border-primary/30">
+        <SheetContent side="bottom" className="h-[92vh] flex flex-col bg-card border-t border-primary/30">
           <SheetHeader className="shrink-0 pb-2">
             <SheetTitle className="text-foreground flex items-center gap-2 text-lg">
               📊 파티 버프 스탯 계산표
@@ -320,7 +320,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[85vh] flex flex-col bg-card border-t border-primary/30">
+      <SheetContent side="bottom" className="h-[92vh] flex flex-col bg-card border-t border-primary/30">
         <SheetHeader className="shrink-0 pb-2">
           <SheetTitle className="text-foreground flex items-center gap-2 text-lg">
             📊 파티 버프 스탯 계산표
