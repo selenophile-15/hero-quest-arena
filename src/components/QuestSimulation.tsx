@@ -557,7 +557,7 @@ export default function QuestSimulation() {
 
       {/* Tab: Compare */}
       <div style={{ display: subTab === 'compare' ? 'block' : 'none' }}>
-        <CompareAnalysis />
+        <CompareAnalysis refreshKey={subTab === 'compare' ? Date.now() : 0} />
       </div>
 
       {/* Tab: Simulation */}
