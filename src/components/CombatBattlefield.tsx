@@ -3,7 +3,7 @@ import { CombatLogEntry } from '@/lib/combatSimulation';
 import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, ChevronDown, ChevronRight, Eye } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, ChevronDown, ChevronRight, Eye, Swords, Shield, Flame } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
 
 interface Props {
@@ -14,32 +14,29 @@ interface Props {
   onNewBattle?: () => void;
 }
 
-// Lime green for party members (yellowish-green)
-const PARTY_COLOR = '#a3e635'; // lime-400
 const MONSTER_COLOR = '#facc15'; // yellow
 
-// 5-tier HP color matching damage contribution scale
-function hpColor(pct: number): string {
-  if (pct > 80) return '#84cc16';  // lime-500 (연두)
-  if (pct > 60) return '#eab308';  // yellow-500
-  if (pct > 40) return '#f97316';  // orange-500
-  if (pct > 20) return '#ef4444';  // red-500
-  return '#a855f7';                // purple-500
-}
+// Class-line based colors
+const CLASS_LINE_COLORS: Record<string, string> = {
+  '전사': '#f87171',   // red-400
+  '로그': '#a3e635',   // lime-400 (yellowish-green)
+  '주문술사': '#60a5fa', // blue-400
+};
+const CHAMPION_COLOR = '#c4b5fd'; // violet-300
 
-function hpColorClass(pct: number): string {
-  if (pct > 80) return 'text-lime-500';
-  if (pct > 60) return 'text-yellow-500';
-  if (pct > 40) return 'text-orange-500';
-  if (pct > 20) return 'text-red-500';
-  return 'text-purple-500';
+// 5-tier HP color
+function hpColor(pct: number): string {
+  if (pct > 80) return '#84cc16';
+  if (pct > 60) return '#eab308';
+  if (pct > 40) return '#f97316';
+  if (pct > 20) return '#ef4444';
+  return '#a855f7';
 }
 
 export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, onNewBattle }: Props) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
-  // 3-click filter: null → {name, mode:'attack'} → {name, mode:'defense'} → null
   const [filter, setFilter] = useState<{ name: string; mode: 'attack' | 'defense' } | null>(null);
   const [showAllBright, setShowAllBright] = useState(false);
   const [collapsedRounds, setCollapsedRounds] = useState<Set<number>>(new Set());
@@ -47,6 +44,26 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const logScrollRef = useRef<HTMLDivElement>(null);
 
   const activeHeroes = heroes.filter(h => h.hp > 0);
+
+  // Build name→color map from hero data
+  const nameColorMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    activeHeroes.forEach(h => {
+      if (h.type === 'champion') {
+        map[h.name] = CHAMPION_COLOR;
+      } else {
+        map[h.name] = CLASS_LINE_COLORS[h.classLine || ''] || '#d1d5db';
+      }
+    });
+    return map;
+  }, [activeHeroes]);
+
+  const getNameColor = (name: string | undefined): string => {
+    if (!name) return '#d1d5db';
+    if (name.includes('몬스터') || name === monsterName) return MONSTER_COLOR;
+    if (name === '시스템') return '#d1d5db';
+    return nameColorMap[name] || '#d1d5db';
+  };
 
   // Group log entries by round
   const roundGroups = useMemo(() => {
@@ -69,7 +86,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     const aoeRounds = new Set<number>();
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
       const entry = log[i];
-      if (entry.type === 'monster_attack' && entry.detail === '광역 공격!') aoeRounds.add(entry.round);
+      if (entry.type === 'monster_attack' && entry.detail.includes('광역 공격')) aoeRounds.add(entry.round);
     }
 
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
@@ -82,7 +99,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         stats[entry.target].targeted++;
         if (!aoeRounds.has(entry.round)) stats[entry.target].singleHits++;
       }
-      if (entry.type === 'event' && entry.detail.includes('회피 성공') && entry.target && stats[entry.target]) {
+      if (entry.type === 'event' && entry.detail === '회피' && entry.target && stats[entry.target]) {
         stats[entry.target].dodged++;
         stats[entry.target].targeted++;
       }
@@ -130,7 +147,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         }
       }
       if (entry.type === 'event' && entry.detail.includes('사망')) heroHp[entry.actor] = 0;
-      if (entry.type === 'event' && entry.detail.includes('회피 성공') && entry.target && i === currentIdx) {
+      if (entry.type === 'event' && entry.detail === '회피' && entry.target && i === currentIdx) {
         actionEffects.push({ target: entry.target, value: 'MISS', color: 'text-teal-400', key: i });
       }
     }
@@ -162,7 +179,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const isResult = state.lastAction?.type === 'result';
   const isWin = isResult && state.lastAction?.detail.includes('승리');
 
-  // 3-click filter cycle
   const handleFilterClick = (name: string) => {
     if (!filter || filter.name !== name) {
       setFilter({ name, mode: 'attack' });
@@ -173,7 +189,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     }
   };
 
-  // Check if entry matches filter
   const entryMatchesFilter = useCallback((entry: CombatLogEntry) => {
     if (!filter) return true;
     const { name, mode } = filter;
@@ -184,7 +199,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     }
   }, [filter]);
 
-  // Check if round is relevant for filter
   const isRoundRelevant = useCallback((group: { entries: { entry: CombatLogEntry }[] }) => {
     if (!filter) return true;
     return group.entries.some(({ entry }) => entryMatchesFilter(entry));
@@ -207,12 +221,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     const shouldBright = showAllBright || (filter && matchesFilter);
 
     const isCrit = entry.detail.includes('치명타');
-    const isEvasion = entry.detail.includes('회피 성공');
+    const isEvasion = entry.detail === '회피';
     const isDeath = entry.detail.includes('사망');
     const isSetup = entry.type === 'event' && !isEvasion && !isDeath;
-    const isAoe = entry.detail === '광역 공격!' || entry.detail.includes('광역');
+    const isAoe = entry.detail.includes('광역 공격');
 
-    // Icon selection - all use consistent styled icons
+    // Icon selection - all clean Lucide icons
     let icon: React.ReactNode;
     if (entry.type === 'result') {
       icon = <span className="text-base">🏁</span>;
@@ -222,12 +236,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       icon = <Wind className="w-4 h-4 text-teal-400" />;
     } else if (isSetup) {
       icon = <Settings className="w-4 h-4 text-muted-foreground" />;
+    } else if (entry.type === 'monster_attack' && isAoe) {
+      icon = <Flame className="w-4 h-4 text-red-500" />;
     } else if (entry.type === 'monster_attack') {
-      icon = <span className={`text-base ${isAoe ? 'text-red-500' : 'text-foreground/80'}`}>👹</span>;
+      icon = <Shield className="w-4 h-4 text-yellow-400" />;
     } else if (entry.type === 'hero_attack' && isCrit) {
       icon = <Zap className="w-4 h-4 text-yellow-400" />;
     } else if (entry.type === 'hero_attack') {
-      icon = <span className="text-base">⚔️</span>;
+      icon = <Swords className="w-4 h-4 text-foreground/60" />;
     } else if (entry.type === 'heal') {
       icon = <span className="text-base">💚</span>;
     } else {
@@ -241,9 +257,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
     // Border left color
     let borderLeftColor = 'transparent';
-    const isMonsterActor = entry.actor?.includes('몬스터');
     if (entry.type === 'monster_attack') borderLeftColor = MONSTER_COLOR;
-    else if (entry.type === 'hero_attack') borderLeftColor = PARTY_COLOR;
+    else if (entry.type === 'hero_attack') borderLeftColor = getNameColor(entry.actor);
     else if (entry.type === 'heal') borderLeftColor = '#84cc16';
     else if (entry.type === 'result') borderLeftColor = entry.detail.includes('승리') ? '#84cc16' : '#ef4444';
     else if (isEvasion) borderLeftColor = '#2dd4bf';
@@ -253,24 +268,15 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     let bgClass = '';
     if (isCurrent) bgClass = 'bg-primary/10 ring-1 ring-primary/40';
 
-    // Actor/target colors
-    const getNameColor = (name: string | undefined) => {
-      if (!name) return undefined;
-      if (name.includes('몬스터')) return MONSTER_COLOR;
-      if (name === '시스템') return undefined;
-      return PARTY_COLOR;
-    };
-
     // Build structured content
     let damageText = '';
     let hpText = '';
 
-    if (entry.type === 'hero_attack' || entry.type === 'monster_attack') {
+    if (entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) {
       const dmgMatch = entry.detail.match(/([\d,]+)\s*피해/);
       if (dmgMatch) damageText = `${dmgMatch[1]} 피해`;
 
-      // Extract HP info with percentage
-      const hpInfoMatch = entry.detail.match(/\((.+?HP: [\d,\-]+ \(~\d+%\))\)/);
+      const hpInfoMatch = entry.detail.match(/\((.+?HP: [\d,\-]+ \(\d+%\))\)/);
       if (hpInfoMatch) {
         hpText = `(${hpInfoMatch[1]})`;
       } else {
@@ -281,7 +287,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
     // HP percentage for color
     const getHpPctFromText = (): number => {
-      const pctMatch = hpText.match(/~(\d+)%/);
+      const pctMatch = hpText.match(/(\d+)%/);
       if (pctMatch) return parseInt(pctMatch[1]);
       return 100;
     };
@@ -309,22 +315,23 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           )}
 
           {/* Attack entries: structured format */}
-          {(entry.type === 'hero_attack' || entry.type === 'monster_attack') ? (
+          {(entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) ? (
             <>
-              {isCrit && <span className="text-yellow-400 font-bold ml-2">치명타!</span>}
-              {isAoe && !isCrit && entry.detail === '광역 공격!' && <span className="text-red-400 font-bold ml-2">광역!</span>}
-
               {damageText && (
-                <span className="font-mono font-bold text-sm text-gray-100 ml-8">{damageText}</span>
+                <span className="font-mono font-bold text-sm ml-8" style={{ color: entry.type === 'monster_attack' ? '#f87171' : '#facc15' }}>{damageText}</span>
               )}
 
               {hpText && (
                 <span className="font-mono text-sm ml-8" style={{ color: hpColor(getHpPctFromText()) }}>{hpText}</span>
               )}
             </>
+          ) : entry.type === 'monster_attack' && !entry.target ? (
+            // AOE header line
+            <span className="ml-1 text-sm text-red-400 font-bold">{entry.detail}</span>
+          ) : isEvasion ? (
+            <span className="text-teal-400 font-bold text-sm ml-8">회피</span>
           ) : (
             <span className={`ml-1 text-sm ${
-              isEvasion ? 'text-teal-400 font-bold' :
               isDeath ? 'text-red-400 font-bold' :
               entry.type === 'result' ? (entry.detail.includes('승리') ? 'text-green-400 font-bold' : 'text-red-400 font-bold') :
               'text-foreground/60'
@@ -354,8 +361,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           </div>
 
           <div className="flex items-start gap-3">
-            {/* Heroes - compact with spacing */}
-            <div className="flex-1 space-y-1.5">
+            {/* Heroes */}
+            <div className="flex-1 space-y-2">
               {activeHeroes.map(h => {
                 const hp = state.heroHp[h.name] || 0;
                 const maxHp = state.heroMaxHp[h.name] || 1;
@@ -377,8 +384,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                       {heroImg && <img src={heroImg} alt="" className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-semibold truncate" style={{ color: PARTY_COLOR }}>{h.name}</span>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-xs font-semibold truncate" style={{ color: getNameColor(h.name) }}>{h.name}</span>
                         <span className="text-xs font-mono" style={{ color: hpColor(hpPct) }}>
                           {Math.round(hp).toLocaleString()}
                         </span>
@@ -406,12 +413,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               <span className="text-lg text-muted-foreground/30">⚔</span>
             </div>
 
-            {/* Monster - compact, clickable for filter */}
+            {/* Monster */}
             <div
-              className={`w-36 shrink-0 cursor-pointer transition-all ${filter?.name === '몬스터' ? 'ring-2 ring-primary rounded-lg' : ''}`}
-              onClick={() => handleFilterClick('몬스터')}
+              className={`w-36 shrink-0 cursor-pointer transition-all ${filter?.name === monsterName || filter?.name === '몬스터' ? 'ring-2 ring-primary rounded-lg' : ''}`}
+              onClick={() => handleFilterClick(monsterName)}
             >
-              <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === '몬스터' ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
+              <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName || filter?.name === '몬스터' ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
                 <div className="text-center"><span className="text-2xl">👹</span></div>
                 <div className="text-center mb-1.5"><span className="text-xs font-bold" style={{ color: MONSTER_COLOR }}>{monsterName}</span></div>
                 <div className="text-center text-xs font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
@@ -427,9 +434,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     </span>
                   </div>
                 )}
-                {filter?.name === '몬스터' && (
+                {(filter?.name === monsterName || filter?.name === '몬스터') && (
                   <div className="text-center mt-1">
-                    <span className="text-[10px] text-primary">{filter.mode === 'attack' ? '⚔ 공격' : '🛡 피격'}</span>
+                    <span className="text-[10px] text-primary">{filter?.mode === 'attack' ? '⚔ 공격' : '🛡 피격'}</span>
                   </div>
                 )}
               </div>
@@ -477,7 +484,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <tbody>
               {heroStatsData.map((hs, idx) => (
                 <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                  <td className="py-1.5 px-1 font-medium truncate max-w-[80px] text-center text-sm" style={{ color: PARTY_COLOR }}>{hs.name}</td>
+                  <td className="py-1.5 px-1 font-medium truncate max-w-[80px] text-center text-sm" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
                   <td className="py-1.5 px-1 text-center font-mono text-red-400 text-sm">{formatNumber(hs.dmg)}</td>
                   <td className="py-1.5 px-1 text-center font-mono text-orange-400 text-sm">{hs.dmgPct.toFixed(1)}%</td>
                   <td className="py-1.5 px-1 text-center font-mono text-yellow-400 text-sm">{hs.targeted}</td>
@@ -492,17 +499,19 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
       {/* RIGHT: Grouped Log */}
       <div className="flex flex-col overflow-hidden" style={{ height: '85vh' }}>
-        {/* Log toolbar */}
-        <div className="flex items-center gap-2 mb-1 px-1">
-          {filter && (
-            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-primary/10 rounded text-xs text-primary">
-              <span className="font-medium">
-                {filter.mode === 'attack' ? '⚔' : '🛡'} {filter.name} {filter.mode === 'attack' ? '공격' : '피격'}
-              </span>
-              <button onClick={() => setFilter(null)} className="ml-1 text-muted-foreground hover:text-foreground text-sm">✕</button>
-            </div>
-          )}
-          <div className="ml-auto">
+        {/* Filter bar */}
+        {filter && (
+          <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-t text-xs text-primary mb-0.5">
+            <span className="font-medium">
+              {filter.mode === 'attack' ? '⚔' : '🛡'} {filter.name} {filter.mode === 'attack' ? '공격' : '피격'}
+            </span>
+            <button onClick={() => setFilter(null)} className="ml-1 text-muted-foreground hover:text-foreground text-sm">✕</button>
+          </div>
+        )}
+
+        <div ref={logScrollRef} className="overflow-y-auto rounded border border-border/30 bg-secondary/20 flex-1 min-h-0">
+          {/* Bright toggle inside log box */}
+          <div className="sticky top-0 z-20 flex justify-end px-2 py-1 bg-secondary/80 border-b border-border/20">
             <Button
               variant={showAllBright ? 'default' : 'outline'}
               size="sm"
@@ -513,29 +522,24 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               전체 밝게
             </Button>
           </div>
-        </div>
 
-        <div ref={logScrollRef} className="overflow-y-auto rounded border border-border/30 bg-secondary/20 flex-1 min-h-0">
           {roundGroups.map(group => {
             if (filter && !isRoundRelevant(group)) return null;
             const isCollapsed = collapsedRounds.has(group.round);
 
             return (
               <div key={group.round} className="border-b border-border/20">
-                {/* Round header - brighter */}
+                {/* Round header */}
                 <div
-                  className="flex items-center gap-2 px-3 py-1.5 bg-secondary/60 cursor-pointer hover:bg-secondary/80 sticky top-0 z-10"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-primary/5 cursor-pointer hover:bg-primary/10 sticky top-[30px] z-10"
                   onClick={() => toggleRoundCollapse(group.round)}
                 >
-                  {isCollapsed ? <ChevronRight className="w-3.5 h-3.5 text-foreground/70" /> : <ChevronDown className="w-3.5 h-3.5 text-foreground/70" />}
+                  {isCollapsed ? <ChevronRight className="w-3.5 h-3.5 text-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-foreground" />}
                   <span className="text-sm font-bold text-foreground">라운드 {group.round}</span>
                   <span className="text-xs text-muted-foreground ml-auto">{group.entries.length}건</span>
                 </div>
-                {/* Round entries */}
                 {!isCollapsed && group.entries.map(({ entry, idx }) => {
-                  if (filter && !entryMatchesFilter(entry)) {
-                    return null;
-                  }
+                  if (filter && !entryMatchesFilter(entry)) return null;
                   return renderLogEntry(entry, idx);
                 })}
               </div>

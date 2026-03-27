@@ -1597,6 +1597,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   const heroIsDaimyoFlag: boolean[] = [];
   const heroSharkVal: number[] = [];
   const heroDinoVal: number[] = [];
+  const heroArmadilloVal: number[] = [];
+  const heroIsClericFlag: boolean[] = [];
+  const heroIsBishopFlag: boolean[] = [];
   const heroTier: number[] = [];
 
   for (let i = 0; i < numHeroes; i++) {
@@ -1656,6 +1659,17 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       return name.includes('공룡') || name.includes('Dinosaur') || name.includes('T-Rex') || name.includes('티렉스') ? sum + (typeof sp === 'object' ? (sp?.value || sp?.atk || 0) : 0) : sum;
     }, 0);
     heroDinoVal.push(dinoV);
+
+    // Armadillo spirit (crit survival)
+    const armadilloV = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      return name.includes('아르마딜로') || name.includes('Armadillo') ? sum + (typeof sp === 'object' ? (sp?.value || 15) : 15) : sum;
+    }, 0);
+    heroArmadilloVal.push(armadilloV);
+
+    // Class flags for crit survival
+    heroIsClericFlag.push(isClass(h, '클레릭', 'Cleric'));
+    heroIsBishopFlag.push(isClass(h, '비숍', 'Bishop', '주교', '성직자'));
   }
 
   // Berserker HP thresholds
@@ -1757,11 +1771,12 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     const isAoe = Math.random() < mobAoeChance && heroesAlive > 1;
 
     if (isAoe) {
-      log.push({ round, type: 'monster_attack', actor: mobDisplayName, detail: `광역 공격!` });
+      const aoeDmgBase = Math.ceil(mobDamage * mobAoeDmgRatio);
+      log.push({ round, type: 'monster_attack', actor: mobDisplayName, detail: `광역 공격! (기본 ${formatNum(aoeDmgBase)} 피해)` });
       for (let i = 0; i < numHeroes; i++) {
         if (heroHp[i] <= 0) continue;
         if (Math.random() < Math.max(0, heroEva[i])) {
-          log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[i].name, detail: `${activeHeroes[i].name} 회피 성공!` });
+          log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[i].name, detail: `회피` });
           continue;
         }
         // Ninja/Sensei lose innate on hit
@@ -1769,17 +1784,24 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
           heroAtkVal[i] = ninjaBaseAtk[i];
           heroEva[i] = ninjaBaseEva[i];
           lostInnateRound[i] = round;
-          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `피격! 고유 스킬 소실` });
+          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `피격! 고유 스킬 소실 (ATK -30%, EVA -15%)` });
         }
         // Lord protection (single target only, skip for AOE)
         const negEvaBonus = (heroEva[i] < 0 && isExtreme) ? -0.25 * heroEva[i] : 0;
         const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
-        const aoeDmg = Math.ceil(mobDamage * mobAoeDmgRatio);
-        const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmg, mobCap);
-        const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmg) : normalDmg;
+        const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmgBase, mobCap);
+        const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
         heroHp[i] -= dmg;
+        // Crit survival check (armadillo spirit)
+        if (heroHp[i] <= 0 && heroArmadilloVal[i] > 0) {
+          const armadilloChance = heroArmadilloVal[i] / 100;
+          if (Math.random() < armadilloChance) {
+            heroHp[i] = 1;
+            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `치명타 생존 발동! HP 1로 생존` });
+          }
+        }
         const hpPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
-        log.push({ round, type: 'monster_attack', actor: mobDisplayName, target: activeHeroes[i].name, detail: `${isCrit ? '치명타! ' : ''}${formatNum(dmg)} 피해 (${activeHeroes[i].name} HP: ${formatNum(Math.max(0, heroHp[i]))} (~${hpPct.toFixed(0)}%))` });
+        log.push({ round, type: 'monster_attack', actor: mobDisplayName, target: activeHeroes[i].name, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${activeHeroes[i].name} HP: ${formatNum(Math.max(0, heroHp[i]))} (${hpPct.toFixed(0)}%))` });
         if (heroHp[i] <= 0) { heroesAlive--; log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `사망!` }); }
       }
     } else {
@@ -1807,22 +1829,30 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
 
       if (Math.random() < Math.max(0, heroEva[target])) {
-        log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[target].name, detail: `${activeHeroes[target].name} 회피 성공!` });
+        log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[target].name, detail: `회피` });
       } else {
         // Ninja/Sensei lose innate on hit
         if ((heroIsNinjaFlag[target] || heroIsSenseiFlag[target]) && lostInnateRound[target] < 0) {
           heroAtkVal[target] = ninjaBaseAtk[target];
           heroEva[target] = ninjaBaseEva[target];
           lostInnateRound[target] = round;
-          log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `피격! 고유 스킬 소실` });
+          log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `피격! 고유 스킬 소실 (ATK -30%, EVA -15%)` });
         }
         const negEvaBonus = (heroEva[target] < 0 && isExtreme) ? -0.25 * heroEva[target] : 0;
         const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
         const normalDmg = calcDamageTaken(heroDefVal[target], mobDamage, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, mobDamage) : normalDmg;
         heroHp[target] -= dmg;
+        // Crit survival check
+        if (heroHp[target] <= 0 && heroArmadilloVal[target] > 0) {
+          const armadilloChance = heroArmadilloVal[target] / 100;
+          if (Math.random() < armadilloChance) {
+            heroHp[target] = 1;
+            log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `치명타 생존 발동! HP 1로 생존` });
+          }
+        }
         const hpPct = Math.max(0, heroHp[target] / heroMaxHp[target] * 100);
-        log.push({ round, type: 'monster_attack', actor: mobDisplayName, target: activeHeroes[target].name, detail: `${isCrit ? '치명타! ' : ''}${formatNum(dmg)} 피해 (${activeHeroes[target].name} HP: ${formatNum(Math.max(0, heroHp[target]))} (~${hpPct.toFixed(0)}%))` });
+        log.push({ round, type: 'monster_attack', actor: mobDisplayName, target: activeHeroes[target].name, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${activeHeroes[target].name} HP: ${formatNum(Math.max(0, heroHp[target]))} (${hpPct.toFixed(0)}%))` });
         if (heroHp[target] <= 0) { heroesAlive--; log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `사망!` }); }
       }
     }
@@ -1878,7 +1908,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
 
       const mobPct = Math.max(0, mobHpCurrent / totalMobHp * 100);
-      log.push({ round, type: 'hero_attack', actor: activeHeroes[i].name, target: mobDisplayName, detail: `${isCrit ? '치명타! ' : ''}${formatNum(dmg)} 피해 (${mobDisplayName} HP: ${formatNum(Math.max(0, mobHpCurrent))} (~${mobPct.toFixed(0)}%))` });
+      log.push({ round, type: 'hero_attack', actor: activeHeroes[i].name, target: mobDisplayName, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${mobDisplayName} HP: ${formatNum(Math.max(0, mobHpCurrent))} (${mobPct.toFixed(0)}%))` });
       if (mobHpCurrent <= 0) break;
     }
 
