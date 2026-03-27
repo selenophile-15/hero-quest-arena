@@ -490,7 +490,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         </div>
 
         {/* Combat Stats - with extra spacing */}
-        <div className="mt-4 rounded border border-border/30 bg-secondary/20 p-2.5 flex-1 overflow-y-auto min-h-0">
+        <div className="mt-4 rounded border border-border/30 bg-secondary/20 p-2.5 flex-1 overflow-y-auto min-h-0 shrink">
           <div className="text-sm font-bold text-foreground mb-1.5">📊 전투 통계</div>
           <table className="w-full text-sm">
             <thead>
