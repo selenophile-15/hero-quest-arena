@@ -770,17 +770,26 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     
     activeHeroes.forEach(h => {
       if (!barrierEl) return;
-      const elVal = h.equipmentElements?.[barrierEl] || 0;
-      // "Any" element = 50% effectiveness
-      if (h.element === barrierEl || h.element === '모든 원소' || h.element === '전체') {
+      let elVal = h.equipmentElements?.[barrierEl] || 0;
+      // Spell Knight / 마법검 / 스펠나이트: can use any element but at 50% effectiveness
+      const isSpellKnight = isClass(h, '마법검', '스펠나이트', 'Spellblade', 'Spellknight');
+      if (isSpellKnight) {
+        // Sum all element values and apply 50%
+        const allElements = h.equipmentElements || {};
+        const totalElVal = Object.values(allElements).reduce((s: number, v: number) => s + (v || 0), 0);
+        elVal = Math.floor(totalElVal * 0.5);
+      } else if (h.element === barrierEl || h.element === '모든 원소' || h.element === '전체') {
+        // Matching element uses full value
         totalBarrierDmg += elVal;
+        return;
       } else if (barrierEl === '랜덤') {
-        // Random barrier - use all element values at 100%
         totalBarrierDmg += elVal;
+        return;
       } else {
-        // Check if hero has matching element through equipment
         totalBarrierDmg += h.equipmentElements?.[barrierEl] || 0;
+        return;
       }
+      totalBarrierDmg += elVal;
     });
 
     // Rudo barrier bonus (tier 3+: 50% more barrier damage)
