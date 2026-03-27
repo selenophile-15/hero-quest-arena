@@ -810,7 +810,7 @@ export default function QuestSimulation() {
                     <div className="flex items-center justify-center gap-4">
                       {barrierElements.map((el, i) => {
                         const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                        const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
+                        const heroSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
                         const required = currentQuest.barrier!.hp;
                         const isMet = heroSum >= required;
                         return (
