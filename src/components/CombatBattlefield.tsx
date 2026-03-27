@@ -85,9 +85,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   }, [monsterName]);
 
   const getNameColor = (name: string | undefined): string => {
-    if (!name) return '#d1d5db';
-    if (name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터')) return MONSTER_COLOR;
-    if (name === '시스템') return '#d1d5db';
+    if (!name) return isLight ? '#4b5563' : '#d1d5db';
+    if (name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터')) return C.monster;
+    if (name === '시스템') return isLight ? '#4b5563' : '#d1d5db';
     return nameColorMap[name] || '#d1d5db';
   };
 
