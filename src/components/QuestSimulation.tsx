@@ -12,6 +12,17 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
 import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
+
+// 마법검/스펠나이트: all elements at 50% effectiveness for barriers
+const SPELLKNIGHT_CLASSES = ['마법검', '스펠나이트'];
+function getHeroBarrierContribution(h: Hero, barrierEl: string): number {
+  if (SPELLKNIGHT_CLASSES.includes(h.heroClass)) {
+    const allVals = Object.values(h.equipmentElements || {});
+    const total = allVals.reduce((a, b) => a + b, 0);
+    return Math.floor(total * 0.5);
+  }
+  return h.equipmentElements?.[barrierEl] || 0;
+}
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
