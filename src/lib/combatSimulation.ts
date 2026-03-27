@@ -1659,6 +1659,17 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       return name.includes('공룡') || name.includes('Dinosaur') || name.includes('T-Rex') || name.includes('티렉스') ? sum + (typeof sp === 'object' ? (sp?.value || sp?.atk || 0) : 0) : sum;
     }, 0);
     heroDinoVal.push(dinoV);
+
+    // Armadillo spirit (crit survival)
+    const armadilloV = spirits.reduce((sum: number, sp: any) => {
+      const name = typeof sp === 'string' ? sp : sp?.name || '';
+      return name.includes('아르마딜로') || name.includes('Armadillo') ? sum + (typeof sp === 'object' ? (sp?.value || 15) : 15) : sum;
+    }, 0);
+    heroArmadilloVal.push(armadilloV);
+
+    // Class flags for crit survival
+    heroIsClericFlag.push(isClass(h, '클레릭', 'Cleric'));
+    heroIsBishopFlag.push(isClass(h, '비숍', 'Bishop', '주교', '성직자'));
   }
 
   // Berserker HP thresholds
