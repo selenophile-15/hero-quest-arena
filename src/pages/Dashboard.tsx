@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
-import { Sword, Swords, Trophy, Palette, Sun, Moon } from 'lucide-react';
+import { Sword, Swords, Trophy, Sun, Moon } from 'lucide-react';
 import { useTheme, ThemeMode } from '@/hooks/use-theme';
 import {
   DropdownMenu,
