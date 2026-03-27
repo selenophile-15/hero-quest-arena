@@ -1746,12 +1746,12 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
-    // ─── Shark spirit activation (HP <= 50%) ───
+    // ─── Shark spirit activation (monster HP <= 50%) ───
+    const mobHpPctNow = mobHpCurrent / totalMobHp;
     for (let i = 0; i < numHeroes; i++) {
       if (heroSharkVal[i] <= 0 || heroHp[i] <= 0) continue;
-      const hpPct = heroHp[i] / heroMaxHp[i];
-      if (hpPct <= 0.5) {
-        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `상어 영혼 발동! (HP ${(hpPct * 100).toFixed(0)}%)` });
+      if (mobHpPctNow <= 0.5) {
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `상어 영혼 발동! (적 HP ${(mobHpPctNow * 100).toFixed(0)}%)` });
       }
     }
 
