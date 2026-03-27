@@ -1884,9 +1884,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         dinoBonus = heroDinoVal[i];
       }
 
-      // Shark bonus (HP <= 50%)
+      // Shark bonus (monster HP <= 50%)
       let sharkBonus = 0;
-      if (heroSharkVal[i] > 0 && heroHp[i] / heroMaxHp[i] <= 0.5) {
+      if (heroSharkVal[i] > 0 && mobHpCurrent / totalMobHp <= 0.5) {
         sharkBonus = heroSharkVal[i];
       }
 
