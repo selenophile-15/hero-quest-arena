@@ -770,17 +770,26 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     
     activeHeroes.forEach(h => {
       if (!barrierEl) return;
-      const elVal = h.equipmentElements?.[barrierEl] || 0;
-      // "Any" element = 50% effectiveness
-      if (h.element === barrierEl || h.element === '모든 원소' || h.element === '전체') {
+      let elVal = h.equipmentElements?.[barrierEl] || 0;
+      // Spell Knight / 마법검 / 스펠나이트: can use any element but at 50% effectiveness
+      const isSpellKnight = isClass(h, '마법검', '스펠나이트', 'Spellblade', 'Spellknight');
+      if (isSpellKnight) {
+        // Sum all element values and apply 50%
+        const allElements = h.equipmentElements || {};
+        const totalElVal = Object.values(allElements).reduce((s: number, v: number) => s + (v || 0), 0);
+        elVal = Math.floor(totalElVal * 0.5);
+      } else if (h.element === barrierEl || h.element === '모든 원소' || h.element === '전체') {
+        // Matching element uses full value
         totalBarrierDmg += elVal;
+        return;
       } else if (barrierEl === '랜덤') {
-        // Random barrier - use all element values at 100%
         totalBarrierDmg += elVal;
+        return;
       } else {
-        // Check if hero has matching element through equipment
         totalBarrierDmg += h.equipmentElements?.[barrierEl] || 0;
+        return;
       }
+      totalBarrierDmg += elVal;
     });
 
     // Rudo barrier bonus (tier 3+: 50% more barrier damage)
@@ -1557,12 +1566,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   const mobAoeChance = (monster.aoeChance / 100) * mobAoeChanceMod;
   const baseMobCritChance = 0.10;
 
-  // Barrier check
+  // Barrier check (with spell knight support)
   let barrierMod = 1.0;
   if (monster.barrier && monster.barrier.hp > 0 && monster.barrierElement) {
     let totalEl = 0;
     activeHeroes.forEach(h => {
-      totalEl += h.equipmentElements?.[monster.barrierElement!] || 0;
+      const isSpellKnight = isClass(h, '마법검', '스펠나이트', 'Spellblade', 'Spellknight');
+      if (isSpellKnight) {
+        const allElements = h.equipmentElements || {};
+        const totalElVal = Object.values(allElements).reduce((s: number, v: number) => s + (v || 0), 0);
+        totalEl += Math.floor(totalElVal * 0.5);
+      } else {
+        totalEl += h.equipmentElements?.[monster.barrierElement!] || 0;
+      }
     });
     if (totalEl < monster.barrier.hp) {
       barrierMod = 0.2;
@@ -1746,23 +1762,23 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
-    // ─── Shark spirit activation (HP <= 50%) ───
+    // ─── Shark spirit activation (monster HP <= 50%) ───
+    const mobHpPctNow = mobHpCurrent / totalMobHp;
     for (let i = 0; i < numHeroes; i++) {
       if (heroSharkVal[i] <= 0 || heroHp[i] <= 0) continue;
-      const hpPct = heroHp[i] / heroMaxHp[i];
-      if (hpPct <= 0.5) {
-        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `상어 영혼 발동! (HP ${(hpPct * 100).toFixed(0)}%)` });
+      if (mobHpPctNow <= 0.5) {
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `상어 영혼 발동! (적 HP ${(mobHpPctNow * 100).toFixed(0)}%)` });
       }
     }
 
-    // ─── Ninja/Sensei innate recovery check ───
+    // ─── Sensei innate recovery check (ninja loses permanently, sensei recovers after 2 turns) ───
     for (let i = 0; i < numHeroes; i++) {
-      if (!(heroIsNinjaFlag[i] || heroIsSenseiFlag[i]) || heroHp[i] <= 0) continue;
+      if (!heroIsSenseiFlag[i] || heroHp[i] <= 0) continue;
       if (lostInnateRound[i] > 0 && round >= lostInnateRound[i] + 2) {
         heroAtkVal[i] = ninjaBaseAtk[i] * 1.3;
         heroEva[i] = ninjaBaseEva[i] + 0.15;
         lostInnateRound[i] = -99;
-        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `고유 스킬 회복! ATK/EVA 복구` });
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `센세이 고유 스킬 회복! ATK/EVA 복구 (2턴 경과)` });
       }
     }
 
@@ -1792,12 +1808,23 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmgBase, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
         heroHp[i] -= dmg;
-        // Crit survival check (armadillo spirit)
-        if (heroHp[i] <= 0 && heroArmadilloVal[i] > 0) {
-          const armadilloChance = heroArmadilloVal[i] / 100;
-          if (Math.random() < armadilloChance) {
+        // Fatal blow survival check (armadillo spirit, cleric, bishop)
+        if (heroHp[i] <= 0) {
+          let survived = false;
+          if (heroIsClericFlag[i] || heroIsBishopFlag[i]) {
             heroHp[i] = 1;
-            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `치명타 생존 발동! HP 1로 생존` });
+            survived = true;
+            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! HP 1로 생존` });
+            // Disable further survival for this hero
+            heroIsClericFlag[i] = false;
+            heroIsBishopFlag[i] = false;
+          } else if (heroArmadilloVal[i] > 0) {
+            const armadilloChance = heroArmadilloVal[i] / 100;
+            if (Math.random() < armadilloChance) {
+              heroHp[i] = 1;
+              survived = true;
+              log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `아르마딜로 치명타 생존 발동! HP 1로 생존` });
+            }
           }
         }
         const hpPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
@@ -1843,12 +1870,22 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const normalDmg = calcDamageTaken(heroDefVal[target], mobDamage, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, mobDamage) : normalDmg;
         heroHp[target] -= dmg;
-        // Crit survival check
-        if (heroHp[target] <= 0 && heroArmadilloVal[target] > 0) {
-          const armadilloChance = heroArmadilloVal[target] / 100;
-          if (Math.random() < armadilloChance) {
+        // Fatal blow survival check (cleric/bishop, armadillo)
+        if (heroHp[target] <= 0) {
+          let survived = false;
+          if (heroIsClericFlag[target] || heroIsBishopFlag[target]) {
             heroHp[target] = 1;
-            log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `치명타 생존 발동! HP 1로 생존` });
+            survived = true;
+            log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${heroIsClericFlag[target] ? '클레릭' : '비숍'} 치명타 생존 발동! HP 1로 생존` });
+            heroIsClericFlag[target] = false;
+            heroIsBishopFlag[target] = false;
+          } else if (heroArmadilloVal[target] > 0) {
+            const armadilloChance = heroArmadilloVal[target] / 100;
+            if (Math.random() < armadilloChance) {
+              heroHp[target] = 1;
+              survived = true;
+              log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `아르마딜로 치명타 생존 발동! HP 1로 생존` });
+            }
           }
         }
         const hpPct = Math.max(0, heroHp[target] / heroMaxHp[target] * 100);
@@ -1884,9 +1921,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         dinoBonus = heroDinoVal[i];
       }
 
-      // Shark bonus (HP <= 50%)
+      // Shark bonus (monster HP <= 50%)
       let sharkBonus = 0;
-      if (heroSharkVal[i] > 0 && heroHp[i] / heroMaxHp[i] <= 0.5) {
+      if (heroSharkVal[i] > 0 && mobHpCurrent / totalMobHp <= 0.5) {
         sharkBonus = heroSharkVal[i];
       }
 

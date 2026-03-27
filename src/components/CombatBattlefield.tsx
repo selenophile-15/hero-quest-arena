@@ -3,7 +3,7 @@ import { CombatLogEntry } from '@/lib/combatSimulation';
 import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, ChevronDown, ChevronRight, Eye, Swords, Shield, Flame } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
 
 interface Props {
@@ -19,7 +19,7 @@ const MONSTER_COLOR = '#facc15'; // yellow
 // Class-line based colors
 const CLASS_LINE_COLORS: Record<string, string> = {
   '전사': '#f87171',   // red-400
-  '로그': '#a3e635',   // lime-400 (yellowish-green)
+  '로그': '#a3e635',   // lime-400
   '주문술사': '#60a5fa', // blue-400
 };
 const CHAMPION_COLOR = '#c4b5fd'; // violet-300
@@ -37,9 +37,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const [currentIdx, setCurrentIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
-  const [filter, setFilter] = useState<{ name: string; mode: 'attack' | 'defense' } | null>(null);
+  const [filter, setFilter] = useState<{ name: string } | null>(null);
   const [showAllBright, setShowAllBright] = useState(false);
-  const [collapsedRounds, setCollapsedRounds] = useState<Set<number>>(new Set());
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const logScrollRef = useRef<HTMLDivElement>(null);
 
@@ -58,11 +57,29 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     return map;
   }, [activeHeroes]);
 
+  // Extract the base monster name (without mini-boss prefix) for matching
+  const baseMonsterName = useMemo(() => {
+    const prefixes = ['거대한', '민첩한', '흉포한', '부유한', '전설적인'];
+    let name = monsterName;
+    for (const p of prefixes) {
+      if (name.startsWith(p + ' ')) {
+        name = name.slice(p.length + 1);
+        break;
+      }
+    }
+    return name;
+  }, [monsterName]);
+
   const getNameColor = (name: string | undefined): string => {
     if (!name) return '#d1d5db';
-    if (name.includes('몬스터') || name === monsterName) return MONSTER_COLOR;
+    if (name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터')) return MONSTER_COLOR;
     if (name === '시스템') return '#d1d5db';
     return nameColorMap[name] || '#d1d5db';
+  };
+
+  const isMonsterName = (name: string | undefined): boolean => {
+    if (!name) return false;
+    return name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터');
   };
 
   // Group log entries by round
@@ -83,6 +100,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     const stats: Record<string, { dmg: number; targeted: number; dodged: number; singleHits: number }> = {};
     activeHeroes.forEach(h => { stats[h.name] = { dmg: 0, targeted: 0, dodged: 0, singleHits: 0 }; });
 
+    // Track AOE rounds
     const aoeRounds = new Set<number>();
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
       const entry = log[i];
@@ -135,7 +153,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, '')));
         const dmgMatch = entry.detail.match(/([\d,]+) 피해/);
         if (dmgMatch && i === currentIdx) {
-          actionEffects.push({ target: entry.target, value: `-${dmgMatch[1]}`, color: entry.detail.includes('치명타') ? 'text-orange-400' : 'text-red-400', key: i });
+          actionEffects.push({ target: entry.target, value: `-${dmgMatch[1]}`, color: entry.detail.includes('치명타') ? 'text-yellow-400' : 'text-red-400', key: i });
         }
       }
       if (entry.type === 'hero_attack') {
@@ -179,38 +197,27 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const isResult = state.lastAction?.type === 'result';
   const isWin = isResult && state.lastAction?.detail.includes('승리');
 
+  // Single toggle filter: click once = filter, click again = clear
   const handleFilterClick = (name: string) => {
-    if (!filter || filter.name !== name) {
-      setFilter({ name, mode: 'attack' });
-    } else if (filter.mode === 'attack') {
-      setFilter({ name, mode: 'defense' });
-    } else {
+    if (filter?.name === name) {
       setFilter(null);
+    } else {
+      setFilter({ name });
     }
   };
 
+  // Match filter: show entries where actor OR target matches the filter name
   const entryMatchesFilter = useCallback((entry: CombatLogEntry) => {
     if (!filter) return true;
-    const { name, mode } = filter;
-    if (mode === 'attack') {
-      return entry.actor === name || entry.actor?.includes(name) || entry.detail.includes(name);
-    } else {
-      return entry.target === name || entry.detail.includes(name);
-    }
+    const { name } = filter;
+    return entry.actor === name || entry.target === name
+      || entry.actor?.includes(name) || entry.detail.includes(name);
   }, [filter]);
 
   const isRoundRelevant = useCallback((group: { entries: { entry: CombatLogEntry }[] }) => {
     if (!filter) return true;
     return group.entries.some(({ entry }) => entryMatchesFilter(entry));
   }, [filter, entryMatchesFilter]);
-
-  const toggleRoundCollapse = (round: number) => {
-    setCollapsedRounds(prev => {
-      const next = new Set(prev);
-      if (next.has(round)) next.delete(round); else next.add(round);
-      return next;
-    });
-  };
 
   // Parse log entry into structured display
   const renderLogEntry = (entry: CombatLogEntry, idx: number) => {
@@ -226,7 +233,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     const isSetup = entry.type === 'event' && !isEvasion && !isDeath;
     const isAoe = entry.detail.includes('광역 공격');
 
-    // Icon selection - all clean Lucide icons
+    // Icon selection
     let icon: React.ReactNode;
     if (entry.type === 'result') {
       icon = <span className="text-base">🏁</span>;
@@ -238,12 +245,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       icon = <Settings className="w-4 h-4 text-muted-foreground" />;
     } else if (entry.type === 'monster_attack' && isAoe) {
       icon = <Flame className="w-4 h-4 text-red-500" />;
+    } else if (entry.type === 'monster_attack' && isCrit) {
+      icon = <Flame className="w-4 h-4 text-yellow-400" />;
     } else if (entry.type === 'monster_attack') {
-      icon = <Shield className="w-4 h-4 text-yellow-400" />;
+      icon = <Flame className="w-4 h-4 text-foreground/60" />;
     } else if (entry.type === 'hero_attack' && isCrit) {
       icon = <Zap className="w-4 h-4 text-yellow-400" />;
     } else if (entry.type === 'hero_attack') {
-      icon = <Swords className="w-4 h-4 text-foreground/60" />;
+      icon = <Zap className="w-4 h-4 text-foreground/60" />;
     } else if (entry.type === 'heal') {
       icon = <span className="text-base">💚</span>;
     } else {
@@ -292,6 +301,19 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       return 100;
     };
 
+    // Damage text color logic
+    const getDamageColor = (): string => {
+      if (entry.type === 'hero_attack') {
+        return isCrit ? '#facc15' : '#e5e7eb'; // yellow for crit, white/gray for normal
+      }
+      if (entry.type === 'monster_attack') {
+        if (isCrit) return '#facc15'; // yellow for crit
+        if (isAoe) return '#f87171'; // red for AOE
+        return '#e5e7eb'; // white for normal
+      }
+      return '#e5e7eb';
+    };
+
     return (
       <div
         key={idx}
@@ -318,7 +340,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           {(entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) ? (
             <>
               {damageText && (
-                <span className="font-mono font-bold text-sm ml-8" style={{ color: entry.type === 'monster_attack' ? '#f87171' : '#facc15' }}>{damageText}</span>
+                <span className="font-mono font-bold text-sm ml-8" style={{ color: getDamageColor() }}>{damageText}</span>
               )}
 
               {hpText && (
@@ -401,7 +423,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                       <span className={`text-xs font-bold font-mono ${effect.color} animate-bounce shrink-0`}>{effect.value}</span>
                     )}
                     {isFiltered && (
-                      <span className="text-[10px] text-primary shrink-0">{filter?.mode === 'attack' ? '⚔' : '🛡'}</span>
+                      <span className="text-[10px] text-primary shrink-0">🔍</span>
                     )}
                   </div>
                 );
@@ -415,10 +437,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
             {/* Monster */}
             <div
-              className={`w-36 shrink-0 cursor-pointer transition-all ${filter?.name === monsterName || filter?.name === '몬스터' ? 'ring-2 ring-primary rounded-lg' : ''}`}
+              className={`w-36 shrink-0 cursor-pointer transition-all ${filter?.name === monsterName ? 'ring-2 ring-primary rounded-lg' : ''}`}
               onClick={() => handleFilterClick(monsterName)}
             >
-              <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName || filter?.name === '몬스터' ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
+              <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
                 <div className="text-center"><span className="text-2xl">👹</span></div>
                 <div className="text-center mb-1.5"><span className="text-xs font-bold" style={{ color: MONSTER_COLOR }}>{monsterName}</span></div>
                 <div className="text-center text-xs font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
@@ -434,9 +456,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     </span>
                   </div>
                 )}
-                {(filter?.name === monsterName || filter?.name === '몬스터') && (
+                {filter?.name === monsterName && (
                   <div className="text-center mt-1">
-                    <span className="text-[10px] text-primary">{filter?.mode === 'attack' ? '⚔ 공격' : '🛡 피격'}</span>
+                    <span className="text-[10px] text-primary">🔍 필터</span>
                   </div>
                 )}
               </div>
@@ -467,8 +489,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           <span className="text-[10px] text-muted-foreground">{currentIdx + 1}/{log.length}</span>
         </div>
 
-        {/* Combat Stats */}
-        <div className="rounded border border-border/30 bg-secondary/20 p-2.5 flex-1 overflow-y-auto min-h-0">
+        {/* Combat Stats - with extra spacing */}
+        <div className="mt-4 rounded border border-border/30 bg-secondary/20 p-2.5 flex-1 overflow-y-auto min-h-0">
           <div className="text-sm font-bold text-foreground mb-1.5">📊 전투 통계</div>
           <table className="w-full text-sm">
             <thead>
@@ -497,21 +519,29 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         </div>
       </div>
 
-      {/* RIGHT: Grouped Log */}
+      {/* RIGHT: Log */}
       <div className="flex flex-col overflow-hidden" style={{ height: '85vh' }}>
         {/* Filter bar */}
         {filter && (
           <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-t text-xs text-primary mb-0.5">
-            <span className="font-medium">
-              {filter.mode === 'attack' ? '⚔' : '🛡'} {filter.name} {filter.mode === 'attack' ? '공격' : '피격'}
-            </span>
+            <span className="font-medium">🔍 {filter.name}</span>
             <button onClick={() => setFilter(null)} className="ml-1 text-muted-foreground hover:text-foreground text-sm">✕</button>
           </div>
         )}
 
         <div ref={logScrollRef} className="overflow-y-auto rounded border border-border/30 bg-secondary/20 flex-1 min-h-0">
-          {/* Bright toggle inside log box */}
-          <div className="sticky top-0 z-20 flex justify-end px-2 py-1 bg-secondary/80 border-b border-border/20">
+          {/* Controls inside log box */}
+          <div className="sticky top-0 z-20 flex justify-end gap-1.5 px-2 py-1 bg-secondary/80 border-b border-border/20">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs gap-1 h-6"
+              onClick={() => { setCurrentIdx(log.length - 1); setPlaying(false); }}
+              title="끝까지 진행"
+            >
+              <FastForward className="w-3 h-3" />
+              진행 완료
+            </Button>
             <Button
               variant={showAllBright ? 'default' : 'outline'}
               size="sm"
@@ -525,20 +555,15 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
           {roundGroups.map(group => {
             if (filter && !isRoundRelevant(group)) return null;
-            const isCollapsed = collapsedRounds.has(group.round);
 
             return (
               <div key={group.round} className="border-b border-border/20">
-                {/* Round header */}
-                <div
-                  className="flex items-center gap-2 px-3 py-1.5 bg-primary/5 cursor-pointer hover:bg-primary/10 sticky top-[30px] z-10"
-                  onClick={() => toggleRoundCollapse(group.round)}
-                >
-                  {isCollapsed ? <ChevronRight className="w-3.5 h-3.5 text-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-foreground" />}
+                {/* Round header - non-collapsible, just a divider */}
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40">
                   <span className="text-sm font-bold text-foreground">라운드 {group.round}</span>
                   <span className="text-xs text-muted-foreground ml-auto">{group.entries.length}건</span>
                 </div>
-                {!isCollapsed && group.entries.map(({ entry, idx }) => {
+                {group.entries.map(({ entry, idx }) => {
                   if (filter && !entryMatchesFilter(entry)) return null;
                   return renderLogEntry(entry, idx);
                 })}
