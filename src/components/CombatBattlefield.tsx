@@ -280,9 +280,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
     // Border left color
     let borderLeftColor = 'transparent';
-    if (entry.type === 'monster_attack') borderLeftColor = MONSTER_COLOR;
+    if (entry.type === 'monster_attack') borderLeftColor = C.monster;
     else if (entry.type === 'hero_attack') borderLeftColor = getNameColor(entry.actor);
-    else if (entry.type === 'heal') borderLeftColor = '#84cc16';
+    else if (entry.type === 'heal') borderLeftColor = C.green;
     else if (entry.type === 'result') borderLeftColor = entry.detail.includes('승리') ? '#84cc16' : '#ef4444';
     else if (isEvasion) borderLeftColor = '#2dd4bf';
     else borderLeftColor = '#a3a3a3';
