@@ -1783,10 +1783,10 @@ export default function QuestSimulation() {
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>가하는 대미지</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>일반/치명 비중</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>딜링 비중</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>가하는 대미지</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>일반/치명 비중</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>딜링 비중</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">총 평균</th>
@@ -1844,10 +1844,10 @@ export default function QuestSimulation() {
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦈 상어</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦕 공룡</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={3}>⚡ 광전사</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦈 상어</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦕 공룡</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={3}>⚡ 광전사</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
@@ -1895,9 +1895,9 @@ export default function QuestSimulation() {
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>기본</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>받는 대미지</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>기본</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>받는 대미지</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">생존률</th>
@@ -1945,11 +1945,11 @@ export default function QuestSimulation() {
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20">영웅</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">총 회복량</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">턴당 회복</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">군주 보호</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">치명타 생존</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20">영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">총 회복량</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">턴당 회복</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">군주 보호</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">치명타 생존</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -2010,14 +2010,14 @@ export default function QuestSimulation() {
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-left py-1 px-2 text-muted-foreground font-medium whitespace-nowrap w-20">영웅</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">ATK</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">HP</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">DEF</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">CRIT.C</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">CRIT.D</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">CRIT.A</th>
-                            <th className="text-center py-1 px-2 text-muted-foreground font-medium">EVA</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20">영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">ATK</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">HP</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">DEF</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">CRIT.C</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">CRIT.D</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">CRIT.A</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">EVA</th>
                           </tr>
                         </thead>
                         <tbody>
