@@ -20,9 +20,9 @@ const TABS = [
 
 type TabId = typeof TABS[number]['id'];
 
-const THEMES: { id: ThemeMode; label: string; desc: string }[] = [
-  { id: 'gold', label: '🔥 골드', desc: '따뜻한 황금빛' },
-  { id: 'moonlight', label: '🌙 문라이트', desc: '은은한 푸른빛 + 연보랏빛' },
+const THEMES: { id: ThemeMode; label: string; desc: string; color: string }[] = [
+  { id: 'gold', label: '옐로우', desc: '따뜻한 황금빛', color: 'hsl(40 85% 55%)' },
+  { id: 'moonlight', label: '라벤더', desc: '은은한 푸른빛 + 연보랏빛', color: 'hsl(245 35% 72%)' },
 ];
 
 export default function Dashboard() {
