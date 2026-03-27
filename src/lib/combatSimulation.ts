@@ -1808,12 +1808,23 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmgBase, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
         heroHp[i] -= dmg;
-        // Crit survival check (armadillo spirit)
-        if (heroHp[i] <= 0 && heroArmadilloVal[i] > 0) {
-          const armadilloChance = heroArmadilloVal[i] / 100;
-          if (Math.random() < armadilloChance) {
+        // Fatal blow survival check (armadillo spirit, cleric, bishop)
+        if (heroHp[i] <= 0) {
+          let survived = false;
+          if (heroIsClericFlag[i] || heroIsBishopFlag[i]) {
             heroHp[i] = 1;
-            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `치명타 생존 발동! HP 1로 생존` });
+            survived = true;
+            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! HP 1로 생존` });
+            // Disable further survival for this hero
+            heroIsClericFlag[i] = false;
+            heroIsBishopFlag[i] = false;
+          } else if (heroArmadilloVal[i] > 0) {
+            const armadilloChance = heroArmadilloVal[i] / 100;
+            if (Math.random() < armadilloChance) {
+              heroHp[i] = 1;
+              survived = true;
+              log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `아르마딜로 치명타 생존 발동! HP 1로 생존` });
+            }
           }
         }
         const hpPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
