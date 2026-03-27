@@ -12,6 +12,17 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
 import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
+
+// 마법검/스펠나이트: all elements at 50% effectiveness for barriers
+const SPELLKNIGHT_CLASSES = ['마법검', '스펠나이트'];
+function getHeroBarrierContribution(h: Hero, barrierEl: string): number {
+  if (SPELLKNIGHT_CLASSES.includes(h.heroClass)) {
+    const allVals = Object.values(h.equipmentElements || {});
+    const total = allVals.reduce((a, b) => a + b, 0);
+    return Math.floor(total * 0.5);
+  }
+  return h.equipmentElements?.[barrierEl] || 0;
+}
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
@@ -530,7 +541,7 @@ export default function QuestSimulation() {
   const barrierBrokenGlobal = (() => {
     if (!currentQuest?.barrier || barrierElements.length === 0) return true;
     return barrierElements.every(el => {
-      const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
+      const heroSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
       return heroSum >= currentQuest.barrier!.hp;
     });
   })();
@@ -799,7 +810,7 @@ export default function QuestSimulation() {
                     <div className="flex items-center justify-center gap-4">
                       {barrierElements.map((el, i) => {
                         const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                        const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
+                        const heroSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
                         const required = currentQuest.barrier!.hp;
                         const isMet = heroSum >= required;
                         return (
@@ -1076,18 +1087,34 @@ export default function QuestSimulation() {
                     {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                       const hero = selectedHeroes[slotIdx];
                       if (!hero) return <td key={`el-empty-${slotIdx}`} className="text-center py-1" />;
+                      const isSpellKnight = SPELLKNIGHT_CLASSES.includes(hero.heroClass);
+                      if (isSpellKnight) {
+                        // Show '모든 원소' icon with total * 50%
+                        const allTotal = Object.values(hero.equipmentElements || {}).reduce((a, b) => a + b, 0);
+                        const halfTotal = Math.floor(allTotal * 0.5);
+                        return (
+                          <td key={hero.id} className="text-center py-1">
+                            <div className="flex justify-center gap-1">
+                              <div className="flex flex-col items-center">
+                                <img src="/images/elements/all.webp" alt="모든 원소" className="w-5 h-5" />
+                                <span className="text-xs font-mono font-bold text-purple-300">{halfTotal > 0 ? formatNumber(halfTotal) : '-'}</span>
+                              </div>
+                            </div>
+                          </td>
+                        );
+                      }
                       const icons = barrierElements.map(el => ({
                         el, iconPath: ELEMENT_ICON_MAP[el], val: hero.equipmentElements?.[el] || 0,
                       })).filter(b => b.val > 0);
                       return (
                         <td key={hero.id} className="text-center py-1">
                           <div className="flex justify-center gap-1">
-                            {icons.map(b => (
+                            {icons.length > 0 ? icons.map(b => (
                               <div key={b.el} className="flex flex-col items-center">
                                 {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-5 h-5" />}
                                 <span className="text-xs font-mono font-bold text-purple-300">{formatNumber(b.val)}</span>
                               </div>
-                            ))}
+                            )) : <span className="text-xs text-foreground/30">-</span>}
                           </div>
                         </td>
                       );
@@ -1272,7 +1299,7 @@ export default function QuestSimulation() {
                   const barrierBroken = (() => {
                     if (!currentQuest?.barrier || barrierElements.length === 0) return true;
                     const heroSum = selectedHeroes.reduce((sum, h) => {
-                      return sum + barrierElements.reduce((s, el) => s + (h.equipmentElements?.[el] || 0), 0);
+                      return sum + barrierElements.reduce((s, el) => s + getHeroBarrierContribution(h, el), 0);
                     }, 0);
                     return heroSum >= currentQuest.barrier.hp;
                   })();
