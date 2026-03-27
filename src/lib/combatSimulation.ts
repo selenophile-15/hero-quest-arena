@@ -1894,7 +1894,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
 
       const mobPct = Math.max(0, mobHpCurrent / totalMobHp * 100);
-      log.push({ round, type: 'hero_attack', actor: activeHeroes[i].name, target: mobDisplayName, detail: `${isCrit ? '치명타! ' : ''}${formatNum(dmg)} 피해 (${mobDisplayName} HP: ${formatNum(Math.max(0, mobHpCurrent))} (~${mobPct.toFixed(0)}%))` });
+      log.push({ round, type: 'hero_attack', actor: activeHeroes[i].name, target: mobDisplayName, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${mobDisplayName} HP: ${formatNum(Math.max(0, mobHpCurrent))} (${mobPct.toFixed(0)}%))` });
       if (mobHpCurrent <= 0) break;
     }
 
