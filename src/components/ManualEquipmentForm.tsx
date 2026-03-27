@@ -308,7 +308,7 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
   useImperativeHandle(ref, () => ({
     triggerConfirm: handleConfirm,
     isValid: () => !!(data.name.trim() && (isAurasong || isFamiliar || data.type)),
-  }));
+  }), [data, isAurasong, isFamiliar, handleConfirm]);
 
   const STAT_FIELDS = [
     { key: 'atk' as const, label: '공격력' },
