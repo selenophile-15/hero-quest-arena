@@ -2052,7 +2052,7 @@ export default function QuestSimulation() {
       <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
         <DialogContent className="max-w-[90vw] max-h-[85vh] overflow-hidden">
           <DialogHeader>
-            <DialogTitle className="text-sm">🎲 1회 전투 시각화</DialogTitle>
+            <DialogTitle className="sr-only">1회 추적 로그</DialogTitle>
           </DialogHeader>
           {combatLog && (
             <CombatBattlefield
