@@ -1793,8 +1793,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
         heroHp[i] -= dmg;
         // Crit survival check (armadillo spirit)
-        if (heroHp[i] <= 0 && heroArmadillo[i] > 0) {
-          const armadilloChance = heroArmadillo[i] / 100;
+        if (heroHp[i] <= 0 && heroArmadilloVal[i] > 0) {
+          const armadilloChance = heroArmadilloVal[i] / 100;
           if (Math.random() < armadilloChance) {
             heroHp[i] = 1;
             log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `치명타 생존 발동! HP 1로 생존` });
