@@ -1805,7 +1805,7 @@ export default function QuestSimulation() {
                             const barColors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
                             return (
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                <td className="py-1 px-2 text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
+                                <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                 <td className="py-1 px-2 text-center font-mono text-red-400 border-l border-border/20 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamagePerTurn))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.minDamageDealt))}</td>
@@ -1866,7 +1866,7 @@ export default function QuestSimulation() {
                             const brkGray = !hr.berserkerAtkBonus;
                             return (
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                <td className="py-1 px-2 text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
+                                <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-400'}`}>{sharkGray ? '-' : formatNumber(hr.sharkNormalDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-300'}`}>{sharkGray ? '-' : formatNumber(hr.sharkCritDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-green-400'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurNormalDmg)}</td>
@@ -1914,7 +1914,7 @@ export default function QuestSimulation() {
                         <tbody>
                           {displayResults.map((hr, idx) => (
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                              <td className="py-1 px-2 text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
+                              <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                               <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${
                                 hr.survivalRate >= 90 ? 'text-green-400' :
                                 hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
@@ -1955,7 +1955,7 @@ export default function QuestSimulation() {
                         <tbody>
                           {displayResults.map((hr, idx) => (
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                              <td className="py-1 px-2 text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
+                              <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                               <td className="py-1 px-2 text-center font-mono text-green-400 whitespace-nowrap">{formatNumber(Math.round(hr.totalHealingAvg))}</td>
                               <td className="py-1 px-2 text-center font-mono text-green-300 whitespace-nowrap">{hr.healPerTurn > 0 ? hr.healPerTurn.toFixed(1) : '-'}</td>
                               <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{hr.lordProtectionAvg > 0 ? hr.lordProtectionAvg.toFixed(2) : '-'}</td>
@@ -2023,7 +2023,7 @@ export default function QuestSimulation() {
                         <tbody>
                           {displayResults.map((hr, idx) => (
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                              <td className="py-1 px-2 text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
+                              <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                               <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(hr.finalAtk)}</td>
                               <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(hr.finalHp)}</td>
                               <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{formatNumber(hr.finalDef)}</td>
