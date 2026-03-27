@@ -308,13 +308,13 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
   const grandTotal = all.length;
 
   return (
-    <div className="card-fantasy p-4" style={{ backgroundColor: 'hsl(230 15% 14%)' }}>
+    <div className="card-fantasy p-4 bg-card">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-primary flex items-center gap-1.5">
           <Users size={14} />
           전체
         </h3>
-        <Button size="sm" onClick={onAdd} className="gap-1 bg-yellow-500 text-black hover:bg-yellow-400 font-semibold">
+        <Button size="sm" onClick={onAdd} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
           <Plus size={14} /> 추가
         </Button>
       </div>

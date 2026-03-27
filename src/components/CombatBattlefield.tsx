@@ -5,6 +5,7 @@ import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
+import { useTheme } from '@/hooks/use-theme';
 
 interface Props {
   log: CombatLogEntry[];
@@ -34,6 +35,9 @@ function hpColor(pct: number): string {
 }
 
 export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, onNewBattle }: Props) {
+  const { colorMode } = useTheme();
+  const isLight = colorMode === 'light';
+
   const [currentIdx, setCurrentIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
@@ -41,6 +45,16 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const [showAllBright, setShowAllBright] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const logScrollRef = useRef<HTMLDivElement>(null);
+
+  // Adaptive colors for light/dark mode
+  const C = useMemo(() => ({
+    yellow: isLight ? '#a16207' : '#facc15',
+    white: isLight ? '#374151' : '#e5e7eb',
+    red: isLight ? '#b91c1c' : '#f87171',
+    teal: isLight ? '#0f766e' : '#2dd4bf',
+    green: isLight ? '#166534' : '#84cc16',
+    monster: isLight ? '#a16207' : '#facc15',
+  }), [isLight]);
 
   const activeHeroes = heroes.filter(h => h.hp > 0);
 
@@ -71,9 +85,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   }, [monsterName]);
 
   const getNameColor = (name: string | undefined): string => {
-    if (!name) return '#d1d5db';
-    if (name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터')) return MONSTER_COLOR;
-    if (name === '시스템') return '#d1d5db';
+    if (!name) return isLight ? '#4b5563' : '#d1d5db';
+    if (name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터')) return C.monster;
+    if (name === '시스템') return isLight ? '#4b5563' : '#d1d5db';
     return nameColorMap[name] || '#d1d5db';
   };
 
@@ -266,12 +280,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
     // Border left color
     let borderLeftColor = 'transparent';
-    if (entry.type === 'monster_attack') borderLeftColor = MONSTER_COLOR;
+    if (entry.type === 'monster_attack') borderLeftColor = C.monster;
     else if (entry.type === 'hero_attack') borderLeftColor = getNameColor(entry.actor);
-    else if (entry.type === 'heal') borderLeftColor = '#84cc16';
+    else if (entry.type === 'heal') borderLeftColor = C.green;
     else if (entry.type === 'result') borderLeftColor = entry.detail.includes('승리') ? '#84cc16' : '#ef4444';
-    else if (isEvasion) borderLeftColor = '#2dd4bf';
-    else borderLeftColor = '#a3a3a3';
+    else if (isEvasion) borderLeftColor = C.teal;
+    else borderLeftColor = isLight ? '#6b7280' : '#a3a3a3';
 
     // Background
     let bgClass = '';
@@ -304,14 +318,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     // Damage text color logic
     const getDamageColor = (): string => {
       if (entry.type === 'hero_attack') {
-        return isCrit ? '#facc15' : '#e5e7eb'; // yellow for crit, white/gray for normal
+        return isCrit ? C.yellow : C.white;
       }
       if (entry.type === 'monster_attack') {
-        if (isCrit) return '#facc15'; // yellow for crit
-        if (isAoe) return '#f87171'; // red for AOE
-        return '#e5e7eb'; // white for normal
+        if (isCrit) return C.yellow;
+        if (isAoe) return C.red;
+        return C.white;
       }
-      return '#e5e7eb';
+      return C.white;
     };
 
     return (
@@ -367,9 +381,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4 overflow-hidden" style={{ height: '85vh' }}>
+    <div className="grid grid-cols-2 gap-4 h-[78vh]">
       {/* LEFT: Battlefield + Stats */}
-      <div className="flex flex-col gap-2 overflow-hidden">
+      <div className="flex flex-col gap-2 overflow-hidden min-h-0">
         {/* Compact Battlefield */}
         <div className="relative bg-secondary/30 rounded-lg p-3 border border-border/30">
           <div className="text-center mb-2">
@@ -442,7 +456,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             >
               <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
                 <div className="text-center"><span className="text-2xl">👹</span></div>
-                <div className="text-center mb-1.5"><span className="text-xs font-bold" style={{ color: MONSTER_COLOR }}>{monsterName}</span></div>
+                <div className="text-center mb-1.5"><span className="text-xs font-bold" style={{ color: C.monster }}>{monsterName}</span></div>
                 <div className="text-center text-xs font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
                   {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
                 </div>
@@ -490,7 +504,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         </div>
 
         {/* Combat Stats - with extra spacing */}
-        <div className="mt-4 rounded border border-border/30 bg-secondary/20 p-2.5 flex-1 overflow-y-auto min-h-0">
+        <div className="mt-4 rounded border border-border/30 bg-secondary/20 p-2.5 flex-1 overflow-y-auto min-h-0 shrink">
           <div className="text-sm font-bold text-foreground mb-1.5">📊 전투 통계</div>
           <table className="w-full text-sm">
             <thead>
@@ -520,7 +534,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       </div>
 
       {/* RIGHT: Log */}
-      <div className="flex flex-col overflow-hidden" style={{ height: '85vh' }}>
+      <div className="flex flex-col overflow-hidden min-h-0">
         {/* Filter bar */}
         {filter && (
           <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-t text-xs text-primary mb-0.5">

@@ -299,3 +299,49 @@
     border-color: hsl(40 85% 55% / 0.3);
   }
 }
+
+/* ===== LIGHT MODE COLOR ADAPTATIONS ===== */
+/* Make bright/fluorescent utility colors darker and more readable in light mode */
+:root[data-color-mode="light"] {
+  /* Override bright Tailwind colors for text readability */
+  .text-yellow-400, .text-yellow-300, .text-yellow-200 { color: hsl(40 80% 38%) !important; }
+  .text-green-400 { color: hsl(142 50% 32%) !important; }
+  .text-lime-400 { color: hsl(80 60% 30%) !important; }
+  .text-teal-400 { color: hsl(170 55% 30%) !important; }
+  .text-cyan-300, .text-cyan-400 { color: hsl(190 65% 32%) !important; }
+  .text-sky-400 { color: hsl(200 70% 38%) !important; }
+  .text-blue-400 { color: hsl(217 70% 42%) !important; }
+  .text-red-400 { color: hsl(0 65% 42%) !important; }
+  .text-orange-400 { color: hsl(25 80% 40%) !important; }
+  .text-amber-400, .text-amber-300 { color: hsl(38 75% 38%) !important; }
+  .text-purple-400 { color: hsl(270 50% 42%) !important; }
+  .text-violet-300 { color: hsl(260 45% 45%) !important; }
+  .text-pink-400 { color: hsl(330 60% 42%) !important; }
+  .text-emerald-400 { color: hsl(160 55% 30%) !important; }
+  .text-red-500 { color: hsl(0 65% 38%) !important; }
+  .text-green-500 { color: hsl(142 50% 30%) !important; }
+
+  /* White text/icons → dark gray in light mode */
+  .text-white { color: hsl(230 15% 20%) !important; }
+
+  /* Border adaptations */
+  .border-yellow-500\/40, .border-yellow-400\/30 { border-color: hsl(40 70% 45% / 0.5) !important; }
+  .border-green-500\/40 { border-color: hsl(142 50% 35% / 0.5) !important; }
+  .border-blue-500\/40 { border-color: hsl(217 65% 45% / 0.5) !important; }
+  .border-red-500\/40 { border-color: hsl(0 60% 45% / 0.5) !important; }
+  .border-purple-500\/40 { border-color: hsl(270 45% 45% / 0.5) !important; }
+
+  /* Background adaptations for tinted bg */
+  .bg-yellow-500\/10, .bg-yellow-400\/10 { background-color: hsl(40 70% 45% / 0.1) !important; }
+  .bg-green-500\/10 { background-color: hsl(142 50% 35% / 0.1) !important; }
+  .bg-blue-500\/10 { background-color: hsl(217 65% 45% / 0.1) !important; }
+  .bg-red-500\/10 { background-color: hsl(0 60% 45% / 0.1) !important; }
+  .bg-purple-500\/10 { background-color: hsl(270 45% 45% / 0.1) !important; }
+
+  /* Inline style color overrides via CSS custom properties */
+  --stat-color-atk: hsl(0 65% 42%);
+  --stat-color-def: hsl(217 70% 42%);
+  --stat-color-hp: hsl(25 80% 40%);
+  --stat-color-crit: hsl(40 80% 38%);
+  --stat-color-dodge: hsl(170 55% 30%);
+}

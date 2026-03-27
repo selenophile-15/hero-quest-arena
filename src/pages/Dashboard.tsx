@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
-import { Sword, Swords, Trophy, Palette, Sun, Moon } from 'lucide-react';
+import { Sword, Swords, Trophy, Sun, Moon } from 'lucide-react';
 import { useTheme, ThemeMode } from '@/hooks/use-theme';
 import {
   DropdownMenu,
@@ -20,9 +20,9 @@ const TABS = [
 
 type TabId = typeof TABS[number]['id'];
 
-const THEMES: { id: ThemeMode; label: string; desc: string }[] = [
-  { id: 'gold', label: '🔥 골드', desc: '따뜻한 황금빛' },
-  { id: 'moonlight', label: '🌙 문라이트', desc: '은은한 푸른빛 + 연보랏빛' },
+const THEMES: { id: ThemeMode; label: string; desc: string; color: string }[] = [
+  { id: 'gold', label: '옐로우', desc: '따뜻한 황금빛', color: 'hsl(40 85% 55%)' },
+  { id: 'moonlight', label: '라벤더', desc: '은은한 푸른빛 + 연보랏빛', color: 'hsl(245 35% 72%)' },
 ];
 
 export default function Dashboard() {
@@ -65,7 +65,10 @@ export default function Dashboard() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
-                  <Palette className="w-4 h-4" />
+                  <span
+                    className="w-5 h-3.5 rounded-sm border border-border/50"
+                    style={{ backgroundColor: THEMES.find(t => t.id === theme)?.color }}
+                  />
                   <span className="hidden sm:inline">{THEMES.find(t => t.id === theme)?.label}</span>
                 </button>
               </DropdownMenuTrigger>
@@ -74,10 +77,16 @@ export default function Dashboard() {
                   <DropdownMenuItem
                     key={t.id}
                     onClick={() => setTheme(t.id)}
-                    className={`flex flex-col items-start gap-0.5 cursor-pointer ${theme === t.id ? 'bg-primary/10 text-primary' : ''}`}
+                    className={`flex items-center gap-2.5 cursor-pointer ${theme === t.id ? 'bg-primary/10 text-primary' : ''}`}
                   >
-                    <span className="font-medium">{t.label}</span>
-                    <span className="text-xs text-muted-foreground">{t.desc}</span>
+                    <span
+                      className="w-5 h-3.5 rounded-sm border border-border/50 shrink-0"
+                      style={{ backgroundColor: t.color }}
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-medium">{t.label}</span>
+                      <span className="text-xs text-muted-foreground">{t.desc}</span>
+                    </div>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
