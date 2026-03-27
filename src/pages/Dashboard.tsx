@@ -22,7 +22,9 @@ type TabId = typeof TABS[number]['id'];
 
 const THEMES: { id: ThemeMode; label: string; desc: string; color: string }[] = [
   { id: 'gold', label: '옐로우', desc: '따뜻한 황금빛', color: 'hsl(40 85% 55%)' },
-  { id: 'moonlight', label: '라벤더', desc: '은은한 푸른빛 + 연보랏빛', color: 'hsl(245 35% 72%)' },
+  { id: 'moonlight', label: '라벤더', desc: '은은한 연보랏빛', color: 'hsl(245 35% 72%)' },
+  { id: 'olive', label: '올리브그린', desc: '자연의 올리브빛', color: 'hsl(82 55% 48%)' },
+  { id: 'wine', label: '와인', desc: '깊은 와인빛 레드', color: 'hsl(348 60% 52%)' },
 ];
 
 export default function Dashboard() {
