@@ -1087,18 +1087,34 @@ export default function QuestSimulation() {
                     {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                       const hero = selectedHeroes[slotIdx];
                       if (!hero) return <td key={`el-empty-${slotIdx}`} className="text-center py-1" />;
+                      const isSpellKnight = SPELLKNIGHT_CLASSES.includes(hero.heroClass);
+                      if (isSpellKnight) {
+                        // Show '모든 원소' icon with total * 50%
+                        const allTotal = Object.values(hero.equipmentElements || {}).reduce((a, b) => a + b, 0);
+                        const halfTotal = Math.floor(allTotal * 0.5);
+                        return (
+                          <td key={hero.id} className="text-center py-1">
+                            <div className="flex justify-center gap-1">
+                              <div className="flex flex-col items-center">
+                                <img src="/images/elements/all.webp" alt="모든 원소" className="w-5 h-5" />
+                                <span className="text-xs font-mono font-bold text-purple-300">{halfTotal > 0 ? formatNumber(halfTotal) : '-'}</span>
+                              </div>
+                            </div>
+                          </td>
+                        );
+                      }
                       const icons = barrierElements.map(el => ({
                         el, iconPath: ELEMENT_ICON_MAP[el], val: hero.equipmentElements?.[el] || 0,
                       })).filter(b => b.val > 0);
                       return (
                         <td key={hero.id} className="text-center py-1">
                           <div className="flex justify-center gap-1">
-                            {icons.map(b => (
+                            {icons.length > 0 ? icons.map(b => (
                               <div key={b.el} className="flex flex-col items-center">
                                 {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-5 h-5" />}
                                 <span className="text-xs font-mono font-bold text-purple-300">{formatNumber(b.val)}</span>
                               </div>
-                            ))}
+                            )) : <span className="text-xs text-foreground/30">-</span>}
                           </div>
                         </td>
                       );
