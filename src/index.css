@@ -103,7 +103,104 @@
     font-family: 'Noto Sans KR', sans-serif;
   }
 
-  /* ===== LIGHT MODE ===== */
+  /* ===== OLIVE GREEN THEME (DARK) ===== */
+  :root[data-theme="olive"] {
+    --background: 90 15% 8%;
+    --foreground: 80 20% 88%;
+
+    --card: 90 14% 12%;
+    --card-foreground: 80 20% 88%;
+
+    --popover: 90 14% 18%;
+    --popover-foreground: 80 20% 88%;
+
+    --primary: 82 55% 48%;
+    --primary-foreground: 90 15% 8%;
+
+    --secondary: 90 12% 18%;
+    --secondary-foreground: 80 18% 82%;
+
+    --muted: 90 10% 16%;
+    --muted-foreground: 90 10% 58%;
+
+    --accent: 65 50% 42%;
+    --accent-foreground: 80 20% 95%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 90 12% 22%;
+    --input: 90 12% 20%;
+    --ring: 82 55% 48%;
+
+    --sidebar-background: 90 15% 10%;
+    --sidebar-foreground: 80 18% 82%;
+    --sidebar-primary: 82 55% 48%;
+    --sidebar-primary-foreground: 90 15% 8%;
+    --sidebar-accent: 90 12% 18%;
+    --sidebar-accent-foreground: 80 18% 82%;
+    --sidebar-border: 90 12% 22%;
+    --sidebar-ring: 82 55% 48%;
+
+    --gold-glow: 82 55% 48%;
+    --gold-dim: 85 35% 35%;
+    --fantasy-purple: 270 30% 45%;
+    --fantasy-blue: 170 40% 40%;
+    --hero-gradient: linear-gradient(135deg, hsl(82 55% 48%), hsl(65 50% 42%));
+    --card-glow: 0 0 20px hsl(82 55% 48% / 0.1);
+
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  /* ===== WINE THEME (DARK) ===== */
+  :root[data-theme="wine"] {
+    --background: 350 15% 8%;
+    --foreground: 0 15% 88%;
+
+    --card: 350 14% 12%;
+    --card-foreground: 0 15% 88%;
+
+    --popover: 350 14% 18%;
+    --popover-foreground: 0 15% 88%;
+
+    --primary: 348 60% 52%;
+    --primary-foreground: 350 15% 8%;
+
+    --secondary: 350 12% 18%;
+    --secondary-foreground: 355 18% 82%;
+
+    --muted: 350 10% 16%;
+    --muted-foreground: 350 10% 58%;
+
+    --accent: 330 45% 45%;
+    --accent-foreground: 355 20% 95%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 350 12% 22%;
+    --input: 350 12% 20%;
+    --ring: 348 60% 52%;
+
+    --sidebar-background: 350 15% 10%;
+    --sidebar-foreground: 355 18% 82%;
+    --sidebar-primary: 348 60% 52%;
+    --sidebar-primary-foreground: 350 15% 8%;
+    --sidebar-accent: 350 12% 18%;
+    --sidebar-accent-foreground: 355 18% 82%;
+    --sidebar-border: 350 12% 22%;
+    --sidebar-ring: 348 60% 52%;
+
+    --gold-glow: 348 60% 52%;
+    --gold-dim: 340 40% 35%;
+    --fantasy-purple: 320 35% 45%;
+    --fantasy-blue: 280 35% 45%;
+    --hero-gradient: linear-gradient(135deg, hsl(348 60% 52%), hsl(330 45% 45%));
+    --card-glow: 0 0 20px hsl(348 60% 52% / 0.1);
+
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
   :root[data-color-mode="light"] {
     --background: 40 30% 96%;
     --foreground: 230 15% 15%;
