@@ -318,14 +318,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     // Damage text color logic
     const getDamageColor = (): string => {
       if (entry.type === 'hero_attack') {
-        return isCrit ? '#facc15' : '#e5e7eb'; // yellow for crit, white/gray for normal
+        return isCrit ? C.yellow : C.white;
       }
       if (entry.type === 'monster_attack') {
-        if (isCrit) return '#facc15'; // yellow for crit
-        if (isAoe) return '#f87171'; // red for AOE
-        return '#e5e7eb'; // white for normal
+        if (isCrit) return C.yellow;
+        if (isAoe) return C.red;
+        return C.white;
       }
-      return '#e5e7eb';
+      return C.white;
     };
 
     return (
