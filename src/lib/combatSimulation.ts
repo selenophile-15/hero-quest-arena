@@ -1566,12 +1566,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   const mobAoeChance = (monster.aoeChance / 100) * mobAoeChanceMod;
   const baseMobCritChance = 0.10;
 
-  // Barrier check
+  // Barrier check (with spell knight support)
   let barrierMod = 1.0;
   if (monster.barrier && monster.barrier.hp > 0 && monster.barrierElement) {
     let totalEl = 0;
     activeHeroes.forEach(h => {
-      totalEl += h.equipmentElements?.[monster.barrierElement!] || 0;
+      const isSpellKnight = isClass(h, '마법검', '스펠나이트', 'Spellblade', 'Spellknight');
+      if (isSpellKnight) {
+        const allElements = h.equipmentElements || {};
+        const totalElVal = Object.values(allElements).reduce((s: number, v: number) => s + (v || 0), 0);
+        totalEl += Math.floor(totalElVal * 0.5);
+      } else {
+        totalEl += h.equipmentElements?.[monster.barrierElement!] || 0;
+      }
     });
     if (totalEl < monster.barrier.hp) {
       barrierMod = 0.2;
