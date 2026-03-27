@@ -555,9 +555,11 @@
   }
 }
 
-/* Position badge text always white */
-.bg-blue-500 > *, .bg-emerald-600 > *, .bg-orange-500 > *,
-.bg-red-500 > *, .bg-yellow-500 > *, .bg-cyan-500 > *,
-.bg-purple-500 > * {
-  color: white !important;
+/* Position badge text: keep white even in light mode */
+:root[data-color-mode="light"] {
+  .bg-blue-500.text-white, .bg-emerald-600.text-white, .bg-orange-500.text-white,
+  .bg-red-500.text-white, .bg-yellow-500.text-white, .bg-cyan-500.text-white,
+  .bg-purple-500.text-white, .bg-gray-600.text-white {
+    color: white !important;
+  }
 }
