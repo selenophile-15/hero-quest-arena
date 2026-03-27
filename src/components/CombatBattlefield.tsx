@@ -35,6 +35,9 @@ function hpColor(pct: number): string {
 }
 
 export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, onNewBattle }: Props) {
+  const { colorMode } = useTheme();
+  const isLight = colorMode === 'light';
+
   const [currentIdx, setCurrentIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
@@ -42,6 +45,16 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const [showAllBright, setShowAllBright] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const logScrollRef = useRef<HTMLDivElement>(null);
+
+  // Adaptive colors for light/dark mode
+  const C = useMemo(() => ({
+    yellow: isLight ? '#a16207' : '#facc15',
+    white: isLight ? '#374151' : '#e5e7eb',
+    red: isLight ? '#b91c1c' : '#f87171',
+    teal: isLight ? '#0f766e' : '#2dd4bf',
+    green: isLight ? '#166534' : '#84cc16',
+    monster: isLight ? '#a16207' : '#facc15',
+  }), [isLight]);
 
   const activeHeroes = heroes.filter(h => h.hp > 0);
 
