@@ -1771,14 +1771,14 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
-    // ─── Ninja/Sensei innate recovery check ───
+    // ─── Sensei innate recovery check (ninja loses permanently, sensei recovers after 2 turns) ───
     for (let i = 0; i < numHeroes; i++) {
-      if (!(heroIsNinjaFlag[i] || heroIsSenseiFlag[i]) || heroHp[i] <= 0) continue;
+      if (!heroIsSenseiFlag[i] || heroHp[i] <= 0) continue;
       if (lostInnateRound[i] > 0 && round >= lostInnateRound[i] + 2) {
         heroAtkVal[i] = ninjaBaseAtk[i] * 1.3;
         heroEva[i] = ninjaBaseEva[i] + 0.15;
         lostInnateRound[i] = -99;
-        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `고유 스킬 회복! ATK/EVA 복구` });
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `센세이 고유 스킬 회복! ATK/EVA 복구 (2턴 경과)` });
       }
     }
 
