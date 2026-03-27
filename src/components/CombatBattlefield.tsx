@@ -520,7 +520,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       </div>
 
       {/* RIGHT: Log */}
-      <div className="flex flex-col overflow-hidden" style={{ height: '85vh' }}>
+      <div className="flex flex-col overflow-hidden min-h-0">
         {/* Filter bar */}
         {filter && (
           <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-t text-xs text-primary mb-0.5">
