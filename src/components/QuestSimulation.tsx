@@ -879,14 +879,13 @@ export default function QuestSimulation() {
                           {finalCrit}%
                         </span>
                       </div>
-                      {selectedHeroes.length > 0 && buffedStats.length > 0 && (
-                        <div className="flex items-center justify-between px-1">
-                          <div className="flex items-center gap-1.5">
-                            <Shield className="w-3.5 h-3.5 text-blue-400" />
-                            <span className="text-xs text-foreground">방어력 기준치</span>
-                          </div>
+                      {/* Always show defense bar label when monster is selected */}
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Shield className="w-3.5 h-3.5 text-blue-400" />
+                          <span className="text-xs text-foreground">방어력 기준치</span>
                         </div>
-                      )}
+                      </div>
                       {mobEva > 0 && (
                         <div className="flex items-center justify-between px-1">
                           <div className="flex items-center gap-1.5">
