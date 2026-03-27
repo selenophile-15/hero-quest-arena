@@ -301,47 +301,68 @@
 }
 
 /* ===== LIGHT MODE COLOR ADAPTATIONS ===== */
-/* Make bright/fluorescent utility colors darker and more readable in light mode */
 :root[data-color-mode="light"] {
-  /* Override bright Tailwind colors for text readability */
-  .text-yellow-400, .text-yellow-300, .text-yellow-200 { color: hsl(40 80% 38%) !important; }
-  .text-green-400 { color: hsl(142 50% 32%) !important; }
-  .text-lime-400 { color: hsl(80 60% 30%) !important; }
-  .text-teal-400 { color: hsl(170 55% 30%) !important; }
-  .text-cyan-300, .text-cyan-400 { color: hsl(190 65% 32%) !important; }
-  .text-sky-400 { color: hsl(200 70% 38%) !important; }
-  .text-blue-400 { color: hsl(217 70% 42%) !important; }
-  .text-red-400 { color: hsl(0 65% 42%) !important; }
-  .text-orange-400 { color: hsl(25 80% 40%) !important; }
-  .text-amber-400, .text-amber-300 { color: hsl(38 75% 38%) !important; }
-  .text-purple-400 { color: hsl(270 50% 42%) !important; }
-  .text-violet-300 { color: hsl(260 45% 45%) !important; }
-  .text-pink-400 { color: hsl(330 60% 42%) !important; }
-  .text-emerald-400 { color: hsl(160 55% 30%) !important; }
-  .text-red-500 { color: hsl(0 65% 38%) !important; }
-  .text-green-500 { color: hsl(142 50% 30%) !important; }
+  /* Yellow → 개나리+황금 계열 */
+  .text-yellow-400, .text-yellow-300, .text-yellow-200 { color: hsl(45 85% 40%) !important; }
+  /* Green → 올리브그린+연두 계열 */
+  .text-green-400 { color: hsl(95 60% 34%) !important; }
+  .text-green-500 { color: hsl(95 55% 30%) !important; }
+  /* Lime → 올리브그린+연두 */
+  .text-lime-400 { color: hsl(85 65% 35%) !important; }
+  /* Teal/Emerald → 민트+옥색 */
+  .text-teal-400 { color: hsl(172 60% 32%) !important; }
+  .text-emerald-400 { color: hsl(164 58% 32%) !important; }
+  /* Cyan → 민트+옥색 */
+  .text-cyan-300, .text-cyan-400 { color: hsl(185 65% 35%) !important; }
+  /* Sky/Blue → 하늘+네이비 */
+  .text-sky-400 { color: hsl(205 72% 42%) !important; }
+  .text-blue-400 { color: hsl(220 68% 46%) !important; }
+  /* Red → 레드+와인 */
+  .text-red-400 { color: hsl(355 68% 42%) !important; }
+  .text-red-500 { color: hsl(350 65% 38%) !important; }
+  /* Orange */
+  .text-orange-400 { color: hsl(25 82% 42%) !important; }
+  /* Amber → 개나리+황금 */
+  .text-amber-400, .text-amber-300 { color: hsl(42 80% 40%) !important; }
+  /* Purple */
+  .text-purple-400 { color: hsl(270 55% 48%) !important; }
+  .text-violet-300 { color: hsl(262 50% 48%) !important; }
+  /* Pink */
+  .text-pink-400 { color: hsl(330 62% 44%) !important; }
 
   /* White text/icons → dark gray in light mode */
   .text-white { color: hsl(230 15% 20%) !important; }
 
   /* Border adaptations */
-  .border-yellow-500\/40, .border-yellow-400\/30 { border-color: hsl(40 70% 45% / 0.5) !important; }
-  .border-green-500\/40 { border-color: hsl(142 50% 35% / 0.5) !important; }
-  .border-blue-500\/40 { border-color: hsl(217 65% 45% / 0.5) !important; }
-  .border-red-500\/40 { border-color: hsl(0 60% 45% / 0.5) !important; }
-  .border-purple-500\/40 { border-color: hsl(270 45% 45% / 0.5) !important; }
+  .border-yellow-500\/40, .border-yellow-400\/30 { border-color: hsl(45 80% 42% / 0.5) !important; }
+  .border-green-500\/40 { border-color: hsl(95 55% 36% / 0.5) !important; }
+  .border-blue-500\/40 { border-color: hsl(220 65% 48% / 0.5) !important; }
+  .border-red-500\/40 { border-color: hsl(355 62% 44% / 0.5) !important; }
+  .border-purple-500\/40 { border-color: hsl(270 50% 48% / 0.5) !important; }
 
-  /* Background adaptations for tinted bg */
-  .bg-yellow-500\/10, .bg-yellow-400\/10 { background-color: hsl(40 70% 45% / 0.1) !important; }
-  .bg-green-500\/10 { background-color: hsl(142 50% 35% / 0.1) !important; }
-  .bg-blue-500\/10 { background-color: hsl(217 65% 45% / 0.1) !important; }
-  .bg-red-500\/10 { background-color: hsl(0 60% 45% / 0.1) !important; }
-  .bg-purple-500\/10 { background-color: hsl(270 45% 45% / 0.1) !important; }
+  /* Background adaptations */
+  .bg-yellow-500\/10, .bg-yellow-400\/10 { background-color: hsl(45 80% 42% / 0.12) !important; }
+  .bg-green-500\/10 { background-color: hsl(95 55% 36% / 0.12) !important; }
+  .bg-blue-500\/10 { background-color: hsl(220 65% 48% / 0.12) !important; }
+  .bg-red-500\/10 { background-color: hsl(355 62% 44% / 0.12) !important; }
+  .bg-purple-500\/10 { background-color: hsl(270 50% 48% / 0.12) !important; }
 
-  /* Inline style color overrides via CSS custom properties */
-  --stat-color-atk: hsl(0 65% 42%);
-  --stat-color-def: hsl(217 70% 42%);
-  --stat-color-hp: hsl(25 80% 40%);
-  --stat-color-crit: hsl(40 80% 38%);
-  --stat-color-dodge: hsl(170 55% 30%);
+  /* Stat colors */
+  --stat-color-atk: hsl(355 68% 42%);
+  --stat-color-def: hsl(220 68% 46%);
+  --stat-color-hp: hsl(25 82% 42%);
+  --stat-color-crit: hsl(45 85% 40%);
+  --stat-color-dodge: hsl(172 60% 32%);
+
+  /* Equipment glow wider in light mode */
+  .glow-gold {
+    box-shadow: 0 0 28px hsl(40 85% 55% / 0.2), 0 0 56px hsl(40 85% 55% / 0.08);
+  }
+}
+
+/* Position badge text always white */
+.bg-blue-500 > *, .bg-emerald-600 > *, .bg-orange-500 > *,
+.bg-red-500 > *, .bg-yellow-500 > *, .bg-cyan-500 > *,
+.bg-purple-500 > * {
+  color: white !important;
 }
