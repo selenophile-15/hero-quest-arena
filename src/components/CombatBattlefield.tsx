@@ -5,6 +5,7 @@ import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
+import { useTheme } from '@/hooks/use-theme';
 
 interface Props {
   log: CombatLogEntry[];
