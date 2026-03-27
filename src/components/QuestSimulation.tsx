@@ -930,14 +930,14 @@ export default function QuestSimulation() {
                     return color;
                   };
 
-                  const heroEntries = selectedHeroes.map((h, hi) => {
+                  const heroEntries = hasHeroes ? selectedHeroes.map((h, hi) => {
                     const bs = buffedStats[hi];
                     const heroDef = bs ? bs.def : (h.def || 0);
                     const pinPct = defToBarPct(heroDef);
                     const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
                     const color = getHeroColor(heroDef);
                     return { id: h.id, name: h.name, heroDef, pinPct, dmgApplied, color };
-                  });
+                  }) : [];
 
                   const n = heroEntries.length;
                   const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
