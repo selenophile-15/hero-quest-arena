@@ -541,7 +541,7 @@ export default function QuestSimulation() {
   const barrierBrokenGlobal = (() => {
     if (!currentQuest?.barrier || barrierElements.length === 0) return true;
     return barrierElements.every(el => {
-      const heroSum = selectedHeroes.reduce((sum, h) => sum + (h.equipmentElements?.[el] || 0), 0);
+      const heroSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
       return heroSum >= currentQuest.barrier!.hp;
     });
   })();
