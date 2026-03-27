@@ -369,7 +369,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   return (
     <div className="grid grid-cols-2 gap-4 h-[78vh]">
       {/* LEFT: Battlefield + Stats */}
-      <div className="flex flex-col gap-2 overflow-hidden">
+      <div className="flex flex-col gap-2 overflow-hidden min-h-0">
         {/* Compact Battlefield */}
         <div className="relative bg-secondary/30 rounded-lg p-3 border border-border/30">
           <div className="text-center mb-2">
