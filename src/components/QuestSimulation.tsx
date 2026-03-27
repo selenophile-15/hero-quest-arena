@@ -899,8 +899,9 @@ export default function QuestSimulation() {
                   );
                 })()}
 
-                {/* Defense Reference - inside monster info */}
-                {selectedHeroes.length > 0 && buffedStats.length > 0 && (() => {
+                {/* Defense Reference - inside monster info (show even without party) */}
+                {(() => {
+                  const hasHeroes = selectedHeroes.length > 0 && buffedStats.length > 0;
                   const defToBarPct = (def: number) => {
                     for (let i = defThresholds.length - 1; i >= 1; i--) {
                       const upper = defThresholds[i];
