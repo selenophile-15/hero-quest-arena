@@ -1772,7 +1772,7 @@ export default function QuestSimulation() {
                 if (filtered) displayResults = filtered.heroResults;
               }
               return (
-                <div className="space-y-4">
+                <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
                     <div className="text-sm font-semibold text-yellow-400 mb-2">💥 대미지</div>
