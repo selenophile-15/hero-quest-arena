@@ -1402,15 +1402,105 @@ export default function QuestSimulation() {
           </div>
         </div>
 
-        {/* RIGHT: Contribution Panels */}
+        {/* RIGHT: Contribution Panels - always show skeleton */}
         <div className="w-full lg:w-80 shrink-0">
-          {currentQuest && simResult && selectedHeroes.length > 0 && (
-            <>
-              {/* Main Results */}
+              {/* Main Results Header + Action Buttons */}
               <div className="flex items-center gap-2 mb-3">
                 <Crown className="w-5 h-5 text-primary" />
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
+                {/* Action buttons - right aligned, icon only */}
+                {currentQuest && selectedHeroes.length > 0 && simResult && (
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <button
+                      className="p-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                      title="1회 추적 로그"
+                      onClick={() => {
+                        if (!currentQuest || !currentRegion) return;
+                        const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
+                        const bElements = currentQuest?.barrier ? (() => {
+                          const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                          const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                            ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
+                            : null;
+                          const rawElements = barrierElement2
+                            ? [barrierElement2]
+                            : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+                          return [...new Set(rawElements)] as string[];
+                        })() : [];
+                        const questMonster: QuestMonster = {
+                          hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
+                          aoeChance: currentQuest.aoeChance, def: currentQuest.def,
+                          isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
+                          barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
+                        };
+                        const entries = runSingleCombatLog({
+                          heroes: selectedHeroes, monster: questMonster,
+                          miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
+                          questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
+                        });
+                        setCombatLog(entries);
+                        setCombatLogDialogOpen(true);
+                      }}
+                    >
+                      <Dices className="w-4 h-4" />
+                    </button>
+                    <button
+                      className="p-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                      title="결과 저장"
+                      onClick={handleSaveResult}
+                    >
+                      <Save className="w-4 h-4" />
+                    </button>
+                    <button
+                      className="p-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                      title="스크린샷 저장"
+                      onClick={async () => {
+                        const el = document.querySelector('[data-quest-screenshot]') as HTMLElement;
+                        if (!el) return;
+                        const overlay = document.createElement('div');
+                        overlay.id = 'screenshot-overlay';
+                        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
+                        overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+                        document.body.appendChild(overlay);
+                        try {
+                          const { default: html2canvas } = await import('html2canvas');
+                          const allCells = el.querySelectorAll('td, th');
+                          allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
+                          const canvas = await html2canvas(el, {
+                            backgroundColor: '#1a1a2e',
+                            useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
+                            windowWidth: el.scrollWidth, windowHeight: el.scrollHeight,
+                            width: el.scrollWidth, height: el.scrollHeight,
+                            onclone: (doc) => {
+                              const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
+                              if (clonedEl) {
+                                clonedEl.style.overflow = 'visible';
+                                clonedEl.style.height = 'auto';
+                                clonedEl.style.maxHeight = 'none';
+                                clonedEl.querySelectorAll('td, th').forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
+                                clonedEl.querySelectorAll('.flex').forEach(flex => { (flex as HTMLElement).style.alignItems = (flex as HTMLElement).style.alignItems || 'center'; });
+                              }
+                            }
+                          });
+                          allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = ''; });
+                          const link = document.createElement('a');
+                          link.download = `quest-sim-${Date.now()}.jpg`;
+                          link.href = canvas.toDataURL('image/jpeg', 0.92);
+                          link.click();
+                        } finally {
+                          overlay.remove();
+                        }
+                      }}
+                    >
+                      <Camera className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
+
+              {/* Skeleton / Real results */}
+              {currentQuest && simResult && selectedHeroes.length > 0 ? (
+              <>
               <div className="card-fantasy p-4 mb-3">
                 <div className="flex items-center gap-1.5 mb-2">
                   <Clock className="w-3.5 h-3.5 text-blue-400" />
@@ -1552,8 +1642,54 @@ export default function QuestSimulation() {
                   );
                 })()}
               </div>
-            </>
-          )}
+              </>
+              ) : (
+                /* Skeleton frame before simulation */
+                <>
+                  <div className="card-fantasy p-4 mb-3">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Clock className="w-3.5 h-3.5 text-muted-foreground/40" />
+                      <span className="text-sm font-bold text-muted-foreground/40">턴 수</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      {['최소', '평균', '최대'].map(label => (
+                        <div key={label} className="bg-secondary/20 rounded p-2">
+                          <div className="text-[10px] text-muted-foreground/40">{label}</div>
+                          <div className="text-lg font-bold font-mono text-muted-foreground/20">-</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="card-fantasy p-4 mb-3">
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <Swords className="w-3.5 h-3.5 text-muted-foreground/30" />
+                      <span className="text-sm font-bold text-muted-foreground/30">대미지 기여도</span>
+                    </div>
+                    <div className="space-y-3">
+                      {[1,2,3].map(i => (
+                        <div key={i}>
+                          <div className="h-3 w-16 bg-secondary/20 rounded mb-1" />
+                          <div className="w-full bg-secondary/20 rounded-full h-3" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="card-fantasy p-4 mb-3">
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <Shield className="w-3.5 h-3.5 text-muted-foreground/30" />
+                      <span className="text-sm font-bold text-muted-foreground/30">탱킹 기여도</span>
+                    </div>
+                    <div className="space-y-3">
+                      {[1,2,3].map(i => (
+                        <div key={i}>
+                          <div className="h-3 w-16 bg-secondary/20 rounded mb-1" />
+                          <div className="w-full bg-secondary/20 rounded-full h-3" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
         </div>
       </div>
 
