@@ -1597,6 +1597,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   const heroIsDaimyoFlag: boolean[] = [];
   const heroSharkVal: number[] = [];
   const heroDinoVal: number[] = [];
+  const heroArmadilloVal: number[] = [];
+  const heroIsClericFlag: boolean[] = [];
+  const heroIsBishopFlag: boolean[] = [];
   const heroTier: number[] = [];
 
   for (let i = 0; i < numHeroes; i++) {
