@@ -106,9 +106,7 @@ const QUALITY_SHADOW_COLOR: Record<string, string> = {
   legendary: '0 0 26px rgba(250,204,21,0.9)',
 };
 
-function getTypeImgPath(typeFile: string) {
-  return `/images/type/${typeFile}.webp`;
-}
+// getTypeImgPath is now theme-aware, called inside component with colorMode
 
 const ELEMENT_ENG_MAP: Record<string, string> = {
   '불': 'fire', '물': 'water', '공기': 'air', '대지': 'earth', '빛': 'light', '어둠': 'dark',
