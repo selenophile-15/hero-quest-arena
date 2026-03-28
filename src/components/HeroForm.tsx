@@ -1138,7 +1138,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           {/* Relic effect display */}
           {equipmentSlots.some(s => s.item?.relic && s.item?.relicEffect) && (
             <div className="mt-3 p-2 border border-yellow-400/30 rounded bg-yellow-400/5">
-              <p className="text-xs font-semibold text-yellow-400 mb-1">⭐ 유물 효과</p>
+              <p className="text-xs font-semibold text-yellow-400 mb-1 flex items-center gap-1">
+                <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-4 h-4 inline" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                유물 효과
+              </p>
               {equipmentSlots.filter(s => s.item?.relic && s.item?.relicEffect).map((s, i) => (
                 <div key={i} className="text-xs text-foreground/80">
                   {s.item!.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (

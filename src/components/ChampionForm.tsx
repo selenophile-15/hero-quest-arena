@@ -510,7 +510,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden">
               {typeFile ? (
                 <img
-                  src={`/images/type/${typeFile}.webp`}
+                  src={getTypeImagePath(typeFile, colorMode)}
                   className="w-[80%] h-[80%] object-contain"
                   alt=""
                   onError={e => { e.currentTarget.style.display = 'none'; }}
