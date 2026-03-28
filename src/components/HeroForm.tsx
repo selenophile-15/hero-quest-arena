@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
+import { useTheme } from '@/hooks/use-theme';
+import { getTypeImagePath as getTypeImgPathUtil } from '@/lib/typeImageUtils';
 import { lookupHeroStats, getAvailableSkills, getCommonSkills, getUniqueSkills, lookupHeroFixedStats } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { calculateHeroStats, CalculatedStats } from '@/lib/statCalculator';
