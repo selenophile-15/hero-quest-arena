@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Hero, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
+import { useTheme } from '@/hooks/use-theme';
+import { getTypeImagePath } from '@/lib/typeImageUtils';
 import { CHAMPION_NAMES, lookupChampionStats, getChampionSkillsData, getChampionStats } from '@/lib/gameData';
 import { calculateChampionStats, ChampionCalcResult } from '@/lib/championStatCalculator';
 import ChampionStatBreakdownDrawer from './ChampionStatBreakdownDrawer';
@@ -508,7 +510,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             <div className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden">
               {typeFile ? (
                 <img
-                  src={`/images/type/${typeFile}.webp`}
+                  src={getTypeImagePath(typeFile, colorMode)}
                   className="w-[80%] h-[80%] object-contain"
                   alt=""
                   onError={e => { e.currentTarget.style.display = 'none'; }}

@@ -119,10 +119,8 @@ function getSpiritTier(name: string): number {
   return SPIRIT_TIER[name] || 0;
 }
 
-const TYPE_IMAGE_FIX: Record<string, string> = { staves: 'staff' };
-function getTypeImagePath(typeFile: string) {
-  return `/images/type/${TYPE_IMAGE_FIX[typeFile] || typeFile}.webp`;
-}
+import { getTypeImagePath as getTypeImagePathUtil } from '@/lib/typeImageUtils';
+// getTypeImagePath is now theme-aware, resolved inside component
 
 function formatEquipStat(key: string, value: number): string {
   if (key === '장비_치명타확률%' || key === '장비_회피%') return `${value} %`;

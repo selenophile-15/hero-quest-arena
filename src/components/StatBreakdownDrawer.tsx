@@ -303,7 +303,10 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
           {/* Relic effects info */}
           {relicEffects.length > 0 && (
             <div className="px-3">
-              <h5 className="text-xs font-semibold text-yellow-400 mb-1">⭐ 유물 효과</h5>
+              <h5 className="text-xs font-semibold text-yellow-400 mb-1 flex items-center gap-1">
+                <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                유물 효과
+              </h5>
               <div className="space-y-1">
                 {relicEffects.map((e, i) => (
                   <div key={i} className="text-[10px] bg-yellow-900/20 border border-yellow-500/20 rounded px-2 py-1">

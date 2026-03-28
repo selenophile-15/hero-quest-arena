@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
+import { useTheme } from '@/hooks/use-theme';
+import { getTypeImagePath as getTypeImgPathUtil } from '@/lib/typeImageUtils';
 import { lookupHeroStats, getAvailableSkills, getCommonSkills, getUniqueSkills, lookupHeroFixedStats } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { calculateHeroStats, CalculatedStats } from '@/lib/statCalculator';
@@ -104,9 +106,7 @@ const QUALITY_SHADOW_COLOR: Record<string, string> = {
   legendary: '0 0 26px rgba(250,204,21,0.9)',
 };
 
-function getTypeImgPath(typeFile: string) {
-  return `/images/type/${typeFile}.webp`;
-}
+// getTypeImgPath is now theme-aware, called inside component with colorMode
 
 const ELEMENT_ENG_MAP: Record<string, string> = {
   '불': 'fire', '물': 'water', '공기': 'air', '대지': 'earth', '빛': 'light', '어둠': 'dark',
@@ -168,6 +168,8 @@ function hasRangedWeapon(slots: Array<{ item: any | null }>): boolean {
 }
 
 export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
+  const { colorMode } = useTheme();
+  const getTypeImgPath = (typeFile: string) => getTypeImgPathUtil(typeFile, colorMode);
   const getInitialPromotion = (): boolean => {
     if (!hero) return false;
     for (const pairs of Object.values(JOB_PAIRS)) {
@@ -1136,7 +1138,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           {/* Relic effect display */}
           {equipmentSlots.some(s => s.item?.relic && s.item?.relicEffect) && (
             <div className="mt-3 p-2 border border-yellow-400/30 rounded bg-yellow-400/5">
-              <p className="text-xs font-semibold text-yellow-400 mb-1">⭐ 유물 효과</p>
+              <p className="text-xs font-semibold text-yellow-400 mb-1 flex items-center gap-1">
+                <img src="/images/special/icon_global_artifact.webp" alt="유물" className="w-4 h-4 inline" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                유물 효과
+              </p>
               {equipmentSlots.filter(s => s.item?.relic && s.item?.relicEffect).map((s, i) => (
                 <div key={i} className="text-xs text-foreground/80">
                   {s.item!.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (
