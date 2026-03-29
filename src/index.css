@@ -108,19 +108,19 @@
     --background: 90 15% 8%;
     --foreground: 80 20% 88%;
 
-    --card: 90 14% 12%;
+    --card: 230 15% 12%;
     --card-foreground: 80 20% 88%;
 
-    --popover: 90 14% 18%;
+    --popover: 230 15% 18%;
     --popover-foreground: 80 20% 88%;
 
     --primary: 82 55% 48%;
-    --primary-foreground: 90 15% 8%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 90 12% 18%;
+    --secondary: 230 12% 18%;
     --secondary-foreground: 80 18% 82%;
 
-    --muted: 90 10% 16%;
+    --muted: 230 10% 16%;
     --muted-foreground: 90 10% 58%;
 
     --accent: 65 50% 42%;
