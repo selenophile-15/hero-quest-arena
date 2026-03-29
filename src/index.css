@@ -59,14 +59,14 @@
     --background: 245 15% 8%;
     --foreground: 240 15% 88%;
 
-    --card: 245 14% 12%;
+    --card: 230 15% 12%;
     --card-foreground: 240 15% 88%;
 
-    --popover: 245 14% 18%;
+    --popover: 230 15% 18%;
     --popover-foreground: 240 15% 88%;
 
     --primary: 245 35% 72%;
-    --primary-foreground: 245 15% 8%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 255 12% 18%;
     --secondary-foreground: 250 20% 82%;
