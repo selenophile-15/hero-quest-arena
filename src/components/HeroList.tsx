@@ -134,6 +134,7 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
 const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg'];
 
 export default function HeroList() {
+  const { colorMode } = useTheme();
   const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
   const [editing, setEditing] = useState<Hero | null>(null);
   const [addingType, setAddingType] = useState<'hero' | 'champion' | null>(null);
