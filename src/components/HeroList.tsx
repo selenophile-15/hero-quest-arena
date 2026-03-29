@@ -1236,7 +1236,7 @@ export default function HeroList() {
                         if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
                         return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                       })()}
-                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {itemType && <img src={getTypeImagePath(itemType, colorMode)} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                     </div>
                   )}
                 </div>
