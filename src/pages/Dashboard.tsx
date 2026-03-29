@@ -107,16 +107,20 @@ export default function Dashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-[1px]
+                className={`group relative flex items-center gap-2 px-5 py-3 text-sm font-medium -mb-[1px]
                   transition-all duration-300 ease-out
-                  hover:translate-y-[-1px]
                   ${isActive
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
-                <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : ''}`} />
-                {tab.label}
+                <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-105 group-hover:-translate-y-[1px]'}`} />
+                <span className={`transition-transform duration-300 ${isActive ? '' : 'group-hover:-translate-y-[1px]'}`}>
+                  {tab.label}
+                </span>
+                <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all duration-300 ease-out ${
+                  isActive ? 'w-full' : 'w-0 group-hover:w-full opacity-30'
+                }`} />
               </button>
             );
           })}

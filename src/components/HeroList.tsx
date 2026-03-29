@@ -1260,8 +1260,7 @@ export default function HeroList() {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl text-primary font-bold">영웅 &amp; 챔피언 리스트</h2>
+      <div className="flex items-center justify-end mb-4">
         <div className="flex gap-2">
           <Button onClick={() => setAddingType('hero')} className="gap-2 text-sm font-medium">
             <Shield className="w-4 h-4" /> 새 영웅 추가
@@ -1274,31 +1273,30 @@ export default function HeroList() {
 
       {/* Tab: Hero / Champion / Summary + View mode */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex gap-1">
-          <button
-            onClick={() => { setListTab('hero'); setSummaryOpen(false); }}
-            className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
-              listTab === 'hero' && !summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Shield className="w-4 h-4 inline mr-1" />영웅 목록 ({heroList.length})
-          </button>
-          <button
-            onClick={() => { setListTab('champion'); setSummaryOpen(false); }}
-            className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
-              listTab === 'champion' && !summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Crown className="w-4 h-4 inline mr-1" />챔피언 목록 ({championList.length})
-          </button>
-          <button
-            onClick={() => setSummaryOpen(true)}
-            className={`px-4 py-2 text-sm font-medium rounded-t border-b-2 transition-colors ${
-              summaryOpen ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4 inline mr-1" />리스트 요약
-          </button>
+        <div className="flex gap-1 bg-muted/50 rounded-lg p-1">
+          {([
+            { id: 'hero' as const, label: `영웅 목록 (${heroList.length})`, icon: Shield, active: listTab === 'hero' && !summaryOpen, onClick: () => { setListTab('hero'); setSummaryOpen(false); } },
+            { id: 'champion' as const, label: `챔피언 목록 (${championList.length})`, icon: Crown, active: listTab === 'champion' && !summaryOpen, onClick: () => { setListTab('champion'); setSummaryOpen(false); } },
+            { id: 'summary' as const, label: '리스트 요약', icon: BarChart3, active: summaryOpen, onClick: () => setSummaryOpen(true) },
+          ]).map(tab => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={tab.onClick}
+                className={`relative px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-300 ease-out
+                  ${tab.active
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+              >
+                <span className="relative z-10 inline-flex items-center gap-1.5">
+                  <Icon className={`w-4 h-4 transition-transform duration-300 ${tab.active ? 'scale-110' : ''}`} />
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
         {!summaryOpen && (
           <div className="flex items-center gap-2">
@@ -1421,7 +1419,7 @@ export default function HeroList() {
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
                         className={`border-b border-border/50 transition-colors cursor-pointer select-none ${
                           isExpanded ? 'bg-primary/15' : 'hover:bg-secondary/20'
-                        }`}
+                        } table-zebra-row`}
                         style={{ height: '52px' }}
                       >
                       {activeCols.map(col => {
