@@ -570,3 +570,20 @@
     color: white !important;
   }
 }
+
+/* Primary-colored button text: always white */
+.bg-primary {
+  color: white !important;
+}
+
+/* Zebra striping for table rows */
+.table-zebra-row:nth-child(even) {
+  background-color: hsl(var(--muted) / 0.25);
+}
+:root[data-color-mode="light"] .table-zebra-row:nth-child(even) {
+  background-color: hsl(var(--muted) / 0.4);
+}
+/* Don't override expanded row highlight */
+.table-zebra-row[class*="bg-primary"] {
+  background-color: unset;
+}
