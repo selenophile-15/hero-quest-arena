@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo, Fragment, useRef, useCallback } from 'react';
 import { Hero, HERO_STAT_COLUMNS, CHAMPION_STAT_COLUMNS, STAT_ICON_MAP, ELEMENT_ICON_MAP } from '@/types/game';
+import { useTheme } from '@/hooks/use-theme';
+import { getTypeImagePath } from '@/lib/typeImageUtils';
 import { formatNumber } from '@/lib/format';
 import { HERO_CLASS_MAP, getCommonSkills, getUniqueSkills, getChampionSkillsData } from '@/lib/gameData';
 import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
@@ -132,6 +134,7 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
 const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg'];
 
 export default function HeroList() {
+  const { colorMode } = useTheme();
   const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
   const [editing, setEditing] = useState<Hero | null>(null);
   const [addingType, setAddingType] = useState<'hero' | 'champion' | null>(null);
@@ -1033,7 +1036,7 @@ export default function HeroList() {
                               if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />;
                               return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} /> : null;
                             })()}
-                            {itemType && <img src={`/images/type/${itemType}.webp`} className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />}
+                            {itemType && <img src={getTypeImagePath(itemType, colorMode)} className="w-8 h-8" alt="" onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />}
                           </div>
                         ) : null}
                       </div>
@@ -1180,7 +1183,7 @@ export default function HeroList() {
                         if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
                         return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                       })()}
-                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {itemType && <img src={getTypeImagePath(itemType, colorMode)} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                     </div>
                   )}
                 </div>
@@ -1233,7 +1236,7 @@ export default function HeroList() {
                         if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
                         return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                       })()}
-                      {itemType && <img src={`/images/type/${itemType}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      {itemType && <img src={getTypeImagePath(itemType, colorMode)} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                     </div>
                   )}
                 </div>

@@ -553,6 +553,13 @@
   .glow-gold {
     box-shadow: 0 0 28px hsl(40 85% 55% / 0.2), 0 0 56px hsl(40 85% 55% / 0.08);
   }
+
+  /* Light mode equipment quality: inverted glow (white center → colored edges) with slightly deeper colors */
+  .border-gray-300\/60 { border-color: rgba(160,160,160,0.7) !important; }
+  .border-green-400\/70 { border-color: rgba(34,180,80,0.8) !important; }
+  .border-cyan-300\/80 { border-color: rgba(30,190,220,0.85) !important; }
+  .border-fuchsia-400\/90 { border-color: rgba(190,50,210,0.9) !important; }
+  .border-yellow-400 { border-color: rgba(220,170,10,1) !important; }
 }
 
 /* Position badge text: keep white even in light mode */
