@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo, Fragment, useRef, useCallback } from 'react';
 import { Hero, HERO_STAT_COLUMNS, CHAMPION_STAT_COLUMNS, STAT_ICON_MAP, ELEMENT_ICON_MAP } from '@/types/game';
+import { useTheme } from '@/hooks/use-theme';
+import { getTypeImagePath } from '@/lib/typeImageUtils';
 import { formatNumber } from '@/lib/format';
 import { HERO_CLASS_MAP, getCommonSkills, getUniqueSkills, getChampionSkillsData } from '@/lib/gameData';
 import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';

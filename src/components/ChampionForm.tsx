@@ -153,6 +153,7 @@ function getLeaderSkillTier(rank: number, champSkillData: any): number {
 }
 
 export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormProps) {
+  const { colorMode } = useTheme();
   const [championName, setChampionName] = useState(hero?.championName || CHAMPION_NAMES[0]);
   const [name, setName] = useState(hero?.name || '');
   const [promoted, setPromoted] = useState(false);
