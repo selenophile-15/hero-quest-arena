@@ -157,19 +157,19 @@
     --background: 350 15% 8%;
     --foreground: 0 15% 88%;
 
-    --card: 350 14% 12%;
+    --card: 230 15% 12%;
     --card-foreground: 0 15% 88%;
 
-    --popover: 350 14% 18%;
+    --popover: 230 15% 18%;
     --popover-foreground: 0 15% 88%;
 
     --primary: 348 60% 52%;
-    --primary-foreground: 350 15% 8%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 350 12% 18%;
+    --secondary: 230 12% 18%;
     --secondary-foreground: 355 18% 82%;
 
-    --muted: 350 10% 16%;
+    --muted: 230 10% 16%;
     --muted-foreground: 350 10% 58%;
 
     --accent: 330 45% 45%;
