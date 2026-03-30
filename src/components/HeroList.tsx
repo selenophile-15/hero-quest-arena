@@ -699,7 +699,7 @@ export default function HeroList() {
           <span className="inline-block whitespace-nowrap align-middle leading-none">
             {SEED_ICONS.map(s => {
               const seedVal = hero.seeds?.[s.key as keyof typeof hero.seeds] || 0;
-              const seedColor = seedVal === 80 ? 'text-orange-400 font-semibold' : seedVal === 40 ? 'text-yellow-400 font-semibold' : seedVal === 0 ? 'text-foreground/20' : '';
+              const seedColor = seedVal === 80 ? 'theme-highlight-80' : seedVal === 40 ? 'theme-highlight-40' : seedVal === 0 ? 'text-foreground/20' : '';
               return (
                 <span key={s.key} className="inline-block align-middle mx-0.5">
                   <img src={s.icon} alt="" className="inline-block align-middle w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
