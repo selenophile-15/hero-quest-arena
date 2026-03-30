@@ -698,29 +698,22 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
-          {/* Job Card */}
-          <div className="card-fantasy p-3 flex flex-col items-center">
-            <div className="w-full flex items-center justify-center mt-1">
+        <div className="grid grid-cols-[160px_200px_200px_1fr] gap-4">
+          {/* Job Card - narrow, image only */}
+          <div className="card-fantasy p-3 flex flex-col items-center justify-center">
+            <div className="w-full flex items-center justify-center">
               {heroClass ? (
                 <img
                   key={heroClass}
                   src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.webp`}
                   alt={heroClass}
-                  className="max-w-full max-h-[360px] object-contain drop-shadow-lg"
+                  className="max-w-full max-h-[340px] object-contain drop-shadow-lg"
                   onError={e => { e.currentTarget.style.display = 'none'; }}
                 />
               ) : (
                 <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
               )}
             </div>
-            <div className="flex-1" />
-            {heroClass && (
-              <div className="flex flex-col items-center mt-2 gap-1 pb-1">
-                <span className="text-sm text-foreground">-</span>
-                <p className="text-xs text-foreground/70 text-center leading-tight">-</p>
-              </div>
-            )}
           </div>
 
           {/* Stats Panel */}
