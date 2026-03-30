@@ -1420,7 +1420,7 @@ export default function HeroList() {
                       <tr
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
                         className={`border-b border-border/50 transition-colors cursor-pointer select-none ${
-                          isExpanded ? 'bg-primary/15' : 'hover:bg-secondary/20'
+                          isExpanded ? 'bg-primary/15' : ''
                         } table-zebra-row`}
                         style={{ height: '52px' }}
                       >
