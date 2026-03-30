@@ -903,7 +903,7 @@ export default function EquipmentSelectDialog({
                                 <div className="text-xs">
                                   <span className="text-muted-foreground">친밀 영혼: </span>
                                   {item.spiritAffinity.map((sp, i) => (
-                                    <span key={sp} className="text-foreground">
+                                    <span key={sp} className="text-foreground font-semibold">
                                       {sp} (T{getSpiritTier(sp)}){i < item.spiritAffinity!.length - 1 ? ', ' : ''}
                                     </span>
                                   ))}
@@ -913,7 +913,7 @@ export default function EquipmentSelectDialog({
                                 <div className="text-xs">
                                   <span className="text-muted-foreground">고유 영혼: </span>
                                   {item.uniqueSpirit.map((sp, i) => (
-                                    <span key={sp} className="text-foreground">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
+                                    <span key={sp} className="text-foreground font-semibold">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
                                   ))}
                                 </div>
                               )}
