@@ -1088,7 +1088,7 @@ export default function HeroList() {
         style={{ borderColor, boxShadow: borderShadow }}
         onClick={() => setEditing(hero)}
       >
-        <div className="w-full rounded-lg bg-secondary/20 py-3">
+        <div className="w-full py-3">
           <div className="w-full aspect-square flex items-center justify-center overflow-hidden">
             {illustPath ? (
               <img src={illustPath} alt={hero.name} className="w-full h-full object-cover"
