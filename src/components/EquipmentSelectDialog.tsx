@@ -52,19 +52,19 @@ const QUALITY_BORDER: Record<string, string> = {
 };
 
 const QUALITY_RADIAL: Record<string, string> = {
-  common: 'rgba(220,220,220,0.22)',
-  uncommon: 'rgba(74,222,128,0.26)',
-  flawless: 'rgba(103,232,249,0.32)',
-  epic: 'rgba(217,70,239,0.38)',
-  legendary: 'rgba(250,204,21,0.42)',
+  common: 'rgba(220,220,220,0.4)',
+  uncommon: 'rgba(74,222,128,0.45)',
+  flawless: 'rgba(103,232,249,0.5)',
+  epic: 'rgba(217,70,239,0.55)',
+  legendary: 'rgba(250,204,21,0.6)',
 };
 
 const QUALITY_SHADOW: Record<string, string> = {
-  common: '0 0 4px rgba(220,220,220,0.4)',
-  uncommon: '0 0 5px rgba(74,222,128,0.5)',
-  flawless: '0 0 6px rgba(103,232,249,0.5)',
-  epic: '0 0 7px rgba(217,70,239,0.6)',
-  legendary: '0 0 8px rgba(250,204,21,0.7)',
+  common: '0 0 6px rgba(220,220,220,0.5)',
+  uncommon: '0 0 7px rgba(74,222,128,0.55)',
+  flawless: '0 0 8px rgba(103,232,249,0.55)',
+  epic: '0 0 10px rgba(217,70,239,0.6)',
+  legendary: '0 0 12px rgba(250,204,21,0.7)',
 };
 
 const STAT_FILTER_OPTIONS = [
@@ -412,7 +412,7 @@ export default function EquipmentSelectDialog({
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-[95vw] h-[90vh] overflow-hidden flex flex-col p-5">
         <DialogHeader>
-          <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
+          <DialogTitle className="text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
           <DialogDescription className="sr-only">슬롯별 장비를 선택하세요</DialogDescription>
         </DialogHeader>
 
@@ -446,7 +446,7 @@ export default function EquipmentSelectDialog({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-[58px] text-xs gap-1 px-3 bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40"
+                    className="h-[58px] text-xs gap-1 px-3 bg-primary/30 hover:bg-primary/50 text-white border-primary/40"
                     onClick={() => setManualMode(true)}
                   >
                     <Wrench className="w-3.5 h-3.5" />
@@ -542,7 +542,7 @@ export default function EquipmentSelectDialog({
                           ))}
                         </SelectContent>
                       </Select>
-                      <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={handleBatchQuality}>
+                      <Button size="sm" variant="outline" className="h-7 text-xs bg-primary/30 border-primary/40 text-white hover:bg-primary/50" onClick={handleBatchQuality}>
                         전체
                       </Button>
 
@@ -903,7 +903,7 @@ export default function EquipmentSelectDialog({
                                 <div className="text-xs">
                                   <span className="text-muted-foreground">친밀 영혼: </span>
                                   {item.spiritAffinity.map((sp, i) => (
-                                    <span key={sp} className="text-foreground">
+                                    <span key={sp} className="text-foreground font-semibold">
                                       {sp} (T{getSpiritTier(sp)}){i < item.spiritAffinity!.length - 1 ? ', ' : ''}
                                     </span>
                                   ))}
@@ -913,7 +913,7 @@ export default function EquipmentSelectDialog({
                                 <div className="text-xs">
                                   <span className="text-muted-foreground">고유 영혼: </span>
                                   {item.uniqueSpirit.map((sp, i) => (
-                                    <span key={sp} className="text-foreground">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
+                                    <span key={sp} className="text-foreground font-semibold">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
                                   ))}
                                 </div>
                               )}
@@ -963,17 +963,16 @@ export default function EquipmentSelectDialog({
                   key={i}
                   onClick={() => setActiveSlot(i)}
                   className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
-                    activeSlot === i ? 'border-primary ring-1 ring-primary/30' :
                     s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
                   }`}
-                  style={s.item ? { boxShadow: QUALITY_SHADOW[s.quality] } : {}}
+                  style={s.item ? { boxShadow: `0 0 4px ${QUALITY_RADIAL[s.quality]?.replace(/[\d.]+\)$/, '0.3)')}` } : {}}
                 >
                   {/* Slot number with quality background */}
                   <div
                     className="w-5 flex items-center justify-center flex-shrink-0"
                     style={{ background: s.item ? qualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
                   >
-                    <span className="text-[10px] font-bold text-background">{i + 1}</span>
+                    <span className="text-[10px] font-bold text-black">{i + 1}</span>
                   </div>
                   {s.item ? (
                     <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">
@@ -983,21 +982,21 @@ export default function EquipmentSelectDialog({
                       ) : null}
                       {/* Info */}
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs text-foreground truncate font-medium">{s.item.name}</p>
-                        <p className="text-[10px] text-foreground/60">
+                        <p className="text-xs text-foreground truncate font-bold">{s.item.name}</p>
+                        <p className="text-[10px] text-foreground/70 font-medium">
                           T{s.item.tier} {s.item.typeKor}
                           {s.item.relic && <span className="text-yellow-400 ml-1">⭐</span>}
                           {s.item.manual && <Wrench className="w-2.5 h-2.5 inline ml-1 text-muted-foreground" />}
                         </p>
                         <div className="flex items-center gap-1 mt-0.5 flex-wrap">
                           {s.element && (
-                            <span className={`text-[9px] ${hasAffinityEl ? 'font-bold' : ''} ${ELEMENT_COLORS[s.element.type] || 'text-foreground/70'}`}>
+                            <span className={`text-[9px] font-bold ${ELEMENT_COLORS[s.element.type] || 'text-foreground/70'}`}>
                               {hasAffinityEl && '★ '}{s.element.type} (T{s.element.tier})
                             </span>
                           )}
                           {s.element && s.spirit && <span className="text-[9px] text-muted-foreground">/</span>}
                           {s.spirit && (
-                            <span className={`text-[9px] text-purple-300 ${hasAffinitySp ? 'font-bold' : ''}`}>
+                            <span className={`text-[9px] font-bold text-purple-400`}>
                               {hasAffinitySp && '★ '}{s.spirit.name} (T{getSpiritTier(s.spirit.name)})
                             </span>
                           )}

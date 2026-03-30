@@ -102,18 +102,18 @@ const QUALITY_BORDER: Record<string, string> = {
   legendary: 'border-yellow-400',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.32)',
-  uncommon: 'rgba(74,222,128,0.38)',
-  flawless: 'rgba(103,232,249,0.45)',
-  epic: 'rgba(217,70,239,0.5)',
-  legendary: 'rgba(250,204,21,0.55)',
+  common: 'rgba(220,220,220,0.4)',
+  uncommon: 'rgba(74,222,128,0.45)',
+  flawless: 'rgba(103,232,249,0.5)',
+  epic: 'rgba(217,70,239,0.55)',
+  legendary: 'rgba(250,204,21,0.6)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
-  common: '0 0 4px rgba(220,220,220,0.4)',
-  uncommon: '0 0 5px rgba(74,222,128,0.5)',
-  flawless: '0 0 6px rgba(103,232,249,0.5)',
-  epic: '0 0 7px rgba(217,70,239,0.6)',
-  legendary: '0 0 8px rgba(250,204,21,0.7)',
+  common: '0 0 6px rgba(220,220,220,0.5)',
+  uncommon: '0 0 7px rgba(74,222,128,0.55)',
+  flawless: '0 0 8px rgba(103,232,249,0.55)',
+  epic: '0 0 10px rgba(217,70,239,0.6)',
+  legendary: '0 0 12px rgba(250,204,21,0.7)',
 };
 
 function normalizeJobName(name: string): string {
@@ -699,7 +699,7 @@ export default function HeroList() {
           <span className="inline-block whitespace-nowrap align-middle leading-none">
             {SEED_ICONS.map(s => {
               const seedVal = hero.seeds?.[s.key as keyof typeof hero.seeds] || 0;
-              const seedColor = seedVal === 80 ? 'text-orange-400 font-semibold' : seedVal === 40 ? 'text-yellow-400 font-semibold' : seedVal === 0 ? 'text-foreground/20' : '';
+              const seedColor = seedVal === 80 ? 'theme-highlight-80' : seedVal === 40 ? 'theme-highlight-40' : seedVal === 0 ? 'text-foreground/20' : '';
               return (
                 <span key={s.key} className="inline-block align-middle mx-0.5">
                   <img src={s.icon} alt="" className="inline-block align-middle w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
@@ -714,7 +714,7 @@ export default function HeroList() {
         <div className="flex items-center gap-1 justify-center h-[20px]">
           {SEED_ICONS.map(s => {
             const seedVal = hero.seeds?.[s.key as keyof typeof hero.seeds] || 0;
-            const seedColor = seedVal === 80 ? 'text-orange-400 font-semibold' : seedVal === 40 ? 'text-yellow-400 font-semibold' : seedVal === 0 ? 'text-foreground/20' : '';
+            const seedColor = seedVal === 80 ? 'theme-highlight-80' : seedVal === 40 ? 'theme-highlight-40' : seedVal === 0 ? 'text-foreground/20' : '';
             return (
               <span key={s.key} className="inline-flex items-center gap-0.5">
                 <img src={s.icon} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
@@ -737,7 +737,7 @@ export default function HeroList() {
     }
     if (colKey === 'level') {
       const lv = hero.level || 0;
-      const lvColor = lv >= 50 ? 'text-yellow-400 font-semibold' : '';
+      const lvColor = lv >= 50 ? 'theme-highlight-40' : '';
       return <span className={`${lh} ${lvColor}`}>{lv}</span>;
     }
     const value = hero[colKey as keyof Hero];
@@ -813,10 +813,10 @@ export default function HeroList() {
     }
 
     const dimClass = (val: number | undefined | null) => (!val || val === 0) ? 'text-foreground/20' : '';
-    const seedColor = (val: number) => val === 80 ? 'text-orange-400 font-semibold' : val === 40 ? 'text-yellow-400 font-semibold' : val === 0 ? 'text-foreground/20' : '';
+    const seedColor = (val: number) => val === 80 ? 'theme-highlight-80' : val === 40 ? 'theme-highlight-40' : val === 0 ? 'text-foreground/20' : '';
 
     return (
-      <tr id={`expanded-${hero.id}`} className="bg-muted/40">
+      <tr id={`expanded-${hero.id}`} className="bg-primary/10 border-b border-primary/20">
         <td colSpan={activeCols.length + 1} className="px-4 py-4">
           <div className="flex gap-4">
             {/* Stats Box */}
@@ -1040,7 +1040,7 @@ export default function HeroList() {
                           </div>
                         ) : null}
                       </div>
-                      <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
+                      <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5 font-bold">{item?.name || '-'}</p>
                     </div>
                   );
                 })}
@@ -1088,7 +1088,7 @@ export default function HeroList() {
         style={{ borderColor, boxShadow: borderShadow }}
         onClick={() => setEditing(hero)}
       >
-        <div className="w-full rounded-lg bg-secondary/20 py-3">
+        <div className="w-full py-3">
           <div className="w-full aspect-square flex items-center justify-center overflow-hidden">
             {illustPath ? (
               <img src={illustPath} alt={hero.name} className="w-full h-full object-cover"
@@ -1259,44 +1259,46 @@ export default function HeroList() {
 
   return (
     <div className="animate-fade-in">
-      {/* Header */}
-      <div className="flex items-center justify-end mb-4">
-        <div className="flex gap-2">
-          <Button onClick={() => setAddingType('hero')} className="gap-2 text-sm font-medium">
-            <Shield className="w-4 h-4" /> 새 영웅 추가
-          </Button>
-          <Button onClick={() => setAddingType('champion')} variant="secondary" className="gap-2 text-sm font-medium">
-            <Crown className="w-4 h-4" /> 새 챔피언 추가
-          </Button>
-        </div>
-      </div>
-
-      {/* Tab: Hero / Champion / Summary + View mode */}
+      {/* Tab: Hero / Champion / Summary + View mode + Add buttons */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex gap-1 bg-muted/50 rounded-lg p-1">
-          {([
-            { id: 'hero' as const, label: `영웅 목록 (${heroList.length})`, icon: Shield, active: listTab === 'hero' && !summaryOpen, onClick: () => { setListTab('hero'); setSummaryOpen(false); } },
-            { id: 'champion' as const, label: `챔피언 목록 (${championList.length})`, icon: Crown, active: listTab === 'champion' && !summaryOpen, onClick: () => { setListTab('champion'); setSummaryOpen(false); } },
-            { id: 'summary' as const, label: '리스트 요약', icon: BarChart3, active: summaryOpen, onClick: () => setSummaryOpen(true) },
-          ]).map(tab => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={tab.onClick}
-                className={`relative px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-300 ease-out
-                  ${tab.active
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
-              >
-                <span className="relative z-10 inline-flex items-center gap-1.5">
-                  <Icon className={`w-4 h-4 transition-transform duration-300 ${tab.active ? 'scale-110' : ''}`} />
-                  {tab.label}
-                </span>
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1 bg-muted/50 rounded-lg p-1">
+            {([
+              { id: 'hero' as const, label: `영웅 목록 (${heroList.length})`, icon: Shield, active: listTab === 'hero' && !summaryOpen, onClick: () => { setListTab('hero'); setSummaryOpen(false); } },
+              { id: 'champion' as const, label: `챔피언 목록 (${championList.length})`, icon: Crown, active: listTab === 'champion' && !summaryOpen, onClick: () => { setListTab('champion'); setSummaryOpen(false); } },
+              { id: 'summary' as const, label: '리스트 요약', icon: BarChart3, active: summaryOpen, onClick: () => setSummaryOpen(true) },
+            ]).map(tab => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={tab.onClick}
+                  data-active={tab.active}
+                  className={`sub-tab-item relative px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-300 ease-out
+                    ${tab.active
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    }`}
+                >
+                  <span className="relative z-10 inline-flex items-center gap-1.5">
+                    <Icon className={`w-4 h-4 transition-transform duration-300 ${tab.active ? 'scale-110' : ''}`} />
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
+          {!summaryOpen && (
+            <div className="flex gap-2">
+              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
+                <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
+              </Button>
+              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-accent hover:bg-accent/80 text-white">
+                <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
+              </Button>
+            </div>
+          )}
         </div>
         {!summaryOpen && (
           <div className="flex items-center gap-2">
@@ -1418,7 +1420,7 @@ export default function HeroList() {
                       <tr
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
                         className={`border-b border-border/50 transition-colors cursor-pointer select-none ${
-                          isExpanded ? 'bg-primary/15' : 'hover:bg-secondary/20'
+                          isExpanded ? 'bg-primary/15' : ''
                         } table-zebra-row`}
                         style={{ height: '52px' }}
                       >

@@ -578,12 +578,86 @@
 
 /* Zebra striping for table rows */
 .table-zebra-row:nth-child(even) {
-  background-color: hsl(var(--muted) / 0.25);
+  background-color: hsl(var(--muted) / 0.35);
 }
 :root[data-color-mode="light"] .table-zebra-row:nth-child(even) {
-  background-color: hsl(var(--muted) / 0.4);
+  background-color: hsl(var(--muted) / 0.5);
 }
-/* Don't override expanded row highlight */
-.table-zebra-row[class*="bg-primary"] {
-  background-color: unset;
+
+/* Table row hover with theme-aware color */
+.table-zebra-row:hover {
+  background-color: hsl(var(--primary) / 0.08) !important;
+}
+:root[data-color-mode="light"] .table-zebra-row:hover {
+  background-color: hsl(var(--primary) / 0.12) !important;
+}
+
+/* Dark mode hover glow for cards/boxes */
+.card-fantasy {
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+.card-fantasy:hover {
+  box-shadow: 0 0 16px hsl(var(--primary) / 0.12), 0 2px 12px rgba(0,0,0,0.15);
+  border-color: hsl(var(--primary) / 0.25);
+}
+:root[data-color-mode="light"] .card-fantasy:hover {
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.15), 0 2px 8px rgba(0,0,0,0.08);
+  border-color: hsl(var(--primary) / 0.35);
+}
+
+/* Theme-colored level/seed highlights */
+.theme-highlight-40 { color: hsl(var(--primary)); font-weight: 600; }
+.theme-highlight-80 { color: hsl(var(--accent)); font-weight: 600; }
+
+/* Equipment glow - bigger internal radial, contained external */
+.equip-glow-common { background: radial-gradient(circle, rgba(220,220,220,0.4) 0%, transparent 75%) !important; }
+.equip-glow-uncommon { background: radial-gradient(circle, rgba(74,222,128,0.45) 0%, transparent 75%) !important; }
+.equip-glow-flawless { background: radial-gradient(circle, rgba(103,232,249,0.5) 0%, transparent 75%) !important; }
+.equip-glow-epic { background: radial-gradient(circle, rgba(217,70,239,0.55) 0%, transparent 75%) !important; }
+.equip-glow-legendary { background: radial-gradient(circle, rgba(250,204,21,0.6) 0%, transparent 75%) !important; }
+
+/* Contained external shadow for equipment */
+.equip-shadow-common { box-shadow: 0 0 6px rgba(220,220,220,0.5) !important; }
+.equip-shadow-uncommon { box-shadow: 0 0 7px rgba(74,222,128,0.55) !important; }
+.equip-shadow-flawless { box-shadow: 0 0 8px rgba(103,232,249,0.55) !important; }
+.equip-shadow-epic { box-shadow: 0 0 10px rgba(217,70,239,0.6) !important; }
+.equip-shadow-legendary { box-shadow: 0 0 12px rgba(250,204,21,0.7) !important; }
+
+/* Light mode: enchant text darker for visibility */
+:root[data-color-mode="light"] .text-purple-300 { color: hsl(270 50% 40%) !important; }
+
+/* Light mode: "추가 예정" text darker */
+:root[data-color-mode="light"] .text-lime-300 { color: hsl(85 60% 32%) !important; }
+:root[data-color-mode="light"] .bg-lime-500\/30 { background-color: hsl(85 55% 42% / 0.3) !important; }
+:root[data-color-mode="light"] .bg-lime-500\/20 { background-color: hsl(85 55% 42% / 0.2) !important; }
+:root[data-color-mode="light"] .bg-lime-500\/15 { background-color: hsl(85 55% 42% / 0.15) !important; }
+
+/* Sub-tab (pill) animation */
+.sub-tab-item {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sub-tab-item::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: hsl(var(--primary));
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+.sub-tab-item:hover::after {
+  width: 60%;
+}
+.sub-tab-item[data-active="true"]::after {
+  width: 80%;
+}
+.sub-tab-item:hover {
+  transform: translateY(-1px);
+}
+.sub-tab-item:active {
+  transform: translateY(0);
 }

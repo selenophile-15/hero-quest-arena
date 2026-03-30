@@ -92,18 +92,18 @@ const QUALITY_BORDER: Record<string, string> = {
   legendary: 'border-yellow-400',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.32)',
-  uncommon: 'rgba(74,222,128,0.38)',
-  flawless: 'rgba(103,232,249,0.45)',
-  epic: 'rgba(217,70,239,0.5)',
-  legendary: 'rgba(250,204,21,0.55)',
+  common: 'rgba(220,220,220,0.4)',
+  uncommon: 'rgba(74,222,128,0.45)',
+  flawless: 'rgba(103,232,249,0.5)',
+  epic: 'rgba(217,70,239,0.55)',
+  legendary: 'rgba(250,204,21,0.6)',
 };
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
-  common: '0 0 14px rgba(220,220,220,0.6)',
-  uncommon: '0 0 16px rgba(74,222,128,0.7)',
-  flawless: '0 0 18px rgba(103,232,249,0.7)',
-  epic: '0 0 22px rgba(217,70,239,0.8)',
-  legendary: '0 0 26px rgba(250,204,21,0.9)',
+  common: '0 0 6px rgba(220,220,220,0.5)',
+  uncommon: '0 0 7px rgba(74,222,128,0.55)',
+  flawless: '0 0 8px rgba(103,232,249,0.55)',
+  epic: '0 0 10px rgba(217,70,239,0.6)',
+  legendary: '0 0 12px rgba(250,204,21,0.7)',
 };
 
 // getTypeImgPath is now theme-aware, called inside component with colorMode
@@ -698,29 +698,22 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[0.8fr_200px_200px_0.7fr] gap-4">
-          {/* Job Card */}
-          <div className="card-fantasy p-3 flex flex-col items-center">
-            <div className="w-full flex items-center justify-center mt-1">
+        <div className="grid grid-cols-[160px_200px_200px_1fr] gap-4">
+          {/* Job Card - narrow, image only */}
+          <div className="card-fantasy p-3 flex flex-col items-center justify-center">
+            <div className="w-full flex items-center justify-center">
               {heroClass ? (
                 <img
                   key={heroClass}
                   src={`/images/classillust/${JOB_NAME_MAP[heroClass] || heroClass}.webp`}
                   alt={heroClass}
-                  className="max-w-full max-h-[360px] object-contain drop-shadow-lg"
+                  className="max-w-full max-h-[340px] object-contain drop-shadow-lg"
                   onError={e => { e.currentTarget.style.display = 'none'; }}
                 />
               ) : (
                 <span className="text-xs text-muted-foreground">직업을 선택하세요</span>
               )}
             </div>
-            <div className="flex-1" />
-            {heroClass && (
-              <div className="flex flex-col items-center mt-2 gap-1 pb-1">
-                <span className="text-sm text-foreground">-</span>
-                <p className="text-xs text-foreground/70 text-center leading-tight">-</p>
-              </div>
-            )}
           </div>
 
           {/* Stats Panel */}
