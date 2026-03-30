@@ -446,7 +446,7 @@ export default function EquipmentSelectDialog({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-[58px] text-xs gap-1 px-3 bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40"
+                    className="h-[58px] text-xs gap-1 px-3 bg-primary/30 hover:bg-primary/50 text-white border-primary/40"
                     onClick={() => setManualMode(true)}
                   >
                     <Wrench className="w-3.5 h-3.5" />
