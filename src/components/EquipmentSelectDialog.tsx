@@ -963,17 +963,16 @@ export default function EquipmentSelectDialog({
                   key={i}
                   onClick={() => setActiveSlot(i)}
                   className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
-                    activeSlot === i ? 'border-primary ring-1 ring-primary/30' :
                     s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
                   }`}
-                  style={s.item ? { boxShadow: QUALITY_SHADOW[s.quality] } : {}}
+                  style={s.item ? { boxShadow: `0 0 4px ${QUALITY_RADIAL[s.quality]?.replace(/[\d.]+\)$/, '0.3)')}` } : {}}
                 >
                   {/* Slot number with quality background */}
                   <div
                     className="w-5 flex items-center justify-center flex-shrink-0"
                     style={{ background: s.item ? qualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
                   >
-                    <span className="text-[10px] font-bold text-background">{i + 1}</span>
+                    <span className="text-[10px] font-bold text-black">{i + 1}</span>
                   </div>
                   {s.item ? (
                     <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">
