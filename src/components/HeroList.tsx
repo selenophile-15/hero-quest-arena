@@ -1040,7 +1040,7 @@ export default function HeroList() {
                           </div>
                         ) : null}
                       </div>
-                      <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5">{item?.name || '-'}</p>
+                      <p className="text-[11px] text-foreground truncate w-full text-center mt-0.5 font-bold">{item?.name || '-'}</p>
                     </div>
                   );
                 })}
