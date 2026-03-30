@@ -714,7 +714,7 @@ export default function HeroList() {
         <div className="flex items-center gap-1 justify-center h-[20px]">
           {SEED_ICONS.map(s => {
             const seedVal = hero.seeds?.[s.key as keyof typeof hero.seeds] || 0;
-            const seedColor = seedVal === 80 ? 'text-orange-400 font-semibold' : seedVal === 40 ? 'text-yellow-400 font-semibold' : seedVal === 0 ? 'text-foreground/20' : '';
+            const seedColor = seedVal === 80 ? 'theme-highlight-80' : seedVal === 40 ? 'theme-highlight-40' : seedVal === 0 ? 'text-foreground/20' : '';
             return (
               <span key={s.key} className="inline-flex items-center gap-0.5">
                 <img src={s.icon} alt="" className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
