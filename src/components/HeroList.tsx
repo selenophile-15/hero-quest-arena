@@ -813,7 +813,7 @@ export default function HeroList() {
     }
 
     const dimClass = (val: number | undefined | null) => (!val || val === 0) ? 'text-foreground/20' : '';
-    const seedColor = (val: number) => val === 80 ? 'text-orange-400 font-semibold' : val === 40 ? 'text-yellow-400 font-semibold' : val === 0 ? 'text-foreground/20' : '';
+    const seedColor = (val: number) => val === 80 ? 'theme-highlight-80' : val === 40 ? 'theme-highlight-40' : val === 0 ? 'text-foreground/20' : '';
 
     return (
       <tr id={`expanded-${hero.id}`} className="bg-primary/10 border-b border-primary/20">
