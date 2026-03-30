@@ -982,21 +982,21 @@ export default function EquipmentSelectDialog({
                       ) : null}
                       {/* Info */}
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs text-foreground truncate font-medium">{s.item.name}</p>
-                        <p className="text-[10px] text-foreground/60">
+                        <p className="text-xs text-foreground truncate font-bold">{s.item.name}</p>
+                        <p className="text-[10px] text-foreground/70 font-medium">
                           T{s.item.tier} {s.item.typeKor}
                           {s.item.relic && <span className="text-yellow-400 ml-1">⭐</span>}
                           {s.item.manual && <Wrench className="w-2.5 h-2.5 inline ml-1 text-muted-foreground" />}
                         </p>
                         <div className="flex items-center gap-1 mt-0.5 flex-wrap">
                           {s.element && (
-                            <span className={`text-[9px] ${hasAffinityEl ? 'font-bold' : ''} ${ELEMENT_COLORS[s.element.type] || 'text-foreground/70'}`}>
+                            <span className={`text-[9px] font-bold ${ELEMENT_COLORS[s.element.type] || 'text-foreground/70'}`}>
                               {hasAffinityEl && '★ '}{s.element.type} (T{s.element.tier})
                             </span>
                           )}
                           {s.element && s.spirit && <span className="text-[9px] text-muted-foreground">/</span>}
                           {s.spirit && (
-                            <span className={`text-[9px] text-purple-300 ${hasAffinitySp ? 'font-bold' : ''}`}>
+                            <span className={`text-[9px] font-bold text-purple-400`}>
                               {hasAffinitySp && '★ '}{s.spirit.name} (T{getSpiritTier(s.spirit.name)})
                             </span>
                           )}
