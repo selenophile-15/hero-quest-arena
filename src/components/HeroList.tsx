@@ -131,7 +131,7 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
 }
 
 // Default hidden columns
-const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg'];
+const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg', 'position'];
 
 export default function HeroList() {
   const { colorMode } = useTheme();
@@ -545,7 +545,7 @@ export default function HeroList() {
             <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
           )}
           {isChamp && hero.championName && spacer}
-          <span className={`${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'text-yellow-400' : ''}`}>{hero.name}</span>
+          <span className={`${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'theme-highlight-80' : ''}`}>{hero.name}</span>
           {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
         </span>
       );
@@ -737,7 +737,7 @@ export default function HeroList() {
     }
     if (colKey === 'level') {
       const lv = hero.level || 0;
-      const lvColor = lv >= 50 ? 'theme-highlight-40' : '';
+      const lvColor = lv >= 50 ? 'theme-highlight-80' : '';
       return <span className={`${lh} ${lvColor}`}>{lv}</span>;
     }
     const value = hero[colKey as keyof Hero];
@@ -1099,7 +1099,7 @@ export default function HeroList() {
           </div>
         </div>
         <div className="text-center w-full">
-          <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
+          <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'theme-highlight-80' : 'text-foreground'}`}>
             {hero.name}
             {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />}
           </p>
@@ -1288,20 +1288,17 @@ export default function HeroList() {
               );
             })}
           </div>
-          {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
-          {!summaryOpen && (
-            <div className="flex gap-2">
-              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
-                <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
-              </Button>
-              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-accent hover:bg-accent/80 text-white">
-                <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
-              </Button>
-            </div>
-          )}
         </div>
         {!summaryOpen && (
           <div className="flex items-center gap-2">
+            {/* Add hero/champion buttons moved here, next to save icons */}
+            <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
+              <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
+            </Button>
+            <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
+              <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
+            </Button>
+            <div className="w-px h-5 bg-border mx-1" />
             <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
               <Download className="w-3.5 h-3.5" />
             </Button>
@@ -1348,11 +1345,11 @@ export default function HeroList() {
               ))}
             </div>
             <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={handleResetCols}>초기화</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleSelectAllCols(true)}>전체 선택</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleSelectAllCols(false)}>전체 해제</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleToggleStatCols(true)}>스탯 선택</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleToggleStatCols(false)}>스탯 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary" onClick={handleResetCols}>초기화</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary" onClick={() => handleSelectAllCols(true)}>전체 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary" onClick={() => handleSelectAllCols(false)}>전체 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary" onClick={() => handleToggleStatCols(true)}>스탯 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary" onClick={() => handleToggleStatCols(false)}>스탯 해제</Button>
             </div>
           </div>
 

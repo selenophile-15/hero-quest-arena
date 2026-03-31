@@ -698,7 +698,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[160px_200px_200px_1fr] gap-4">
+        <div className="grid grid-cols-[200px_200px_200px_1fr] gap-4">
           {/* Job Card - narrow, image only */}
           <div className="card-fantasy p-3 flex flex-col items-center justify-center">
             <div className="w-full flex items-center justify-center">
@@ -892,7 +892,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               return (
                 <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/50">
                   <div className="px-2 py-1.5 flex items-center justify-center">
-                    <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-700/60 text-foreground">고유</span>
+                    <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-800/70 text-white">고유</span>
                   </div>
                   <div className="px-1 py-1.5 flex items-center justify-center">
                     {imagePath ? <img src={`/${imagePath}`} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}

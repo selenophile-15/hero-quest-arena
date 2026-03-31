@@ -380,7 +380,8 @@ export default function EquipmentSelectDialog({
 
   const handleClearSlot = useCallback(() => {
     const newSlots = [...slots];
-    newSlots[activeSlot] = { item: null, quality: 'common', element: null, spirit: null };
+    // Keep enchants when removing equipment
+    newSlots[activeSlot] = { item: null, quality: newSlots[activeSlot].quality, element: newSlots[activeSlot].element, spirit: newSlots[activeSlot].spirit };
     setSlots(newSlots);
   }, [slots, activeSlot]);
 

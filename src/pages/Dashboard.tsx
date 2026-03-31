@@ -40,7 +40,7 @@ export default function Dashboard() {
         <div className="w-full px-6 h-14 flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
-            className="font-display text-lg text-primary tracking-wide transition-all duration-300 hover:text-primary/80 hover:scale-105 active:scale-95"
+            className="font-display text-lg text-primary tracking-wide transition-all duration-300 hover:text-primary/80 hover:scale-105 active:scale-95 logo-glow"
           >
             QUEST SIMULATOR
           </button>

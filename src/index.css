@@ -24,8 +24,8 @@
     --muted: 230 10% 16%;
     --muted-foreground: 230 10% 65%;
 
-    --accent: 25 90% 50%;
-    --accent-foreground: 40 20% 95%;
+    --accent: 40 75% 40%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -74,8 +74,8 @@
     --muted: 230 10% 16%;
     --muted-foreground: 250 10% 58%;
 
-    --accent: 270 30% 58%;
-    --accent-foreground: 250 20% 95%;
+    --accent: 250 30% 55%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -123,8 +123,8 @@
     --muted: 230 10% 16%;
     --muted-foreground: 90 10% 58%;
 
-    --accent: 65 50% 42%;
-    --accent-foreground: 80 20% 95%;
+    --accent: 82 45% 36%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -172,8 +172,8 @@
     --muted: 230 10% 16%;
     --muted-foreground: 350 10% 58%;
 
-    --accent: 330 45% 45%;
-    --accent-foreground: 355 20% 95%;
+    --accent: 348 50% 40%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -220,7 +220,7 @@
     --muted: 40 10% 92%;
     --muted-foreground: 230 10% 45%;
 
-    --accent: 25 80% 50%;
+    --accent: 40 70% 38%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
@@ -268,7 +268,7 @@
     --muted: 250 10% 92%;
     --muted-foreground: 250 10% 45%;
 
-    --accent: 270 35% 55%;
+    --accent: 250 40% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
@@ -317,7 +317,7 @@
     --muted: 85 10% 92%;
     --muted-foreground: 90 10% 45%;
 
-    --accent: 65 50% 38%;
+    --accent: 82 50% 30%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
@@ -366,7 +366,7 @@
     --muted: 350 10% 92%;
     --muted-foreground: 350 10% 45%;
 
-    --accent: 330 40% 45%;
+    --accent: 348 45% 35%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
@@ -572,13 +572,17 @@
 }
 
 /* Primary-colored button text: always white */
-.bg-primary {
+.bg-primary, [class*="bg-primary"] {
+  color: white !important;
+}
+/* Accent-colored button text: always white */
+.bg-accent, [class*="bg-accent"] {
   color: white !important;
 }
 
 /* Zebra striping for table rows */
 .table-zebra-row:nth-child(even) {
-  background-color: hsl(var(--muted) / 0.35);
+  background-color: hsl(var(--muted) / 0.5);
 }
 :root[data-color-mode="light"] .table-zebra-row:nth-child(even) {
   background-color: hsl(var(--muted) / 0.5);
@@ -586,42 +590,59 @@
 
 /* Table row hover with theme-aware color */
 .table-zebra-row:hover {
-  background-color: hsl(var(--primary) / 0.08) !important;
+  background-color: hsl(var(--primary) / 0.15) !important;
 }
 :root[data-color-mode="light"] .table-zebra-row:hover {
   background-color: hsl(var(--primary) / 0.12) !important;
 }
 
-/* Dark mode hover glow for cards/boxes */
+/* Dark mode hover glow for cards/boxes - brighter, visible glow */
 .card-fantasy {
   transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
 }
 .card-fantasy:hover {
-  box-shadow: 0 0 16px hsl(var(--primary) / 0.12), 0 2px 12px rgba(0,0,0,0.15);
-  border-color: hsl(var(--primary) / 0.25);
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.25), 0 0 8px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
 }
 :root[data-color-mode="light"] .card-fantasy:hover {
   box-shadow: 0 4px 20px hsl(var(--primary) / 0.15), 0 2px 8px rgba(0,0,0,0.08);
   border-color: hsl(var(--primary) / 0.35);
 }
 
-/* Theme-colored level/seed highlights */
-.theme-highlight-40 { color: hsl(var(--primary)); font-weight: 600; }
-.theme-highlight-80 { color: hsl(var(--accent)); font-weight: 600; }
+/* Theme-colored level/seed highlights - swapped: 40→accent(darker), 80→primary(lighter) */
+/* seed 40 = theme accent (was primary), seed 80 = theme primary lighter (was accent) */
+.theme-highlight-40 { color: hsl(var(--accent)); font-weight: 600; }
+.theme-highlight-80 { color: hsl(var(--primary)); font-weight: 600; }
+
+/* Dark mode: all group box borders slightly brighter */
+:root:not([data-color-mode="light"]) .card-fantasy {
+  border-color: hsl(var(--border) / 0.6);
+}
+:root:not([data-color-mode="light"]) .border-border {
+  border-color: hsl(230 12% 28%);
+}
+
+/* Light mode: slightly brighter primary for buttons/checkboxes (not text) */
+:root[data-color-mode="light"] .bg-primary {
+  background-color: hsl(var(--primary) / 0.85) !important;
+}
+:root[data-color-mode="light"] .bg-accent {
+  background-color: hsl(var(--accent) / 0.85) !important;
+}
 
 /* Equipment glow - bigger internal radial, contained external */
-.equip-glow-common { background: radial-gradient(circle, rgba(220,220,220,0.4) 0%, transparent 75%) !important; }
-.equip-glow-uncommon { background: radial-gradient(circle, rgba(74,222,128,0.45) 0%, transparent 75%) !important; }
-.equip-glow-flawless { background: radial-gradient(circle, rgba(103,232,249,0.5) 0%, transparent 75%) !important; }
-.equip-glow-epic { background: radial-gradient(circle, rgba(217,70,239,0.55) 0%, transparent 75%) !important; }
-.equip-glow-legendary { background: radial-gradient(circle, rgba(250,204,21,0.6) 0%, transparent 75%) !important; }
+.equip-glow-common { background: radial-gradient(circle, rgba(180,180,180,0.35) 0%, transparent 80%) !important; }
+.equip-glow-uncommon { background: radial-gradient(circle, rgba(74,222,128,0.5) 0%, transparent 80%) !important; }
+.equip-glow-flawless { background: radial-gradient(circle, rgba(103,232,249,0.55) 0%, transparent 80%) !important; }
+.equip-glow-epic { background: radial-gradient(circle, rgba(217,70,239,0.6) 0%, transparent 80%) !important; }
+.equip-glow-legendary { background: radial-gradient(circle, rgba(250,204,21,0.65) 0%, transparent 80%) !important; }
 
 /* Contained external shadow for equipment */
-.equip-shadow-common { box-shadow: 0 0 6px rgba(220,220,220,0.5) !important; }
-.equip-shadow-uncommon { box-shadow: 0 0 7px rgba(74,222,128,0.55) !important; }
-.equip-shadow-flawless { box-shadow: 0 0 8px rgba(103,232,249,0.55) !important; }
-.equip-shadow-epic { box-shadow: 0 0 10px rgba(217,70,239,0.6) !important; }
-.equip-shadow-legendary { box-shadow: 0 0 12px rgba(250,204,21,0.7) !important; }
+.equip-shadow-common { box-shadow: 0 0 8px rgba(180,180,180,0.5) !important; }
+.equip-shadow-uncommon { box-shadow: 0 0 9px rgba(74,222,128,0.6) !important; }
+.equip-shadow-flawless { box-shadow: 0 0 10px rgba(103,232,249,0.6) !important; }
+.equip-shadow-epic { box-shadow: 0 0 12px rgba(217,70,239,0.65) !important; }
+.equip-shadow-legendary { box-shadow: 0 0 14px rgba(250,204,21,0.75) !important; }
 
 /* Light mode: enchant text darker for visibility */
 :root[data-color-mode="light"] .text-purple-300 { color: hsl(270 50% 40%) !important; }
@@ -660,4 +681,36 @@
 }
 .sub-tab-item:active {
   transform: translateY(0);
+}
+
+/* Logo glow animation - theme-aware */
+@keyframes logo-glow {
+  0%, 100% {
+    text-shadow: 0 0 8px hsl(var(--primary) / 0.3), 0 0 20px hsl(var(--primary) / 0.1);
+  }
+  50% {
+    text-shadow: 0 0 16px hsl(var(--primary) / 0.6), 0 0 40px hsl(var(--primary) / 0.25);
+  }
+}
+:root[data-color-mode="light"] .logo-glow {
+  animation: logo-glow-light 3s ease-in-out infinite;
+}
+@keyframes logo-glow-light {
+  0%, 100% {
+    text-shadow: 0 0 6px hsl(var(--primary) / 0.2), 0 0 15px hsl(var(--primary) / 0.08);
+  }
+  50% {
+    text-shadow: 0 0 12px hsl(var(--primary) / 0.4), 0 0 30px hsl(var(--primary) / 0.15);
+  }
+}
+.logo-glow {
+  animation: logo-glow 3s ease-in-out infinite;
+}
+
+/* Dark mode relic effect text: slightly brighter */
+:root:not([data-color-mode="light"]) .relic-effect-text {
+  color: hsl(var(--foreground) / 0.85);
+}
+:root[data-color-mode="light"] .relic-effect-text {
+  color: hsl(230 15% 25%);
 }
