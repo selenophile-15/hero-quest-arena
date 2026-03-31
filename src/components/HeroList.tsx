@@ -1302,6 +1302,14 @@ export default function HeroList() {
         </div>
         {!summaryOpen && (
           <div className="flex items-center gap-2">
+            {/* Add hero/champion buttons moved here, next to save icons */}
+            <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
+              <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
+            </Button>
+            <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
+              <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
+            </Button>
+            <div className="w-px h-5 bg-border mx-1" />
             <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
               <Download className="w-3.5 h-3.5" />
             </Button>
