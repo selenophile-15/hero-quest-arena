@@ -572,7 +572,11 @@
 }
 
 /* Primary-colored button text: always white */
-.bg-primary {
+.bg-primary, [class*="bg-primary"] {
+  color: white !important;
+}
+/* Accent-colored button text: always white */
+.bg-accent, [class*="bg-accent"] {
   color: white !important;
 }
 
