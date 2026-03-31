@@ -1288,17 +1288,6 @@ export default function HeroList() {
               );
             })}
           </div>
-          {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
-          {!summaryOpen && (
-            <div className="flex gap-2">
-              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
-                <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
-              </Button>
-              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
-                <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
-              </Button>
-            </div>
-          )}
         </div>
         {!summaryOpen && (
           <div className="flex items-center gap-2">
