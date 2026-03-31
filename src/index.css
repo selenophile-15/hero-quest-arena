@@ -582,7 +582,7 @@
 
 /* Zebra striping for table rows */
 .table-zebra-row:nth-child(even) {
-  background-color: hsl(var(--muted) / 0.35);
+  background-color: hsl(var(--muted) / 0.5);
 }
 :root[data-color-mode="light"] .table-zebra-row:nth-child(even) {
   background-color: hsl(var(--muted) / 0.5);
@@ -590,7 +590,7 @@
 
 /* Table row hover with theme-aware color */
 .table-zebra-row:hover {
-  background-color: hsl(var(--primary) / 0.08) !important;
+  background-color: hsl(var(--primary) / 0.15) !important;
 }
 :root[data-color-mode="light"] .table-zebra-row:hover {
   background-color: hsl(var(--primary) / 0.12) !important;
