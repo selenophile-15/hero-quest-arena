@@ -609,9 +609,26 @@
   border-color: hsl(var(--primary) / 0.35);
 }
 
-/* Theme-colored level/seed highlights */
-.theme-highlight-40 { color: hsl(var(--primary)); font-weight: 600; }
-.theme-highlight-80 { color: hsl(var(--accent)); font-weight: 600; }
+/* Theme-colored level/seed highlights - swapped: 40→accent(darker), 80→primary(lighter) */
+/* seed 40 = theme accent (was primary), seed 80 = theme primary lighter (was accent) */
+.theme-highlight-40 { color: hsl(var(--accent)); font-weight: 600; }
+.theme-highlight-80 { color: hsl(var(--primary)); font-weight: 600; }
+
+/* Dark mode: all group box borders slightly brighter */
+:root:not([data-color-mode="light"]) .card-fantasy {
+  border-color: hsl(var(--border) / 0.6);
+}
+:root:not([data-color-mode="light"]) .border-border {
+  border-color: hsl(230 12% 28%);
+}
+
+/* Light mode: slightly brighter primary for buttons/checkboxes (not text) */
+:root[data-color-mode="light"] .bg-primary {
+  background-color: hsl(var(--primary) / 0.85) !important;
+}
+:root[data-color-mode="light"] .bg-accent {
+  background-color: hsl(var(--accent) / 0.85) !important;
+}
 
 /* Equipment glow - bigger internal radial, contained external */
 .equip-glow-common { background: radial-gradient(circle, rgba(220,220,220,0.4) 0%, transparent 75%) !important; }
