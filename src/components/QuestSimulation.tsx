@@ -552,7 +552,7 @@ export default function QuestSimulation() {
   return (
     <div className="animate-fade-in">
       {/* Sub-tabs */}
-      <div className="flex gap-1 mb-4 border-b border-border/30 pb-1">
+      <div className="flex gap-1 mb-4 bg-muted/50 rounded-lg p-1 w-fit">
         {QUEST_SUB_TABS.map(tab => {
           const Icon = tab.icon;
           const isActive = subTab === tab.id;
@@ -560,15 +560,17 @@ export default function QuestSimulation() {
               <button
                 key={tab.id}
                 onClick={() => setSubTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-[5px]
-                  transition-all duration-200
+                data-active={isActive}
+                className={`sub-tab-item relative px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-300 ease-out
                   ${isActive
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-primary/30'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'scale-110' : ''}`} />
-                {tab.label}
+                <span className="relative z-10 inline-flex items-center gap-1.5">
+                  <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : ''}`} />
+                  {tab.label}
+                </span>
               </button>
           );
         })}
