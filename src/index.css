@@ -596,13 +596,13 @@
   background-color: hsl(var(--primary) / 0.12) !important;
 }
 
-/* Dark mode hover glow for cards/boxes */
+/* Dark mode hover glow for cards/boxes - brighter, visible glow */
 .card-fantasy {
   transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
 }
 .card-fantasy:hover {
-  box-shadow: 0 0 16px hsl(var(--primary) / 0.12), 0 2px 12px rgba(0,0,0,0.15);
-  border-color: hsl(var(--primary) / 0.25);
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.25), 0 0 8px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
 }
 :root[data-color-mode="light"] .card-fantasy:hover {
   box-shadow: 0 4px 20px hsl(var(--primary) / 0.15), 0 2px 8px rgba(0,0,0,0.08);
