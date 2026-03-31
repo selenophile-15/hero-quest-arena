@@ -737,7 +737,7 @@ export default function HeroList() {
     }
     if (colKey === 'level') {
       const lv = hero.level || 0;
-      const lvColor = lv >= 50 ? 'theme-highlight-40' : '';
+      const lvColor = lv >= 50 ? 'theme-highlight-80' : '';
       return <span className={`${lh} ${lvColor}`}>{lv}</span>;
     }
     const value = hero[colKey as keyof Hero];
