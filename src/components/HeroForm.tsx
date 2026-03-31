@@ -892,7 +892,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               return (
                 <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/50">
                   <div className="px-2 py-1.5 flex items-center justify-center">
-                    <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-700/60 text-foreground">고유</span>
+                    <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-800/70 text-white">고유</span>
                   </div>
                   <div className="px-1 py-1.5 flex items-center justify-center">
                     {imagePath ? <img src={`/${imagePath}`} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
