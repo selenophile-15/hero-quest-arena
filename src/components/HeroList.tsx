@@ -1099,7 +1099,7 @@ export default function HeroList() {
           </div>
         </div>
         <div className="text-center w-full">
-          <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
+          <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'theme-highlight-80' : 'text-foreground'}`}>
             {hero.name}
             {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />}
           </p>
