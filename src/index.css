@@ -259,7 +259,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 245 15% 15%;
 
-    --primary: 245 45% 55%;
+    --primary: 245 45% 60%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 250 15% 90%;
@@ -268,7 +268,7 @@
     --muted: 250 10% 92%;
     --muted-foreground: 250 10% 45%;
 
-    --accent: 270 35% 55%;
+    --accent: 270 35% 58%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
@@ -276,23 +276,23 @@
 
     --border: 250 15% 82%;
     --input: 250 15% 85%;
-    --ring: 245 45% 55%;
+    --ring: 245 45% 60%;
 
     --sidebar-background: 250 15% 95%;
     --sidebar-foreground: 250 15% 25%;
-    --sidebar-primary: 245 45% 55%;
+    --sidebar-primary: 245 45% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 250 15% 90%;
     --sidebar-accent-foreground: 250 15% 25%;
     --sidebar-border: 250 15% 82%;
-    --sidebar-ring: 245 45% 55%;
+    --sidebar-ring: 245 45% 60%;
 
-    --gold-glow: 245 45% 55%;
+    --gold-glow: 245 45% 60%;
     --gold-dim: 260 30% 50%;
     --fantasy-purple: 270 35% 55%;
     --fantasy-blue: 240 35% 55%;
-    --hero-gradient: linear-gradient(135deg, hsl(240 40% 55%), hsl(270 35% 55%));
-    --card-glow: 0 0 20px hsl(245 45% 55% / 0.08);
+    --hero-gradient: linear-gradient(135deg, hsl(240 40% 60%), hsl(270 35% 58%));
+    --card-glow: 0 0 20px hsl(245 45% 60% / 0.08);
 
     font-family: 'Noto Sans KR', sans-serif;
   }
