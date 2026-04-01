@@ -75,12 +75,12 @@
     --muted-foreground: 250 10% 58%;
 
     --accent: 270 30% 58%;
-    --accent-foreground: 250 20% 95%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 250 12% 22%;
+    --border: 250 12% 26%;
     --input: 250 12% 20%;
     --ring: 245 35% 72%;
 
