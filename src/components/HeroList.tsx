@@ -131,7 +131,7 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
 }
 
 // Default hidden columns
-const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg'];
+const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg', 'position'];
 
 export default function HeroList() {
   const { colorMode } = useTheme();
@@ -1260,9 +1260,9 @@ export default function HeroList() {
   return (
     <div className="animate-fade-in">
       {/* Tab: Hero / Champion / Summary + View mode + Add buttons */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="flex gap-1 bg-muted/50 rounded-lg p-1">
+      <div className="flex items-center justify-between mb-0">
+        <div className="flex items-end gap-0 border-b border-border w-full">
+          <div className="flex items-end gap-0">
             {([
               { id: 'hero' as const, label: `영웅 목록 (${heroList.length})`, icon: Shield, active: listTab === 'hero' && !summaryOpen, onClick: () => { setListTab('hero'); setSummaryOpen(false); } },
               { id: 'champion' as const, label: `챔피언 목록 (${championList.length})`, icon: Crown, active: listTab === 'champion' && !summaryOpen, onClick: () => { setListTab('champion'); setSummaryOpen(false); } },
@@ -1273,11 +1273,11 @@ export default function HeroList() {
                 <button
                   key={tab.id}
                   onClick={tab.onClick}
-                  data-active={tab.active}
-                  className={`sub-tab-item relative px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-300 ease-out
+                  data-active={String(tab.active)}
+                  className={`sub-tab-bookmark text-sm font-medium
                     ${tab.active
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      ? 'text-primary font-bold'
+                      : 'text-muted-foreground hover:text-foreground'
                     }`}
                 >
                   <span className="relative z-10 inline-flex items-center gap-1.5">
@@ -1288,20 +1288,21 @@ export default function HeroList() {
               );
             })}
           </div>
+          <div className="flex-1" />
           {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
           {!summaryOpen && (
-            <div className="flex gap-2">
-              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-primary hover:bg-primary/80 text-white">
+            <div className="flex gap-2 pb-1">
+              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 text-white">
                 <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
               </Button>
-              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[34px] px-3 bg-accent hover:bg-accent/80 text-white">
+              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 text-white">
                 <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
               </Button>
             </div>
           )}
         </div>
         {!summaryOpen && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pb-1">
             <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
               <Download className="w-3.5 h-3.5" />
             </Button>
@@ -1348,11 +1349,15 @@ export default function HeroList() {
               ))}
             </div>
             <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={handleResetCols}>초기화</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleSelectAllCols(true)}>전체 선택</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleSelectAllCols(false)}>전체 해제</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleToggleStatCols(true)}>스탯 선택</Button>
-              <Button variant="outline" size="sm" className="text-xs h-7 px-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent" onClick={() => handleToggleStatCols(false)}>스탯 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 bg-primary/20 text-primary border-primary/40 hover:bg-primary/30" onClick={handleResetCols}>초기화</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 bg-primary/20 text-primary border-primary/40 hover:bg-primary/30" onClick={() => handleSelectAllCols(true)}>전체 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 bg-primary/20 text-primary border-primary/40 hover:bg-primary/30" onClick={() => handleSelectAllCols(false)}>전체 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 bg-primary/20 text-primary border-primary/40 hover:bg-primary/30" onClick={() => handleToggleStatCols(true)}>스탯 선택</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 bg-primary/20 text-primary border-primary/40 hover:bg-primary/30" onClick={() => handleToggleStatCols(false)}>스탯 해제</Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 px-2 bg-primary/20 text-primary border-primary/40 hover:bg-primary/30" onClick={() => {
+                const screenshotKeys = new Set(['heroClass', 'name', 'level', 'element', 'skills']);
+                setVisibleCols(screenshotKeys);
+              }}>스크린샷용</Button>
             </div>
           </div>
 
