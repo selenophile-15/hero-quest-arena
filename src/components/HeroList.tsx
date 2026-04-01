@@ -1302,7 +1302,7 @@ export default function HeroList() {
           )}
         </div>
         {!summaryOpen && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pb-1">
             <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
               <Download className="w-3.5 h-3.5" />
             </Button>
