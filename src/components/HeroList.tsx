@@ -539,7 +539,7 @@ export default function HeroList() {
     if (colKey === 'name') {
       // For champions: show custom name only. For heroes: show name as before.
       return (
-        <span className={`font-medium text-foreground text-center w-full ${wrapCls} justify-center ${lh}`}>
+        <span className={`font-bold text-foreground text-center w-full ${wrapCls} justify-center ${lh}`}>
           <span className={capture ? 'inline-block align-middle leading-none' : ''}>{hero.name}</span>
         </span>
       );
