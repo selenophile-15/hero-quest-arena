@@ -842,7 +842,7 @@ export default function QuestSimulation() {
                   // Calculate modified values based on mini-boss
                   const hpMod = selectedMiniBoss === 'huge' ? 2.0 : selectedMiniBoss === 'dire' ? 1.5 : selectedMiniBoss === 'legendary' ? 1.5 : 1.0;
                   const atkMod = selectedMiniBoss === 'legendary' ? 1.25 : 1.0;
-                  const aoeMod = selectedMiniBoss === 'huge' ? 2.0 : 1.0;
+                  const aoeMod = selectedMiniBoss === 'huge' ? 3.0 : 1.0;
                   const displayHp = Math.round(currentQuest.hp * hpMod);
                   const displayAtk = Math.round(currentQuest.atk * atkMod);
                   const displayAoeChance = Math.min(currentQuest.aoeChance * aoeMod, 100);
