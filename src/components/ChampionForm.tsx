@@ -1079,6 +1079,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                     <span key={sp} className="text-foreground font-semibold">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
                                   ))}
                                 </div>
+                              )}
                               {equipDialogType === 'aurasong' && (() => {
                                 const effect = getAurasongSkillEffect(item.name);
                                 return effect ? (
