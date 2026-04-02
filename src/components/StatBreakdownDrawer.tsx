@@ -147,7 +147,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
       <div className="grid grid-cols-[1fr_2fr] gap-4 h-full">
         {/* Left: Skill & Soul bonuses */}
         <div className="space-y-3 overflow-y-auto">
-          <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+          <div className={`rounded-t ${config.headerBg} px-3 py-2 stat-box-white`}>
             <h4 className="text-sm font-bold text-white">스킬 & 영혼 보너스</h4>
           </div>
 
@@ -324,7 +324,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
         {/* Right: Equipment breakdown */}
         <div className="space-y-3 overflow-y-auto">
-          <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+          <div className={`rounded-t ${config.headerBg} px-3 py-2 stat-box-white`}>
             <h4 className="text-sm font-bold text-white">무기, 장비 {config.label}</h4>
           </div>
 
@@ -334,7 +334,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               const hasItem = slot && slot.itemName;
               return (
                 <div key={i} className="border border-border/40 rounded overflow-hidden">
-                   <div className={`${config.slotHeaderBg} px-2 py-1 flex items-center justify-between border-b border-white/10`}>
+                   <div className={`${config.slotHeaderBg} px-2 py-1 stat-box-white flex items-center justify-between border-b border-white/10`}>
                      <span className={`text-xs font-semibold ${config.slotHeaderText}`}>장비 {i + 1}</span>
                     <span className="text-[10px] text-white truncate ml-1">
                       {hasItem ? slot.itemName : '비어있음'}
@@ -441,7 +441,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
           </div>
 
           {/* Final calculation summary */}
-          <div className={`mx-3 rounded ${config.headerBg} overflow-hidden`}>
+          <div className={`mx-3 rounded ${config.headerBg} overflow-hidden stat-box-white`}>
             <div className="px-3 py-2">
               <h5 className="text-xs font-bold text-white mb-2">최종 계산식</h5>
               <table className="w-full text-xs">
@@ -603,7 +603,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
         <div className="grid grid-cols-[1fr_1fr] gap-4 h-full">
           {/* Left: Crit Rate */}
           <div className="space-y-3 overflow-y-auto">
-            <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+            <div className={`rounded-t ${config.headerBg} px-3 py-2 stat-box-white`}>
               <h4 className="text-sm font-bold text-white">치명타 확률</h4>
             </div>
 
@@ -678,7 +678,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
 
             {/* Final crit rate summary */}
-            <div className={`mx-0 rounded ${config.headerBg} overflow-hidden`}>
+            <div className={`mx-0 rounded ${config.headerBg} overflow-hidden stat-box-white`}>
               <div className="px-3 py-2">
                 <h5 className="text-xs font-bold text-white mb-2">최종 계산식</h5>
                 <table className="w-full text-xs">
@@ -737,7 +737,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
           {/* Right: Crit Damage */}
           <div className="space-y-3 overflow-y-auto">
-            <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+            <div className={`rounded-t ${config.headerBg} px-3 py-2 stat-box-white`}>
               <h4 className="text-sm font-bold text-white">치명타 대미지</h4>
             </div>
 
@@ -781,7 +781,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
 
             {/* Final crit damage summary */}
-            <div className={`mx-0 rounded ${config.headerBg} overflow-hidden`}>
+            <div className={`mx-0 rounded ${config.headerBg} overflow-hidden stat-box-white`}>
               <div className="px-3 py-2">
                 <h5 className="text-xs font-bold text-white mb-2">최종 계산식</h5>
                 <table className="w-full text-xs">
@@ -829,7 +829,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
       <div className="grid grid-cols-[1fr_1fr] gap-4 h-full">
         {/* Left: Breakdown */}
         <div className="space-y-3 overflow-y-auto">
-          <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+          <div className={`rounded-t ${config.headerBg} px-3 py-2 stat-box-white`}>
             <h4 className="text-sm font-bold text-white">{config.label} 상세</h4>
           </div>
 
@@ -917,7 +917,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
         {/* Right: Summary */}
         <div className="space-y-3 overflow-y-auto">
-          <div className={`rounded-t ${config.headerBg} px-3 py-2`}>
+          <div className={`rounded-t ${config.headerBg} px-3 py-2 stat-box-white`}>
             <h4 className="text-sm font-bold text-white">보너스 합산</h4>
           </div>
 
@@ -935,7 +935,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
           </div>
 
           {/* Final summary box */}
-          <div className={`mx-0 rounded ${config.headerBg} overflow-hidden`}>
+          <div className={`mx-0 rounded ${config.headerBg} overflow-hidden stat-box-white`}>
             <div className="px-3 py-2">
               <h5 className="text-xs font-bold text-white mb-2">최종 계산식</h5>
               <table className="w-full text-xs">
