@@ -1382,7 +1382,7 @@ export default function HeroList() {
           </div>
 
           {/* Table View */}
-          <div ref={tableContentRef} className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
+          <div ref={tableContentRef} data-screenshot-target className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
