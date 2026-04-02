@@ -39,6 +39,7 @@ export interface Hero {
     element: any | null;
     spirit: any | null;
   }>;
+  detailStats?: Record<string, number>; // 기타 상세 스탯 (광전사, 공룡, 상어, 문드라 등)
 }
 
 export interface Quest {
