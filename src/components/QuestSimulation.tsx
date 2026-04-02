@@ -138,7 +138,7 @@ const DEFAULT_TIME_SETTINGS: TimeSettingItem[] = [
   { id: 'guild_quest', label: '길드) 퀘스트, 휴식 부스트', category: 'quest', enabled: false, value: null },
   // Rest
   { id: 'rest_region_level', label: '퀘스트) 지역 레벨 효과', category: 'rest', enabled: false, value: null },
-  { id: 'rest_guild_emerald', label: '길드) 에메랄드 여관 효과', category: 'rest', color: 'text-green-400', enabled: false, value: null },
+  { id: 'rest_guild_emerald', label: '길드) 에메랄드 여관 효과', category: 'rest', color: 'text-lime-400', enabled: false, value: null },
   { id: 'rest_skill_hero_champ', label: '재능) 영웅, 챔피언 시간 감소', category: 'rest', enabled: false, value: null },
   { id: 'rest_skill_airship', label: '재능) 에어쉽 시간 감소', category: 'rest', enabled: false, value: null },
   { id: 'rest_champion_pillow', label: '챔피언) 필루', category: 'rest', enabled: false, value: null },
@@ -737,7 +737,7 @@ export default function QuestSimulation() {
                     <button
                       onClick={() => openConfigAtStep('difficulty')}
                       className={`font-medium cursor-pointer hover:underline ${
-                        currentQuest.difficulty === '쉬움' ? 'text-green-400' :
+                        currentQuest.difficulty === '쉬움' ? 'text-lime-400' :
                         currentQuest.difficulty === '보통' ? 'text-blue-400' :
                         currentQuest.difficulty === '어려움' ? 'text-orange-400' :
                         currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
@@ -760,7 +760,7 @@ export default function QuestSimulation() {
                       <PopoverTrigger asChild>
                         <button className={`text-xs px-2 py-0.5 rounded border transition-all ${
                           selectedMiniBoss !== 'random'
-                            ? selectedMiniBoss === 'huge' ? 'border-green-500/40 bg-green-500/10 text-green-400' :
+                            ? selectedMiniBoss === 'huge' ? 'border-lime-500/40 bg-lime-500/10 text-lime-400' :
                               selectedMiniBoss === 'agile' ? 'border-blue-500/40 bg-blue-500/10 text-blue-400' :
                               selectedMiniBoss === 'dire' ? 'border-red-500/40 bg-red-500/10 text-red-400' :
                               selectedMiniBoss === 'wealthy' ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400' :
@@ -783,7 +783,7 @@ export default function QuestSimulation() {
                           {([
                             { id: 'random', label: '랜덤', desc: '2% 확률로 미니보스 등장', color: 'text-primary' },
                             { id: 'none', label: '없음 (항상)', desc: '미니보스 없음 고정', color: '' },
-                            { id: 'huge', label: '거대한 (항상)', desc: 'HP ×2, 광역 확률 ×3', color: 'text-green-400' },
+                            { id: 'huge', label: '거대한 (항상)', desc: 'HP ×2, 광역 확률 ×3', color: 'text-lime-400' },
                             { id: 'agile', label: '민첩한 (항상)', desc: '회피 40%', color: 'text-blue-400' },
                             { id: 'dire', label: '흉포한 (항상)', desc: 'HP ×1.5, 치확 30%', color: 'text-red-400' },
                             { id: 'wealthy', label: '부유한 (항상)', desc: '보상 증가', color: 'text-yellow-400' },
@@ -818,9 +818,9 @@ export default function QuestSimulation() {
                         const required = currentQuest.barrier!.hp;
                         const isMet = heroSum >= required;
                         return (
-                          <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? 'border-green-500/40 bg-green-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
+                          <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? 'border-lime-500/40 bg-lime-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
                             {iconPath && <img src={iconPath} alt="" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                            <span className={`text-sm font-mono font-bold ${isMet ? 'text-green-400' : 'text-red-400'}`}>
+                            <span className={`text-sm font-mono font-bold ${isMet ? 'text-lime-400' : 'text-red-400'}`}>
                               {formatNumber(heroSum)} / {formatNumber(required)}
                             </span>
                           </div>
@@ -860,7 +860,7 @@ export default function QuestSimulation() {
                           <Heart className="w-3.5 h-3.5 text-red-400" />
                           <span className="text-xs text-foreground">체력</span>
                         </div>
-                        <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-green-400' : 'text-foreground'}`}>
+                        <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-lime-400' : 'text-foreground'}`}>
                           {formatNumber(displayHp)}
                           {isHpMod && <span className="text-[10px] text-muted-foreground ml-1">(×{hpMod})</span>}
                         </span>
@@ -904,19 +904,19 @@ export default function QuestSimulation() {
                           {finalCrit}%
                         </span>
                       </div>
-                      {/* Always show defense bar label when monster is selected */}
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Shield className="w-3.5 h-3.5 text-blue-400" />
-                          <span className="text-xs text-foreground">방어력 기준치</span>
-                        </div>
-                      </div>
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Wind className="w-3.5 h-3.5 text-teal-400" />
                           <span className="text-xs text-foreground">회피</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${mobEva > 0 ? 'text-teal-400' : 'text-foreground'}`}>{mobEva}%</span>
+                      </div>
+                      {/* Always show defense bar label when monster is selected */}
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Shield className="w-3.5 h-3.5 text-blue-400" />
+                          <span className="text-xs text-foreground">방어력 기준치</span>
+                        </div>
                       </div>
                     </div>
                   );
@@ -968,7 +968,7 @@ export default function QuestSimulation() {
                   const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
 
                     return (
-                    <div className="mt-4 pt-4 border-t border-border/30">
+                    <div className="mt-6 pt-4 border-t border-border/30">
                       <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5" style={{ height: `${barH}px` }}>
                         <div className="relative">
                           {rows.map(r => (
@@ -1072,7 +1072,7 @@ export default function QuestSimulation() {
               <div className="mb-3 text-center">
                 <div className="text-[10px] text-muted-foreground mb-0.5">승률</div>
                 <div className={`text-2xl font-bold font-mono ${
-                  simResult.winRate >= 90 ? 'text-green-400' :
+                  simResult.winRate >= 90 ? 'text-lime-400' :
                   simResult.winRate >= 70 ? 'text-lime-400' :
                   simResult.winRate >= 50 ? 'text-yellow-400' :
                   simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400'
@@ -1433,7 +1433,7 @@ export default function QuestSimulation() {
                             const targetChance = totalThreat > 0 ? (threat / totalThreat) * 100 : 0;
                             return (
                               <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm font-bold">
-                                <span className={targetChance >= 40 ? 'text-red-400' : targetChance >= 25 ? 'text-yellow-400' : 'text-green-400'}>
+                                <span className={targetChance >= 40 ? 'text-red-400' : targetChance >= 25 ? 'text-yellow-400' : 'text-lime-400'}>
                                   {targetChance.toFixed(1)}%
                                 </span>
                               </td>
@@ -1444,7 +1444,7 @@ export default function QuestSimulation() {
                       {/* Monster Crit Chance row - same logic as detailed results */}
                       {simResult && (
                         <tr className="border-b border-border/20 bg-muted/20">
-                          <td className="py-1.5 px-1.5 text-red-400 font-medium text-sm">몬스터 치확</td>
+                          <td className="py-1.5 px-1.5 text-red-400 font-medium text-sm">M.CRIT.C</td>
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
                             if (!hero) return <td key={`mcrit-empty-${slotIdx}`} />;
@@ -1542,8 +1542,6 @@ export default function QuestSimulation() {
                           const canvas = await html2canvas(el, {
                             backgroundColor: bgColor,
                             useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
-                            windowWidth: el.scrollWidth + PAD * 2, windowHeight: el.scrollHeight + PAD * 2,
-                            width: el.scrollWidth + PAD * 2, height: el.scrollHeight + PAD * 2,
                             onclone: (doc) => {
                               const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
                               if (clonedEl) {
@@ -1556,6 +1554,8 @@ export default function QuestSimulation() {
                                 clonedEl.style.height = 'auto';
                                 clonedEl.style.maxHeight = 'none';
                                 clonedEl.style.padding = `${PAD}px`;
+                                clonedEl.style.display = 'inline-block';
+                                clonedEl.style.boxSizing = 'border-box';
                                 clonedEl.querySelectorAll('td, th').forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
                                 // Force flex items to align to top so party composition header lines up
                                 const flexRow = clonedEl.querySelector('[data-quest-sim]') as HTMLElement;
@@ -1626,8 +1626,8 @@ export default function QuestSimulation() {
                 {(() => {
                   const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                   const sorted = [...simResult.heroResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
-                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-green-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
-                  const getTextColor = (pct: number) => pct >= 81 ? 'text-green-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
+                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
+                  const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
                     <div className="space-y-2">
                       {sorted.map((hr) => {
@@ -1657,8 +1657,8 @@ export default function QuestSimulation() {
                 </div>
                 {(() => {
                   const sorted = [...simResult.heroResults].sort((a, b) => b.tankingRate - a.tankingRate);
-                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-green-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
-                  const getTextColor = (pct: number) => pct >= 81 ? 'text-green-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
+                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
+                  const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
                     <div className="space-y-2">
                       {sorted.map((hr) => (
@@ -1704,8 +1704,8 @@ export default function QuestSimulation() {
                   });
                   const partyTotal = heroGrades.reduce((s, g) => s + g.avg, 0);
                   const partyAvg = heroGrades.length > 0 ? partyTotal / heroGrades.length : 0;
-                  const getGradeColor = (score: number) => score >= 2.5 ? 'text-purple-400' : score >= 2 ? 'text-yellow-400' : score >= 1.5 ? 'text-blue-400' : score >= 1.25 ? 'text-green-400' : 'text-muted-foreground';
-                  const getBarColor = (score: number) => score >= 2.5 ? 'bg-purple-500' : score >= 2 ? 'bg-yellow-500' : score >= 1.5 ? 'bg-blue-500' : score >= 1.25 ? 'bg-green-500' : 'bg-muted';
+                  const getGradeColor = (score: number) => score >= 2.5 ? 'text-purple-400' : score >= 2 ? 'text-fuchsia-400' : score >= 1.5 ? 'text-cyan-400' : score >= 1.25 ? 'text-lime-400' : 'text-gray-400';
+                  const getBarColor = (score: number) => score >= 2.5 ? 'bg-purple-500' : score >= 2 ? 'bg-fuchsia-500' : score >= 1.5 ? 'bg-cyan-500' : score >= 1.25 ? 'bg-lime-500' : 'bg-gray-400';
                   return (
                     <div className="space-y-2">
                       {heroGrades.map(g => (
@@ -1805,7 +1805,7 @@ export default function QuestSimulation() {
                     mbr.type === 'wealthy' ? '부유한' :
                     mbr.type === 'legendary' ? '전설의' : mbr.type;
                   const typeColor = mbr.type === 'normal' ? 'text-foreground' :
-                    mbr.type === 'huge' ? 'text-green-400' :
+                    mbr.type === 'huge' ? 'text-lime-400' :
                     mbr.type === 'agile' ? 'text-blue-400' :
                     mbr.type === 'dire' ? 'text-red-400' :
                     mbr.type === 'wealthy' ? 'text-yellow-400' :
@@ -1815,7 +1815,7 @@ export default function QuestSimulation() {
                         <div className={`text-[12px] font-medium ${typeColor}`}>{typeLabel}</div>
                         <div className="text-[11px] text-muted-foreground">{mbr.encounters.toLocaleString()}회</div>
                         <div className={`text-sm font-mono font-bold ${
-                          mbr.winRate >= 90 ? 'text-green-400' :
+                          mbr.winRate >= 90 ? 'text-lime-400' :
                           mbr.winRate >= 70 ? 'text-lime-400' :
                           mbr.winRate >= 50 ? 'text-yellow-400' : 'text-red-400'
                         }`}>
@@ -1865,7 +1865,7 @@ export default function QuestSimulation() {
                 <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2"><Swords className="w-4 h-4 inline mr-1 text-red-400" />대미지</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-red-400" />대미지</div>
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
@@ -1873,12 +1873,12 @@ export default function QuestSimulation() {
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>가하는 대미지</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>일반/치명 비중</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>딜링 비중</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={4}>가하는 대미지</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={2}>일반/치명 비중</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={2}>딜링 비중</th>
                           </tr>
-                          <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
+                          <tr className="border-b border-border/30 text-[12px] text-foreground/50">
                             <th className="text-center py-1 px-2 border-l border-border/20">총 평균</th>
                             <th className="text-center py-1 px-2">턴당 평균</th>
                             <th className="text-center py-1 px-2">최소</th>
@@ -1892,7 +1892,7 @@ export default function QuestSimulation() {
                         <tbody>
                           {displayResults.map((hr, idx) => {
                             const dmgPct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
-                            const barColors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
+                            const barColors = ['bg-red-500', 'bg-blue-500', 'bg-lime-500', 'bg-yellow-500', 'bg-purple-500'];
                             return (
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
@@ -1929,17 +1929,17 @@ export default function QuestSimulation() {
 
                   {/* Table 1.5: 특수 대미지 (상어 / 첫턴 / 광전사) */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2"><Target className="w-4 h-4 inline mr-1 text-cyan-400" />특수 대미지 (상어 / 공룡 / 광전사)</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Target className="w-4 h-4 text-cyan-400" />특수 대미지 (상어 / 공룡 / 광전사)</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦈 상어</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦕 공룡</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={2}>🦈 상어</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={2}>🦕 공룡</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사</th>
                           </tr>
-                          <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
+                          <tr className="border-b border-border/30 text-[12px] text-foreground/50">
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
@@ -1959,8 +1959,8 @@ export default function QuestSimulation() {
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-400'}`}>{sharkGray ? '-' : formatNumber(hr.sharkNormalDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-300'}`}>{sharkGray ? '-' : formatNumber(hr.sharkCritDmg)}</td>
-                                <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-green-400'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurNormalDmg)}</td>
-                                <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-green-300'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurCritDmg)}</td>
+                                <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-400'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurNormalDmg)}</td>
+                                <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-300'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurCritDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${brkGray ? 'text-muted-foreground/30' : 'text-red-400'}`}>
                                   {brkGray ? '-' : `+${hr.berserkerAtkBonus![0]}% / +${hr.berserkerEvaBonus![0]}%`}
                                 </td>
@@ -1980,16 +1980,16 @@ export default function QuestSimulation() {
 
                   {/* Table 2: 생존 & 방어 (with 받는 대미지) */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2"><Shield className="w-4 h-4 inline mr-1 text-blue-400" />생존 & 방어</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-blue-400" />생존 & 방어</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={5}>기본</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={4}>받는 대미지</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={5}>기본</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={4}>받는 대미지</th>
                           </tr>
-                          <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
+                          <tr className="border-b border-border/30 text-[12px] text-foreground/50">
                             <th className="text-center py-1 px-2 border-l border-border/20">생존률</th>
                             <th className="text-center py-1 px-2">대미지 보정</th>
                             <th className="text-center py-1 px-2">피격 확률</th>
@@ -2006,11 +2006,11 @@ export default function QuestSimulation() {
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                               <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                               <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${
-                                hr.survivalRate >= 90 ? 'text-green-400' :
+                                hr.survivalRate >= 90 ? 'text-lime-400' :
                                 hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
                               }`}>{hr.survivalRate.toFixed(1)}%</td>
                               <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${
-                                hr.damageApplicationRate <= 30 ? 'text-green-400' :
+                                hr.damageApplicationRate <= 30 ? 'text-lime-400' :
                                 hr.damageApplicationRate <= 60 ? 'text-blue-400' :
                                 hr.damageApplicationRate <= 100 ? 'text-yellow-400' : 'text-red-400'
                               }`}>{hr.damageApplicationRate}%</td>
@@ -2030,24 +2030,24 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 회복 & 보호 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2"><Heart className="w-4 h-4 inline mr-1 text-green-400" />회복 & 보호</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-lime-400" />회복 & 보호</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20">영웅</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">총 회복량</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">턴당 회복</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">군주 보호</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">치명타 생존</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20">영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">총 회복량</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">턴당 회복</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">군주 보호</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">치명타 생존</th>
                           </tr>
                         </thead>
                         <tbody>
                           {displayResults.map((hr, idx) => (
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                               <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                              <td className="py-1 px-2 text-center font-mono text-green-400 whitespace-nowrap">{formatNumber(Math.round(hr.totalHealingAvg))}</td>
-                              <td className="py-1 px-2 text-center font-mono text-green-300 whitespace-nowrap">{hr.healPerTurn > 0 ? hr.healPerTurn.toFixed(1) : '-'}</td>
+                              <td className="py-1 px-2 text-center font-mono text-lime-400 whitespace-nowrap">{formatNumber(Math.round(hr.totalHealingAvg))}</td>
+                              <td className="py-1 px-2 text-center font-mono text-lime-300 whitespace-nowrap">{hr.healPerTurn > 0 ? hr.healPerTurn.toFixed(1) : '-'}</td>
                               <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{hr.lordProtectionAvg > 0 ? hr.lordProtectionAvg.toFixed(2) : '-'}</td>
                               <td className="py-1 px-2 text-center font-mono text-purple-400 whitespace-nowrap">{hr.critSurvivalCount > 0 ? hr.critSurvivalCount.toFixed(2) : '-'}</td>
                             </tr>
@@ -2060,7 +2060,7 @@ export default function QuestSimulation() {
                   {/* Table 4: 특수 (광전사, 크로노맨서 등) */}
                   {displayResults.some(hr => hr.berserkerThresholds || hr.chronomancerRetries !== undefined) && (
                     <div>
-                      <div className="text-sm font-semibold text-primary mb-2"><Flame className="w-4 h-4 inline mr-1 text-orange-400" />특수 정보</div>
+                      <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-orange-400" />특수 정보</div>
                       <div className="overflow-x-auto">
                         <div className="space-y-1">
                           {displayResults.map(hr => {
@@ -2095,19 +2095,19 @@ export default function QuestSimulation() {
 
                   {/* Table 5: 시뮬레이션 스탯 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2"><Info className="w-4 h-4 inline mr-1 text-blue-400" />시뮬레이션 스탯</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-blue-400" />시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
                           <tr className="border-b border-border/40">
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20">영웅</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">ATK</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">HP</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">DEF</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">CRIT.C</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">CRIT.D</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">CRIT.A</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium">EVA</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20">영웅</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">ATK</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">HP</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">DEF</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">CRIT.C</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">CRIT.D</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">CRIT.A</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium">EVA</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -2212,6 +2212,7 @@ export default function QuestSimulation() {
           setEditingSlotIdx(null);
         }}
         editingSlotIdx={editingSlotIdx}
+        barrierElements={barrierElements}
       />
 
       {/* Party Buff Breakdown Drawer */}

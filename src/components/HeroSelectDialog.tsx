@@ -20,6 +20,7 @@ interface Props {
   minPower: number;
   onConfirm: (ids: Set<string>) => void;
   editingSlotIdx: number | null;
+  barrierElements?: string[];
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -92,7 +93,7 @@ const ELEMENT_ENG: Record<string, string> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedIds, maxMembers, minPower, onConfirm, editingSlotIdx }: Props) {
+export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedIds, maxMembers, minPower, onConfirm, editingSlotIdx, barrierElements = [] }: Props) {
   const [viewMode, setViewMode] = useState<'table' | 'album'>('table');
   const [localIds, setLocalIds] = useState<Set<string>>(new Set());
   const [sortKey, setSortKey] = useState<SortKey>('heroClass');
@@ -146,7 +147,29 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
     } else if (sortKey === 'name') {
       list.sort((a, b) => sortDir === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
     } else if (sortKey === 'element') {
-      list.sort((a, b) => sortDir === 'asc' ? (a.element || '').localeCompare(b.element || '') : (b.element || '').localeCompare(a.element || ''));
+      // If barrier elements exist, sort by barrier-matching elements first
+      if (barrierElements.length > 0) {
+        const SPELLKNIGHT_CLASSES = ['마법검', '스펠나이트'];
+        const hasBarrierMatch = (h: Hero) => {
+          if (SPELLKNIGHT_CLASSES.includes(h.heroClass)) return true; // all elements
+          if (h.element === '모든 원소') return true;
+          return barrierElements.includes(h.element || '');
+        };
+        const getElementVal = (h: Hero) => h.elementValue || 0;
+        list.sort((a, b) => {
+          const aMatch = hasBarrierMatch(a) ? 1 : 0;
+          const bMatch = hasBarrierMatch(b) ? 1 : 0;
+          if (sortDir === 'desc') {
+            if (aMatch !== bMatch) return bMatch - aMatch;
+            return getElementVal(b) - getElementVal(a);
+          } else {
+            if (aMatch !== bMatch) return aMatch - bMatch;
+            return getElementVal(a) - getElementVal(b);
+          }
+        });
+      } else {
+        list.sort((a, b) => sortDir === 'asc' ? (a.element || '').localeCompare(b.element || '') : (b.element || '').localeCompare(a.element || ''));
+      }
     } else if (sortKey === 'position') {
       list.sort((a, b) => sortDir === 'asc' ? (a.position || '').localeCompare(b.position || '') : (b.position || '').localeCompare(a.position || ''));
     } else if (sortKey === 'critDmg') {
@@ -386,7 +409,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       title={isOtherChampion ? '파티에 챔피언은 1명만 가능' : undefined}>
                       {/* 유형 */}
                       <td className="py-1.5 px-1.5 text-center">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${hero.type === 'champion' ? 'bg-accent/20 text-accent' : 'bg-primary/20 text-primary'}`}>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold text-white ${hero.type === 'champion' ? 'bg-purple-600' : 'bg-sky-600'}`}>
                           {hero.type === 'champion' ? '챔피언' : '영웅'}
                         </span>
                       </td>
@@ -409,14 +432,14 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                         )}
                       </td>
                       {/* 이름: just name text, no icon */}
-                      <td className="py-1.5 px-1.5 text-center font-medium text-foreground">
+                      <td className="py-1.5 px-1.5 text-center font-bold text-foreground">
                         <div className="flex items-center gap-1 justify-center">
                           {belowMin && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
                           <span className="whitespace-nowrap">{hero.name}</span>
                         </div>
                       </td>
                       {/* Lv */}
-                      <td className="py-1.5 px-1 text-center text-muted-foreground">{hero.level}</td>
+                      <td className="py-1.5 px-1 text-center font-bold text-muted-foreground">{hero.level}</td>
                       {/* 원소 */}
                       <td className="py-1.5 px-1 text-center">
                         <div className="flex items-center gap-0.5 justify-center">
@@ -461,21 +484,21 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                         </div>
                       </td>
                       {/* 전투력 */}
-                      <td className={`py-1.5 px-1 text-center font-mono ${belowMin ? 'text-red-400' : 'text-yellow-400'}`}>
+                      <td className={`py-1.5 px-1 text-center font-mono font-bold ${belowMin ? 'text-red-400' : 'text-yellow-400'}`}>
                         {hero.power > 0 ? formatNumber(hero.power) : '-'}
                       </td>
                       {/* 공격력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-red-400">{formatNumber(hero.atk)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-red-400">{formatNumber(hero.atk)}</td>
                       {/* 방어력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-blue-400">{formatNumber(hero.def)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-blue-400">{formatNumber(hero.def)}</td>
                       {/* 체력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-orange-400">{formatNumber(hero.hp)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-orange-400">{formatNumber(hero.hp)}</td>
                       {/* 치확 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400">{hero.crit > 0 ? `${formatNumber(hero.crit)}%` : '-'}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-yellow-400">{hero.crit > 0 ? `${formatNumber(hero.crit)}%` : '-'}</td>
                       {/* 치명타 대미지 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400">{critDmgDisplay > 0 ? formatNumber(critDmgDisplay) : '-'}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-yellow-400">{critDmgDisplay > 0 ? formatNumber(critDmgDisplay) : '-'}</td>
                       {/* 회피 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-teal-400">{hero.evasion > 0 ? `${formatNumber(hero.evasion)}%` : '-'}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-teal-400">{hero.evasion > 0 ? `${formatNumber(hero.evasion)}%` : '-'}</td>
                       {/* 포지션 */}
                       <td className="py-1.5 px-1 text-center text-[10px] whitespace-nowrap">
                         {hero.position ? (
