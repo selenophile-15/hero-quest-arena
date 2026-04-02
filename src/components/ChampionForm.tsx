@@ -445,7 +445,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         >
           <div className="w-full flex items-center justify-between gap-1 px-1.5 pt-1">
             <div className="rounded bg-card/80 border border-border/40 px-1.5 py-0.5">
-              <span className="text-xs font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
+              <span className="text-xs font-bold text-foreground tracking-wide">{SLOT_LABELS[slotIdx]}</span>
             </div>
             <div className="flex items-center gap-1">
               {equipItem && (
