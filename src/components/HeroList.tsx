@@ -537,16 +537,10 @@ export default function HeroList() {
     const spacer = capture ? <span className="inline-block w-1" /> : null;
 
     if (colKey === 'name') {
-      const isChamp = hero.type === 'champion';
-      const isPromoted = isChamp && hero.promoted;
+      // For champions: show custom name only. For heroes: show name as before.
       return (
         <span className={`font-medium text-foreground text-center w-full ${wrapCls} justify-center ${lh}`}>
-          {isChamp && hero.championName && (
-            <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
-          )}
-          {isChamp && hero.championName && spacer}
-          <span className={`${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'text-yellow-400' : ''}`}>{hero.name}</span>
-          {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
+          <span className={capture ? 'inline-block align-middle leading-none' : ''}>{hero.name}</span>
         </span>
       );
     }
