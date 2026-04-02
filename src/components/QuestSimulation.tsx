@@ -878,7 +878,7 @@ export default function QuestSimulation() {
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                          <span className="text-xs text-foreground">광역 확률</span>
+                          <span className="text-xs text-foreground">광역 공격 확률</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAoeMod ? 'text-yellow-400' : 'text-foreground'}`}>
                           {displayAoeChance}%
