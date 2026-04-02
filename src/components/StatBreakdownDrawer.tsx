@@ -155,16 +155,16 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">기본 {config.label}</td>
-                  <td className="py-1.5 text-right tabular-nums text-white font-medium">{formatNumber(baseStat)}</td>
+                  <td className="py-1.5 text-foreground/70">기본 {config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(baseStat)}</td>
                 </tr>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">씨앗 {config.label}</td>
-                  <td className="py-1.5 text-right tabular-nums text-white font-medium">{formatNumber(seedStat)}</td>
+                  <td className="py-1.5 text-foreground/70">씨앗 {config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(seedStat)}</td>
                 </tr>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">장비 {config.label} 합</td>
-                  <td className="py-1.5 text-right tabular-nums font-bold text-white">{formatNumber(equipTotal)}</td>
+                  <td className="py-1.5 text-foreground/70">장비 {config.label} 합</td>
+                  <td className="py-1.5 text-right tabular-nums font-bold text-foreground">{formatNumber(equipTotal)}</td>
                 </tr>
               </tbody>
             </table>
