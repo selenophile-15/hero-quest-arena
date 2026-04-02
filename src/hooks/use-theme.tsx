@@ -23,7 +23,7 @@ const COLOR_MODE_KEY = 'quest-sim-color-mode';
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     const stored = localStorage.getItem(THEME_KEY);
-    if (stored === 'moonlight' || stored === 'olive' || stored === 'wine') return stored as ThemeMode;
+    if (['moonlight', 'olive', 'wine', 'cyan', 'purple', 'blue', 'caramel'].includes(stored || '')) return stored as ThemeMode;
     return 'gold';
   });
 

@@ -226,7 +226,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
         className={`rounded border ${item ? QUALITY_BORDER[quality] || 'border-border/30' : 'border-border/30'} flex flex-col items-center overflow-hidden`}
         style={item ? {
           background: `radial-gradient(circle, ${QUALITY_RADIAL[quality] || ''} 0%, transparent 85%)`,
-          boxShadow: QUALITY_SHADOW[quality] || '',
+          boxShadow: `0 0 4px ${(QUALITY_RADIAL[quality] || 'transparent').replace(/[\d.]+\)$/, '0.3)')}`,
         } : { background: 'hsl(var(--secondary) / 0.2)' }}>
         <div className="relative w-full flex items-center justify-center pt-0.5">
           {item?.imagePath

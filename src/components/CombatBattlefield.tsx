@@ -421,7 +421,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-xs font-semibold truncate" style={{ color: getNameColor(h.name) }}>{h.name}</span>
+                        <span className="text-xs font-bold truncate" style={{ color: isLight ? (nameColorMap[h.name] ? adjustColorForLight(nameColorMap[h.name]) : '#1f2937') : getNameColor(h.name) }}>{h.name}</span>
                         <span className="text-xs font-mono" style={{ color: hpColor(hpPct) }}>
                           {Math.round(hp).toLocaleString()}
                         </span>
