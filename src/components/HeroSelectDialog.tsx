@@ -147,7 +147,29 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
     } else if (sortKey === 'name') {
       list.sort((a, b) => sortDir === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
     } else if (sortKey === 'element') {
-      list.sort((a, b) => sortDir === 'asc' ? (a.element || '').localeCompare(b.element || '') : (b.element || '').localeCompare(a.element || ''));
+      // If barrier elements exist, sort by barrier-matching elements first
+      if (barrierElements.length > 0) {
+        const SPELLKNIGHT_CLASSES = ['마법검', '스펠나이트'];
+        const hasBarrierMatch = (h: Hero) => {
+          if (SPELLKNIGHT_CLASSES.includes(h.heroClass)) return true; // all elements
+          if (h.element === '모든 원소') return true;
+          return barrierElements.includes(h.element || '');
+        };
+        const getElementVal = (h: Hero) => h.elementValue || 0;
+        list.sort((a, b) => {
+          const aMatch = hasBarrierMatch(a) ? 1 : 0;
+          const bMatch = hasBarrierMatch(b) ? 1 : 0;
+          if (sortDir === 'desc') {
+            if (aMatch !== bMatch) return bMatch - aMatch;
+            return getElementVal(b) - getElementVal(a);
+          } else {
+            if (aMatch !== bMatch) return aMatch - bMatch;
+            return getElementVal(a) - getElementVal(b);
+          }
+        });
+      } else {
+        list.sort((a, b) => sortDir === 'asc' ? (a.element || '').localeCompare(b.element || '') : (b.element || '').localeCompare(a.element || ''));
+      }
     } else if (sortKey === 'position') {
       list.sort((a, b) => sortDir === 'asc' ? (a.position || '').localeCompare(b.position || '') : (b.position || '').localeCompare(a.position || ''));
     } else if (sortKey === 'critDmg') {
