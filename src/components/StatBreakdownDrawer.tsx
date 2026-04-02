@@ -897,10 +897,10 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
                   const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
                   const isIdolSrc = !!(src as any).isIdol;
-                  const valColor = isIdolSrc ? 'text-red-400 font-semibold' : 'text-white';
+                  const valColor = isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground';
                   return (
                     <tr key={i} className="border-b border-border/20">
-                      <td className="py-1 text-white/70">
+                      <td className="py-1 text-foreground/70">
                         <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                         {src.name}
                       </td>
