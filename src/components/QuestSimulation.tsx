@@ -897,7 +897,7 @@ export default function QuestSimulation() {
                       </div>
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
-                          <img src="/images/stats/critchance.webp" alt="" className="w-3.5 h-3.5" />
+                          <Crosshair className="w-3.5 h-3.5 text-yellow-400" />
                           <span className="text-xs text-foreground">치명타 확률</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${isCritMod ? 'text-red-400' : 'text-foreground'}`}>
