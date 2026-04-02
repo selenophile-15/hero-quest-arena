@@ -581,7 +581,14 @@ export default function QuestSimulation() {
         {subTab === 'simulation' && currentQuest && selectedHeroes.length > 0 && simResult && (
           <div className="flex items-center gap-1.5 ml-auto mb-1">
             <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors text-xs font-medium"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
+              onClick={handleSaveResult}
+            >
+              <Save className="w-3.5 h-3.5" />
+              결과 저장
+            </button>
+            <button
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
               onClick={() => {
                 if (!currentQuest || !currentRegion) return;
                 const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
@@ -614,14 +621,7 @@ export default function QuestSimulation() {
               1회 전투 로그
             </button>
             <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors text-xs font-medium"
-              onClick={handleSaveResult}
-            >
-              <Save className="w-3.5 h-3.5" />
-              결과 저장
-            </button>
-            <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors text-xs font-medium"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
               onClick={async () => {
                 const el = document.querySelector('[data-quest-screenshot]') as HTMLElement;
                 if (!el) return;
