@@ -1298,45 +1298,42 @@ export default function HeroList() {
           <div className="flex-1" />
           {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
           {!summaryOpen && (
-            <div className="flex gap-2 pb-1">
-              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 text-white">
+            <div className="flex items-center gap-2 pb-1">
+              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 text-white" style={{ color: 'white' }}>
                 <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
               </Button>
-              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 text-white">
+              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 text-white" style={{ color: 'white' }}>
                 <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
               </Button>
+              <div className="w-px h-5 bg-border mx-1" />
+              <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
+                <Download className="w-3.5 h-3.5" />
+              </Button>
+              <label className="inline-flex">
+                <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
+                <Button asChild variant="outline" size="sm" className="gap-1 text-xs h-8 px-2 cursor-pointer" title="리스트 불러오기">
+                  <span><Upload className="w-3.5 h-3.5" /></span>
+                </Button>
+              </label>
+              <Button onClick={() => {
+                if (viewMode === 'table') {
+                  handleScreenshot(tableContentRef, 'list');
+                } else {
+                  handleScreenshot(albumContentRef, 'album');
+                }
+              }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장" disabled={screenshotLoading}>
+                <Camera className="w-3.5 h-3.5" />
+              </Button>
+              <div className="w-px h-5 bg-border mx-1" />
+              <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                <Table2 className="w-4 h-4" />
+              </button>
+              <button onClick={() => setViewMode('album')} className={`p-2 rounded ${viewMode === 'album' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                <LayoutGrid className="w-4 h-4" />
+              </button>
             </div>
           )}
         </div>
-        {!summaryOpen && (
-          <div className="flex items-center gap-2 pb-1">
-            <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
-              <Download className="w-3.5 h-3.5" />
-            </Button>
-            <label className="inline-flex">
-              <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
-              <Button asChild variant="outline" size="sm" className="gap-1 text-xs h-8 px-2 cursor-pointer" title="리스트 불러오기">
-                <span><Upload className="w-3.5 h-3.5" /></span>
-              </Button>
-            </label>
-            <Button onClick={() => {
-              if (viewMode === 'table') {
-                handleScreenshot(tableContentRef, 'list');
-              } else {
-                handleScreenshot(albumContentRef, 'album');
-              }
-            }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장" disabled={screenshotLoading}>
-              <Camera className="w-3.5 h-3.5" />
-            </Button>
-            <div className="w-px h-5 bg-border mx-1" />
-            <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-              <Table2 className="w-4 h-4" />
-            </button>
-            <button onClick={() => setViewMode('album')} className={`p-2 rounded ${viewMode === 'album' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-          </div>
-        )}
       </div>
 
       {summaryOpen ? (
