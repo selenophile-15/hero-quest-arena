@@ -275,7 +275,7 @@ export default function HeroList() {
         setImportPreview(parsed);
         setSaveLoadOpen(true);
       } catch {
-        alert('파일 형식이 올바르지 않습니다. JSON 형식의 백업 파일을 사용해주세요.');
+        alert('파일 형식이 올바르지 않습니다. JSON 또는 TXT 형식의 백업 파일을 사용해주세요.');
       }
     };
     reader.readAsText(file);
