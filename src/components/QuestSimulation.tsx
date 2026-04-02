@@ -1702,8 +1702,8 @@ export default function QuestSimulation() {
                   });
                   const partyTotal = heroGrades.reduce((s, g) => s + g.avg, 0);
                   const partyAvg = heroGrades.length > 0 ? partyTotal / heroGrades.length : 0;
-                  const getGradeColor = (score: number) => score >= 2.5 ? 'text-purple-400' : score >= 2 ? 'text-yellow-400' : score >= 1.5 ? 'text-blue-400' : score >= 1.25 ? 'text-green-400' : 'text-muted-foreground';
-                  const getBarColor = (score: number) => score >= 2.5 ? 'bg-purple-500' : score >= 2 ? 'bg-yellow-500' : score >= 1.5 ? 'bg-blue-500' : score >= 1.25 ? 'bg-green-500' : 'bg-muted';
+                  const getGradeColor = (score: number) => score >= 2.5 ? 'text-purple-400' : score >= 2 ? 'text-fuchsia-400' : score >= 1.5 ? 'text-cyan-400' : score >= 1.25 ? 'text-lime-400' : 'text-gray-400';
+                  const getBarColor = (score: number) => score >= 2.5 ? 'bg-purple-500' : score >= 2 ? 'bg-fuchsia-500' : score >= 1.5 ? 'bg-cyan-500' : score >= 1.25 ? 'bg-lime-500' : 'bg-gray-400';
                   return (
                     <div className="space-y-2">
                       {heroGrades.map(g => (
