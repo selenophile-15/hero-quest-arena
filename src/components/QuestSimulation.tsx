@@ -157,6 +157,7 @@ const QUEST_SUB_TABS = [
 ];
 
 export default function QuestSimulation() {
+  const { colorMode } = useTheme();
   const allHeroes = getHeroes();
   const [questDataMap, setQuestDataMap] = useState<Record<string, QuestData>>({});
   const [commonData, setCommonData] = useState<QuestCommon | null>(null);
