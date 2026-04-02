@@ -549,7 +549,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     }
     if (!heroClass) return;
     setNameError(false);
-    onSave({
+    const heroData: Hero = {
       id: hero?.id || crypto.randomUUID(),
       name: name.trim(),
       classLine: classLine as HeroClassLine,
@@ -569,8 +569,44 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       equipmentElements: equipElements,
       elementManual,
       equipmentSlots,
+      detailStats,
       createdAt: hero?.createdAt || new Date().toISOString(),
-    });
+    };
+    onSave(heroData);
+  };
+
+  const handleSaveAs = () => {
+    if (!name.trim()) {
+      setNameError(true);
+      nameInputRef.current?.focus();
+      return;
+    }
+    if (!heroClass) return;
+    setNameError(false);
+    const heroData: Hero = {
+      id: crypto.randomUUID(),
+      name: name.trim(),
+      classLine: classLine as HeroClassLine,
+      heroClass,
+      type: 'hero',
+      promoted,
+      level: Number(level) || 1,
+      power: Number(power) || 0,
+      hp, atk, def,
+      crit, critDmg,
+      evasion, threat, element,
+      elementValue: totalEquipElement,
+      skills: [uniqueSkillName, ...selectedSkills],
+      label,
+      position,
+      seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
+      equipmentElements: equipElements,
+      elementManual,
+      equipmentSlots,
+      detailStats,
+      createdAt: new Date().toISOString(),
+    };
+    onSave(heroData);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
