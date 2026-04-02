@@ -1416,12 +1416,12 @@ export default function HeroList() {
           {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
           {!summaryOpen && (
             <div className="flex items-center gap-2 pb-1">
-              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 text-white" style={{ color: 'white' }}>
-                <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
-              </Button>
-              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 text-white" style={{ color: 'white' }}>
-                <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
-              </Button>
+               <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 btn-force-white" style={{ color: 'white' }}>
+                <Shield className="w-3.5 h-3.5" style={{ color: 'white' }} /> 새 영웅 추가
+               </Button>
+               <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 btn-force-white" style={{ color: 'white' }}>
+                <Crown className="w-3.5 h-3.5" style={{ color: 'white' }} /> 새 챔피언 추가
+               </Button>
               <div className="w-px h-5 bg-border mx-1" />
               <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 저장하기">
                 <Save className="w-3.5 h-3.5" />
