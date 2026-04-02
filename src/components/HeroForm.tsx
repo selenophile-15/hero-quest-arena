@@ -698,8 +698,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[160px_200px_200px_1fr] gap-4">
-          {/* Job Card - narrow, image only */}
+        <div className="grid grid-cols-[360px_200px_1fr] gap-4">
+          {/* Job Card - expanded to cover old stat box area */}
           <div className="card-fantasy p-3 flex flex-col items-center justify-center">
             <div className="w-full flex items-center justify-center">
               {heroClass ? (
