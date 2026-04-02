@@ -79,7 +79,7 @@ const QUALITY_BORDER: Record<string, string> = {
   flawless: 'border-cyan-300/60', epic: 'border-fuchsia-400/70', legendary: 'border-yellow-400/80',
 };
 const QUALITY_RADIAL: Record<string, string> = {
-  common: 'rgba(220,220,220,0.28)', uncommon: 'rgba(74,222,128,0.32)',
+  common: 'rgba(100,100,115,0.35)', uncommon: 'rgba(74,222,128,0.32)',
   flawless: 'rgba(103,232,249,0.38)', epic: 'rgba(217,70,239,0.42)', legendary: 'rgba(250,204,21,0.5)',
 };
 const QUALITY_SHADOW: Record<string, string> = {

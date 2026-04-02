@@ -92,7 +92,7 @@ const QUALITY_BORDER: Record<string, string> = {
   legendary: 'border-yellow-400',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.4)',
+  common: 'rgba(100,100,115,0.5)',
   uncommon: 'rgba(74,222,128,0.45)',
   flawless: 'rgba(103,232,249,0.5)',
   epic: 'rgba(217,70,239,0.55)',
