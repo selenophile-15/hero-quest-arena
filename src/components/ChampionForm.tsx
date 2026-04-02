@@ -970,7 +970,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                                 }`}
                                 style={isSelected ? {
-                                  background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
+                                  background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 100%)`,
                                   boxShadow: QUALITY_SHADOW_COLOR[quality],
                                 } : {}}
                               >
