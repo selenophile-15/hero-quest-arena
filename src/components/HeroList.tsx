@@ -733,7 +733,7 @@ export default function HeroList() {
       );
     }
     if (colKey === 'position') return <span className={lh}>{hero.position || '-'}</span>;
-    if (colKey === 'promoted') return null;
+    if (colKey === 'promoted') return <span className={lh}>{hero.promoted ? '✓' : '-'}</span>;
     if (colKey === 'airshipPower') return <span className={`text-foreground/20 ${lh}`}>-</span>;
     if (colKey === 'evasion') {
       const ev = typeof hero.evasion === 'number' ? hero.evasion : 0;
