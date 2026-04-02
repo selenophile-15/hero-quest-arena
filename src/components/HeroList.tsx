@@ -174,6 +174,7 @@ export default function HeroList() {
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
   const [saveLoadOpen, setSaveLoadOpen] = useState(false);
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [importMode, setImportMode] = useState<'replace' | 'merge'>('replace');
   const [importPreview, setImportPreview] = useState<Hero[] | null>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
