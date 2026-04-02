@@ -465,7 +465,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
                 <div className="text-center"><span className="text-2xl">👹</span></div>
                 <div className="text-center mb-1.5"><span className="text-xs font-bold" style={{ color: C.monster }}>{monsterName}</span></div>
-                <div className="text-center text-xs font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
+                <div className="text-center text-xs font-bold font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
                   {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
                 </div>
                 <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
