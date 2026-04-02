@@ -1351,7 +1351,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   {/* Leader skill row */}
                   <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0 border-b border-border/50">
                     <div className="px-1 py-1.5 flex items-center justify-center">
-                      <span className="px-1 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: '#c02020', color: 'white' }}>챔피언</span>
+                      <span className="px-1 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: '#c02020', color: 'white' }}>챔피언</span>
                     </div>
                     <div className="px-1 py-1.5 flex items-center justify-center">
                       <img src={`/images/skills/sk_champion/${champEng}_${leaderSkillTier}.webp`} alt="" className="w-9 h-9 object-contain"
