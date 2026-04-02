@@ -904,19 +904,19 @@ export default function QuestSimulation() {
                           {finalCrit}%
                         </span>
                       </div>
-                      {/* Always show defense bar label when monster is selected */}
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Shield className="w-3.5 h-3.5 text-blue-400" />
-                          <span className="text-xs text-foreground">방어력 기준치</span>
-                        </div>
-                      </div>
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Wind className="w-3.5 h-3.5 text-teal-400" />
                           <span className="text-xs text-foreground">회피</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${mobEva > 0 ? 'text-teal-400' : 'text-foreground'}`}>{mobEva}%</span>
+                      </div>
+                      {/* Always show defense bar label when monster is selected */}
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Shield className="w-3.5 h-3.5 text-blue-400" />
+                          <span className="text-xs text-foreground">방어력 기준치</span>
+                        </div>
                       </div>
                     </div>
                   );
