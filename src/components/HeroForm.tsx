@@ -778,7 +778,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <span className="text-sm text-foreground ml-auto tabular-nums">-</span>
               </div>
             </div>
-            </div>
+          </div>
+
+          {/* Seeds + Element */}
+          <div className="flex flex-col gap-3">
 
             <div className="card-fantasy p-3">
               <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>씨앗</h3>
