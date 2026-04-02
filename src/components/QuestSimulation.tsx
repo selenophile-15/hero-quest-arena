@@ -1554,6 +1554,8 @@ export default function QuestSimulation() {
                                 clonedEl.style.height = 'auto';
                                 clonedEl.style.maxHeight = 'none';
                                 clonedEl.style.padding = `${PAD}px`;
+                                clonedEl.style.display = 'inline-block';
+                                clonedEl.style.boxSizing = 'border-box';
                                 clonedEl.querySelectorAll('td, th').forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
                                 // Force flex items to align to top so party composition header lines up
                                 const flexRow = clonedEl.querySelector('[data-quest-sim]') as HTMLElement;
