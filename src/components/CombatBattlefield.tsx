@@ -366,7 +366,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               )}
 
               {hpText && (
-                <span className="font-mono text-sm ml-8" style={{ color: hpColor(getHpPctFromText()) }}>{hpText}</span>
+                <span className="font-mono font-bold text-sm ml-8" style={{ color: hpColor(getHpPctFromText()) }}>{hpText}</span>
               )}
             </>
           ) : entry.type === 'monster_attack' && !entry.target ? (
