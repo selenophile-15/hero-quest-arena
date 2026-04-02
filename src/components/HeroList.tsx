@@ -1098,6 +1098,7 @@ export default function HeroList() {
     const equipSlots = hero.equipmentSlots || Array.from({ length: isChampion ? 2 : 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null }));
     const borderColor = hero.classLine ? (CLASS_LINE_BORDER_COLOR[hero.classLine] || '#6b7280') : '#a855f7';
     const borderShadow = hero.classLine ? (CLASS_LINE_SHADOW_STYLE[hero.classLine] || 'none') : '0 0 12px rgba(168,85,247,0.3)';
+    const isFlipped = flippedCards.has(hero.id);
 
     let leaderSkillIcon = '';
     let aurasongIcon = '';
@@ -1118,177 +1119,268 @@ export default function HeroList() {
       }
     }
 
+    const handleFlip = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setFlippedCards(prev => {
+        const next = new Set(prev);
+        if (next.has(hero.id)) next.delete(hero.id);
+        else next.add(hero.id);
+        return next;
+      });
+    };
+
+    // Stats for back of card
+    const statItems = [
+      { label: 'HP', value: hero.hp, color: 'text-orange-400' },
+      { label: 'ATK', value: hero.atk, color: 'text-red-400' },
+      { label: 'DEF', value: hero.def, color: 'text-blue-400' },
+      { label: 'Crit', value: hero.crit, color: 'text-yellow-300', suffix: '%' },
+      { label: 'Crit.D', value: hero.critDmg, color: 'text-yellow-300', format: (v: number) => `x${(v / 100).toFixed(1)}` },
+      { label: 'Eva', value: hero.evasion, color: 'text-teal-300', suffix: '%' },
+      { label: 'Threat', value: hero.threat, color: 'text-purple-400' },
+    ];
+    const seeds = hero.seeds || { hp: 0, atk: 0, def: 0 };
+
     return (
-      <div
-        key={hero.id}
-        className="card-fantasy p-3 border-2 rounded-xl flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-all"
-        style={{ borderColor, boxShadow: borderShadow }}
-        onClick={() => setEditing(hero)}
-      >
-        <div className="w-full py-3">
-          <div className="w-full aspect-square flex items-center justify-center overflow-hidden">
-            {illustPath ? (
-              <img src={illustPath} alt={hero.name} className="w-full h-full object-cover"
-                onError={e => { e.currentTarget.style.display = 'none'; }} />
+      <div key={hero.id} className="album-card-flip-container">
+        <div className={`album-card-flip-inner ${isFlipped ? 'flipped' : ''}`}>
+          {/* Front face */}
+          <div
+            className="album-card-front card-fantasy p-3 border-2 rounded-xl flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-all"
+            style={{ borderColor, boxShadow: borderShadow }}
+            onClick={handleFlip}
+          >
+            <div className="w-full py-3">
+              <div className="w-full aspect-square flex items-center justify-center overflow-hidden">
+                {illustPath ? (
+                  <img src={illustPath} alt={hero.name} className="w-full h-full object-cover"
+                    onError={e => { e.currentTarget.style.display = 'none'; }} />
+                ) : (
+                  <span className="text-muted-foreground text-sm">{hero.name}</span>
+                )}
+              </div>
+            </div>
+            <div className="text-center w-full">
+              <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
+                {hero.name}
+                {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />}
+              </p>
+              <p className="text-xs text-foreground/60">
+                {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
+              </p>
+            </div>
+            <div className="flex items-center gap-1">
+              <ElementIcon element={hero.element} size={16} />
+              <span className={`text-xs tabular-nums ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+            </div>
+
+            {isChampion ? (
+              <div className="flex items-center gap-1 justify-center">
+                {leaderSkillIcon && <img src={leaderSkillIcon} alt="리더" className="w-9 h-9" title="리더 스킬" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                {aurasongIcon && <img src={aurasongIcon} alt="오라" className="w-9 h-9" title="오라의 노래" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+              </div>
             ) : (
-              <span className="text-muted-foreground text-sm">{hero.name}</span>
+              hero.skills && hero.skills.length > 0 && (
+                <div className="flex items-center gap-0.5 flex-wrap justify-center">
+                  {hero.heroClass && (
+                    <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-9 h-9" title={hero.skills?.[0]}
+                      onError={e => { e.currentTarget.style.display = 'none'; }} />
+                  )}
+                  {hero.skills.slice(1, 5).map((sk, i) => (
+                    <img key={i} src={getSkillImagePath(sk)} alt={sk} className="w-9 h-9" title={sk}
+                      onError={e => { e.currentTarget.style.display = 'none'; }} />
+                  ))}
+                </div>
+              )
+            )}
+
+            {isChampion ? (
+              <div className="flex gap-2 justify-center w-full">
+                {equipSlots.slice(0, 2).map((slot: any, i: number) => {
+                  const item = slot.item;
+                  const quality = slot.quality || 'common';
+                  const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
+                  const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
+                  const itemType = item?.type || '';
+                  return (
+                    <div
+                      key={i}
+                      className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-stretch overflow-hidden`}
+                      style={{
+                        width: '64px',
+                        ...(item
+                          ? { background: `radial-gradient(circle, ${(colorMode === 'light' ? QUALITY_RADIAL_COLOR_LIGHT : QUALITY_RADIAL_COLOR)[quality]} 0%, transparent 85%)`, boxShadow: (colorMode === 'light' ? QUALITY_SHADOW_COLOR_LIGHT : QUALITY_SHADOW_COLOR)[quality] }
+                          : { background: 'hsl(var(--secondary) / 0.2)' }),
+                      }}
+                    >
+                      <div className="w-full flex items-center justify-between px-0.5 pt-0.5" style={{ minHeight: '14px' }}>
+                        {item ? (
+                          <span className="text-[7px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span>
+                        ) : (
+                          <span />
+                        )}
+                        {item?.relic ? (
+                          <img src="/images/special/icon_global_artifact.webp" alt="" className="w-3 h-3" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : (
+                          <span />
+                        )}
+                      </div>
+                      <div className="w-full flex items-center justify-center pt-0.5 -mb-1">
+                        {item?.manual ? (
+                          <CircleHelp className="w-9 h-9 text-muted-foreground/60" />
+                        ) : item?.imagePath ? (
+                          <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : (
+                          <span className="text-[6px] text-muted-foreground/50">-</span>
+                        )}
+                      </div>
+                      {item && (displayElement || displaySpirit || itemType) && (
+                        <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-2">
+                          {displayElement && (
+                            <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
+                              className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                          )}
+                          {displaySpirit && (() => {
+                            const eng = SPIRIT_NAME_MAP[displaySpirit.name];
+                            if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                            return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                          })()}
+                          {itemType && <img src={getTypeImagePath(itemType, colorMode)} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-1 w-full">
+                {equipSlots.map((slot: any, i: number) => {
+                  const item = slot.item;
+                  const quality = slot.quality || 'common';
+                  const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
+                  const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
+                  const itemType = item?.type || '';
+                  return (
+                    <div
+                      key={i}
+                      className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-stretch overflow-hidden min-h-[78px]`}
+                      style={item ? { background: `radial-gradient(circle, ${(colorMode === 'light' ? QUALITY_RADIAL_COLOR_LIGHT : QUALITY_RADIAL_COLOR)[quality]} 0%, transparent 85%)`, boxShadow: (colorMode === 'light' ? QUALITY_SHADOW_COLOR_LIGHT : QUALITY_SHADOW_COLOR)[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}
+                    >
+                      <div className="w-full flex items-center justify-between px-0.5 pt-0.5" style={{ minHeight: '14px' }}>
+                        {item ? (
+                          <span className="text-[7px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span>
+                        ) : (
+                          <span />
+                        )}
+                        {item?.relic ? (
+                          <img src="/images/special/icon_global_artifact.webp" alt="" className="w-3 h-3" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : (
+                          <span />
+                        )}
+                      </div>
+                      <div className="w-full flex items-center justify-center pt-0.5 -mb-1">
+                        {item?.manual ? (
+                          <CircleHelp className="w-9 h-9 text-muted-foreground/60" />
+                        ) : item?.imagePath ? (
+                          <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        ) : (
+                          <span className="text-[6px] text-muted-foreground/50">-</span>
+                        )}
+                      </div>
+                      {item && (displayElement || displaySpirit || itemType) && (
+                        <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-2">
+                          {displayElement && (
+                            <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
+                              className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                          )}
+                          {displaySpirit && (() => {
+                            const eng = SPIRIT_NAME_MAP[displaySpirit.name];
+                            if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                            return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                          })()}
+                          {itemType && <img src={getTypeImagePath(itemType, colorMode)} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {!captureMode && (
+              <div className="flex items-center gap-1 mt-auto album-delete-btn">
+                <button onClick={(e) => { e.stopPropagation(); setEditing(hero); }} className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={(e) => { e.stopPropagation(); handleCopyHero(hero); }} className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary" title="복사">
+                  <Copy className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Back face - Stats */}
+          <div
+            className="album-card-back card-fantasy p-3 border-2 rounded-xl flex flex-col items-center gap-1 cursor-pointer"
+            style={{ borderColor, boxShadow: borderShadow }}
+            onClick={handleFlip}
+          >
+            <div className="text-center w-full mb-1">
+              <p className="text-sm font-bold text-foreground">{hero.name}</p>
+              <p className="text-xs text-foreground/60">
+                {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
+              </p>
+            </div>
+
+            <div className="w-full space-y-0.5">
+              {statItems.map(s => {
+                const val = s.format ? s.format(s.value) : `${formatNumber(s.value)}${s.suffix || ''}`;
+                return (
+                  <div key={s.label} className="flex items-center justify-between text-xs px-1">
+                    <span className="text-foreground/60 font-medium">{s.label}</span>
+                    <span className={`font-bold tabular-nums ${s.value ? s.color : 'text-foreground/20'}`}>{val}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="w-full border-t border-border/30 mt-1 pt-1">
+              <p className="text-[10px] text-foreground/50 text-center mb-1">씨앗</p>
+              <div className="flex items-center justify-center gap-3">
+                {SEED_ICONS.map(si => (
+                  <div key={si.key} className="flex items-center gap-0.5">
+                    <img src={si.icon} alt={si.label} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                    <span className={`text-xs font-bold tabular-nums ${(seeds as any)[si.key] >= 40 ? 'text-accent' : (seeds as any)[si.key] > 0 ? 'text-foreground' : 'text-foreground/20'}`}>
+                      {(seeds as any)[si.key]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1 mt-1">
+              <ElementIcon element={hero.element} size={14} />
+              <span className={`text-xs tabular-nums ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+            </div>
+
+            {!captureMode && (
+              <div className="flex items-center gap-1 mt-auto album-delete-btn">
+                <button onClick={(e) => { e.stopPropagation(); setEditing(hero); }} className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={(e) => { e.stopPropagation(); handleCopyHero(hero); }} className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary" title="복사">
+                  <Copy className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             )}
           </div>
         </div>
-        <div className="text-center w-full">
-          <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
-            {hero.name}
-            {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />}
-          </p>
-          <p className="text-xs text-foreground/60">
-            {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
-          </p>
-        </div>
-        <div className="flex items-center gap-1">
-          <ElementIcon element={hero.element} size={16} />
-          <span className={`text-xs tabular-nums ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
-        </div>
-
-        {isChampion ? (
-          <div className="flex items-center gap-1 justify-center">
-            {leaderSkillIcon && <img src={leaderSkillIcon} alt="리더" className="w-9 h-9" title="리더 스킬" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-            {aurasongIcon && <img src={aurasongIcon} alt="오라" className="w-9 h-9" title="오라의 노래" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-          </div>
-        ) : (
-          hero.skills && hero.skills.length > 0 && (
-            <div className="flex items-center gap-0.5 flex-wrap justify-center">
-              {hero.heroClass && (
-                <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-9 h-9" title={hero.skills?.[0]}
-                  onError={e => { e.currentTarget.style.display = 'none'; }} />
-              )}
-              {hero.skills.slice(1, 5).map((sk, i) => (
-                <img key={i} src={getSkillImagePath(sk)} alt={sk} className="w-9 h-9" title={sk}
-                  onError={e => { e.currentTarget.style.display = 'none'; }} />
-              ))}
-            </div>
-          )
-        )}
-
-        {isChampion ? (
-          <div className="flex gap-2 justify-center w-full">
-            {equipSlots.slice(0, 2).map((slot: any, i: number) => {
-              const item = slot.item;
-              const quality = slot.quality || 'common';
-              const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
-              const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
-              const itemType = item?.type || '';
-              return (
-                <div
-                  key={i}
-                  className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-stretch overflow-hidden`}
-                  style={{
-                    width: '64px',
-                    ...(item
-                      ? { background: `radial-gradient(circle, ${(colorMode === 'light' ? QUALITY_RADIAL_COLOR_LIGHT : QUALITY_RADIAL_COLOR)[quality]} 0%, transparent 85%)`, boxShadow: (colorMode === 'light' ? QUALITY_SHADOW_COLOR_LIGHT : QUALITY_SHADOW_COLOR)[quality] }
-                      : { background: 'hsl(var(--secondary) / 0.2)' }),
-                  }}
-                >
-                  <div className="w-full flex items-center justify-between px-0.5 pt-0.5" style={{ minHeight: '14px' }}>
-                    {item ? (
-                      <span className="text-[7px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span>
-                    ) : (
-                      <span />
-                    )}
-                    {item?.relic ? (
-                      <img src="/images/special/icon_global_artifact.webp" alt="" className="w-3 h-3" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    ) : (
-                      <span />
-                    )}
-                  </div>
-                  <div className="w-full flex items-center justify-center pt-0.5 -mb-1">
-                    {item?.manual ? (
-                      <CircleHelp className="w-9 h-9 text-muted-foreground/60" />
-                    ) : item?.imagePath ? (
-                      <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    ) : (
-                      <span className="text-[6px] text-muted-foreground/50">-</span>
-                    )}
-                  </div>
-                  {item && (displayElement || displaySpirit || itemType) && (
-                    <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-2">
-                      {displayElement && (
-                        <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                          className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                      )}
-                      {displaySpirit && (() => {
-                        const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
-                      })()}
-                      {itemType && <img src={getTypeImagePath(itemType, colorMode)} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 gap-1 w-full">
-            {equipSlots.map((slot: any, i: number) => {
-              const item = slot.item;
-              const quality = slot.quality || 'common';
-              const displayElement = slot.element || (item?.uniqueElement?.length ? { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true } : null);
-              const displaySpirit = slot.spirit || (item?.uniqueSpirit?.length ? { name: item.uniqueSpirit[0], affinity: true } : null);
-              const itemType = item?.type || '';
-              return (
-                <div
-                  key={i}
-                  className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-stretch overflow-hidden min-h-[78px]`}
-                  style={item ? { background: `radial-gradient(circle, ${(colorMode === 'light' ? QUALITY_RADIAL_COLOR_LIGHT : QUALITY_RADIAL_COLOR)[quality]} 0%, transparent 85%)`, boxShadow: (colorMode === 'light' ? QUALITY_SHADOW_COLOR_LIGHT : QUALITY_SHADOW_COLOR)[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}
-                >
-                  <div className="w-full flex items-center justify-between px-0.5 pt-0.5" style={{ minHeight: '14px' }}>
-                    {item ? (
-                      <span className="text-[7px] font-bold text-muted-foreground bg-background/80 rounded px-0.5">T{item.tier}</span>
-                    ) : (
-                      <span />
-                    )}
-                    {item?.relic ? (
-                      <img src="/images/special/icon_global_artifact.webp" alt="" className="w-3 h-3" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    ) : (
-                      <span />
-                    )}
-                  </div>
-                  <div className="w-full flex items-center justify-center pt-0.5 -mb-1">
-                    {item?.manual ? (
-                      <CircleHelp className="w-9 h-9 text-muted-foreground/60" />
-                    ) : item?.imagePath ? (
-                      <img src={item.imagePath} alt="" className="w-11 h-11 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                    ) : (
-                      <span className="text-[6px] text-muted-foreground/50">-</span>
-                    )}
-                  </div>
-                  {item && (displayElement || displaySpirit || itemType) && (
-                    <div className="flex items-center justify-center gap-0.5 pb-0.5 mt-2">
-                      {displayElement && (
-                        <img src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                          className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                      )}
-                      {displaySpirit && (() => {
-                        const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-                        if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-                        return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
-                      })()}
-                      {itemType && <img src={getTypeImagePath(itemType, colorMode)} className="w-5 h-5" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {!captureMode && (
-          <div className="flex items-center gap-1 mt-auto album-delete-btn">
-            <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }} className="p-1 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        )}
       </div>
     );
   };
