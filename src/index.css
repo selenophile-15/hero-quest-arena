@@ -634,7 +634,7 @@
 :root[data-theme="gold"] .theme-highlight-80 { color: hsl(var(--accent)); filter: brightness(1); }
 
 /* Equipment glow - bigger internal radial (50% increase), contained external */
-.equip-glow-common { background: radial-gradient(circle, rgba(200,200,200,0.35) 0%, transparent 80%) !important; }
+.equip-glow-common { background: radial-gradient(circle, rgba(140,140,155,0.5) 0%, transparent 80%) !important; }
 .equip-glow-uncommon { background: radial-gradient(circle, rgba(74,222,128,0.5) 0%, transparent 80%) !important; }
 .equip-glow-flawless { background: radial-gradient(circle, rgba(103,232,249,0.55) 0%, transparent 80%) !important; }
 .equip-glow-epic { background: radial-gradient(circle, rgba(217,70,239,0.6) 0%, transparent 80%) !important; }
