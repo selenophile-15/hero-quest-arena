@@ -1136,7 +1136,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 유물 효과
               </p>
               {equipmentSlots.filter(s => s.item?.relic && s.item?.relicEffect).map((s, i) => (
-                <div key={i} className="text-xs text-foreground/80">
+                <div key={i} className="text-xs text-foreground/90 dark:text-foreground/80">
                   {s.item!.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (
                     <span key={li}>{li > 0 && <br />}{line}</span>
                   ))}
