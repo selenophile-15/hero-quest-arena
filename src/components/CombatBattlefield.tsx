@@ -366,7 +366,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               )}
 
               {hpText && (
-                <span className="font-mono text-sm ml-8" style={{ color: hpColor(getHpPctFromText()) }}>{hpText}</span>
+                <span className="font-mono font-bold text-sm ml-8" style={{ color: hpColor(getHpPctFromText()) }}>{hpText}</span>
               )}
             </>
           ) : entry.type === 'monster_attack' && !entry.target ? (
@@ -430,7 +430,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-xs font-bold truncate" style={{ color: isLight ? (nameColorMap[h.name] ? adjustColorForLight(nameColorMap[h.name]) : '#1f2937') : getNameColor(h.name) }}>{h.name}</span>
-                        <span className="text-xs font-mono" style={{ color: hpColor(hpPct) }}>
+                        <span className="text-xs font-bold font-mono" style={{ color: hpColor(hpPct) }}>
                           {Math.round(hp).toLocaleString()}
                         </span>
                       </div>
@@ -465,7 +465,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
                 <div className="text-center"><span className="text-2xl">👹</span></div>
                 <div className="text-center mb-1.5"><span className="text-xs font-bold" style={{ color: C.monster }}>{monsterName}</span></div>
-                <div className="text-center text-xs font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
+                <div className="text-center text-xs font-bold font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
                   {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
                 </div>
                 <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
@@ -528,12 +528,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <tbody>
               {heroStatsData.map((hs, idx) => (
                 <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                  <td className="py-1.5 px-1 font-medium truncate max-w-[80px] text-center text-sm" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-red-400 text-sm">{formatNumber(hs.dmg)}</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-orange-400 text-sm">{hs.dmgPct.toFixed(1)}%</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-yellow-400 text-sm">{hs.targeted}</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-teal-400 text-sm">{hs.dodged}</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-blue-400 text-sm">{hs.tankPct.toFixed(1)}%</td>
+                  <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-sm" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-red-400 text-sm">{formatNumber(hs.dmg)}</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-orange-400 text-sm">{hs.dmgPct.toFixed(1)}%</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-yellow-400 text-sm">{hs.targeted}</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-teal-400 text-sm">{hs.dodged}</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-blue-400 text-sm">{hs.tankPct.toFixed(1)}%</td>
                 </tr>
               ))}
             </tbody>

@@ -554,7 +554,7 @@ export default function QuestSimulation() {
   return (
     <div className="animate-fade-in">
       {/* Sub-tabs - bookmark style */}
-      <div className="flex gap-0.5 mb-4 relative" style={{ paddingBottom: '1px' }}>
+      <div className="flex gap-0.5 mb-4 relative items-end" style={{ paddingBottom: '1px' }}>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-border/40" />
         {QUEST_SUB_TABS.map(tab => {
           const Icon = tab.icon;
@@ -576,6 +576,110 @@ export default function QuestSimulation() {
               </button>
           );
         })}
+
+        {/* Action buttons - right aligned in sub-tab row */}
+        {subTab === 'simulation' && currentQuest && selectedHeroes.length > 0 && simResult && (
+          <div className="flex items-center gap-1.5 ml-auto mb-1">
+            <button
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors text-xs font-medium"
+              onClick={() => {
+                if (!currentQuest || !currentRegion) return;
+                const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
+                const bElements = currentQuest?.barrier ? (() => {
+                  const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                  const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                    ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
+                    : null;
+                  const rawElements = barrierElement2
+                    ? [barrierElement2]
+                    : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+                  return [...new Set(rawElements)] as string[];
+                })() : [];
+                const questMonster: QuestMonster = {
+                  hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
+                  aoeChance: currentQuest.aoeChance, def: currentQuest.def,
+                  isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
+                  barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
+                };
+                const entries = runSingleCombatLog({
+                  heroes: selectedHeroes, monster: questMonster,
+                  miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
+                  questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
+                });
+                setCombatLog(entries);
+                setCombatLogDialogOpen(true);
+              }}
+            >
+              <Dices className="w-3.5 h-3.5" />
+              1회 전투 로그
+            </button>
+            <button
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors text-xs font-medium"
+              onClick={handleSaveResult}
+            >
+              <Save className="w-3.5 h-3.5" />
+              결과 저장
+            </button>
+            <button
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors text-xs font-medium"
+              onClick={async () => {
+                const el = document.querySelector('[data-quest-screenshot]') as HTMLElement;
+                if (!el) return;
+                const overlay = document.createElement('div');
+                overlay.id = 'screenshot-overlay';
+                overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
+                overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+                document.body.appendChild(overlay);
+                try {
+                  const { default: html2canvas } = await import('html2canvas');
+                  const allCells = el.querySelectorAll('td, th');
+                  allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
+                  const bgStyle = getComputedStyle(document.documentElement);
+                  const bgHsl = bgStyle.getPropertyValue('--background').trim();
+                  const bgColor = bgHsl ? `hsl(${bgHsl})` : (colorMode === 'light' ? '#f5f3f0' : '#1a1a2e');
+                  const PAD = 40;
+                  const canvas = await html2canvas(el, {
+                    backgroundColor: bgColor,
+                    useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
+                    onclone: (doc) => {
+                      const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
+                      if (clonedEl) {
+                        const root = doc.documentElement;
+                        root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
+                        root.setAttribute('data-color-mode', colorMode);
+                        clonedEl.style.overflow = 'visible';
+                        clonedEl.style.height = 'auto';
+                        clonedEl.style.maxHeight = 'none';
+                        clonedEl.style.padding = `${PAD}px`;
+                        clonedEl.style.display = 'inline-block';
+                        clonedEl.style.boxSizing = 'border-box';
+                        clonedEl.querySelectorAll('td, th').forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
+                        const flexRow = clonedEl.querySelector('[data-quest-sim]') as HTMLElement;
+                        if (flexRow) { flexRow.style.alignItems = 'flex-start'; }
+                        clonedEl.querySelectorAll('img, span, svg').forEach(e => {
+                          const cs = window.getComputedStyle(e);
+                          if (cs.display === 'inline-block' || cs.display === 'inline') {
+                            (e as HTMLElement).style.verticalAlign = 'middle';
+                          }
+                        });
+                      }
+                    }
+                  });
+                  allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = ''; });
+                  const link = document.createElement('a');
+                  link.download = `quest-sim-${Date.now()}.jpg`;
+                  link.href = canvas.toDataURL('image/jpeg', 0.92);
+                  link.click();
+                } finally {
+                  overlay.remove();
+                }
+              }}
+            >
+              <Camera className="w-3.5 h-3.5" />
+              스크린샷
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Tab: Saved Results */}
@@ -857,7 +961,7 @@ export default function QuestSimulation() {
                     <div className="space-y-1.5 pt-2 border-t border-border/30">
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
-                          <Heart className="w-3.5 h-3.5 text-red-400" />
+                          <Heart className="w-3.5 h-3.5 text-orange-400" />
                           <span className="text-xs text-foreground">체력</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-lime-400' : 'text-foreground'}`}>
@@ -979,7 +1083,7 @@ export default function QuestSimulation() {
                         </div>
                         <div className="relative">
                           <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
-                            background: 'linear-gradient(to top, #7f1d1d 0%, #a16207 25%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
+                            background: 'linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
                           }} />
                           {rows.map(r => (
                             <div key={`tick-${r.key}`} className="absolute left-0 right-0 flex items-center pointer-events-none" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
@@ -1471,121 +1575,10 @@ export default function QuestSimulation() {
 
         {/* RIGHT: Contribution Panels - always show skeleton */}
         <div className="w-full lg:w-80 shrink-0">
-              {/* Main Results Header + Action Buttons */}
+              {/* Main Results Header */}
               <div className="flex items-center gap-2 mb-3">
                 <Crown className="w-5 h-5 text-primary" />
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
-                {/* Action buttons - right aligned, icon only */}
-                {currentQuest && selectedHeroes.length > 0 && simResult && (
-                  <div className="flex items-center gap-1.5 ml-auto">
-                    <button
-                      className="p-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-                      title="1회 추적 로그"
-                      onClick={() => {
-                        if (!currentQuest || !currentRegion) return;
-                        const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
-                        const bElements = currentQuest?.barrier ? (() => {
-                          const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
-                          const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-                            ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
-                            : null;
-                          const rawElements = barrierElement2
-                            ? [barrierElement2]
-                            : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
-                          return [...new Set(rawElements)] as string[];
-                        })() : [];
-                        const questMonster: QuestMonster = {
-                          hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
-                          aoeChance: currentQuest.aoeChance, def: currentQuest.def,
-                          isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
-                          barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
-                        };
-                        const entries = runSingleCombatLog({
-                          heroes: selectedHeroes, monster: questMonster,
-                          miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
-                          questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
-                        });
-                        setCombatLog(entries);
-                        setCombatLogDialogOpen(true);
-                      }}
-                    >
-                      <Dices className="w-4 h-4" />
-                    </button>
-                    <button
-                      className="p-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-                      title="결과 저장"
-                      onClick={handleSaveResult}
-                    >
-                      <Save className="w-4 h-4" />
-                    </button>
-                    <button
-                      className="p-1.5 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-                      title="스크린샷 저장"
-                      onClick={async () => {
-                        const el = document.querySelector('[data-quest-screenshot]') as HTMLElement;
-                        if (!el) return;
-                        const overlay = document.createElement('div');
-                        overlay.id = 'screenshot-overlay';
-                        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
-                        overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
-                        document.body.appendChild(overlay);
-                        try {
-                          const { default: html2canvas } = await import('html2canvas');
-                          const allCells = el.querySelectorAll('td, th');
-                          allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
-                          // Use computed background color from the actual theme
-                          const bgStyle = getComputedStyle(document.documentElement);
-                          const bgHsl = bgStyle.getPropertyValue('--background').trim();
-                          const bgColor = bgHsl ? `hsl(${bgHsl})` : (colorMode === 'light' ? '#f5f3f0' : '#1a1a2e');
-                          const isLight = colorMode === 'light';
-                          const PAD = 40;
-                          const canvas = await html2canvas(el, {
-                            backgroundColor: bgColor,
-                            useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
-                            onclone: (doc) => {
-                              const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
-                              if (clonedEl) {
-                                // Copy theme attributes so CSS variables resolve correctly
-                                const root = doc.documentElement;
-                                root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
-                                root.setAttribute('data-color-mode', colorMode);
-
-                                clonedEl.style.overflow = 'visible';
-                                clonedEl.style.height = 'auto';
-                                clonedEl.style.maxHeight = 'none';
-                                clonedEl.style.padding = `${PAD}px`;
-                                clonedEl.style.display = 'inline-block';
-                                clonedEl.style.boxSizing = 'border-box';
-                                clonedEl.querySelectorAll('td, th').forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
-                                // Force flex items to align to top so party composition header lines up
-                                const flexRow = clonedEl.querySelector('[data-quest-sim]') as HTMLElement;
-                                if (flexRow) {
-                                  flexRow.style.alignItems = 'flex-start';
-                                }
-                                // Ensure all img/span/svg vertical alignment
-                                clonedEl.querySelectorAll('img, span, svg').forEach(e => {
-                                  const cs = window.getComputedStyle(e);
-                                  if (cs.display === 'inline-block' || cs.display === 'inline') {
-                                    (e as HTMLElement).style.verticalAlign = 'middle';
-                                  }
-                                });
-                              }
-                            }
-                          });
-                          allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = ''; });
-                          const link = document.createElement('a');
-                          link.download = `quest-sim-${Date.now()}.jpg`;
-                          link.href = canvas.toDataURL('image/jpeg', 0.92);
-                          link.click();
-                        } finally {
-                          overlay.remove();
-                        }
-                      }}
-                    >
-                      <Camera className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
               </div>
 
               {/* Skeleton / Real results */}
@@ -1680,7 +1673,7 @@ export default function QuestSimulation() {
               {/* Equipment Grade Score */}
               <div className="card-fantasy p-4 mb-3">
                 <div className="flex items-center gap-1.5 mb-3">
-                  <img src="/images/stats/power.webp" alt="" className="w-3.5 h-3.5" />
+                  <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
                   <span className="text-sm font-bold text-foreground">장비 등급</span>
                 </div>
                 {(() => {
@@ -1704,8 +1697,8 @@ export default function QuestSimulation() {
                   });
                   const partyTotal = heroGrades.reduce((s, g) => s + g.avg, 0);
                   const partyAvg = heroGrades.length > 0 ? partyTotal / heroGrades.length : 0;
-                  const getGradeColor = (score: number) => score >= 2.5 ? 'text-purple-400' : score >= 2 ? 'text-fuchsia-400' : score >= 1.5 ? 'text-cyan-400' : score >= 1.25 ? 'text-lime-400' : 'text-gray-400';
-                  const getBarColor = (score: number) => score >= 2.5 ? 'bg-purple-500' : score >= 2 ? 'bg-fuchsia-500' : score >= 1.5 ? 'bg-cyan-500' : score >= 1.25 ? 'bg-lime-500' : 'bg-gray-400';
+                  const getGradeColor = (score: number) => score >= 2.5 ? 'text-yellow-400' : score >= 2 ? 'text-fuchsia-400' : score >= 1.5 ? 'text-cyan-400' : score >= 1.25 ? 'text-lime-400' : 'text-gray-400';
+                  const getBarColor = (score: number) => score >= 2.5 ? 'bg-yellow-500' : score >= 2 ? 'bg-fuchsia-500' : score >= 1.5 ? 'bg-cyan-500' : score >= 1.25 ? 'bg-lime-500' : 'bg-gray-400';
                   return (
                     <div className="space-y-2">
                       {heroGrades.map(g => (
