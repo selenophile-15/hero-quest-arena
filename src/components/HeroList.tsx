@@ -11,10 +11,11 @@ import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffec
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
 import ListSummary from './ListSummary';
+import SaveListDialog from './SaveListDialog';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown, LayoutGrid, Table2, Filter, ArrowUpDown, CircleHelp, Copy, RefreshCw, Award, Download, Upload, Camera, BarChart3 } from 'lucide-react';
+import { Plus, Trash2, Pencil, ChevronUp, ChevronDown, Shield, Crown, LayoutGrid, Table2, Filter, ArrowUpDown, CircleHelp, Copy, RefreshCw, Award, Download, Upload, Camera, BarChart3, Save } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -173,6 +174,7 @@ export default function HeroList() {
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
   const [saveLoadOpen, setSaveLoadOpen] = useState(false);
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [importMode, setImportMode] = useState<'replace' | 'merge'>('replace');
   const [importPreview, setImportPreview] = useState<Hero[] | null>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
@@ -254,17 +256,10 @@ export default function HeroList() {
     }
   }, [listTab, colorMode]);
 
-  // Export handler
+  // Export handler (now via dialog)
   const handleExport = useCallback(() => {
-    const data = JSON.stringify(heroes, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = `quest_sim_backup_${new Date().toISOString().slice(0, 10)}.json`;
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
-  }, [heroes]);
+    setSaveDialogOpen(true);
+  }, []);
 
   // Import handler
   const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1428,8 +1423,8 @@ export default function HeroList() {
                 <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
               </Button>
               <div className="w-px h-5 bg-border mx-1" />
-              <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
-                <Download className="w-3.5 h-3.5" />
+              <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 저장하기">
+                <Save className="w-3.5 h-3.5" />
               </Button>
               <label className="inline-flex">
                 <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
@@ -1794,6 +1789,9 @@ export default function HeroList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Save list dialog */}
+      <SaveListDialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen} heroes={heroes} />
     </div>
   );
 }

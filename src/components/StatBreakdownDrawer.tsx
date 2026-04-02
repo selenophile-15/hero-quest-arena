@@ -19,12 +19,12 @@ type StatType = MultStatType | AddStatType;
 const MULT_TABS: { key: MultStatType; label: string; icon: string; color: string; headerBg: string; slotHeaderBg: string; slotHeaderText: string }[] = [
   { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-[#7a1a1a]', slotHeaderBg: 'bg-[#7a1a1a]', slotHeaderText: 'text-red-300' },
   { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-[#1a2a5a]', slotHeaderBg: 'bg-[#1a2a5a]', slotHeaderText: 'text-blue-300' },
-  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-500', headerBg: 'bg-[#934d00]', slotHeaderBg: 'bg-[#934d00]', slotHeaderText: 'text-orange-300' },
+  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#a85200]', slotHeaderBg: 'bg-[#a85200]', slotHeaderText: 'text-orange-200' },
 ];
 
 const ADD_TABS: { key: AddStatType; label: string; icon: string; color: string; headerBg: string }[] = [
-  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-400', headerBg: 'bg-[#4d4010]' },
-  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-cyan-500', headerBg: 'bg-[#0d3d3d]' },
+  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-[#6b5a14]' },
+  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-cyan-400', headerBg: 'bg-[#175e5e]' },
   { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-gray-300', headerBg: 'bg-[#2a2a32]' },
   { key: 'other', label: '기타', icon: '', color: 'text-gray-400', headerBg: 'bg-[#3a3a45]' },
 ];
@@ -155,16 +155,16 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">기본 {config.label}</td>
-                  <td className="py-1.5 text-right tabular-nums text-white font-medium">{formatNumber(baseStat)}</td>
+                  <td className="py-1.5 text-foreground/70">기본 {config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(baseStat)}</td>
                 </tr>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">씨앗 {config.label}</td>
-                  <td className="py-1.5 text-right tabular-nums text-white font-medium">{formatNumber(seedStat)}</td>
+                  <td className="py-1.5 text-foreground/70">씨앗 {config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(seedStat)}</td>
                 </tr>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">장비 {config.label} 합</td>
-                  <td className="py-1.5 text-right tabular-nums font-bold text-white">{formatNumber(equipTotal)}</td>
+                  <td className="py-1.5 text-foreground/70">장비 {config.label} 합</td>
+                  <td className="py-1.5 text-right tabular-nums font-bold text-foreground">{formatNumber(equipTotal)}</td>
                 </tr>
               </tbody>
             </table>
@@ -201,10 +201,10 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
                     const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
                     const isIdolSrc = !!(src as any).isIdol;
-                    const valColor = isIdolSrc ? 'text-red-400 font-semibold' : 'text-white';
+                    const valColor = isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground';
                     return (
                       <tr key={i} className="border-b border-border/20">
-                        <td className="py-1 text-white/70">
+                        <td className="py-1 text-foreground/70">
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
@@ -241,11 +241,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   const tagLabel = src.skillType === 'unique' ? '고유' : '공용';
                   return (
                     <tr key={i} className="border-b border-border/20">
-                      <td className="py-1 text-white/70">
+                      <td className="py-1 text-foreground/70">
                         <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                         {src.skillName} → {src.equipType}
                       </td>
-                      <td className="py-1 text-right tabular-nums text-white">+{src.value}%</td>
+                      <td className="py-1 text-right tabular-nums text-foreground">+{src.value}%</td>
                     </tr>
                   );
                 })}
@@ -268,11 +268,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   const tagLabel = src.skillType === 'unique' ? '고유' : '공용';
                   return (
                     <tr key={i} className="border-b border-border/20">
-                      <td className="py-1 text-white/70">
+                      <td className="py-1 text-foreground/70">
                         <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                         {src.skillName}
                       </td>
-                      <td className="py-1 text-right tabular-nums text-white">+{src.value}%</td>
+                      <td className="py-1 text-right tabular-nums text-foreground">+{src.value}%</td>
                     </tr>
                   );
                 })}
@@ -285,14 +285,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">총 깡 보너스</td>
-                  <td className={`py-1.5 text-right tabular-nums font-medium ${flatBonus ? 'text-white' : 'text-muted-foreground'}`}>
+                  <td className="py-1.5 text-foreground/70">총 깡 보너스</td>
+                  <td className={`py-1.5 text-right tabular-nums font-medium ${flatBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {flatBonus ? `+${formatNumber(flatBonus)}` : '0'}
                   </td>
                 </tr>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">총 공통 % 계수</td>
-                  <td className={`py-1.5 text-right tabular-nums font-medium ${pctBonus ? 'text-white' : 'text-muted-foreground'}`}>
+                  <td className="py-1.5 text-foreground/70">총 공통 % 계수</td>
+                  <td className={`py-1.5 text-right tabular-nums font-medium ${pctBonus ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {pctBonus ? `+${pctBonus}%` : '0%'}
                   </td>
                 </tr>
@@ -311,7 +311,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 {relicEffects.map((e, i) => (
                   <div key={i} className="text-[10px] bg-yellow-900/20 border border-yellow-500/20 rounded px-2 py-1">
                     <span className="text-yellow-300 font-semibold">{e.itemName}</span>
-                    <span className="text-white/70 ml-1">— {e.description}</span>
+                    <span className="text-foreground/70 ml-1">— {e.description}</span>
                     {e.type === 'weapon_nullify' && (
                       <span className="text-red-400 ml-1">(무기 스탯 → 0)</span>
                     )}
@@ -343,24 +343,24 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   <table className="w-full text-xs">
                     <tbody>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">유형</td>
-                        <td className="px-2 py-1 text-right text-white">{hasItem ? slot.itemTypeKor || slot.itemType : '-'}</td>
+                        <td className="px-2 py-1 text-foreground/70">유형</td>
+                        <td className="px-2 py-1 text-right text-foreground">{hasItem ? slot.itemTypeKor || slot.itemType : '-'}</td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">기본 {config.label}</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-white">
+                        <td className="px-2 py-1 text-foreground/70">기본 {config.label}</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
                           {formatNumber(slot ? getSlotStatDirect(slot, baseKey as keyof EquipSlotCalc) : 0)}
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">등급 적용</td>
-                        <td className="px-2 py-1 text-right tabular-nums font-medium text-white">
+                        <td className="px-2 py-1 text-foreground/70">등급 적용</td>
+                        <td className="px-2 py-1 text-right tabular-nums font-medium text-foreground">
                           {formatNumber(slot ? getSlotStatDirect(slot, qualityKey as keyof EquipSlotCalc) : 0)}
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">원소 {config.label}</td>
-                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-white'}`}>
+                        <td className="px-2 py-1 text-foreground/70">원소 {config.label}</td>
+                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-foreground'}`}>
                           {formatNumber(slot ? getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) : 0)}
                           {slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) && (
                             <span className="text-[9px] text-muted-foreground ml-0.5">(보정)</span>
@@ -368,8 +368,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">영혼 {config.label}</td>
-                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-white'}`}>
+                        <td className="px-2 py-1 text-foreground/70">영혼 {config.label}</td>
+                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-foreground'}`}>
                           {formatNumber(slot ? getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) : 0)}
                           {slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) && (
                             <span className="text-[9px] text-muted-foreground ml-0.5">(보정)</span>
@@ -377,8 +377,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">보너스 전</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-white">
+                        <td className="px-2 py-1 text-foreground/70">보너스 전</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
                           {formatNumber(slot ? getSlotStatDirect(slot, preBonusKey as keyof EquipSlotCalc) : 0)}
                         </td>
                       </tr>
@@ -401,8 +401,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </tr>
                       )}
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">장비 보너스 %</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-white">
+                        <td className="px-2 py-1 text-foreground/70">장비 보너스 %</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
                           {slot ? `${getSlotStatDirect(slot, bonusPctKey as keyof EquipSlotCalc)}%` : '0%'}
                         </td>
                       </tr>
@@ -428,7 +428,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </tr>
                       )}
                       <tr className={hasItem ? 'bg-secondary/30' : ''}>
-                        <td className="px-2 py-1 font-semibold text-white">최종</td>
+                        <td className="px-2 py-1 font-semibold text-foreground">최종</td>
                         <td className={`px-2 py-1 text-right tabular-nums font-bold ${config.color}`}>
                           {formatNumber(slot ? getSlotStatDirect(slot, finalKey as keyof EquipSlotCalc) : 0)}
                         </td>
@@ -611,13 +611,13 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               <table className="w-full text-xs">
                 <tbody>
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-white/70">기본 치명타 확률</td>
-                    <td className="py-1.5 text-right tabular-nums text-white font-medium">{baseVal}%</td>
+                    <td className="py-1.5 text-foreground/70">기본 치명타 확률</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseVal}%</td>
                   </tr>
                   {slotStatKey && (
                     <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-white/70">장비 치명타 확률 합</td>
-                      <td className="py-1.5 text-right tabular-nums font-bold text-white">{equipCrit}%</td>
+                      <td className="py-1.5 text-foreground/70">장비 치명타 확률 합</td>
+                      <td className="py-1.5 text-right tabular-nums font-bold text-foreground">{equipCrit}%</td>
                     </tr>
                   )}
                 </tbody>
@@ -634,11 +634,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       const val = getSlotStatDirect(slot, slotStatKey as keyof EquipSlotCalc);
                       return (
                         <tr key={i} className="border-b border-border/20">
-                          <td className="py-1 text-white/70">
+                          <td className="py-1 text-foreground/70">
                             장비 {i + 1}
                             {slot.itemName && <span className="text-foreground/50 ml-1 text-[10px]">({slot.itemName})</span>}
                           </td>
-                          <td className={`py-1 text-right tabular-nums ${val ? 'text-white' : 'text-muted-foreground'}`}>
+                          <td className={`py-1 text-right tabular-nums ${val ? 'text-foreground' : 'text-muted-foreground'}`}>
                             {val ? `+${val}%` : '-'}
                           </td>
                         </tr>
@@ -665,11 +665,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const isIdolSrc = !!(src as any).isIdol;
                     return (
                       <tr key={i} className="border-b border-border/20">
-                        <td className="py-1 text-white/70">
+                        <td className="py-1 text-foreground/70">
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-white'}`}>+{val}%</td>
+                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+{val}%</td>
                       </tr>
                     );
                   })}
@@ -745,8 +745,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               <table className="w-full text-xs">
                 <tbody>
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-white/70">기본 치명타 대미지</td>
-                    <td className="py-1.5 text-right tabular-nums text-white font-medium">{baseCritDmgVal}%</td>
+                    <td className="py-1.5 text-foreground/70">기본 치명타 대미지</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseCritDmgVal}%</td>
                   </tr>
                 </tbody>
               </table>
@@ -768,11 +768,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const isIdolSrc = !!(src as any).isIdol;
                     return (
                       <tr key={i} className="border-b border-border/20">
-                        <td className="py-1 text-white/70">
+                        <td className="py-1 text-foreground/70">
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-white'}`}>+{val}%</td>
+                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+{val}%</td>
                       </tr>
                     );
                   })}
@@ -837,13 +837,13 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">기본 {config.label}</td>
-                  <td className="py-1.5 text-right tabular-nums text-white font-medium">{baseVal}{unit}</td>
+                  <td className="py-1.5 text-foreground/70">기본 {config.label}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseVal}{unit}</td>
                 </tr>
                 {slotStatKey && (
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-white/70">장비 {config.label} 합</td>
-                    <td className="py-1.5 text-right tabular-nums font-bold text-white">
+                    <td className="py-1.5 text-foreground/70">장비 {config.label} 합</td>
+                    <td className="py-1.5 text-right tabular-nums font-bold text-foreground">
                       {equipEvasion}{unit}
                     </td>
                   </tr>
@@ -862,11 +862,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const val = getSlotStatDirect(slot, slotStatKey as keyof EquipSlotCalc);
                     return (
                       <tr key={i} className="border-b border-border/20">
-                        <td className="py-1 text-white/70">
+                        <td className="py-1 text-foreground/70">
                           장비 {i + 1}
                           {slot.itemName && <span className="text-foreground/50 ml-1 text-[10px]">({slot.itemName})</span>}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${val ? 'text-white' : 'text-muted-foreground'}`}>
+                        <td className={`py-1 text-right tabular-nums ${val ? 'text-foreground' : 'text-muted-foreground'}`}>
                           {val ? `+${val}${unit}` : '-'}
                         </td>
                       </tr>
@@ -897,10 +897,10 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
                   const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
                   const isIdolSrc = !!(src as any).isIdol;
-                  const valColor = isIdolSrc ? 'text-red-400 font-semibold' : 'text-white';
+                  const valColor = isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground';
                   return (
                     <tr key={i} className="border-b border-border/20">
-                      <td className="py-1 text-white/70">
+                      <td className="py-1 text-foreground/70">
                         <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                         {src.name}
                       </td>
@@ -925,8 +925,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">총 {config.label} 보너스</td>
-                  <td className={`py-1.5 text-right tabular-nums font-medium ${bonusVal ? 'text-white' : 'text-muted-foreground'}`}>
+                  <td className="py-1.5 text-foreground/70">총 {config.label} 보너스</td>
+                  <td className={`py-1.5 text-right tabular-nums font-medium ${bonusVal ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {bonusVal ? `+${bonusVal}${unit}` : `0${unit}`}
                   </td>
                 </tr>
