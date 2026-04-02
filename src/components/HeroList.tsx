@@ -102,7 +102,7 @@ const QUALITY_BORDER: Record<string, string> = {
   legendary: 'border-yellow-400',
 };
 const QUALITY_RADIAL_COLOR: Record<string, string> = {
-  common: 'rgba(220,220,220,0.4)',
+  common: 'rgba(100,100,115,0.5)',
   uncommon: 'rgba(74,222,128,0.45)',
   flawless: 'rgba(103,232,249,0.5)',
   epic: 'rgba(217,70,239,0.55)',
@@ -539,7 +539,7 @@ export default function HeroList() {
     if (colKey === 'name') {
       // For champions: show custom name only. For heroes: show name as before.
       return (
-        <span className={`font-medium text-foreground text-center w-full ${wrapCls} justify-center ${lh}`}>
+        <span className={`font-bold text-foreground text-center w-full ${wrapCls} justify-center ${lh}`}>
           <span className={capture ? 'inline-block align-middle leading-none' : ''}>{hero.name}</span>
         </span>
       );
@@ -564,7 +564,7 @@ export default function HeroList() {
           <span className={`${wrapCls} ${lh}`}>
             <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { e.currentTarget.style.display = 'none'; }} />
             {spacer}
-            <span className={`whitespace-nowrap ${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'theme-highlight-40' : ''}`}>{hero.championName}</span>
+            <span className={`whitespace-nowrap font-bold ${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'theme-highlight-40' : ''}`}>{hero.championName}</span>
             {isPromoted && <Award className="w-3.5 h-3.5 theme-highlight-40" />}
           </span>
         );
@@ -574,7 +574,7 @@ export default function HeroList() {
         <span className={`${wrapCls} ${lh}`}>
           <img src={getJobImagePath(hero.heroClass)} alt="" className={iconCls} onError={e => { e.currentTarget.style.display = 'none'; }} />
           {spacer}
-          <span className={`whitespace-nowrap ${capture ? 'inline-block align-middle leading-none' : ''}`}>{hero.heroClass}</span>
+          <span className={`whitespace-nowrap font-bold ${capture ? 'inline-block align-middle leading-none' : ''}`}>{hero.heroClass}</span>
         </span>
       );
     }
@@ -600,7 +600,7 @@ export default function HeroList() {
         <span className={`${wrapCls} ${lh}`}>
           <ElementIcon element={hero.element} size={20} />
           {spacer}
-          <span className={`tabular-nums ${capture ? 'inline-block align-middle leading-none' : ''} ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
+          <span className={`tabular-nums font-bold ${capture ? 'inline-block align-middle leading-none' : ''} ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
       );
     }
@@ -745,7 +745,7 @@ export default function HeroList() {
     if (colKey === 'level') {
       const lv = hero.level || 0;
       const lvColor = lv >= 50 ? 'theme-highlight-40' : '';
-      return <span className={`${lh} ${lvColor}`}>{lv}</span>;
+      return <span className={`${lh} ${lvColor} font-bold`}>{lv}</span>;
     }
     const value = hero[colKey as keyof Hero];
     const formatted = formatValue(colKey, value);
@@ -1343,7 +1343,7 @@ export default function HeroList() {
       ) : viewMode === 'table' ? (
         <div ref={listRef}>
           {/* Column visibility - table only */}
-          <div className="card-fantasy p-3 mb-3">
+          <div className="card-fantasy p-3 mb-3 mt-3">
             <div className="flex flex-wrap gap-3">
               {activeColumns.map(col => (
                 <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">

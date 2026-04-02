@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix html2canvas screenshot: prevent img from creating line breaks */
+@layer base {
+  img {
+    display: inline-block;
+  }
+}
+
 @layer base {
   :root, :root[data-theme="gold"] {
     --background: 230 15% 8%;
@@ -573,12 +580,26 @@
   }
 }
 
-/* Primary/accent button text: always white */
-.bg-primary, .bg-accent,
-.bg-primary *,  .bg-accent *,
-.bg-primary.text-white, .bg-accent.text-white,
-[class*="bg-primary"] button,
-[class*="bg-accent"] button {
+/* Primary/accent SOLID button text: always white */
+/* Use .btn-white-text class or inline style for buttons that need forced white text */
+button.bg-primary,
+button.bg-primary *,
+button.bg-accent,
+button.bg-accent *,
+a.bg-primary,
+a.bg-primary *,
+a.bg-accent,
+a.bg-accent *,
+.force-white-text,
+.force-white-text * {
+  color: white !important;
+}
+:root[data-color-mode="light"] button.bg-primary,
+:root[data-color-mode="light"] button.bg-primary *,
+:root[data-color-mode="light"] button.bg-accent,
+:root[data-color-mode="light"] button.bg-accent *,
+:root[data-color-mode="light"] .force-white-text,
+:root[data-color-mode="light"] .force-white-text * {
   color: white !important;
 }
 
@@ -638,7 +659,7 @@
 :root[data-theme="gold"] .theme-highlight-80 { color: hsl(var(--accent)); filter: brightness(1); }
 
 /* Equipment glow - bigger internal radial (50% increase), contained external */
-.equip-glow-common { background: radial-gradient(circle, rgba(140,140,155,0.5) 0%, transparent 80%) !important; }
+.equip-glow-common { background: radial-gradient(circle, rgba(100,100,115,0.6) 0%, transparent 85%) !important; }
 .equip-glow-uncommon { background: radial-gradient(circle, rgba(74,222,128,0.5) 0%, transparent 80%) !important; }
 .equip-glow-flawless { background: radial-gradient(circle, rgba(103,232,249,0.55) 0%, transparent 80%) !important; }
 .equip-glow-epic { background: radial-gradient(circle, rgba(217,70,239,0.6) 0%, transparent 80%) !important; }

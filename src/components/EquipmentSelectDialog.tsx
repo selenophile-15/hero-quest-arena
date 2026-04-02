@@ -52,7 +52,7 @@ const QUALITY_BORDER: Record<string, string> = {
 };
 
 const QUALITY_RADIAL: Record<string, string> = {
-  common: 'rgba(220,220,220,0.4)',
+  common: 'rgba(100,100,115,0.5)',
   uncommon: 'rgba(74,222,128,0.45)',
   flawless: 'rgba(103,232,249,0.5)',
   epic: 'rgba(217,70,239,0.55)',
@@ -782,7 +782,7 @@ export default function EquipmentSelectDialog({
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                                 }`}
                                 style={isSelected ? {
-                                  background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 70%)`,
+                                  background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 100%)`,
                                   boxShadow: QUALITY_SHADOW[quality],
                                 } : {}}
                               >
