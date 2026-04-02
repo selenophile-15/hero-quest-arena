@@ -1497,28 +1497,41 @@ export default function QuestSimulation() {
                           const { default: html2canvas } = await import('html2canvas');
                           const allCells = el.querySelectorAll('td, th');
                           allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
-                          const isLight = document.documentElement.classList.contains('light');
+                          // Use computed background color from the actual theme
+                          const bgStyle = getComputedStyle(document.documentElement);
+                          const bgHsl = bgStyle.getPropertyValue('--background').trim();
+                          const bgColor = bgHsl ? `hsl(${bgHsl})` : (colorMode === 'light' ? '#f5f3f0' : '#1a1a2e');
+                          const isLight = colorMode === 'light';
+                          const PAD = 32;
                           const canvas = await html2canvas(el, {
-                            backgroundColor: isLight ? '#f5f3f0' : '#1a1a2e',
+                            backgroundColor: bgColor,
                             useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
-                            windowWidth: el.scrollWidth + 48, windowHeight: el.scrollHeight + 48,
-                            width: el.scrollWidth + 48, height: el.scrollHeight + 48,
+                            windowWidth: el.scrollWidth + PAD * 2, windowHeight: el.scrollHeight + PAD * 2,
+                            width: el.scrollWidth + PAD * 2, height: el.scrollHeight + PAD * 2,
                             onclone: (doc) => {
                               const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
                               if (clonedEl) {
+                                // Copy theme attributes so CSS variables resolve correctly
+                                const root = doc.documentElement;
+                                root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
+                                root.setAttribute('data-color-mode', colorMode);
+
                                 clonedEl.style.overflow = 'visible';
                                 clonedEl.style.height = 'auto';
                                 clonedEl.style.maxHeight = 'none';
-                                clonedEl.style.padding = '24px';
+                                clonedEl.style.padding = `${PAD}px`;
                                 clonedEl.querySelectorAll('td, th').forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
-                                clonedEl.querySelectorAll('.flex').forEach(flex => { (flex as HTMLElement).style.alignItems = (flex as HTMLElement).style.alignItems || 'center'; });
-                                // Fix section title visibility - ensure text-foreground color
-                                clonedEl.querySelectorAll('h3').forEach(h3 => {
-                                  (h3 as HTMLElement).style.color = isLight ? '#1a1a2e' : '#e8e8f0';
-                                });
-                                // Fix sub-section titles (yellow text)
-                                clonedEl.querySelectorAll('.text-yellow-400').forEach(el => {
-                                  (el as HTMLElement).style.color = isLight ? '#b45309' : '#facc15';
+                                // Force flex items to align to top so party composition header lines up
+                                const flexRow = clonedEl.querySelector('[data-quest-sim]') as HTMLElement;
+                                if (flexRow) {
+                                  flexRow.style.alignItems = 'flex-start';
+                                }
+                                // Ensure all img/span/svg vertical alignment
+                                clonedEl.querySelectorAll('img, span, svg').forEach(e => {
+                                  const cs = window.getComputedStyle(e);
+                                  if (cs.display === 'inline-block' || cs.display === 'inline') {
+                                    (e as HTMLElement).style.verticalAlign = 'middle';
+                                  }
                                 });
                               }
                             }
