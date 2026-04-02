@@ -1444,7 +1444,7 @@ export default function QuestSimulation() {
                       {/* Monster Crit Chance row - same logic as detailed results */}
                       {simResult && (
                         <tr className="border-b border-border/20 bg-muted/20">
-                          <td className="py-1.5 px-1.5 text-red-400 font-medium text-sm">몬스터 치확</td>
+                          <td className="py-1.5 px-1.5 text-red-400 font-medium text-sm">M.CRIT.C</td>
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
                             if (!hero) return <td key={`mcrit-empty-${slotIdx}`} />;
