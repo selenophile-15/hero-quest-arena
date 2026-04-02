@@ -1522,7 +1522,7 @@ export default function QuestSimulation() {
                           const bgHsl = bgStyle.getPropertyValue('--background').trim();
                           const bgColor = bgHsl ? `hsl(${bgHsl})` : (colorMode === 'light' ? '#f5f3f0' : '#1a1a2e');
                           const isLight = colorMode === 'light';
-                          const PAD = 32;
+                          const PAD = 40;
                           const canvas = await html2canvas(el, {
                             backgroundColor: bgColor,
                             useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
