@@ -93,7 +93,7 @@ const ELEMENT_ENG: Record<string, string> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedIds, maxMembers, minPower, onConfirm, editingSlotIdx }: Props) {
+export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedIds, maxMembers, minPower, onConfirm, editingSlotIdx, barrierElements = [] }: Props) {
   const [viewMode, setViewMode] = useState<'table' | 'album'>('table');
   const [localIds, setLocalIds] = useState<Set<string>>(new Set());
   const [sortKey, setSortKey] = useState<SortKey>('heroClass');
