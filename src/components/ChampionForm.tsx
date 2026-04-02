@@ -601,7 +601,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       }}>
         <DialogContent className="max-w-[95vw] h-[90vh] overflow-hidden flex flex-col p-5">
           <DialogHeader>
-            <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
+            <DialogTitle className="text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
             <DialogDescription className="sr-only">퍼밀리어 또는 오라의 노래를 선택하세요</DialogDescription>
           </DialogHeader>
 
@@ -632,7 +632,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-[58px] text-xs gap-1 px-3 bg-amber-700/30 hover:bg-amber-700/50 text-amber-200 border-amber-600/40"
+                      className="h-[58px] text-xs gap-1 px-3 bg-primary/30 hover:bg-primary/50 text-white border-primary/40"
                       onClick={() => setChampionManualMode(true)}
                     >
                       <Wrench className="w-3.5 h-3.5" />
@@ -698,7 +698,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                             {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
                           </SelectContent>
                         </Select>
-                        <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={() => {
+                        <Button size="sm" variant="outline" className="h-7 text-xs bg-primary/30 border-primary/40 text-white hover:bg-primary/50" onClick={() => {
                           setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
                         }}>
                           전체
@@ -970,7 +970,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                                 }`}
                                 style={isSelected ? {
-                                  background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
+                                  background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 100%)`,
                                   boxShadow: QUALITY_SHADOW_COLOR[quality],
                                 } : {}}
                               >
@@ -985,22 +985,47 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                   </div>
                                   <p className="text-[11px] text-foreground/90 truncate w-full text-center leading-tight font-semibold px-1 pb-0.5">{item.name}</p>
                                 </div>
-                                <div className="flex items-center justify-center gap-1 w-full" style={{ height: '25%' }}>
+                                <div className="flex items-center justify-center gap-2 w-full" style={{ height: '25%' }}>
                                   {hasAffinityIcons ? (
-                                    <>
-                                      <div className="flex items-center gap-0.5">
-                                        {elemAffs.map(el => (
-                                          <img key={el} src={`/images/elements/${ELEMENT_ENG_MAP[el] || el}.webp`} alt={el} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                        ))}
-                                      </div>
-                                      {spiritAffs.length > 0 && elemAffs.length > 0 && <div className="w-px h-4 bg-border/50" />}
-                                      <div className="flex items-center gap-0.5">
-                                        {spiritAffs.map(sp => {
-                                          const eng = SPIRIT_NAME_MAP[sp];
-                                          return eng ? <img key={sp} src={`/images/enchant/spirit/${eng}_1.webp`} alt={sp} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
-                                        })}
-                                      </div>
-                                    </>
+                                    (() => {
+                                      const hasElems = elemAffs.length > 0 || uniqueElems.length > 0;
+                                      const hasSpirits = spiritAffs.length > 0 || uniqueSp.length > 0;
+                                      const showDivider = hasElems && hasSpirits;
+                                      return (
+                                        <>
+                                          {hasElems && (
+                                            <div className={`flex items-center gap-0.5 ${!showDivider ? 'mx-auto' : ''}`}>
+                                              {elemAffs.map(el => (
+                                                <img key={el} src={`/images/elements/${ELEMENT_ENG_MAP[el] || el}.webp`} alt={el} className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                              ))}
+                                              {uniqueElems.map(el => {
+                                                const eng = ELEMENT_ENG_MAP[el];
+                                                const tier = item.uniqueElementTier || 1;
+                                                return (
+                                                  <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ''} alt={el} className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                                );
+                                              })}
+                                            </div>
+                                          )}
+                                          {showDivider && <div className="w-px h-5 bg-border/50" />}
+                                          {hasSpirits && (
+                                            <div className={`flex items-center gap-0.5 ${!showDivider ? 'mx-auto' : ''}`}>
+                                              {spiritAffs.map(sp => {
+                                                const eng = SPIRIT_NAME_MAP[sp];
+                                                return eng ? <img key={sp} src={`/images/enchant/spirit/${eng}_1.webp`} alt={sp} className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                                              })}
+                                              {uniqueSp.map(sp => {
+                                                const eng = SPIRIT_NAME_MAP[sp];
+                                                const imgSrc = sp === '문드라' ? '/images/enchant/spirit/mundra.webp' : (eng ? `/images/enchant/spirit/${eng}_2.webp` : '');
+                                                return (
+                                                  <img key={`us-${sp}`} src={imgSrc} alt={sp} className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                                );
+                                              })}
+                                            </div>
+                                          )}
+                                        </>
+                                      );
+                                    })()
                                   ) : (
                                     <span className="text-[7px] text-muted-foreground/30">-</span>
                                   )}
@@ -1025,7 +1050,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                 <div className="text-xs">
                                   <span className="text-muted-foreground">친밀 원소: </span>
                                   {item.elementAffinity.map((el: string, ei: number) => (
-                                    <span key={ei}>{ei > 0 ? ', ' : ''}<span className={ELEMENT_COLORS_LOCAL[el] || 'text-foreground'}>{el}</span></span>
+                                    <span key={ei} className={`font-semibold ${ELEMENT_COLORS_LOCAL[el] || 'text-foreground'}`}>{ei > 0 ? ', ' : ''}{el}</span>
                                   ))}
                                 </div>
                               )}
@@ -1033,7 +1058,25 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                 <div className="text-xs">
                                   <span className="text-muted-foreground">친밀 영혼: </span>
                                   {item.spiritAffinity.map((sp: string, si: number) => (
-                                    <span key={si}>{si > 0 ? ', ' : ''}{sp} (T{getSpiritTier(sp)})</span>
+                                    <span key={si} className="text-foreground font-semibold">{si > 0 ? ', ' : ''}{sp} (T{getSpiritTier(sp)})</span>
+                                  ))}
+                                </div>
+                              )}
+                              {item.uniqueElement && item.uniqueElement.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">고유 원소: </span>
+                                  {item.uniqueElement.map((el: string, i: number) => (
+                                    <span key={el} className={`font-semibold ${ELEMENT_COLORS_LOCAL[el] || 'text-foreground'}`}>
+                                      {el} (T{item.uniqueElementTier || 1}){i < item.uniqueElement!.length - 1 ? ', ' : ''}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {item.uniqueSpirit && item.uniqueSpirit.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">고유 영혼: </span>
+                                  {item.uniqueSpirit.map((sp: string, i: number) => (
+                                    <span key={sp} className="text-foreground font-semibold">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
                                   ))}
                                 </div>
                               )}
@@ -1080,7 +1123,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                         className="w-5 flex items-center justify-center flex-shrink-0"
                         style={{ background: s.item ? champQualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
                       >
-                        <span className="text-[10px] font-bold text-background">{i + 1}</span>
+                        <span className="text-[10px] font-bold text-black">{i + 1}</span>
                       </div>
                       {s.item ? (
                         <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">
@@ -1095,13 +1138,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                             </p>
                             <div className="flex items-center gap-1 mt-0.5 flex-wrap">
                               {s.element && (
-                                <span className={`text-[9px] ${hasAffinityEl ? 'font-bold' : ''} ${ELEMENT_COLORS_LOCAL[s.element.type] || 'text-foreground/70'}`}>
+                                <span className={`text-[9px] font-bold ${ELEMENT_COLORS_LOCAL[s.element.type] || 'text-foreground/70'}`}>
                                   {hasAffinityEl && '★ '}{s.element.type} (T{s.element.tier})
                                 </span>
                               )}
                               {s.element && s.spirit && <span className="text-[9px] text-muted-foreground">/</span>}
                               {s.spirit && (
-                                <span className={`text-[9px] text-purple-300 ${hasAffinitySp ? 'font-bold' : ''}`}>
+                                <span className={`text-[9px] font-bold text-purple-400`}>
                                   {hasAffinitySp && '★ '}{s.spirit.name} (T{getSpiritTier(s.spirit.name)})
                                 </span>
                               )}
@@ -1351,7 +1394,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   {/* Leader skill row */}
                   <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0 border-b border-border/50">
                     <div className="px-1 py-1.5 flex items-center justify-center">
-                      <span className="px-1 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: '#c02020', color: 'white' }}>챔피언</span>
+                      <span className="px-1 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: '#c02020', color: 'white' }}>챔피언</span>
                     </div>
                     <div className="px-1 py-1.5 flex items-center justify-center">
                       <img src={`/images/skills/sk_champion/${champEng}_${leaderSkillTier}.webp`} alt="" className="w-9 h-9 object-contain"
@@ -1365,7 +1408,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   {/* Aura Song skill row */}
                   <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0">
                     <div className="px-1 py-1.5 flex items-center justify-center">
-                      <span className="px-1 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: '#1a6b3c', color: 'white' }}>오라</span>
+                      <span className="px-1 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: '#4a7c3f', color: 'white' }}>오라</span>
                     </div>
                     <div className="px-1 py-1.5 flex items-center justify-center">
                       {aurasongSkillIcon ? (
