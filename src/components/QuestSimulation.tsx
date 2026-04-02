@@ -1921,7 +1921,7 @@ export default function QuestSimulation() {
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦈 상어</th>
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦕 공룡</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={3}>⚡ 광전사</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
