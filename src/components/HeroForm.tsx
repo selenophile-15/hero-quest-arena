@@ -718,7 +718,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
           {/* Stats only */}
           <div className="card-fantasy p-3">
-            <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
             <div className="space-y-1.5">
               {heroClass && (
