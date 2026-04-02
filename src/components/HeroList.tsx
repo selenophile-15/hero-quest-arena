@@ -574,7 +574,7 @@ export default function HeroList() {
         <span className={`${wrapCls} ${lh}`}>
           <img src={getJobImagePath(hero.heroClass)} alt="" className={iconCls} onError={e => { e.currentTarget.style.display = 'none'; }} />
           {spacer}
-          <span className={`whitespace-nowrap ${capture ? 'inline-block align-middle leading-none' : ''}`}>{hero.heroClass}</span>
+          <span className={`whitespace-nowrap font-bold ${capture ? 'inline-block align-middle leading-none' : ''}`}>{hero.heroClass}</span>
         </span>
       );
     }
