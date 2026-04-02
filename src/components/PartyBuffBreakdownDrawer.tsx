@@ -20,11 +20,11 @@ type StatTab = 'atk' | 'def' | 'hp' | 'hpRegen' | 'critChance' | 'critDmg' | 'ev
 const STAT_TABS: { key: StatTab; label: string; icon: string; color: string; headerBg: string }[] = [
   { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-900/60' },
   { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-900/60' },
-  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#ff7f00]/40' },
+  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-500', headerBg: 'bg-[#934d00]/60' },
   { key: 'hpRegen', label: '체력 재생', icon: STAT_ICON_MAP.hp, color: 'text-green-400', headerBg: 'bg-green-900/40' },
-  { key: 'critChance', label: '치명타 확률', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-yellow-500/30' },
+  { key: 'critChance', label: '치명타 확률', icon: STAT_ICON_MAP.crit, color: 'text-yellow-400', headerBg: 'bg-yellow-500/30' },
   { key: 'critDmg', label: '치명타 대미지', icon: STAT_ICON_MAP.critDmg, color: 'text-orange-300', headerBg: 'bg-orange-500/30' },
-  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-teal-300', headerBg: 'bg-teal-600/30' },
+  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-cyan-500', headerBg: 'bg-teal-600/30' },
 ];
 
 // Spirit names that provide per-turn HP regen
