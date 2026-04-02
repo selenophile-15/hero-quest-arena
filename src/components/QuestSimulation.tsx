@@ -2212,6 +2212,7 @@ export default function QuestSimulation() {
           setEditingSlotIdx(null);
         }}
         editingSlotIdx={editingSlotIdx}
+        barrierElements={barrierElements}
       />
 
       {/* Party Buff Breakdown Drawer */}
