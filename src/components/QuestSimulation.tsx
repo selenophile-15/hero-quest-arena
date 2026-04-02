@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -878,16 +878,26 @@ export default function QuestSimulation() {
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                          <span className="text-xs text-foreground">광역 공격</span>
+                          <span className="text-xs text-foreground">광역 확률</span>
                         </div>
-                        <span className={`text-sm font-bold font-mono ${isAoeMod || isAtkMod ? 'text-yellow-400' : 'text-foreground'}`}>
-                          {displayAoeChance}% / {formatNumber(displayAoe)}
-                          {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(확률 ×{aoeMod})</span>}
+                        <span className={`text-sm font-bold font-mono ${isAoeMod ? 'text-yellow-400' : 'text-foreground'}`}>
+                          {displayAoeChance}%
+                          {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(×{aoeMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
-                          <img src="/images/stats/critchance.webp" alt="" className="w-3.5 h-3.5" />
+                          <Swords className="w-3.5 h-3.5 text-yellow-400" />
+                          <span className="text-xs text-foreground">광역 대미지</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
+                          {formatNumber(displayAoe)}
+                          {isAtkMod && <span className="text-[10px] text-muted-foreground ml-1">(×{atkMod})</span>}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Crosshair className="w-3.5 h-3.5 text-yellow-400" />
                           <span className="text-xs text-foreground">치명타 확률</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${isCritMod ? 'text-red-400' : 'text-foreground'}`}>
@@ -991,14 +1001,24 @@ export default function QuestSimulation() {
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          <svg className="absolute overflow-visible pointer-events-none" style={{ left: '70px', top: 0, width: 'calc(100% - 70px)', height: '100%' }}>
-                            {heroLayout.map(h => {
-                              const yPin = (1 - h.pinPct / 100) * barH;
-                              const yLabel = (1 - h.labelPct / 100) * barH;
-                              const d = `M 0 ${yPin} C 14 ${yPin}, 14 ${yLabel}, 28 ${yLabel}`;
-                              return <path key={`line-${h.id}`} d={d} fill="none" stroke={h.color} strokeWidth={1.5} strokeOpacity={0.8} />;
-                            })}
-                          </svg>
+                          {/* Use div-based lines instead of SVG for html2canvas compatibility */}
+                          {heroLayout.map(h => {
+                            const yPinPx = (1 - h.pinPct / 100) * barH;
+                            const yLabelPx = (1 - h.labelPct / 100) * barH;
+                            const top = Math.min(yPinPx, yLabelPx);
+                            const height = Math.abs(yLabelPx - yPinPx) || 1;
+                            return (
+                              <div key={`line-${h.id}`} className="absolute pointer-events-none" style={{
+                                left: '70px', top: `${top}px`, width: '28px', height: `${height}px`,
+                                borderLeft: `1.5px solid ${h.color}`,
+                                borderBottom: yLabelPx > yPinPx ? `1.5px solid ${h.color}` : 'none',
+                                borderTop: yLabelPx < yPinPx ? `1.5px solid ${h.color}` : 'none',
+                                borderRight: `1.5px solid ${h.color}`,
+                                borderRadius: yLabelPx > yPinPx ? '0 0 6px 6px' : '6px 6px 0 0',
+                                opacity: 0.8,
+                              }} />
+                            );
+                          })}
                           {heroLayout.map(h => (
                             <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '100px', transform: 'translateY(50%)', zIndex: 5 }}>
                               <span className="text-[11px] font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
@@ -1389,7 +1409,7 @@ export default function QuestSimulation() {
                             }
                             
                             return (
-                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono text-sm ${displayColor}`}>
+                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono text-sm font-bold ${displayColor}`}>
                                 <div className="flex flex-col items-center">
                                   <span>
                                     {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
@@ -1416,7 +1436,7 @@ export default function QuestSimulation() {
                             const threat = hero.threat || 1;
                             const targetChance = totalThreat > 0 ? (threat / totalThreat) * 100 : 0;
                             return (
-                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm">
+                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm font-bold">
                                 <span className={targetChance >= 40 ? 'text-red-400' : targetChance >= 25 ? 'text-yellow-400' : 'text-green-400'}>
                                   {targetChance.toFixed(1)}%
                                 </span>
@@ -1502,7 +1522,7 @@ export default function QuestSimulation() {
                           const bgHsl = bgStyle.getPropertyValue('--background').trim();
                           const bgColor = bgHsl ? `hsl(${bgHsl})` : (colorMode === 'light' ? '#f5f3f0' : '#1a1a2e');
                           const isLight = colorMode === 'light';
-                          const PAD = 32;
+                          const PAD = 40;
                           const canvas = await html2canvas(el, {
                             backgroundColor: bgColor,
                             useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
@@ -1829,7 +1849,7 @@ export default function QuestSimulation() {
                 <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-sm font-semibold text-yellow-400 mb-2">💥 대미지</div>
+                    <div className="text-sm font-semibold text-primary mb-2"><Swords className="w-4 h-4 inline mr-1 text-red-400" />대미지</div>
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
@@ -1893,7 +1913,7 @@ export default function QuestSimulation() {
 
                   {/* Table 1.5: 특수 대미지 (상어 / 첫턴 / 광전사) */}
                   <div>
-                    <div className="text-sm font-semibold text-yellow-400 mb-2">🦈 특수 대미지 (상어 / 공룡 / 광전사)</div>
+                    <div className="text-sm font-semibold text-primary mb-2"><Target className="w-4 h-4 inline mr-1 text-cyan-400" />특수 대미지 (상어 / 공룡 / 광전사)</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
@@ -1901,7 +1921,7 @@ export default function QuestSimulation() {
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦈 상어</th>
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={2}>🦕 공룡</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={3}>⚡ 광전사</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-muted-foreground font-medium border-l border-border/20" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[12px] text-muted-foreground/70">
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
@@ -1944,7 +1964,7 @@ export default function QuestSimulation() {
 
                   {/* Table 2: 생존 & 방어 (with 받는 대미지) */}
                   <div>
-                    <div className="text-sm font-semibold text-yellow-400 mb-2">🛡 생존 & 방어</div>
+                    <div className="text-sm font-semibold text-primary mb-2"><Shield className="w-4 h-4 inline mr-1 text-blue-400" />생존 & 방어</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
@@ -1994,7 +2014,7 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 회복 & 보호 */}
                   <div>
-                    <div className="text-sm font-semibold text-yellow-400 mb-2">💚 회복 & 보호</div>
+                    <div className="text-sm font-semibold text-primary mb-2"><Heart className="w-4 h-4 inline mr-1 text-green-400" />회복 & 보호</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
@@ -2024,7 +2044,7 @@ export default function QuestSimulation() {
                   {/* Table 4: 특수 (광전사, 크로노맨서 등) */}
                   {displayResults.some(hr => hr.berserkerThresholds || hr.chronomancerRetries !== undefined) && (
                     <div>
-                      <div className="text-sm font-semibold text-yellow-400 mb-2">⚡ 특수 정보</div>
+                      <div className="text-sm font-semibold text-primary mb-2"><Flame className="w-4 h-4 inline mr-1 text-orange-400" />특수 정보</div>
                       <div className="overflow-x-auto">
                         <div className="space-y-1">
                           {displayResults.map(hr => {
@@ -2059,7 +2079,7 @@ export default function QuestSimulation() {
 
                   {/* Table 5: 시뮬레이션 스탯 */}
                   <div>
-                    <div className="text-sm font-semibold text-yellow-400 mb-2">📊 시뮬레이션 스탯</div>
+                    <div className="text-sm font-semibold text-primary mb-2"><Info className="w-4 h-4 inline mr-1 text-blue-400" />시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
