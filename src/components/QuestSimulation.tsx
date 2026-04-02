@@ -1680,7 +1680,7 @@ export default function QuestSimulation() {
               {/* Equipment Grade Score */}
               <div className="card-fantasy p-4 mb-3">
                 <div className="flex items-center gap-1.5 mb-3">
-                  <img src="/images/stats/power.webp" alt="" className="w-3.5 h-3.5" />
+                  <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
                   <span className="text-sm font-bold text-foreground">장비 등급</span>
                 </div>
                 {(() => {
