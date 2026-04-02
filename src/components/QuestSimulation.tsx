@@ -1542,8 +1542,6 @@ export default function QuestSimulation() {
                           const canvas = await html2canvas(el, {
                             backgroundColor: bgColor,
                             useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
-                            windowWidth: el.scrollWidth + PAD * 2, windowHeight: el.scrollHeight + PAD * 2,
-                            width: el.scrollWidth + PAD * 2, height: el.scrollHeight + PAD * 2,
                             onclone: (doc) => {
                               const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
                               if (clonedEl) {
