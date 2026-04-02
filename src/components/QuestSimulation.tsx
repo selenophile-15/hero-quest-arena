@@ -1964,7 +1964,7 @@ export default function QuestSimulation() {
 
                   {/* Table 2: 생존 & 방어 (with 받는 대미지) */}
                   <div>
-                    <div className="text-sm font-semibold text-yellow-400 mb-2">🛡 생존 & 방어</div>
+                    <div className="text-sm font-semibold text-primary mb-2"><Shield className="w-4 h-4 inline mr-1 text-blue-400" />생존 & 방어</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
