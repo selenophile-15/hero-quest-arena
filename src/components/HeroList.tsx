@@ -600,7 +600,7 @@ export default function HeroList() {
         <span className={`${wrapCls} ${lh}`}>
           <ElementIcon element={hero.element} size={20} />
           {spacer}
-          <span className={`tabular-nums ${capture ? 'inline-block align-middle leading-none' : ''} ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
+          <span className={`tabular-nums font-bold ${capture ? 'inline-block align-middle leading-none' : ''} ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
       );
     }
