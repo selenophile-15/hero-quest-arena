@@ -979,7 +979,7 @@ export default function QuestSimulation() {
                         </div>
                         <div className="relative">
                           <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
-                            background: 'linear-gradient(to top, #7f1d1d 0%, #a16207 25%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
+                            background: 'linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
                           }} />
                           {rows.map(r => (
                             <div key={`tick-${r.key}`} className="absolute left-0 right-0 flex items-center pointer-events-none" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
