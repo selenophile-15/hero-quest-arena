@@ -624,8 +624,12 @@ a.bg-accent *,
 }
 
 /* Detail tables in quest simulation: bold all numeric cells */
-[data-quest-screenshot] table td.font-mono,
-[data-quest-screenshot] table td .font-mono {
+[data-quest-screenshot] .card-fantasy table td {
+  font-weight: 700;
+}
+
+/* Main result numbers bold */
+[data-quest-screenshot] .card-fantasy .font-mono {
   font-weight: 700;
 }
 
