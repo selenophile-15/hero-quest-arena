@@ -601,15 +601,16 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       )
                     )}
                     {/* Equipment */}
-                    {isChampion ? (
-                      <div className="flex gap-1 justify-center w-full">
-                        {equipSlots.slice(0, 2).map((slot: any, i: number) => renderEquipSlot(slot, i))}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-3 gap-0.5 w-full">
-                        {equipSlots.map((slot: any, i: number) => renderEquipSlot(slot, i))}
-                      </div>
-                    )}
+                    <div className="grid grid-cols-3 gap-0.5 w-full">
+                      {isChampion ? (
+                        <>
+                          <div />
+                          {equipSlots.slice(0, 2).map((slot: any, i: number) => renderEquipSlot(slot, i))}
+                        </>
+                      ) : (
+                        equipSlots.map((slot: any, i: number) => renderEquipSlot(slot, i))
+                      )}
+                    </div>
                     {/* Power */}
                     {hero.power > 0 && (
                       <span className={`text-[10px] font-mono ${belowMin ? 'text-red-400' : 'text-yellow-400'}`}>{formatNumber(hero.power)}</span>
