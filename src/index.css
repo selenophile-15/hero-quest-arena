@@ -573,17 +573,26 @@
   }
 }
 
-/* Primary/accent SOLID button text: always white - only exact bg-primary/bg-accent, not opacity variants like bg-primary/15 */
-.bg-primary:not([class*="bg-primary/"]),
-.bg-primary:not([class*="bg-primary/"]) *,
-.bg-accent:not([class*="bg-accent/"]),
-.bg-accent:not([class*="bg-accent/"]) * {
+/* Primary/accent SOLID button text: always white */
+/* Use .btn-white-text class or inline style for buttons that need forced white text */
+button.bg-primary,
+button.bg-primary *,
+button.bg-accent,
+button.bg-accent *,
+a.bg-primary,
+a.bg-primary *,
+a.bg-accent,
+a.bg-accent *,
+.force-white-text,
+.force-white-text * {
   color: white !important;
 }
-:root[data-color-mode="light"] .bg-primary:not([class*="bg-primary/"]),
-:root[data-color-mode="light"] .bg-primary:not([class*="bg-primary/"]) *,
-:root[data-color-mode="light"] .bg-accent:not([class*="bg-accent/"]),
-:root[data-color-mode="light"] .bg-accent:not([class*="bg-accent/"]) * {
+:root[data-color-mode="light"] button.bg-primary,
+:root[data-color-mode="light"] button.bg-primary *,
+:root[data-color-mode="light"] button.bg-accent,
+:root[data-color-mode="light"] button.bg-accent *,
+:root[data-color-mode="light"] .force-white-text,
+:root[data-color-mode="light"] .force-white-text * {
   color: white !important;
 }
 
