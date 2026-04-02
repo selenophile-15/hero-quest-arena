@@ -346,15 +346,15 @@ export default function EquipmentSelectDialog({
     let newElement: EquipmentSlotData['element'];
     if (item.uniqueElement?.length) {
       newElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true };
-    } else if (prevHadUniqueElement) {
-      newElement = null;
     } else {
+      // Keep existing enchant even if previous item had unique element
       const existing = newSlots[activeSlot]?.element || null;
-      if (existing) {
+      if (existing && !prevHadUniqueElement) {
         const hasAffinity = item.elementAffinity?.includes(existing.type) || item.elementAffinity?.includes('모든 원소');
         const allElAff = isAllElementAffinityOnly(item.elementAffinity, existing.type);
         newElement = { ...existing, affinity: !!hasAffinity, allElementAffinity: allElAff };
       } else {
+        // Previous had unique element → clear it (it belonged to the old item)
         newElement = null;
       }
     }
@@ -362,14 +362,13 @@ export default function EquipmentSelectDialog({
     let newSpirit: EquipmentSlotData['spirit'];
     if (item.uniqueSpirit?.length) {
       newSpirit = { name: item.uniqueSpirit[0], affinity: true };
-    } else if (prevHadUniqueSpirit) {
-      newSpirit = null;
     } else {
       const existing = newSlots[activeSlot]?.spirit || null;
-      if (existing) {
+      if (existing && !prevHadUniqueSpirit) {
         const hasAffinity = item.spiritAffinity?.includes(existing.name);
         newSpirit = { ...existing, affinity: !!hasAffinity };
       } else {
+        // Previous had unique spirit → clear it
         newSpirit = null;
       }
     }
