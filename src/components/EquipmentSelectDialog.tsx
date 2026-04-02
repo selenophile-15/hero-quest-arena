@@ -105,7 +105,7 @@ const ELEMENT_FILTER_OPTIONS = [
 ];
 
 const SPIRIT_TIER: Record<string, number> = {
-  '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14,
+  '바하무트': 14, '레비아탄': 14, '그리핀': 14, '명인': 14, '조상': 14, '베히모스': 14, '우로보로스': 14, '문드라': 14,
   '기린': 12, '크람푸스': 12, '크리스마스': 12,
   '크라켄': 12, '키메라': 12, '카벙클': 12, '타라스크': 12, '하이드라': 12, '불사조': 12,
   '케찰코아틀': 10,
@@ -346,15 +346,15 @@ export default function EquipmentSelectDialog({
     let newElement: EquipmentSlotData['element'];
     if (item.uniqueElement?.length) {
       newElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true };
-    } else if (prevHadUniqueElement) {
-      newElement = null;
     } else {
+      // Keep existing enchant even if previous item had unique element
       const existing = newSlots[activeSlot]?.element || null;
-      if (existing) {
+      if (existing && !prevHadUniqueElement) {
         const hasAffinity = item.elementAffinity?.includes(existing.type) || item.elementAffinity?.includes('모든 원소');
         const allElAff = isAllElementAffinityOnly(item.elementAffinity, existing.type);
         newElement = { ...existing, affinity: !!hasAffinity, allElementAffinity: allElAff };
       } else {
+        // Previous had unique element → clear it (it belonged to the old item)
         newElement = null;
       }
     }
@@ -362,14 +362,13 @@ export default function EquipmentSelectDialog({
     let newSpirit: EquipmentSlotData['spirit'];
     if (item.uniqueSpirit?.length) {
       newSpirit = { name: item.uniqueSpirit[0], affinity: true };
-    } else if (prevHadUniqueSpirit) {
-      newSpirit = null;
     } else {
       const existing = newSlots[activeSlot]?.spirit || null;
-      if (existing) {
+      if (existing && !prevHadUniqueSpirit) {
         const hasAffinity = item.spiritAffinity?.includes(existing.name);
         newSpirit = { ...existing, affinity: !!hasAffinity };
       } else {
+        // Previous had unique spirit → clear it
         newSpirit = null;
       }
     }
@@ -380,8 +379,11 @@ export default function EquipmentSelectDialog({
 
   const handleClearSlot = useCallback(() => {
     const newSlots = [...slots];
-    // Preserve enchantments (element/spirit) when clearing equipment
-    newSlots[activeSlot] = { item: null, quality: newSlots[activeSlot]?.quality || 'common', element: newSlots[activeSlot]?.element || null, spirit: newSlots[activeSlot]?.spirit || null };
+    const prevItem = newSlots[activeSlot]?.item;
+    // Preserve user-set enchantments, but clear unique enchants that belonged to the item
+    const keepElement = (prevItem?.uniqueElement?.length) ? null : (newSlots[activeSlot]?.element || null);
+    const keepSpirit = (prevItem?.uniqueSpirit?.length) ? null : (newSlots[activeSlot]?.spirit || null);
+    newSlots[activeSlot] = { item: null, quality: newSlots[activeSlot]?.quality || 'common', element: keepElement, spirit: keepSpirit };
     setSlots(newSlots);
   }, [slots, activeSlot]);
 
@@ -848,8 +850,9 @@ export default function EquipmentSelectDialog({
                                               })}
                                               {uniqueSp.map(sp => {
                                                 const eng = SPIRIT_NAME_MAP[sp];
+                                                const imgSrc = sp === '문드라' ? '/images/enchant/spirit/mundra.webp' : (eng ? `/images/enchant/spirit/${eng}_2.webp` : '');
                                                 return (
-                                                  <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
+                                                  <img key={`us-${sp}`} src={imgSrc} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
                                                     onError={e => { e.currentTarget.style.display = 'none'; }} />
                                                 );
                                               })}
@@ -1016,8 +1019,11 @@ export default function EquipmentSelectDialog({
                       onClick={(e) => {
                           e.stopPropagation();
                           const newSlots = [...slots];
-                          // Keep enchants (element/spirit) when removing equipment
-                          newSlots[i] = { item: null, quality: newSlots[i].quality, element: newSlots[i].element, spirit: newSlots[i].spirit };
+                          const prevItem = newSlots[i]?.item;
+                          // Keep user-set enchants, clear unique enchants belonging to the item
+                          const keepEl = (prevItem?.uniqueElement?.length) ? null : newSlots[i].element;
+                          const keepSp = (prevItem?.uniqueSpirit?.length) ? null : newSlots[i].spirit;
+                          newSlots[i] = { item: null, quality: newSlots[i].quality, element: keepEl, spirit: keepSp };
                           setSlots(newSlots);
                         }}
                         className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
