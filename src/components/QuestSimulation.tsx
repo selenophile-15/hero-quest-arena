@@ -911,15 +911,13 @@ export default function QuestSimulation() {
                           <span className="text-xs text-foreground">방어력 기준치</span>
                         </div>
                       </div>
-                      {mobEva > 0 && (
-                        <div className="flex items-center justify-between px-1">
-                          <div className="flex items-center gap-1.5">
-                            <img src="/images/stats/evasion.webp" alt="" className="w-3.5 h-3.5" />
-                            <span className="text-xs text-foreground">회피</span>
-                          </div>
-                          <span className="text-sm font-bold font-mono text-blue-400">{mobEva}%</span>
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Wind className="w-3.5 h-3.5 text-teal-400" />
+                          <span className="text-xs text-foreground">회피</span>
                         </div>
-                      )}
+                        <span className={`text-sm font-bold font-mono ${mobEva > 0 ? 'text-teal-400' : 'text-foreground'}`}>{mobEva}%</span>
+                      </div>
                     </div>
                   );
                 })()}
