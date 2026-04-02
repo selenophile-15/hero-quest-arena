@@ -850,8 +850,9 @@ export default function EquipmentSelectDialog({
                                               })}
                                               {uniqueSp.map(sp => {
                                                 const eng = SPIRIT_NAME_MAP[sp];
+                                                const imgSrc = sp === '문드라' ? '/images/enchant/spirit/mundra.webp' : (eng ? `/images/enchant/spirit/${eng}_2.webp` : '');
                                                 return (
-                                                  <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
+                                                  <img key={`us-${sp}`} src={imgSrc} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
                                                     onError={e => { e.currentTarget.style.display = 'none'; }} />
                                                 );
                                               })}
