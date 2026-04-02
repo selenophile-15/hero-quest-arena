@@ -404,9 +404,19 @@ export default function HeroList() {
   };
 
   const handleSave = (hero: Hero) => {
-    const updated = editing
-      ? heroes.map(h => (h.id === hero.id ? hero : h))
-      : [...heroes, hero];
+    let updated: Hero[];
+    if (editing) {
+      const existingIdx = heroes.findIndex(h => h.id === hero.id);
+      if (existingIdx >= 0) {
+        // Normal save (overwrite)
+        updated = heroes.map(h => (h.id === hero.id ? hero : h));
+      } else {
+        // Save As (new ID, append)
+        updated = [...heroes, hero];
+      }
+    } else {
+      updated = [...heroes, hero];
+    }
     setHeroes(updated);
     saveHeroes(updated);
     setEditing(null);
