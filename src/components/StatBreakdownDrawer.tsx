@@ -745,8 +745,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               <table className="w-full text-xs">
                 <tbody>
                   <tr className="border-b border-border/30">
-                    <td className="py-1.5 text-white/70">기본 치명타 대미지</td>
-                    <td className="py-1.5 text-right tabular-nums text-white font-medium">{baseCritDmgVal}%</td>
+                    <td className="py-1.5 text-foreground/70">기본 치명타 대미지</td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{baseCritDmgVal}%</td>
                   </tr>
                 </tbody>
               </table>
