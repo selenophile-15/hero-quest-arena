@@ -1423,8 +1423,8 @@ export default function HeroList() {
                 <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
               </Button>
               <div className="w-px h-5 bg-border mx-1" />
-              <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
-                <Download className="w-3.5 h-3.5" />
+              <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 저장하기">
+                <Save className="w-3.5 h-3.5" />
               </Button>
               <label className="inline-flex">
                 <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
