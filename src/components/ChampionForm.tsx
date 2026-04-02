@@ -445,7 +445,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         >
           <div className="w-full flex items-center justify-between gap-1 px-1.5 pt-1">
             <div className="rounded bg-card/80 border border-border/40 px-1.5 py-0.5">
-              <span className="text-xs font-bold text-primary tracking-wide">{SLOT_LABELS[slotIdx]}</span>
+              <span className="text-xs font-bold text-foreground tracking-wide">{SLOT_LABELS[slotIdx]}</span>
             </div>
             <div className="flex items-center gap-1">
               {equipItem && (
@@ -477,7 +477,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
           <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5 self-center">
             <div
-              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
+              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
               onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
             >
               {displayElement ? (
@@ -490,7 +490,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               ) : <span className="text-[6px] text-muted-foreground">원소</span>}
             </div>
             <div
-              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
+              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
               onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }}
             >
               {displaySpirit ? (() => {

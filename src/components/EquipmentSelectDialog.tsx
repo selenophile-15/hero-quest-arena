@@ -380,7 +380,8 @@ export default function EquipmentSelectDialog({
 
   const handleClearSlot = useCallback(() => {
     const newSlots = [...slots];
-    newSlots[activeSlot] = { item: null, quality: 'common', element: null, spirit: null };
+    // Preserve enchantments (element/spirit) when clearing equipment
+    newSlots[activeSlot] = { item: null, quality: newSlots[activeSlot]?.quality || 'common', element: newSlots[activeSlot]?.element || null, spirit: newSlots[activeSlot]?.spirit || null };
     setSlots(newSlots);
   }, [slots, activeSlot]);
 
@@ -813,41 +814,50 @@ export default function EquipmentSelectDialog({
                                 </div>
                                 <div className="flex items-center justify-center gap-2 w-full" style={{ height: '25%' }}>
                                   {hasAffinityIcons ? (
-                                    <>
-                                      <div className="flex items-center gap-0.5">
-                                        {elemAffs.map(el => (
-                                          <img key={el} src={getElementIconPath(el)} alt={el} className="w-6 h-6" title={`친밀 원소: ${el}`}
-                                            onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                        ))}
-                                        {uniqueElems.map(el => {
-                                          const eng = ELEMENT_ENG[el];
-                                          const tier = item.uniqueElementTier || 1;
-                                          return (
-                                            <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
-                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                          );
-                                        })}
-                                      </div>
-                                      {(spiritAffs.length > 0 || uniqueSp.length > 0) && (elemAffs.length > 0 || uniqueElems.length > 0) && (
-                                        <div className="w-px h-5 bg-border/50" />
-                                      )}
-                                      <div className="flex items-center gap-0.5">
-                                        {spiritAffs.map(sp => {
-                                          const eng = SPIRIT_NAME_MAP[sp];
-                                          return (
-                                            <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.webp` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
-                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                          );
-                                        })}
-                                        {uniqueSp.map(sp => {
-                                          const eng = SPIRIT_NAME_MAP[sp];
-                                          return (
-                                            <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
-                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                          );
-                                        })}
-                                      </div>
-                                    </>
+                                    (() => {
+                                      const hasElems = elemAffs.length > 0 || uniqueElems.length > 0;
+                                      const hasSpirits = spiritAffs.length > 0 || uniqueSp.length > 0;
+                                      const showDivider = hasElems && hasSpirits;
+                                      return (
+                                        <>
+                                          {hasElems && (
+                                            <div className={`flex items-center gap-0.5 ${!showDivider ? 'mx-auto' : ''}`}>
+                                              {elemAffs.map(el => (
+                                                <img key={el} src={getElementIconPath(el)} alt={el} className="w-6 h-6" title={`친밀 원소: ${el}`}
+                                                  onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                              ))}
+                                              {uniqueElems.map(el => {
+                                                const eng = ELEMENT_ENG[el];
+                                                const tier = item.uniqueElementTier || 1;
+                                                return (
+                                                  <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
+                                                    onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                                );
+                                              })}
+                                            </div>
+                                          )}
+                                          {showDivider && <div className="w-px h-5 bg-border/50" />}
+                                          {hasSpirits && (
+                                            <div className={`flex items-center gap-0.5 ${!showDivider ? 'mx-auto' : ''}`}>
+                                              {spiritAffs.map(sp => {
+                                                const eng = SPIRIT_NAME_MAP[sp];
+                                                return (
+                                                  <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.webp` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
+                                                    onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                                );
+                                              })}
+                                              {uniqueSp.map(sp => {
+                                                const eng = SPIRIT_NAME_MAP[sp];
+                                                return (
+                                                  <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
+                                                    onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                                );
+                                              })}
+                                            </div>
+                                          )}
+                                        </>
+                                      );
+                                    })()
                                   ) : (
                                     <span className="text-[7px] text-muted-foreground/30">-</span>
                                   )}
@@ -881,22 +891,22 @@ export default function EquipmentSelectDialog({
                               )}
                               {item.elementAffinity && item.elementAffinity.length > 0 && (
                                 <div className="text-xs">
-                                  <span className="text-muted-foreground">친밀 원소: </span>
-                                  {item.elementAffinity.map((el, i) => (
-                                    <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
-                                      {el}{i < item.elementAffinity!.length - 1 ? ', ' : ''}
-                                    </span>
-                                  ))}
+                                 <span className="text-muted-foreground">친밀 원소: </span>
+                                   {item.elementAffinity.map((el, i) => (
+                                     <span key={el} className={`font-semibold ${ELEMENT_COLORS[el] || 'text-foreground'}`}>
+                                       {el}{i < item.elementAffinity!.length - 1 ? ', ' : ''}
+                                     </span>
+                                   ))}
                                 </div>
                               )}
                               {item.uniqueElement && item.uniqueElement.length > 0 && (
                                 <div className="text-xs">
-                                  <span className="text-muted-foreground">고유 원소: </span>
-                                  {item.uniqueElement.map((el, i) => (
-                                    <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
-                                      {el} (T{item.uniqueElementTier || 1}){i < item.uniqueElement!.length - 1 ? ', ' : ''}
-                                    </span>
-                                  ))}
+                                   <span className="text-muted-foreground">고유 원소: </span>
+                                   {item.uniqueElement.map((el, i) => (
+                                     <span key={el} className={`font-semibold ${ELEMENT_COLORS[el] || 'text-foreground'}`}>
+                                       {el} (T{item.uniqueElementTier || 1}){i < item.uniqueElement!.length - 1 ? ', ' : ''}
+                                     </span>
+                                   ))}
                                 </div>
                               )}
                               {item.spiritAffinity && item.spiritAffinity.length > 0 && (

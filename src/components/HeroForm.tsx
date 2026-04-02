@@ -698,8 +698,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[160px_200px_200px_1fr] gap-4">
-          {/* Job Card - narrow, image only */}
+        <div className="grid grid-cols-[360px_200px_1fr] gap-4">
+          {/* Job Card - expanded to cover old stat box area */}
           <div className="card-fantasy p-3 flex flex-col items-center justify-center">
             <div className="w-full flex items-center justify-center">
               {heroClass ? (
@@ -716,8 +716,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
           </div>
 
-          {/* Stats Panel */}
-          <div className="card-fantasy p-3">
+          {/* Seeds + Element + Stats combined */}
+          <div className="flex flex-col gap-3">
+            <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
             <div className="space-y-1.5">
               {heroClass && (
@@ -777,10 +778,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <span className="text-sm text-foreground ml-auto tabular-nums">-</span>
               </div>
             </div>
-          </div>
+            </div>
 
-          {/* Seeds + Element Breakdown */}
-          <div className="flex flex-col gap-3">
             <div className="card-fantasy p-3">
               <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>씨앗</h3>
               <div className="flex flex-col gap-[6px]">
@@ -832,7 +831,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
           </div>
 
-          {/* Detail Stats */}
+          {/* Detail Stats - narrower since illustration expanded */}
           <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>기타 상세 스탯</h3>
             <div className="space-y-1 text-xs">
@@ -892,7 +891,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               return (
                 <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/50">
                   <div className="px-2 py-1.5 flex items-center justify-center">
-                    <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-700/60 text-foreground">고유</span>
+                    <span className="px-1.5 py-0.5 rounded text-xs font-semibold text-white" style={{ backgroundColor: '#7d0354' }}>고유</span>
                   </div>
                   <div className="px-1 py-1.5 flex items-center justify-center">
                     {imagePath ? <img src={`/${imagePath}`} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
@@ -1002,7 +1001,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   >
                     <div className="w-full flex items-center justify-between gap-1 px-1.5 pt-1">
                       <div className="rounded bg-card/80 border border-border/40 px-1.5 py-0.5">
-                        <span className="text-xs font-bold text-primary tracking-wide">{slotLabel}</span>
+                        <span className="text-xs font-bold text-foreground tracking-wide">{slotLabel}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         {equipItem && (
@@ -1136,7 +1135,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 유물 효과
               </p>
               {equipmentSlots.filter(s => s.item?.relic && s.item?.relicEffect).map((s, i) => (
-                <div key={i} className="text-xs text-foreground/80">
+                <div key={i} className="text-xs text-foreground/90 dark:text-foreground/80">
                   {s.item!.relicEffect.split(/\\n|\n/).map((line: string, li: number) => (
                     <span key={li}>{li > 0 && <br />}{line}</span>
                   ))}
