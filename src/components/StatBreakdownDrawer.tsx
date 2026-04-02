@@ -862,11 +862,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const val = getSlotStatDirect(slot, slotStatKey as keyof EquipSlotCalc);
                     return (
                       <tr key={i} className="border-b border-border/20">
-                        <td className="py-1 text-white/70">
+                        <td className="py-1 text-foreground/70">
                           장비 {i + 1}
                           {slot.itemName && <span className="text-foreground/50 ml-1 text-[10px]">({slot.itemName})</span>}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${val ? 'text-white' : 'text-muted-foreground'}`}>
+                        <td className={`py-1 text-right tabular-nums ${val ? 'text-foreground' : 'text-muted-foreground'}`}>
                           {val ? `+${val}${unit}` : '-'}
                         </td>
                       </tr>
