@@ -211,7 +211,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 230 15% 15%;
 
-    --primary: 40 75% 55%;
+    --primary: 40 75% 58%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 40 15% 90%;
@@ -220,7 +220,7 @@
     --muted: 40 10% 92%;
     --muted-foreground: 230 10% 45%;
 
-    --accent: 38 75% 46%;
+    --accent: 38 75% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
@@ -228,23 +228,23 @@
 
     --border: 40 15% 82%;
     --input: 40 15% 85%;
-    --ring: 40 80% 50%;
+    --ring: 40 80% 55%;
 
     --sidebar-background: 40 20% 95%;
     --sidebar-foreground: 230 15% 25%;
-    --sidebar-primary: 40 80% 50%;
+    --sidebar-primary: 40 80% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 40 15% 90%;
     --sidebar-accent-foreground: 230 15% 25%;
     --sidebar-border: 40 15% 82%;
-    --sidebar-ring: 40 80% 50%;
+    --sidebar-ring: 40 80% 55%;
 
-    --gold-glow: 40 80% 50%;
+    --gold-glow: 40 80% 55%;
     --gold-dim: 40 40% 50%;
     --fantasy-purple: 270 40% 55%;
     --fantasy-blue: 210 60% 50%;
-    --hero-gradient: linear-gradient(135deg, hsl(40 80% 50%), hsl(38 75% 46%));
-    --card-glow: 0 0 20px hsl(40 80% 50% / 0.08);
+    --hero-gradient: linear-gradient(135deg, hsl(40 80% 55%), hsl(38 75% 50%));
+    --card-glow: 0 0 20px hsl(40 80% 55% / 0.08);
 
     font-family: 'Noto Sans KR', sans-serif;
   }
@@ -259,7 +259,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 245 15% 15%;
 
-    --primary: 245 45% 60%;
+    --primary: 245 45% 64%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 250 15% 90%;
@@ -308,7 +308,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 90 15% 15%;
 
-    --primary: 82 50% 42%;
+    --primary: 82 50% 46%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 85 15% 90%;
@@ -357,7 +357,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 350 15% 15%;
 
-    --primary: 348 50% 50%;
+    --primary: 348 50% 54%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 350 15% 90%;
@@ -571,12 +571,23 @@
   }
 }
 
-/* Primary-colored button text: always white */
+/* Primary/accent button text: always white */
 .bg-primary, .bg-accent,
 [class*="bg-primary"] button,
 [class*="bg-accent"] button {
   color: white !important;
 }
+
+/* Skill badge text: always white regardless of color mode */
+.skill-badge-unique,
+.skill-badge-champion,
+.skill-badge-aura {
+  color: white !important;
+  font-weight: 700;
+}
+.skill-badge-unique { background-color: #7d0354; }
+.skill-badge-champion { background-color: #c02020; }
+.skill-badge-aura { background-color: #1a6b3c; }
 
 /* Screenshot mode: bold all table text */
 .list-table-screenshot td {
@@ -623,7 +634,7 @@
 :root[data-theme="gold"] .theme-highlight-80 { color: hsl(var(--accent)); filter: brightness(1); }
 
 /* Equipment glow - bigger internal radial (50% increase), contained external */
-.equip-glow-common { background: radial-gradient(circle, rgba(200,200,200,0.35) 0%, transparent 80%) !important; }
+.equip-glow-common { background: radial-gradient(circle, rgba(140,140,155,0.5) 0%, transparent 80%) !important; }
 .equip-glow-uncommon { background: radial-gradient(circle, rgba(74,222,128,0.5) 0%, transparent 80%) !important; }
 .equip-glow-flawless { background: radial-gradient(circle, rgba(103,232,249,0.55) 0%, transparent 80%) !important; }
 .equip-glow-epic { background: radial-gradient(circle, rgba(217,70,239,0.6) 0%, transparent 80%) !important; }

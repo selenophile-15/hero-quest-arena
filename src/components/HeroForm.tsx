@@ -698,7 +698,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         </div>
 
         {/* ─── Row 2: Job Card + Stats + Seeds/Element + Detail Stats ─── */}
-        <div className="grid grid-cols-[360px_200px_1fr] gap-4">
+        <div className="grid grid-cols-[360px_200px_180px_1fr] gap-4">
           {/* Job Card - expanded to cover old stat box area */}
           <div className="card-fantasy p-3 flex flex-col items-center justify-center">
             <div className="w-full flex items-center justify-center">
@@ -716,9 +716,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
           </div>
 
-          {/* Seeds + Element + Stats combined */}
-          <div className="flex flex-col gap-3">
-            <div className="card-fantasy p-3">
+          {/* Stats only */}
+          <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
             <div className="space-y-1.5">
               {heroClass && (
@@ -778,7 +777,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <span className="text-sm text-foreground ml-auto tabular-nums">-</span>
               </div>
             </div>
-            </div>
+          </div>
+
+          {/* Seeds + Element */}
+          <div className="flex flex-col gap-3">
 
             <div className="card-fantasy p-3">
               <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>씨앗</h3>
@@ -891,7 +893,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               return (
                 <div className="grid grid-cols-[60px_44px_0.7fr_50px_0.7fr_2fr_100px] gap-0 border-b border-border/50">
                   <div className="px-2 py-1.5 flex items-center justify-center">
-                    <span className="px-1.5 py-0.5 rounded text-xs font-semibold text-white" style={{ backgroundColor: '#7d0354' }}>고유</span>
+                    <span className="skill-badge-unique px-1.5 py-0.5 rounded text-xs">고유</span>
                   </div>
                   <div className="px-1 py-1.5 flex items-center justify-center">
                     {imagePath ? <img src={`/${imagePath}`} alt="" className="w-9 h-9 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null}
