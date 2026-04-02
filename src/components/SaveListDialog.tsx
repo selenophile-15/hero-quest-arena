@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { JOB_NAME_MAP, CHAMPION_NAME_MAP } from '@/lib/nameMap';
+import { HERO_CLASS_MAP, CHAMPION_NAMES } from '@/lib/gameData';
 
 interface SaveListDialogProps {
   open: boolean;
@@ -17,11 +18,46 @@ interface SaveListDialogProps {
 
 type FilterTab = 'all' | 'hero' | 'champion';
 
+// Build job order from HERO_CLASS_MAP
+const JOB_ORDER: Record<string, number> = {};
+let idx = 0;
+for (const jobs of Object.values(HERO_CLASS_MAP)) {
+  for (const job of jobs) {
+    JOB_ORDER[job] = idx++;
+  }
+}
+
+// Champion order
+const CHAMPION_ORDER: Record<string, number> = {};
+CHAMPION_NAMES.forEach((name, i) => { CHAMPION_ORDER[name] = i; });
+
+// Class line lookup
+const JOB_CLASS_LINE: Record<string, string> = {};
+for (const [classLine, jobs] of Object.entries(HERO_CLASS_MAP)) {
+  for (const job of jobs) {
+    JOB_CLASS_LINE[job] = classLine;
+  }
+}
+
+const CLASS_LINE_COLORS: Record<string, string> = {
+  '전사': 'text-red-400',
+  '로그': 'text-[#6b8f3a]',
+  '주문술사': 'text-[#3366cc]',
+};
+
+const CHAMPION_COLOR = 'text-[#7d0354]';
+
+function getHeroSortKey(h: Hero): number {
+  if (h.type === 'champion') return 100000 + (CHAMPION_ORDER[h.championName || ''] ?? 999);
+  const classLineVal = h.classLine === '전사' ? 0 : h.classLine === '로그' ? 1 : h.classLine === '주문술사' ? 2 : 9;
+  const jobVal = JOB_ORDER[h.heroClass] ?? 999;
+  return classLineVal * 10000 + jobVal;
+}
+
 export default function SaveListDialog({ open, onOpenChange, heroes }: SaveListDialogProps) {
   const [filterTab, setFilterTab] = useState<FilterTab>('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(heroes.map(h => h.id)));
 
-  // Reset selection when dialog opens
   const handleOpenChange = useCallback((v: boolean) => {
     if (v) {
       setSelectedIds(new Set(heroes.map(h => h.id)));
@@ -30,19 +66,16 @@ export default function SaveListDialog({ open, onOpenChange, heroes }: SaveListD
     onOpenChange(v);
   }, [heroes, onOpenChange]);
 
-  const heroList = useMemo(() => heroes.filter(h => h.type === 'hero'), [heroes]);
-  const championList = useMemo(() => heroes.filter(h => h.type === 'champion'), [heroes]);
+  const heroList = useMemo(() => heroes.filter(h => h.type === 'hero').sort((a, b) => getHeroSortKey(a) - getHeroSortKey(b)), [heroes]);
+  const championList = useMemo(() => heroes.filter(h => h.type === 'champion').sort((a, b) => getHeroSortKey(a) - getHeroSortKey(b)), [heroes]);
 
   const displayList = useMemo(() => {
     if (filterTab === 'hero') return heroList;
     if (filterTab === 'champion') return championList;
-    return heroes;
-  }, [filterTab, heroes, heroList, championList]);
+    return [...heroList, ...championList];
+  }, [filterTab, heroList, championList]);
 
-  const selectedCount = useMemo(() => {
-    return heroes.filter(h => selectedIds.has(h.id)).length;
-  }, [heroes, selectedIds]);
-
+  const selectedCount = useMemo(() => heroes.filter(h => selectedIds.has(h.id)).length, [heroes, selectedIds]);
   const selectedHeroCount = useMemo(() => heroList.filter(h => selectedIds.has(h.id)).length, [heroList, selectedIds]);
   const selectedChampionCount = useMemo(() => championList.filter(h => selectedIds.has(h.id)).length, [championList, selectedIds]);
 
@@ -66,35 +99,35 @@ export default function SaveListDialog({ open, onOpenChange, heroes }: SaveListD
     });
   }, []);
 
-  const isAllChecked = useMemo(() => displayList.every(h => selectedIds.has(h.id)), [displayList, selectedIds]);
+  const isAllChecked = useMemo(() => displayList.length > 0 && displayList.every(h => selectedIds.has(h.id)), [displayList, selectedIds]);
   const isSomeChecked = useMemo(() => displayList.some(h => selectedIds.has(h.id)) && !isAllChecked, [displayList, selectedIds, isAllChecked]);
 
   const handleSave = useCallback(() => {
     const selected = heroes.filter(h => selectedIds.has(h.id));
     if (selected.length === 0) return;
     const data = JSON.stringify(selected, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
+    const blob = new Blob([data], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.download = `quest_sim_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = `quest_sim_backup_${new Date().toISOString().slice(0, 10)}.txt`;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
     onOpenChange(false);
   }, [heroes, selectedIds, onOpenChange]);
 
-  const getDisplayName = (h: Hero) => {
+  const getJobDisplay = (h: Hero): string => {
     if (h.type === 'champion') {
-      return CHAMPION_NAME_MAP[h.heroClass] || h.name;
+      // Show champion name (same as champion list's 직업 column)
+      return h.championName || '-';
     }
-    return h.name;
+    return h.heroClass || '-';
   };
 
-  const getSubInfo = (h: Hero) => {
-    if (h.type === 'hero') {
-      return JOB_NAME_MAP[h.heroClass] || h.heroClass || '-';
-    }
-    return '챔피언';
+  const getJobColor = (h: Hero): string => {
+    if (h.type === 'champion') return CHAMPION_COLOR;
+    const classLine = h.classLine || JOB_CLASS_LINE[h.heroClass] || '';
+    return CLASS_LINE_COLORS[classLine] || 'text-foreground';
   };
 
   return (
@@ -123,7 +156,6 @@ export default function SaveListDialog({ open, onOpenChange, heroes }: SaveListD
           {(['all', 'hero', 'champion'] as FilterTab[]).map(tab => (
             <TabsContent key={tab} value={tab} className="flex-1 overflow-hidden mt-2">
               <div className="flex flex-col h-full">
-                {/* Select all header */}
                 <label className="flex items-center gap-2 px-3 py-2 border-b border-border bg-secondary/30 rounded-t cursor-pointer">
                   <Checkbox
                     checked={isAllChecked ? true : isSomeChecked ? 'indeterminate' : false}
@@ -132,7 +164,6 @@ export default function SaveListDialog({ open, onOpenChange, heroes }: SaveListD
                   <span className="text-xs font-semibold text-foreground">전체 선택 / 해제</span>
                 </label>
 
-                {/* Item list */}
                 <div className="flex-1 overflow-y-auto max-h-[40vh] border border-border rounded-b">
                   {displayList.map(h => (
                     <label
@@ -143,11 +174,10 @@ export default function SaveListDialog({ open, onOpenChange, heroes }: SaveListD
                         checked={selectedIds.has(h.id)}
                         onCheckedChange={() => toggleId(h.id)}
                       />
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${h.type === 'hero' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                        {h.type === 'hero' ? '영웅' : '챔피언'}
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${getJobColor(h)}`}>
+                        {getJobDisplay(h)}
                       </span>
-                      <span className="text-xs font-medium text-foreground truncate flex-1">{getDisplayName(h)}</span>
-                      <span className="text-[10px] text-muted-foreground">{getSubInfo(h)}</span>
+                      <span className="text-xs font-medium text-foreground truncate flex-1">{h.name}</span>
                       <span className="text-[10px] text-muted-foreground">Lv.{h.level}</span>
                     </label>
                   ))}
