@@ -968,7 +968,7 @@ export default function QuestSimulation() {
                   const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
 
                     return (
-                    <div className="mt-4 pt-4 border-t border-border/30">
+                    <div className="mt-6 pt-4 border-t border-border/30">
                       <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5" style={{ height: `${barH}px` }}>
                         <div className="relative">
                           {rows.map(r => (
