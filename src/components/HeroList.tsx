@@ -108,12 +108,26 @@ const QUALITY_RADIAL_COLOR: Record<string, string> = {
   epic: 'rgba(217,70,239,0.55)',
   legendary: 'rgba(250,204,21,0.6)',
 };
+const QUALITY_RADIAL_COLOR_LIGHT: Record<string, string> = {
+  common: 'rgba(160,160,175,0.35)',
+  uncommon: 'rgba(34,180,80,0.25)',
+  flawless: 'rgba(30,180,220,0.3)',
+  epic: 'rgba(180,40,200,0.3)',
+  legendary: 'rgba(210,170,0,0.35)',
+};
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
   common: '0 0 6px rgba(220,220,220,0.5)',
   uncommon: '0 0 7px rgba(74,222,128,0.55)',
   flawless: '0 0 8px rgba(103,232,249,0.55)',
   epic: '0 0 10px rgba(217,70,239,0.6)',
   legendary: '0 0 12px rgba(250,204,21,0.7)',
+};
+const QUALITY_SHADOW_COLOR_LIGHT: Record<string, string> = {
+  common: '0 0 6px rgba(120,120,140,0.4)',
+  uncommon: '0 0 7px rgba(34,180,80,0.5)',
+  flawless: '0 0 8px rgba(30,180,220,0.5)',
+  epic: '0 0 10px rgba(180,40,200,0.5)',
+  legendary: '0 0 12px rgba(210,170,0,0.6)',
 };
 
 function normalizeJobName(name: string): string {
