@@ -999,24 +999,22 @@ export default function QuestSimulation() {
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          {/* Use div-based lines instead of SVG for html2canvas compatibility */}
-                          {heroLayout.map(h => {
-                            const yPinPx = (1 - h.pinPct / 100) * barH;
-                            const yLabelPx = (1 - h.labelPct / 100) * barH;
-                            const top = Math.min(yPinPx, yLabelPx);
-                            const height = Math.abs(yLabelPx - yPinPx) || 1;
-                            return (
-                              <div key={`line-${h.id}`} className="absolute pointer-events-none" style={{
-                                left: '70px', top: `${top}px`, width: '28px', height: `${height}px`,
-                                borderLeft: `1.5px solid ${h.color}`,
-                                borderBottom: yLabelPx > yPinPx ? `1.5px solid ${h.color}` : 'none',
-                                borderTop: yLabelPx < yPinPx ? `1.5px solid ${h.color}` : 'none',
-                                borderRight: `1.5px solid ${h.color}`,
-                                borderRadius: yLabelPx > yPinPx ? '0 0 6px 6px' : '6px 6px 0 0',
-                                opacity: 0.8,
-                              }} />
-                            );
-                          })}
+                          {/* SVG bezier curves for connecting hero pins to labels */}
+                          <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
+                            {heroLayout.map(h => {
+                              const yPin = (1 - h.pinPct / 100) * barH;
+                              const yLabel = (1 - h.labelPct / 100) * barH;
+                              const x1 = 70;
+                              const x2 = 98;
+                              const cx = (x1 + x2) / 2;
+                              return (
+                                <path key={`line-${h.id}`}
+                                  d={`M ${x1} ${yPin} C ${cx} ${yPin}, ${cx} ${yLabel}, ${x2} ${yLabel}`}
+                                  fill="none" stroke={h.color} strokeWidth="1.5" opacity="0.8"
+                                />
+                              );
+                            })}
+                          </svg>
                           {heroLayout.map(h => (
                             <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '100px', transform: 'translateY(50%)', zIndex: 5 }}>
                               <span className="text-[11px] font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
