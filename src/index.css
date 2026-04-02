@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix html2canvas screenshot: prevent img from creating line breaks */
+@layer base {
+  img {
+    display: inline-block;
+  }
+}
+
 @layer base {
   :root, :root[data-theme="gold"] {
     --background: 230 15% 8%;

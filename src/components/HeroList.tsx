@@ -1343,7 +1343,7 @@ export default function HeroList() {
       ) : viewMode === 'table' ? (
         <div ref={listRef}>
           {/* Column visibility - table only */}
-          <div className="card-fantasy p-3 mb-3">
+          <div className="card-fantasy p-3 mb-3 mt-3">
             <div className="flex flex-wrap gap-3">
               {activeColumns.map(col => (
                 <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
