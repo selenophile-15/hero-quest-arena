@@ -878,11 +878,21 @@ export default function QuestSimulation() {
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                          <span className="text-xs text-foreground">광역 공격</span>
+                          <span className="text-xs text-foreground">광역 확률</span>
                         </div>
-                        <span className={`text-sm font-bold font-mono ${isAoeMod || isAtkMod ? 'text-yellow-400' : 'text-foreground'}`}>
-                          {displayAoeChance}% / {formatNumber(displayAoe)}
-                          {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(확률 ×{aoeMod})</span>}
+                        <span className={`text-sm font-bold font-mono ${isAoeMod ? 'text-yellow-400' : 'text-foreground'}`}>
+                          {displayAoeChance}%
+                          {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(×{aoeMod})</span>}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Swords className="w-3.5 h-3.5 text-yellow-400" />
+                          <span className="text-xs text-foreground">광역 대미지</span>
+                        </div>
+                        <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
+                          {formatNumber(displayAoe)}
+                          {isAtkMod && <span className="text-[10px] text-muted-foreground ml-1">(×{atkMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
