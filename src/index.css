@@ -645,32 +645,54 @@
 :root[data-color-mode="light"] .bg-lime-500\/20 { background-color: hsl(85 55% 42% / 0.2) !important; }
 :root[data-color-mode="light"] .bg-lime-500\/15 { background-color: hsl(85 55% 42% / 0.15) !important; }
 
-/* Sub-tab bookmark style */
+/* Sub-tab bookmark style - premium sticker/folder tab */
 .sub-tab-bookmark {
   position: relative;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border-radius: 8px 8px 0 0;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 10px 10px 0 0;
   border: 1px solid transparent;
   border-bottom: none;
-  padding: 6px 16px 8px;
+  padding: 8px 20px 10px;
   margin-bottom: -1px;
   z-index: 1;
+  background: hsl(var(--muted) / 0.2);
+}
+.sub-tab-bookmark::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: hsl(var(--primary));
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: translateX(-50%);
+  border-radius: 1px;
 }
 .sub-tab-bookmark[data-active="true"] {
-  background: hsl(var(--card));
-  border-color: hsl(var(--border));
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--card)) 60%);
+  border-color: hsl(var(--primary) / 0.3);
   z-index: 2;
-  transform: translateY(-2px);
-  box-shadow: 0 -3px 8px hsl(var(--primary) / 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 -4px 12px hsl(var(--primary) / 0.15), 0 2px 8px rgba(0,0,0,0.1);
+}
+.sub-tab-bookmark[data-active="true"]::after {
+  width: 60%;
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.4);
 }
 .sub-tab-bookmark[data-active="false"] {
-  background: hsl(var(--muted) / 0.3);
-  border-color: hsl(var(--border) / 0.3);
+  background: hsl(var(--muted) / 0.25);
+  border-color: hsl(var(--border) / 0.2);
 }
 .sub-tab-bookmark[data-active="false"]:hover {
-  background: hsl(var(--muted) / 0.6);
-  transform: translateY(-1px);
-  border-color: hsl(var(--primary) / 0.2);
+  background: hsl(var(--muted) / 0.5);
+  transform: translateY(-2px);
+  border-color: hsl(var(--primary) / 0.25);
+  box-shadow: 0 -2px 6px hsl(var(--primary) / 0.08);
+}
+.sub-tab-bookmark[data-active="false"]:hover::after {
+  width: 30%;
+  opacity: 0.4;
 }
 
 /* Logo glow animation */
