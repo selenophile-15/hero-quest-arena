@@ -572,8 +572,19 @@
 }
 
 /* Primary-colored button text: always white */
-.bg-primary, .bg-accent {
+.bg-primary, .bg-accent,
+[class*="bg-primary"] button,
+[class*="bg-accent"] button {
   color: white !important;
+}
+
+/* Screenshot mode: bold all table text */
+.list-table-screenshot td {
+  font-weight: 700 !important;
+}
+.list-table-screenshot td span,
+.list-table-screenshot td div {
+  font-weight: 700 !important;
 }
 
 /* Zebra striping for table rows */
