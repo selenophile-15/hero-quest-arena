@@ -64,7 +64,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
     return (
       <div className="flex flex-col gap-4 h-full overflow-y-auto">
         {/* Calculation steps */}
-        <div className={`rounded-t ${config.headerBg} px-4 py-2`}>
+        <div className={`rounded-t ${config.headerBg} px-4 py-2 stat-box-white`}>
           <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
             <img src={config.icon} alt="" className="w-5 h-5" />
             {config.label} 계산 과정
@@ -268,7 +268,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
           </div>
 
           {/* Final result */}
-          <div className={`rounded ${config.headerBg} px-4 py-3`}>
+          <div className={`rounded ${config.headerBg} px-4 py-3 stat-box-white`}>
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-foreground flex items-center gap-2">
                 <img src={config.icon} alt="" className="w-5 h-5" />
