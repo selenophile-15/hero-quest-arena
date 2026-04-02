@@ -1789,6 +1789,9 @@ export default function HeroList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Save list dialog */}
+      <SaveListDialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen} heroes={heroes} />
     </div>
   );
 }
