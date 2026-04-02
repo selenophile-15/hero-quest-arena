@@ -524,6 +524,8 @@
   .text-violet-300 { color: hsl(262 50% 48%) !important; }
   /* Pink */
   .text-pink-400 { color: hsl(330 62% 44%) !important; }
+  /* Gray (equipment common grade) → darker in light mode */
+  .text-gray-300 { color: hsl(230 10% 40%) !important; }
 
   /* White text/icons → dark gray in light mode */
   .text-white { color: hsl(230 15% 20%) !important; }
