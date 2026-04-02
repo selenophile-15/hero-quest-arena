@@ -698,7 +698,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                             {QUALITY_OPTIONS.map(q => <SelectItem key={q.value} value={q.value}><span className={q.color}>{q.label}</span></SelectItem>)}
                           </SelectContent>
                         </Select>
-                        <Button size="sm" variant="outline" className="h-7 text-xs bg-yellow-700/30 border-yellow-600/40 text-yellow-200 hover:bg-yellow-700/50" onClick={() => {
+                        <Button size="sm" variant="outline" className="h-7 text-xs bg-primary/30 border-primary/40 text-white hover:bg-primary/50" onClick={() => {
                           setEquipmentSlots(prev => prev.map(s => ({ ...s, quality: equipSlotQuality })));
                         }}>
                           전체
