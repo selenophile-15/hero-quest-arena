@@ -234,6 +234,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const nameInputRef = useRef<HTMLInputElement>(null);
   const [calcStats, setCalcStats] = useState<CalculatedStats | null>(null);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [detailStats, setDetailStats] = useState<Record<string, number>>(hero?.detailStats || {});
+  const [compareMode, setCompareMode] = useState(false);
+  const [baselineStats, setBaselineStats] = useState<CalculatedStats | null>(null);
 
   // Scroll to top when form mounts
   useEffect(() => {
