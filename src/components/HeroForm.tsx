@@ -787,33 +787,44 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   <span className="text-sm text-foreground ml-auto tabular-nums">{power ? formatNumber(Number(power)) : '-'}</span>
                 )}
               </div>
-              {[
-                { icon: STAT_ICON_MAP.hp, value: hp, suffix: '' },
-                { icon: STAT_ICON_MAP.atk, value: atk, suffix: '' },
-                { icon: STAT_ICON_MAP.def, value: def, suffix: '' },
-                { icon: STAT_ICON_MAP.crit, value: crit, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: '', isCritDmg: true },
-                { icon: STAT_ICON_MAP.critAttack, value: calcStats?.totalCritAttack ?? critAttack, suffix: '' },
-                { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %', isEvasion: true },
-                { icon: STAT_ICON_MAP.threat, value: threat, suffix: '' },
-              ].map((stat, i) => (
-                <div key={i} className="flex items-center gap-2 py-0.5 px-1">
-                  <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm text-foreground ml-auto tabular-nums">
-                    {stat.value ? (() => {
-                      if ((stat as any).isCritDmg) {
-                        return `x${(Number(stat.value) / 100).toFixed(1)}`;
-                      }
-                      const v = `${formatNumber(stat.value)}${stat.suffix}`;
-                      if ((stat as any).isEvasion && stat.value) {
-                        const cap = heroClass === '길잡이' ? 78 : 75;
-                        if (Number(stat.value) > cap) return <>{v} <span className="text-xs text-muted-foreground">({cap}%)</span></>;
-                      }
-                      return v;
-                    })() : '-'}
-                  </span>
-                </div>
-              ))}
+              {(() => {
+                const statItems = [
+                  { icon: STAT_ICON_MAP.hp, value: hp, suffix: '', baseKey: 'totalHp' as const },
+                  { icon: STAT_ICON_MAP.atk, value: atk, suffix: '', baseKey: 'totalAtk' as const },
+                  { icon: STAT_ICON_MAP.def, value: def, suffix: '', baseKey: 'totalDef' as const },
+                  { icon: STAT_ICON_MAP.crit, value: crit, suffix: ' %', baseKey: 'totalCrit' as const },
+                  { icon: STAT_ICON_MAP.critDmg, value: critDmg, suffix: '', isCritDmg: true, baseKey: 'totalCritDmg' as const },
+                  { icon: STAT_ICON_MAP.critAttack, value: calcStats?.totalCritAttack ?? critAttack, suffix: '', baseKey: 'totalCritAttack' as const },
+                  { icon: STAT_ICON_MAP.evasion, value: evasion, suffix: ' %', isEvasion: true, baseKey: 'totalEvasion' as const },
+                  { icon: STAT_ICON_MAP.threat, value: threat, suffix: '', baseKey: 'totalThreat' as const },
+                ];
+                return statItems.map((stat, i) => {
+                  const currentVal = calcStats ? (calcStats as any)[stat.baseKey] ?? stat.value : stat.value;
+                  const baseVal = compareMode && baselineStats ? (baselineStats as any)[stat.baseKey] ?? 0 : null;
+                  const diff = baseVal !== null ? currentVal - baseVal : null;
+                  return (
+                    <div key={i} className="flex items-center gap-2 py-0.5 px-1">
+                      <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
+                      <span className="text-sm text-foreground ml-auto tabular-nums">
+                        {stat.value ? (() => {
+                          if ((stat as any).isCritDmg) return `x${(Number(stat.value) / 100).toFixed(1)}`;
+                          const v = `${formatNumber(stat.value)}${stat.suffix}`;
+                          if ((stat as any).isEvasion && stat.value) {
+                            const cap = heroClass === '길잡이' ? 78 : 75;
+                            if (Number(stat.value) > cap) return <>{v} <span className="text-xs text-muted-foreground">({cap}%)</span></>;
+                          }
+                          return v;
+                        })() : '-'}
+                      </span>
+                      {diff !== null && diff !== 0 && (
+                        <span className={`text-[10px] font-semibold tabular-nums ${diff > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {diff > 0 ? '▲' : '▼'}{Math.abs(Math.round(diff))}
+                        </span>
+                      )}
+                    </div>
+                  );
+                });
+              })()}
               <div className="flex items-center gap-2 py-0.5 px-1">
                 <ElementIcon element={isAllElement ? '모든 원소' : element} size={20} />
                 <span className="text-sm text-foreground ml-auto tabular-nums">
