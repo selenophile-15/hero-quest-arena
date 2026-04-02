@@ -92,7 +92,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                     </tr>
                     <tr className="border-b border-border/50">
                       <td className="py-1.5 text-foreground font-medium">기본 {config.label}</td>
-                      <td className="py-1.5 text-right tabular-nums text-yellow-300 font-bold">{formatNumber(baseStat)}</td>
+                      <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">{formatNumber(baseStat)}</td>
                     </tr>
                   </>
                 ) : (
@@ -301,7 +301,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
       <div className="px-4 space-y-4">
         {/* Crit */}
         <div>
-          <h5 className="text-xs font-semibold text-yellow-300 mb-1.5 flex items-center gap-1">
+          <h5 className="text-xs font-semibold text-yellow-400 mb-1.5 flex items-center gap-1">
             <img src={STAT_ICON_MAP.crit} alt="" className="w-4 h-4" /> 치명타 확률
           </h5>
           <table className="w-full text-xs">
@@ -318,7 +318,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
               )}
               <tr className="border-b border-primary/30">
                 <td className="py-1.5 text-foreground font-medium">최종</td>
-                <td className="py-1.5 text-right tabular-nums text-yellow-300 font-bold">{r.totalCrit}%</td>
+                <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">{r.totalCrit}%</td>
               </tr>
             </tbody>
           </table>
@@ -326,7 +326,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
 
         {/* Crit Dmg */}
         <div>
-          <h5 className="text-xs font-semibold text-yellow-300 mb-1.5 flex items-center gap-1">
+          <h5 className="text-xs font-semibold text-yellow-400 mb-1.5 flex items-center gap-1">
             <img src={STAT_ICON_MAP.critDmg} alt="" className="w-4 h-4" /> 치명타 대미지
           </h5>
           <table className="w-full text-xs">
@@ -337,7 +337,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
               </tr>
               <tr className="border-b border-border/30">
                 <td className="py-1.5 text-foreground/70">치명타 공격력 (ATK × x{(r.totalCritDmg / 100).toFixed(1)})</td>
-                <td className="py-1.5 text-right tabular-nums text-yellow-300 font-bold">{formatNumber(r.critAttack)}</td>
+                <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">{formatNumber(r.critAttack)}</td>
               </tr>
             </tbody>
           </table>
@@ -345,7 +345,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
 
         {/* Evasion */}
         <div>
-          <h5 className="text-xs font-semibold text-teal-300 mb-1.5 flex items-center gap-1">
+          <h5 className="text-xs font-semibold text-cyan-500 mb-1.5 flex items-center gap-1">
             <img src={STAT_ICON_MAP.evasion} alt="" className="w-4 h-4" /> 회피
           </h5>
           <table className="w-full text-xs">
@@ -362,7 +362,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
               )}
               <tr className="border-b border-primary/30">
                 <td className="py-1.5 text-foreground font-medium">최종</td>
-                <td className="py-1.5 text-right tabular-nums text-teal-300 font-bold">{r.totalEvasion}%</td>
+                <td className="py-1.5 text-right tabular-nums text-cyan-500 font-bold">{r.totalEvasion}%</td>
               </tr>
             </tbody>
           </table>
@@ -399,7 +399,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
               {r.promoted && (
                 <tr className="border-b border-border/30">
                   <td className="py-1.5 text-foreground/70">승급 랭크 {r.rank + 2} 원소량</td>
-                  <td className="py-1.5 text-right tabular-nums text-yellow-300">{r.promotedRankElement}</td>
+                  <td className="py-1.5 text-right tabular-nums text-yellow-400">{r.promotedRankElement}</td>
                 </tr>
               )}
             </tbody>
@@ -409,7 +409,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
         {/* Promotion comparison summary */}
         {r.promoted && (
           <div className="rounded border border-yellow-500/30 bg-yellow-900/15 p-3">
-            <h5 className="text-xs font-bold text-yellow-300 mb-2">🏆 승급 효과 요약</h5>
+            <h5 className="text-xs font-bold text-yellow-400 mb-2">🏆 승급 효과 요약</h5>
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-yellow-500/30">
@@ -428,7 +428,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                   <tr key={row.label} className="border-b border-border/20">
                     <td className="py-1.5 text-foreground/80 font-medium">{row.label}</td>
                     <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(row.before)}</td>
-                    <td className="py-1.5 text-right tabular-nums text-yellow-300 font-bold">{formatNumber(row.after)}</td>
+                    <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">{formatNumber(row.after)}</td>
                     <td className="py-1.5 text-right tabular-nums">
                       <DiffBadge value={row.after - row.before} />
                     </td>
