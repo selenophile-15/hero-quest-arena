@@ -130,20 +130,21 @@ const SEED_ICONS = [
 ];
 
 const DETAIL_STATS = [
-  '휴식시간 감소 %',
-  '경험치 %',
+  '공통 공격력 계수',
+  '공통 방어력 계수',
+  '공통 체력 계수',
   '매 턴 체력 재생',
-  '치명적인 공격에서 살아날 확률 %',
-  '공룡 - 첫 라운드 +공격력 %',
-  '공룡 - 첫 라운드 대미지',
-  '공룡 - 첫 라운드 치명타 대미지',
-  '상어 - 적 체력 50% 미만일 때, +공격력 %',
-  '상어 - 적 체력 50% 미만일 때, 대미지',
-  '상어 - 적 체력 50% 미만일 때, 치명타 대미지',
-  '광전사 - 체력 비례 공격력 (50%<HP<75%)',
-  '광전사 - 체력 비례 공격력 (25%<HP<50%)',
-  '광전사 - 체력 비례 공격력 (HP<25%)',
-  '문드라 - 중첩량 (보스 상대 +공 20%, 방 20%)',
+  '죽기 전 공격 한 번 버틸 확률',
+  '휴식시간 감소%',
+  '상어) 공격력 증가%',
+  '공룡) 공격력 증가%',
+  '광전사) 체력 비례 공격력 증가% (50~75%)',
+  '광전사) 체력 비례 공격력 증가% (25~50%)',
+  '광전사) 체력 비례 공격력 증가% (0~25%)',
+  '광전사) 체력 비례 회피 증가% (50~75%)',
+  '광전사) 체력 비례 회피 증가% (25~50%)',
+  '광전사) 체력 비례 회피 증가% (0~25%)',
+  '문드라) 보스 상대 공격력/방어력 증가%',
 ];
 
 const EQUIP_STAT_ICONS: Record<string, string> = {
@@ -651,12 +652,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           {hero ? '영웅 수정' : '새 영웅 추가'}
         </h2>
          <div className="flex gap-2 items-center">
-          <Button type="button" variant={compareMode ? 'default' : 'outline'} size="sm" onClick={() => {
-            if (!compareMode && calcStats) setBaselineStats(calcStats);
-            setCompareMode(!compareMode);
-          }} disabled={!calcStats} className="text-xs gap-1">
-            {compareMode ? '🔄 비교 중' : '📈 비교'}
-          </Button>
           <Button type="button" variant="outline" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!calcStats}>📊 스탯 계산표</Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
           {hero && (
@@ -766,7 +761,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
           {/* Stats only */}
           <div className="card-fantasy p-3">
-            <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
+              <Button type="button" variant={compareMode ? 'default' : 'outline'} size="sm" onClick={() => {
+                if (!compareMode && calcStats) setBaselineStats(calcStats);
+                setCompareMode(!compareMode);
+              }} disabled={!calcStats} className="text-[10px] h-6 px-2 gap-1">
+                {compareMode ? '🔄 비교 중' : '📈 비교 모드'}
+              </Button>
+            </div>
             <div className="space-y-1.5">
               {heroClass && (
                 <div className="flex items-center justify-center py-2 mb-1">
@@ -817,8 +820,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                         })() : '-'}
                       </span>
                       {diff !== null && diff !== 0 && (
-                        <span className={`text-[10px] font-semibold tabular-nums ${diff > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {diff > 0 ? '▲' : '▼'}{Math.abs(Math.round(diff))}
+                        <span className={`text-[10px] font-semibold tabular-nums ml-1 ${diff > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {diff > 0 ? '▲' : '▼'}{formatNumber(Math.abs(Math.round(diff)))}
                         </span>
                       )}
                     </div>
@@ -892,23 +895,16 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
           </div>
 
-          {/* Detail Stats - editable */}
+          {/* Detail Stats - auto-calculated (read-only display) */}
           <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>기타 상세 스탯</h3>
             <div className="space-y-1 text-xs">
               {DETAIL_STATS.map((stat, i) => (
                 <div key={i} className="flex items-center justify-between py-0.5 border-b border-border/30 gap-2">
                   <span className="text-foreground/70 flex-1 min-w-0 truncate">{stat}</span>
-                  <Input
-                    type="number"
-                    value={detailStats[stat] || ''}
-                    onChange={e => {
-                      const v = e.target.value === '' ? 0 : parseFloat(e.target.value);
-                      setDetailStats(prev => ({ ...prev, [stat]: isNaN(v) ? 0 : v }));
-                    }}
-                    className="h-6 w-20 text-xs text-right tabular-nums"
-                    placeholder="0"
-                  />
+                  <span className="text-sm text-foreground tabular-nums text-right w-20">
+                    {detailStats[stat] ? (stat.includes('%') || stat.includes('계수') ? `${detailStats[stat]}%` : formatNumber(detailStats[stat])) : '-'}
+                  </span>
                 </div>
               ))}
             </div>

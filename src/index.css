@@ -913,8 +913,9 @@
   .text-gray-300 { color: hsl(230 10% 40%) !important; }
 
   /* White text/icons → dark gray in light mode (except inside stat colored boxes) */
-  .text-white:not(.stat-box-white .text-white):not(.stat-box-white) { color: hsl(230 15% 20%) !important; }
+  .text-white:not(.stat-box-white .text-white):not(.stat-box-white):not(.btn-force-white):not(.btn-force-white *) { color: hsl(230 15% 20%) !important; }
   .stat-box-white, .stat-box-white .text-white, .stat-box-white .text-white\/70, .stat-box-white .text-white\/80 { color: white !important; }
+  .btn-force-white, .btn-force-white * { color: white !important; }
 
   /* Border adaptations */
   .border-yellow-500\/40, .border-yellow-400\/30 { border-color: hsl(45 80% 42% / 0.5) !important; }

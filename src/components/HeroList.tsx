@@ -275,7 +275,7 @@ export default function HeroList() {
         setImportPreview(parsed);
         setSaveLoadOpen(true);
       } catch {
-        alert('파일 형식이 올바르지 않습니다. JSON 형식의 백업 파일을 사용해주세요.');
+        alert('파일 형식이 올바르지 않습니다. JSON 또는 TXT 형식의 백업 파일을 사용해주세요.');
       }
     };
     reader.readAsText(file);
@@ -404,9 +404,19 @@ export default function HeroList() {
   };
 
   const handleSave = (hero: Hero) => {
-    const updated = editing
-      ? heroes.map(h => (h.id === hero.id ? hero : h))
-      : [...heroes, hero];
+    let updated: Hero[];
+    if (editing) {
+      const existingIdx = heroes.findIndex(h => h.id === hero.id);
+      if (existingIdx >= 0) {
+        // Normal save (overwrite)
+        updated = heroes.map(h => (h.id === hero.id ? hero : h));
+      } else {
+        // Save As (new ID, append)
+        updated = [...heroes, hero];
+      }
+    } else {
+      updated = [...heroes, hero];
+    }
     setHeroes(updated);
     saveHeroes(updated);
     setEditing(null);
@@ -1416,18 +1426,18 @@ export default function HeroList() {
           {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
           {!summaryOpen && (
             <div className="flex items-center gap-2 pb-1">
-              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 text-white" style={{ color: 'white' }}>
-                <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
-              </Button>
-              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 text-white" style={{ color: 'white' }}>
-                <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
-              </Button>
+               <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 btn-force-white" style={{ color: 'white' }}>
+                <Shield className="w-3.5 h-3.5" style={{ color: 'white' }} /> 새 영웅 추가
+               </Button>
+               <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 btn-force-white" style={{ color: 'white' }}>
+                <Crown className="w-3.5 h-3.5" style={{ color: 'white' }} /> 새 챔피언 추가
+               </Button>
               <div className="w-px h-5 bg-border mx-1" />
               <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 저장하기">
                 <Save className="w-3.5 h-3.5" />
               </Button>
               <label className="inline-flex">
-                <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
+                <input type="file" accept=".json,.txt" className="hidden" onChange={handleImportFile} />
                 <Button asChild variant="outline" size="sm" className="gap-1 text-xs h-8 px-2 cursor-pointer" title="리스트 불러오기">
                   <span><Upload className="w-3.5 h-3.5" /></span>
                 </Button>
