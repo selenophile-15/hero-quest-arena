@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-export type ThemeMode = 'gold' | 'moonlight' | 'olive' | 'wine' | 'cyan' | 'purple' | 'blue' | 'caramel';
+export type ThemeMode = 'gold' | 'moonlight' | 'olive' | 'wine' | 'cyan' | 'purple' | 'blue' | 'caramel' | 'orange';
 export type ColorMode = 'dark' | 'light';
 
 interface ThemeContextType {
