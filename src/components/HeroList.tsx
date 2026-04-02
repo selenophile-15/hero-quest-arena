@@ -1427,7 +1427,7 @@ export default function HeroList() {
                 <Save className="w-3.5 h-3.5" />
               </Button>
               <label className="inline-flex">
-                <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
+                <input type="file" accept=".json,.txt" className="hidden" onChange={handleImportFile} />
                 <Button asChild variant="outline" size="sm" className="gap-1 text-xs h-8 px-2 cursor-pointer" title="리스트 불러오기">
                   <span><Upload className="w-3.5 h-3.5" /></span>
                 </Button>
