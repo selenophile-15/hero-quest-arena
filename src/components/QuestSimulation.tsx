@@ -1849,7 +1849,7 @@ export default function QuestSimulation() {
                 <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-sm font-semibold text-yellow-400 mb-2">💥 대미지</div>
+                    <div className="text-sm font-semibold text-primary mb-2"><Swords className="w-4 h-4 inline mr-1 text-red-400" />대미지</div>
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
