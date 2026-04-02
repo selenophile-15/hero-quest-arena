@@ -1062,6 +1062,23 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                   ))}
                                 </div>
                               )}
+                              {item.uniqueElement && item.uniqueElement.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">고유 원소: </span>
+                                  {item.uniqueElement.map((el: string, i: number) => (
+                                    <span key={el} className={`font-semibold ${ELEMENT_COLORS_LOCAL[el] || 'text-foreground'}`}>
+                                      {el} (T{item.uniqueElementTier || 1}){i < item.uniqueElement!.length - 1 ? ', ' : ''}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {item.uniqueSpirit && item.uniqueSpirit.length > 0 && (
+                                <div className="text-xs">
+                                  <span className="text-muted-foreground">고유 영혼: </span>
+                                  {item.uniqueSpirit.map((sp: string, i: number) => (
+                                    <span key={sp} className="text-foreground font-semibold">{sp} (T{getSpiritTier(sp)}){i < item.uniqueSpirit!.length - 1 ? ', ' : ''}</span>
+                                  ))}
+                                </div>
                               {equipDialogType === 'aurasong' && (() => {
                                 const effect = getAurasongSkillEffect(item.name);
                                 return effect ? (
