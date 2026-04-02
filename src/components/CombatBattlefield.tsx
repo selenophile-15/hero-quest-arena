@@ -528,12 +528,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <tbody>
               {heroStatsData.map((hs, idx) => (
                 <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                  <td className="py-1.5 px-1 font-medium truncate max-w-[80px] text-center text-sm" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-red-400 text-sm">{formatNumber(hs.dmg)}</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-orange-400 text-sm">{hs.dmgPct.toFixed(1)}%</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-yellow-400 text-sm">{hs.targeted}</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-teal-400 text-sm">{hs.dodged}</td>
-                  <td className="py-1.5 px-1 text-center font-mono text-blue-400 text-sm">{hs.tankPct.toFixed(1)}%</td>
+                  <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-sm" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-red-400 text-sm">{formatNumber(hs.dmg)}</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-orange-400 text-sm">{hs.dmgPct.toFixed(1)}%</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-yellow-400 text-sm">{hs.targeted}</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-teal-400 text-sm">{hs.dodged}</td>
+                  <td className="py-1.5 px-1 text-center font-mono font-bold text-blue-400 text-sm">{hs.tankPct.toFixed(1)}%</td>
                 </tr>
               ))}
             </tbody>
