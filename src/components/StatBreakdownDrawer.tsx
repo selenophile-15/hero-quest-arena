@@ -16,17 +16,17 @@ type MultStatType = 'atk' | 'def' | 'hp';
 type AddStatType = 'crit' | 'evasion' | 'threat' | 'other';
 type StatType = MultStatType | AddStatType;
 
-const MULT_TABS: { key: MultStatType; label: string; icon: string; color: string; headerBg: string }[] = [
-  { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-900/60' },
-  { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-900/60' },
-  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#ff7f00]/40' },
+const MULT_TABS: { key: MultStatType; label: string; icon: string; color: string; headerBg: string; slotHeaderBg: string; slotHeaderText: string }[] = [
+  { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-[#7a1a1a]', slotHeaderBg: 'bg-[#7a1a1a]', slotHeaderText: 'text-red-300' },
+  { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-[#1a2a5a]', slotHeaderBg: 'bg-[#1a2a5a]', slotHeaderText: 'text-blue-300' },
+  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#7a4000]', slotHeaderBg: 'bg-[#7a4000]', slotHeaderText: 'text-orange-300' },
 ];
 
 const ADD_TABS: { key: AddStatType; label: string; icon: string; color: string; headerBg: string }[] = [
-  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-yellow-500/30' },
-  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-teal-300', headerBg: 'bg-teal-600/30' },
-  { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-purple-400', headerBg: 'bg-purple-900/60' },
-  { key: 'other', label: '기타', icon: '', color: 'text-gray-400', headerBg: 'bg-gray-700/60' },
+  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-[#5a4a10]' },
+  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-teal-300', headerBg: 'bg-[#104a4a]' },
+  { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-purple-400', headerBg: 'bg-[#3a1a5a]' },
+  { key: 'other', label: '기타', icon: '', color: 'text-gray-400', headerBg: 'bg-[#3a3a45]' },
 ];
 
 const ALL_TABS = [...MULT_TABS, ...ADD_TABS];

@@ -181,6 +181,7 @@ export default function HeroList() {
   const tableContentRef = useRef<HTMLDivElement>(null);
   const [screenshotLoading, setScreenshotLoading] = useState(false);
   const [captureMode, setCaptureMode] = useState(false);
+  const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
 
   // Album filters/sort
   const [albumSortKey, setAlbumSortKey] = useState<string>('heroClass');
