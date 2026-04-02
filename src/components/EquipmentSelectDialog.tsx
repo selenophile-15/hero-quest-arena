@@ -882,12 +882,12 @@ export default function EquipmentSelectDialog({
                               )}
                               {item.elementAffinity && item.elementAffinity.length > 0 && (
                                 <div className="text-xs">
-                                  <span className="text-muted-foreground">친밀 원소: </span>
-                                  {item.elementAffinity.map((el, i) => (
-                                    <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
-                                      {el}{i < item.elementAffinity!.length - 1 ? ', ' : ''}
-                                    </span>
-                                  ))}
+                                 <span className="text-muted-foreground">친밀 원소: </span>
+                                   {item.elementAffinity.map((el, i) => (
+                                     <span key={el} className={`font-semibold ${ELEMENT_COLORS[el] || 'text-foreground'}`}>
+                                       {el}{i < item.elementAffinity!.length - 1 ? ', ' : ''}
+                                     </span>
+                                   ))}
                                 </div>
                               )}
                               {item.uniqueElement && item.uniqueElement.length > 0 && (
