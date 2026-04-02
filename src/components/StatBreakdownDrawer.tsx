@@ -428,7 +428,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </tr>
                       )}
                       <tr className={hasItem ? 'bg-secondary/30' : ''}>
-                        <td className="px-2 py-1 font-semibold text-white">최종</td>
+                        <td className="px-2 py-1 font-semibold text-foreground">최종</td>
                         <td className={`px-2 py-1 text-right tabular-nums font-bold ${config.color}`}>
                           {formatNumber(slot ? getSlotStatDirect(slot, finalKey as keyof EquipSlotCalc) : 0)}
                         </td>
