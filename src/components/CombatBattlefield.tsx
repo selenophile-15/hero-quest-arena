@@ -25,6 +25,14 @@ const CLASS_LINE_COLORS: Record<string, string> = {
 };
 const CHAMPION_COLOR = '#c4b5fd'; // violet-300
 
+// Darken colors for light mode visibility
+function adjustColorForLight(hex: string): string {
+  const colorMap: Record<string, string> = {
+    '#f87171': '#b91c1c', '#a3e635': '#4d7c0f', '#60a5fa': '#1d4ed8', '#c4b5fd': '#6d28d9', '#d1d5db': '#374151',
+  };
+  return colorMap[hex] || hex;
+}
+
 // 5-tier HP color
 function hpColor(pct: number): string {
   if (pct > 80) return '#84cc16';
@@ -421,7 +429,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-xs font-semibold truncate" style={{ color: getNameColor(h.name) }}>{h.name}</span>
+                        <span className="text-xs font-bold truncate" style={{ color: isLight ? (nameColorMap[h.name] ? adjustColorForLight(nameColorMap[h.name]) : '#1f2937') : getNameColor(h.name) }}>{h.name}</span>
                         <span className="text-xs font-mono" style={{ color: hpColor(hpPct) }}>
                           {Math.round(hp).toLocaleString()}
                         </span>

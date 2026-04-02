@@ -226,7 +226,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
         className={`rounded border ${item ? QUALITY_BORDER[quality] || 'border-border/30' : 'border-border/30'} flex flex-col items-center overflow-hidden`}
         style={item ? {
           background: `radial-gradient(circle, ${QUALITY_RADIAL[quality] || ''} 0%, transparent 85%)`,
-          boxShadow: QUALITY_SHADOW[quality] || '',
+          boxShadow: `0 0 4px ${(QUALITY_RADIAL[quality] || 'transparent').replace(/[\d.]+\)$/, '0.3)')}`,
         } : { background: 'hsl(var(--secondary) / 0.2)' }}>
         <div className="relative w-full flex items-center justify-center pt-0.5">
           {item?.imagePath
@@ -601,15 +601,16 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       )
                     )}
                     {/* Equipment */}
-                    {isChampion ? (
-                      <div className="flex gap-1 justify-center w-full">
-                        {equipSlots.slice(0, 2).map((slot: any, i: number) => renderEquipSlot(slot, i))}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-3 gap-0.5 w-full">
-                        {equipSlots.map((slot: any, i: number) => renderEquipSlot(slot, i))}
-                      </div>
-                    )}
+                    <div className="grid grid-cols-3 gap-0.5 w-full">
+                      {isChampion ? (
+                        <>
+                          <div />
+                          {equipSlots.slice(0, 2).map((slot: any, i: number) => renderEquipSlot(slot, i))}
+                        </>
+                      ) : (
+                        equipSlots.map((slot: any, i: number) => renderEquipSlot(slot, i))
+                      )}
+                    </div>
                     {/* Power */}
                     {hero.power > 0 && (
                       <span className={`text-[10px] font-mono ${belowMin ? 'text-red-400' : 'text-yellow-400'}`}>{formatNumber(hero.power)}</span>
