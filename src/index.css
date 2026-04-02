@@ -977,32 +977,10 @@ a.bg-accent *,
 .stat-box-white {
   color: white !important;
 }
-.stat-box-white td,
-.stat-box-white th,
-.stat-box-white span,
-.stat-box-white h4,
-.stat-box-white h5,
-.stat-box-white p {
+.stat-box-white .text-white,
+.stat-box-white .text-white\/70,
+.stat-box-white .text-white\/80 {
   color: white !important;
-}
-/* Preserve explicit stat colors inside stat-box-white */
-.stat-box-white .text-red-400,
-.stat-box-white .text-red-300,
-.stat-box-white .text-blue-400,
-.stat-box-white .text-blue-300,
-.stat-box-white .text-orange-400,
-.stat-box-white .text-orange-300,
-.stat-box-white .text-orange-200,
-.stat-box-white .text-yellow-400,
-.stat-box-white .text-yellow-300,
-.stat-box-white .text-cyan-400,
-.stat-box-white .text-cyan-300,
-.stat-box-white .text-gray-300,
-.stat-box-white .text-green-400,
-.stat-box-white .text-purple-300,
-.stat-box-white .text-purple-200,
-.stat-box-white .text-muted-foreground {
-  color: revert-layer !important;
 }
 :root[data-color-mode="light"] button.bg-primary,
 :root[data-color-mode="light"] button.bg-primary *,
