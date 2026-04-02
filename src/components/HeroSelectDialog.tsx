@@ -432,14 +432,14 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                         )}
                       </td>
                       {/* 이름: just name text, no icon */}
-                      <td className="py-1.5 px-1.5 text-center font-medium text-foreground">
+                      <td className="py-1.5 px-1.5 text-center font-bold text-foreground">
                         <div className="flex items-center gap-1 justify-center">
                           {belowMin && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
                           <span className="whitespace-nowrap">{hero.name}</span>
                         </div>
                       </td>
                       {/* Lv */}
-                      <td className="py-1.5 px-1 text-center text-muted-foreground">{hero.level}</td>
+                      <td className="py-1.5 px-1 text-center font-bold text-muted-foreground">{hero.level}</td>
                       {/* 원소 */}
                       <td className="py-1.5 px-1 text-center">
                         <div className="flex items-center gap-0.5 justify-center">
@@ -484,21 +484,21 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                         </div>
                       </td>
                       {/* 전투력 */}
-                      <td className={`py-1.5 px-1 text-center font-mono ${belowMin ? 'text-red-400' : 'text-yellow-400'}`}>
+                      <td className={`py-1.5 px-1 text-center font-mono font-bold ${belowMin ? 'text-red-400' : 'text-yellow-400'}`}>
                         {hero.power > 0 ? formatNumber(hero.power) : '-'}
                       </td>
                       {/* 공격력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-red-400">{formatNumber(hero.atk)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-red-400">{formatNumber(hero.atk)}</td>
                       {/* 방어력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-blue-400">{formatNumber(hero.def)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-blue-400">{formatNumber(hero.def)}</td>
                       {/* 체력 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-orange-400">{formatNumber(hero.hp)}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-orange-400">{formatNumber(hero.hp)}</td>
                       {/* 치확 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400">{hero.crit > 0 ? `${formatNumber(hero.crit)}%` : '-'}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-yellow-400">{hero.crit > 0 ? `${formatNumber(hero.crit)}%` : '-'}</td>
                       {/* 치명타 대미지 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-yellow-400">{critDmgDisplay > 0 ? formatNumber(critDmgDisplay) : '-'}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-yellow-400">{critDmgDisplay > 0 ? formatNumber(critDmgDisplay) : '-'}</td>
                       {/* 회피 */}
-                      <td className="py-1.5 px-1 text-center font-mono text-teal-400">{hero.evasion > 0 ? `${formatNumber(hero.evasion)}%` : '-'}</td>
+                      <td className="py-1.5 px-1 text-center font-mono font-bold text-teal-400">{hero.evasion > 0 ? `${formatNumber(hero.evasion)}%` : '-'}</td>
                       {/* 포지션 */}
                       <td className="py-1.5 px-1 text-center text-[10px] whitespace-nowrap">
                         {hero.position ? (
