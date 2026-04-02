@@ -1001,14 +1001,24 @@ export default function QuestSimulation() {
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          <svg className="absolute overflow-visible pointer-events-none" style={{ left: '70px', top: 0, width: 'calc(100% - 70px)', height: '100%' }}>
-                            {heroLayout.map(h => {
-                              const yPin = (1 - h.pinPct / 100) * barH;
-                              const yLabel = (1 - h.labelPct / 100) * barH;
-                              const d = `M 0 ${yPin} C 14 ${yPin}, 14 ${yLabel}, 28 ${yLabel}`;
-                              return <path key={`line-${h.id}`} d={d} fill="none" stroke={h.color} strokeWidth={1.5} strokeOpacity={0.8} />;
-                            })}
-                          </svg>
+                          {/* Use div-based lines instead of SVG for html2canvas compatibility */}
+                          {heroLayout.map(h => {
+                            const yPinPx = (1 - h.pinPct / 100) * barH;
+                            const yLabelPx = (1 - h.labelPct / 100) * barH;
+                            const top = Math.min(yPinPx, yLabelPx);
+                            const height = Math.abs(yLabelPx - yPinPx) || 1;
+                            return (
+                              <div key={`line-${h.id}`} className="absolute pointer-events-none" style={{
+                                left: '70px', top: `${top}px`, width: '28px', height: `${height}px`,
+                                borderLeft: `1.5px solid ${h.color}`,
+                                borderBottom: yLabelPx > yPinPx ? `1.5px solid ${h.color}` : 'none',
+                                borderTop: yLabelPx < yPinPx ? `1.5px solid ${h.color}` : 'none',
+                                borderRight: `1.5px solid ${h.color}`,
+                                borderRadius: yLabelPx > yPinPx ? '0 0 6px 6px' : '6px 6px 0 0',
+                                opacity: 0.8,
+                              }} />
+                            );
+                          })}
                           {heroLayout.map(h => (
                             <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '100px', transform: 'translateY(50%)', zIndex: 5 }}>
                               <span className="text-[11px] font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
