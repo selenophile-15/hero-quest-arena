@@ -925,8 +925,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-white/70">총 {config.label} 보너스</td>
-                  <td className={`py-1.5 text-right tabular-nums font-medium ${bonusVal ? 'text-white' : 'text-muted-foreground'}`}>
+                  <td className="py-1.5 text-foreground/70">총 {config.label} 보너스</td>
+                  <td className={`py-1.5 text-right tabular-nums font-medium ${bonusVal ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {bonusVal ? `+${bonusVal}${unit}` : `0${unit}`}
                   </td>
                 </tr>
