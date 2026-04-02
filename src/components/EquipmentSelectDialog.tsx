@@ -814,41 +814,50 @@ export default function EquipmentSelectDialog({
                                 </div>
                                 <div className="flex items-center justify-center gap-2 w-full" style={{ height: '25%' }}>
                                   {hasAffinityIcons ? (
-                                    <>
-                                      <div className="flex items-center gap-0.5">
-                                        {elemAffs.map(el => (
-                                          <img key={el} src={getElementIconPath(el)} alt={el} className="w-6 h-6" title={`친밀 원소: ${el}`}
-                                            onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                        ))}
-                                        {uniqueElems.map(el => {
-                                          const eng = ELEMENT_ENG[el];
-                                          const tier = item.uniqueElementTier || 1;
-                                          return (
-                                            <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
-                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                          );
-                                        })}
-                                      </div>
-                                      {(spiritAffs.length > 0 || uniqueSp.length > 0) && (elemAffs.length > 0 || uniqueElems.length > 0) && (
-                                        <div className="w-px h-5 bg-border/50" />
-                                      )}
-                                      <div className="flex items-center gap-0.5">
-                                        {spiritAffs.map(sp => {
-                                          const eng = SPIRIT_NAME_MAP[sp];
-                                          return (
-                                            <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.webp` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
-                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                          );
-                                        })}
-                                        {uniqueSp.map(sp => {
-                                          const eng = SPIRIT_NAME_MAP[sp];
-                                          return (
-                                            <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
-                                              onError={e => { e.currentTarget.style.display = 'none'; }} />
-                                          );
-                                        })}
-                                      </div>
-                                    </>
+                                    (() => {
+                                      const hasElems = elemAffs.length > 0 || uniqueElems.length > 0;
+                                      const hasSpirits = spiritAffs.length > 0 || uniqueSp.length > 0;
+                                      const showDivider = hasElems && hasSpirits;
+                                      return (
+                                        <>
+                                          {hasElems && (
+                                            <div className={`flex items-center gap-0.5 ${!showDivider ? 'mx-auto' : ''}`}>
+                                              {elemAffs.map(el => (
+                                                <img key={el} src={getElementIconPath(el)} alt={el} className="w-6 h-6" title={`친밀 원소: ${el}`}
+                                                  onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                              ))}
+                                              {uniqueElems.map(el => {
+                                                const eng = ELEMENT_ENG[el];
+                                                const tier = item.uniqueElementTier || 1;
+                                                return (
+                                                  <img key={`u-${el}`} src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ''} alt={el} className="w-6 h-6" title={`고유 원소: ${el} T${tier}`}
+                                                    onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                                );
+                                              })}
+                                            </div>
+                                          )}
+                                          {showDivider && <div className="w-px h-5 bg-border/50" />}
+                                          {hasSpirits && (
+                                            <div className={`flex items-center gap-0.5 ${!showDivider ? 'mx-auto' : ''}`}>
+                                              {spiritAffs.map(sp => {
+                                                const eng = SPIRIT_NAME_MAP[sp];
+                                                return (
+                                                  <img key={sp} src={eng ? `/images/enchant/spirit/${eng}_1.webp` : ''} alt={sp} className="w-6 h-6" title={`친밀 영혼: ${sp}`}
+                                                    onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                                );
+                                              })}
+                                              {uniqueSp.map(sp => {
+                                                const eng = SPIRIT_NAME_MAP[sp];
+                                                return (
+                                                  <img key={`us-${sp}`} src={eng ? `/images/enchant/spirit/${eng}_2.webp` : ''} alt={sp} className="w-6 h-6" title={`고유 영혼: ${sp}`}
+                                                    onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                                );
+                                              })}
+                                            </div>
+                                          )}
+                                        </>
+                                      );
+                                    })()
                                   ) : (
                                     <span className="text-[7px] text-muted-foreground/30">-</span>
                                   )}
