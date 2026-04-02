@@ -961,7 +961,7 @@ export default function QuestSimulation() {
                     <div className="space-y-1.5 pt-2 border-t border-border/30">
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
-                          <Heart className="w-3.5 h-3.5 text-red-400" />
+                          <Heart className="w-3.5 h-3.5 text-orange-400" />
                           <span className="text-xs text-foreground">체력</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-lime-400' : 'text-foreground'}`}>
