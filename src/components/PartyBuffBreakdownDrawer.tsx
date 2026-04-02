@@ -191,7 +191,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
             </TabsList>
 
             <div className="flex-1 overflow-y-auto">
-              <div className={`${config.headerBg} rounded-t-lg px-4 py-3 flex items-center gap-2`}>
+              <div className={`${config.headerBg} rounded-t-lg px-4 py-3 stat-box-white flex items-center gap-2`}>
                 {config.icon && <img src={config.icon} alt="" className="w-6 h-6" />}
                 <span className={`font-bold text-base ${config.color}`}>{config.label} - 전투 중 회복</span>
               </div>
@@ -284,7 +284,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                     <tr><td colSpan={heroes.length + 1} className="h-1" /></tr>
 
                     {/* Total row */}
-                    <tr className={`${config.headerBg} border-t border-border/40`}>
+                    <tr className={`${config.headerBg} border-t border-border/40 stat-box-white`}>
                       <td className="py-2.5 px-3 font-bold text-foreground text-sm">총 매턴 회복</td>
                       {heroes.map((h, hi) => {
                         const bs = buffedStats[hi];
@@ -342,7 +342,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
           <div className="flex-1 overflow-y-auto">
             {/* Header: stat color bar */}
-            <div className={`${config.headerBg} rounded-t-lg px-4 py-3 flex items-center gap-2`}>
+            <div className={`${config.headerBg} rounded-t-lg px-4 py-3 stat-box-white flex items-center gap-2`}>
               {config.icon && <img src={config.icon} alt="" className="w-6 h-6" />}
               <span className={`font-bold text-base ${config.color}`}>{config.label} 파티 버프 상세</span>
             </div>
@@ -586,7 +586,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   <tr><td colSpan={heroes.length + 1} className="h-1" /></tr>
 
                   {/* Final buffed stat */}
-                  <tr className={`${config.headerBg} border-t border-border/40`}>
+                  <tr className={`${config.headerBg} border-t border-border/40 stat-box-white`}>
                     <td className="py-2.5 px-3 font-bold text-foreground text-sm">
                       최종 (버프 적용)
                     </td>

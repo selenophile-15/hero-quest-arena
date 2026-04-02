@@ -912,8 +912,9 @@
   /* Gray (equipment common grade) → darker in light mode */
   .text-gray-300 { color: hsl(230 10% 40%) !important; }
 
-  /* White text/icons → dark gray in light mode */
-  .text-white { color: hsl(230 15% 20%) !important; }
+  /* White text/icons → dark gray in light mode (except inside stat colored boxes) */
+  .text-white:not(.stat-box-white .text-white):not(.stat-box-white) { color: hsl(230 15% 20%) !important; }
+  .stat-box-white, .stat-box-white .text-white, .stat-box-white .text-white\/70, .stat-box-white .text-white\/80 { color: white !important; }
 
   /* Border adaptations */
   .border-yellow-500\/40, .border-yellow-400\/30 { border-color: hsl(45 80% 42% / 0.5) !important; }
@@ -970,6 +971,15 @@ a.bg-accent,
 a.bg-accent *,
 .force-white-text,
 .force-white-text * {
+  color: white !important;
+}
+/* Stat breakdown colored boxes: force white text but preserve stat-specific colors */
+.stat-box-white {
+  color: white !important;
+}
+.stat-box-white .text-white,
+.stat-box-white .text-white\/70,
+.stat-box-white .text-white\/80 {
   color: white !important;
 }
 :root[data-color-mode="light"] button.bg-primary,
