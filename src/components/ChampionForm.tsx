@@ -490,7 +490,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
               ) : <span className="text-[6px] text-muted-foreground">원소</span>}
             </div>
             <div
-              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
+              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
               onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('spirit'); setEnchantDialogOpen(true); }}
             >
               {displaySpirit ? (() => {
