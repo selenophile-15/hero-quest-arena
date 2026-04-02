@@ -343,24 +343,24 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   <table className="w-full text-xs">
                     <tbody>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">유형</td>
-                        <td className="px-2 py-1 text-right text-white">{hasItem ? slot.itemTypeKor || slot.itemType : '-'}</td>
+                        <td className="px-2 py-1 text-foreground/70">유형</td>
+                        <td className="px-2 py-1 text-right text-foreground">{hasItem ? slot.itemTypeKor || slot.itemType : '-'}</td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">기본 {config.label}</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-white">
+                        <td className="px-2 py-1 text-foreground/70">기본 {config.label}</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
                           {formatNumber(slot ? getSlotStatDirect(slot, baseKey as keyof EquipSlotCalc) : 0)}
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">등급 적용</td>
-                        <td className="px-2 py-1 text-right tabular-nums font-medium text-white">
+                        <td className="px-2 py-1 text-foreground/70">등급 적용</td>
+                        <td className="px-2 py-1 text-right tabular-nums font-medium text-foreground">
                           {formatNumber(slot ? getSlotStatDirect(slot, qualityKey as keyof EquipSlotCalc) : 0)}
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">원소 {config.label}</td>
-                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-white'}`}>
+                        <td className="px-2 py-1 text-foreground/70">원소 {config.label}</td>
+                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-foreground'}`}>
                           {formatNumber(slot ? getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) : 0)}
                           {slot && getSlotStatDirect(slot, elementCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, elementRawKey as keyof EquipSlotCalc) && (
                             <span className="text-[9px] text-muted-foreground ml-0.5">(보정)</span>
@@ -368,8 +368,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">영혼 {config.label}</td>
-                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-white'}`}>
+                        <td className="px-2 py-1 text-foreground/70">영혼 {config.label}</td>
+                        <td className={`px-2 py-1 text-right tabular-nums ${slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) ? 'text-yellow-400' : 'text-foreground'}`}>
                           {formatNumber(slot ? getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) : 0)}
                           {slot && getSlotStatDirect(slot, spiritCapKey as keyof EquipSlotCalc) < getSlotStatDirect(slot, spiritRawKey as keyof EquipSlotCalc) && (
                             <span className="text-[9px] text-muted-foreground ml-0.5">(보정)</span>
@@ -377,8 +377,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </td>
                       </tr>
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">보너스 전</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-white">
+                        <td className="px-2 py-1 text-foreground/70">보너스 전</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
                           {formatNumber(slot ? getSlotStatDirect(slot, preBonusKey as keyof EquipSlotCalc) : 0)}
                         </td>
                       </tr>
@@ -401,8 +401,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         </tr>
                       )}
                       <tr className="border-b border-border/20">
-                        <td className="px-2 py-1 text-white/70">장비 보너스 %</td>
-                        <td className="px-2 py-1 text-right tabular-nums text-white">
+                        <td className="px-2 py-1 text-foreground/70">장비 보너스 %</td>
+                        <td className="px-2 py-1 text-right tabular-nums text-foreground">
                           {slot ? `${getSlotStatDirect(slot, bonusPctKey as keyof EquipSlotCalc)}%` : '0%'}
                         </td>
                       </tr>
