@@ -1025,7 +1025,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                 <div className="text-xs">
                                   <span className="text-muted-foreground">친밀 원소: </span>
                                   {item.elementAffinity.map((el: string, ei: number) => (
-                                    <span key={ei}>{ei > 0 ? ', ' : ''}<span className={ELEMENT_COLORS_LOCAL[el] || 'text-foreground'}>{el}</span></span>
+                                    <span key={ei} className={`font-semibold ${ELEMENT_COLORS_LOCAL[el] || 'text-foreground'}`}>{ei > 0 ? ', ' : ''}{el}</span>
                                   ))}
                                 </div>
                               )}
@@ -1033,7 +1033,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                 <div className="text-xs">
                                   <span className="text-muted-foreground">친밀 영혼: </span>
                                   {item.spiritAffinity.map((sp: string, si: number) => (
-                                    <span key={si}>{si > 0 ? ', ' : ''}{sp} (T{getSpiritTier(sp)})</span>
+                                    <span key={si} className="text-foreground font-semibold">{si > 0 ? ', ' : ''}{sp} (T{getSpiritTier(sp)})</span>
                                   ))}
                                 </div>
                               )}
