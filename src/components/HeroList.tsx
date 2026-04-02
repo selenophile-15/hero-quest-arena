@@ -256,17 +256,10 @@ export default function HeroList() {
     }
   }, [listTab, colorMode]);
 
-  // Export handler
+  // Export handler (now via dialog)
   const handleExport = useCallback(() => {
-    const data = JSON.stringify(heroes, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = `quest_sim_backup_${new Date().toISOString().slice(0, 10)}.json`;
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
-  }, [heroes]);
+    setSaveDialogOpen(true);
+  }, []);
 
   // Import handler
   const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
