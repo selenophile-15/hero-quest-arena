@@ -1352,7 +1352,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   {/* Aura Song skill row */}
                   <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0">
                     <div className="px-1 py-1.5 flex items-center justify-center">
-                      <span className="px-1 py-0.5 rounded text-[10px] font-semibold bg-cyan-700/60 text-foreground">오라</span>
+                      <span className="px-1 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: '#1a6b3c', color: 'white' }}>오라</span>
                     </div>
                     <div className="px-1 py-1.5 flex items-center justify-center">
                       {aurasongSkillIcon ? (
