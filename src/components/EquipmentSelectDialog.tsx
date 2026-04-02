@@ -892,12 +892,12 @@ export default function EquipmentSelectDialog({
                               )}
                               {item.uniqueElement && item.uniqueElement.length > 0 && (
                                 <div className="text-xs">
-                                  <span className="text-muted-foreground">고유 원소: </span>
-                                  {item.uniqueElement.map((el, i) => (
-                                    <span key={el} className={ELEMENT_COLORS[el] || 'text-foreground'}>
-                                      {el} (T{item.uniqueElementTier || 1}){i < item.uniqueElement!.length - 1 ? ', ' : ''}
-                                    </span>
-                                  ))}
+                                   <span className="text-muted-foreground">고유 원소: </span>
+                                   {item.uniqueElement.map((el, i) => (
+                                     <span key={el} className={`font-semibold ${ELEMENT_COLORS[el] || 'text-foreground'}`}>
+                                       {el} (T{item.uniqueElementTier || 1}){i < item.uniqueElement!.length - 1 ? ', ' : ''}
+                                     </span>
+                                   ))}
                                 </div>
                               )}
                               {item.spiritAffinity && item.spiritAffinity.length > 0 && (
