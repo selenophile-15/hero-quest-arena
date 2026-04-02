@@ -820,8 +820,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                         })() : '-'}
                       </span>
                       {diff !== null && diff !== 0 && (
-                        <span className={`text-[10px] font-semibold tabular-nums ${diff > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {diff > 0 ? '▲' : '▼'}{Math.abs(Math.round(diff))}
+                        <span className={`text-[10px] font-semibold tabular-nums ml-1 ${diff > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {diff > 0 ? '▲' : '▼'}{formatNumber(Math.abs(Math.round(diff)))}
                         </span>
                       )}
                     </div>
