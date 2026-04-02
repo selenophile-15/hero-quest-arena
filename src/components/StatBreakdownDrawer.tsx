@@ -311,7 +311,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 {relicEffects.map((e, i) => (
                   <div key={i} className="text-[10px] bg-yellow-900/20 border border-yellow-500/20 rounded px-2 py-1">
                     <span className="text-yellow-300 font-semibold">{e.itemName}</span>
-                    <span className="text-white/70 ml-1">— {e.description}</span>
+                    <span className="text-foreground/70 ml-1">— {e.description}</span>
                     {e.type === 'weapon_nullify' && (
                       <span className="text-red-400 ml-1">(무기 스탯 → 0)</span>
                     )}
