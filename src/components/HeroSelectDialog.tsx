@@ -20,6 +20,7 @@ interface Props {
   minPower: number;
   onConfirm: (ids: Set<string>) => void;
   editingSlotIdx: number | null;
+  barrierElements?: string[];
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
