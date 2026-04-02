@@ -564,7 +564,7 @@ export default function HeroList() {
           <span className={`${wrapCls} ${lh}`}>
             <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { e.currentTarget.style.display = 'none'; }} />
             {spacer}
-            <span className={`whitespace-nowrap ${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'theme-highlight-40' : ''}`}>{hero.championName}</span>
+            <span className={`whitespace-nowrap font-bold ${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'theme-highlight-40' : ''}`}>{hero.championName}</span>
             {isPromoted && <Award className="w-3.5 h-3.5 theme-highlight-40" />}
           </span>
         );
