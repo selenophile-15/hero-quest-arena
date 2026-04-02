@@ -1517,7 +1517,7 @@ export default function HeroList() {
       ) : (
         <>
           {/* Album controls: sort + filter */}
-          <div className="card-fantasy p-3 mb-3 flex flex-wrap items-center gap-3">
+           <div className="card-fantasy p-3 mb-3 mt-3 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">정렬:</span>
