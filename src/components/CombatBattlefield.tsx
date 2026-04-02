@@ -369,7 +369,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           ) : (
             <span className={`ml-1 text-sm ${
               isDeath ? 'text-red-400 font-bold' :
-              entry.type === 'result' ? (entry.detail.includes('승리') ? 'text-green-400 font-bold' : 'text-red-400 font-bold') :
+              entry.type === 'result' ? (entry.detail.includes('승리') ? 'text-lime-400 font-bold' : 'text-red-400 font-bold') :
               'text-foreground/60'
             }`}>
               {entry.detail}
@@ -390,7 +390,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <span className="text-xs text-muted-foreground">라운드</span>
             <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
             {isResult && (
-              <span className={`ml-2 text-sm font-bold ${isWin ? 'text-green-400' : 'text-red-400'}`}>
+              <span className={`ml-2 text-sm font-bold ${isWin ? 'text-lime-400' : 'text-red-400'}`}>
                 {isWin ? '🏆 승리!' : '💀 패배!'}
               </span>
             )}
