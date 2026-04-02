@@ -154,7 +154,7 @@ export const SPIRIT_NAME_MAP: Record<string, string> = {
   '크라켄': 'kraken', '크리스마스': 'christmas', '크람푸스': 'krampus',
   '기린': 'kirin', '베히모스': 'behemoth', '우로보로스': 'ouroboros',
   '바하무트': 'bahamut', '레비아탄': 'leviathan', '그리핀': 'griffin',
-  '명인': 'titan', '조상': 'ancestor',
+  '명인': 'titan', '조상': 'ancestor', '문드라': 'mundra',
 };
 
 // ===== Champions =====
