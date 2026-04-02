@@ -1362,6 +1362,7 @@ export default function HeroList() {
                 const screenshotKeys = new Set(['heroClass', 'name', 'level', 'element', 'skills']);
                 setVisibleCols(screenshotKeys);
               }}>스크린샷용</Button>
+
             </div>
           </div>
 

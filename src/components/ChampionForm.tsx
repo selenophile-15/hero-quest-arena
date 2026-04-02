@@ -1226,7 +1226,20 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         </div>
 
         {/* ─── Row 2: Stats + Seeds/Element + Skills + Equipment ─── */}
-        <div className="grid grid-cols-[200px_200px_1fr] gap-4">
+        <div className="grid grid-cols-[360px_200px_200px_1fr] gap-4">
+          {/* Champion Illustration placeholder */}
+          <div className="card-fantasy p-3 flex flex-col items-center justify-center">
+            <div className="w-full flex items-center justify-center">
+              <img
+                src={getChampionImagePath(championName)}
+                alt={championName}
+                className="max-w-full max-h-[340px] object-contain drop-shadow-lg rounded-full"
+                onError={e => { e.currentTarget.style.display = 'none'; }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">일러스트 준비 중</p>
+          </div>
+
           {/* Stats Panel */}
           <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>

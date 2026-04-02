@@ -105,6 +105,7 @@ export const HERO_STAT_COLUMNS = [
 ];
 
 export const CHAMPION_STAT_COLUMNS = [
+  { key: 'heroClass' as const, label: '직업' },
   { key: 'name' as const, label: '이름' },
   { key: 'level' as const, label: 'Lv' },
   { key: 'rank' as const, label: '랭크' },
@@ -121,7 +122,6 @@ export const CHAMPION_STAT_COLUMNS = [
   { key: 'critAttack' as const, label: 'CRIT.A', icon: true },
   { key: 'evasion' as const, label: 'EVA', icon: true },
   { key: 'threat' as const, label: 'THREAT', icon: true },
-  { key: 'promoted' as const, label: '승급' },
   { key: 'seeds' as const, label: '씨앗' },
   { key: 'label' as const, label: '상태' },
 ];
