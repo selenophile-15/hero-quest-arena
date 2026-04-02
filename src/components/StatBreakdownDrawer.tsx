@@ -241,11 +241,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   const tagLabel = src.skillType === 'unique' ? '고유' : '공용';
                   return (
                     <tr key={i} className="border-b border-border/20">
-                      <td className="py-1 text-white/70">
+                      <td className="py-1 text-foreground/70">
                         <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                         {src.skillName} → {src.equipType}
                       </td>
-                      <td className="py-1 text-right tabular-nums text-white">+{src.value}%</td>
+                      <td className="py-1 text-right tabular-nums text-foreground">+{src.value}%</td>
                     </tr>
                   );
                 })}
