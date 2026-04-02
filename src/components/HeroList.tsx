@@ -205,11 +205,26 @@ export default function HeroList() {
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
 
       const canvas = await html2canvas(targetRef.current, {
-        backgroundColor: '#1a1a2e',
+        backgroundColor: colorMode === 'light' ? '#f5f3f0' : '#1a1a2e',
         scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
+        onclone: (doc) => {
+          const clonedEl = doc.querySelector(`[data-screenshot-target]`) as HTMLElement;
+          if (clonedEl) {
+            // Force vertical-align: middle on all inline-block elements for uniform text height
+            clonedEl.querySelectorAll('td, th').forEach(cell => {
+              (cell as HTMLElement).style.verticalAlign = 'middle';
+            });
+            clonedEl.querySelectorAll('img, span, svg').forEach(el => {
+              const s = window.getComputedStyle(el);
+              if (s.display === 'inline-block' || s.display === 'inline') {
+                (el as HTMLElement).style.verticalAlign = 'middle';
+              }
+            });
+          }
+        },
       });
 
       const link = document.createElement('a');
@@ -222,7 +237,7 @@ export default function HeroList() {
       setCaptureMode(false);
       setScreenshotLoading(false);
     }
-  }, [listTab]);
+  }, [listTab, colorMode]);
 
   // Export handler
   const handleExport = useCallback(() => {
