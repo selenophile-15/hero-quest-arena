@@ -25,6 +25,14 @@ const CLASS_LINE_COLORS: Record<string, string> = {
 };
 const CHAMPION_COLOR = '#c4b5fd'; // violet-300
 
+// Darken colors for light mode visibility
+function adjustColorForLight(hex: string): string {
+  const colorMap: Record<string, string> = {
+    '#f87171': '#b91c1c', '#a3e635': '#4d7c0f', '#60a5fa': '#1d4ed8', '#c4b5fd': '#6d28d9', '#d1d5db': '#374151',
+  };
+  return colorMap[hex] || hex;
+}
+
 // 5-tier HP color
 function hpColor(pct: number): string {
   if (pct > 80) return '#84cc16';
