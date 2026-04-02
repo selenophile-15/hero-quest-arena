@@ -1018,8 +1018,11 @@ export default function EquipmentSelectDialog({
                       onClick={(e) => {
                           e.stopPropagation();
                           const newSlots = [...slots];
-                          // Keep enchants (element/spirit) when removing equipment
-                          newSlots[i] = { item: null, quality: newSlots[i].quality, element: newSlots[i].element, spirit: newSlots[i].spirit };
+                          const prevItem = newSlots[i]?.item;
+                          // Keep user-set enchants, clear unique enchants belonging to the item
+                          const keepEl = (prevItem?.uniqueElement?.length) ? null : newSlots[i].element;
+                          const keepSp = (prevItem?.uniqueSpirit?.length) ? null : newSlots[i].spirit;
+                          newSlots[i] = { item: null, quality: newSlots[i].quality, element: keepEl, spirit: keepSp };
                           setSlots(newSlots);
                         }}
                         className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
