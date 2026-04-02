@@ -573,12 +573,23 @@
   }
 }
 
-/* Primary/accent button text: always white */
-.bg-primary, .bg-accent,
-.bg-primary *,  .bg-accent *,
-.bg-primary.text-white, .bg-accent.text-white,
+/* Primary/accent button text: always white - high specificity to override light mode .text-white rule */
+.bg-primary,
+.bg-primary *,
+.bg-primary .text-white,
 [class*="bg-primary"] button,
-[class*="bg-accent"] button {
+[class*="bg-primary"] svg,
+.bg-accent,
+.bg-accent *,
+.bg-accent .text-white,
+[class*="bg-accent"] button,
+[class*="bg-accent"] svg {
+  color: white !important;
+}
+:root[data-color-mode="light"] .bg-primary,
+:root[data-color-mode="light"] .bg-primary *,
+:root[data-color-mode="light"] .bg-accent,
+:root[data-color-mode="light"] .bg-accent * {
   color: white !important;
 }
 
