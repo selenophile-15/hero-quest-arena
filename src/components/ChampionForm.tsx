@@ -601,7 +601,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       }}>
         <DialogContent className="max-w-[95vw] h-[90vh] overflow-hidden flex flex-col p-5">
           <DialogHeader>
-            <DialogTitle className="text-yellow-400" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
+            <DialogTitle className="text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>장비 선택</DialogTitle>
             <DialogDescription className="sr-only">퍼밀리어 또는 오라의 노래를 선택하세요</DialogDescription>
           </DialogHeader>
 
