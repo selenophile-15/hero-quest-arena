@@ -19,12 +19,12 @@ type StatType = MultStatType | AddStatType;
 const MULT_TABS: { key: MultStatType; label: string; icon: string; color: string; headerBg: string; slotHeaderBg: string; slotHeaderText: string }[] = [
   { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-[#7a1a1a]', slotHeaderBg: 'bg-[#7a1a1a]', slotHeaderText: 'text-red-300' },
   { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-[#1a2a5a]', slotHeaderBg: 'bg-[#1a2a5a]', slotHeaderText: 'text-blue-300' },
-  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-500', headerBg: 'bg-[#934d00]', slotHeaderBg: 'bg-[#934d00]', slotHeaderText: 'text-orange-300' },
+  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#a85200]', slotHeaderBg: 'bg-[#a85200]', slotHeaderText: 'text-orange-200' },
 ];
 
 const ADD_TABS: { key: AddStatType; label: string; icon: string; color: string; headerBg: string }[] = [
-  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-400', headerBg: 'bg-[#4d4010]' },
-  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-cyan-500', headerBg: 'bg-[#0d3d3d]' },
+  { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-[#6b5a14]' },
+  { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-cyan-400', headerBg: 'bg-[#175e5e]' },
   { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-gray-300', headerBg: 'bg-[#2a2a32]' },
   { key: 'other', label: '기타', icon: '', color: 'text-gray-400', headerBg: 'bg-[#3a3a45]' },
 ];
