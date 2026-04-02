@@ -744,7 +744,44 @@
     font-family: 'Noto Sans KR', sans-serif;
   }
 
-  * {
+  /* ===== ORANGE (오렌지) LIGHT ===== */
+  :root[data-color-mode="light"][data-theme="orange"] {
+    --background: 24 22% 96%;
+    --foreground: 20 15% 15%;
+    --card: 24 18% 98%;
+    --card-foreground: 20 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 15% 15%;
+    --primary: 24 75% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 24 15% 90%;
+    --secondary-foreground: 20 15% 25%;
+    --muted: 24 10% 92%;
+    --muted-foreground: 20 10% 45%;
+    --accent: 16 65% 42%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 24 15% 82%;
+    --input: 24 15% 85%;
+    --ring: 24 75% 45%;
+    --sidebar-background: 24 15% 95%;
+    --sidebar-foreground: 20 15% 25%;
+    --sidebar-primary: 24 75% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 24 15% 90%;
+    --sidebar-accent-foreground: 20 15% 25%;
+    --sidebar-border: 24 15% 82%;
+    --sidebar-ring: 24 75% 45%;
+    --gold-glow: 24 75% 45%;
+    --gold-dim: 20 50% 40%;
+    --fantasy-purple: 270 30% 48%;
+    --fantasy-blue: 210 38% 45%;
+    --hero-gradient: linear-gradient(135deg, hsl(24 75% 48%), hsl(16 65% 42%));
+    --card-glow: 0 0 20px hsl(24 75% 48% / 0.08);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
     @apply border-border;
   }
 
