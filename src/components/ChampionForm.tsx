@@ -1095,13 +1095,13 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                             </p>
                             <div className="flex items-center gap-1 mt-0.5 flex-wrap">
                               {s.element && (
-                                <span className={`text-[9px] ${hasAffinityEl ? 'font-bold' : ''} ${ELEMENT_COLORS_LOCAL[s.element.type] || 'text-foreground/70'}`}>
+                                <span className={`text-[9px] font-bold ${ELEMENT_COLORS_LOCAL[s.element.type] || 'text-foreground/70'}`}>
                                   {hasAffinityEl && '★ '}{s.element.type} (T{s.element.tier})
                                 </span>
                               )}
                               {s.element && s.spirit && <span className="text-[9px] text-muted-foreground">/</span>}
                               {s.spirit && (
-                                <span className={`text-[9px] text-purple-300 ${hasAffinitySp ? 'font-bold' : ''}`}>
+                                <span className={`text-[9px] font-bold text-purple-400`}>
                                   {hasAffinitySp && '★ '}{s.spirit.name} (T{getSpiritTier(s.spirit.name)})
                                 </span>
                               )}
