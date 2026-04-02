@@ -537,16 +537,10 @@ export default function HeroList() {
     const spacer = capture ? <span className="inline-block w-1" /> : null;
 
     if (colKey === 'name') {
-      const isChamp = hero.type === 'champion';
-      const isPromoted = isChamp && hero.promoted;
+      // For champions: show custom name only. For heroes: show name as before.
       return (
         <span className={`font-medium text-foreground text-center w-full ${wrapCls} justify-center ${lh}`}>
-          {isChamp && hero.championName && (
-            <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { (e.target as HTMLElement).style.display = 'none'; }} />
-          )}
-          {isChamp && hero.championName && spacer}
-          <span className={`${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'text-yellow-400' : ''}`}>{hero.name}</span>
-          {isPromoted && <Award className="w-3.5 h-3.5 text-yellow-400" />}
+          <span className={capture ? 'inline-block align-middle leading-none' : ''}>{hero.name}</span>
         </span>
       );
     }
@@ -562,6 +556,19 @@ export default function HeroList() {
       return <span className={`${lh} ${CLASS_LINE_COLORS[hero.classLine] || 'text-foreground'}`}>{hero.classLine}</span>;
     }
     if (colKey === 'heroClass') {
+      // For champions: show champion name + icon + promoted badge
+      if (hero.type === 'champion') {
+        const isPromoted = hero.promoted;
+        if (!hero.championName) return <span className="text-muted-foreground">-</span>;
+        return (
+          <span className={`${wrapCls} ${lh}`}>
+            <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { e.currentTarget.style.display = 'none'; }} />
+            {spacer}
+            <span className={`whitespace-nowrap ${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'theme-highlight-40' : ''}`}>{hero.championName}</span>
+            {isPromoted && <Award className="w-3.5 h-3.5 theme-highlight-40" />}
+          </span>
+        );
+      }
       if (!hero.heroClass) return <span className="text-muted-foreground">-</span>;
       return (
         <span className={`${wrapCls} ${lh}`}>
@@ -726,7 +733,7 @@ export default function HeroList() {
       );
     }
     if (colKey === 'position') return <span className={lh}>{hero.position || '-'}</span>;
-    if (colKey === 'promoted') return null;
+    if (colKey === 'promoted') return <span className={lh}>{hero.promoted ? '✓' : '-'}</span>;
     if (colKey === 'airshipPower') return <span className={`text-foreground/20 ${lh}`}>-</span>;
     if (colKey === 'evasion') {
       const ev = typeof hero.evasion === 'number' ? hero.evasion : 0;
@@ -1291,45 +1298,42 @@ export default function HeroList() {
           <div className="flex-1" />
           {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
           {!summaryOpen && (
-            <div className="flex gap-2 pb-1">
-              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 text-white">
+            <div className="flex items-center gap-2 pb-1">
+              <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 text-white" style={{ color: 'white' }}>
                 <Shield className="w-3.5 h-3.5" /> 새 영웅 추가
               </Button>
-              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 text-white">
+              <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 text-white" style={{ color: 'white' }}>
                 <Crown className="w-3.5 h-3.5" /> 새 챔피언 추가
               </Button>
+              <div className="w-px h-5 bg-border mx-1" />
+              <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
+                <Download className="w-3.5 h-3.5" />
+              </Button>
+              <label className="inline-flex">
+                <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
+                <Button asChild variant="outline" size="sm" className="gap-1 text-xs h-8 px-2 cursor-pointer" title="리스트 불러오기">
+                  <span><Upload className="w-3.5 h-3.5" /></span>
+                </Button>
+              </label>
+              <Button onClick={() => {
+                if (viewMode === 'table') {
+                  handleScreenshot(tableContentRef, 'list');
+                } else {
+                  handleScreenshot(albumContentRef, 'album');
+                }
+              }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장" disabled={screenshotLoading}>
+                <Camera className="w-3.5 h-3.5" />
+              </Button>
+              <div className="w-px h-5 bg-border mx-1" />
+              <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                <Table2 className="w-4 h-4" />
+              </button>
+              <button onClick={() => setViewMode('album')} className={`p-2 rounded ${viewMode === 'album' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+                <LayoutGrid className="w-4 h-4" />
+              </button>
             </div>
           )}
         </div>
-        {!summaryOpen && (
-          <div className="flex items-center gap-2 pb-1">
-            <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 내보내기">
-              <Download className="w-3.5 h-3.5" />
-            </Button>
-            <label className="inline-flex">
-              <input type="file" accept=".json" className="hidden" onChange={handleImportFile} />
-              <Button asChild variant="outline" size="sm" className="gap-1 text-xs h-8 px-2 cursor-pointer" title="리스트 불러오기">
-                <span><Upload className="w-3.5 h-3.5" /></span>
-              </Button>
-            </label>
-            <Button onClick={() => {
-              if (viewMode === 'table') {
-                handleScreenshot(tableContentRef, 'list');
-              } else {
-                handleScreenshot(albumContentRef, 'album');
-              }
-            }} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장" disabled={screenshotLoading}>
-              <Camera className="w-3.5 h-3.5" />
-            </Button>
-            <div className="w-px h-5 bg-border mx-1" />
-            <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-              <Table2 className="w-4 h-4" />
-            </button>
-            <button onClick={() => setViewMode('album')} className={`p-2 rounded ${viewMode === 'album' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-          </div>
-        )}
       </div>
 
       {summaryOpen ? (
@@ -1358,6 +1362,7 @@ export default function HeroList() {
                 const screenshotKeys = new Set(['heroClass', 'name', 'level', 'element', 'skills']);
                 setVisibleCols(screenshotKeys);
               }}>스크린샷용</Button>
+
             </div>
           </div>
 

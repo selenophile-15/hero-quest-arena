@@ -1165,9 +1165,9 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       <div className="space-y-4 mt-4" ref={formRef} onKeyDown={handleKeyDown}>
         {/* ─── Row 1: Basic Info ─── */}
         <div className="card-fantasy p-4">
-          <div className="grid grid-cols-[1.5fr_auto_0.8fr_0.5fr_0.7fr_1fr_1fr] gap-3 items-end">
+          <div className="grid grid-cols-[1fr_1fr_auto_0.6fr_0.4fr_0.5fr_0.8fr_0.8fr] gap-3 items-end">
             <div>
-              <Label className="text-foreground/80 text-xs mb-1 block">이름</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block">직업</Label>
               <Select value={championName} onValueChange={v => { setChampionName(v); if (!hero) setName(v); }}>
                 <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -1176,6 +1176,11 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div>
+              <Label className="text-foreground/80 text-xs mb-1 block">이름</Label>
+              <Input ref={nameInputRef} value={name} onChange={e => { setName(e.target.value); setNameError(false); }} placeholder="이름 입력" className={`h-9 text-sm ${nameError ? 'border-red-500 ring-1 ring-red-500' : ''}`} />
+              {nameError && <p className="text-red-500 text-xs mt-0.5">이름을 입력해주세요</p>}
             </div>
             <div>
               <Label className="text-foreground/80 text-xs mb-1 block text-center">&nbsp;</Label>
@@ -1221,7 +1226,20 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         </div>
 
         {/* ─── Row 2: Stats + Seeds/Element + Skills + Equipment ─── */}
-        <div className="grid grid-cols-[200px_200px_1fr] gap-4">
+        <div className="grid grid-cols-[360px_200px_200px_1fr] gap-4">
+          {/* Champion Illustration placeholder */}
+          <div className="card-fantasy p-3 flex flex-col items-center justify-center">
+            <div className="w-full flex items-center justify-center">
+              <img
+                src={getChampionImagePath(championName)}
+                alt={championName}
+                className="max-w-full max-h-[340px] object-contain drop-shadow-lg rounded-full"
+                onError={e => { e.currentTarget.style.display = 'none'; }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">일러스트 준비 중</p>
+          </div>
+
           {/* Stats Panel */}
           <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
@@ -1333,7 +1351,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   {/* Leader skill row */}
                   <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0 border-b border-border/50">
                     <div className="px-1 py-1.5 flex items-center justify-center">
-                      <span className="px-1 py-0.5 rounded text-[10px] font-semibold bg-yellow-600/60 text-foreground">챔피언</span>
+                      <span className="px-1 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: '#c02020', color: 'white' }}>챔피언</span>
                     </div>
                     <div className="px-1 py-1.5 flex items-center justify-center">
                       <img src={`/images/skills/sk_champion/${champEng}_${leaderSkillTier}.webp`} alt="" className="w-9 h-9 object-contain"
@@ -1347,7 +1365,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                   {/* Aura Song skill row */}
                   <div className="grid grid-cols-[50px_44px_1fr_2fr] gap-0">
                     <div className="px-1 py-1.5 flex items-center justify-center">
-                      <span className="px-1 py-0.5 rounded text-[10px] font-semibold bg-cyan-700/60 text-foreground">오라</span>
+                      <span className="px-1 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: '#1a6b3c', color: 'white' }}>오라</span>
                     </div>
                     <div className="px-1 py-1.5 flex items-center justify-center">
                       {aurasongSkillIcon ? (
