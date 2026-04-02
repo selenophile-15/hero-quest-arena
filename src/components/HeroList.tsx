@@ -108,12 +108,26 @@ const QUALITY_RADIAL_COLOR: Record<string, string> = {
   epic: 'rgba(217,70,239,0.55)',
   legendary: 'rgba(250,204,21,0.6)',
 };
+const QUALITY_RADIAL_COLOR_LIGHT: Record<string, string> = {
+  common: 'rgba(160,160,175,0.35)',
+  uncommon: 'rgba(34,180,80,0.25)',
+  flawless: 'rgba(30,180,220,0.3)',
+  epic: 'rgba(180,40,200,0.3)',
+  legendary: 'rgba(210,170,0,0.35)',
+};
 const QUALITY_SHADOW_COLOR: Record<string, string> = {
   common: '0 0 6px rgba(220,220,220,0.5)',
   uncommon: '0 0 7px rgba(74,222,128,0.55)',
   flawless: '0 0 8px rgba(103,232,249,0.55)',
   epic: '0 0 10px rgba(217,70,239,0.6)',
   legendary: '0 0 12px rgba(250,204,21,0.7)',
+};
+const QUALITY_SHADOW_COLOR_LIGHT: Record<string, string> = {
+  common: '0 0 6px rgba(120,120,140,0.4)',
+  uncommon: '0 0 7px rgba(34,180,80,0.5)',
+  flawless: '0 0 8px rgba(30,180,220,0.5)',
+  epic: '0 0 10px rgba(180,40,200,0.5)',
+  legendary: '0 0 12px rgba(210,170,0,0.6)',
 };
 
 function normalizeJobName(name: string): string {
@@ -205,11 +219,26 @@ export default function HeroList() {
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
 
       const canvas = await html2canvas(targetRef.current, {
-        backgroundColor: '#1a1a2e',
+        backgroundColor: colorMode === 'light' ? '#f5f3f0' : '#1a1a2e',
         scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
+        onclone: (doc) => {
+          const clonedEl = doc.querySelector(`[data-screenshot-target]`) as HTMLElement;
+          if (clonedEl) {
+            // Force vertical-align: middle on all inline-block elements for uniform text height
+            clonedEl.querySelectorAll('td, th').forEach(cell => {
+              (cell as HTMLElement).style.verticalAlign = 'middle';
+            });
+            clonedEl.querySelectorAll('img, span, svg').forEach(el => {
+              const s = window.getComputedStyle(el);
+              if (s.display === 'inline-block' || s.display === 'inline') {
+                (el as HTMLElement).style.verticalAlign = 'middle';
+              }
+            });
+          }
+        },
       });
 
       const link = document.createElement('a');
@@ -222,7 +251,7 @@ export default function HeroList() {
       setCaptureMode(false);
       setScreenshotLoading(false);
     }
-  }, [listTab]);
+  }, [listTab, colorMode]);
 
   // Export handler
   const handleExport = useCallback(() => {
@@ -1154,7 +1183,7 @@ export default function HeroList() {
                   style={{
                     width: '64px',
                     ...(item
-                      ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] }
+                      ? { background: `radial-gradient(circle, ${(colorMode === 'light' ? QUALITY_RADIAL_COLOR_LIGHT : QUALITY_RADIAL_COLOR)[quality]} 0%, transparent 85%)`, boxShadow: (colorMode === 'light' ? QUALITY_SHADOW_COLOR_LIGHT : QUALITY_SHADOW_COLOR)[quality] }
                       : { background: 'hsl(var(--secondary) / 0.2)' }),
                   }}
                 >
@@ -1209,7 +1238,7 @@ export default function HeroList() {
                 <div
                   key={i}
                   className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} flex flex-col items-stretch overflow-hidden min-h-[78px]`}
-                  style={item ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}
+                  style={item ? { background: `radial-gradient(circle, ${(colorMode === 'light' ? QUALITY_RADIAL_COLOR_LIGHT : QUALITY_RADIAL_COLOR)[quality]} 0%, transparent 85%)`, boxShadow: (colorMode === 'light' ? QUALITY_SHADOW_COLOR_LIGHT : QUALITY_SHADOW_COLOR)[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}
                 >
                   <div className="w-full flex items-center justify-between px-0.5 pt-0.5" style={{ minHeight: '14px' }}>
                     {item ? (
@@ -1367,7 +1396,7 @@ export default function HeroList() {
           </div>
 
           {/* Table View */}
-          <div ref={tableContentRef} className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
+          <div ref={tableContentRef} data-screenshot-target className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
@@ -1562,7 +1591,7 @@ export default function HeroList() {
           </div>
 
           {/* Album Grid */}
-          <div ref={albumContentRef} className="grid grid-cols-6 gap-3">
+          <div ref={albumContentRef} data-screenshot-target className="grid grid-cols-6 gap-3">
             {albumFiltered.length === 0 ? (
               <div className="col-span-6 text-center py-12 text-muted-foreground">
                 {listTab === 'hero' ? '영웅을 추가해주세요' : '챔피언을 추가해주세요'}
