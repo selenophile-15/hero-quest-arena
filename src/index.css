@@ -292,33 +292,33 @@
     --card-foreground: 215 15% 88%;
     --popover: 230 15% 18%;
     --popover-foreground: 215 15% 88%;
-    --primary: 220 70% 55%;
+    --primary: 220 70% 65%;
     --primary-foreground: 0 0% 100%;
     --secondary: 230 12% 18%;
     --secondary-foreground: 220 18% 82%;
     --muted: 230 10% 16%;
-    --muted-foreground: 220 10% 58%;
-    --accent: 210 60% 48%;
+    --muted-foreground: 220 10% 62%;
+    --accent: 210 60% 55%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 12% 26%;
     --input: 220 12% 20%;
-    --ring: 220 70% 55%;
+    --ring: 220 70% 60%;
     --sidebar-background: 220 15% 10%;
     --sidebar-foreground: 220 18% 82%;
-    --sidebar-primary: 220 70% 55%;
+    --sidebar-primary: 220 70% 60%;
     --sidebar-primary-foreground: 220 15% 8%;
     --sidebar-accent: 220 12% 18%;
     --sidebar-accent-foreground: 220 18% 82%;
     --sidebar-border: 220 12% 22%;
-    --sidebar-ring: 220 70% 55%;
-    --gold-glow: 220 70% 55%;
-    --gold-dim: 225 45% 38%;
-    --fantasy-purple: 260 40% 50%;
-    --fantasy-blue: 220 60% 50%;
-    --hero-gradient: linear-gradient(135deg, hsl(220 70% 55%), hsl(210 60% 48%));
-    --card-glow: 0 0 20px hsl(220 70% 55% / 0.1);
+    --sidebar-ring: 220 70% 60%;
+    --gold-glow: 220 70% 60%;
+    --gold-dim: 225 45% 42%;
+    --fantasy-purple: 260 40% 55%;
+    --fantasy-blue: 220 60% 55%;
+    --hero-gradient: linear-gradient(135deg, hsl(220 70% 65%), hsl(210 60% 55%));
+    --card-glow: 0 0 20px hsl(220 70% 60% / 0.1);
     font-family: 'Noto Sans KR', sans-serif;
   }
 
@@ -360,7 +360,44 @@
     font-family: 'Noto Sans KR', sans-serif;
   }
 
-  /* ===== GOLD LIGHT ===== */
+  /* ===== ORANGE (오렌지) THEME (DARK) ===== */
+  :root[data-theme="orange"] {
+    --background: 20 15% 8%;
+    --foreground: 20 15% 88%;
+    --card: 230 15% 12%;
+    --card-foreground: 20 15% 88%;
+    --popover: 230 15% 18%;
+    --popover-foreground: 20 15% 88%;
+    --primary: 24 85% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 230 12% 18%;
+    --secondary-foreground: 20 18% 82%;
+    --muted: 230 10% 16%;
+    --muted-foreground: 20 10% 58%;
+    --accent: 16 75% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 20 12% 26%;
+    --input: 20 12% 20%;
+    --ring: 24 85% 55%;
+    --sidebar-background: 20 15% 10%;
+    --sidebar-foreground: 20 18% 82%;
+    --sidebar-primary: 24 85% 55%;
+    --sidebar-primary-foreground: 20 15% 8%;
+    --sidebar-accent: 20 12% 18%;
+    --sidebar-accent-foreground: 20 18% 82%;
+    --sidebar-border: 20 12% 22%;
+    --sidebar-ring: 24 85% 55%;
+    --gold-glow: 24 85% 55%;
+    --gold-dim: 20 60% 40%;
+    --fantasy-purple: 270 30% 45%;
+    --fantasy-blue: 210 40% 42%;
+    --hero-gradient: linear-gradient(135deg, hsl(24 85% 55%), hsl(16 75% 48%));
+    --card-glow: 0 0 20px hsl(24 85% 55% / 0.1);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
   :root[data-color-mode="light"][data-theme="gold"] {
     --background: 40 30% 96%;
     --foreground: 230 15% 15%;
@@ -707,7 +744,44 @@
     font-family: 'Noto Sans KR', sans-serif;
   }
 
-  * {
+  /* ===== ORANGE (오렌지) LIGHT ===== */
+  :root[data-color-mode="light"][data-theme="orange"] {
+    --background: 24 22% 96%;
+    --foreground: 20 15% 15%;
+    --card: 24 18% 98%;
+    --card-foreground: 20 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 15% 15%;
+    --primary: 24 75% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 24 15% 90%;
+    --secondary-foreground: 20 15% 25%;
+    --muted: 24 10% 92%;
+    --muted-foreground: 20 10% 45%;
+    --accent: 16 65% 42%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 24 15% 82%;
+    --input: 24 15% 85%;
+    --ring: 24 75% 45%;
+    --sidebar-background: 24 15% 95%;
+    --sidebar-foreground: 20 15% 25%;
+    --sidebar-primary: 24 75% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 24 15% 90%;
+    --sidebar-accent-foreground: 20 15% 25%;
+    --sidebar-border: 24 15% 82%;
+    --sidebar-ring: 24 75% 45%;
+    --gold-glow: 24 75% 45%;
+    --gold-dim: 20 50% 40%;
+    --fantasy-purple: 270 30% 48%;
+    --fantasy-blue: 210 38% 45%;
+    --hero-gradient: linear-gradient(135deg, hsl(24 75% 48%), hsl(16 65% 42%));
+    --card-glow: 0 0 20px hsl(24 75% 48% / 0.08);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
     @apply border-border;
   }
 

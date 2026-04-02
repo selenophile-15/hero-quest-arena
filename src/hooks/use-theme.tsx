@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-export type ThemeMode = 'gold' | 'moonlight' | 'olive' | 'wine' | 'cyan' | 'purple' | 'blue' | 'caramel';
+export type ThemeMode = 'gold' | 'moonlight' | 'olive' | 'wine' | 'cyan' | 'purple' | 'blue' | 'caramel' | 'orange';
 export type ColorMode = 'dark' | 'light';
 
 interface ThemeContextType {
@@ -23,7 +23,7 @@ const COLOR_MODE_KEY = 'quest-sim-color-mode';
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     const stored = localStorage.getItem(THEME_KEY);
-    if (['moonlight', 'olive', 'wine', 'cyan', 'purple', 'blue', 'caramel'].includes(stored || '')) return stored as ThemeMode;
+    if (['moonlight', 'olive', 'wine', 'cyan', 'purple', 'blue', 'caramel', 'orange'].includes(stored || '')) return stored as ThemeMode;
     return 'gold';
   });
 

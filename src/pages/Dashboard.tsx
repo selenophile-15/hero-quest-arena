@@ -21,13 +21,14 @@ const TABS = [
 type TabId = typeof TABS[number]['id'];
 
 const THEMES: { id: ThemeMode; label: string; desc: string; color: string }[] = [
-  { id: 'gold', label: '옐로우', desc: '따뜻한 황금빛', color: 'hsl(40 85% 55%)' },
-  { id: 'moonlight', label: '라벤더', desc: '은은한 연보랏빛', color: 'hsl(245 35% 72%)' },
-  { id: 'olive', label: '올리브그린', desc: '자연의 올리브빛', color: 'hsl(82 55% 48%)' },
   { id: 'wine', label: '로제', desc: '깊은 와인빛 레드', color: 'hsl(348 65% 58%)' },
+  { id: 'orange', label: '오렌지', desc: '활기찬 오렌지빛', color: 'hsl(24 85% 55%)' },
+  { id: 'gold', label: '옐로우', desc: '따뜻한 황금빛', color: 'hsl(40 85% 55%)' },
+  { id: 'olive', label: '올리브그린', desc: '자연의 올리브빛', color: 'hsl(82 55% 48%)' },
   { id: 'cyan', label: '소라', desc: '시원한 시안+틸 빛', color: 'hsl(185 65% 50%)' },
-  { id: 'purple', label: '퍼플', desc: '우아한 보랏빛', color: 'hsl(280 55% 62%)' },
   { id: 'blue', label: '블루', desc: '코발트 블루', color: 'hsl(220 70% 55%)' },
+  { id: 'moonlight', label: '라벤더', desc: '은은한 연보랏빛', color: 'hsl(245 35% 72%)' },
+  { id: 'purple', label: '퍼플', desc: '우아한 보랏빛', color: 'hsl(280 55% 62%)' },
   { id: 'caramel', label: '카라멜', desc: '버버리풍 황갈색', color: 'hsl(32 55% 52%)' },
 ];
 
