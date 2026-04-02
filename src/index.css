@@ -571,12 +571,23 @@
   }
 }
 
-/* Primary-colored button text: always white */
+/* Primary/accent button text: always white */
 .bg-primary, .bg-accent,
 [class*="bg-primary"] button,
 [class*="bg-accent"] button {
   color: white !important;
 }
+
+/* Skill badge text: always white regardless of color mode */
+.skill-badge-unique,
+.skill-badge-champion,
+.skill-badge-aura {
+  color: white !important;
+  font-weight: 700;
+}
+.skill-badge-unique { background-color: #7d0354; }
+.skill-badge-champion { background-color: #c02020; }
+.skill-badge-aura { background-color: #1a6b3c; }
 
 /* Screenshot mode: bold all table text */
 .list-table-screenshot td {
