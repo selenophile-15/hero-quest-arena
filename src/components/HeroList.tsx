@@ -556,6 +556,19 @@ export default function HeroList() {
       return <span className={`${lh} ${CLASS_LINE_COLORS[hero.classLine] || 'text-foreground'}`}>{hero.classLine}</span>;
     }
     if (colKey === 'heroClass') {
+      // For champions: show champion name + icon + promoted badge
+      if (hero.type === 'champion') {
+        const isPromoted = hero.promoted;
+        if (!hero.championName) return <span className="text-muted-foreground">-</span>;
+        return (
+          <span className={`${wrapCls} ${lh}`}>
+            <img src={getChampionImagePath(hero.championName)} alt="" className={`${iconCls} rounded-full`} onError={e => { e.currentTarget.style.display = 'none'; }} />
+            {spacer}
+            <span className={`whitespace-nowrap ${capture ? 'inline-block align-middle leading-none' : ''} ${isPromoted ? 'theme-highlight-40' : ''}`}>{hero.championName}</span>
+            {isPromoted && <Award className="w-3.5 h-3.5 theme-highlight-40" />}
+          </span>
+        );
+      }
       if (!hero.heroClass) return <span className="text-muted-foreground">-</span>;
       return (
         <span className={`${wrapCls} ${lh}`}>
