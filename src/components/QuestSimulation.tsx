@@ -2044,7 +2044,7 @@ export default function QuestSimulation() {
                   {/* Table 4: 특수 (광전사, 크로노맨서 등) */}
                   {displayResults.some(hr => hr.berserkerThresholds || hr.chronomancerRetries !== undefined) && (
                     <div>
-                      <div className="text-sm font-semibold text-yellow-400 mb-2">⚡ 특수 정보</div>
+                      <div className="text-sm font-semibold text-primary mb-2"><Flame className="w-4 h-4 inline mr-1 text-orange-400" />특수 정보</div>
                       <div className="overflow-x-auto">
                         <div className="space-y-1">
                           {displayResults.map(hr => {
