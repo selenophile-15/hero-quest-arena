@@ -832,7 +832,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
           </div>
 
-          {/* Detail Stats */}
+          {/* Detail Stats - narrower since illustration expanded */}
           <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>기타 상세 스탯</h3>
             <div className="space-y-1 text-xs">
