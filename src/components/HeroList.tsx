@@ -1183,7 +1183,7 @@ export default function HeroList() {
                   style={{
                     width: '64px',
                     ...(item
-                      ? { background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`, boxShadow: QUALITY_SHADOW_COLOR[quality] }
+                      ? { background: `radial-gradient(circle, ${(colorMode === 'light' ? QUALITY_RADIAL_COLOR_LIGHT : QUALITY_RADIAL_COLOR)[quality]} 0%, transparent 85%)`, boxShadow: (colorMode === 'light' ? QUALITY_SHADOW_COLOR_LIGHT : QUALITY_SHADOW_COLOR)[quality] }
                       : { background: 'hsl(var(--secondary) / 0.2)' }),
                   }}
                 >
