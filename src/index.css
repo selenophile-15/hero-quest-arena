@@ -551,9 +551,159 @@
 
     font-family: 'Noto Sans KR', sans-serif;
   }
-}
 
-@layer base {
+  /* ===== CYAN (소라) LIGHT ===== */
+  :root[data-color-mode="light"][data-theme="cyan"] {
+    --background: 185 20% 96%;
+    --foreground: 190 15% 15%;
+    --card: 185 15% 98%;
+    --card-foreground: 190 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 190 15% 15%;
+    --primary: 185 55% 42%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 185 15% 90%;
+    --secondary-foreground: 190 15% 25%;
+    --muted: 185 10% 92%;
+    --muted-foreground: 190 10% 45%;
+    --accent: 172 48% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 185 15% 82%;
+    --input: 185 15% 85%;
+    --ring: 185 55% 40%;
+    --sidebar-background: 185 15% 95%;
+    --sidebar-foreground: 190 15% 25%;
+    --sidebar-primary: 185 55% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 185 15% 90%;
+    --sidebar-accent-foreground: 190 15% 25%;
+    --sidebar-border: 185 15% 82%;
+    --sidebar-ring: 185 55% 40%;
+    --gold-glow: 185 55% 40%;
+    --gold-dim: 188 35% 42%;
+    --fantasy-purple: 270 35% 50%;
+    --fantasy-blue: 200 45% 48%;
+    --hero-gradient: linear-gradient(135deg, hsl(185 55% 42%), hsl(172 48% 38%));
+    --card-glow: 0 0 20px hsl(185 55% 42% / 0.08);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  /* ===== PURPLE (퍼플) LIGHT ===== */
+  :root[data-color-mode="light"][data-theme="purple"] {
+    --background: 280 18% 96%;
+    --foreground: 280 15% 15%;
+    --card: 280 12% 98%;
+    --card-foreground: 280 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 280 15% 15%;
+    --primary: 280 45% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 280 15% 90%;
+    --secondary-foreground: 280 15% 25%;
+    --muted: 280 10% 92%;
+    --muted-foreground: 280 10% 45%;
+    --accent: 290 38% 46%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 280 15% 82%;
+    --input: 280 15% 85%;
+    --ring: 280 45% 48%;
+    --sidebar-background: 280 12% 95%;
+    --sidebar-foreground: 280 15% 25%;
+    --sidebar-primary: 280 45% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 280 15% 90%;
+    --sidebar-accent-foreground: 280 15% 25%;
+    --sidebar-border: 280 15% 82%;
+    --sidebar-ring: 280 45% 48%;
+    --gold-glow: 280 45% 48%;
+    --gold-dim: 285 30% 45%;
+    --fantasy-purple: 290 35% 50%;
+    --fantasy-blue: 250 35% 52%;
+    --hero-gradient: linear-gradient(135deg, hsl(280 45% 52%), hsl(290 38% 46%));
+    --card-glow: 0 0 20px hsl(280 45% 52% / 0.08);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  /* ===== BLUE (블루) LIGHT ===== */
+  :root[data-color-mode="light"][data-theme="blue"] {
+    --background: 220 18% 96%;
+    --foreground: 220 15% 15%;
+    --card: 220 12% 98%;
+    --card-foreground: 220 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
+    --primary: 220 60% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 90%;
+    --secondary-foreground: 220 15% 25%;
+    --muted: 220 10% 92%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 210 52% 44%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 15% 82%;
+    --input: 220 15% 85%;
+    --ring: 220 60% 45%;
+    --sidebar-background: 220 12% 95%;
+    --sidebar-foreground: 220 15% 25%;
+    --sidebar-primary: 220 60% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 90%;
+    --sidebar-accent-foreground: 220 15% 25%;
+    --sidebar-border: 220 15% 82%;
+    --sidebar-ring: 220 60% 45%;
+    --gold-glow: 220 60% 45%;
+    --gold-dim: 225 40% 42%;
+    --fantasy-purple: 260 35% 50%;
+    --fantasy-blue: 220 55% 48%;
+    --hero-gradient: linear-gradient(135deg, hsl(220 60% 48%), hsl(210 52% 44%));
+    --card-glow: 0 0 20px hsl(220 60% 48% / 0.08);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  /* ===== CARAMEL (카라멜) LIGHT ===== */
+  :root[data-color-mode="light"][data-theme="caramel"] {
+    --background: 32 22% 96%;
+    --foreground: 30 15% 15%;
+    --card: 32 18% 98%;
+    --card-foreground: 30 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 15% 15%;
+    --primary: 32 50% 46%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 15% 90%;
+    --secondary-foreground: 30 15% 25%;
+    --muted: 32 10% 92%;
+    --muted-foreground: 30 10% 45%;
+    --accent: 25 45% 40%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 32 15% 82%;
+    --input: 32 15% 85%;
+    --ring: 32 50% 42%;
+    --sidebar-background: 32 15% 95%;
+    --sidebar-foreground: 30 15% 25%;
+    --sidebar-primary: 32 50% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 32 15% 90%;
+    --sidebar-accent-foreground: 30 15% 25%;
+    --sidebar-border: 32 15% 82%;
+    --sidebar-ring: 32 50% 42%;
+    --gold-glow: 32 50% 42%;
+    --gold-dim: 28 35% 40%;
+    --fantasy-purple: 270 30% 48%;
+    --fantasy-blue: 210 38% 45%;
+    --hero-gradient: linear-gradient(135deg, hsl(32 50% 46%), hsl(25 45% 40%));
+    --card-glow: 0 0 20px hsl(32 50% 46% / 0.08);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+}
   * {
     @apply border-border;
   }
