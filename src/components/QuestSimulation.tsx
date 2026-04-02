@@ -1495,19 +1495,29 @@ export default function QuestSimulation() {
                           const { default: html2canvas } = await import('html2canvas');
                           const allCells = el.querySelectorAll('td, th');
                           allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
+                          const isLight = document.documentElement.classList.contains('light');
                           const canvas = await html2canvas(el, {
-                            backgroundColor: '#1a1a2e',
+                            backgroundColor: isLight ? '#f5f3f0' : '#1a1a2e',
                             useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
-                            windowWidth: el.scrollWidth, windowHeight: el.scrollHeight,
-                            width: el.scrollWidth, height: el.scrollHeight,
+                            windowWidth: el.scrollWidth + 48, windowHeight: el.scrollHeight + 48,
+                            width: el.scrollWidth + 48, height: el.scrollHeight + 48,
                             onclone: (doc) => {
                               const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
                               if (clonedEl) {
                                 clonedEl.style.overflow = 'visible';
                                 clonedEl.style.height = 'auto';
                                 clonedEl.style.maxHeight = 'none';
+                                clonedEl.style.padding = '24px';
                                 clonedEl.querySelectorAll('td, th').forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
                                 clonedEl.querySelectorAll('.flex').forEach(flex => { (flex as HTMLElement).style.alignItems = (flex as HTMLElement).style.alignItems || 'center'; });
+                                // Fix section title visibility - ensure text-foreground color
+                                clonedEl.querySelectorAll('h3').forEach(h3 => {
+                                  (h3 as HTMLElement).style.color = isLight ? '#1a1a2e' : '#e8e8f0';
+                                });
+                                // Fix sub-section titles (yellow text)
+                                clonedEl.querySelectorAll('.text-yellow-400').forEach(el => {
+                                  (el as HTMLElement).style.color = isLight ? '#b45309' : '#facc15';
+                                });
                               }
                             }
                           });
