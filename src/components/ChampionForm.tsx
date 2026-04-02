@@ -477,7 +477,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
 
           <div className="grid grid-cols-3 gap-0.5 w-[90%] p-0.5 mb-0.5 self-center">
             <div
-              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden"
+              className="aspect-square rounded border border-border/30 bg-background/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all"
               onClick={(e) => { e.stopPropagation(); setEnchantInitialTab('element'); setEnchantDialogOpen(true); }}
             >
               {displayElement ? (
