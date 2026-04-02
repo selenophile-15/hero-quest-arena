@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -842,7 +842,7 @@ export default function QuestSimulation() {
                   // Calculate modified values based on mini-boss
                   const hpMod = selectedMiniBoss === 'huge' ? 2.0 : selectedMiniBoss === 'dire' ? 1.5 : selectedMiniBoss === 'legendary' ? 1.5 : 1.0;
                   const atkMod = selectedMiniBoss === 'legendary' ? 1.25 : 1.0;
-                  const aoeMod = selectedMiniBoss === 'huge' ? 2.0 : 1.0;
+                  const aoeMod = selectedMiniBoss === 'huge' ? 3.0 : 1.0;
                   const displayHp = Math.round(currentQuest.hp * hpMod);
                   const displayAtk = Math.round(currentQuest.atk * atkMod);
                   const displayAoeChance = Math.min(currentQuest.aoeChance * aoeMod, 100);
@@ -878,7 +878,7 @@ export default function QuestSimulation() {
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                          <span className="text-xs text-foreground">광역 확률</span>
+                          <span className="text-xs text-foreground">광역 공격 확률</span>
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAoeMod ? 'text-yellow-400' : 'text-foreground'}`}>
                           {displayAoeChance}%
@@ -911,15 +911,13 @@ export default function QuestSimulation() {
                           <span className="text-xs text-foreground">방어력 기준치</span>
                         </div>
                       </div>
-                      {mobEva > 0 && (
-                        <div className="flex items-center justify-between px-1">
-                          <div className="flex items-center gap-1.5">
-                            <img src="/images/stats/evasion.webp" alt="" className="w-3.5 h-3.5" />
-                            <span className="text-xs text-foreground">회피</span>
-                          </div>
-                          <span className="text-sm font-bold font-mono text-blue-400">{mobEva}%</span>
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1.5">
+                          <Wind className="w-3.5 h-3.5 text-teal-400" />
+                          <span className="text-xs text-foreground">회피</span>
                         </div>
-                      )}
+                        <span className={`text-sm font-bold font-mono ${mobEva > 0 ? 'text-teal-400' : 'text-foreground'}`}>{mobEva}%</span>
+                      </div>
                     </div>
                   );
                 })()}
@@ -1001,24 +999,22 @@ export default function QuestSimulation() {
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          {/* Use div-based lines instead of SVG for html2canvas compatibility */}
-                          {heroLayout.map(h => {
-                            const yPinPx = (1 - h.pinPct / 100) * barH;
-                            const yLabelPx = (1 - h.labelPct / 100) * barH;
-                            const top = Math.min(yPinPx, yLabelPx);
-                            const height = Math.abs(yLabelPx - yPinPx) || 1;
-                            return (
-                              <div key={`line-${h.id}`} className="absolute pointer-events-none" style={{
-                                left: '70px', top: `${top}px`, width: '28px', height: `${height}px`,
-                                borderLeft: `1.5px solid ${h.color}`,
-                                borderBottom: yLabelPx > yPinPx ? `1.5px solid ${h.color}` : 'none',
-                                borderTop: yLabelPx < yPinPx ? `1.5px solid ${h.color}` : 'none',
-                                borderRight: `1.5px solid ${h.color}`,
-                                borderRadius: yLabelPx > yPinPx ? '0 0 6px 6px' : '6px 6px 0 0',
-                                opacity: 0.8,
-                              }} />
-                            );
-                          })}
+                          {/* SVG bezier curves for connecting hero pins to labels */}
+                          <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
+                            {heroLayout.map(h => {
+                              const yPin = (1 - h.pinPct / 100) * barH;
+                              const yLabel = (1 - h.labelPct / 100) * barH;
+                              const x1 = 70;
+                              const x2 = 98;
+                              const cx = (x1 + x2) / 2;
+                              return (
+                                <path key={`line-${h.id}`}
+                                  d={`M ${x1} ${yPin} C ${cx} ${yPin}, ${cx} ${yLabel}, ${x2} ${yLabel}`}
+                                  fill="none" stroke={h.color} strokeWidth="1.5" opacity="0.8"
+                                />
+                              );
+                            })}
+                          </svg>
                           {heroLayout.map(h => (
                             <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '100px', transform: 'translateY(50%)', zIndex: 5 }}>
                               <span className="text-[11px] font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
@@ -1445,6 +1441,26 @@ export default function QuestSimulation() {
                           });
                         })()}
                       </tr>
+                      {/* Monster Crit Chance row - same logic as detailed results */}
+                      {simResult && (
+                        <tr className="border-b border-border/20 bg-muted/20">
+                          <td className="py-1.5 px-1.5 text-red-400 font-medium text-sm">몬스터 치확</td>
+                          {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                            const hero = selectedHeroes[slotIdx];
+                            if (!hero) return <td key={`mcrit-empty-${slotIdx}`} />;
+                            const heroResult = simResult.heroResults.find(r => r.heroId === hero.id);
+                            if (!heroResult) return <td key={`mcrit-na-${slotIdx}`} className="text-center text-foreground/30">-</td>;
+                            const mc = heroResult.monsterCritChance;
+                            return (
+                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm font-bold">
+                                <span className={mc > 10 ? 'text-red-400' : 'text-orange-300'}>
+                                  {mc}%
+                                </span>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      )}
                     </>
                   );
                 })()}
