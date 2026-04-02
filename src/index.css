@@ -573,6 +573,8 @@
 
 /* Primary/accent button text: always white */
 .bg-primary, .bg-accent,
+.bg-primary *,  .bg-accent *,
+.bg-primary.text-white, .bg-accent.text-white,
 [class*="bg-primary"] button,
 [class*="bg-accent"] button {
   color: white !important;
