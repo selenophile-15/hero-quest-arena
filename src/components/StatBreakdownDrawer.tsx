@@ -768,11 +768,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     const isIdolSrc = !!(src as any).isIdol;
                     return (
                       <tr key={i} className="border-b border-border/20">
-                        <td className="py-1 text-white/70">
+                        <td className="py-1 text-foreground/70">
                           <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
                           {src.name}
                         </td>
-                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-white'}`}>+{val}%</td>
+                        <td className={`py-1 text-right tabular-nums ${isIdolSrc ? 'text-red-400 font-semibold' : 'text-foreground'}`}>+{val}%</td>
                       </tr>
                     );
                   })}
