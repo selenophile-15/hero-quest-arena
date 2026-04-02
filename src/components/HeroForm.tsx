@@ -836,14 +836,23 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
             </div>
           </div>
 
-          {/* Detail Stats - narrower since illustration expanded */}
+          {/* Detail Stats - editable */}
           <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>기타 상세 스탯</h3>
             <div className="space-y-1 text-xs">
               {DETAIL_STATS.map((stat, i) => (
-                <div key={i} className="flex items-center justify-between py-0.5 border-b border-border/30">
-                  <span className="text-foreground/70">{stat}</span>
-                  <span className="text-foreground tabular-nums">-</span>
+                <div key={i} className="flex items-center justify-between py-0.5 border-b border-border/30 gap-2">
+                  <span className="text-foreground/70 flex-1 min-w-0 truncate">{stat}</span>
+                  <Input
+                    type="number"
+                    value={detailStats[stat] || ''}
+                    onChange={e => {
+                      const v = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                      setDetailStats(prev => ({ ...prev, [stat]: isNaN(v) ? 0 : v }));
+                    }}
+                    className="h-6 w-20 text-xs text-right tabular-nums"
+                    placeholder="0"
+                  />
                 </div>
               ))}
             </div>
