@@ -761,7 +761,15 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
 
           {/* Stats only */}
           <div className="card-fantasy p-3">
-            <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
+              <Button type="button" variant={compareMode ? 'default' : 'outline'} size="sm" onClick={() => {
+                if (!compareMode && calcStats) setBaselineStats(calcStats);
+                setCompareMode(!compareMode);
+              }} disabled={!calcStats} className="text-[10px] h-6 px-2 gap-1">
+                {compareMode ? '🔄 비교 중' : '📈 비교 모드'}
+              </Button>
+            </div>
             <div className="space-y-1.5">
               {heroClass && (
                 <div className="flex items-center justify-center py-2 mb-1">
