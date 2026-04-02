@@ -360,7 +360,44 @@
     font-family: 'Noto Sans KR', sans-serif;
   }
 
-  /* ===== GOLD LIGHT ===== */
+  /* ===== ORANGE (오렌지) THEME (DARK) ===== */
+  :root[data-theme="orange"] {
+    --background: 20 15% 8%;
+    --foreground: 20 15% 88%;
+    --card: 230 15% 12%;
+    --card-foreground: 20 15% 88%;
+    --popover: 230 15% 18%;
+    --popover-foreground: 20 15% 88%;
+    --primary: 24 85% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 230 12% 18%;
+    --secondary-foreground: 20 18% 82%;
+    --muted: 230 10% 16%;
+    --muted-foreground: 20 10% 58%;
+    --accent: 16 75% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 20 12% 26%;
+    --input: 20 12% 20%;
+    --ring: 24 85% 55%;
+    --sidebar-background: 20 15% 10%;
+    --sidebar-foreground: 20 18% 82%;
+    --sidebar-primary: 24 85% 55%;
+    --sidebar-primary-foreground: 20 15% 8%;
+    --sidebar-accent: 20 12% 18%;
+    --sidebar-accent-foreground: 20 18% 82%;
+    --sidebar-border: 20 12% 22%;
+    --sidebar-ring: 24 85% 55%;
+    --gold-glow: 24 85% 55%;
+    --gold-dim: 20 60% 40%;
+    --fantasy-purple: 270 30% 45%;
+    --fantasy-blue: 210 40% 42%;
+    --hero-gradient: linear-gradient(135deg, hsl(24 85% 55%), hsl(16 75% 48%));
+    --card-glow: 0 0 20px hsl(24 85% 55% / 0.1);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
   :root[data-color-mode="light"][data-theme="gold"] {
     --background: 40 30% 96%;
     --foreground: 230 15% 15%;
