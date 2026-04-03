@@ -10,7 +10,7 @@ import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '
 import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
-import ListSummary from './ListSummary';
+import ListSummary, { ListSummaryHandle } from './ListSummary';
 import SaveListDialog from './SaveListDialog';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
