@@ -532,6 +532,8 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
   const [ownedIds, setOwnedIds] = useState<string[]>(() => loadIds(STORAGE_KEY_OWNED));
   const [plannedIds, setPlannedIds] = useState<string[]>(() => loadIds(STORAGE_KEY_PLANNED));
   const [pickerOpen, setPickerOpen] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const { colorMode } = useTheme();
 
   const ownedSet = useMemo(() => new Set(ownedIds), [ownedIds]);
   const plannedSet = useMemo(() => new Set(plannedIds), [plannedIds]);
@@ -546,8 +548,42 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
     saveIds(STORAGE_KEY_PLANNED, newPlanned);
   }, []);
 
+  const handleScreenshot = useCallback(async () => {
+    if (!summaryRef.current) return;
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = '<div style="color:white;font-size:18px;">📸 캡처 중...</div>';
+    document.body.appendChild(overlay);
+    try {
+      const bgColor = colorMode === 'light' ? '#f5f3f0' : '#1a1a2e';
+      const canvas = await html2canvas(summaryRef.current, {
+        backgroundColor: bgColor,
+        useCORS: true,
+        scrollY: -window.scrollY,
+        scrollX: 0,
+        scale: 2,
+        logging: false,
+      });
+      const link = document.createElement('a');
+      link.download = `리스트요약_${new Date().toISOString().slice(0, 10)}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e) {
+      console.error('Screenshot failed:', e);
+    } finally {
+      document.body.removeChild(overlay);
+    }
+  }, [colorMode]);
+
   return (
     <div className="space-y-4">
+      {/* Screenshot button */}
+      <div className="flex justify-end">
+        <Button size="sm" onClick={handleScreenshot} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90 btn-force-white">
+          <Camera size={14} /> 스크린샷
+        </Button>
+      </div>
+      <div ref={summaryRef} className="space-y-4">
       <MatrixGrid
         allHeroes={heroes}
         ownedIds={ownedSet}
