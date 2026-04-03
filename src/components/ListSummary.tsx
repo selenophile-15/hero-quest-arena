@@ -1,9 +1,11 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Users } from 'lucide-react';
+import { Plus, Users, Camera } from 'lucide-react';
+import { useTheme } from '@/hooks/use-theme';
+import html2canvas from 'html2canvas';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -360,7 +362,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
                                 <span className="text-[11px] font-semibold text-white">
                                   {h.type === 'hero' ? h.heroClass : (h.championName || h.name)}
                                 </span>
-                                <span className={`text-[10px] font-bold px-1 rounded text-white ${pos === '미지정' ? 'bg-gray-600' : (POSITION_COLORS[pos] || 'bg-secondary')}`}>
+                                <span className={`text-[10px] font-bold px-1 rounded stat-box-white ${pos === '미지정' ? 'bg-gray-600' : (POSITION_COLORS[pos] || 'bg-secondary')}`}>
                                   {pos}
                                 </span>
                               </div>
@@ -530,6 +532,8 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
   const [ownedIds, setOwnedIds] = useState<string[]>(() => loadIds(STORAGE_KEY_OWNED));
   const [plannedIds, setPlannedIds] = useState<string[]>(() => loadIds(STORAGE_KEY_PLANNED));
   const [pickerOpen, setPickerOpen] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const { colorMode } = useTheme();
 
   const ownedSet = useMemo(() => new Set(ownedIds), [ownedIds]);
   const plannedSet = useMemo(() => new Set(plannedIds), [plannedIds]);
@@ -544,8 +548,42 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
     saveIds(STORAGE_KEY_PLANNED, newPlanned);
   }, []);
 
+  const handleScreenshot = useCallback(async () => {
+    if (!summaryRef.current) return;
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = '<div style="color:white;font-size:18px;">📸 캡처 중...</div>';
+    document.body.appendChild(overlay);
+    try {
+      const bgColor = colorMode === 'light' ? '#f5f3f0' : '#1a1a2e';
+      const canvas = await html2canvas(summaryRef.current, {
+        backgroundColor: bgColor,
+        useCORS: true,
+        scrollY: -window.scrollY,
+        scrollX: 0,
+        scale: 2,
+        logging: false,
+      });
+      const link = document.createElement('a');
+      link.download = `리스트요약_${new Date().toISOString().slice(0, 10)}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e) {
+      console.error('Screenshot failed:', e);
+    } finally {
+      document.body.removeChild(overlay);
+    }
+  }, [colorMode]);
+
   return (
     <div className="space-y-4">
+      {/* Screenshot button */}
+      <div className="flex justify-end">
+        <Button size="sm" onClick={handleScreenshot} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90 btn-force-white">
+          <Camera size={14} /> 스크린샷
+        </Button>
+      </div>
+      <div ref={summaryRef} className="space-y-4">
       <MatrixGrid
         allHeroes={heroes}
         ownedIds={ownedSet}
@@ -560,6 +598,8 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
           <PositionChart owned={ownedHeroes} planned={plannedHeroes} />
         </div>
       )}
+
+      </div>
 
       {pickerOpen && (
         <HeroPicker
