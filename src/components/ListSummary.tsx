@@ -599,6 +599,8 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
         </div>
       )}
 
+      </div>
+
       {pickerOpen && (
         <HeroPicker
           open
