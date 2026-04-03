@@ -1,9 +1,11 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Users } from 'lucide-react';
+import { Plus, Users, Camera } from 'lucide-react';
+import { useTheme } from '@/hooks/use-theme';
+import html2canvas from 'html2canvas';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
