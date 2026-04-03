@@ -362,7 +362,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
                                 <span className="text-[11px] font-semibold text-white">
                                   {h.type === 'hero' ? h.heroClass : (h.championName || h.name)}
                                 </span>
-                                <span className={`text-[10px] font-bold px-1 rounded text-white ${pos === '미지정' ? 'bg-gray-600' : (POSITION_COLORS[pos] || 'bg-secondary')}`}>
+                                <span className={`text-[10px] font-bold px-1 rounded stat-box-white ${pos === '미지정' ? 'bg-gray-600' : (POSITION_COLORS[pos] || 'bg-secondary')}`}>
                                   {pos}
                                 </span>
                               </div>
