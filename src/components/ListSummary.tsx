@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Users, Camera } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
 import html2canvas from 'html2canvas';
+import { saveCanvasImage } from '@/lib/fileDownload';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -576,10 +577,7 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
         logging: false,
       });
       el.style.padding = origPad;
-      const link = document.createElement('a');
-      link.download = `리스트요약_${new Date().toISOString().slice(0, 10)}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      await saveCanvasImage(canvas, `리스트요약_${new Date().toISOString().slice(0, 10)}.png`, 'image/png');
     } catch (e) {
       console.error('Screenshot failed:', e);
     } finally {

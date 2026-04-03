@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Swords, Shield, Trophy } from "lucide-react";
+import { Monitor, Swords, Shield, Trophy } from "lucide-react";
+import { useMobileGestures } from "@/hooks/use-mobile-gestures";
+import { useDesktopModeState } from "@/hooks/use-desktop-mode";
 
 import landingBg from "@/assets/landing-bg.jpg";
 import titleLogo from "@/assets/title-logo.png";
@@ -11,11 +13,14 @@ import featureRanking from "@/assets/feature-ranking.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { desktopMode, setDesktopMode } = useDesktopModeState();
   const starsRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
   const shootingStarsRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+
+  useMobileGestures(desktopMode);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -76,6 +81,19 @@ const Index = () => {
 
   return (
     <div className="min-h-[200vh] bg-background relative overflow-hidden">
+      <div className="fixed top-4 right-4 z-20">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setDesktopMode((value) => !value)}
+          title={desktopMode ? '모바일 모드로 전환' : '데스크탑 모드로 전환'}
+          className="h-9 gap-2 border-border/70 bg-card/80 px-3 text-xs text-foreground backdrop-blur-sm"
+        >
+          <Monitor className="w-4 h-4" />
+          {desktopMode ? '데스크탑 모드 ON' : '데스크탑 모드'}
+        </Button>
+      </div>
+
       <style>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0.1; transform: scale(0.8); }

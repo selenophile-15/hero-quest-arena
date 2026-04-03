@@ -32,6 +32,7 @@ import SavedResults from '@/components/SavedResults';
 import CompareAnalysis from '@/components/CompareAnalysis';
 import { saveSimulationResult, SavedSimulationSummary } from '@/lib/savedSimulations';
 import { toast } from '@/hooks/use-toast';
+import { saveCanvasImage } from '@/lib/fileDownload';
 
 // Quest data types
 interface QuestTime {
@@ -666,10 +667,7 @@ export default function QuestSimulation() {
                     }
                   });
                   allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = ''; });
-                  const link = document.createElement('a');
-                  link.download = `quest-sim-${Date.now()}.jpg`;
-                  link.href = canvas.toDataURL('image/jpeg', 0.92);
-                  link.click();
+                  await saveCanvasImage(canvas, `quest-sim-${Date.now()}.jpg`, 'image/jpeg', 0.92);
                 } finally {
                   overlay.remove();
                 }

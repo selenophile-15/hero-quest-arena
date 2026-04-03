@@ -9,6 +9,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { JOB_NAME_MAP, CHAMPION_NAME_MAP } from '@/lib/nameMap';
 import { HERO_CLASS_MAP, CHAMPION_NAMES } from '@/lib/gameData';
+import { saveBlobFile } from '@/lib/fileDownload';
 
 interface SaveListDialogProps {
   open: boolean;
@@ -102,17 +103,16 @@ export default function SaveListDialog({ open, onOpenChange, heroes }: SaveListD
   const isAllChecked = useMemo(() => displayList.length > 0 && displayList.every(h => selectedIds.has(h.id)), [displayList, selectedIds]);
   const isSomeChecked = useMemo(() => displayList.some(h => selectedIds.has(h.id)) && !isAllChecked, [displayList, selectedIds, isAllChecked]);
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     const selected = heroes.filter(h => selectedIds.has(h.id));
     if (selected.length === 0) return;
     const data = JSON.stringify(selected, null, 2);
     const blob = new Blob([data], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = `quest_sim_backup_${new Date().toISOString().slice(0, 10)}.txt`;
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
+    await saveBlobFile(
+      blob,
+      `quest_sim_backup_${new Date().toISOString().slice(0, 10)}.txt`,
+      '자동 저장이 안 되면 공유 또는 다른 앱으로 열기를 사용해 주세요.',
+    );
     onOpenChange(false);
   }, [heroes, selectedIds, onOpenChange]);
 

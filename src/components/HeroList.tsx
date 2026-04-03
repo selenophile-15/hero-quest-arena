@@ -8,6 +8,7 @@ import { getHeroes, saveHeroes, deleteHero } from '@/lib/storage';
 import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_MAP, JOB_NAME_MAP, SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
+import { saveCanvasImage } from '@/lib/fileDownload';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
 import ListSummary, { ListSummaryHandle } from './ListSummary';
@@ -182,6 +183,7 @@ export default function HeroList() {
   const summaryHandleRef = useRef<ListSummaryHandle>(null);
   const albumContentRef = useRef<HTMLDivElement>(null);
   const tableContentRef = useRef<HTMLDivElement>(null);
+  const importInputRef = useRef<HTMLInputElement>(null);
   const [screenshotLoading, setScreenshotLoading] = useState(false);
   const [captureMode, setCaptureMode] = useState(false);
   const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
@@ -245,10 +247,7 @@ export default function HeroList() {
         },
       });
 
-      const link = document.createElement('a');
-      link.download = `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.jpg`;
-      link.href = canvas.toDataURL('image/jpeg', 0.92);
-      link.click();
+      await saveCanvasImage(canvas, `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.jpg`, 'image/jpeg', 0.92);
     } catch (e) {
       console.error('Screenshot failed:', e);
     } finally {
@@ -1443,12 +1442,16 @@ export default function HeroList() {
               <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 저장하기">
                 <Save className="w-3.5 h-3.5" />
               </Button>
-              <label className="inline-flex">
-                <input type="file" accept=".json,.txt" className="hidden" onChange={handleImportFile} />
-                <Button asChild variant="outline" size="sm" className="gap-1 text-xs h-8 px-2 cursor-pointer" title="리스트 불러오기">
-                  <span><Upload className="w-3.5 h-3.5" /></span>
-                </Button>
-              </label>
+              <input ref={importInputRef} type="file" accept=".json,.txt" className="sr-only" tabIndex={-1} onChange={handleImportFile} />
+              <Button
+                onClick={() => importInputRef.current?.click()}
+                variant="outline"
+                size="sm"
+                className="gap-1 text-xs h-8 px-2 cursor-pointer"
+                title="리스트 불러오기"
+              >
+                <Upload className="w-3.5 h-3.5" />
+              </Button>
               <Button onClick={() => {
                 if (viewMode === 'table') {
                   handleScreenshot(tableContentRef, 'list');
