@@ -1,4 +1,8 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
+
+export interface ListSummaryHandle {
+  takeScreenshot: () => Promise<void>;
+}
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
