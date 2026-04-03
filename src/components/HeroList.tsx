@@ -1472,7 +1472,7 @@ export default function HeroList() {
 
       {summaryOpen ? (
         <div ref={listRef}>
-          <ListSummary heroes={heroes} />
+          <ListSummary ref={summaryHandleRef} heroes={heroes} />
         </div>
       ) : viewMode === 'table' ? (
         <div ref={listRef}>
