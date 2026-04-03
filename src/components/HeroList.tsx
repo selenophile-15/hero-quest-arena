@@ -179,6 +179,7 @@ export default function HeroList() {
   const [importPreview, setImportPreview] = useState<Hero[] | null>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+  const summaryHandleRef = useRef<ListSummaryHandle>(null);
   const albumContentRef = useRef<HTMLDivElement>(null);
   const tableContentRef = useRef<HTMLDivElement>(null);
   const [screenshotLoading, setScreenshotLoading] = useState(false);
