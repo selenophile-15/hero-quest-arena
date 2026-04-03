@@ -44,20 +44,62 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
-  // Apply desktop mode viewport scaling
+  // Apply desktop mode: CSS transform scaling for universal webview support
   useEffect(() => {
     const viewport = document.querySelector('meta[name="viewport"]');
-    if (!viewport) return;
+    const root = document.getElementById('root');
+    if (!viewport || !root) return;
 
-    if (desktopMode) {
-      viewport.setAttribute('content', `width=${DESKTOP_WIDTH}, initial-scale=0.26, user-scalable=yes`);
-    } else {
-      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
-    }
     localStorage.setItem('quest-sim-desktop-mode', String(desktopMode));
 
-    return () => {
+    if (!desktopMode) {
       viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
+      root.style.width = '';
+      root.style.transformOrigin = '';
+      root.style.transform = '';
+      root.style.minHeight = '';
+      document.body.style.overflow = '';
+      return;
+    }
+
+    // Set viewport meta (works in standard mobile browsers)
+    viewport.setAttribute('content', `width=${DESKTOP_WIDTH}, initial-scale=0.26, user-scalable=yes`);
+
+    // CSS transform fallback for webview apps (Naver, KakaoTalk, etc.)
+    const applyScale = () => {
+      const screenW = window.innerWidth;
+      // If the browser actually applied the viewport width, innerWidth ≈ DESKTOP_WIDTH
+      // If webview ignored it, innerWidth will be small (e.g. 360-414)
+      if (screenW < DESKTOP_WIDTH * 0.8) {
+        const scale = screenW / DESKTOP_WIDTH;
+        root.style.width = `${DESKTOP_WIDTH}px`;
+        root.style.transformOrigin = 'top left';
+        root.style.transform = `scale(${scale})`;
+        root.style.minHeight = `${100 / scale}vh`;
+        document.body.style.overflow = 'auto';
+      } else {
+        // Viewport meta worked, no CSS transform needed
+        root.style.width = '';
+        root.style.transformOrigin = '';
+        root.style.transform = '';
+        root.style.minHeight = '';
+        document.body.style.overflow = '';
+      }
+    };
+
+    // Delay to let viewport meta take effect first
+    const timer = setTimeout(applyScale, 100);
+    window.addEventListener('resize', applyScale);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', applyScale);
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
+      root.style.width = '';
+      root.style.transformOrigin = '';
+      root.style.transform = '';
+      root.style.minHeight = '';
+      document.body.style.overflow = '';
     };
   }, [desktopMode]);
 
