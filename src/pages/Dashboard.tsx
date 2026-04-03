@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
-import { Sword, Swords, Trophy, Sun, Moon } from 'lucide-react';
+import { Sword, Swords, Trophy, Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme, ThemeMode } from '@/hooks/use-theme';
 import {
   DropdownMenu,
@@ -32,11 +32,34 @@ const THEMES: { id: ThemeMode; label: string; desc: string; color: string }[] = 
   { id: 'caramel', label: '카라멜', desc: '버버리풍 황갈색', color: 'hsl(32 55% 52%)' },
 ];
 
+// Desktop mode: fixed viewport width for 15.6" laptop feel
+const DESKTOP_WIDTH = 1366;
+
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
   const { theme, setTheme, colorMode, setColorMode } = useTheme();
+  const [desktopMode, setDesktopMode] = useState(() => {
+    try { return localStorage.getItem('quest-sim-desktop-mode') === 'true'; } catch { return false; }
+  });
 
   const navigate = useNavigate();
+
+  // Apply desktop mode viewport scaling
+  useEffect(() => {
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (!viewport) return;
+
+    if (desktopMode) {
+      viewport.setAttribute('content', `width=${DESKTOP_WIDTH}, initial-scale=0.26, user-scalable=yes`);
+    } else {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
+    }
+    localStorage.setItem('quest-sim-desktop-mode', String(desktopMode));
+
+    return () => {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
+    };
+  }, [desktopMode]);
 
   return (
     <div className="min-h-screen bg-fantasy-gradient">
@@ -51,6 +74,17 @@ export default function Dashboard() {
           </button>
 
           <div className="flex items-center gap-2">
+            {/* Desktop Mode Toggle */}
+            <button
+              onClick={() => setDesktopMode(v => !v)}
+              title={desktopMode ? '모바일 모드로 전환' : '데스크탑 모드로 전환'}
+              className={`flex items-center justify-center w-8 h-8 rounded-md border border-border transition-colors ${
+                desktopMode ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Monitor className="w-4 h-4" />
+            </button>
+
             {/* Light/Dark Toggle */}
             <button
               onClick={() => setColorMode(colorMode === 'dark' ? 'light' : 'dark')}
