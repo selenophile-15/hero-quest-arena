@@ -562,18 +562,20 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
     try {
       const bgColor = colorMode === 'light' ? '#f5f3f0' : '#1a1a2e';
       const PAD = 40;
-      const canvas = await html2canvas(summaryRef.current, {
+      // Add temporary padding wrapper for uniform margins
+      const el = summaryRef.current;
+      const origPad = el.style.padding;
+      el.style.padding = `${PAD}px`;
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+      const canvas = await html2canvas(el, {
         backgroundColor: bgColor,
         useCORS: true,
         scrollY: -window.scrollY,
         scrollX: 0,
         scale: 2,
         logging: false,
-        x: -PAD,
-        y: -PAD,
-        width: summaryRef.current.scrollWidth + PAD * 2,
-        height: summaryRef.current.scrollHeight + PAD * 2,
       });
+      el.style.padding = origPad;
       const link = document.createElement('a');
       link.download = `리스트요약_${new Date().toISOString().slice(0, 10)}.png`;
       link.href = canvas.toDataURL('image/png');
