@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMobileGestures } from '@/hooks/use-mobile-gestures';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
@@ -32,8 +33,6 @@ const THEMES: { id: ThemeMode; label: string; desc: string; color: string }[] = 
   { id: 'caramel', label: '카라멜', desc: '버버리풍 황갈색', color: 'hsl(32 55% 52%)' },
 ];
 
-// Desktop mode: fixed viewport width for 15.6" laptop feel
-const DESKTOP_WIDTH = 1366;
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
@@ -44,64 +43,17 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
-  // Apply desktop mode: CSS transform scaling for universal webview support
+  // Save desktop mode preference
   useEffect(() => {
-    const viewport = document.querySelector('meta[name="viewport"]');
-    const root = document.getElementById('root');
-    if (!viewport || !root) return;
-
     localStorage.setItem('quest-sim-desktop-mode', String(desktopMode));
-
     if (!desktopMode) {
-      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
-      root.style.width = '';
-      root.style.transformOrigin = '';
-      root.style.transform = '';
-      root.style.minHeight = '';
-      document.body.style.overflow = '';
-      return;
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
     }
-
-    // Set viewport meta (works in standard mobile browsers)
-    viewport.setAttribute('content', `width=${DESKTOP_WIDTH}, initial-scale=0.26, user-scalable=yes`);
-
-    // CSS transform fallback for webview apps (Naver, KakaoTalk, etc.)
-    const applyScale = () => {
-      const screenW = window.innerWidth;
-      // If the browser actually applied the viewport width, innerWidth ≈ DESKTOP_WIDTH
-      // If webview ignored it, innerWidth will be small (e.g. 360-414)
-      if (screenW < DESKTOP_WIDTH * 0.8) {
-        const scale = screenW / DESKTOP_WIDTH;
-        root.style.width = `${DESKTOP_WIDTH}px`;
-        root.style.transformOrigin = 'top left';
-        root.style.transform = `scale(${scale})`;
-        root.style.minHeight = `${100 / scale}vh`;
-        document.body.style.overflow = 'auto';
-      } else {
-        // Viewport meta worked, no CSS transform needed
-        root.style.width = '';
-        root.style.transformOrigin = '';
-        root.style.transform = '';
-        root.style.minHeight = '';
-        document.body.style.overflow = '';
-      }
-    };
-
-    // Delay to let viewport meta take effect first
-    const timer = setTimeout(applyScale, 100);
-    window.addEventListener('resize', applyScale);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', applyScale);
-      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
-      root.style.width = '';
-      root.style.transformOrigin = '';
-      root.style.transform = '';
-      root.style.minHeight = '';
-      document.body.style.overflow = '';
-    };
   }, [desktopMode]);
+
+  // Handle gestures (pinch-zoom, double-tap) and CSS zoom for desktop mode
+  useMobileGestures(desktopMode);
 
   return (
     <div className="min-h-screen bg-fantasy-gradient">
