@@ -1424,7 +1424,13 @@ export default function HeroList() {
             })}
           </div>
           <div className="flex-1" />
-          {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
+          {summaryOpen && (
+            <div className="flex items-center gap-2 pb-1">
+              <Button onClick={() => summaryHandleRef.current?.takeScreenshot()} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장">
+                <Camera className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          )}
           {!summaryOpen && (
             <div className="flex items-center gap-2 pb-1">
                <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 btn-force-white" style={{ color: 'white' }}>
