@@ -1426,7 +1426,7 @@ export default function HeroList() {
           <div className="flex-1" />
           {summaryOpen && (
             <div className="flex items-center gap-2 pb-1">
-              <Button onClick={() => summaryHandleRef.current?.takeScreenshot()} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장">
+              <Button onClick={() => summaryHandleRef.current?.takeScreenshot()} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2 btn-force-white" title="스크린샷 저장">
                 <Camera className="w-3.5 h-3.5" />
               </Button>
             </div>
