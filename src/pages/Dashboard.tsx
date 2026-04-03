@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMobileGestures } from '@/hooks/use-mobile-gestures';
+import { useDesktopModeState } from '@/hooks/use-desktop-mode';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
@@ -37,20 +38,9 @@ const THEMES: { id: ThemeMode; label: string; desc: string; color: string }[] = 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('list');
   const { theme, setTheme, colorMode, setColorMode } = useTheme();
-  const [desktopMode, setDesktopMode] = useState(() => {
-    try { return localStorage.getItem('quest-sim-desktop-mode') === 'true'; } catch { return false; }
-  });
+  const { desktopMode, setDesktopMode } = useDesktopModeState();
 
   const navigate = useNavigate();
-
-  // Save desktop mode preference
-  useEffect(() => {
-    localStorage.setItem('quest-sim-desktop-mode', String(desktopMode));
-    if (!desktopMode) {
-      const viewport = document.querySelector('meta[name="viewport"]');
-      if (viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
-    }
-  }, [desktopMode]);
 
   // Handle gestures (pinch-zoom, double-tap) and CSS zoom for desktop mode
   useMobileGestures(desktopMode);
