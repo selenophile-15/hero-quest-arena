@@ -1,4 +1,8 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
+
+export interface ListSummaryHandle {
+  takeScreenshot: () => Promise<void>;
+}
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
@@ -528,7 +532,7 @@ function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
 }
 
 /* ── Main component ── */
-export default function ListSummary({ heroes }: ListSummaryProps) {
+const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function ListSummary({ heroes }, ref) {
   const [ownedIds, setOwnedIds] = useState<string[]>(() => loadIds(STORAGE_KEY_OWNED));
   const [plannedIds, setPlannedIds] = useState<string[]>(() => loadIds(STORAGE_KEY_PLANNED));
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -551,11 +555,13 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
   const handleScreenshot = useCallback(async () => {
     if (!summaryRef.current) return;
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;display:flex;align-items:center;justify-content:center;';
-    overlay.innerHTML = '<div style="color:white;font-size:18px;">📸 캡처 중...</div>';
+    overlay.id = 'screenshot-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
+    overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
     document.body.appendChild(overlay);
     try {
       const bgColor = colorMode === 'light' ? '#f5f3f0' : '#1a1a2e';
+      const PAD = 40;
       const canvas = await html2canvas(summaryRef.current, {
         backgroundColor: bgColor,
         useCORS: true,
@@ -563,6 +569,10 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
         scrollX: 0,
         scale: 2,
         logging: false,
+        x: -PAD,
+        y: -PAD,
+        width: summaryRef.current.scrollWidth + PAD * 2,
+        height: summaryRef.current.scrollHeight + PAD * 2,
       });
       const link = document.createElement('a');
       link.download = `리스트요약_${new Date().toISOString().slice(0, 10)}.png`;
@@ -575,14 +585,10 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
     }
   }, [colorMode]);
 
+  useImperativeHandle(ref, () => ({ takeScreenshot: handleScreenshot }), [handleScreenshot]);
+
   return (
     <div className="space-y-4">
-      {/* Screenshot button */}
-      <div className="flex justify-end">
-        <Button size="sm" onClick={handleScreenshot} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90 btn-force-white">
-          <Camera size={14} /> 스크린샷
-        </Button>
-      </div>
       <div ref={summaryRef} className="space-y-4">
       <MatrixGrid
         allHeroes={heroes}
@@ -598,7 +604,6 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
           <PositionChart owned={ownedHeroes} planned={plannedHeroes} />
         </div>
       )}
-
       </div>
 
       {pickerOpen && (
@@ -613,4 +618,6 @@ export default function ListSummary({ heroes }: ListSummaryProps) {
       )}
     </div>
   );
-}
+});
+
+export default ListSummary;

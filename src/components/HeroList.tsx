@@ -10,7 +10,7 @@ import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '
 import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
-import ListSummary from './ListSummary';
+import ListSummary, { ListSummaryHandle } from './ListSummary';
 import SaveListDialog from './SaveListDialog';
 import ElementIcon from './ElementIcon';
 import { Button } from '@/components/ui/button';
@@ -179,6 +179,7 @@ export default function HeroList() {
   const [importPreview, setImportPreview] = useState<Hero[] | null>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+  const summaryHandleRef = useRef<ListSummaryHandle>(null);
   const albumContentRef = useRef<HTMLDivElement>(null);
   const tableContentRef = useRef<HTMLDivElement>(null);
   const [screenshotLoading, setScreenshotLoading] = useState(false);
@@ -1423,7 +1424,13 @@ export default function HeroList() {
             })}
           </div>
           <div className="flex-1" />
-          {/* Add hero/champion buttons - only show for hero/champion tabs, not summary */}
+          {summaryOpen && (
+            <div className="flex items-center gap-2 pb-1">
+              <Button onClick={() => summaryHandleRef.current?.takeScreenshot()} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="스크린샷 저장">
+                <Camera className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          )}
           {!summaryOpen && (
             <div className="flex items-center gap-2 pb-1">
                <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 btn-force-white" style={{ color: 'white' }}>
@@ -1465,7 +1472,7 @@ export default function HeroList() {
 
       {summaryOpen ? (
         <div ref={listRef}>
-          <ListSummary heroes={heroes} />
+          <ListSummary ref={summaryHandleRef} heroes={heroes} />
         </div>
       ) : viewMode === 'table' ? (
         <div ref={listRef}>
@@ -1703,10 +1710,10 @@ export default function HeroList() {
 
       {/* Screenshot loading overlay */}
       {screenshotLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-          <div className="flex items-center gap-3 bg-card px-6 py-4 rounded-lg border border-border shadow-lg">
-            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-foreground">스크린샷 저장 중...</span>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+          <div className="flex flex-col items-center gap-2 text-white text-sm">
+            <div className="w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+            스크린샷 저장 중...
           </div>
         </div>
       )}
