@@ -122,6 +122,7 @@ function getSpiritBonusStats(
 export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<SkillBonusSummary, 'sources'>, sources: SkillBonusSource[] } {
   const sources: SkillBonusSource[] = [];
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
+  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0 };
 
   for (const skill of skills) {
     const src = emptySource(skill.name, skill.type);
@@ -144,14 +145,19 @@ export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<Sk
         case '스킬_치명타데미지%': src.critDmg += val; totals.critDmg += val; break;
         case '스킬_회피%': src.evasion += val; totals.evasion += val; break;
         case '스킬_위협도': src.threat += val; totals.threat += val; break;
-        // Special/detail stats are ignored for now (경험치, 휴식시간, etc.)
+        // Detail stats
+        case '스킬_매턴체력회복': detail.hpRegenPerTurn += val; break;
+        case '스킬_치명타생존%': detail.survivalChance += val; break;
+        case '스킬_휴식시간감소%': detail.restReduction += val; break;
+        case '스킬_체력비례스킬_공격력%': detail.berserkerAtkPct += val; break;
+        case '스킬_체력비례회피%': detail.berserkerEvaPct += val; break;
       }
     }
 
     sources.push(src);
   }
 
-  return { summary: totals, sources };
+  return { summary: { ...totals, detail }, sources };
 }
 
 /**
