@@ -11,6 +11,17 @@
  * - Soul %: 영혼_공격력%, 영혼_방어력%, 영혼_체력%, 영혼_치명타확률%, 영혼_치명타데미지%, 영혼_회피%, 영혼_위협도
  */
 
+export interface DetailStatsSummary {
+  hpRegenPerTurn: number;        // 매 턴 체력 재생
+  survivalChance: number;        // 죽기 전 공격 한 번 버틸 확률
+  restReduction: number;         // 휴식시간 감소%
+  sharkAtkPct: number;           // 상어) 공격력 증가%
+  dinoAtkPct: number;            // 공룡) 공격력 증가%
+  berserkerAtkPct: number;       // 광전사) 체력 비례 공격력 증가% (per threshold)
+  berserkerEvaPct: number;       // 광전사) 체력 비례 회피 증가% (per threshold)
+  mundraBosPct: number;          // 문드라) 보스 상대 공격력/방어력 증가%
+}
+
 export interface SkillBonusSummary {
   // Flat bonuses (깡)
   flatAtk: number;
@@ -27,6 +38,9 @@ export interface SkillBonusSummary {
   critDmg: number;
   evasion: number;
   threat: number;
+
+  // Detail/special stats
+  detail: DetailStatsSummary;
 
   // Breakdown per source for UI display
   sources: SkillBonusSource[];
