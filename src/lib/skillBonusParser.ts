@@ -169,9 +169,8 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
   const spiritData = await loadSpiritStats();
   const sources: SkillBonusSource[] = [];
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
+  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0 };
 
-  // Build per-spirit candidates with multiplier applied
-  // Only spirits with 중복불가 flag get deduped (e.g. 명인)
   const noDupCandidates: Map<string, { src: SkillBonusSource; mult: number }[]> = new Map();
   const normalSources: SkillBonusSource[] = [];
 
@@ -200,10 +199,16 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
         case '영혼_치명타데미지%': src.critDmg += adjusted; break;
         case '영혼_회피%': src.evasion += adjusted; break;
         case '영혼_위협도': src.threat += adjusted; break;
+        // Detail stats from spirits
+        case '영혼_매턴체력회복': case '매턴회복': detail.hpRegenPerTurn += adjusted; break;
+        case '휴식시간감소%': detail.restReduction += adjusted; break;
+        case '조건부공격력%': detail.sharkAtkPct += adjusted; break;
+        case '영혼_첫라공격력%': detail.dinoAtkPct += adjusted; break;
+        case '영혼_보스공격력%': detail.mundraBosPct += adjusted; break;
+        // 영혼_보스방어력% is same value as mundraBosPct, don't double count
       }
     }
 
-    // Check if this spirit has 중복불가 flag
     const hasNoDup = !!(bonusStats as any)['중복불가'];
     if (hasNoDup) {
       if (!noDupCandidates.has(soul.spiritName)) {
@@ -215,7 +220,6 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     }
   }
 
-  // Normal spirits: all stack
   for (const s of normalSources) {
     totals.flatAtk += s.flatAtk; totals.flatDef += s.flatDef; totals.flatHp += s.flatHp;
     totals.pctAtk += s.pctAtk; totals.pctDef += s.pctDef; totals.pctHp += s.pctHp;
@@ -223,7 +227,6 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     sources.push(s);
   }
 
-  // 중복불가 spirits: pick highest magnitude only
   for (const [, candidates] of noDupCandidates) {
     let best = candidates[0];
     if (candidates.length > 1) {
@@ -240,7 +243,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     sources.push(s);
   }
 
-  return { summary: totals, sources };
+  return { summary: { ...totals, detail }, sources };
 }
 
 /**
