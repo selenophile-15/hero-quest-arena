@@ -293,6 +293,29 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   // Crit attack = atk × critDmg / 100
   const totalCritAttack = Math.floor(totalAtk * totalCritDmg / 100);
 
+  // Build detail stats from bonusSummary.detail
+  const d = bonusSummary.detail;
+  const detailStats: Record<string, number> = {};
+  detailStats['공통 공격력 계수'] = bonusSummary.pctAtk;
+  detailStats['공통 방어력 계수'] = bonusSummary.pctDef;
+  detailStats['공통 체력 계수'] = bonusSummary.pctHp;
+  if (d.hpRegenPerTurn) detailStats['매 턴 체력 재생'] = d.hpRegenPerTurn;
+  if (d.survivalChance) detailStats['죽기 전 공격 한 번 버틸 확률'] = d.survivalChance;
+  if (d.restReduction) detailStats['휴식시간 감소%'] = d.restReduction;
+  if (d.sharkAtkPct) detailStats['상어) 공격력 증가%'] = d.sharkAtkPct;
+  if (d.dinoAtkPct) detailStats['공룡) 공격력 증가%'] = d.dinoAtkPct;
+  if (d.berserkerAtkPct) {
+    detailStats['광전사) 체력 비례 공격력 증가% (50~75%)'] = d.berserkerAtkPct;
+    detailStats['광전사) 체력 비례 공격력 증가% (25~50%)'] = d.berserkerAtkPct * 2;
+    detailStats['광전사) 체력 비례 공격력 증가% (0~25%)'] = d.berserkerAtkPct * 3;
+  }
+  if (d.berserkerEvaPct) {
+    detailStats['광전사) 체력 비례 회피 증가% (50~75%)'] = d.berserkerEvaPct;
+    detailStats['광전사) 체력 비례 회피 증가% (25~50%)'] = d.berserkerEvaPct * 2;
+    detailStats['광전사) 체력 비례 회피 증가% (0~25%)'] = d.berserkerEvaPct * 3;
+  }
+  if (d.mundraBosPct) detailStats['문드라) 보스 상대 공격력/방어력 증가%'] = d.mundraBosPct;
+
   return {
     baseHp, baseAtk, baseDef,
     baseCrit, baseCritDmg, baseEvasion, baseThreat,
@@ -306,6 +329,7 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     relicEffects,
     preRelicCrit,
     preRelicEvasion,
+    detailStats,
     jobName,
     jobElement: fixed.element,
   };
