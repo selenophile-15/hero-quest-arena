@@ -253,6 +253,8 @@ export function combineBonuses(
   skillResult: { summary: Omit<SkillBonusSummary, 'sources'>, sources: SkillBonusSource[] },
   soulResult: { summary: Omit<SkillBonusSummary, 'sources'>, sources: SkillBonusSource[] },
 ): SkillBonusSummary {
+  const sd = skillResult.summary.detail;
+  const sod = soulResult.summary.detail;
   return {
     flatAtk: skillResult.summary.flatAtk + soulResult.summary.flatAtk,
     flatDef: skillResult.summary.flatDef + soulResult.summary.flatDef,
@@ -264,6 +266,16 @@ export function combineBonuses(
     critDmg: skillResult.summary.critDmg + soulResult.summary.critDmg,
     evasion: skillResult.summary.evasion + soulResult.summary.evasion,
     threat: skillResult.summary.threat + soulResult.summary.threat,
+    detail: {
+      hpRegenPerTurn: sd.hpRegenPerTurn + sod.hpRegenPerTurn,
+      survivalChance: sd.survivalChance + sod.survivalChance,
+      restReduction: sd.restReduction + sod.restReduction,
+      sharkAtkPct: sd.sharkAtkPct + sod.sharkAtkPct,
+      dinoAtkPct: sd.dinoAtkPct + sod.dinoAtkPct,
+      berserkerAtkPct: sd.berserkerAtkPct + sod.berserkerAtkPct,
+      berserkerEvaPct: sd.berserkerEvaPct + sod.berserkerEvaPct,
+      mundraBosPct: sd.mundraBosPct + sod.mundraBosPct,
+    },
     sources: [...skillResult.sources, ...soulResult.sources],
   };
 }
