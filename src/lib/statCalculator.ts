@@ -50,6 +50,8 @@ export interface CalculatedStats {
   preRelicCrit: number;
   preRelicEvasion: number;
 
+  // Detail stats (auto-calculated)
+  detailStats: Record<string, number>;
 
   // Metadata
   jobName: string;
