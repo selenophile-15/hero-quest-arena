@@ -11,6 +11,17 @@
  * - Soul %: 영혼_공격력%, 영혼_방어력%, 영혼_체력%, 영혼_치명타확률%, 영혼_치명타데미지%, 영혼_회피%, 영혼_위협도
  */
 
+export interface DetailStatsSummary {
+  hpRegenPerTurn: number;        // 매 턴 체력 재생
+  survivalChance: number;        // 죽기 전 공격 한 번 버틸 확률
+  restReduction: number;         // 휴식시간 감소%
+  sharkAtkPct: number;           // 상어) 공격력 증가%
+  dinoAtkPct: number;            // 공룡) 공격력 증가%
+  berserkerAtkPct: number;       // 광전사) 체력 비례 공격력 증가% (per threshold)
+  berserkerEvaPct: number;       // 광전사) 체력 비례 회피 증가% (per threshold)
+  mundraBosPct: number;          // 문드라) 보스 상대 공격력/방어력 증가%
+}
+
 export interface SkillBonusSummary {
   // Flat bonuses (깡)
   flatAtk: number;
@@ -27,6 +38,9 @@ export interface SkillBonusSummary {
   critDmg: number;
   evasion: number;
   threat: number;
+
+  // Detail/special stats
+  detail: DetailStatsSummary;
 
   // Breakdown per source for UI display
   sources: SkillBonusSource[];
@@ -108,6 +122,7 @@ function getSpiritBonusStats(
 export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<SkillBonusSummary, 'sources'>, sources: SkillBonusSource[] } {
   const sources: SkillBonusSource[] = [];
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
+  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0 };
 
   for (const skill of skills) {
     const src = emptySource(skill.name, skill.type);
@@ -130,14 +145,19 @@ export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<Sk
         case '스킬_치명타데미지%': src.critDmg += val; totals.critDmg += val; break;
         case '스킬_회피%': src.evasion += val; totals.evasion += val; break;
         case '스킬_위협도': src.threat += val; totals.threat += val; break;
-        // Special/detail stats are ignored for now (경험치, 휴식시간, etc.)
+        // Detail stats
+        case '스킬_매턴체력회복': detail.hpRegenPerTurn += val; break;
+        case '스킬_치명타생존%': detail.survivalChance += val; break;
+        case '스킬_휴식시간감소%': detail.restReduction += val; break;
+        case '스킬_체력비례스킬_공격력%': detail.berserkerAtkPct += val; break;
+        case '스킬_체력비례회피%': detail.berserkerEvaPct += val; break;
       }
     }
 
     sources.push(src);
   }
 
-  return { summary: totals, sources };
+  return { summary: { ...totals, detail }, sources };
 }
 
 /**
@@ -149,9 +169,8 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
   const spiritData = await loadSpiritStats();
   const sources: SkillBonusSource[] = [];
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
+  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0 };
 
-  // Build per-spirit candidates with multiplier applied
-  // Only spirits with 중복불가 flag get deduped (e.g. 명인)
   const noDupCandidates: Map<string, { src: SkillBonusSource; mult: number }[]> = new Map();
   const normalSources: SkillBonusSource[] = [];
 
@@ -180,10 +199,16 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
         case '영혼_치명타데미지%': src.critDmg += adjusted; break;
         case '영혼_회피%': src.evasion += adjusted; break;
         case '영혼_위협도': src.threat += adjusted; break;
+        // Detail stats from spirits
+        case '영혼_매턴체력회복': case '매턴회복': detail.hpRegenPerTurn += adjusted; break;
+        case '휴식시간감소%': detail.restReduction += adjusted; break;
+        case '조건부공격력%': detail.sharkAtkPct += adjusted; break;
+        case '영혼_첫라공격력%': detail.dinoAtkPct += adjusted; break;
+        case '영혼_보스공격력%': detail.mundraBosPct += adjusted; break;
+        // 영혼_보스방어력% is same value as mundraBosPct, don't double count
       }
     }
 
-    // Check if this spirit has 중복불가 flag
     const hasNoDup = !!(bonusStats as any)['중복불가'];
     if (hasNoDup) {
       if (!noDupCandidates.has(soul.spiritName)) {
@@ -195,7 +220,6 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     }
   }
 
-  // Normal spirits: all stack
   for (const s of normalSources) {
     totals.flatAtk += s.flatAtk; totals.flatDef += s.flatDef; totals.flatHp += s.flatHp;
     totals.pctAtk += s.pctAtk; totals.pctDef += s.pctDef; totals.pctHp += s.pctHp;
@@ -203,7 +227,6 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     sources.push(s);
   }
 
-  // 중복불가 spirits: pick highest magnitude only
   for (const [, candidates] of noDupCandidates) {
     let best = candidates[0];
     if (candidates.length > 1) {
@@ -220,7 +243,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
     sources.push(s);
   }
 
-  return { summary: totals, sources };
+  return { summary: { ...totals, detail }, sources };
 }
 
 /**
@@ -230,6 +253,8 @@ export function combineBonuses(
   skillResult: { summary: Omit<SkillBonusSummary, 'sources'>, sources: SkillBonusSource[] },
   soulResult: { summary: Omit<SkillBonusSummary, 'sources'>, sources: SkillBonusSource[] },
 ): SkillBonusSummary {
+  const sd = skillResult.summary.detail;
+  const sod = soulResult.summary.detail;
   return {
     flatAtk: skillResult.summary.flatAtk + soulResult.summary.flatAtk,
     flatDef: skillResult.summary.flatDef + soulResult.summary.flatDef,
@@ -241,6 +266,16 @@ export function combineBonuses(
     critDmg: skillResult.summary.critDmg + soulResult.summary.critDmg,
     evasion: skillResult.summary.evasion + soulResult.summary.evasion,
     threat: skillResult.summary.threat + soulResult.summary.threat,
+    detail: {
+      hpRegenPerTurn: sd.hpRegenPerTurn + sod.hpRegenPerTurn,
+      survivalChance: sd.survivalChance + sod.survivalChance,
+      restReduction: sd.restReduction + sod.restReduction,
+      sharkAtkPct: sd.sharkAtkPct + sod.sharkAtkPct,
+      dinoAtkPct: sd.dinoAtkPct + sod.dinoAtkPct,
+      berserkerAtkPct: sd.berserkerAtkPct + sod.berserkerAtkPct,
+      berserkerEvaPct: sd.berserkerEvaPct + sod.berserkerEvaPct,
+      mundraBosPct: sd.mundraBosPct + sod.mundraBosPct,
+    },
     sources: [...skillResult.sources, ...soulResult.sources],
   };
 }

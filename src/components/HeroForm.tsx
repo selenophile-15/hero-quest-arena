@@ -537,6 +537,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
         setCritDmg(result.totalCritDmg);
         setEvasion(result.totalEvasion);
         setThreat(result.totalThreat);
+        setDetailStats(result.detailStats);
       }
     });
   }, [heroClass, level, seedHp, seedAtk, seedDef, equipmentSlots, hasRanged, skillBonusInputs, skillInputs]);
