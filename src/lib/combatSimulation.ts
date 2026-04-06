@@ -819,8 +819,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let rudoRounds = 0;
   if (champName.includes('루도') || champName === 'Rudo') {
     if (champTier === 1) { rudoBonusBase = 0.3; rudoRounds = 2; }
-    else if (champTier === 2) { rudoBonusBase = 0.4; rudoRounds = 2; }
-    else if (champTier === 3) { rudoBonusBase = 0.5; rudoRounds = 3; }
+    else if (champTier === 2) { rudoBonusBase = 0.4; rudoRounds = 3; }
+    else if (champTier === 3) { rudoBonusBase = 0.4; rudoRounds = 3; }
     else if (champTier === 4) { rudoBonusBase = 0.5; rudoRounds = 4; }
     // Mercenary bonus
     if (heroIsMercenary[championIdx]) {
@@ -985,11 +985,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             timesEvaded[i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
-            // Hit - AoE uses normal damage × aoe ratio
-            const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[i];
-            const dmg = isCrit
-              ? Math.ceil(critDamageTaken[i] * mobAoeDmgRatio)
-              : Math.ceil(damageTaken[i] * mobAoeDmgRatio);
+            // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
+            const dmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio);
             hp[i] -= dmg;
             simDmgTaken[i] += dmg;
             simTimesHit[i]++;
