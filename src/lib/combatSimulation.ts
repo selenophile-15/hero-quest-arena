@@ -985,11 +985,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             timesEvaded[i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
-            // Hit - AoE uses normal damage × aoe ratio
-            const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[i];
-            const dmg = isCrit
-              ? Math.ceil(critDamageTaken[i] * mobAoeDmgRatio)
-              : Math.ceil(damageTaken[i] * mobAoeDmgRatio);
+            // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
+            const dmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio);
             hp[i] -= dmg;
             simDmgTaken[i] += dmg;
             simTimesHit[i]++;
