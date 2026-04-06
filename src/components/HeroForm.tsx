@@ -129,22 +129,14 @@ const SEED_ICONS = [
   { key: 'def', icon: '/images/special/def_seed.webp' },
 ];
 
-const DETAIL_STATS = [
+// Base detail stats always shown
+const DETAIL_STATS_BASE = [
   '공통 공격력 계수',
   '공통 방어력 계수',
   '공통 체력 계수',
   '매 턴 체력 재생',
   '죽기 전 공격 한 번 버틸 확률',
   '휴식시간 감소%',
-  '상어) 공격력 증가%',
-  '공룡) 공격력 증가%',
-  '광전사) 체력 비례 공격력 증가% (50~75%)',
-  '광전사) 체력 비례 공격력 증가% (25~50%)',
-  '광전사) 체력 비례 공격력 증가% (0~25%)',
-  '광전사) 체력 비례 회피 증가% (50~75%)',
-  '광전사) 체력 비례 회피 증가% (25~50%)',
-  '광전사) 체력 비례 회피 증가% (0~25%)',
-  '문드라) 보스 상대 공격력/방어력 증가%',
 ];
 
 const EQUIP_STAT_ICONS: Record<string, string> = {
@@ -900,7 +892,8 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           <div className="card-fantasy p-3">
             <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>기타 상세 스탯</h3>
             <div className="space-y-1 text-xs">
-              {DETAIL_STATS.map((stat, i) => (
+              {/* Base stats (always shown) */}
+              {DETAIL_STATS_BASE.map((stat, i) => (
                 <div key={i} className="flex items-center justify-between py-0.5 border-b border-border/30 gap-2">
                   <span className="text-foreground/70 flex-1 min-w-0 truncate">{stat}</span>
                   <span className="text-sm text-foreground tabular-nums text-right w-20">
@@ -908,6 +901,21 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   </span>
                 </div>
               ))}
+              {/* Conditional stats (dynamically from detailStats keys) */}
+              {Object.entries(detailStats)
+                .filter(([key]) => !DETAIL_STATS_BASE.includes(key))
+                .map(([key, val], i) => {
+                  const isPercent = key.includes('%') || key.includes('계수');
+                  const isComputed = key.includes('(단독) 공격력') || key.includes('(단독) 방어력');
+                  return (
+                    <div key={`cond-${i}`} className={`flex items-center justify-between py-0.5 border-b border-border/30 gap-2 ${isComputed ? 'pl-3' : ''}`}>
+                      <span className={`flex-1 min-w-0 truncate ${isComputed ? 'text-foreground/50 italic' : 'text-foreground/70'}`}>{isComputed ? `↳ ${key}` : key}</span>
+                      <span className={`text-sm tabular-nums text-right w-24 ${isComputed ? 'text-accent font-medium' : 'text-foreground'}`}>
+                        {val ? (isPercent ? `${val}%` : formatNumber(val)) : '-'}
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         </div>
