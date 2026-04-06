@@ -129,22 +129,14 @@ const SEED_ICONS = [
   { key: 'def', icon: '/images/special/def_seed.webp' },
 ];
 
-const DETAIL_STATS = [
+// Base detail stats always shown
+const DETAIL_STATS_BASE = [
   '공통 공격력 계수',
   '공통 방어력 계수',
   '공통 체력 계수',
   '매 턴 체력 재생',
   '죽기 전 공격 한 번 버틸 확률',
   '휴식시간 감소%',
-  '상어) 공격력 증가%',
-  '공룡) 공격력 증가%',
-  '광전사) 체력 비례 공격력 증가% (50~75%)',
-  '광전사) 체력 비례 공격력 증가% (25~50%)',
-  '광전사) 체력 비례 공격력 증가% (0~25%)',
-  '광전사) 체력 비례 회피 증가% (50~75%)',
-  '광전사) 체력 비례 회피 증가% (25~50%)',
-  '광전사) 체력 비례 회피 증가% (0~25%)',
-  '문드라) 보스 상대 공격력/방어력 증가%',
 ];
 
 const EQUIP_STAT_ICONS: Record<string, string> = {
