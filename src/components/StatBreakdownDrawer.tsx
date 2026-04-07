@@ -981,9 +981,9 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
               <span className="text-sm font-bold text-white">최종 {config.label}</span>
               {isEvasion && hasEvasionFixed ? (
-                <span className="text-xl font-bold tabular-nums text-red-400">
+                <span className="text-xl font-bold tabular-nums stat-relic-fixed">
                   {totalVal}%
-                  <span className="text-sm font-normal text-muted-foreground ml-1">({preRelicEvasion}%→고정)</span>
+                  <span className="text-sm font-normal ml-1 stat-relic-sub">({preRelicEvasion}%→고정)</span>
                 </span>
               ) : isEvasion ? (
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
