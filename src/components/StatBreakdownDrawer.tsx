@@ -492,9 +492,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
           </div>
 
           <div className="px-3 pb-3">
-            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              ※ {config.label} = (기본 + 씨앗 + Σ장비최종 + 깡 보너스) × (1 + 공통%/100)
-            </p>
+            <div className={`rounded px-3 py-2 stat-note-box stat-note-box-${statType}`}>
+              <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                ※ {config.label} = (기본 + 씨앗 + Σ장비최종 + 깡 보너스) × (1 + 공통%/100)
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -697,8 +699,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     </tr>
                     {hasCritFixed && (
                       <tr className="border-b border-border/30 bg-red-900/20">
-                        <td className="py-1.5 text-red-400 font-semibold">⚠ {hasCritFixed.itemName}</td>
-                        <td className="py-1.5 text-right tabular-nums text-red-400 font-bold">→ {hasCritFixed.fixedValue}% 고정</td>
+                        <td className="py-1.5 font-semibold stat-relic-fixed">⚠ {hasCritFixed.itemName}</td>
+                        <td className="py-1.5 text-right tabular-nums font-bold stat-relic-fixed">→ {hasCritFixed.fixedValue}% 고정</td>
                       </tr>
                     )}
                   </tbody>
@@ -709,7 +711,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
                   {totalVal}%
                   {hasCritFixed && (
-                    <span className="text-sm font-normal text-muted-foreground ml-1">({preRelicCrit}%→고정)</span>
+                    <span className="text-sm font-normal ml-1 stat-relic-sub">{preRelicCrit}%→고정</span>
                   )}
                 </span>
               </div>
@@ -726,13 +728,24 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               </div>
             )}
 
-            <div className="px-3 pb-3">
-              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                {hasCritFixed
-                  ? `※ ${hasCritFixed.itemName}: 치명타 확률 ${hasCritFixed.fixedValue}%로 고정`
-                  : '※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스'}
-              </p>
-            </div>
+            {hasCritFixed && (
+              <div className="px-3">
+                <div className="rounded bg-red-900/20 border border-red-500/20 px-3 py-2">
+                  <p className="text-[10px] stat-relic-fixed leading-relaxed">
+                    ⚠ <span className="font-bold">{hasCritFixed.itemName}</span>: 치명타 확률 {hasCritFixed.fixedValue}%로 고정
+                  </p>
+                </div>
+              </div>
+            )}
+            {!hasCritFixed && (
+              <div className="px-3 pb-3">
+                <div className="rounded stat-note-box stat-note-box-crit px-3 py-2">
+                  <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                    ※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right: Crit Damage */}
@@ -812,12 +825,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
 
             <div className="px-3 pb-3">
-              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                ※ 치명타 대미지 계수 = 기본 + 스킬/영혼 보너스
-              </p>
-              <p className="text-[10px] text-muted-foreground text-center leading-relaxed mt-1">
-                ※ 최종 치명타 대미지 = 최종 공격력 × 치명타 대미지 계수
-              </p>
+              <div className="rounded stat-note-box stat-note-box-crit px-3 py-2">
+                <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                  ※ 치명타 대미지 계수 = 기본 + 스킬/영혼 보너스
+                </p>
+                <p className="text-[10px] stat-note-text leading-relaxed text-center mt-1">
+                  ※ 최종 치명타 대미지 = 최종 공격력 × 치명타 대미지 계수
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -958,8 +973,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   </tr>
                   {isEvasion && hasEvasionFixed && (
                     <tr className="border-b border-border/30 bg-red-900/20">
-                      <td className="py-1.5 text-red-400 font-semibold">⚠ {hasEvasionFixed.itemName}</td>
-                      <td className="py-1.5 text-right tabular-nums text-red-400 font-bold">→ {hasEvasionFixed.fixedValue}% 고정</td>
+                      <td className="py-1.5 font-semibold stat-relic-fixed">⚠ {hasEvasionFixed.itemName}</td>
+                      <td className="py-1.5 text-right tabular-nums font-bold stat-relic-fixed">→ {hasEvasionFixed.fixedValue}% 고정</td>
                     </tr>
                   )}
                 </tbody>
@@ -968,9 +983,9 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
               <span className="text-sm font-bold text-white">최종 {config.label}</span>
               {isEvasion && hasEvasionFixed ? (
-                <span className="text-xl font-bold tabular-nums text-red-400">
+                <span className="text-xl font-bold tabular-nums stat-relic-fixed">
                   {totalVal}%
-                  <span className="text-sm font-normal text-muted-foreground ml-1">({preRelicEvasion}%→고정)</span>
+                  <span className="text-sm font-normal ml-1 stat-relic-sub">({preRelicEvasion}%→고정)</span>
                 </span>
               ) : isEvasion ? (
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
@@ -1020,15 +1035,24 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
           )}
 
-          <div className="px-3 pb-3">
-            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              {isEvasion && hasEvasionFixed
-                ? `※ ${hasEvasionFixed.itemName}: 회피 ${hasEvasionFixed.fixedValue}%로 고정`
-                : isEvasion
-                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75% / 길잡이 78%)'
-                  : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
-            </p>
-          </div>
+          {!isEvasion && (
+            <div className="px-3 pb-3">
+              <div className="rounded stat-note-box stat-note-box-threat px-3 py-2">
+                <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                  ※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)
+                </p>
+              </div>
+            </div>
+          )}
+          {isEvasion && !hasEvasionFixed && (
+            <div className="px-3 pb-3">
+              <div className="rounded stat-note-box stat-note-box-evasion px-3 py-2">
+                <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                  ※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75% / 길잡이 78%)
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );

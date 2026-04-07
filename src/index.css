@@ -938,13 +938,13 @@
   --stat-color-crit: hsl(45 85% 40%);
   --stat-color-dodge: hsl(172 60% 32%);
 
-  /* Stat breakdown final value colors: much brighter in light mode */
-  .text-red-400.tabular-nums.font-bold { color: hsl(355 80% 50%) !important; }
-  .text-blue-400.tabular-nums.font-bold { color: hsl(220 80% 52%) !important; }
+  /* Stat breakdown final value colors: MUCH brighter in light mode */
+  .text-red-400.tabular-nums.font-bold { color: hsl(355 85% 58%) !important; }
+  .text-blue-400.tabular-nums.font-bold { color: hsl(220 85% 58%) !important; }
   .text-orange-400.tabular-nums.font-bold,
-  .text-orange-200.tabular-nums.font-bold { color: hsl(25 90% 48%) !important; }
-  .text-yellow-300.tabular-nums.font-bold { color: hsl(45 90% 42%) !important; }
-  .text-cyan-400.tabular-nums.font-bold { color: hsl(172 70% 38%) !important; }
+  .text-orange-200.tabular-nums.font-bold { color: hsl(25 95% 55%) !important; }
+  .text-yellow-300.tabular-nums.font-bold { color: hsl(45 95% 48%) !important; }
+  .text-cyan-400.tabular-nums.font-bold { color: hsl(172 75% 42%) !important; }
 
   /* Stat breakdown tag badges: always white text in light mode */
   .bg-purple-700\/60,
@@ -958,11 +958,19 @@
   /* Crit header box brighter in light mode */
   .bg-\[\#6b5a14\] { background-color: hsl(45 65% 32%) !important; }
 
-  /* Stat breakdown explanation/warning text: darker for readability */
-  .stat-box-white ~ .px-3 .text-muted-foreground,
-  .stat-box-white ~ div .text-muted-foreground {
-    color: hsl(230 10% 35%) !important;
-  }
+  /* Relic fixed effect text: bright red in light mode */
+  .stat-relic-fixed { color: hsl(355 80% 52%) !important; }
+  .stat-relic-sub { color: white !important; }
+
+  /* Stat note boxes: colored backgrounds per stat type */
+  .stat-note-box { border: 1px solid transparent; }
+  .stat-note-box-atk { background-color: hsl(355 60% 94%) !important; border-color: hsl(355 50% 80%) !important; }
+  .stat-note-box-def { background-color: hsl(220 60% 94%) !important; border-color: hsl(220 50% 80%) !important; }
+  .stat-note-box-hp { background-color: hsl(25 60% 93%) !important; border-color: hsl(25 50% 78%) !important; }
+  .stat-note-box-crit { background-color: hsl(45 60% 92%) !important; border-color: hsl(45 50% 75%) !important; }
+  .stat-note-box-evasion { background-color: hsl(172 45% 92%) !important; border-color: hsl(172 40% 75%) !important; }
+  .stat-note-box-threat { background-color: hsl(230 15% 93%) !important; border-color: hsl(230 10% 78%) !important; }
+  .stat-note-text { color: hsl(230 15% 30%) !important; }
 
   /* Manual equipment form inputs: white background */
   .manual-equip-input,
@@ -1226,3 +1234,9 @@ a.bg-accent *,
 .stat-breakdown-box .text-foreground\/80 {
   color: rgba(255,255,255,0.75) !important;
 }
+
+/* Dark mode defaults for new stat classes */
+.stat-relic-fixed { color: hsl(0 72% 60%); }
+.stat-relic-sub { color: hsl(0 0% 60%); }
+.stat-note-box { background: transparent; border: none; }
+.stat-note-text { color: hsl(0 0% 55%); }

@@ -1161,9 +1161,8 @@ export default function QuestSimulation() {
               <div className="mb-3 flex items-center gap-3">
                 <Button
                   onClick={() => setBuffBreakdownOpen(true)}
-                  variant="outline"
                   size="sm"
-                  className="gap-1.5"
+                  className="gap-1.5 btn-force-white"
                 >
                   📊 스탯 계산표
                 </Button>
