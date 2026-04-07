@@ -1234,3 +1234,9 @@ a.bg-accent *,
 .stat-breakdown-box .text-foreground\/80 {
   color: rgba(255,255,255,0.75) !important;
 }
+
+/* Dark mode defaults for new stat classes */
+.stat-relic-fixed { color: hsl(0 72% 60%); }
+.stat-relic-sub { color: hsl(0 0% 60%); }
+.stat-note-box { background: transparent; border: none; }
+.stat-note-text { color: hsl(0 0% 55%); }
