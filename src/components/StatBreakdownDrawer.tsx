@@ -823,12 +823,14 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
 
             <div className="px-3 pb-3">
-              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                ※ 치명타 대미지 계수 = 기본 + 스킬/영혼 보너스
-              </p>
-              <p className="text-[10px] text-muted-foreground text-center leading-relaxed mt-1">
-                ※ 최종 치명타 대미지 = 최종 공격력 × 치명타 대미지 계수
-              </p>
+              <div className="rounded stat-note-box stat-note-box-crit px-3 py-2">
+                <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                  ※ 치명타 대미지 계수 = 기본 + 스킬/영혼 보너스
+                </p>
+                <p className="text-[10px] stat-note-text leading-relaxed text-center mt-1">
+                  ※ 최종 치명타 대미지 = 최종 공격력 × 치명타 대미지 계수
+                </p>
+              </div>
             </div>
           </div>
         </div>
