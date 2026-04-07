@@ -492,9 +492,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
           </div>
 
           <div className="px-3 pb-3">
-            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              ※ {config.label} = (기본 + 씨앗 + Σ장비최종 + 깡 보너스) × (1 + 공통%/100)
-            </p>
+            <div className={`rounded px-3 py-2 stat-note-box stat-note-box-${statType}`}>
+              <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                ※ {config.label} = (기본 + 씨앗 + Σ장비최종 + 깡 보너스) × (1 + 공통%/100)
+              </p>
+            </div>
           </div>
         </div>
       </div>
