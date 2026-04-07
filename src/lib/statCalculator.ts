@@ -303,48 +303,37 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   if (d.survivalChance) detailStats['죽기 전 공격 한 번 버틸 확률'] = d.survivalChance;
   if (d.restReduction) detailStats['휴식시간 감소%'] = d.restReduction;
 
-  // Conditional ATK bonuses — compute actual (단독) ATK under each condition
-  const preMultAtk = baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk;
-  const preMultDef = baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef;
-
+  // Conditional ATK bonuses — store % values only (actual ATK computed in simulation)
   if (d.sharkAtkPct) {
-    detailStats['상어) 적 HP 50% 미만 시 공격력 증가%'] = d.sharkAtkPct;
-    detailStats['상어) 발동 시 (단독) 공격력'] = Math.round(preMultAtk * (1 + (bonusSummary.pctAtk + d.sharkAtkPct) / 100));
+    detailStats['상어 - 적 HP 50% 미만 시 공격력 증가%'] = d.sharkAtkPct;
   }
   if (d.dinoAtkPct) {
-    detailStats['공룡) 첫 턴 공격력 증가%'] = d.dinoAtkPct;
-    detailStats['공룡) 발동 시 (단독) 공격력'] = Math.round(preMultAtk * (1 + (bonusSummary.pctAtk + d.dinoAtkPct) / 100));
+    detailStats['공룡 - 첫 턴 공격력 증가%'] = d.dinoAtkPct;
   }
   if (d.mundraBosPct) {
-    detailStats['문드라) 보스 상대 공격력 증가%'] = d.mundraBosPct;
-    detailStats['문드라) 발동 시 (단독) 공격력'] = Math.round(preMultAtk * (1 + (bonusSummary.pctAtk + d.mundraBosPct) / 100));
-    detailStats['문드라) 발동 시 (단독) 방어력'] = Math.round(preMultDef * (1 + (bonusSummary.pctDef + d.mundraBosPct) / 100));
+    detailStats['문드라 - 보스 상대 공격력/방어력 증가%'] = d.mundraBosPct;
   }
 
   // Berserker: tier-aware thresholds and per-stage ATK/EVA bonuses
   const isBerserker = jobName === '광전사' || jobName === '잘';
+  const berserkerLabel = jobName === '잘' ? '잘' : '광전사';
   if (isBerserker && d.berserkerAtkPct) {
-    // Tier 4 (잘 = promoted berserker) uses 80/55/30 thresholds
     const isT4 = jobName === '잘';
     const t1 = isT4 ? 80 : 75;
     const t2 = isT4 ? 55 : 50;
     const t3 = isT4 ? 30 : 25;
-    detailStats[`광전사) 1단계 (HP ≤${t1}%) 공격력 증가%`] = d.berserkerAtkPct;
-    detailStats[`광전사) 2단계 (HP ≤${t2}%) 공격력 증가%`] = d.berserkerAtkPct * 2;
-    detailStats[`광전사) 3단계 (HP ≤${t3}%) 공격력 증가%`] = d.berserkerAtkPct * 3;
-    // Actual ATK under each berserker stage
-    detailStats[`광전사) 1단계 발동 시 (단독) 공격력`] = Math.round(preMultAtk * (1 + (bonusSummary.pctAtk + d.berserkerAtkPct) / 100));
-    detailStats[`광전사) 2단계 발동 시 (단독) 공격력`] = Math.round(preMultAtk * (1 + (bonusSummary.pctAtk + d.berserkerAtkPct * 2) / 100));
-    detailStats[`광전사) 3단계 발동 시 (단독) 공격력`] = Math.round(preMultAtk * (1 + (bonusSummary.pctAtk + d.berserkerAtkPct * 3) / 100));
+    detailStats[`${berserkerLabel} - 1단계 (${t2}%<HP≤${t1}%) 공격력 증가%`] = d.berserkerAtkPct;
+    detailStats[`${berserkerLabel} - 2단계 (${t3}%<HP≤${t2}%) 공격력 증가%`] = d.berserkerAtkPct * 2;
+    detailStats[`${berserkerLabel} - 3단계 (HP≤${t3}%) 공격력 증가%`] = d.berserkerAtkPct * 3;
   }
   if (isBerserker && d.berserkerEvaPct) {
     const isT4 = jobName === '잘';
     const t1 = isT4 ? 80 : 75;
     const t2 = isT4 ? 55 : 50;
     const t3 = isT4 ? 30 : 25;
-    detailStats[`광전사) 1단계 (HP ≤${t1}%) 회피 증가%`] = d.berserkerEvaPct;
-    detailStats[`광전사) 2단계 (HP ≤${t2}%) 회피 증가%`] = d.berserkerEvaPct * 2;
-    detailStats[`광전사) 3단계 (HP ≤${t3}%) 회피 증가%`] = d.berserkerEvaPct * 3;
+    detailStats[`${berserkerLabel} - 1단계 (${t2}%<HP≤${t1}%) 회피 증가%`] = d.berserkerEvaPct;
+    detailStats[`${berserkerLabel} - 2단계 (${t3}%<HP≤${t2}%) 회피 증가%`] = d.berserkerEvaPct * 2;
+    detailStats[`${berserkerLabel} - 3단계 (HP≤${t3}%) 회피 증가%`] = d.berserkerEvaPct * 3;
   }
 
   return {

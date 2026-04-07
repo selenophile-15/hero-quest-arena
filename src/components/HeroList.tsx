@@ -625,8 +625,10 @@ export default function HeroList() {
     }
     if (colKey === 'rank') {
       const r = hero.rank || 1;
-      if (r <= 11) return <span className={lh}>{r}</span>;
-      return <span className={lh}>{r} (11+{r - 11})</span>;
+      const isSpecialChamp = hero.championName === '라인홀드' || hero.championName === '타마스';
+      const rankBase = isSpecialChamp ? 4 : 11;
+      if (r <= rankBase) return <span className={lh}>{r}</span>;
+      return <span className={lh}>{r} ({rankBase}+{r - rankBase})</span>;
     }
     if (colKey === 'element') {
       const elVal = hero.elementValue || 0;
