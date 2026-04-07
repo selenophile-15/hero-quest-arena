@@ -726,13 +726,24 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               </div>
             )}
 
-            <div className="px-3 pb-3">
-              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                {hasCritFixed
-                  ? `※ ${hasCritFixed.itemName}: 치명타 확률 ${hasCritFixed.fixedValue}%로 고정`
-                  : '※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스'}
-              </p>
-            </div>
+            {hasCritFixed && (
+              <div className="px-3">
+                <div className="rounded bg-red-900/20 border border-red-500/20 px-3 py-2">
+                  <p className="text-[10px] stat-relic-fixed leading-relaxed">
+                    ⚠ <span className="font-bold">{hasCritFixed.itemName}</span>: 치명타 확률 {hasCritFixed.fixedValue}%로 고정
+                  </p>
+                </div>
+              </div>
+            )}
+            {!hasCritFixed && (
+              <div className="px-3 pb-3">
+                <div className="rounded stat-note-box stat-note-box-crit px-3 py-2">
+                  <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                    ※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right: Crit Damage */}
