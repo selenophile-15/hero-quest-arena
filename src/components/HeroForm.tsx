@@ -906,11 +906,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 .filter(([key]) => !DETAIL_STATS_BASE.includes(key))
                 .map(([key, val], i) => {
                   const isPercent = key.includes('%') || key.includes('계수');
-                  const isComputed = key.includes('(단독) 공격력') || key.includes('(단독) 방어력');
                   return (
-                    <div key={`cond-${i}`} className={`flex items-center justify-between py-0.5 border-b border-border/30 gap-2 ${isComputed ? 'pl-3' : ''}`}>
-                      <span className={`flex-1 min-w-0 truncate ${isComputed ? 'text-foreground/50 italic' : 'text-foreground/70'}`}>{isComputed ? `↳ ${key}` : key}</span>
-                      <span className={`text-sm tabular-nums text-right w-24 ${isComputed ? 'text-accent font-medium' : 'text-foreground'}`}>
+                    <div key={`cond-${i}`} className="flex items-center justify-between py-0.5 border-b border-border/30 gap-2">
+                      <span className="text-foreground/70 flex-1 min-w-0 truncate">{key}</span>
+                      <span className="text-sm text-foreground tabular-nums text-right w-24">
                         {val ? (isPercent ? `${val}%` : formatNumber(val)) : '-'}
                       </span>
                     </div>
