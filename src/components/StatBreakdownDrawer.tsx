@@ -697,8 +697,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                     </tr>
                     {hasCritFixed && (
                       <tr className="border-b border-border/30 bg-red-900/20">
-                        <td className="py-1.5 text-red-400 font-semibold">⚠ {hasCritFixed.itemName}</td>
-                        <td className="py-1.5 text-right tabular-nums text-red-400 font-bold">→ {hasCritFixed.fixedValue}% 고정</td>
+                        <td className="py-1.5 font-semibold stat-relic-fixed">⚠ {hasCritFixed.itemName}</td>
+                        <td className="py-1.5 text-right tabular-nums font-bold stat-relic-fixed">→ {hasCritFixed.fixedValue}% 고정</td>
                       </tr>
                     )}
                   </tbody>
@@ -709,7 +709,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 <span className={`text-xl font-bold tabular-nums ${config.color}`}>
                   {totalVal}%
                   {hasCritFixed && (
-                    <span className="text-sm font-normal text-muted-foreground ml-1">({preRelicCrit}%→고정)</span>
+                    <span className="text-sm font-normal ml-1 stat-relic-sub">{preRelicCrit}%→고정</span>
                   )}
                 </span>
               </div>
