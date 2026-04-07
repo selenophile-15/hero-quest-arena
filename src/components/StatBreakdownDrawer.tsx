@@ -1033,15 +1033,24 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
           )}
 
-          <div className="px-3 pb-3">
-            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              {isEvasion && hasEvasionFixed
-                ? `※ ${hasEvasionFixed.itemName}: 회피 ${hasEvasionFixed.fixedValue}%로 고정`
-                : isEvasion
-                  ? '※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75% / 길잡이 78%)'
-                  : '※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)'}
-            </p>
-          </div>
+          {!isEvasion && (
+            <div className="px-3 pb-3">
+              <div className="rounded stat-note-box stat-note-box-threat px-3 py-2">
+                <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                  ※ 위협도 = 기본 + 스킬/영혼 보너스 (합산)
+                </p>
+              </div>
+            </div>
+          )}
+          {isEvasion && !hasEvasionFixed && (
+            <div className="px-3 pb-3">
+              <div className="rounded stat-note-box stat-note-box-evasion px-3 py-2">
+                <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                  ※ 회피 = 기본 + 장비 합 + 스킬/영혼 보너스 (합산, 최대 75% / 길잡이 78%)
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
