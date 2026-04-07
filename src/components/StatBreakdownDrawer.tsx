@@ -971,8 +971,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   </tr>
                   {isEvasion && hasEvasionFixed && (
                     <tr className="border-b border-border/30 bg-red-900/20">
-                      <td className="py-1.5 text-red-400 font-semibold">⚠ {hasEvasionFixed.itemName}</td>
-                      <td className="py-1.5 text-right tabular-nums text-red-400 font-bold">→ {hasEvasionFixed.fixedValue}% 고정</td>
+                      <td className="py-1.5 font-semibold stat-relic-fixed">⚠ {hasEvasionFixed.itemName}</td>
+                      <td className="py-1.5 text-right tabular-nums font-bold stat-relic-fixed">→ {hasEvasionFixed.fixedValue}% 고정</td>
                     </tr>
                   )}
                 </tbody>
