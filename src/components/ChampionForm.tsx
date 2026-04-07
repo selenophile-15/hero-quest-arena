@@ -1199,7 +1199,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           {hero ? '챔피언 수정' : '새 챔피언 추가'}
         </h2>
         <div className="flex gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!champCalcResult}>📊 스탯 계산표</Button>
+          <Button type="button" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!champCalcResult} className="btn-force-white">📊 스탯 계산표</Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
           <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
         </div>
