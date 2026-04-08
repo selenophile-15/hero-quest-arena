@@ -1237,7 +1237,12 @@ a.bg-accent *,
 }
 
 /* Dark mode defaults for new stat classes */
-.stat-relic-fixed { color: hsl(0 72% 60%); }
-.stat-relic-sub { color: hsl(0 0% 60%); }
+.stat-relic-fixed { color: hsl(0 90% 72%); }
+.stat-relic-sub { color: hsl(0 0% 80%); }
 .stat-note-box { background: transparent; border: none; }
-.stat-note-text { color: hsl(0 0% 55%); }
+.stat-note-text { color: hsl(0 0% 72%); }
+
+/* Dark mode formula box: brighter text for readability */
+.stat-breakdown-box .text-white\/70 { color: rgba(255,255,255,0.85) !important; }
+.stat-breakdown-box .text-white\/80 { color: rgba(255,255,255,0.9) !important; }
+.stat-breakdown-box .text-muted-foreground { color: hsl(0 0% 65%) !important; }
