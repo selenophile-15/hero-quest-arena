@@ -146,6 +146,13 @@ export default function EquipmentSelectDialog({
 }: EquipmentSelectDialogProps) {
   const [activeSlot, setActiveSlot] = useState(initialSlot);
   const [slots, setSlots] = useState<EquipmentSlotData[]>([...currentEquipment]);
+  // Store user-set enchantments per slot so they can be restored after switching away from unique element/spirit items
+  const userEnchantRef = useRef<Array<{ element: EquipmentSlotData['element']; spirit: EquipmentSlotData['spirit'] }>>(
+    currentEquipment.map(s => ({
+      element: s.item?.uniqueElement?.length ? null : (s.element || null),
+      spirit: s.item?.uniqueSpirit?.length ? null : (s.spirit || null),
+    }))
+  );
   const [allItems, setAllItems] = useState<EquipmentItem[]>([]);
   const [slotAllowedTypes, setSlotAllowedTypes] = useState<string[][]>([]);
   const [loading, setLoading] = useState(false);
