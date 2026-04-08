@@ -728,24 +728,13 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               </div>
             )}
 
-            {hasCritFixed && (
-              <div className="px-3">
-                <div className="rounded bg-red-900/20 border border-red-500/20 px-3 py-2">
-                  <p className="text-[10px] stat-relic-fixed leading-relaxed">
-                    ⚠ <span className="font-bold">{hasCritFixed.itemName}</span>: 치명타 확률 {hasCritFixed.fixedValue}%로 고정
-                  </p>
-                </div>
+            <div className="px-3 pb-3">
+              <div className="rounded stat-note-box stat-note-box-crit px-3 py-2">
+                <p className="text-[10px] stat-note-text leading-relaxed text-center">
+                  ※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스
+                </p>
               </div>
-            )}
-            {!hasCritFixed && (
-              <div className="px-3 pb-3">
-                <div className="rounded stat-note-box stat-note-box-crit px-3 py-2">
-                  <p className="text-[10px] stat-note-text leading-relaxed text-center">
-                    ※ 치명타 확률 = 기본 + 장비 합 + 스킬/영혼 보너스
-                  </p>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Right: Crit Damage */}
@@ -1002,28 +991,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
             </div>
           </div>
 
-          {isEvasion && !hasEvasionFixed && (
-            <div className="px-3">
-              <div className="rounded bg-teal-900/20 border border-teal-500/20 px-3 py-2">
-                <p className="text-[10px] text-teal-300/80 leading-relaxed">
-                  ⚠️ 던전에서 회피율은 최대 <span className="font-bold text-teal-200">{evasionCap}%</span>까지만 적용됩니다.
-                  {isPathfinder && ' (길잡이만 78%까지 적용)'}
-                  {!isPathfinder && ' (길잡이만 78%까지 적용 가능)'}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {isEvasion && hasEvasionFixed && (
-            <div className="px-3">
-              <div className="rounded bg-red-900/20 border border-red-500/20 px-3 py-2">
-                <p className="text-[10px] text-red-300/80 leading-relaxed">
-                  ⚠ <span className="font-bold text-red-200">{hasEvasionFixed.itemName}</span> 장착으로 회피가 {hasEvasionFixed.fixedValue}%로 고정됩니다.
-                </p>
-              </div>
-            </div>
-          )}
-
           {isEvasion && (calcStats?.jobName === '닌자' || calcStats?.jobName === '센세') && (
             <div className="px-3">
               <div className="rounded bg-purple-900/20 border border-purple-500/20 px-3 py-2">
@@ -1044,7 +1011,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
               </div>
             </div>
           )}
-          {isEvasion && !hasEvasionFixed && (
+          {isEvasion && (
             <div className="px-3 pb-3">
               <div className="rounded stat-note-box stat-note-box-evasion px-3 py-2">
                 <p className="text-[10px] stat-note-text leading-relaxed text-center">
