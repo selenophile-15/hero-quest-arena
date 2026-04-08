@@ -1239,7 +1239,13 @@ a.bg-accent *,
 /* Dark mode defaults for new stat classes */
 .stat-relic-fixed { color: hsl(0 90% 72%); }
 .stat-relic-sub { color: hsl(0 0% 80%); }
-.stat-note-box { background: transparent; border: none; }
+.stat-note-box { border: 1px solid transparent; }
+.stat-note-box-atk { background-color: hsl(355 30% 18%); border-color: hsl(355 30% 28%); }
+.stat-note-box-def { background-color: hsl(220 30% 18%); border-color: hsl(220 30% 28%); }
+.stat-note-box-hp { background-color: hsl(25 30% 18%); border-color: hsl(25 30% 28%); }
+.stat-note-box-crit { background-color: hsl(45 30% 16%); border-color: hsl(45 30% 26%); }
+.stat-note-box-evasion { background-color: hsl(172 25% 16%); border-color: hsl(172 25% 26%); }
+.stat-note-box-threat { background-color: hsl(230 10% 18%); border-color: hsl(230 10% 28%); }
 .stat-note-text { color: hsl(0 0% 72%); }
 
 /* Dark mode formula box: brighter text for readability */
