@@ -604,26 +604,42 @@ export default function EquipmentSelectDialog({
                       const prevHadUniqueElement = !!prevItem?.uniqueElement?.length;
                       const prevHadUniqueSpirit = !!prevItem?.uniqueSpirit?.length;
 
+                      // Save current user enchants before switching
+                      if (!prevHadUniqueElement && existingSlot?.element) {
+                        userEnchantRef.current[activeSlot] = { ...userEnchantRef.current[activeSlot], element: existingSlot.element };
+                      }
+                      if (!prevHadUniqueSpirit && existingSlot?.spirit) {
+                        userEnchantRef.current[activeSlot] = { ...userEnchantRef.current[activeSlot], spirit: existingSlot.spirit };
+                      }
+
                       let slotElement = existingSlot?.element || null;
                       let slotSpirit = existingSlot?.spirit || null;
 
                       if (item.uniqueElement?.length) {
                         slotElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 4, affinity: true };
-                      } else if (prevHadUniqueElement) {
-                        slotElement = null;
-                      } else if (slotElement) {
-                        const hasAffinity = item.elementAffinity?.includes(slotElement.type) || item.elementAffinity?.includes('모든 원소');
-                        const allElAff = isAllElementAffinityOnly(item.elementAffinity, slotElement.type);
-                        slotElement = { ...slotElement, affinity: !!hasAffinity, allElementAffinity: allElAff };
+                      } else {
+                        const saved = userEnchantRef.current[activeSlot]?.element;
+                        const existing = saved || slotElement;
+                        if (existing) {
+                          const hasAffinity = item.elementAffinity?.includes(existing.type) || item.elementAffinity?.includes('모든 원소');
+                          const allElAff = isAllElementAffinityOnly(item.elementAffinity, existing.type);
+                          slotElement = { ...existing, affinity: !!hasAffinity, allElementAffinity: allElAff };
+                        } else {
+                          slotElement = null;
+                        }
                       }
 
                       if (item.uniqueSpirit?.length) {
                         slotSpirit = { name: item.uniqueSpirit[0], affinity: true };
-                      } else if (prevHadUniqueSpirit) {
-                        slotSpirit = null;
-                      } else if (slotSpirit) {
-                        const hasAffinity = item.spiritAffinity?.includes(slotSpirit.name);
-                        slotSpirit = { ...slotSpirit, affinity: !!hasAffinity };
+                      } else {
+                        const saved = userEnchantRef.current[activeSlot]?.spirit;
+                        const existing = saved || slotSpirit;
+                        if (existing) {
+                          const hasAffinity = item.spiritAffinity?.includes(existing.name);
+                          slotSpirit = { ...existing, affinity: !!hasAffinity };
+                        } else {
+                          slotSpirit = null;
+                        }
                       }
 
                       newSlots[activeSlot] = {
