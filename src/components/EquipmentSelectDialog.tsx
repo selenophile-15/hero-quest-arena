@@ -1009,7 +1009,7 @@ export default function EquipmentSelectDialog({
                           )}
                           {s.element && s.spirit && <span className="text-[9px] text-muted-foreground">/</span>}
                           {s.spirit && (
-                            <span className={`text-[9px] font-bold text-purple-400`}>
+                            <span className={`text-[9px] font-bold text-foreground`}>
                               {hasAffinitySp && '★ '}{s.spirit.name} (T{getSpiritTier(s.spirit.name)})
                             </span>
                           )}
