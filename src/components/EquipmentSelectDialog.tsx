@@ -350,18 +350,26 @@ export default function EquipmentSelectDialog({
     const prevHadUniqueElement = prevItem?.uniqueElement?.length > 0;
     const prevHadUniqueSpirit = prevItem?.uniqueSpirit?.length > 0;
 
+    // If current slot has user-set enchant (not unique), save it
+    if (!prevHadUniqueElement && newSlots[activeSlot]?.element) {
+      userEnchantRef.current[activeSlot] = { ...userEnchantRef.current[activeSlot], element: newSlots[activeSlot].element };
+    }
+    if (!prevHadUniqueSpirit && newSlots[activeSlot]?.spirit) {
+      userEnchantRef.current[activeSlot] = { ...userEnchantRef.current[activeSlot], spirit: newSlots[activeSlot].spirit };
+    }
+
     let newElement: EquipmentSlotData['element'];
     if (item.uniqueElement?.length) {
       newElement = { type: item.uniqueElement[0], tier: item.uniqueElementTier || 1, affinity: true };
     } else {
-      // Keep existing enchant even if previous item had unique element
-      const existing = newSlots[activeSlot]?.element || null;
-      if (existing && !prevHadUniqueElement) {
+      // Restore from saved user enchant
+      const saved = userEnchantRef.current[activeSlot]?.element;
+      const existing = saved || newSlots[activeSlot]?.element || null;
+      if (existing) {
         const hasAffinity = item.elementAffinity?.includes(existing.type) || item.elementAffinity?.includes('모든 원소');
         const allElAff = isAllElementAffinityOnly(item.elementAffinity, existing.type);
         newElement = { ...existing, affinity: !!hasAffinity, allElementAffinity: allElAff };
       } else {
-        // Previous had unique element → clear it (it belonged to the old item)
         newElement = null;
       }
     }
@@ -370,12 +378,12 @@ export default function EquipmentSelectDialog({
     if (item.uniqueSpirit?.length) {
       newSpirit = { name: item.uniqueSpirit[0], affinity: true };
     } else {
-      const existing = newSlots[activeSlot]?.spirit || null;
-      if (existing && !prevHadUniqueSpirit) {
+      const saved = userEnchantRef.current[activeSlot]?.spirit;
+      const existing = saved || newSlots[activeSlot]?.spirit || null;
+      if (existing) {
         const hasAffinity = item.spiritAffinity?.includes(existing.name);
         newSpirit = { ...existing, affinity: !!hasAffinity };
       } else {
-        // Previous had unique spirit → clear it
         newSpirit = null;
       }
     }
