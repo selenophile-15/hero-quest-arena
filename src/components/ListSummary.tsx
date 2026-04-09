@@ -364,9 +364,21 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
               const topBorderClass = isChamp ? 'border-t-2 border-border' : (clIdx > 0 ? 'border-t border-border' : '');
               return (
                 <tr key={cl} className={topBorderClass}>
-                  <td className="py-2 px-2 font-bold whitespace-nowrap text-sm text-center text-white" style={{ backgroundColor: CLASS_LINE_BG[cl] || 'transparent' }}>
-                    {cl}
-                  </td>
+                  {(() => {
+                    const bgColor = CLASS_LINE_BG[cl];
+                    if (bgColor) {
+                      return (
+                        <td className="py-2 px-2 font-bold whitespace-nowrap text-sm text-center text-white" style={{ backgroundColor: bgColor }}>
+                          {cl}
+                        </td>
+                      );
+                    }
+                    return (
+                      <td className={`py-2 px-2 font-bold whitespace-nowrap text-sm text-center ${CLASS_LINE_COLORS[cl] || 'text-foreground'}`}>
+                        {cl}
+                      </td>
+                    );
+                  })()}
                   {ELEMENT_ORDER.map(el => {
                     const cells = matrix[cl]?.[el] || [];
                     return (
