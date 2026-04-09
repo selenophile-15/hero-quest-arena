@@ -48,13 +48,13 @@ const CLASS_LINE_HEADER_BG: Record<string, string> = {
 };
 
 const ELEMENT_HEADER_BG: Record<string, string> = {
-  '불': 'hsla(0, 70%, 50%, 0.15)',
-  '물': 'hsla(210, 70%, 50%, 0.15)',
-  '공기': 'hsla(170, 60%, 45%, 0.15)',
-  '대지': 'hsla(85, 60%, 40%, 0.15)',
-  '빛': 'hsla(45, 80%, 55%, 0.15)',
-  '어둠': 'hsla(270, 60%, 50%, 0.15)',
-  '모든 원소': 'hsla(0, 0%, 70%, 0.1)',
+  '불': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,70%,50%,0.2) 0%, transparent 100%)',
+  '물': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(210,70%,50%,0.2) 0%, transparent 100%)',
+  '공기': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(170,60%,45%,0.2) 0%, transparent 100%)',
+  '대지': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(85,60%,40%,0.2) 0%, transparent 100%)',
+  '빛': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(45,80%,55%,0.2) 0%, transparent 100%)',
+  '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(270,60%,50%,0.2) 0%, transparent 100%)',
+  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,0%,70%,0.12) 0%, transparent 100%)',
 };
 
 const POSITION_COLORS: Record<string, string> = {
