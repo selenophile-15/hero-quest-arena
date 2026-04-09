@@ -40,8 +40,11 @@ const CLASS_LINE_COLORS: Record<string, string> = {
   '주문술사': 'text-sky-400',
 };
 
-const CLASS_LINE_BG: Record<string, string> = {
-  '챔피언': 'hsl(270 50% 55%)',
+const CLASS_LINE_HEADER_BG: Record<string, string> = {
+  '전사': 'hsla(0, 65%, 50%, 0.15)',
+  '로그': 'hsla(80, 55%, 45%, 0.15)',
+  '주문술사': 'hsla(210, 70%, 50%, 0.15)',
+  '챔피언': 'hsla(270, 50%, 55%, 0.15)',
 };
 
 const ELEMENT_HEADER_BG: Record<string, string> = {
@@ -364,21 +367,12 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
               const topBorderClass = isChamp ? 'border-t-2 border-border' : (clIdx > 0 ? 'border-t border-border' : '');
               return (
                 <tr key={cl} className={topBorderClass}>
-                  {(() => {
-                    const bgColor = CLASS_LINE_BG[cl];
-                    if (bgColor) {
-                      return (
-                        <td className="py-2 px-2 font-bold whitespace-nowrap text-sm text-center text-white" style={{ backgroundColor: bgColor }}>
-                          {cl}
-                        </td>
-                      );
-                    }
-                    return (
-                      <td className={`py-2 px-2 font-bold whitespace-nowrap text-sm text-center ${CLASS_LINE_COLORS[cl] || 'text-foreground'}`}>
-                        {cl}
-                      </td>
-                    );
-                  })()}
+                  <td
+                    className={`py-2 px-2 font-bold whitespace-nowrap text-sm text-center ${isChamp ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')}`}
+                    style={{ backgroundColor: CLASS_LINE_HEADER_BG[cl] || 'transparent' }}
+                  >
+                    {cl}
+                  </td>
                   {ELEMENT_ORDER.map(el => {
                     const cells = matrix[cl]?.[el] || [];
                     return (
