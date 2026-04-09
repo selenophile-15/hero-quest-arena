@@ -40,6 +40,23 @@ const CLASS_LINE_COLORS: Record<string, string> = {
   '주문술사': 'text-sky-400',
 };
 
+const CLASS_LINE_BG: Record<string, string> = {
+  '전사': 'hsl(0 65% 45%)',
+  '로그': 'hsl(80 55% 38%)',
+  '주문술사': 'hsl(210 70% 50%)',
+  '챔피언': 'hsl(270 50% 55%)',
+};
+
+const ELEMENT_HEADER_BG: Record<string, string> = {
+  '불': 'hsla(0, 70%, 50%, 0.25)',
+  '물': 'hsla(210, 70%, 50%, 0.25)',
+  '공기': 'hsla(170, 60%, 45%, 0.25)',
+  '대지': 'hsla(85, 60%, 40%, 0.25)',
+  '빛': 'hsla(45, 80%, 55%, 0.25)',
+  '어둠': 'hsla(270, 60%, 50%, 0.25)',
+  '모든 원소': 'hsla(0, 0%, 70%, 0.2)',
+};
+
 const POSITION_COLORS: Record<string, string> = {
   '퓨어 탱커': 'bg-blue-500',
   '회피 탱커': 'bg-emerald-600',
@@ -332,10 +349,9 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
             <tr className="border-b-2 border-border">
               <th className="py-2 px-2 text-center text-muted-foreground font-medium" style={{ width: '80px' }}></th>
               {ELEMENT_ORDER.map(el => (
-                <th key={el} className="py-2 px-1 text-center border-l border-border">
-                  <div className="flex items-center justify-center gap-1">
-                    <ElementIcon element={el} size={16} />
-                    <span className="text-foreground font-medium">{el}</span>
+                <th key={el} className="py-2 px-1 text-center border-l border-border" style={{ backgroundColor: ELEMENT_HEADER_BG[el] || 'transparent' }}>
+                  <div className="flex items-center justify-center">
+                    <ElementIcon element={el} size={22} />
                   </div>
                 </th>
               ))}
@@ -351,7 +367,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
               const topBorderClass = isChamp ? 'border-t-2 border-border' : (clIdx > 0 ? 'border-t border-border' : '');
               return (
                 <tr key={cl} className={topBorderClass}>
-                  <td className={`py-2 px-2 font-bold whitespace-nowrap text-sm text-center ${isChamp ? 'text-yellow-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')}`}>
+                  <td className="py-2 px-2 font-bold whitespace-nowrap text-sm text-center text-white" style={{ backgroundColor: CLASS_LINE_BG[cl] || 'transparent' }}>
                     {cl}
                   </td>
                   {ELEMENT_ORDER.map(el => {
