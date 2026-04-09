@@ -41,20 +41,20 @@ const CLASS_LINE_COLORS: Record<string, string> = {
 };
 
 const CLASS_LINE_HEADER_BG: Record<string, string> = {
-  '전사': 'hsla(0, 65%, 50%, 0.15)',
-  '로그': 'hsla(80, 55%, 45%, 0.15)',
-  '주문술사': 'hsla(210, 70%, 50%, 0.15)',
-  '챔피언': 'hsla(270, 50%, 55%, 0.15)',
+  '전사': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(0,65%,50%,0.25) 0%, transparent 100%)',
+  '로그': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(80,55%,45%,0.25) 0%, transparent 100%)',
+  '주문술사': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(210,70%,50%,0.25) 0%, transparent 100%)',
+  '챔피언': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(270,50%,55%,0.25) 0%, transparent 100%)',
 };
 
 const ELEMENT_HEADER_BG: Record<string, string> = {
-  '불': 'hsla(0, 70%, 50%, 0.15)',
-  '물': 'hsla(210, 70%, 50%, 0.15)',
-  '공기': 'hsla(170, 60%, 45%, 0.15)',
-  '대지': 'hsla(85, 60%, 40%, 0.15)',
-  '빛': 'hsla(45, 80%, 55%, 0.15)',
-  '어둠': 'hsla(270, 60%, 50%, 0.15)',
-  '모든 원소': 'hsla(0, 0%, 70%, 0.1)',
+  '불': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,70%,50%,0.2) 0%, transparent 100%)',
+  '물': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(210,70%,50%,0.2) 0%, transparent 100%)',
+  '공기': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(170,60%,45%,0.2) 0%, transparent 100%)',
+  '대지': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(85,60%,40%,0.2) 0%, transparent 100%)',
+  '빛': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(45,80%,55%,0.2) 0%, transparent 100%)',
+  '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(270,60%,50%,0.2) 0%, transparent 100%)',
+  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,0%,70%,0.12) 0%, transparent 100%)',
 };
 
 const POSITION_COLORS: Record<string, string> = {
@@ -349,7 +349,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
             <tr className="border-b-2 border-border">
               <th className="py-2 px-2 text-center text-muted-foreground font-medium" style={{ width: '80px' }}></th>
               {ELEMENT_ORDER.map(el => (
-                <th key={el} className="py-2 px-1 text-center border-l border-border" style={{ backgroundColor: ELEMENT_HEADER_BG[el] || 'transparent' }}>
+                <th key={el} className="py-2 px-1 text-center border-l border-border" style={{ background: ELEMENT_HEADER_BG[el] || 'transparent' }}>
                   <div className="flex items-center justify-center">
                     <ElementIcon element={el} size={18} />
                   </div>
@@ -369,7 +369,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
                 <tr key={cl} className={topBorderClass}>
                   <td
                     className={`py-2 px-2 font-bold whitespace-nowrap text-sm text-center ${isChamp ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')}`}
-                    style={{ backgroundColor: CLASS_LINE_HEADER_BG[cl] || 'transparent' }}
+                    style={{ background: CLASS_LINE_HEADER_BG[cl] || 'transparent' }}
                   >
                     {cl}
                   </td>
