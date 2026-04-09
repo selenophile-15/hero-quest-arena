@@ -40,8 +40,11 @@ const CLASS_LINE_COLORS: Record<string, string> = {
   '주문술사': 'text-sky-400',
 };
 
-const CLASS_LINE_BG: Record<string, string> = {
-  '챔피언': 'hsl(270 50% 55%)',
+const CLASS_LINE_HEADER_BG: Record<string, string> = {
+  '전사': 'hsla(0, 65%, 50%, 0.15)',
+  '로그': 'hsla(80, 55%, 45%, 0.15)',
+  '주문술사': 'hsla(210, 70%, 50%, 0.15)',
+  '챔피언': 'hsla(270, 50%, 55%, 0.15)',
 };
 
 const ELEMENT_HEADER_BG: Record<string, string> = {
