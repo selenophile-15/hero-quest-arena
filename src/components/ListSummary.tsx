@@ -41,10 +41,10 @@ const CLASS_LINE_COLORS: Record<string, string> = {
 };
 
 const CLASS_LINE_HEADER_BG: Record<string, string> = {
-  '전사': 'hsla(0, 65%, 50%, 0.15)',
-  '로그': 'hsla(80, 55%, 45%, 0.15)',
-  '주문술사': 'hsla(210, 70%, 50%, 0.15)',
-  '챔피언': 'hsla(270, 50%, 55%, 0.15)',
+  '전사': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(0,65%,50%,0.25) 0%, transparent 100%)',
+  '로그': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(80,55%,45%,0.25) 0%, transparent 100%)',
+  '주문술사': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(210,70%,50%,0.25) 0%, transparent 100%)',
+  '챔피언': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(270,50%,55%,0.25) 0%, transparent 100%)',
 };
 
 const ELEMENT_HEADER_BG: Record<string, string> = {
