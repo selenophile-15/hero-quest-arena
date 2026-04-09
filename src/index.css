@@ -1246,7 +1246,16 @@ a.bg-accent *,
 .stat-note-box-crit { background-color: hsl(45 30% 16%); border-color: hsl(45 30% 26%); }
 .stat-note-box-evasion { background-color: hsl(172 25% 16%); border-color: hsl(172 25% 26%); }
 .stat-note-box-threat { background-color: hsl(230 10% 18%); border-color: hsl(230 10% 28%); }
-.stat-note-text { color: hsl(0 0% 72%); }
+.stat-note-text { color: hsl(0 0% 82%); }
+
+/* Dark mode stat breakdown: brighten dim text for readability */
+.stat-box-white .text-white\/80 { color: hsl(0 0% 92%) !important; }
+.stat-box-white .text-white\/70 { color: hsl(0 0% 88%) !important; }
+
+/* Dark mode: brighten foreground/70 and foreground/50 in stat tables */
+:root:not([data-color-mode="light"]) .text-foreground\/70 { color: hsl(0 0% 80%) !important; }
+:root:not([data-color-mode="light"]) .text-foreground\/50 { color: hsl(0 0% 72%) !important; }
+:root:not([data-color-mode="light"]) .text-muted-foreground { color: hsl(0 0% 62%) !important; }
 
 /* Dark mode formula box: brighter text for readability */
 .stat-breakdown-box .text-white\/70 { color: rgba(255,255,255,0.85) !important; }
