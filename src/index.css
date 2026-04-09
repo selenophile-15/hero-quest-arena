@@ -971,7 +971,16 @@
   .stat-note-box-crit { background-color: hsl(45 60% 92%) !important; border-color: hsl(45 50% 75%) !important; }
   .stat-note-box-evasion { background-color: hsl(172 45% 92%) !important; border-color: hsl(172 40% 75%) !important; }
   .stat-note-box-threat { background-color: hsl(230 15% 93%) !important; border-color: hsl(230 10% 78%) !important; }
-  .stat-note-text { color: hsl(230 15% 30%) !important; }
+  .stat-note-text { color: hsl(230 15% 25%) !important; }
+
+  /* Light mode: ninja/sense note box text darker for readability */
+  .bg-purple-900\/20 .text-purple-300\/80 { color: hsl(270 60% 30%) !important; }
+  .bg-purple-900\/20 .text-purple-200 { color: hsl(270 60% 25%) !important; }
+  .bg-purple-900\/20 .font-bold.text-purple-200 { color: hsl(270 65% 22%) !important; }
+
+  /* Light mode: equipment list item names darker */
+  .text-foreground\/50 { color: hsl(230 15% 35%) !important; }
+  .text-foreground\/70 { color: hsl(230 15% 28%) !important; }
 
   /* Manual equipment form inputs: white background */
   .manual-equip-input,
@@ -1246,7 +1255,16 @@ a.bg-accent *,
 .stat-note-box-crit { background-color: hsl(45 30% 16%); border-color: hsl(45 30% 26%); }
 .stat-note-box-evasion { background-color: hsl(172 25% 16%); border-color: hsl(172 25% 26%); }
 .stat-note-box-threat { background-color: hsl(230 10% 18%); border-color: hsl(230 10% 28%); }
-.stat-note-text { color: hsl(0 0% 72%); }
+.stat-note-text { color: hsl(0 0% 82%); }
+
+/* Dark mode stat breakdown: brighten dim text for readability */
+.stat-box-white .text-white\/80 { color: hsl(0 0% 92%) !important; }
+.stat-box-white .text-white\/70 { color: hsl(0 0% 88%) !important; }
+
+/* Dark mode: brighten foreground/70 and foreground/50 in stat tables */
+:root:not([data-color-mode="light"]) .text-foreground\/70 { color: hsl(0 0% 80%) !important; }
+:root:not([data-color-mode="light"]) .text-foreground\/50 { color: hsl(0 0% 72%) !important; }
+:root:not([data-color-mode="light"]) .text-muted-foreground { color: hsl(0 0% 62%) !important; }
 
 /* Dark mode formula box: brighter text for readability */
 .stat-breakdown-box .text-white\/70 { color: rgba(255,255,255,0.85) !important; }
