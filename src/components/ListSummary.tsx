@@ -41,20 +41,17 @@ const CLASS_LINE_COLORS: Record<string, string> = {
 };
 
 const CLASS_LINE_BG: Record<string, string> = {
-  '전사': 'hsl(0 65% 45%)',
-  '로그': 'hsl(80 55% 38%)',
-  '주문술사': 'hsl(210 70% 50%)',
   '챔피언': 'hsl(270 50% 55%)',
 };
 
 const ELEMENT_HEADER_BG: Record<string, string> = {
-  '불': 'hsla(0, 70%, 50%, 0.25)',
-  '물': 'hsla(210, 70%, 50%, 0.25)',
-  '공기': 'hsla(170, 60%, 45%, 0.25)',
-  '대지': 'hsla(85, 60%, 40%, 0.25)',
-  '빛': 'hsla(45, 80%, 55%, 0.25)',
-  '어둠': 'hsla(270, 60%, 50%, 0.25)',
-  '모든 원소': 'hsla(0, 0%, 70%, 0.2)',
+  '불': 'hsla(0, 70%, 50%, 0.15)',
+  '물': 'hsla(210, 70%, 50%, 0.15)',
+  '공기': 'hsla(170, 60%, 45%, 0.15)',
+  '대지': 'hsla(85, 60%, 40%, 0.15)',
+  '빛': 'hsla(45, 80%, 55%, 0.15)',
+  '어둠': 'hsla(270, 60%, 50%, 0.15)',
+  '모든 원소': 'hsla(0, 0%, 70%, 0.1)',
 };
 
 const POSITION_COLORS: Record<string, string> = {
