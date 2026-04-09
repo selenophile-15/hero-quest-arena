@@ -971,7 +971,16 @@
   .stat-note-box-crit { background-color: hsl(45 60% 92%) !important; border-color: hsl(45 50% 75%) !important; }
   .stat-note-box-evasion { background-color: hsl(172 45% 92%) !important; border-color: hsl(172 40% 75%) !important; }
   .stat-note-box-threat { background-color: hsl(230 15% 93%) !important; border-color: hsl(230 10% 78%) !important; }
-  .stat-note-text { color: hsl(230 15% 30%) !important; }
+  .stat-note-text { color: hsl(230 15% 25%) !important; }
+
+  /* Light mode: ninja/sense note box text darker for readability */
+  .bg-purple-900\/20 .text-purple-300\/80 { color: hsl(270 60% 30%) !important; }
+  .bg-purple-900\/20 .text-purple-200 { color: hsl(270 60% 25%) !important; }
+  .bg-purple-900\/20 .font-bold.text-purple-200 { color: hsl(270 65% 22%) !important; }
+
+  /* Light mode: equipment list item names darker */
+  .text-foreground\/50 { color: hsl(230 15% 35%) !important; }
+  .text-foreground\/70 { color: hsl(230 15% 28%) !important; }
 
   /* Manual equipment form inputs: white background */
   .manual-equip-input,
