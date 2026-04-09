@@ -369,7 +369,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
                 <tr key={cl} className={topBorderClass}>
                   <td
                     className={`py-2 px-2 font-bold whitespace-nowrap text-sm text-center ${isChamp ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')}`}
-                    style={{ backgroundColor: CLASS_LINE_HEADER_BG[cl] || 'transparent' }}
+                    style={{ background: CLASS_LINE_HEADER_BG[cl] || 'transparent' }}
                   >
                     {cl}
                   </td>
