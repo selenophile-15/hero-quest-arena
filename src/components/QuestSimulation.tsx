@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from '@/hooks/use-theme';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
+import { HERO_CLASS_MAP } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { getHeroes } from '@/lib/storage';
 import { getJobImagePath, getChampionImagePath, getJobIllustPath } from '@/lib/nameMap';
@@ -174,7 +175,7 @@ export default function QuestSimulation() {
 
   // Dialogs
   const [configOpen, setConfigOpen] = useState(false);
-  const [configInitialStep, setConfigInitialStep] = useState<'type' | 'region' | 'subarea' | 'difficulty' | undefined>();
+  const [configInitialStep, setConfigInitialStep] = useState<'type' | 'region' | 'subarea' | undefined>();
   const [configInitialState, setConfigInitialState] = useState<{ questTypeKey: string; regionIdx: number; subAreaIdx: number } | undefined>();
   const [heroSelectOpen, setHeroSelectOpen] = useState(false);
   const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null);
@@ -196,6 +197,7 @@ export default function QuestSimulation() {
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>('random');
   const [jobDisplayMode, setJobDisplayMode] = useState<'icon' | 'illust' | 'none'>('icon');
   const [simResultsFilter, setSimResultsFilter] = useState<string>('all');
+  const [mainResultsTab, setMainResultsTab] = useState<'all' | 'win' | 'lose'>('all');
 
   // Load quest data
   useEffect(() => {
@@ -257,10 +259,38 @@ export default function QuestSimulation() {
   const hasSubAreas = currentRegion && currentRegion.subAreas.length > 1;
   const selectedSubArea = currentRegion && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99 ? currentRegion.subAreas[selectedSubAreaIdx] : null;
 
-  const selectedHeroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+  // Sort party: champions first, then heroes by class order (HERO_CLASS_MAP)
+  const JOB_SORT_MAP = useMemo(() => {
+    const m: Record<string, number> = {};
+    let idx = 0;
+    for (const jobs of Object.values(HERO_CLASS_MAP)) {
+      for (const job of jobs) m[job] = idx++;
+    }
+    return m;
+  }, []);
+
+  const selectedHeroes = useMemo(() => {
+    const heroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    return heroes.sort((a, b) => {
+      // Champions first
+      if (a.type === 'champion' && b.type !== 'champion') return -1;
+      if (a.type !== 'champion' && b.type === 'champion') return 1;
+      if (a.type === 'champion' && b.type === 'champion') return 0;
+      // Then by class order
+      const aOrder = JOB_SORT_MAP[a.heroClass] ?? 999;
+      const bOrder = JOB_SORT_MAP[b.heroClass] ?? 999;
+      return aOrder - bOrder;
+    });
+  }, [allHeroes, selectedHeroIds, JOB_SORT_MAP]);
+
   const maxMembers = currentRegion?.maxMembers || 5;
   const isBossQuest = currentQuest?.isBoss || false;
   const isFlashQuest = selectedQuestType === 'flash';
+
+  // Rudo element bonus: +50% to total party element values (rounded)
+  const champion = selectedHeroes.find(h => h.type === 'champion');
+  const isRudo = champion && (champion.championName?.includes('루도') || champion.name?.includes('루도'));
+  const rudoElementMultiplier = isRudo ? 1.5 : 1.0;
 
   // Compute party-buffed stats whenever party changes
   const heroIdKey = Array.from(selectedHeroIds).join(',');
@@ -424,7 +454,7 @@ export default function QuestSimulation() {
     setSelectedMiniBoss('random');
   };
 
-  const openConfigAtStep = (step: 'type' | 'region' | 'subarea' | 'difficulty') => {
+  const openConfigAtStep = (step: 'type' | 'region' | 'subarea') => {
     setConfigInitialStep(step);
     setConfigInitialState({
       questTypeKey: selectedQuestType,
@@ -540,12 +570,16 @@ export default function QuestSimulation() {
     return -50;
   };
 
-  // Check if barrier is broken (for warning)
+  // Check if barrier is broken (for warning) - apply Rudo 50% bonus
+  const getPartyElementSum = (el: string) => {
+    const rawSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
+    return Math.round(rawSum * rudoElementMultiplier);
+  };
+
   const barrierBrokenGlobal = (() => {
     if (!currentQuest?.barrier || barrierElements.length === 0) return true;
     return barrierElements.every(el => {
-      const heroSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
-      return heroSum >= currentQuest.barrier!.hp;
+      return getPartyElementSum(el) >= currentQuest.barrier!.hp;
     });
   })();
 
@@ -803,8 +837,8 @@ export default function QuestSimulation() {
                     setConfigInitialState(undefined);
                     setConfigOpen(true);
                   } else {
-                    // 이미 선택된 상태: 세부 지역부터
-                    openConfigAtStep(hasSubAreas ? 'subarea' : 'difficulty');
+                    // 이미 선택된 상태: 세부 지역 & 난이도부터
+                    openConfigAtStep('subarea');
                   }
                 }}
                 className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
@@ -833,19 +867,17 @@ export default function QuestSimulation() {
                   <span className="text-sm text-foreground font-medium">{locationName}</span>
                 </div>
 
-                {/* Line 2: Difficulty */}
+                {/* Line 2: Difficulty - display only, no click to change */}
                 {currentQuest.difficulty !== '없음' && (
                   <div className="text-center text-sm">
-                    <button
-                      onClick={() => openConfigAtStep('difficulty')}
-                      className={`font-medium cursor-pointer hover:underline ${
+                    <span
+                      className={`font-medium ${
                         currentQuest.difficulty === '쉬움' ? 'text-lime-400' :
                         currentQuest.difficulty === '보통' ? 'text-blue-400' :
                         currentQuest.difficulty === '어려움' ? 'text-orange-400' :
                         currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
                       }`}
-                      title="난이도 변경"
-                    >{currentQuest.difficulty}</button>
+                    >{currentQuest.difficulty}</span>
                   </div>
                 )}
 
@@ -916,7 +948,7 @@ export default function QuestSimulation() {
                     <div className="flex items-center justify-center gap-4">
                       {barrierElements.map((el, i) => {
                         const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                        const heroSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
+                        const heroSum = getPartyElementSum(el);
                         const required = currentQuest.barrier!.hp;
                         const isMet = heroSum >= required;
                         return (
@@ -1168,22 +1200,27 @@ export default function QuestSimulation() {
                 </Button>
               </div>
             )}
-            {/* Win Rate - between stat button and element row */}
+            {/* Win Rate - prominent display */}
             {currentQuest && selectedHeroes.length > 0 && simResult && (
-              <div className="mb-3 text-center">
-                <div className="text-[10px] text-muted-foreground mb-0.5">승률</div>
-                <div className={`text-2xl font-bold font-mono ${
-                  simResult.winRate >= 90 ? 'text-lime-400' :
+              <div className="mb-3 py-3 px-4 rounded-xl text-center" style={{
+                background: simResult.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
+                  : simResult.winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
+                  : 'linear-gradient(135deg, hsla(0,80%,50%,0.12) 0%, hsla(0,80%,50%,0.04) 100%)',
+                border: `1px solid ${simResult.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : simResult.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
+              }}>
+                <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
+                <div className={`text-3xl font-black font-mono tracking-tight ${
+                  simResult.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
                   simResult.winRate >= 70 ? 'text-lime-400' :
-                  simResult.winRate >= 50 ? 'text-yellow-400' :
-                  simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400'
+                  simResult.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
+                  simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
                 }`}>
                   {simResult.winRate.toFixed(1)}%
                 </div>
                 {simResult.retryWinRate !== undefined && (
-                  <div className="text-[9px] text-muted-foreground space-y-0.5 mt-1">
-                    <div>1차 시도: <span className="text-foreground">{simResult.rawWinRate.toFixed(1)}%</span></div>
-                    <div>2차 시도 (부스터 적용): <span className="text-foreground">{simResult.retryWinRate.toFixed(1)}%</span></div>
+                  <div className="text-[10px] text-muted-foreground space-y-0.5 mt-1.5">
+                    <div>1차 시도: <span className="text-foreground font-medium">{simResult.rawWinRate.toFixed(1)}%</span></div>
+                    <div>2차 시도 (부스터 적용): <span className="text-foreground font-medium">{simResult.retryWinRate.toFixed(1)}%</span></div>
                   </div>
                 )}
                 {simRunning && (
@@ -1416,13 +1453,10 @@ export default function QuestSimulation() {
                     (selectedQuestType === 'tot' && currentRegion?.name === '공포')
                   );
 
-                  // Check if barrier is broken
+                  // Check if barrier is broken (with Rudo bonus)
                   const barrierBroken = (() => {
                     if (!currentQuest?.barrier || barrierElements.length === 0) return true;
-                    const heroSum = selectedHeroes.reduce((sum, h) => {
-                      return sum + barrierElements.reduce((s, el) => s + getHeroBarrierContribution(h, el), 0);
-                    }, 0);
-                    return heroSum >= currentQuest.barrier.hp;
+                    return barrierElements.every(el => getPartyElementSum(el) >= currentQuest.barrier!.hp);
                   })();
 
                   const statRows = [
@@ -1586,20 +1620,52 @@ export default function QuestSimulation() {
                   <Clock className="w-3.5 h-3.5 text-blue-400" />
                   <span className="text-sm font-bold text-foreground">턴 수</span>
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-secondary/30 rounded p-2">
-                    <div className="text-[10px] text-muted-foreground">최소</div>
-                    <div className="text-lg font-bold font-mono text-foreground">{simResult.minRounds}</div>
-                  </div>
-                  <div className="bg-secondary/30 rounded p-2">
-                    <div className="text-[10px] text-muted-foreground">평균</div>
-                    <div className="text-lg font-bold font-mono text-primary">{Math.round(simResult.avgRounds)}</div>
-                  </div>
-                  <div className="bg-secondary/30 rounded p-2">
-                    <div className="text-[10px] text-muted-foreground">최대</div>
-                    <div className="text-lg font-bold font-mono text-foreground">{simResult.maxRounds}</div>
-                  </div>
+                {/* Tab selector */}
+                <div className="flex gap-1 mb-2">
+                  {([
+                    { id: 'all' as const, label: '전체' },
+                    { id: 'win' as const, label: '성공한 판' },
+                    { id: 'lose' as const, label: '실패한 판' },
+                  ]).map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setMainResultsTab(tab.id)}
+                      className={`flex-1 text-[10px] py-1 rounded transition-colors ${
+                        mainResultsTab === tab.id
+                          ? 'bg-primary/20 text-primary font-bold border border-primary/30'
+                          : 'bg-secondary/20 text-muted-foreground hover:bg-secondary/40 border border-transparent'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
+                {(() => {
+                  const rounds = mainResultsTab === 'win' ? simResult.winRounds
+                    : mainResultsTab === 'lose' ? simResult.loseRounds
+                    : { avg: simResult.avgRounds, min: simResult.minRounds, max: simResult.maxRounds };
+                  if (!rounds) return (
+                    <div className="text-center text-xs text-muted-foreground py-3">
+                      {mainResultsTab === 'win' ? '성공한 판 없음' : '실패한 판 없음'}
+                    </div>
+                  );
+                  return (
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="bg-secondary/30 rounded p-2">
+                        <div className="text-[10px] text-muted-foreground">최소</div>
+                        <div className="text-lg font-bold font-mono text-foreground">{rounds.min}</div>
+                      </div>
+                      <div className="bg-secondary/30 rounded p-2">
+                        <div className="text-[10px] text-muted-foreground">평균</div>
+                        <div className="text-lg font-bold font-mono text-primary">{Math.round(rounds.avg)}</div>
+                      </div>
+                      <div className="bg-secondary/30 rounded p-2">
+                        <div className="text-[10px] text-muted-foreground">최대</div>
+                        <div className="text-lg font-bold font-mono text-foreground">{rounds.max}</div>
+                      </div>
+                    </div>
+                  );
+                })()}
                 {simResult.roundLimitRate > 0 && (
                   <div className="mt-2 text-center text-[10px] text-red-400">
                     ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%

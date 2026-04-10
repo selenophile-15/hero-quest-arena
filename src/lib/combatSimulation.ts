@@ -150,6 +150,9 @@ export interface SimulationResult {
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
   // Per mini-boss breakdown (only for random mode)
   miniBossResults?: MiniBossResult[];
+  // Win/loss round breakdown
+  winRounds?: { avg: number; min: number; max: number };
+  loseRounds?: { avg: number; min: number; max: number };
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
@@ -792,8 +795,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       totalBarrierDmg += elVal;
     });
 
-    // Rudo barrier bonus (tier 3+: 50% more barrier damage)
-    if ((champName.includes('루도') || champName === 'Rudo') && champTier >= 3) {
+    // Rudo barrier bonus: 50% more barrier damage (all tiers)
+    if (champName.includes('루도') || champName === 'Rudo') {
       totalBarrierDmg = Math.round(totalBarrierDmg * 1.5);
     }
 
@@ -843,6 +846,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let timesQuestWon = 0;
   let roundsAvg = 0, roundsMin = 1000, roundsMax = 0;
   let roundLimitTimes = 0;
+  // Win/loss round tracking
+  let winRoundsSum = 0, winRoundsMin = 1000, winRoundsMax = 0;
+  let loseRoundsSum = 0, loseRoundsMin = 1000, loseRoundsMax = 0, loseCount = 0;
 
   const timesSurvived = new Float64Array(numHeroes);
   const damageDealtAvg = new Float64Array(numHeroes);
@@ -1200,13 +1206,26 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         roundsAvg += round;
         roundsMax = Math.max(roundsMax, round);
         roundsMin = Math.min(roundsMin, round);
+        winRoundsSum += round;
+        winRoundsMin = Math.min(winRoundsMin, round);
+        winRoundsMax = Math.max(winRoundsMax, round);
       }
 
-      if (heroesAlive === 0) contFight = false;
+      if (heroesAlive === 0) {
+        contFight = false;
+        loseCount++;
+        loseRoundsSum += round;
+        loseRoundsMin = Math.min(loseRoundsMin, round);
+        loseRoundsMax = Math.max(loseRoundsMax, round);
+      }
 
       if (contFight && round >= 499) {
         contFight = false;
         roundLimitTimes++;
+        loseCount++;
+        loseRoundsSum += round;
+        loseRoundsMin = Math.min(loseRoundsMin, round);
+        loseRoundsMax = Math.max(loseRoundsMax, round);
       }
 
       if (!contFight) {
@@ -1406,6 +1425,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     roundLimitRate: (roundLimitTimes / actualSimCount) * 100,
     totalSimulations: actualSimCount,
     retrySimulations,
+    winRounds: timesQuestWon > 0 ? {
+      avg: Math.round((winRoundsSum / timesQuestWon) * 100) / 100,
+      min: winRoundsMin >= 1000 ? 0 : winRoundsMin,
+      max: winRoundsMax,
+    } : undefined,
+    loseRounds: loseCount > 0 ? {
+      avg: Math.round((loseRoundsSum / loseCount) * 100) / 100,
+      min: loseRoundsMin >= 1000 ? 0 : loseRoundsMin,
+      max: loseRoundsMax,
+    } : undefined,
   };
 }
 
