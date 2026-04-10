@@ -792,8 +792,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       totalBarrierDmg += elVal;
     });
 
-    // Rudo barrier bonus (tier 3+: 50% more barrier damage)
-    if ((champName.includes('루도') || champName === 'Rudo') && champTier >= 3) {
+    // Rudo barrier bonus: 50% more barrier damage (all tiers)
+    if (champName.includes('루도') || champName === 'Rudo') {
       totalBarrierDmg = Math.round(totalBarrierDmg * 1.5);
     }
 
