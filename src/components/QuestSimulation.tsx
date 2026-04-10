@@ -1620,20 +1620,52 @@ export default function QuestSimulation() {
                   <Clock className="w-3.5 h-3.5 text-blue-400" />
                   <span className="text-sm font-bold text-foreground">턴 수</span>
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-secondary/30 rounded p-2">
-                    <div className="text-[10px] text-muted-foreground">최소</div>
-                    <div className="text-lg font-bold font-mono text-foreground">{simResult.minRounds}</div>
-                  </div>
-                  <div className="bg-secondary/30 rounded p-2">
-                    <div className="text-[10px] text-muted-foreground">평균</div>
-                    <div className="text-lg font-bold font-mono text-primary">{Math.round(simResult.avgRounds)}</div>
-                  </div>
-                  <div className="bg-secondary/30 rounded p-2">
-                    <div className="text-[10px] text-muted-foreground">최대</div>
-                    <div className="text-lg font-bold font-mono text-foreground">{simResult.maxRounds}</div>
-                  </div>
+                {/* Tab selector */}
+                <div className="flex gap-1 mb-2">
+                  {([
+                    { id: 'all' as const, label: '전체' },
+                    { id: 'win' as const, label: '성공한 판' },
+                    { id: 'lose' as const, label: '실패한 판' },
+                  ]).map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setMainResultsTab(tab.id)}
+                      className={`flex-1 text-[10px] py-1 rounded transition-colors ${
+                        mainResultsTab === tab.id
+                          ? 'bg-primary/20 text-primary font-bold border border-primary/30'
+                          : 'bg-secondary/20 text-muted-foreground hover:bg-secondary/40 border border-transparent'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
+                {(() => {
+                  const rounds = mainResultsTab === 'win' ? simResult.winRounds
+                    : mainResultsTab === 'lose' ? simResult.loseRounds
+                    : { avg: simResult.avgRounds, min: simResult.minRounds, max: simResult.maxRounds };
+                  if (!rounds) return (
+                    <div className="text-center text-xs text-muted-foreground py-3">
+                      {mainResultsTab === 'win' ? '성공한 판 없음' : '실패한 판 없음'}
+                    </div>
+                  );
+                  return (
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="bg-secondary/30 rounded p-2">
+                        <div className="text-[10px] text-muted-foreground">최소</div>
+                        <div className="text-lg font-bold font-mono text-foreground">{rounds.min}</div>
+                      </div>
+                      <div className="bg-secondary/30 rounded p-2">
+                        <div className="text-[10px] text-muted-foreground">평균</div>
+                        <div className="text-lg font-bold font-mono text-primary">{Math.round(rounds.avg)}</div>
+                      </div>
+                      <div className="bg-secondary/30 rounded p-2">
+                        <div className="text-[10px] text-muted-foreground">최대</div>
+                        <div className="text-lg font-bold font-mono text-foreground">{rounds.max}</div>
+                      </div>
+                    </div>
+                  );
+                })()}
                 {simResult.roundLimitRate > 0 && (
                   <div className="mt-2 text-center text-[10px] text-red-400">
                     ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
