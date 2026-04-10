@@ -846,6 +846,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let timesQuestWon = 0;
   let roundsAvg = 0, roundsMin = 1000, roundsMax = 0;
   let roundLimitTimes = 0;
+  // Win/loss round tracking
+  let winRoundsSum = 0, winRoundsMin = 1000, winRoundsMax = 0;
+  let loseRoundsSum = 0, loseRoundsMin = 1000, loseRoundsMax = 0, loseCount = 0;
 
   const timesSurvived = new Float64Array(numHeroes);
   const damageDealtAvg = new Float64Array(numHeroes);
