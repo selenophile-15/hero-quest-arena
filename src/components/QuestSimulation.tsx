@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from '@/hooks/use-theme';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
+import { HERO_CLASS_MAP } from '@/lib/gameData';
 import { formatNumber } from '@/lib/format';
 import { getHeroes } from '@/lib/storage';
 import { getJobImagePath, getChampionImagePath, getJobIllustPath } from '@/lib/nameMap';
