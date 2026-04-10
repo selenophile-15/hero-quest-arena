@@ -68,7 +68,7 @@ const ELEMENT_HEADER_BG_DARK: Record<string, string> = {
 
 const POSITION_COLORS: Record<string, string> = {
   '퓨어 탱커': 'bg-blue-500',
-  '회피 탱커': 'bg-emerald-600',
+  '회피 탱커': 'bg-lime-600',
   '딜탱': 'bg-orange-500',
   '치명 딜러': 'bg-red-500',
   '일반 딜러': 'bg-yellow-500',
@@ -78,7 +78,7 @@ const POSITION_COLORS: Record<string, string> = {
 };
 const POSITION_TEXT_COLORS: Record<string, string> = {
   '퓨어 탱커': 'text-blue-400',
-  '회피 탱커': 'text-emerald-400',
+  '회피 탱커': 'text-lime-400',
   '딜탱': 'text-orange-400',
   '치명 딜러': 'text-red-400',
   '일반 딜러': 'text-yellow-400',
@@ -301,6 +301,9 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
   plannedIds: Set<string>;
   onAdd: () => void;
 }) {
+  const { colorMode } = useTheme();
+  const isDark = colorMode === 'dark';
+  const ELEMENT_HEADER_BG = isDark ? ELEMENT_HEADER_BG_DARK : ELEMENT_HEADER_BG_LIGHT;
   const all = useMemo(() => {
     const combined = new Set([...Array.from(ownedIds), ...Array.from(plannedIds)]);
     return allHeroes.filter(h => combined.has(h.id));
