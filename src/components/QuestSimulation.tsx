@@ -174,7 +174,7 @@ export default function QuestSimulation() {
 
   // Dialogs
   const [configOpen, setConfigOpen] = useState(false);
-  const [configInitialStep, setConfigInitialStep] = useState<'type' | 'region' | 'subarea' | 'difficulty' | undefined>();
+  const [configInitialStep, setConfigInitialStep] = useState<'type' | 'region' | 'subarea' | undefined>();
   const [configInitialState, setConfigInitialState] = useState<{ questTypeKey: string; regionIdx: number; subAreaIdx: number } | undefined>();
   const [heroSelectOpen, setHeroSelectOpen] = useState(false);
   const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null);
