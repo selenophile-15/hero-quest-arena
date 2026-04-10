@@ -47,19 +47,28 @@ const CLASS_LINE_HEADER_BG: Record<string, string> = {
   '챔피언': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(270,50%,55%,0.25) 0%, transparent 100%)',
 };
 
-const ELEMENT_HEADER_BG: Record<string, string> = {
+const ELEMENT_HEADER_BG_LIGHT: Record<string, string> = {
   '불': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,70%,50%,0.2) 0%, transparent 100%)',
   '물': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(210,70%,50%,0.2) 0%, transparent 100%)',
   '공기': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(170,60%,45%,0.2) 0%, transparent 100%)',
   '대지': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(85,60%,40%,0.2) 0%, transparent 100%)',
   '빛': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(45,80%,55%,0.2) 0%, transparent 100%)',
-  '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(270,60%,50%,0.2) 0%, transparent 100%)',
-  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,0%,70%,0.12) 0%, transparent 100%)',
+  '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(280,50%,55%,0.2) 0%, transparent 100%)',
+  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,80%,55%,0.15) 0%, hsla(45,80%,55%,0.1) 30%, hsla(130,60%,45%,0.1) 50%, hsla(210,70%,55%,0.1) 70%, hsla(280,60%,55%,0.15) 100%)',
+};
+const ELEMENT_HEADER_BG_DARK: Record<string, string> = {
+  '불': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,70%,55%,0.25) 0%, transparent 100%)',
+  '물': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(210,70%,55%,0.25) 0%, transparent 100%)',
+  '공기': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(170,60%,50%,0.25) 0%, transparent 100%)',
+  '대지': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(85,60%,45%,0.25) 0%, transparent 100%)',
+  '빛': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(45,80%,60%,0.25) 0%, transparent 100%)',
+  '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(280,55%,65%,0.3) 0%, transparent 100%)',
+  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,80%,60%,0.2) 0%, hsla(45,80%,60%,0.15) 30%, hsla(130,60%,50%,0.15) 50%, hsla(210,70%,60%,0.15) 70%, hsla(280,60%,60%,0.2) 100%)',
 };
 
 const POSITION_COLORS: Record<string, string> = {
   '퓨어 탱커': 'bg-blue-500',
-  '회피 탱커': 'bg-emerald-600',
+  '회피 탱커': 'bg-lime-600',
   '딜탱': 'bg-orange-500',
   '치명 딜러': 'bg-red-500',
   '일반 딜러': 'bg-yellow-500',
@@ -69,7 +78,7 @@ const POSITION_COLORS: Record<string, string> = {
 };
 const POSITION_TEXT_COLORS: Record<string, string> = {
   '퓨어 탱커': 'text-blue-400',
-  '회피 탱커': 'text-emerald-400',
+  '회피 탱커': 'text-lime-400',
   '딜탱': 'text-orange-400',
   '치명 딜러': 'text-red-400',
   '일반 딜러': 'text-yellow-400',
@@ -292,6 +301,9 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
   plannedIds: Set<string>;
   onAdd: () => void;
 }) {
+  const { colorMode } = useTheme();
+  const isDark = colorMode === 'dark';
+  const ELEMENT_HEADER_BG = isDark ? ELEMENT_HEADER_BG_DARK : ELEMENT_HEADER_BG_LIGHT;
   const all = useMemo(() => {
     const combined = new Set([...Array.from(ownedIds), ...Array.from(plannedIds)]);
     return allHeroes.filter(h => combined.has(h.id));
