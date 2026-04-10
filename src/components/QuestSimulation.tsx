@@ -258,10 +258,38 @@ export default function QuestSimulation() {
   const hasSubAreas = currentRegion && currentRegion.subAreas.length > 1;
   const selectedSubArea = currentRegion && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99 ? currentRegion.subAreas[selectedSubAreaIdx] : null;
 
-  const selectedHeroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+  // Sort party: champions first, then heroes by class order (HERO_CLASS_MAP)
+  const JOB_SORT_MAP = useMemo(() => {
+    const m: Record<string, number> = {};
+    let idx = 0;
+    for (const jobs of Object.values(HERO_CLASS_MAP)) {
+      for (const job of jobs) m[job] = idx++;
+    }
+    return m;
+  }, []);
+
+  const selectedHeroes = useMemo(() => {
+    const heroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    return heroes.sort((a, b) => {
+      // Champions first
+      if (a.type === 'champion' && b.type !== 'champion') return -1;
+      if (a.type !== 'champion' && b.type === 'champion') return 1;
+      if (a.type === 'champion' && b.type === 'champion') return 0;
+      // Then by class order
+      const aOrder = JOB_SORT_MAP[a.heroClass] ?? 999;
+      const bOrder = JOB_SORT_MAP[b.heroClass] ?? 999;
+      return aOrder - bOrder;
+    });
+  }, [allHeroes, selectedHeroIds, JOB_SORT_MAP]);
+
   const maxMembers = currentRegion?.maxMembers || 5;
   const isBossQuest = currentQuest?.isBoss || false;
   const isFlashQuest = selectedQuestType === 'flash';
+
+  // Rudo element bonus: +50% to total party element values (rounded)
+  const champion = selectedHeroes.find(h => h.type === 'champion');
+  const isRudo = champion && (champion.championName?.includes('루도') || champion.name?.includes('루도'));
+  const rudoElementMultiplier = isRudo ? 1.5 : 1.0;
 
   // Compute party-buffed stats whenever party changes
   const heroIdKey = Array.from(selectedHeroIds).join(',');
