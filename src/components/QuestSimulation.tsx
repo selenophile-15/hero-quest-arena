@@ -424,7 +424,7 @@ export default function QuestSimulation() {
     setSelectedMiniBoss('random');
   };
 
-  const openConfigAtStep = (step: 'type' | 'region' | 'subarea' | 'difficulty') => {
+  const openConfigAtStep = (step: 'type' | 'region' | 'subarea') => {
     setConfigInitialStep(step);
     setConfigInitialState({
       questTypeKey: selectedQuestType,
