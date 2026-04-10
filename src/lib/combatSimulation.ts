@@ -1425,6 +1425,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     roundLimitRate: (roundLimitTimes / actualSimCount) * 100,
     totalSimulations: actualSimCount,
     retrySimulations,
+    winRounds: timesQuestWon > 0 ? {
+      avg: Math.round((winRoundsSum / timesQuestWon) * 100) / 100,
+      min: winRoundsMin >= 1000 ? 0 : winRoundsMin,
+      max: winRoundsMax,
+    } : undefined,
+    loseRounds: loseCount > 0 ? {
+      avg: Math.round((loseRoundsSum / loseCount) * 100) / 100,
+      min: loseRoundsMin >= 1000 ? 0 : loseRoundsMin,
+      max: loseRoundsMax,
+    } : undefined,
   };
 }
 
