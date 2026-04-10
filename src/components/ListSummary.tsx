@@ -47,14 +47,23 @@ const CLASS_LINE_HEADER_BG: Record<string, string> = {
   '챔피언': 'radial-gradient(ellipse 80% 70% at 50% 50%, hsla(270,50%,55%,0.25) 0%, transparent 100%)',
 };
 
-const ELEMENT_HEADER_BG: Record<string, string> = {
+const ELEMENT_HEADER_BG_LIGHT: Record<string, string> = {
   '불': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,70%,50%,0.2) 0%, transparent 100%)',
   '물': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(210,70%,50%,0.2) 0%, transparent 100%)',
   '공기': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(170,60%,45%,0.2) 0%, transparent 100%)',
   '대지': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(85,60%,40%,0.2) 0%, transparent 100%)',
   '빛': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(45,80%,55%,0.2) 0%, transparent 100%)',
-  '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(270,60%,50%,0.2) 0%, transparent 100%)',
-  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,0%,70%,0.12) 0%, transparent 100%)',
+  '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(280,50%,55%,0.2) 0%, transparent 100%)',
+  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,80%,55%,0.15) 0%, hsla(45,80%,55%,0.1) 30%, hsla(130,60%,45%,0.1) 50%, hsla(210,70%,55%,0.1) 70%, hsla(280,60%,55%,0.15) 100%)',
+};
+const ELEMENT_HEADER_BG_DARK: Record<string, string> = {
+  '불': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,70%,55%,0.25) 0%, transparent 100%)',
+  '물': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(210,70%,55%,0.25) 0%, transparent 100%)',
+  '공기': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(170,60%,50%,0.25) 0%, transparent 100%)',
+  '대지': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(85,60%,45%,0.25) 0%, transparent 100%)',
+  '빛': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(45,80%,60%,0.25) 0%, transparent 100%)',
+  '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(280,55%,65%,0.3) 0%, transparent 100%)',
+  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,80%,60%,0.2) 0%, hsla(45,80%,60%,0.15) 30%, hsla(130,60%,50%,0.15) 50%, hsla(210,70%,60%,0.15) 70%, hsla(280,60%,60%,0.2) 100%)',
 };
 
 const POSITION_COLORS: Record<string, string> = {
