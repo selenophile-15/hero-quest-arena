@@ -54,7 +54,7 @@ const ELEMENT_HEADER_BG_LIGHT: Record<string, string> = {
   '대지': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(85,60%,40%,0.2) 0%, transparent 100%)',
   '빛': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(45,80%,55%,0.2) 0%, transparent 100%)',
   '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(280,50%,55%,0.2) 0%, transparent 100%)',
-  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,80%,55%,0.15) 0%, hsla(45,80%,55%,0.1) 30%, hsla(130,60%,45%,0.1) 50%, hsla(210,70%,55%,0.1) 70%, hsla(280,60%,55%,0.15) 100%)',
+  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,0%,55%,0.15) 0%, transparent 100%)',
 };
 const ELEMENT_HEADER_BG_DARK: Record<string, string> = {
   '불': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,70%,55%,0.25) 0%, transparent 100%)',
@@ -63,7 +63,7 @@ const ELEMENT_HEADER_BG_DARK: Record<string, string> = {
   '대지': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(85,60%,45%,0.25) 0%, transparent 100%)',
   '빛': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(45,80%,60%,0.25) 0%, transparent 100%)',
   '어둠': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(280,55%,65%,0.3) 0%, transparent 100%)',
-  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,80%,60%,0.2) 0%, hsla(45,80%,60%,0.15) 30%, hsla(130,60%,50%,0.15) 50%, hsla(210,70%,60%,0.15) 70%, hsla(280,60%,60%,0.2) 100%)',
+  '모든 원소': 'radial-gradient(ellipse 70% 80% at 50% 50%, hsla(0,0%,70%,0.25) 0%, transparent 100%)',
 };
 
 const POSITION_COLORS: Record<string, string> = {
@@ -109,7 +109,7 @@ const ELEMENT_BAR_COLORS: Record<string, string> = {
   '대지': '#65a30d',
   '빛': '#fde68a',
   '어둠': '#a855f7',
-  '모든 원소': '#e5e7eb',
+  '모든 원소': '#9ca3af',
 };
 
 const POSITION_ORDER = ['퓨어 탱커', '회피 탱커', '딜탱', '일반 딜러', '치명 딜러', '회피 딜러', '미지정'];
