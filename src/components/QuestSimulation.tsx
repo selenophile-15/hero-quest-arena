@@ -803,8 +803,8 @@ export default function QuestSimulation() {
                     setConfigInitialState(undefined);
                     setConfigOpen(true);
                   } else {
-                    // 이미 선택된 상태: 세부 지역부터
-                    openConfigAtStep(hasSubAreas ? 'subarea' : 'difficulty');
+                    // 이미 선택된 상태: 세부 지역 & 난이도부터
+                    openConfigAtStep('subarea');
                   }
                 }}
                 className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
@@ -833,19 +833,17 @@ export default function QuestSimulation() {
                   <span className="text-sm text-foreground font-medium">{locationName}</span>
                 </div>
 
-                {/* Line 2: Difficulty */}
+                {/* Line 2: Difficulty - display only, no click to change */}
                 {currentQuest.difficulty !== '없음' && (
                   <div className="text-center text-sm">
-                    <button
-                      onClick={() => openConfigAtStep('difficulty')}
-                      className={`font-medium cursor-pointer hover:underline ${
+                    <span
+                      className={`font-medium ${
                         currentQuest.difficulty === '쉬움' ? 'text-lime-400' :
                         currentQuest.difficulty === '보통' ? 'text-blue-400' :
                         currentQuest.difficulty === '어려움' ? 'text-orange-400' :
                         currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
                       }`}
-                      title="난이도 변경"
-                    >{currentQuest.difficulty}</button>
+                    >{currentQuest.difficulty}</span>
                   </div>
                 )}
 
