@@ -947,7 +947,7 @@ export default function QuestSimulation() {
                     <div className="flex items-center justify-center gap-4">
                       {barrierElements.map((el, i) => {
                         const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                        const heroSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
+                        const heroSum = getPartyElementSum(el);
                         const required = currentQuest.barrier!.hp;
                         const isMet = heroSum >= required;
                         return (
@@ -1199,22 +1199,27 @@ export default function QuestSimulation() {
                 </Button>
               </div>
             )}
-            {/* Win Rate - between stat button and element row */}
+            {/* Win Rate - prominent display */}
             {currentQuest && selectedHeroes.length > 0 && simResult && (
-              <div className="mb-3 text-center">
-                <div className="text-[10px] text-muted-foreground mb-0.5">승률</div>
-                <div className={`text-2xl font-bold font-mono ${
-                  simResult.winRate >= 90 ? 'text-lime-400' :
+              <div className="mb-3 py-3 px-4 rounded-xl text-center" style={{
+                background: simResult.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
+                  : simResult.winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
+                  : 'linear-gradient(135deg, hsla(0,80%,50%,0.12) 0%, hsla(0,80%,50%,0.04) 100%)',
+                border: `1px solid ${simResult.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : simResult.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
+              }}>
+                <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
+                <div className={`text-3xl font-black font-mono tracking-tight ${
+                  simResult.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
                   simResult.winRate >= 70 ? 'text-lime-400' :
-                  simResult.winRate >= 50 ? 'text-yellow-400' :
-                  simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400'
+                  simResult.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
+                  simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
                 }`}>
                   {simResult.winRate.toFixed(1)}%
                 </div>
                 {simResult.retryWinRate !== undefined && (
-                  <div className="text-[9px] text-muted-foreground space-y-0.5 mt-1">
-                    <div>1차 시도: <span className="text-foreground">{simResult.rawWinRate.toFixed(1)}%</span></div>
-                    <div>2차 시도 (부스터 적용): <span className="text-foreground">{simResult.retryWinRate.toFixed(1)}%</span></div>
+                  <div className="text-[10px] text-muted-foreground space-y-0.5 mt-1.5">
+                    <div>1차 시도: <span className="text-foreground font-medium">{simResult.rawWinRate.toFixed(1)}%</span></div>
+                    <div>2차 시도 (부스터 적용): <span className="text-foreground font-medium">{simResult.retryWinRate.toFixed(1)}%</span></div>
                   </div>
                 )}
                 {simRunning && (
@@ -1447,13 +1452,10 @@ export default function QuestSimulation() {
                     (selectedQuestType === 'tot' && currentRegion?.name === '공포')
                   );
 
-                  // Check if barrier is broken
+                  // Check if barrier is broken (with Rudo bonus)
                   const barrierBroken = (() => {
                     if (!currentQuest?.barrier || barrierElements.length === 0) return true;
-                    const heroSum = selectedHeroes.reduce((sum, h) => {
-                      return sum + barrierElements.reduce((s, el) => s + getHeroBarrierContribution(h, el), 0);
-                    }, 0);
-                    return heroSum >= currentQuest.barrier.hp;
+                    return barrierElements.every(el => getPartyElementSum(el) >= currentQuest.barrier!.hp);
                   })();
 
                   const statRows = [
