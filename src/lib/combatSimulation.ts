@@ -1206,13 +1206,26 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         roundsAvg += round;
         roundsMax = Math.max(roundsMax, round);
         roundsMin = Math.min(roundsMin, round);
+        winRoundsSum += round;
+        winRoundsMin = Math.min(winRoundsMin, round);
+        winRoundsMax = Math.max(winRoundsMax, round);
       }
 
-      if (heroesAlive === 0) contFight = false;
+      if (heroesAlive === 0) {
+        contFight = false;
+        loseCount++;
+        loseRoundsSum += round;
+        loseRoundsMin = Math.min(loseRoundsMin, round);
+        loseRoundsMax = Math.max(loseRoundsMax, round);
+      }
 
       if (contFight && round >= 499) {
         contFight = false;
         roundLimitTimes++;
+        loseCount++;
+        loseRoundsSum += round;
+        loseRoundsMin = Math.min(loseRoundsMin, round);
+        loseRoundsMax = Math.max(loseRoundsMax, round);
       }
 
       if (!contFight) {
