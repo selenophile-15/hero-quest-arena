@@ -569,12 +569,16 @@ export default function QuestSimulation() {
     return -50;
   };
 
-  // Check if barrier is broken (for warning)
+  // Check if barrier is broken (for warning) - apply Rudo 50% bonus
+  const getPartyElementSum = (el: string) => {
+    const rawSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
+    return Math.round(rawSum * rudoElementMultiplier);
+  };
+
   const barrierBrokenGlobal = (() => {
     if (!currentQuest?.barrier || barrierElements.length === 0) return true;
     return barrierElements.every(el => {
-      const heroSum = selectedHeroes.reduce((sum, h) => sum + getHeroBarrierContribution(h, el), 0);
-      return heroSum >= currentQuest.barrier!.hp;
+      return getPartyElementSum(el) >= currentQuest.barrier!.hp;
     });
   })();
 
