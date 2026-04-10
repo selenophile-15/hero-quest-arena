@@ -150,6 +150,9 @@ export interface SimulationResult {
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
   // Per mini-boss breakdown (only for random mode)
   miniBossResults?: MiniBossResult[];
+  // Win/loss round breakdown
+  winRounds?: { avg: number; min: number; max: number };
+  loseRounds?: { avg: number; min: number; max: number };
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
