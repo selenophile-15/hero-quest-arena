@@ -293,16 +293,16 @@ export default function QuestSimulation() {
   const rudoElementMultiplier = isRudo ? 1.5 : 1.0;
 
   // Compute party-buffed stats whenever party changes
-  const heroIdKey = Array.from(selectedHeroIds).join(',');
+  // Compute party-buffed stats whenever party changes
+  // IMPORTANT: Use selectedHeroes (sorted) to ensure stat order matches display order
   useEffect(() => {
     if (selectedHeroIds.size === 0) {
       setBuffedStats([]);
       setBuffSummary(null);
       return;
     }
-    const heroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
-    if (heroes.length === 0) return;
-    calculatePartyBuffs({ heroes, isBoss: isBossQuest, isFlashQuest })
+    if (selectedHeroes.length === 0) return;
+    calculatePartyBuffs({ heroes: selectedHeroes, isBoss: isBossQuest, isFlashQuest })
       .then(({ summary, buffedStats: bs }) => {
         // Apply booster on top of party buffs
         if (selectedBooster !== 'none') {
@@ -312,7 +312,7 @@ export default function QuestSimulation() {
           const boosterCritDmg = selectedBooster === 'mega' ? 50 : 0;
           
           bs.forEach((stat, i) => {
-            const hero = heroes[i];
+            const hero = selectedHeroes[i];
             const atkAdd = Math.floor((hero.atk || 0) * boosterAtkPct);
             const defAdd = Math.floor((hero.def || 0) * boosterDefPct);
             stat.atk += atkAdd;
@@ -344,7 +344,7 @@ export default function QuestSimulation() {
         setBuffedStats(bs);
         setBuffSummary(summary);
       });
-  }, [heroIdKey, isBossQuest, isFlashQuest, selectedBooster]);
+  }, [selectedHeroes, isBossQuest, isFlashQuest, selectedBooster]);
 
   // Auto-run simulation when party or booster changes
   // IMPORTANT: Only run when buffedStats is ready (prevents fallback path with wrong aurasong values)
@@ -406,7 +406,7 @@ export default function QuestSimulation() {
       setSimRunning(false);
     }, 100);
     return () => clearTimeout(timer);
-  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffSummary, buffedStats]);
+  }, [selectedHeroes, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffSummary, buffedStats]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
@@ -1200,27 +1200,38 @@ export default function QuestSimulation() {
                 </Button>
               </div>
             )}
-            {/* Win Rate - prominent display */}
-            {currentQuest && selectedHeroes.length > 0 && simResult && (
-              <div className="mb-3 py-3 px-4 rounded-xl text-center" style={{
-                background: simResult.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
+            {/* Win Rate - prominent display, always visible when quest selected */}
+            {currentQuest && selectedHeroes.length > 0 && (
+              <div className="mb-3 py-3 px-4 rounded-xl text-center relative overflow-hidden" style={{
+                background: !simResult 
+                  ? 'linear-gradient(135deg, hsla(0,0%,50%,0.08) 0%, hsla(0,0%,50%,0.02) 100%)'
+                  : simResult.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
                   : simResult.winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
                   : 'linear-gradient(135deg, hsla(0,80%,50%,0.12) 0%, hsla(0,80%,50%,0.04) 100%)',
-                border: `1px solid ${simResult.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : simResult.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
+                border: `1px solid ${!simResult ? 'hsla(0,0%,50%,0.15)' : simResult.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : simResult.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
+                boxShadow: simResult ? (simResult.winRate >= 90 ? '0 0 20px hsla(82,80%,45%,0.1), inset 0 0 30px hsla(82,80%,45%,0.05)' : simResult.winRate >= 50 ? '0 0 20px hsla(48,80%,50%,0.1), inset 0 0 30px hsla(48,80%,50%,0.05)' : '0 0 20px hsla(0,80%,50%,0.1)') : 'none',
               }}>
                 <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
-                <div className={`text-3xl font-black font-mono tracking-tight ${
-                  simResult.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
-                  simResult.winRate >= 70 ? 'text-lime-400' :
-                  simResult.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
-                  simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
-                }`}>
-                  {simResult.winRate.toFixed(1)}%
-                </div>
-                {simResult.retryWinRate !== undefined && (
-                  <div className="text-[10px] text-muted-foreground space-y-0.5 mt-1.5">
-                    <div>1차 시도: <span className="text-foreground font-medium">{simResult.rawWinRate.toFixed(1)}%</span></div>
-                    <div>2차 시도 (부스터 적용): <span className="text-foreground font-medium">{simResult.retryWinRate.toFixed(1)}%</span></div>
+                {simResult ? (
+                  <>
+                    <div className={`text-3xl font-black font-mono tracking-tight ${
+                      simResult.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
+                      simResult.winRate >= 70 ? 'text-lime-400' :
+                      simResult.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
+                      simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
+                    }`}>
+                      {simResult.winRate.toFixed(1)}%
+                    </div>
+                    {simResult.retryWinRate !== undefined && (
+                      <div className="text-[10px] text-muted-foreground space-y-0.5 mt-1.5">
+                        <div>1차 시도: <span className="text-foreground font-medium">{simResult.rawWinRate.toFixed(1)}%</span></div>
+                        <div>2차 시도 (부스터 적용): <span className="text-foreground font-medium">{simResult.retryWinRate.toFixed(1)}%</span></div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
+                    -
                   </div>
                 )}
                 {simRunning && (
@@ -1576,26 +1587,6 @@ export default function QuestSimulation() {
                           });
                         })()}
                       </tr>
-                      {/* Monster Crit Chance row - same logic as detailed results */}
-                      {simResult && (
-                        <tr className="border-b border-border/20 bg-muted/20">
-                          <td className="py-1.5 px-1.5 text-red-400 font-medium text-sm">M.CRIT.C</td>
-                          {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                            const hero = selectedHeroes[slotIdx];
-                            if (!hero) return <td key={`mcrit-empty-${slotIdx}`} />;
-                            const heroResult = simResult.heroResults.find(r => r.heroId === hero.id);
-                            if (!heroResult) return <td key={`mcrit-na-${slotIdx}`} className="text-center text-foreground/30">-</td>;
-                            const mc = heroResult.monsterCritChance;
-                            return (
-                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm font-bold">
-                                <span className={mc > 10 ? 'text-red-400' : 'text-orange-300'}>
-                                  {mc}%
-                                </span>
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      )}
                     </>
                   );
                 })()}
@@ -1604,12 +1595,24 @@ export default function QuestSimulation() {
           </div>
         </div>
 
-        {/* RIGHT: Contribution Panels - always show skeleton */}
+        {/* RIGHT: Main Results */}
         <div className="w-full lg:w-80 shrink-0">
-              {/* Main Results Header */}
+              {/* Main Results Header with dropdown */}
               <div className="flex items-center gap-2 mb-3">
                 <Crown className="w-5 h-5 text-primary" />
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
+                {currentQuest && simResult && selectedHeroes.length > 0 && (
+                  <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
+                    <SelectTrigger className="h-7 w-24 text-[11px] ml-auto">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value="win">성공</SelectItem>
+                      <SelectItem value="lose">실패</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
 
               {/* Skeleton / Real results */}
@@ -1619,26 +1622,6 @@ export default function QuestSimulation() {
                 <div className="flex items-center gap-1.5 mb-2">
                   <Clock className="w-3.5 h-3.5 text-blue-400" />
                   <span className="text-sm font-bold text-foreground">턴 수</span>
-                </div>
-                {/* Tab selector */}
-                <div className="flex gap-1 mb-2">
-                  {([
-                    { id: 'all' as const, label: '전체' },
-                    { id: 'win' as const, label: '성공한 판' },
-                    { id: 'lose' as const, label: '실패한 판' },
-                  ]).map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setMainResultsTab(tab.id)}
-                      className={`flex-1 text-[10px] py-1 rounded transition-colors ${
-                        mainResultsTab === tab.id
-                          ? 'bg-primary/20 text-primary font-bold border border-primary/30'
-                          : 'bg-secondary/20 text-muted-foreground hover:bg-secondary/40 border border-transparent'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
                 </div>
                 {(() => {
                   const rounds = mainResultsTab === 'win' ? simResult.winRounds

@@ -156,7 +156,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const { colorMode } = useTheme();
   const [championName, setChampionName] = useState(hero?.championName || CHAMPION_NAMES[0]);
   const [name, setName] = useState(hero?.name || '');
-  const [promoted, setPromoted] = useState(false);
+  const [promoted, setPromoted] = useState(hero?.promoted || false);
   const [rank, setRank] = useState<number | ''>(hero?.rank || 1);
   const [cardLevel, setCardLevel] = useState<number>(hero?.cardLevel ?? 1);
   const [level, setLevel] = useState<number | ''>(hero?.level || 1);

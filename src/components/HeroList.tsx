@@ -220,17 +220,23 @@ export default function HeroList() {
     if (!targetRef.current) return;
     setScreenshotLoading(true);
     setCaptureMode(true);
+    // For album mode, unflip all cards so screenshot shows front face
+    const savedFlipped = new Set(flippedCards);
+    setFlippedCards(new Set());
     try {
-      // Wait for React re-render with captureMode=true
+      // Wait for React re-render with captureMode=true + unflipped cards
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
 
       const canvas = await html2canvas(targetRef.current, {
-        backgroundColor: colorMode === 'light' ? '#f5f3f0' : '#1a1a2e',
+        backgroundColor: colorMode === 'light' ? '#ffffff' : '#1a1a2e',
         scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
         onclone: (doc) => {
+          const root = doc.documentElement;
+          root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
+          root.setAttribute('data-color-mode', colorMode);
           const clonedEl = doc.querySelector(`[data-screenshot-target]`) as HTMLElement;
           if (clonedEl) {
             // Force vertical-align: middle on all inline-block elements for uniform text height
@@ -243,6 +249,13 @@ export default function HeroList() {
                 (el as HTMLElement).style.verticalAlign = 'middle';
               }
             });
+            // Hide flip inner transforms for album cards
+            clonedEl.querySelectorAll('.album-card-flip-inner').forEach(el => {
+              (el as HTMLElement).style.transform = 'none';
+            });
+            clonedEl.querySelectorAll('.album-card-back').forEach(el => {
+              (el as HTMLElement).style.display = 'none';
+            });
           }
         },
       });
@@ -252,9 +265,10 @@ export default function HeroList() {
       console.error('Screenshot failed:', e);
     } finally {
       setCaptureMode(false);
+      setFlippedCards(savedFlipped);
       setScreenshotLoading(false);
     }
-  }, [listTab, colorMode]);
+  }, [listTab, colorMode, flippedCards]);
 
   // Export handler (now via dialog)
   const handleExport = useCallback(() => {
@@ -642,6 +656,7 @@ export default function HeroList() {
       );
     }
     if (colKey === 'skills') {
+      const skillPx = capture ? 'px-1' : 'px-1';
       if (hero.type === 'champion') {
         const champEng = hero.championName ? (CHAMPION_NAME_MAP[hero.championName] || '') : '';
         let leaderTier = 1;
@@ -774,9 +789,7 @@ export default function HeroList() {
     if (colKey === 'airshipPower') return <span className={`text-foreground/20 ${lh}`}>-</span>;
     if (colKey === 'evasion') {
       const ev = typeof hero.evasion === 'number' ? hero.evasion : 0;
-      const cap = hero.heroClass === '길잡이' ? 78 : 75;
       const isDim = ev === 0;
-      if (ev > cap) return <span className={lh}>{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
       return <span className={`${lh} ${isDim ? 'text-foreground/20' : ''}`}>{formatNumber(ev)} %</span>;
     }
     if (colKey === 'level') {
@@ -1507,14 +1520,14 @@ export default function HeroList() {
 
           {/* Table View */}
           <div ref={tableContentRef} data-screenshot-target className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-bold">
               <thead>
                 <tr className="border-b border-border">
                   {activeCols.map(col => (
                     <th key={col.key} onClick={() => handleSort(col.key)}
                       className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
-                      } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[100px]' : 'min-w-[170px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
+                      } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[80px]' : 'min-w-[150px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
                         {renderHeaderLabel(col)}
                         {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
