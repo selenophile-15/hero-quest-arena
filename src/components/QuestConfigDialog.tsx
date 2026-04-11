@@ -221,36 +221,37 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
             <div className="flex flex-wrap justify-center gap-4">
               {/* Normal sub-areas */}
               {region.subAreas.map((sub, subIdx) => (
-                <div key={sub.key} className="flex flex-col items-center gap-2 min-w-[100px]">
+                <div key={sub.key} className="flex flex-col items-center gap-2 min-w-[120px]">
                   {/* Sub-area icon */}
-                  <div className="w-20 h-20 rounded-lg border border-border bg-secondary/30 flex items-center justify-center overflow-hidden aspect-square">
+                  <div className="w-24 h-24 rounded-lg border border-border bg-secondary/30 flex items-center justify-center overflow-hidden aspect-square">
                     <img src={sub.image} alt={sub.name} className="w-full h-full object-contain p-1" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
                   </div>
-                  <span className="text-[11px] font-medium text-foreground text-center">{sub.name}</span>
+                  <span className="text-xs font-bold text-foreground text-center">{sub.name}</span>
 
                   {/* Difficulty buttons for this sub-area */}
                   <div className="flex flex-col gap-1.5 w-full">
                     {questGroups.normal.map(q => {
-                      const colors = DIFFICULTY_COLORS[q.difficulty] || { bg: 'bg-secondary/20', border: 'border-border', text: 'text-muted-foreground' };
+                      const colors = DIFFICULTY_COLORS[q.difficulty] || { bg: 'bg-secondary/20', border: 'border-border', text: 'text-muted-foreground', textLight: 'text-muted-foreground' };
                       const barrierEl = getBarrierForSubArea(q, subIdx);
                       const barrierHp = q.barrier?.hp || 0;
                       const elIcon = barrierEl ? ELEMENT_ICON_MAP[barrierEl] : null;
+                      const diffTextColor = isDark ? colors.text : (q.difficulty === '쉬움' ? 'text-[hsl(80,45%,30%)]' : colors.textLight);
                       return (
                         <button
                           key={q.originalIdx}
                           onClick={() => selectQuest(hasSubAreas ? subIdx : (region.subAreas.length === 1 ? 0 : -1), q.originalIdx)}
-                          className={`px-2 py-1.5 rounded-md border ${colors.bg} ${colors.border} hover:opacity-80 transition-all text-center`}
+                          className={`px-2 py-2 rounded-md border ${q.difficulty === '쉬움' && !isDark ? 'bg-[hsl(80,50%,90%)]/60' : colors.bg} ${colors.border} hover:opacity-80 transition-all text-center`}
                         >
-                          <div className={`text-[11px] font-medium ${colors.text}`}>
+                          <div className={`text-xs font-bold ${diffTextColor}`}>
                             {q.stage ? `${q.stage}단계` : q.difficulty}
                           </div>
                           {q.barrier ? (
                             <div className="flex items-center justify-center gap-1 mt-0.5">
-                              {elIcon && <img src={elIcon} alt={barrierEl || ''} className="w-3.5 h-3.5" />}
-                              <span className="text-[9px] text-muted-foreground font-mono">{barrierHp}</span>
+                              {elIcon && <img src={elIcon} alt={barrierEl || ''} className="w-4 h-4" />}
+                              <span className={`text-xs font-bold font-mono ${isDark ? 'text-foreground/80' : 'text-foreground/70'}`}>{barrierHp}</span>
                             </div>
                           ) : (
-                            <div className="text-[9px] text-muted-foreground/40 mt-0.5">-</div>
+                            <div className="text-xs text-muted-foreground/40 mt-0.5 font-bold">-</div>
                           )}
                         </button>
                       );
