@@ -1576,26 +1576,6 @@ export default function QuestSimulation() {
                           });
                         })()}
                       </tr>
-                      {/* Monster Crit Chance row - same logic as detailed results */}
-                      {simResult && (
-                        <tr className="border-b border-border/20 bg-muted/20">
-                          <td className="py-1.5 px-1.5 text-red-400 font-medium text-sm">M.CRIT.C</td>
-                          {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                            const hero = selectedHeroes[slotIdx];
-                            if (!hero) return <td key={`mcrit-empty-${slotIdx}`} />;
-                            const heroResult = simResult.heroResults.find(r => r.heroId === hero.id);
-                            if (!heroResult) return <td key={`mcrit-na-${slotIdx}`} className="text-center text-foreground/30">-</td>;
-                            const mc = heroResult.monsterCritChance;
-                            return (
-                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm font-bold">
-                                <span className={mc > 10 ? 'text-red-400' : 'text-orange-300'}>
-                                  {mc}%
-                                </span>
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      )}
                     </>
                   );
                 })()}

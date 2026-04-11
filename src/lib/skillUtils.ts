@@ -138,6 +138,12 @@ export function getUniqueSkillImagePath(jobName: string): string {
 }
 
 /**
+ * Epic skills that are mutually exclusive: 대마법사, 저격수, 전쟁 마스터
+ * Only one of these can be selected across all skill slots.
+ */
+const EXCLUSIVE_EPIC_SKILLS = new Set(['대마법사', '저격수', '전쟁 마스터']);
+
+/**
  * Check if two skills are incompatible
  */
 export function areSkillsIncompatible(
@@ -149,6 +155,8 @@ export function areSkillsIncompatible(
   const dataB = commonSkillsData[skillB];
   if (dataA?.['호환_불가능_스킬']?.includes(skillB)) return true;
   if (dataB?.['호환_불가능_스킬']?.includes(skillA)) return true;
+  // Exclusive epic skills: 대마법사, 저격수, 전쟁 마스터
+  if (EXCLUSIVE_EPIC_SKILLS.has(skillA) && EXCLUSIVE_EPIC_SKILLS.has(skillB) && skillA !== skillB) return true;
   return false;
 }
 
