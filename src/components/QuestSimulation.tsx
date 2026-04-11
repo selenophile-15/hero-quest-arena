@@ -1200,27 +1200,38 @@ export default function QuestSimulation() {
                 </Button>
               </div>
             )}
-            {/* Win Rate - prominent display */}
-            {currentQuest && selectedHeroes.length > 0 && simResult && (
-              <div className="mb-3 py-3 px-4 rounded-xl text-center" style={{
-                background: simResult.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
+            {/* Win Rate - prominent display, always visible when quest selected */}
+            {currentQuest && selectedHeroes.length > 0 && (
+              <div className="mb-3 py-3 px-4 rounded-xl text-center relative overflow-hidden" style={{
+                background: !simResult 
+                  ? 'linear-gradient(135deg, hsla(0,0%,50%,0.08) 0%, hsla(0,0%,50%,0.02) 100%)'
+                  : simResult.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
                   : simResult.winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
                   : 'linear-gradient(135deg, hsla(0,80%,50%,0.12) 0%, hsla(0,80%,50%,0.04) 100%)',
-                border: `1px solid ${simResult.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : simResult.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
+                border: `1px solid ${!simResult ? 'hsla(0,0%,50%,0.15)' : simResult.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : simResult.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
+                boxShadow: simResult ? (simResult.winRate >= 90 ? '0 0 20px hsla(82,80%,45%,0.1), inset 0 0 30px hsla(82,80%,45%,0.05)' : simResult.winRate >= 50 ? '0 0 20px hsla(48,80%,50%,0.1), inset 0 0 30px hsla(48,80%,50%,0.05)' : '0 0 20px hsla(0,80%,50%,0.1)') : 'none',
               }}>
                 <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
-                <div className={`text-3xl font-black font-mono tracking-tight ${
-                  simResult.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
-                  simResult.winRate >= 70 ? 'text-lime-400' :
-                  simResult.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
-                  simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
-                }`}>
-                  {simResult.winRate.toFixed(1)}%
-                </div>
-                {simResult.retryWinRate !== undefined && (
-                  <div className="text-[10px] text-muted-foreground space-y-0.5 mt-1.5">
-                    <div>1차 시도: <span className="text-foreground font-medium">{simResult.rawWinRate.toFixed(1)}%</span></div>
-                    <div>2차 시도 (부스터 적용): <span className="text-foreground font-medium">{simResult.retryWinRate.toFixed(1)}%</span></div>
+                {simResult ? (
+                  <>
+                    <div className={`text-3xl font-black font-mono tracking-tight ${
+                      simResult.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
+                      simResult.winRate >= 70 ? 'text-lime-400' :
+                      simResult.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
+                      simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
+                    }`}>
+                      {simResult.winRate.toFixed(1)}%
+                    </div>
+                    {simResult.retryWinRate !== undefined && (
+                      <div className="text-[10px] text-muted-foreground space-y-0.5 mt-1.5">
+                        <div>1차 시도: <span className="text-foreground font-medium">{simResult.rawWinRate.toFixed(1)}%</span></div>
+                        <div>2차 시도 (부스터 적용): <span className="text-foreground font-medium">{simResult.retryWinRate.toFixed(1)}%</span></div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
+                    -
                   </div>
                 )}
                 {simRunning && (
