@@ -1623,26 +1623,6 @@ export default function QuestSimulation() {
                   <Clock className="w-3.5 h-3.5 text-blue-400" />
                   <span className="text-sm font-bold text-foreground">턴 수</span>
                 </div>
-                {/* Tab selector */}
-                <div className="flex gap-1 mb-2">
-                  {([
-                    { id: 'all' as const, label: '전체' },
-                    { id: 'win' as const, label: '성공한 판' },
-                    { id: 'lose' as const, label: '실패한 판' },
-                  ]).map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setMainResultsTab(tab.id)}
-                      className={`flex-1 text-[10px] py-1 rounded transition-colors ${
-                        mainResultsTab === tab.id
-                          ? 'bg-primary/20 text-primary font-bold border border-primary/30'
-                          : 'bg-secondary/20 text-muted-foreground hover:bg-secondary/40 border border-transparent'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
                 {(() => {
                   const rounds = mainResultsTab === 'win' ? simResult.winRounds
                     : mainResultsTab === 'lose' ? simResult.loseRounds
