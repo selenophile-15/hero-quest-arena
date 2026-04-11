@@ -642,6 +642,7 @@ export default function HeroList() {
       );
     }
     if (colKey === 'skills') {
+      const skillPx = capture ? 'px-1' : 'px-1';
       if (hero.type === 'champion') {
         const champEng = hero.championName ? (CHAMPION_NAME_MAP[hero.championName] || '') : '';
         let leaderTier = 1;
@@ -774,9 +775,7 @@ export default function HeroList() {
     if (colKey === 'airshipPower') return <span className={`text-foreground/20 ${lh}`}>-</span>;
     if (colKey === 'evasion') {
       const ev = typeof hero.evasion === 'number' ? hero.evasion : 0;
-      const cap = hero.heroClass === '길잡이' ? 78 : 75;
       const isDim = ev === 0;
-      if (ev > cap) return <span className={lh}>{formatNumber(ev)} % <span className="text-xs text-muted-foreground">({cap}%)</span></span>;
       return <span className={`${lh} ${isDim ? 'text-foreground/20' : ''}`}>{formatNumber(ev)} %</span>;
     }
     if (colKey === 'level') {
@@ -1514,7 +1513,7 @@ export default function HeroList() {
                     <th key={col.key} onClick={() => handleSort(col.key)}
                       className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
-                      } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[100px]' : 'min-w-[170px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
+                      } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[80px]' : 'min-w-[150px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
                         {renderHeaderLabel(col)}
                         {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
