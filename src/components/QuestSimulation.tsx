@@ -293,16 +293,16 @@ export default function QuestSimulation() {
   const rudoElementMultiplier = isRudo ? 1.5 : 1.0;
 
   // Compute party-buffed stats whenever party changes
-  const heroIdKey = Array.from(selectedHeroIds).join(',');
+  // Compute party-buffed stats whenever party changes
+  // IMPORTANT: Use selectedHeroes (sorted) to ensure stat order matches display order
   useEffect(() => {
     if (selectedHeroIds.size === 0) {
       setBuffedStats([]);
       setBuffSummary(null);
       return;
     }
-    const heroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
-    if (heroes.length === 0) return;
-    calculatePartyBuffs({ heroes, isBoss: isBossQuest, isFlashQuest })
+    if (selectedHeroes.length === 0) return;
+    calculatePartyBuffs({ heroes: selectedHeroes, isBoss: isBossQuest, isFlashQuest })
       .then(({ summary, buffedStats: bs }) => {
         // Apply booster on top of party buffs
         if (selectedBooster !== 'none') {
@@ -312,7 +312,7 @@ export default function QuestSimulation() {
           const boosterCritDmg = selectedBooster === 'mega' ? 50 : 0;
           
           bs.forEach((stat, i) => {
-            const hero = heroes[i];
+            const hero = selectedHeroes[i];
             const atkAdd = Math.floor((hero.atk || 0) * boosterAtkPct);
             const defAdd = Math.floor((hero.def || 0) * boosterDefPct);
             stat.atk += atkAdd;
@@ -344,7 +344,7 @@ export default function QuestSimulation() {
         setBuffedStats(bs);
         setBuffSummary(summary);
       });
-  }, [heroIdKey, isBossQuest, isFlashQuest, selectedBooster]);
+  }, [selectedHeroes, isBossQuest, isFlashQuest, selectedBooster]);
 
   // Auto-run simulation when party or booster changes
   // IMPORTANT: Only run when buffedStats is ready (prevents fallback path with wrong aurasong values)
