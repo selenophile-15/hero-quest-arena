@@ -406,7 +406,7 @@ export default function QuestSimulation() {
       setSimRunning(false);
     }, 100);
     return () => clearTimeout(timer);
-  }, [heroIdKey, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffSummary, buffedStats]);
+  }, [selectedHeroes, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffSummary, buffedStats]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
