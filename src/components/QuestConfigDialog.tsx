@@ -186,16 +186,16 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                   setSelRegionIdx(idx);
                   setStep('subarea');
                 }}
-                className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all group aspect-square flex flex-col"
+                className="rounded-lg border border-border hover:border-primary/50 overflow-hidden transition-all group flex flex-col"
               >
-                <div className="bg-secondary/30 flex items-center justify-center p-2 flex-1">
+                <div className="bg-secondary/30 flex items-center justify-center p-2 aspect-square">
                   <img src={r.areaImage} alt={r.name} className="w-full h-full object-contain" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 </div>
                 <div className="p-1.5 text-center">
-                  <span className="text-[10px] font-medium text-foreground leading-tight block">{r.name}</span>
+                  <span className="text-xs font-bold text-foreground leading-tight block">{r.name}</span>
                   <div className="flex items-center justify-center gap-1 mt-0.5">
                     <Users className="w-3.5 h-3.5 text-muted-foreground" />
-                    <span className="text-xs font-medium text-muted-foreground">{r.maxMembers}</span>
+                    <span className="text-xs font-bold text-muted-foreground">{r.maxMembers}</span>
                   </div>
                 </div>
               </button>
