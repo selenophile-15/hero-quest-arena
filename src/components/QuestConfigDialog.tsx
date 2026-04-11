@@ -75,11 +75,11 @@ interface Props {
   initialState?: { questTypeKey: string; regionIdx: number; subAreaIdx: number };
 }
 
-const DIFFICULTY_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  '쉬움': { bg: 'bg-[hsl(80,40%,30%)]/20', border: 'border-[hsl(80,50%,40%)]', text: 'text-[hsl(80,50%,45%)]' },
-  '보통': { bg: 'bg-yellow-400/10', border: 'border-yellow-500', text: 'text-yellow-400' },
-  '어려움': { bg: 'bg-red-500/10', border: 'border-red-500', text: 'text-red-400' },
-  '익스트림': { bg: 'bg-purple-600/15', border: 'border-purple-500', text: 'text-purple-400' },
+const DIFFICULTY_COLORS: Record<string, { bg: string; border: string; text: string; textLight: string }> = {
+  '쉬움': { bg: 'bg-[hsl(80,40%,30%)]/20', border: 'border-[hsl(80,50%,40%)]', text: 'text-[hsl(80,50%,45%)]', textLight: 'text-[hsl(80,45%,30%)]' },
+  '보통': { bg: 'bg-yellow-400/10', border: 'border-yellow-500', text: 'text-yellow-400', textLight: 'text-yellow-600' },
+  '어려움': { bg: 'bg-red-500/10', border: 'border-red-500', text: 'text-red-400', textLight: 'text-red-500' },
+  '익스트림': { bg: 'bg-purple-600/15', border: 'border-purple-500', text: 'text-purple-400', textLight: 'text-purple-600' },
 };
 
 function getBarrierForSubArea(quest: QuestEntry, subIdx: number): string | null {
@@ -91,6 +91,7 @@ function getBarrierForSubArea(quest: QuestEntry, subIdx: number): string | null 
 }
 
 export default function QuestConfigDialog({ open, onOpenChange, questDataMap, questFiles, onSelect, initialStep, initialState }: Props) {
+  const isDark = typeof document !== 'undefined' && document.documentElement.getAttribute('data-color-mode') === 'dark';
   const [step, setStep] = useState<'type' | 'region' | 'subarea'>(initialStep || 'type');
   const [selType, setSelType] = useState(initialState?.questTypeKey || '');
   const [selRegionIdx, setSelRegionIdx] = useState(initialState?.regionIdx ?? -1);
@@ -144,7 +145,7 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
-      <DialogContent className="sm:max-w-3xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-bold flex items-center gap-2">
             {step !== 'type' && (
