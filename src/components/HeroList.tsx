@@ -220,17 +220,23 @@ export default function HeroList() {
     if (!targetRef.current) return;
     setScreenshotLoading(true);
     setCaptureMode(true);
+    // For album mode, unflip all cards so screenshot shows front face
+    const savedFlipped = new Set(flippedCards);
+    setFlippedCards(new Set());
     try {
-      // Wait for React re-render with captureMode=true
+      // Wait for React re-render with captureMode=true + unflipped cards
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
 
       const canvas = await html2canvas(targetRef.current, {
-        backgroundColor: colorMode === 'light' ? '#f5f3f0' : '#1a1a2e',
+        backgroundColor: colorMode === 'light' ? '#ffffff' : '#1a1a2e',
         scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
         onclone: (doc) => {
+          const root = doc.documentElement;
+          root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
+          root.setAttribute('data-color-mode', colorMode);
           const clonedEl = doc.querySelector(`[data-screenshot-target]`) as HTMLElement;
           if (clonedEl) {
             // Force vertical-align: middle on all inline-block elements for uniform text height
@@ -243,6 +249,13 @@ export default function HeroList() {
                 (el as HTMLElement).style.verticalAlign = 'middle';
               }
             });
+            // Hide flip inner transforms for album cards
+            clonedEl.querySelectorAll('.album-card-flip-inner').forEach(el => {
+              (el as HTMLElement).style.transform = 'none';
+            });
+            clonedEl.querySelectorAll('.album-card-back').forEach(el => {
+              (el as HTMLElement).style.display = 'none';
+            });
           }
         },
       });
@@ -252,9 +265,10 @@ export default function HeroList() {
       console.error('Screenshot failed:', e);
     } finally {
       setCaptureMode(false);
+      setFlippedCards(savedFlipped);
       setScreenshotLoading(false);
     }
-  }, [listTab, colorMode]);
+  }, [listTab, colorMode, flippedCards]);
 
   // Export handler (now via dialog)
   const handleExport = useCallback(() => {
