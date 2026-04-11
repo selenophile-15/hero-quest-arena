@@ -1595,12 +1595,24 @@ export default function QuestSimulation() {
           </div>
         </div>
 
-        {/* RIGHT: Contribution Panels - always show skeleton */}
+        {/* RIGHT: Main Results */}
         <div className="w-full lg:w-80 shrink-0">
-              {/* Main Results Header */}
+              {/* Main Results Header with dropdown */}
               <div className="flex items-center gap-2 mb-3">
                 <Crown className="w-5 h-5 text-primary" />
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
+                {currentQuest && simResult && selectedHeroes.length > 0 && (
+                  <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
+                    <SelectTrigger className="h-7 w-24 text-[11px] ml-auto">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value="win">성공</SelectItem>
+                      <SelectItem value="lose">실패</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
 
               {/* Skeleton / Real results */}
