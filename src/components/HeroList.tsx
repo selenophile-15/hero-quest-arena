@@ -1697,6 +1697,7 @@ export default function HeroList() {
                     </>
                   ) : (
                     <>
+                      <SelectItem value="heroClass">직업</SelectItem>
                       <SelectItem value="name">이름</SelectItem>
                       <SelectItem value="element">속성</SelectItem>
                     </>

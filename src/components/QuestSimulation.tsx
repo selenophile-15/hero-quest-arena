@@ -348,6 +348,8 @@ export default function QuestSimulation() {
 
   // Auto-run simulation when party or booster changes
   // IMPORTANT: Only run when buffedStats is ready (prevents fallback path with wrong aurasong values)
+  // Use a ref to track if simulation is already scheduled to prevent infinite re-runs
+  const simScheduledRef = useRef(false);
   useEffect(() => {
     if (!currentQuest || !currentRegion || selectedHeroes.length === 0) {
       setSimResult(null);
@@ -357,8 +359,11 @@ export default function QuestSimulation() {
     if (buffedStats.length !== selectedHeroes.length) {
       return;
     }
+    if (simScheduledRef.current) return;
+    simScheduledRef.current = true;
     setSimRunning(true);
     const timer = setTimeout(() => {
+      simScheduledRef.current = false;
       const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
       const bElements = currentQuest?.barrier ? (() => {
         const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
@@ -404,9 +409,9 @@ export default function QuestSimulation() {
       });
       setSimResult(result);
       setSimRunning(false);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [selectedHeroes, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffSummary, buffedStats]);
+    }, 150);
+    return () => { clearTimeout(timer); simScheduledRef.current = false; };
+  }, [selectedHeroes.length, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffedStats]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
