@@ -1167,14 +1167,16 @@ export default function HeroList() {
     };
 
     // Stats for back of card
+    const critAttack = hero.atk && hero.critDmg ? Math.floor(hero.atk * hero.critDmg / 100) : 0;
     const statItems = [
-      { label: 'HP', value: hero.hp, color: 'text-orange-400' },
-      { label: 'ATK', value: hero.atk, color: 'text-red-400' },
-      { label: 'DEF', value: hero.def, color: 'text-blue-400' },
-      { label: 'Crit', value: hero.crit, color: 'text-yellow-300', suffix: '%' },
-      { label: 'Crit.D', value: hero.critDmg, color: 'text-yellow-300', format: (v: number) => `x${(v / 100).toFixed(1)}` },
-      { label: 'Eva', value: hero.evasion, color: 'text-teal-300', suffix: '%' },
-      { label: 'Threat', value: hero.threat, color: 'text-purple-400' },
+      { label: 'HP', value: hero.hp, color: 'text-orange-400', lightColor: 'text-orange-500' },
+      { label: 'ATK', value: hero.atk, color: 'text-red-400', lightColor: 'text-red-500' },
+      { label: 'DEF', value: hero.def, color: 'text-blue-400', lightColor: 'text-blue-500' },
+      { label: 'CRIT.C', value: hero.crit, color: 'text-yellow-300', lightColor: 'text-yellow-600', suffix: '%' },
+      { label: 'CRIT.D', value: hero.critDmg, color: 'text-yellow-300', lightColor: 'text-yellow-600', format: (v: number) => `x${(v / 100).toFixed(1)}` },
+      { label: 'CRIT.A', value: critAttack, color: 'text-yellow-300', lightColor: 'text-yellow-600' },
+      { label: 'EVA', value: hero.evasion, color: 'text-teal-300', lightColor: 'text-teal-600', suffix: '%' },
+      { label: 'THREAT', value: hero.threat, color: 'text-purple-400', lightColor: 'text-purple-600' },
     ];
     const seeds = hero.seeds || { hp: 0, atk: 0, def: 0 };
 
@@ -1198,17 +1200,13 @@ export default function HeroList() {
               </div>
             </div>
             <div className="text-center w-full">
-              <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
+              <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? (colorMode === 'light' ? 'text-amber-600' : 'text-yellow-400') : 'text-foreground'}`}>
                 {hero.name}
-                {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />}
+                {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colorMode === 'light' ? '#d97706' : '#facc15' }} />}
               </p>
               <p className="text-xs text-foreground/60">
                 {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
               </p>
-            </div>
-            <div className="flex items-center gap-1">
-              <ElementIcon element={hero.element} size={16} />
-              <span className={`text-xs tabular-nums ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
             </div>
 
             {isChampion ? (
