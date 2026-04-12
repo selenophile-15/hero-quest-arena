@@ -525,19 +525,19 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const isCrit = statType === 'crit';
     const isEvasion = statType === 'evasion';
 
-    // Relic effects for this stat
-    let hasCritFixed = relicEffects.find(e => e.type === 'crit_fixed') || null;
-    let hasEvasionFixed = relicEffects.find(e => e.type === 'evasion_fixed') || null;
+    // Relic effects for this stat - only show relevant ones
+    let hasCritFixed: RelicEffect | null = isCrit ? (relicEffects.find(e => e.type === 'crit_fixed') || null) : null;
+    let hasEvasionFixed: RelicEffect | null = isEvasion ? (relicEffects.find(e => e.type === 'evasion_fixed') || null) : null;
 
     // Also detect manual relic fixed effects (op === '고정')
     for (const effect of relicEffects) {
       if (effect.type === 'relic_bonus' && effect.bonuses) {
         for (const b of effect.bonuses) {
           if (b.op !== '고정') continue;
-          if (b.stat === '치명타확률%' && !hasCritFixed) {
+          if (isCrit && b.stat === '치명타확률%' && !hasCritFixed) {
             hasCritFixed = { itemName: effect.itemName, slotIndex: effect.slotIndex, type: 'crit_fixed', fixedValue: b.value, description: `치명타 확률 ${b.value}%로 고정` };
           }
-          if (b.stat === '회피%' && !hasEvasionFixed) {
+          if (isEvasion && b.stat === '회피%' && !hasEvasionFixed) {
             hasEvasionFixed = { itemName: effect.itemName, slotIndex: effect.slotIndex, type: 'evasion_fixed', fixedValue: b.value, description: `회피 ${b.value}%로 고정` };
           }
         }
