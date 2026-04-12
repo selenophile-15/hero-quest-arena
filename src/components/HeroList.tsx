@@ -952,7 +952,7 @@ export default function HeroList() {
                       <img src={leaderSkillIcon} alt="" className="w-10 h-10 flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       <div>
                         <p className="text-xs font-semibold text-foreground">{leaderSkillName || '리더 스킬'}</p>
-                        <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{leaderSkillEffect}</p>
+                        <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line font-normal">{leaderSkillEffect}</p>
                       </div>
                     </div>
                   )}
@@ -961,7 +961,7 @@ export default function HeroList() {
                       <img src={aurasongSkillIcon} alt="" className="w-10 h-10 flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       <div>
                         <p className="text-xs font-semibold text-foreground">{aurasongItemName}</p>
-                        <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{aurasongSkillEffect}</p>
+                        <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line font-normal">{aurasongSkillEffect}</p>
                       </div>
                     </div>
                   )}
@@ -988,7 +988,7 @@ export default function HeroList() {
                             <span className={`text-[10px] px-1 py-0.5 rounded ${skillLevelColorClass(uniqueLevelIdx + 1)}`}>Lv.{uniqueLevelIdx + 1}</span>
                           </div>
                           {uDesc && (
-                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{uDesc}</p>
+                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line font-normal">{uDesc}</p>
                           )}
                         </div>
                       </div>
@@ -1023,7 +1023,7 @@ export default function HeroList() {
                             <span className={`text-[10px] px-1 py-0.5 rounded ${skillLevelColorClass(skLevel)}`}>Lv.{skLevel}</span>
                           </div>
                           {cDesc && (
-                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{cDesc}</p>
+                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line font-normal">{cDesc}</p>
                           )}
                         </div>
                       </div>
@@ -1038,7 +1038,7 @@ export default function HeroList() {
                   {relicEffects.map((r, i) => (
                     <div key={i} className="flex items-start gap-1 text-xs mb-1">
                       <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <div className="text-foreground/80">
+                      <div className="text-foreground/80 font-normal">
                         {r.effect.split(/\\n|\n/).map((line: string, li: number) => (
                           <span key={li}>{li > 0 && <br />}{line}</span>
                         ))}
