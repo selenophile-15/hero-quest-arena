@@ -1374,13 +1374,20 @@ export default function HeroList() {
               </p>
             </div>
 
+            {/* Element on top */}
+            <div className="flex items-center gap-1">
+              <ElementIcon element={hero.element} size={16} />
+              <span className={`text-xs tabular-nums font-bold ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+            </div>
+
             <div className="w-full space-y-0.5">
               {statItems.map(s => {
                 const val = s.format ? s.format(s.value) : `${formatNumber(s.value)}${s.suffix || ''}`;
+                const statColor = s.value ? (colorMode === 'light' ? (s.lightColor || s.color) : s.color) : 'text-foreground/20';
                 return (
                   <div key={s.label} className="flex items-center justify-between text-xs px-1">
                     <span className="text-foreground/60 font-medium">{s.label}</span>
-                    <span className={`font-bold tabular-nums ${s.value ? s.color : 'text-foreground/20'}`}>{val}</span>
+                    <span className={`font-bold tabular-nums ${statColor}`}>{val}</span>
                   </div>
                 );
               })}
@@ -1400,10 +1407,25 @@ export default function HeroList() {
               </div>
             </div>
 
-            <div className="flex items-center gap-1 mt-1">
-              <ElementIcon element={hero.element} size={14} />
-              <span className={`text-xs tabular-nums ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
-            </div>
+            {/* Position & Status dividers */}
+            {hero.position && (
+              <>
+                <div className="w-full border-t border-border/30 mt-0.5 pt-1">
+                  <div className="flex items-center justify-between text-xs px-1">
+                    <span className="text-foreground/50">포지션</span>
+                    <span className="font-bold text-foreground/80">{hero.position}</span>
+                  </div>
+                </div>
+              </>
+            )}
+            {hero.label && (
+              <div className="w-full border-t border-border/30 pt-1">
+                <div className="flex items-center justify-between text-xs px-1">
+                  <span className="text-foreground/50">상태</span>
+                  <span className="font-bold text-foreground/80">{hero.label}</span>
+                </div>
+              </div>
+            )}
 
             {!captureMode && (
               <div className="flex items-center gap-1 mt-auto album-delete-btn">
