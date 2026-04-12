@@ -224,8 +224,8 @@ export default function HeroList() {
     const savedFlipped = new Set(flippedCards);
     setFlippedCards(new Set());
     try {
-      // Wait for React re-render with captureMode=true + unflipped cards
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+      // Wait for React re-render with overlay visible + captureMode=true + unflipped cards
+      await new Promise(r => setTimeout(r, 300));
 
       const canvas = await html2canvas(targetRef.current, {
         backgroundColor: colorMode === 'light' ? '#ffffff' : '#1a1a2e',
@@ -237,8 +237,15 @@ export default function HeroList() {
           const root = doc.documentElement;
           root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
           root.setAttribute('data-color-mode', colorMode);
+          // Force white background for light mode to prevent gray glow artifacts
+          if (colorMode === 'light') {
+            doc.body.style.backgroundColor = '#ffffff';
+          }
           const clonedEl = doc.querySelector(`[data-screenshot-target]`) as HTMLElement;
           if (clonedEl) {
+            if (colorMode === 'light') {
+              clonedEl.style.backgroundColor = '#ffffff';
+            }
             // Force vertical-align: middle on all inline-block elements for uniform text height
             clonedEl.querySelectorAll('td, th').forEach(cell => {
               (cell as HTMLElement).style.verticalAlign = 'middle';
@@ -256,6 +263,16 @@ export default function HeroList() {
             clonedEl.querySelectorAll('.album-card-back').forEach(el => {
               (el as HTMLElement).style.display = 'none';
             });
+            // Force white background on card-fantasy elements in light mode
+            if (colorMode === 'light') {
+              clonedEl.querySelectorAll('.card-fantasy, .album-card-front').forEach(el => {
+                const htmlEl = el as HTMLElement;
+                const bg = window.getComputedStyle(htmlEl).backgroundColor;
+                if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
+                  htmlEl.style.backgroundColor = '#ffffff';
+                }
+              });
+            }
           }
         },
       });
@@ -952,7 +969,7 @@ export default function HeroList() {
                       <img src={leaderSkillIcon} alt="" className="w-10 h-10 flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       <div>
                         <p className="text-xs font-semibold text-foreground">{leaderSkillName || '리더 스킬'}</p>
-                        <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{leaderSkillEffect}</p>
+                        <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line font-normal">{leaderSkillEffect}</p>
                       </div>
                     </div>
                   )}
@@ -961,7 +978,7 @@ export default function HeroList() {
                       <img src={aurasongSkillIcon} alt="" className="w-10 h-10 flex-shrink-0" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       <div>
                         <p className="text-xs font-semibold text-foreground">{aurasongItemName}</p>
-                        <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{aurasongSkillEffect}</p>
+                        <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line font-normal">{aurasongSkillEffect}</p>
                       </div>
                     </div>
                   )}
@@ -988,7 +1005,7 @@ export default function HeroList() {
                             <span className={`text-[10px] px-1 py-0.5 rounded ${skillLevelColorClass(uniqueLevelIdx + 1)}`}>Lv.{uniqueLevelIdx + 1}</span>
                           </div>
                           {uDesc && (
-                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{uDesc}</p>
+                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line font-normal">{uDesc}</p>
                           )}
                         </div>
                       </div>
@@ -1023,7 +1040,7 @@ export default function HeroList() {
                             <span className={`text-[10px] px-1 py-0.5 rounded ${skillLevelColorClass(skLevel)}`}>Lv.{skLevel}</span>
                           </div>
                           {cDesc && (
-                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line">{cDesc}</p>
+                            <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-line font-normal">{cDesc}</p>
                           )}
                         </div>
                       </div>
@@ -1038,7 +1055,7 @@ export default function HeroList() {
                   {relicEffects.map((r, i) => (
                     <div key={i} className="flex items-start gap-1 text-xs mb-1">
                       <img src="/images/special/icon_global_artifact.webp" alt="" className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <div className="text-foreground/80">
+                      <div className="text-foreground/80 font-normal">
                         {r.effect.split(/\\n|\n/).map((line: string, li: number) => (
                           <span key={li}>{li > 0 && <br />}{line}</span>
                         ))}
@@ -1150,14 +1167,16 @@ export default function HeroList() {
     };
 
     // Stats for back of card
+    const critAttack = hero.atk && hero.critDmg ? Math.floor(hero.atk * hero.critDmg / 100) : 0;
     const statItems = [
-      { label: 'HP', value: hero.hp, color: 'text-orange-400' },
-      { label: 'ATK', value: hero.atk, color: 'text-red-400' },
-      { label: 'DEF', value: hero.def, color: 'text-blue-400' },
-      { label: 'Crit', value: hero.crit, color: 'text-yellow-300', suffix: '%' },
-      { label: 'Crit.D', value: hero.critDmg, color: 'text-yellow-300', format: (v: number) => `x${(v / 100).toFixed(1)}` },
-      { label: 'Eva', value: hero.evasion, color: 'text-teal-300', suffix: '%' },
-      { label: 'Threat', value: hero.threat, color: 'text-purple-400' },
+      { label: 'HP', value: hero.hp, color: 'text-orange-400', lightColor: 'text-orange-500' },
+      { label: 'ATK', value: hero.atk, color: 'text-red-400', lightColor: 'text-red-500' },
+      { label: 'DEF', value: hero.def, color: 'text-blue-400', lightColor: 'text-blue-500' },
+      { label: 'CRIT.C', value: hero.crit, color: 'text-yellow-300', lightColor: 'text-yellow-600', suffix: '%' },
+      { label: 'CRIT.D', value: hero.critDmg, color: 'text-yellow-300', lightColor: 'text-yellow-600', format: (v: number) => `x${(v / 100).toFixed(1)}` },
+      { label: 'CRIT.A', value: critAttack, color: 'text-yellow-300', lightColor: 'text-yellow-600' },
+      { label: 'EVA', value: hero.evasion, color: 'text-teal-300', lightColor: 'text-teal-600', suffix: '%' },
+      { label: 'THREAT', value: hero.threat, color: 'text-purple-400', lightColor: 'text-purple-600' },
     ];
     const seeds = hero.seeds || { hp: 0, atk: 0, def: 0 };
 
@@ -1181,17 +1200,17 @@ export default function HeroList() {
               </div>
             </div>
             <div className="text-center w-full">
-              <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? 'text-yellow-400' : 'text-foreground'}`}>
+              <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? (colorMode === 'light' ? 'text-amber-600' : 'text-yellow-400') : 'text-foreground'}`}>
                 {hero.name}
-                {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />}
+                {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colorMode === 'light' ? '#d97706' : '#facc15' }} />}
               </p>
               <p className="text-xs text-foreground/60">
                 {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
               </p>
-            </div>
-            <div className="flex items-center gap-1">
-              <ElementIcon element={hero.element} size={16} />
-              <span className={`text-xs tabular-nums ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+              <div className="flex items-center gap-1 justify-center mt-0.5">
+                <ElementIcon element={hero.element} size={16} />
+                <span className={`text-xs tabular-nums font-bold ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+              </div>
             </div>
 
             {isChampion ? (
@@ -1355,13 +1374,20 @@ export default function HeroList() {
               </p>
             </div>
 
+            {/* Element on top */}
+            <div className="flex items-center gap-1">
+              <ElementIcon element={hero.element} size={16} />
+              <span className={`text-xs tabular-nums font-bold ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+            </div>
+
             <div className="w-full space-y-0.5">
               {statItems.map(s => {
                 const val = s.format ? s.format(s.value) : `${formatNumber(s.value)}${s.suffix || ''}`;
+                const statColor = s.value ? (colorMode === 'light' ? (s.lightColor || s.color) : s.color) : 'text-foreground/20';
                 return (
                   <div key={s.label} className="flex items-center justify-between text-xs px-1">
                     <span className="text-foreground/60 font-medium">{s.label}</span>
-                    <span className={`font-bold tabular-nums ${s.value ? s.color : 'text-foreground/20'}`}>{val}</span>
+                    <span className={`font-bold tabular-nums ${statColor}`}>{val}</span>
                   </div>
                 );
               })}
@@ -1381,10 +1407,25 @@ export default function HeroList() {
               </div>
             </div>
 
-            <div className="flex items-center gap-1 mt-1">
-              <ElementIcon element={hero.element} size={14} />
-              <span className={`text-xs tabular-nums ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
-            </div>
+            {/* Position & Status dividers */}
+            {hero.position && (
+              <>
+                <div className="w-full border-t border-border/30 mt-0.5 pt-1">
+                  <div className="flex items-center justify-between text-xs px-1">
+                    <span className="text-foreground/50">포지션</span>
+                    <span className="font-bold text-foreground/80">{hero.position}</span>
+                  </div>
+                </div>
+              </>
+            )}
+            {hero.label && (
+              <div className="w-full border-t border-border/30 pt-1">
+                <div className="flex items-center justify-between text-xs px-1">
+                  <span className="text-foreground/50">상태</span>
+                  <span className="font-bold text-foreground/80">{hero.label}</span>
+                </div>
+              </div>
+            )}
 
             {!captureMode && (
               <div className="flex items-center gap-1 mt-auto album-delete-btn">
@@ -1656,6 +1697,7 @@ export default function HeroList() {
                     </>
                   ) : (
                     <>
+                      <SelectItem value="heroClass">직업</SelectItem>
                       <SelectItem value="name">이름</SelectItem>
                       <SelectItem value="element">속성</SelectItem>
                     </>
