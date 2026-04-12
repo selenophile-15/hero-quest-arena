@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useTheme } from '@/hooks/use-theme';
 import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
 import { HERO_CLASS_MAP } from '@/lib/gameData';
