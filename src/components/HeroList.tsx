@@ -224,8 +224,8 @@ export default function HeroList() {
     const savedFlipped = new Set(flippedCards);
     setFlippedCards(new Set());
     try {
-      // Wait for React re-render with captureMode=true + unflipped cards
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+      // Wait for React re-render with overlay visible + captureMode=true + unflipped cards
+      await new Promise(r => setTimeout(r, 300));
 
       const canvas = await html2canvas(targetRef.current, {
         backgroundColor: colorMode === 'light' ? '#ffffff' : '#1a1a2e',
@@ -237,8 +237,15 @@ export default function HeroList() {
           const root = doc.documentElement;
           root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
           root.setAttribute('data-color-mode', colorMode);
+          // Force white background for light mode to prevent gray glow artifacts
+          if (colorMode === 'light') {
+            doc.body.style.backgroundColor = '#ffffff';
+          }
           const clonedEl = doc.querySelector(`[data-screenshot-target]`) as HTMLElement;
           if (clonedEl) {
+            if (colorMode === 'light') {
+              clonedEl.style.backgroundColor = '#ffffff';
+            }
             // Force vertical-align: middle on all inline-block elements for uniform text height
             clonedEl.querySelectorAll('td, th').forEach(cell => {
               (cell as HTMLElement).style.verticalAlign = 'middle';
@@ -256,6 +263,16 @@ export default function HeroList() {
             clonedEl.querySelectorAll('.album-card-back').forEach(el => {
               (el as HTMLElement).style.display = 'none';
             });
+            // Force white background on card-fantasy elements in light mode
+            if (colorMode === 'light') {
+              clonedEl.querySelectorAll('.card-fantasy, .album-card-front').forEach(el => {
+                const htmlEl = el as HTMLElement;
+                const bg = window.getComputedStyle(htmlEl).backgroundColor;
+                if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
+                  htmlEl.style.backgroundColor = '#ffffff';
+                }
+              });
+            }
           }
         },
       });
