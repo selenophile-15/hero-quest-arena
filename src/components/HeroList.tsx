@@ -1207,6 +1207,10 @@ export default function HeroList() {
               <p className="text-xs text-foreground/60">
                 {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
               </p>
+              <div className="flex items-center gap-1 justify-center mt-0.5">
+                <ElementIcon element={hero.element} size={16} />
+                <span className={`text-xs tabular-nums font-bold ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+              </div>
             </div>
 
             {isChampion ? (
