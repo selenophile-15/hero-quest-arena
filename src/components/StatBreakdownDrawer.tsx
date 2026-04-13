@@ -53,6 +53,30 @@ function getCritDmgField(source: SkillBonusSource): number {
   return source.critDmg;
 }
 
+function doesRelicBonusApplyToStat(statName: string, statType: MultStatType | AddStatType): boolean {
+  switch (statType) {
+    case 'atk':
+      return statName === '깡공격력' || statName === '공격력%';
+    case 'def':
+      return statName === '깡방어력' || statName === '방어력%';
+    case 'hp':
+      return statName === '깡체력' || statName === '체력%';
+    case 'crit':
+      return statName === '치명타확률%' || statName === '치명타데미지%';
+    case 'evasion':
+      return statName === '회피%';
+    case 'threat':
+      return statName === '위협도';
+    default:
+      return false;
+  }
+}
+
+function isRelicEffectRelevant(effect: RelicEffect, statType: MultStatType | AddStatType): boolean {
+  if (effect.type !== 'relic_bonus' || !effect.bonuses?.length) return false;
+  return effect.bonuses.some((bonus) => doesRelicBonusApplyToStat(bonus.stat, statType));
+}
+
 function getSummaryField(summary: SkillBonusSummary, statType: MultStatType, field: 'flat' | 'pct'): number {
   if (field === 'flat') {
     return statType === 'atk' ? summary.flatAtk : statType === 'def' ? summary.flatDef : summary.flatHp;
@@ -109,7 +133,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
     const flatBonus = bonus ? getSummaryField(bonus, statType, 'flat') : 0;
     const pctBonus = bonus ? getSummaryField(bonus, statType, 'pct') : 0;
 
-    const relicEffects = calcStats?.relicEffects || [];
+    const relicEffects = (calcStats?.relicEffects || []).filter((effect) => isRelicEffectRelevant(effect, statType));
     const hasWeaponNullify = relicEffects.some(e => e.type === 'weapon_nullify');
 
     const skillSources = bonus?.sources.filter(s => s.type === 'unique' || s.type === 'common') || [];

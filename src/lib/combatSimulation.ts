@@ -60,6 +60,7 @@ export interface SimulationConfig {
   precomputedStats?: PrecomputedHeroStats[];  // If provided, skip champion/aurasong computation
   simulationCount?: number;  // Default 50000
   _isRetry?: boolean;        // Internal: prevents Fateweaver recursion
+  _disableRetry?: boolean;   // Internal: used for aggregated random miniboss runs
 }
 
 export interface HeroSimResult {
@@ -1290,7 +1291,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let retrySimulations: number | undefined;
 
   // Fateweaver/Chronomancer retry: re-run simulation with added Normal booster
-  if (fateweaverPresent && rawWinRate < 100 && !config._isRetry) {
+  if (fateweaverPresent && rawWinRate < 100 && !config._isRetry && !config._disableRetry) {
     const retryResult = runCombatSimulation({
       ...config,
       booster: getRetryBooster(booster),
@@ -1456,6 +1457,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
     ...config,
     miniBoss: 'none',
     simulationCount: normalSimCount,
+    _disableRetry: true,
   });
 
   // Run each mini-boss type simulation
@@ -1479,6 +1481,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       ...config,
       miniBoss: mbType,
       simulationCount: perTypeSimCount,
+      _disableRetry: true,
     });
 
     const wins = Math.round(mbResult.winRate / 100 * perTypeSimCount);

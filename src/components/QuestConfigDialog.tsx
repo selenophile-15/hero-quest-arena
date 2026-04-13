@@ -82,6 +82,13 @@ const DIFFICULTY_COLORS: Record<string, { bg: string; border: string; text: stri
   '익스트림': { bg: 'bg-purple-600/15', border: 'border-purple-500', text: 'text-purple-400', textLight: 'text-purple-600' },
 };
 
+const NEUTRAL_DIFFICULTY_COLORS = {
+  bg: 'bg-secondary/30',
+  border: 'border-border/60',
+  text: 'text-muted-foreground',
+  textLight: 'text-muted-foreground',
+};
+
 function getBarrierForSubArea(quest: QuestEntry, subIdx: number): string | null {
   if (!quest.barrier) return null;
   if (subIdx === 0) return quest.barrier.sub1;
@@ -108,13 +115,53 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
   const region = questData && selRegionIdx >= 0 ? questData.regions[selRegionIdx] : null;
   const hasSubAreas = region && region.subAreas.length > 1;
 
-  // Group quests by type (normal vs boss) and get difficulties
-  const questGroups = useMemo(() => {
-    if (!region) return { normal: [] as (QuestEntry & { originalIdx: number })[], boss: [] as (QuestEntry & { originalIdx: number })[] };
-    const normal = region.quests.filter(q => q.type === 'normal').map(q => ({ ...q, originalIdx: region.quests.indexOf(q) }));
-    const boss = region.quests.filter(q => q.type === 'boss').map(q => ({ ...q, originalIdx: region.quests.indexOf(q) }));
-    return { normal, boss };
+  const questEntries = useMemo(() => {
+    if (!region) return [] as (QuestEntry & { originalIdx: number })[];
+    return region.quests.map((quest, originalIdx) => ({ ...quest, originalIdx }));
   }, [region]);
+
+  const questGroups = useMemo(() => {
+    const normal = questEntries.filter(q => q.type === 'normal');
+    const boss = questEntries.filter(q => q.type === 'boss');
+    return { normal, boss };
+  }, [questEntries]);
+
+  const areaCards = useMemo(() => {
+    if (!region) return [] as Array<{
+      key: string;
+      name: string;
+      image: string;
+      subAreaIdx: number;
+      quests: (QuestEntry & { originalIdx: number })[];
+      isBoss: boolean;
+    }>;
+
+    const cards = region.subAreas.map((sub, subIdx) => ({
+      key: `sub-${sub.key}-${subIdx}`,
+      name: sub.name,
+      image: sub.image,
+      subAreaIdx: subIdx,
+      quests: region.boss && questGroups.normal.length > 0
+        ? questGroups.normal
+        : region.subAreas.length > 1 && questGroups.normal.length > 0
+          ? questGroups.normal
+          : questEntries,
+      isBoss: false,
+    }));
+
+    if (region.boss && questGroups.boss.length > 0) {
+      cards.push({
+        key: `boss-${region.boss.key}`,
+        name: region.boss.name,
+        image: region.boss.image,
+        subAreaIdx: 99,
+        quests: questGroups.boss,
+        isBoss: true,
+      });
+    }
+
+    return cards;
+  }, [region, questEntries, questGroups]);
 
   const handleOpen = (isOpen: boolean) => {
     if (!isOpen) {
@@ -219,32 +266,40 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
 
             {/* Sub-areas with difficulty buttons */}
             <div className="flex flex-wrap justify-center gap-4">
-              {/* Normal sub-areas */}
-              {region.subAreas.map((sub, subIdx) => (
-                <div key={sub.key} className="flex flex-col items-center gap-2 min-w-[120px]">
-                  {/* Sub-area icon */}
-                  <div className="w-24 h-24 rounded-lg border border-border bg-secondary/30 flex items-center justify-center overflow-hidden aspect-square">
-                    <img src={sub.image} alt={sub.name} className="w-full h-full object-contain p-1" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
+              {areaCards.map(card => (
+                <div key={card.key} className="flex w-[132px] flex-col items-center gap-2">
+                  <div className={`w-24 h-24 rounded-lg border ${card.isBoss ? 'border-red-500/40 bg-secondary/30' : 'border-border bg-secondary/30'} flex items-center justify-center overflow-hidden aspect-square`}>
+                    <img src={card.image} alt={card.name} className="w-full h-full object-contain p-1" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
                   </div>
-                  <span className="text-xs font-bold text-foreground text-center">{sub.name}</span>
+                  <span className={`text-xs font-bold text-center ${card.isBoss ? 'text-red-400' : 'text-foreground'} flex items-center justify-center gap-0.5 min-h-[32px]`}>
+                    {card.isBoss && <Crown className="w-3.5 h-3.5" />}
+                    {card.name}
+                  </span>
 
-                  {/* Difficulty buttons for this sub-area */}
-                  <div className="flex flex-col gap-1.5 w-full">
-                    {questGroups.normal.map(q => {
-                      const colors = DIFFICULTY_COLORS[q.difficulty] || { bg: 'bg-secondary/20', border: 'border-border', text: 'text-muted-foreground', textLight: 'text-muted-foreground' };
-                      const barrierEl = getBarrierForSubArea(q, subIdx);
+                  <div className="flex w-full flex-col gap-1.5">
+                    {card.quests.map(q => {
+                      const hasDifficulty = q.difficulty !== '없음';
+                      const colors = hasDifficulty
+                        ? (DIFFICULTY_COLORS[q.difficulty] || NEUTRAL_DIFFICULTY_COLORS)
+                        : NEUTRAL_DIFFICULTY_COLORS;
+                      const barrierEl = card.isBoss ? (q.barrier?.sub1 || null) : getBarrierForSubArea(q, card.subAreaIdx);
                       const barrierHp = q.barrier?.hp || 0;
                       const elIcon = barrierEl ? ELEMENT_ICON_MAP[barrierEl] : null;
-                      const diffTextColor = isDark ? colors.text : (q.difficulty === '쉬움' ? 'text-[hsl(80,45%,30%)]' : colors.textLight);
+                      const diffTextColor = hasDifficulty
+                        ? (isDark ? colors.text : (q.difficulty === '쉬움' ? 'text-[hsl(80,45%,30%)]' : colors.textLight))
+                        : 'text-muted-foreground';
                       return (
                         <button
                           key={q.originalIdx}
-                          onClick={() => selectQuest(hasSubAreas ? subIdx : (region.subAreas.length === 1 ? 0 : -1), q.originalIdx)}
-                          className={`px-2 py-2 rounded-md border ${q.difficulty === '쉬움' && !isDark ? 'bg-[hsl(80,50%,90%)]/60' : colors.bg} ${colors.border} hover:opacity-80 transition-all text-center`}
+                          onClick={() => selectQuest(card.subAreaIdx, q.originalIdx)}
+                          className={`px-2 py-2 rounded-md border ${hasDifficulty && q.difficulty === '쉬움' && !isDark ? 'bg-[hsl(80,50%,90%)]/60' : colors.bg} ${colors.border} hover:opacity-80 transition-all text-center`}
                         >
                           <div className={`text-xs font-bold ${diffTextColor}`}>
-                            {q.stage ? `${q.stage}단계` : q.difficulty}
+                            {q.stage ? `${q.stage}단계` : hasDifficulty ? q.difficulty : '-'}
                           </div>
+                          {!hasDifficulty && q.stage && (
+                            <div className="text-[10px] font-bold text-muted-foreground mt-0.5">-</div>
+                          )}
                           {q.barrier ? (
                             <div className="flex items-center justify-center gap-1 mt-0.5">
                               {elIcon && <img src={elIcon} alt={barrierEl || ''} className="w-4 h-4" />}
@@ -259,83 +314,6 @@ export default function QuestConfigDialog({ open, onOpenChange, questDataMap, qu
                   </div>
                 </div>
               ))}
-
-              {/* Boss */}
-              {region.boss && questGroups.boss.length > 0 && (
-                <div className="flex flex-col items-center gap-2 min-w-[120px]">
-                  <div className="w-24 h-24 rounded-lg border border-border bg-red-500/10 flex items-center justify-center overflow-hidden aspect-square">
-                    <img src={region.boss.image} alt={region.boss.name} className="w-full h-full object-contain p-1" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                  </div>
-                  <span className="text-xs font-bold text-red-400 flex items-center gap-0.5 text-center">
-                    <Crown className="w-3.5 h-3.5" /> {region.boss.name}
-                  </span>
-
-                  <div className="flex flex-col gap-1.5 w-full">
-                    {questGroups.boss.map(q => {
-                      const hasDifficulty = q.difficulty !== '없음';
-                      const colors = hasDifficulty
-                        ? (DIFFICULTY_COLORS[q.difficulty] || { bg: 'bg-secondary/20', border: 'border-border', text: 'text-muted-foreground', textLight: 'text-muted-foreground' })
-                        : { bg: 'bg-secondary/20', border: 'border-border/60', text: 'text-muted-foreground', textLight: 'text-muted-foreground' };
-                      const barrierEl = q.barrier?.sub1 || null;
-                      const barrierHp = q.barrier?.hp || 0;
-                      const elIcon = barrierEl ? ELEMENT_ICON_MAP[barrierEl] : null;
-                      const diffTextColor = hasDifficulty ? (isDark ? colors.text : (q.difficulty === '쉬움' ? 'text-[hsl(80,45%,30%)]' : colors.textLight)) : 'text-muted-foreground';
-                      return (
-                        <button
-                          key={q.originalIdx}
-                          onClick={() => selectQuest(99, q.originalIdx)}
-                          className={`px-2 py-2 rounded-md border ${hasDifficulty && q.difficulty === '쉬움' && !isDark ? 'bg-[hsl(80,50%,90%)]/60' : colors.bg} ${colors.border} hover:opacity-80 transition-all text-center`}
-                        >
-                          <div className={`text-xs font-bold ${diffTextColor}`}>
-                            {q.stage ? `${q.stage}단계` : hasDifficulty ? q.difficulty : '-'}
-                          </div>
-                          {q.barrier ? (
-                            <div className="flex items-center justify-center gap-1 mt-0.5">
-                              {elIcon && <img src={elIcon} alt={barrierEl || ''} className="w-4 h-4" />}
-                              <span className={`text-xs font-bold font-mono ${isDark ? 'text-foreground/80' : 'text-foreground/70'}`}>{barrierHp}</span>
-                            </div>
-                          ) : (
-                            <div className="text-xs text-muted-foreground/40 mt-0.5 font-bold">-</div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* If no sub-areas (single area), show just difficulty */}
-              {!hasSubAreas && !region.boss && region.subAreas.length <= 1 && questGroups.normal.length > 0 && (
-                <div className="flex flex-col items-center gap-2 min-w-[100px]">
-                  <div className="w-20 h-20 rounded-lg border border-border bg-secondary/30 flex items-center justify-center overflow-hidden aspect-square">
-                    <img src={region.areaImage} alt={region.name} className="w-full h-full object-contain p-1" loading="eager" decoding="sync" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                  </div>
-                  <span className="text-[11px] font-medium text-foreground text-center">{region.name}</span>
-                  <div className="flex flex-col gap-1.5 w-full">
-                    {questGroups.normal.map(q => {
-                      const colors = DIFFICULTY_COLORS[q.difficulty] || { bg: 'bg-secondary/20', border: 'border-border', text: 'text-muted-foreground' };
-                      return (
-                        <button
-                          key={q.originalIdx}
-                          onClick={() => selectQuest(0, q.originalIdx)}
-                          className={`px-2 py-1.5 rounded-md border ${colors.bg} ${colors.border} hover:opacity-80 transition-all text-center`}
-                        >
-                          <div className={`text-[11px] font-medium ${colors.text}`}>
-                            {q.stage ? `${q.stage}단계` : q.difficulty}
-                          </div>
-                          {q.barrier ? (
-                            <div className="flex items-center justify-center gap-1 mt-0.5">
-                              <span className="text-[9px] text-muted-foreground font-mono">{q.barrier.hp}</span>
-                            </div>
-                          ) : (
-                            <div className="text-[9px] text-muted-foreground/40 mt-0.5">-</div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
