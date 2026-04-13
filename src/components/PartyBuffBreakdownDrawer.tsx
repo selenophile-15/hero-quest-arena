@@ -100,6 +100,13 @@ function isBoosterSource(src: PartyBuffSource): boolean {
   return src.note === '부스터';
 }
 
+function doesArtifactAffectStat(itemName: string | undefined, stat: StatTab): boolean {
+  if (!itemName) return false;
+  if (itemName === '락 스톰퍼') return stat === 'evasion';
+  if (itemName === '키쿠 이치몬지' || itemName === '키쿠이치몬지') return stat === 'critChance';
+  return false;
+}
+
 export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, buffSummary, buffedStats, hasEvasionPenalty }: PartyBuffBreakdownDrawerProps) {
   const [activeTab, setActiveTab] = useState<StatTab>('atk');
 
@@ -689,16 +696,13 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
 
             {/* Artifact effects */}
-            {heroes.some(h => 
-              h.equipmentSlots?.some((s: any) => s.item?.name === '락 스톰퍼') ||
-              h.equipmentSlots?.some((s: any) => s.item?.name === '키쿠이치몬지')
-            ) && (
+            {heroes.some(h => h.equipmentSlots?.some((s: any) => doesArtifactAffectStat(s.item?.name, activeTab))) && (
               <div className="mt-4 px-3">
                 <div className="text-sm text-muted-foreground font-medium mb-2">🗡️ 유물 효과</div>
                 <div className="space-y-2">
                   {heroes.map(h => {
-                    const hasRS = h.equipmentSlots?.some((s: any) => s.item?.name === '락 스톰퍼');
-                    const hasKiku = h.equipmentSlots?.some((s: any) => s.item?.name === '키쿠이치몬지');
+                    const hasRS = activeTab === 'evasion' && h.equipmentSlots?.some((s: any) => s.item?.name === '락 스톰퍼');
+                    const hasKiku = activeTab === 'critChance' && h.equipmentSlots?.some((s: any) => s.item?.name === '키쿠이치몬지' || s.item?.name === '키쿠 이치몬지');
                     if (!hasRS && !hasKiku) return null;
                     return (
                       <div key={h.id} className="bg-secondary/50 border border-border/30 rounded-lg px-3 py-2 text-sm">
@@ -715,22 +719,18 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
             )}
 
             {/* Buff sources summary */}
+            {relevantSources.length > 0 && (
             <div className="mt-4 px-3">
               <div className="text-sm text-muted-foreground font-medium mb-2">적용된 파티 버프 소스</div>
               <div className="flex flex-wrap gap-2">
-                {buffSummary.sources.map((src, i) => {
+                {relevantSources.map((src, i) => {
                   const isChamp = src.type === 'champion';
                   const isBooster = isBoosterSource(src);
                   const parts: string[] = [];
-                  if (src.atkPct) parts.push(`공격력 +${src.atkPct}%`);
-                  if (src.defPct) parts.push(`방어력 +${src.defPct}%`);
-                  if (src.hpPct) parts.push(`체력 +${src.hpPct}%`);
-                  if (src.critPct) parts.push(`치확 +${src.critPct}%`);
-                  if (src.evaPct) parts.push(`회피 +${src.evaPct}%`);
-                  if (src.critDmgPct) parts.push(`치댐 +${src.critDmgPct}%`);
-                  if (src.flatAtk) parts.push(`깡공 +${src.flatAtk}`);
-                  if (src.flatDef) parts.push(`깡방 +${src.flatDef}`);
-                  if (src.flatHp) parts.push(`깡체 +${src.flatHp}`);
+                  const pctVal = getSourcePctForStat(src, activeTab);
+                  const flatVal = getSourceFlatForStat(src, activeTab);
+                  if (flatVal) parts.push(`${config.label} +${flatVal}`);
+                  if (pctVal) parts.push(`${config.label} +${pctVal}%`);
 
                   return (
                     <div key={i} className="bg-secondary/50 border border-border/30 rounded-lg px-3 py-2 text-sm">
@@ -749,6 +749,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                 })}
               </div>
             </div>
+            )}
           </div>
         </Tabs>
       </SheetContent>

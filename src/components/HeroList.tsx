@@ -149,6 +149,15 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
 // Default hidden columns
 const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg', 'position'];
 
+function createScreenshotOverlay() {
+  const overlay = document.createElement('div');
+  overlay.id = 'hero-list-screenshot-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
+  overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px;font-weight:600"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
 export default function HeroList() {
   const { colorMode } = useTheme();
   const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
@@ -218,14 +227,14 @@ export default function HeroList() {
   // Screenshot handler (shared for table & album)
   const handleScreenshot = useCallback(async (targetRef: React.RefObject<HTMLDivElement | null>, prefix: string) => {
     if (!targetRef.current) return;
+    const overlay = createScreenshotOverlay();
     setScreenshotLoading(true);
     setCaptureMode(true);
     // For album mode, unflip all cards so screenshot shows front face
     const savedFlipped = new Set(flippedCards);
     setFlippedCards(new Set());
     try {
-      // Wait for React re-render with overlay visible + captureMode=true + unflipped cards
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
 
       const canvas = await html2canvas(targetRef.current, {
         backgroundColor: colorMode === 'light' ? '#ffffff' : '#1a1a2e',
@@ -237,8 +246,8 @@ export default function HeroList() {
           const root = doc.documentElement;
           root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
           root.setAttribute('data-color-mode', colorMode);
-          // Force white background for light mode to prevent gray glow artifacts
           if (colorMode === 'light') {
+            root.style.backgroundColor = '#ffffff';
             doc.body.style.backgroundColor = '#ffffff';
           }
           const clonedEl = doc.querySelector(`[data-screenshot-target]`) as HTMLElement;
@@ -246,7 +255,6 @@ export default function HeroList() {
             if (colorMode === 'light') {
               clonedEl.style.backgroundColor = '#ffffff';
             }
-            // Force vertical-align: middle on all inline-block elements for uniform text height
             clonedEl.querySelectorAll('td, th').forEach(cell => {
               (cell as HTMLElement).style.verticalAlign = 'middle';
             });
@@ -263,9 +271,8 @@ export default function HeroList() {
             clonedEl.querySelectorAll('.album-card-back').forEach(el => {
               (el as HTMLElement).style.display = 'none';
             });
-            // Force white background on card-fantasy elements in light mode
             if (colorMode === 'light') {
-              clonedEl.querySelectorAll('.card-fantasy, .album-card-front').forEach(el => {
+              clonedEl.querySelectorAll('.card-fantasy, .album-card-front, .album-card-back, table, thead, tbody, tr, td, th').forEach(el => {
                 const htmlEl = el as HTMLElement;
                 const bg = window.getComputedStyle(htmlEl).backgroundColor;
                 if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
@@ -277,13 +284,14 @@ export default function HeroList() {
         },
       });
 
-      await saveCanvasImage(canvas, `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.jpg`, 'image/jpeg', 0.92);
+      await saveCanvasImage(canvas, `${prefix}_${listTab}_${new Date().toISOString().slice(0, 10)}.png`, 'image/png');
     } catch (e) {
       console.error('Screenshot failed:', e);
     } finally {
       setCaptureMode(false);
       setFlippedCards(savedFlipped);
       setScreenshotLoading(false);
+      overlay.remove();
     }
   }, [listTab, colorMode, flippedCards]);
 
@@ -1179,6 +1187,7 @@ export default function HeroList() {
       { label: 'THREAT', value: hero.threat, color: 'text-purple-400', lightColor: 'text-purple-600' },
     ];
     const seeds = hero.seeds || { hp: 0, atk: 0, def: 0 };
+    const promotedNameClass = hero.type === 'champion' && hero.promoted ? 'theme-highlight-40' : 'text-foreground';
 
     return (
       <div key={hero.id} className="album-card-flip-container">
@@ -1200,38 +1209,36 @@ export default function HeroList() {
               </div>
             </div>
             <div className="text-center w-full">
-              <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${hero.type === 'champion' && hero.promoted ? (colorMode === 'light' ? 'text-amber-600' : 'text-yellow-400') : 'text-foreground'}`}>
+              <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${promotedNameClass}`}>
                 {hero.name}
-                {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colorMode === 'light' ? '#d97706' : '#facc15' }} />}
+                {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 flex-shrink-0 theme-highlight-40" />}
               </p>
               <p className="text-xs text-foreground/60">
                 {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
               </p>
-              <div className="flex items-center gap-1 justify-center mt-0.5">
-                <ElementIcon element={hero.element} size={16} />
-                <span className={`text-xs tabular-nums font-bold ${(hero.elementValue || 0) === 0 ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
-              </div>
             </div>
 
-            {isChampion ? (
-              <div className="flex items-center gap-1 justify-center">
-                {leaderSkillIcon && <img src={leaderSkillIcon} alt="리더" className="w-9 h-9" title="리더 스킬" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                {aurasongIcon && <img src={aurasongIcon} alt="오라" className="w-9 h-9" title="오라의 노래" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-              </div>
-            ) : (
-              hero.skills && hero.skills.length > 0 && (
-                <div className="flex items-center gap-0.5 flex-wrap justify-center">
-                  {hero.heroClass && (
-                    <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-9 h-9" title={hero.skills?.[0]}
-                      onError={e => { e.currentTarget.style.display = 'none'; }} />
-                  )}
-                  {hero.skills.slice(1, 5).map((sk, i) => (
-                    <img key={i} src={getSkillImagePath(sk)} alt={sk} className="w-9 h-9" title={sk}
-                      onError={e => { e.currentTarget.style.display = 'none'; }} />
-                  ))}
+            <div className="min-h-[48px] flex items-center justify-center w-full -mt-1 mb-1">
+              {isChampion ? (
+                <div className="flex items-center gap-1 justify-center w-full">
+                  {leaderSkillIcon && <img src={leaderSkillIcon} alt="리더" className="w-9 h-9" title="리더 스킬" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                  {aurasongIcon && <img src={aurasongIcon} alt="오라" className="w-9 h-9" title="오라의 노래" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                 </div>
-              )
-            )}
+              ) : (
+                hero.skills && hero.skills.length > 0 && (
+                  <div className="flex items-center gap-0.5 flex-wrap justify-center w-full">
+                    {hero.heroClass && (
+                      <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-9 h-9" title={hero.skills?.[0]}
+                        onError={e => { e.currentTarget.style.display = 'none'; }} />
+                    )}
+                    {hero.skills.slice(1, 5).map((sk, i) => (
+                      <img key={i} src={getSkillImagePath(sk)} alt={sk} className="w-9 h-9" title={sk}
+                        onError={e => { e.currentTarget.style.display = 'none'; }} />
+                    ))}
+                  </div>
+                )
+              )}
+            </div>
 
             {isChampion ? (
               <div className="flex gap-2 justify-center w-full">
@@ -1368,7 +1375,10 @@ export default function HeroList() {
             onClick={handleFlip}
           >
             <div className="text-center w-full mb-1">
-              <p className="text-sm font-bold text-foreground">{hero.name}</p>
+              <p className={`text-sm font-bold inline-flex items-center gap-1 justify-center w-full ${promotedNameClass}`}>
+                {hero.name}
+                {hero.type === 'champion' && hero.promoted && <Award className="w-3.5 h-3.5 flex-shrink-0 theme-highlight-40" />}
+              </p>
               <p className="text-xs text-foreground/60">
                 {hero.heroClass && <>{hero.heroClass} / </>}Lv.{hero.level}
               </p>
@@ -1766,16 +1776,6 @@ export default function HeroList() {
             )}
           </div>
         </>
-      )}
-
-      {/* Screenshot loading overlay */}
-      {screenshotLoading && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
-          <div className="flex flex-col items-center gap-2 text-white text-sm">
-            <div className="w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
-            스크린샷 저장 중...
-          </div>
-        </div>
       )}
 
       {/* Import confirmation dialog */}

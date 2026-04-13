@@ -160,7 +160,7 @@ const QUEST_SUB_TABS = [
 
 export default function QuestSimulation() {
   const { colorMode } = useTheme();
-  const allHeroes = getHeroes();
+  const allHeroes = useMemo(() => getHeroes(), []);
   const [questDataMap, setQuestDataMap] = useState<Record<string, QuestData>>({});
   const [commonData, setCommonData] = useState<QuestCommon | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1227,12 +1227,6 @@ export default function QuestSimulation() {
                     }`}>
                       {simResult.winRate.toFixed(1)}%
                     </div>
-                    {simResult.retryWinRate !== undefined && (
-                      <div className="text-[10px] text-muted-foreground space-y-0.5 mt-1.5">
-                        <div>1차 시도: <span className="text-foreground font-medium">{simResult.rawWinRate.toFixed(1)}%</span></div>
-                        <div>2차 시도 (부스터 적용): <span className="text-foreground font-medium">{simResult.retryWinRate.toFixed(1)}%</span></div>
-                      </div>
-                    )}
                   </>
                 ) : (
                   <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">

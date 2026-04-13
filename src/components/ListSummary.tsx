@@ -592,12 +592,15 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
     overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
     document.body.appendChild(overlay);
     try {
-      const bgColor = colorMode === 'light' ? '#f5f3f0' : '#1a1a2e';
+      const bgColor = colorMode === 'light' ? '#ffffff' : '#1a1a2e';
       const PAD = 40;
-      // Add temporary padding wrapper for uniform margins
       const el = summaryRef.current;
       const origPad = el.style.padding;
+      const origBg = el.style.backgroundColor;
       el.style.padding = `${PAD}px`;
+      if (colorMode === 'light') {
+        el.style.backgroundColor = '#ffffff';
+      }
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
       const canvas = await html2canvas(el, {
         backgroundColor: bgColor,
@@ -606,12 +609,34 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
         scrollX: 0,
         scale: 2,
         logging: false,
+        onclone: (doc) => {
+          const root = doc.documentElement;
+          root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
+          root.setAttribute('data-color-mode', colorMode);
+          if (colorMode === 'light') {
+            root.style.backgroundColor = '#ffffff';
+            doc.body.style.backgroundColor = '#ffffff';
+          }
+          const clonedEl = doc.querySelector('[data-summary-screenshot]') as HTMLElement | null;
+          if (clonedEl && colorMode === 'light') {
+            clonedEl.style.backgroundColor = '#ffffff';
+            clonedEl.querySelectorAll('.card-fantasy, table, thead, tbody, tr, td, th').forEach(node => {
+              const htmlEl = node as HTMLElement;
+              const bg = window.getComputedStyle(htmlEl).backgroundColor;
+              if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
+                htmlEl.style.backgroundColor = '#ffffff';
+              }
+            });
+          }
+        },
       });
       el.style.padding = origPad;
+      el.style.backgroundColor = origBg;
       await saveCanvasImage(canvas, `리스트요약_${new Date().toISOString().slice(0, 10)}.png`, 'image/png');
     } catch (e) {
       console.error('Screenshot failed:', e);
     } finally {
+      summaryRef.current.style.padding = '';
       document.body.removeChild(overlay);
     }
   }, [colorMode]);
@@ -620,7 +645,7 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
 
   return (
     <div className="space-y-4">
-      <div ref={summaryRef} className="space-y-4">
+      <div ref={summaryRef} data-summary-screenshot className="space-y-4">
       <MatrixGrid
         allHeroes={heroes}
         ownedIds={ownedSet}
