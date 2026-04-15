@@ -419,15 +419,15 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
 }
 
 /* ── Distribution bar (reusable) ── */
-function DistBar({ label, labelNode, owned, planned, maxCount, color }: {
+function DistBar({ label, labelNode, total, owned, planned, maxCount, color }: {
   label?: string;
   labelNode?: React.ReactNode;
+  total: number;
   owned: number;
   planned: number;
   maxCount: number;
   color: string;
 }) {
-  const total = owned + planned;
   const ownedPct = (owned / maxCount) * 100;
   const plannedPct = (planned / maxCount) * 100;
   return (
@@ -439,9 +439,9 @@ function DistBar({ label, labelNode, owned, planned, maxCount, color }: {
         {owned > 0 && <div className="h-full transition-all" style={{ width: `${ownedPct}%`, backgroundColor: color }} />}
         {planned > 0 && <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />}
       </div>
-      <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{owned}</span>
-      <span className="text-xs font-bold text-muted-foreground tabular-nums w-8 text-right">
-        {planned > 0 ? `(${planned})` : ''}
+      <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{total}</span>
+      <span className="text-xs font-bold text-muted-foreground tabular-nums w-16 text-right">
+        ({owned > 0 ? owned : '-'}/{planned > 0 ? planned : '-'})
       </span>
     </div>
   );
