@@ -348,7 +348,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-primary flex items-center gap-1.5">
           <Users size={14} />
-          전체
+          전체 ({grandTotal}) <span className="text-xs font-normal text-muted-foreground">{Array.from(ownedIds).length} / {Array.from(plannedIds).length}</span>
         </h3>
         <Button size="sm" onClick={onAdd} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
           <Plus size={14} /> 추가
