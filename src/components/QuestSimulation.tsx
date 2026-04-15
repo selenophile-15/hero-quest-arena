@@ -785,7 +785,7 @@ export default function QuestSimulation() {
             )}
 
             {/* Booster slot - top right, symmetric with region icon */}
-            <Popover>
+            <Popover open={undefined}>
               <PopoverTrigger asChild>
                 <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
                   {selectedBooster !== 'none' && commonData?.boosters ? (() => {
@@ -801,29 +801,30 @@ export default function QuestSimulation() {
                   )}
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-52 p-2" align="end">
-                <div className="text-xs font-medium text-foreground mb-2">전투력 부스터</div>
-                <div className="space-y-1">
+              <PopoverContent className="w-72 p-2.5" align="end">
+                <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
+                <div className="space-y-1.5">
                   <button
-                    onClick={() => setSelectedBooster('none')}
-                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${selectedBooster === 'none' ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
+                    onClick={() => { setSelectedBooster('none'); document.body.click(); }}
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === 'none' ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
                   >
-                    없음
+                    <span className="w-8 h-8 rounded flex items-center justify-center bg-secondary/50 text-muted-foreground shrink-0">✕</span>
+                    <span className="font-medium">부스터 없음</span>
                   </button>
                   {(['normal', 'super', 'mega'] as const).map(bType => {
                     const names: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
-                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40%, 치확 +10%', mega: '공/방 +80%, 치확 +25%, 치명타 대미지 +50%' };
+                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40% / 치확 +10%', mega: '공/방 +80% / 치확 +25% / 치명타 대미지 +50%' };
                     const bEntry = commonData?.boosters?.[names[bType]];
                     return (
                       <button
                         key={bType}
-                        onClick={() => setSelectedBooster(bType)}
-                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${selectedBooster === bType ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
+                        onClick={() => { setSelectedBooster(bType); document.body.click(); }}
+                        className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
                       >
-                        {bEntry && <img src={bEntry.image} alt="" className="w-6 h-6 rounded" />}
-                        <div className="text-left">
+                        {bEntry && <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />}
+                        <div className="text-left min-w-0">
                           <div className="font-medium">{names[bType]}</div>
-                          <div className="text-[10px] text-muted-foreground">{descs[bType]}</div>
+                          <div className="text-xs text-foreground/60 dark:text-foreground/50 whitespace-nowrap">{descs[bType]}</div>
                         </div>
                       </button>
                     );

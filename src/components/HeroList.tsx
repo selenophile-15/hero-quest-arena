@@ -234,7 +234,7 @@ export default function HeroList() {
     const savedFlipped = new Set(flippedCards);
     setFlippedCards(new Set());
     try {
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+      await new Promise(r => setTimeout(r, 300));
 
       const canvas = await html2canvas(targetRef.current, {
         backgroundColor: colorMode === 'light' ? '#ffffff' : '#1a1a2e',
@@ -271,7 +271,22 @@ export default function HeroList() {
             clonedEl.querySelectorAll('.album-card-back').forEach(el => {
               (el as HTMLElement).style.display = 'none';
             });
+            // Fix light mode screenshot: replace transparent gradients with white
             if (colorMode === 'light') {
+              clonedEl.querySelectorAll('*').forEach(el => {
+                const htmlEl = el as HTMLElement;
+                const bg = htmlEl.style.background || '';
+                const computedBg = window.getComputedStyle(htmlEl).background || '';
+                // Replace transparent in radial-gradient with #ffffff
+                if (bg.includes('transparent')) {
+                  htmlEl.style.background = bg.replace(/transparent/g, '#ffffff');
+                }
+                // Remove box-shadow that causes gray halos
+                const shadow = htmlEl.style.boxShadow || '';
+                if (shadow && shadow !== 'none') {
+                  htmlEl.style.boxShadow = 'none';
+                }
+              });
               clonedEl.querySelectorAll('.card-fantasy, .album-card-front, .album-card-back, table, thead, tbody, tr, td, th').forEach(el => {
                 const htmlEl = el as HTMLElement;
                 const bg = window.getComputedStyle(htmlEl).backgroundColor;

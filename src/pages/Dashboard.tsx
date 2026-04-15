@@ -5,7 +5,7 @@ import { useDesktopModeState } from '@/hooks/use-desktop-mode';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
-import { Sword, Swords, Trophy, Sun, Moon, Monitor } from 'lucide-react';
+import { List, Swords, Trophy, Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme, ThemeMode } from '@/hooks/use-theme';
 import {
   DropdownMenu,
@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const TABS = [
-  { id: 'list', label: '리스트 관리', icon: Sword },
+  { id: 'list', label: '리스트 관리', icon: List },
   { id: 'quest', label: '퀘스트 시뮬레이션', icon: Swords },
   { id: 'ranking', label: '랭킹', icon: Trophy },
 ] as const;

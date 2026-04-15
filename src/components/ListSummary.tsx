@@ -89,7 +89,7 @@ const POSITION_TEXT_COLORS: Record<string, string> = {
 };
 const POSITION_BAR_STYLE: Record<string, string> = {
   '퓨어 탱커': '#3b82f6',
-  '회피 탱커': '#059669',
+  '회피 탱커': '#65a30d',
   '딜탱': '#f97316',
   '치명 딜러': '#ef4444',
   '일반 딜러': '#eab308',
@@ -348,7 +348,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-primary flex items-center gap-1.5">
           <Users size={14} />
-          전체
+          전체 ({grandTotal}) <span className="text-xs font-normal text-muted-foreground">{Array.from(ownedIds).length} / {Array.from(plannedIds).length}</span>
         </h3>
         <Button size="sm" onClick={onAdd} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
           <Plus size={14} /> 추가
@@ -419,15 +419,15 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
 }
 
 /* ── Distribution bar (reusable) ── */
-function DistBar({ label, labelNode, owned, planned, maxCount, color }: {
+function DistBar({ label, labelNode, total, owned, planned, maxCount, color }: {
   label?: string;
   labelNode?: React.ReactNode;
+  total: number;
   owned: number;
   planned: number;
   maxCount: number;
   color: string;
 }) {
-  const total = owned + planned;
   const ownedPct = (owned / maxCount) * 100;
   const plannedPct = (planned / maxCount) * 100;
   return (
@@ -439,9 +439,9 @@ function DistBar({ label, labelNode, owned, planned, maxCount, color }: {
         {owned > 0 && <div className="h-full transition-all" style={{ width: `${ownedPct}%`, backgroundColor: color }} />}
         {planned > 0 && <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />}
       </div>
-      <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{owned}</span>
-      <span className="text-xs font-bold text-muted-foreground tabular-nums w-8 text-right">
-        {planned > 0 ? `(${planned})` : ''}
+      <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{total}</span>
+      <span className="text-xs font-bold text-muted-foreground tabular-nums w-16 text-right">
+        ({owned > 0 ? owned : '-'}/{planned > 0 ? planned : '-'})
       </span>
     </div>
   );
@@ -474,6 +474,7 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
           <DistBar
             key={el}
             labelNode={<><ElementIcon element={el} size={16} /><span className="text-xs font-medium text-foreground">{el}</span></>}
+            total={data[el].owned + data[el].planned}
             owned={data[el].owned}
             planned={data[el].planned}
             maxCount={maxCount}
@@ -488,33 +489,36 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
 /* ── Class line distribution ── */
 function ClassLineSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
   const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
-  const heroesOnly = useMemo(() => [...owned, ...planned].filter(h => h.type === 'hero'), [owned, planned]);
+  const all = useMemo(() => [...owned, ...planned], [owned, planned]);
 
   const data = useMemo(() => {
+    const lines = [...CLASS_LINE_ORDER, '챔피언'];
     const map: Record<string, { owned: number; planned: number }> = {};
-    CLASS_LINE_ORDER.forEach(cl => { map[cl] = { owned: 0, planned: 0 }; });
-    heroesOnly.forEach(h => {
-      const cl = h.classLine || '기타';
+    lines.forEach(cl => { map[cl] = { owned: 0, planned: 0 }; });
+    all.forEach(h => {
+      const cl = h.type === 'champion' ? '챔피언' : (h.classLine || '기타');
       if (!map[cl]) map[cl] = { owned: 0, planned: 0 };
       if (ownedSet.has(h.id)) map[cl].owned++; else map[cl].planned++;
     });
     return map;
-  }, [heroesOnly, ownedSet]);
+  }, [all, ownedSet]);
 
-  const clBarColors: Record<string, string> = { '전사': '#ef4444', '로그': '#84cc16', '주문술사': '#38bdf8' };
-  const maxCount = Math.max(...Object.values(data).map(d => d.owned + d.planned), 1);
-  if (heroesOnly.length === 0) return null;
+  const clBarColors: Record<string, string> = { '전사': '#ef4444', '로그': '#84cc16', '주문술사': '#38bdf8', '챔피언': '#a855f7' };
+  const allLines = [...CLASS_LINE_ORDER, '챔피언'];
+  const maxCount = Math.max(...allLines.map(cl => (data[cl]?.owned || 0) + (data[cl]?.planned || 0)), 1);
+  if (all.length === 0) return null;
 
   return (
     <div className="card-fantasy p-3">
-      <h3 className="text-sm font-semibold text-primary mb-3">계열 분포 (영웅)</h3>
+      <h3 className="text-sm font-semibold text-primary mb-3">계열 분포</h3>
       <div className="space-y-2">
-        {CLASS_LINE_ORDER.map(cl => (
+        {allLines.map(cl => (
           <DistBar
             key={cl}
-            labelNode={<span className={`text-xs font-medium ${CLASS_LINE_COLORS[cl]}`}>{cl}</span>}
-            owned={data[cl].owned}
-            planned={data[cl].planned}
+            labelNode={<span className={`text-xs font-medium ${cl === '챔피언' ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || '')}`}>{cl}</span>}
+            total={(data[cl]?.owned || 0) + (data[cl]?.planned || 0)}
+            owned={data[cl]?.owned || 0}
+            planned={data[cl]?.planned || 0}
             maxCount={maxCount}
             color={clBarColors[cl] || '#6b7280'}
           />
@@ -552,6 +556,7 @@ function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
           <DistBar
             key={pos}
             labelNode={<span className={`text-xs font-medium ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>{pos}</span>}
+            total={d.owned + d.planned}
             owned={d.owned}
             planned={d.planned}
             maxCount={maxCount}
@@ -589,7 +594,7 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
     const overlay = document.createElement('div');
     overlay.id = 'screenshot-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
-    overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+    overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px;font-weight:600"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
     document.body.appendChild(overlay);
     try {
       const bgColor = colorMode === 'light' ? '#ffffff' : '#1a1a2e';
@@ -601,7 +606,7 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
       if (colorMode === 'light') {
         el.style.backgroundColor = '#ffffff';
       }
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+      await new Promise(r => setTimeout(r, 300));
       const canvas = await html2canvas(el, {
         backgroundColor: bgColor,
         useCORS: true,
@@ -618,15 +623,29 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
             doc.body.style.backgroundColor = '#ffffff';
           }
           const clonedEl = doc.querySelector('[data-summary-screenshot]') as HTMLElement | null;
-          if (clonedEl && colorMode === 'light') {
-            clonedEl.style.backgroundColor = '#ffffff';
-            clonedEl.querySelectorAll('.card-fantasy, table, thead, tbody, tr, td, th').forEach(node => {
-              const htmlEl = node as HTMLElement;
-              const bg = window.getComputedStyle(htmlEl).backgroundColor;
-              if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
-                htmlEl.style.backgroundColor = '#ffffff';
-              }
-            });
+          if (clonedEl) {
+            if (colorMode === 'light') {
+              clonedEl.style.backgroundColor = '#ffffff';
+              // Replace transparent in gradients with white, remove boxShadow
+              clonedEl.querySelectorAll('*').forEach(node => {
+                const htmlEl = node as HTMLElement;
+                const bg = htmlEl.style.background || '';
+                if (bg.includes('transparent')) {
+                  htmlEl.style.background = bg.replace(/transparent/g, '#ffffff');
+                }
+                const shadow = htmlEl.style.boxShadow || '';
+                if (shadow && shadow !== 'none') {
+                  htmlEl.style.boxShadow = 'none';
+                }
+              });
+              clonedEl.querySelectorAll('.card-fantasy, table, thead, tbody, tr, td, th').forEach(node => {
+                const htmlEl = node as HTMLElement;
+                const bg = window.getComputedStyle(htmlEl).backgroundColor;
+                if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
+                  htmlEl.style.backgroundColor = '#ffffff';
+                }
+              });
+            }
           }
         },
       });
