@@ -556,6 +556,7 @@ function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
           <DistBar
             key={pos}
             labelNode={<span className={`text-xs font-medium ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>{pos}</span>}
+            total={d.owned + d.planned}
             owned={d.owned}
             planned={d.planned}
             maxCount={maxCount}
