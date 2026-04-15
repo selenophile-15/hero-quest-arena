@@ -589,7 +589,7 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
     const overlay = document.createElement('div');
     overlay.id = 'screenshot-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
-    overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+    overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px;font-weight:600"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
     document.body.appendChild(overlay);
     try {
       const bgColor = colorMode === 'light' ? '#ffffff' : '#1a1a2e';
@@ -601,7 +601,7 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
       if (colorMode === 'light') {
         el.style.backgroundColor = '#ffffff';
       }
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+      await new Promise(r => setTimeout(r, 300));
       const canvas = await html2canvas(el, {
         backgroundColor: bgColor,
         useCORS: true,
@@ -618,15 +618,29 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
             doc.body.style.backgroundColor = '#ffffff';
           }
           const clonedEl = doc.querySelector('[data-summary-screenshot]') as HTMLElement | null;
-          if (clonedEl && colorMode === 'light') {
-            clonedEl.style.backgroundColor = '#ffffff';
-            clonedEl.querySelectorAll('.card-fantasy, table, thead, tbody, tr, td, th').forEach(node => {
-              const htmlEl = node as HTMLElement;
-              const bg = window.getComputedStyle(htmlEl).backgroundColor;
-              if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
-                htmlEl.style.backgroundColor = '#ffffff';
-              }
-            });
+          if (clonedEl) {
+            if (colorMode === 'light') {
+              clonedEl.style.backgroundColor = '#ffffff';
+              // Replace transparent in gradients with white, remove boxShadow
+              clonedEl.querySelectorAll('*').forEach(node => {
+                const htmlEl = node as HTMLElement;
+                const bg = htmlEl.style.background || '';
+                if (bg.includes('transparent')) {
+                  htmlEl.style.background = bg.replace(/transparent/g, '#ffffff');
+                }
+                const shadow = htmlEl.style.boxShadow || '';
+                if (shadow && shadow !== 'none') {
+                  htmlEl.style.boxShadow = 'none';
+                }
+              });
+              clonedEl.querySelectorAll('.card-fantasy, table, thead, tbody, tr, td, th').forEach(node => {
+                const htmlEl = node as HTMLElement;
+                const bg = window.getComputedStyle(htmlEl).backgroundColor;
+                if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
+                  htmlEl.style.backgroundColor = '#ffffff';
+                }
+              });
+            }
           }
         },
       });
