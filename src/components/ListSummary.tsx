@@ -474,6 +474,7 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
           <DistBar
             key={el}
             labelNode={<><ElementIcon element={el} size={16} /><span className="text-xs font-medium text-foreground">{el}</span></>}
+            total={data[el].owned + data[el].planned}
             owned={data[el].owned}
             planned={data[el].planned}
             maxCount={maxCount}
