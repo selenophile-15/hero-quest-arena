@@ -489,33 +489,36 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
 /* ── Class line distribution ── */
 function ClassLineSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
   const ownedSet = useMemo(() => new Set(owned.map(h => h.id)), [owned]);
-  const heroesOnly = useMemo(() => [...owned, ...planned].filter(h => h.type === 'hero'), [owned, planned]);
+  const all = useMemo(() => [...owned, ...planned], [owned, planned]);
 
   const data = useMemo(() => {
+    const lines = [...CLASS_LINE_ORDER, '챔피언'];
     const map: Record<string, { owned: number; planned: number }> = {};
-    CLASS_LINE_ORDER.forEach(cl => { map[cl] = { owned: 0, planned: 0 }; });
-    heroesOnly.forEach(h => {
-      const cl = h.classLine || '기타';
+    lines.forEach(cl => { map[cl] = { owned: 0, planned: 0 }; });
+    all.forEach(h => {
+      const cl = h.type === 'champion' ? '챔피언' : (h.classLine || '기타');
       if (!map[cl]) map[cl] = { owned: 0, planned: 0 };
       if (ownedSet.has(h.id)) map[cl].owned++; else map[cl].planned++;
     });
     return map;
-  }, [heroesOnly, ownedSet]);
+  }, [all, ownedSet]);
 
-  const clBarColors: Record<string, string> = { '전사': '#ef4444', '로그': '#84cc16', '주문술사': '#38bdf8' };
-  const maxCount = Math.max(...Object.values(data).map(d => d.owned + d.planned), 1);
-  if (heroesOnly.length === 0) return null;
+  const clBarColors: Record<string, string> = { '전사': '#ef4444', '로그': '#84cc16', '주문술사': '#38bdf8', '챔피언': '#a855f7' };
+  const allLines = [...CLASS_LINE_ORDER, '챔피언'];
+  const maxCount = Math.max(...allLines.map(cl => (data[cl]?.owned || 0) + (data[cl]?.planned || 0)), 1);
+  if (all.length === 0) return null;
 
   return (
     <div className="card-fantasy p-3">
-      <h3 className="text-sm font-semibold text-primary mb-3">계열 분포 (영웅)</h3>
+      <h3 className="text-sm font-semibold text-primary mb-3">계열 분포</h3>
       <div className="space-y-2">
-        {CLASS_LINE_ORDER.map(cl => (
+        {allLines.map(cl => (
           <DistBar
             key={cl}
-            labelNode={<span className={`text-xs font-medium ${CLASS_LINE_COLORS[cl]}`}>{cl}</span>}
-            owned={data[cl].owned}
-            planned={data[cl].planned}
+            labelNode={<span className={`text-xs font-medium ${cl === '챔피언' ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || '')}`}>{cl}</span>}
+            total={(data[cl]?.owned || 0) + (data[cl]?.planned || 0)}
+            owned={data[cl]?.owned || 0}
+            planned={data[cl]?.planned || 0}
             maxCount={maxCount}
             color={clBarColors[cl] || '#6b7280'}
           />
