@@ -2037,7 +2037,9 @@ export default function QuestSimulation() {
                                       </td>
                                     );
                                   })}
-                              </tr>
+                                </tr>
+                              )}
+                            </>
                             );
                           })}
                         </tbody>
