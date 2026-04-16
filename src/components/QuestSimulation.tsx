@@ -1134,7 +1134,7 @@ export default function QuestSimulation() {
                         </div>
                         <div className="relative ml-1.5">
                           {rows.map(r => (
-                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-1.5" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-2" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
                               <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
