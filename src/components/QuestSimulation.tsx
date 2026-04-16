@@ -2078,18 +2078,16 @@ export default function QuestSimulation() {
                                 hr.survivalRate >= 90 ? 'text-lime-400' :
                                 hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
                               }`}>{hr.survivalRate.toFixed(1)}%</td>
-                              <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${
-                                hr.damageApplicationRate <= 30 ? 'text-lime-400' :
-                                hr.damageApplicationRate <= 60 ? 'text-blue-400' :
-                                hr.damageApplicationRate <= 100 ? 'text-yellow-400' : 'text-red-400'
-                              }`}>{hr.damageApplicationRate}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{hr.targetingRate.toFixed(1)}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-teal-400 whitespace-nowrap">{hr.evasionRate.toFixed(1)}%</td>
-                              <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${hr.monsterCritChance > 10 ? 'text-red-400 font-bold' : 'text-orange-300'}`}>{hr.monsterCritChance}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-blue-300 border-l border-border/20 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-purple-400 whitespace-nowrap">{formatNumber(hr.critDamageTakenVal)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-orange-300 whitespace-nowrap">{formatNumber(hr.avgDamageTakenPerTurn)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-red-400 font-bold whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
+                              <td className="py-1 px-2 text-center font-mono whitespace-nowrap" style={{
+                                color: hr.damageApplicationRate <= 25 ? '#e5e5e5' : hr.damageApplicationRate <= 50 ? '#84cc16' : hr.damageApplicationRate <= 100 ? '#eab308' : '#ef4444'
+                              }}>{hr.damageApplicationRate}%</td>
+                              <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.targetingRate.toFixed(1)}%</td>
+                              <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.evasionRate.toFixed(1)}%</td>
+                              <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.monsterCritChance}%</td>
+                              <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l border-border/20 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(hr.critDamageTakenVal)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(hr.avgDamageTakenPerTurn)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
                             </tr>
                           ))}
                         </tbody>
