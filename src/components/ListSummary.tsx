@@ -348,7 +348,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-primary flex items-center gap-1.5">
           <Users size={14} />
-          전체 ({grandTotal}) <span className="text-xs font-normal text-muted-foreground">{Array.from(ownedIds).length} / {Array.from(plannedIds).length}</span>
+          전체 ({grandTotal}) <span className="text-xs font-normal text-muted-foreground">[보유 중 : {Array.from(ownedIds).length}명 / 추가 예정 : {Array.from(plannedIds).length}명]</span>
         </h3>
         <Button size="sm" onClick={onAdd} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
           <Plus size={14} /> 추가
@@ -440,8 +440,8 @@ function DistBar({ label, labelNode, total, owned, planned, maxCount, color }: {
         {planned > 0 && <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />}
       </div>
       <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{total}</span>
-      <span className="text-xs font-bold text-muted-foreground tabular-nums w-16 text-right">
-        ({owned > 0 ? owned : '-'}/{planned > 0 ? planned : '-'})
+      <span className="text-xs font-bold text-muted-foreground tabular-nums w-20 text-right">
+        ({owned > 0 ? owned : '-'} / {planned > 0 ? planned : '-'})
       </span>
     </div>
   );
