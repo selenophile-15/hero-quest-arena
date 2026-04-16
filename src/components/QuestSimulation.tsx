@@ -1970,22 +1970,23 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Target className="w-4 h-4 text-foreground" />특수 대미지 (상어 / 공룡 / 광전사)</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/20 [&_th]:border [&_th]:border-border/20">
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={2}>🦈 상어</th>
+                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={3}>🦈 상어</th>
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={2}>🦕 공룡</th>
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사</th>
                           </tr>
                           <tr className="border-b border-border/30 text-[12px] text-foreground/50">
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
+                            <th className="text-center py-1 px-2">총 평균</th>
                             <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
-                            <th className="text-center py-1 px-2 border-l border-border/20">1단계 ATK/EVA</th>
-                            <th className="text-center py-1 px-2">2단계 ATK/EVA</th>
-                            <th className="text-center py-1 px-2">3단계 ATK/EVA</th>
+                            <th className="text-center py-1 px-2 border-l border-border/20">1단계 ATK</th>
+                            <th className="text-center py-1 px-2">2단계 ATK</th>
+                            <th className="text-center py-1 px-2">3단계 ATK</th>
                           </tr>
                         </thead>
                         <tbody>
