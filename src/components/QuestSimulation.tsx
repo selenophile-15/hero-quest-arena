@@ -1994,7 +1994,7 @@ export default function QuestSimulation() {
                             const sharkGray = !hr.hasSharkSpirit;
                             const dinoGray = !hr.hasDinosaurSpirit && !hr.isSamuraiOrDaimyo;
                             const brkGray = !hr.berserkerAtkBonus;
-                            return (
+                            return (<>
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-400'}`}>{sharkGray ? '-' : formatNumber(hr.sharkNormalDmg)}</td>
