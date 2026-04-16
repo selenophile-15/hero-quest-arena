@@ -801,7 +801,7 @@ export default function QuestSimulation() {
                   )}
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-72 p-2.5" align="end">
+              <PopoverContent className="w-96 p-2.5" align="end">
                 <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
                 <div className="space-y-1.5">
                   <button
@@ -1904,7 +1904,7 @@ export default function QuestSimulation() {
                 <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-red-400" />대미지</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />대미지</div>
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
@@ -1968,7 +1968,7 @@ export default function QuestSimulation() {
 
                   {/* Table 1.5: 특수 대미지 (상어 / 첫턴 / 광전사) */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Target className="w-4 h-4 text-cyan-400" />특수 대미지 (상어 / 공룡 / 광전사)</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Target className="w-4 h-4 text-foreground" />특수 대미지 (상어 / 공룡 / 광전사)</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
@@ -2019,7 +2019,7 @@ export default function QuestSimulation() {
 
                   {/* Table 2: 생존 & 방어 (with 받는 대미지) */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-blue-400" />생존 & 방어</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />생존 & 방어</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
@@ -2069,7 +2069,7 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 회복 & 보호 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-lime-400" />회복 & 보호</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />회복 & 보호</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
@@ -2099,7 +2099,7 @@ export default function QuestSimulation() {
                   {/* Table 4: 특수 (광전사, 크로노맨서 등) */}
                   {displayResults.some(hr => hr.berserkerThresholds || hr.chronomancerRetries !== undefined) && (
                     <div>
-                      <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-orange-400" />특수 정보</div>
+                      <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보</div>
                       <div className="overflow-x-auto">
                         <div className="space-y-1">
                           {displayResults.map(hr => {
@@ -2134,7 +2134,7 @@ export default function QuestSimulation() {
 
                   {/* Table 5: 시뮬레이션 스탯 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-blue-400" />시뮬레이션 스탯</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-foreground" />시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse">
                         <thead>
