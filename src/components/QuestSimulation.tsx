@@ -1999,17 +1999,44 @@ export default function QuestSimulation() {
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-400'}`}>{sharkGray ? '-' : formatNumber(hr.sharkNormalDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-300'}`}>{sharkGray ? '-' : formatNumber(hr.sharkCritDmg)}</td>
+                                <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-200'}`}>{sharkGray ? '-' : formatNumber(Math.round(((hr.sharkNormalDmg || 0) + (hr.sharkCritDmg || 0)) / 2))}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-400'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurNormalDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-300'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurCritDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap ${brkGray ? 'text-muted-foreground/30' : 'text-red-400'}`}>
-                                  {brkGray ? '-' : `+${hr.berserkerAtkBonus![0]}% / +${hr.berserkerEvaBonus![0]}%`}
+                                  {brkGray ? '-' : `+${hr.berserkerAtkBonus![0]}%`}
                                 </td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${brkGray ? 'text-muted-foreground/30' : 'text-red-400'}`}>
-                                  {brkGray ? '-' : `+${hr.berserkerAtkBonus![1]}% / +${hr.berserkerEvaBonus![1]}%`}
+                                  {brkGray ? '-' : `+${hr.berserkerAtkBonus![1]}%`}
                                 </td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${brkGray ? 'text-muted-foreground/30' : 'text-red-400'}`}>
-                                  {brkGray ? '-' : `+${hr.berserkerAtkBonus![2]}% / +${hr.berserkerEvaBonus![2]}%`}
+                                  {brkGray ? '-' : `+${hr.berserkerAtkBonus![2]}%`}
                                 </td>
+                                {/* Sub-rows for berserker: 일반/치명/총평균 per stage */}
+                              </tr>
+                              {!brkGray && hr.berserkerAtkBonus && (
+                                <tr className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                  <td className="py-1 px-2 text-center text-foreground/50 text-[11px] whitespace-nowrap">└ 딜</td>
+                                  <td colSpan={5} />
+                                  {[0,1,2].map(stage => {
+                                    const atkMul = 1 + (hr.berserkerAtkBonus![stage] / 100);
+                                    const baseAtk = hr.finalAtk || 0;
+                                    const stageAtk = Math.floor(baseAtk * atkMul);
+                                    const critMul = (hr.finalCritDmg || 100) / 100;
+                                    const normalDmg = stageAtk;
+                                    const critDmg = Math.floor(stageAtk * critMul);
+                                    const avgDmg = Math.floor((normalDmg + critDmg) / 2);
+                                    return (
+                                      <td key={stage} className="py-1 px-1 text-center font-mono text-[11px] whitespace-nowrap border-l border-border/20">
+                                        <div className="flex justify-center gap-1">
+                                          <span className="text-blue-300">{formatNumber(normalDmg)}</span>
+                                          <span className="text-muted-foreground">/</span>
+                                          <span className="text-yellow-300">{formatNumber(critDmg)}</span>
+                                          <span className="text-muted-foreground">/</span>
+                                          <span className="text-foreground">{formatNumber(avgDmg)}</span>
+                                        </div>
+                                      </td>
+                                    );
+                                  })}
                               </tr>
                             );
                           })}
