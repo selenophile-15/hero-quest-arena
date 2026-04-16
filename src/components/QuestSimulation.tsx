@@ -1471,12 +1471,12 @@ export default function QuestSimulation() {
                   })();
 
                   const statRows = [
-                    { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-400', labelColor: 'text-orange-400' },
+                    { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-500 dark:text-orange-400', labelColor: 'text-orange-500 dark:text-orange-400' },
                     { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400', labelColor: 'text-red-400' },
                     { label: 'DEF', key: 'def', bKey: 'def', dKey: 'deltaDef', color: 'text-blue-400', labelColor: 'text-blue-400' },
                     { label: 'CRIT.C', key: 'crit', bKey: 'crit', dKey: 'deltaCrit', color: 'text-yellow-400', suffix: '%', labelColor: 'text-yellow-400' },
                     { label: 'CRIT.D', key: 'critAttack', bKey: 'critAttack', dKey: null, color: 'text-yellow-400', computed: true, labelColor: 'text-yellow-400' },
-                    { label: 'EVA', key: 'evasion', bKey: 'evasion', dKey: 'deltaEvasion', color: 'text-teal-400', suffix: '%', labelColor: 'text-teal-400' },
+                    { label: 'EVA', key: 'evasion', bKey: 'evasion', dKey: 'deltaEvasion', color: 'text-cyan-500 dark:text-cyan-400', suffix: '%', labelColor: 'text-cyan-500 dark:text-cyan-400' },
                     { label: 'THREAT', key: 'threat', bKey: 'threat', dKey: null, color: 'text-foreground', labelColor: 'text-foreground/70' },
                   ];
 
