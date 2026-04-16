@@ -849,7 +849,7 @@ export default function QuestSimulation() {
                 }}
                 className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
                   currentQuest
-                    ? 'border-primary/60 glow-gold'
+                    ? `border-primary/60 ${colorMode === 'dark' ? 'shadow-[0_0_20px_hsla(var(--primary)/0.4)]' : 'shadow-[0_0_20px_hsla(var(--primary)/0.3)]'}`
                     : 'border-dashed border-muted-foreground/40 hover:border-primary/50'
                 }`}
               >
@@ -1108,7 +1108,7 @@ export default function QuestSimulation() {
                   const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
 
                     return (
-                    <div className="mt-6 pt-4 border-t border-border/30">
+                    <div className="mt-6 pt-4 border-t border-border/30" style={{ marginBottom: '8px' }}>
                       <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5" style={{ height: `${barH}px` }}>
                         <div className="relative">
                           {rows.map(r => (
