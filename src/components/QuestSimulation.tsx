@@ -1909,7 +1909,7 @@ export default function QuestSimulation() {
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                         return (
-                      <table className="w-full text-[13px] border-collapse">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/20 [&_th]:border [&_th]:border-border/20">
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
@@ -1936,9 +1936,9 @@ export default function QuestSimulation() {
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                 <td className="py-1 px-2 text-center font-mono text-red-400 border-l border-border/20 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
-                                <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamagePerTurn))}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.avgDamagePerTurn))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.minDamageDealt))}</td>
-                                <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
                                 {/* Normal/Crit damage breakdown */}
                                 {(() => {
                                   const normalPct = hr.avgDamageDealt > 0 ? (hr.normalDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
@@ -1950,7 +1950,7 @@ export default function QuestSimulation() {
                                     </>
                                   );
                                 })()}
-                                <td className="py-1 px-2 text-center font-mono text-amber-400 border-l border-border/20 whitespace-nowrap">{dmgPct.toFixed(1)}%</td>
+                                <td className="py-1 px-2 text-center font-mono border-l border-border/20 whitespace-nowrap" style={{ color: ['#ef4444','#3b82f6','#84cc16','#eab308','#a855f7'][idx % 5] }}>{dmgPct.toFixed(1)}%</td>
                                 <td className="py-1 px-2">
                                   <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
                                     <div className={`h-full rounded-full ${barColors[idx % barColors.length]} transition-all`} style={{ width: `${dmgPct}%` }} />
