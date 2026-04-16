@@ -2164,7 +2164,7 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-foreground" />시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/20 [&_th]:border [&_th]:border-border/20">
                         <thead>
                           <tr className="border-b border-border/40">
                             <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20">영웅</th>
@@ -2182,12 +2182,12 @@ export default function QuestSimulation() {
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                               <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                               <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(hr.finalAtk)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(hr.finalHp)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-orange-500 dark:text-orange-400 whitespace-nowrap">{formatNumber(hr.finalHp)}</td>
                               <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{formatNumber(hr.finalDef)}</td>
                               <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{hr.finalCritChance}%</td>
                               <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">x{(hr.finalCritDmg / 100).toFixed(1)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(hr.finalCritAttack)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-teal-400 whitespace-nowrap">{hr.finalEvasion}%</td>
+                              <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(hr.finalCritAttack)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-cyan-500 dark:text-cyan-400 whitespace-nowrap">{hr.finalEvasion}%</td>
                             </tr>
                           ))}
                         </tbody>
