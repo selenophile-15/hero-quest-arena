@@ -1046,6 +1046,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
           timesTargeted[i]++;
+          simTargeted[i]++;
 
           const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
           const cappedEva = Math.min(totalEva, heroEvaCap[i]);
