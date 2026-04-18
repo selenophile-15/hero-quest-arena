@@ -1623,7 +1623,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   });
 
   // Run each mini-boss type simulation
-  const miniBossResults: MiniBossResult[] = [
+  const miniBossResults: (MiniBossResult & { winHero?: HeroSimResult[]; loseHero?: HeroSimResult[]; winN?: number; loseN?: number; winRoundsSum?: number; loseRoundsSum?: number; })[] = [
     {
       type: 'normal',
       encounters: normalSimCount,
@@ -1631,6 +1631,12 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       winRate: normalResult.winRate,
       avgRounds: normalResult.avgRounds,
       heroResults: normalResult.heroResults,
+      winHero: normalResult.winHeroResults,
+      loseHero: normalResult.loseHeroResults,
+      winN: normalResult.winSimCount || 0,
+      loseN: normalResult.loseSimCount || 0,
+      winRoundsSum: (normalResult.winRounds?.avg || 0) * (normalResult.winSimCount || 0),
+      loseRoundsSum: (normalResult.loseRounds?.avg || 0) * (normalResult.loseSimCount || 0),
     },
   ];
 
@@ -1654,6 +1660,12 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       winRate: mbResult.winRate,
       avgRounds: mbResult.avgRounds,
       heroResults: mbResult.heroResults,
+      winHero: mbResult.winHeroResults,
+      loseHero: mbResult.loseHeroResults,
+      winN: mbResult.winSimCount || 0,
+      loseN: mbResult.loseSimCount || 0,
+      winRoundsSum: (mbResult.winRounds?.avg || 0) * (mbResult.winSimCount || 0),
+      loseRoundsSum: (mbResult.loseRounds?.avg || 0) * (mbResult.loseSimCount || 0),
     });
 
     totalWins += wins;
@@ -1665,7 +1677,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   const combinedWinRate = (totalWins / totalSims) * 100;
   const combinedAvgRounds = totalRounds / totalSims;
 
-  // Aggregate hero results (weighted average)
+  // Aggregate hero results (weighted average) — overall (all)
   const aggregatedHeroResults: HeroSimResult[] = normalResult.heroResults.map((hr, idx) => {
     let survivalSum = hr.survivalRate * normalSimCount;
     let dmgSum = hr.avgDamageDealt * normalSimCount;
@@ -1691,16 +1703,60 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
     };
   });
 
+  // Aggregate win-only / lose-only hero results
+  const aggregateBucket = (bucket: 'win' | 'lose'): { results: HeroSimResult[]; count: number; roundsSum: number } | undefined => {
+    let totalCount = 0;
+    let roundsSum = 0;
+    for (const mbr of miniBossResults) {
+      const n = bucket === 'win' ? (mbr.winN || 0) : (mbr.loseN || 0);
+      totalCount += n;
+      roundsSum += bucket === 'win' ? (mbr.winRoundsSum || 0) : (mbr.loseRoundsSum || 0);
+    }
+    if (totalCount === 0) return undefined;
+    const results = normalResult.heroResults.map((hr, idx) => {
+      let dmgSum = 0, normSum = 0, critSum = 0, takenSum = 0;
+      let maxDmg = 0, minDmg = 1e9;
+      for (const mbr of miniBossResults) {
+        const n = bucket === 'win' ? (mbr.winN || 0) : (mbr.loseN || 0);
+        const arr = bucket === 'win' ? mbr.winHero : mbr.loseHero;
+        if (!arr || !arr[idx] || n === 0) continue;
+        const r = arr[idx];
+        dmgSum += r.avgDamageDealt * n;
+        normSum += r.normalDmgDealtAvg * n;
+        critSum += r.critDmgDealtAvg * n;
+        takenSum += r.totalDamageTakenAvg * n;
+        maxDmg = Math.max(maxDmg, r.maxDamageDealt);
+        if (r.minDamageDealt > 0) minDmg = Math.min(minDmg, r.minDamageDealt);
+      }
+      return {
+        ...hr,
+        avgDamageDealt: dmgSum / totalCount,
+        normalDmgDealtAvg: normSum / totalCount,
+        critDmgDealtAvg: critSum / totalCount,
+        totalDamageTakenAvg: Math.round(takenSum / totalCount),
+        maxDamageDealt: maxDmg,
+        minDamageDealt: minDmg >= 1e9 ? 0 : minDmg,
+      };
+    });
+    return { results, count: totalCount, roundsSum };
+  };
+
+  const winAgg = aggregateBucket('win');
+  const loseAgg = aggregateBucket('lose');
+
   return {
     winRate: Math.round(combinedWinRate * 100) / 100,
     rawWinRate: Math.round(combinedWinRate * 100) / 100,
     avgRounds: Math.round(combinedAvgRounds * 100) / 100,
-    minRounds: Math.min(normalResult.minRounds, ...miniBossResults.slice(1).map(m => {
-      // Need to get min from the actual simulation - use 1 as placeholder
-      return 1;
-    })),
-    maxRounds: Math.max(normalResult.maxRounds, ...miniBossResults.slice(1).map(m => m.avgRounds * 2)), // Approximate
+    minRounds: normalResult.minRounds,
+    maxRounds: Math.max(normalResult.maxRounds, ...miniBossResults.slice(1).map(m => m.avgRounds * 2)),
     heroResults: aggregatedHeroResults,
+    winHeroResults: winAgg?.results,
+    loseHeroResults: loseAgg?.results,
+    winSimCount: winAgg?.count,
+    loseSimCount: loseAgg?.count,
+    winRounds: winAgg && winAgg.count > 0 ? { avg: Math.round((winAgg.roundsSum / winAgg.count) * 100) / 100, min: 1, max: normalResult.winRounds?.max || 0 } : undefined,
+    loseRounds: loseAgg && loseAgg.count > 0 ? { avg: Math.round((loseAgg.roundsSum / loseAgg.count) * 100) / 100, min: 1, max: normalResult.loseRounds?.max || 499 } : undefined,
     roundLimitRate: normalResult.roundLimitRate,
     totalSimulations: totalSims,
     miniBossResults,
