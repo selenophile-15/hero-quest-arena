@@ -1610,7 +1610,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     winRate: Math.round(winRate * 100) / 100,
     rawWinRate: Math.round(rawWinRate * 100) / 100,
     retryWinRate: retryWinRate !== undefined ? Math.round(retryWinRate * 100) / 100 : undefined,
-    avgRounds: timesQuestWon > 0 ? Math.round((roundsAvg / timesQuestWon) * 100) / 100 : 0,
+    avgRounds: actualSimCount > 0 ? Math.round((roundsAvg / actualSimCount) * 100) / 100 : 0,
     minRounds: roundsMin >= 1000 ? 0 : roundsMin,
     maxRounds: roundsMax,
     heroResults,
