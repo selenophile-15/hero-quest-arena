@@ -1715,10 +1715,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
     // Class flags
     heroIsNinjaFlag.push(isClass(h, '닌자', 'Ninja'));
-    heroIsSenseiFlag.push(isClass(h, '센세이', 'Sensei'));
-    heroIsBerserker.push(isClass(h, '광전사', '야를', 'Berserker', 'Jarl'));
+    heroIsSenseiFlag.push(isClass(h, '센세', '센세이', 'Sensei'));
+    heroIsBerserker.push(isClass(h, '광전사', '잘', '야를', 'Berserker', 'Jarl'));
     heroIsConquistadorFlag.push(isClass(h, '정복자', 'Conquistador'));
-    heroIsLordFlag.push(isClass(h, '기사', 'Lord'));
+    heroIsLordFlag.push(isClass(h, '기사', '군주', 'Lord', 'Knight'));
     heroIsSamuraiFlag.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyoFlag.push(isClass(h, '다이묘', 'Daimyo'));
 
