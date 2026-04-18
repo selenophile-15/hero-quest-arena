@@ -786,7 +786,7 @@ export default function QuestSimulation() {
             )}
 
             {/* Booster slot - top right, symmetric with region icon */}
-            <Popover open={undefined}>
+            <Popover open={boosterOpen} onOpenChange={setBoosterOpen}>
               <PopoverTrigger asChild>
                 <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
                   {selectedBooster !== 'none' && commonData?.boosters ? (() => {
@@ -806,7 +806,7 @@ export default function QuestSimulation() {
                 <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
                 <div className="space-y-1.5">
                   <button
-                    onClick={() => { setSelectedBooster('none'); document.body.click(); }}
+                    onClick={() => { setSelectedBooster('none'); setBoosterOpen(false); }}
                     className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === 'none' ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
                   >
                     <span className="w-8 h-8 rounded flex items-center justify-center bg-secondary/50 text-muted-foreground shrink-0">✕</span>
@@ -819,7 +819,7 @@ export default function QuestSimulation() {
                     return (
                       <button
                         key={bType}
-                        onClick={() => { setSelectedBooster(bType); document.body.click(); }}
+                        onClick={() => { setSelectedBooster(bType); setBoosterOpen(false); }}
                         className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
                       >
                         {bEntry && <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />}
