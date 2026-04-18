@@ -164,12 +164,42 @@ const CLASS_LINE_MAP: Record<string, 'fighter' | 'rogue' | 'spellcaster'> = {
   '주문술사': 'spellcaster',
 };
 
-// Fighter classes
-const FIGHTER_CLASSES = ['용병', '기사', '사무라이', '다이묘', '광전사', '야를', '암흑기사', '데스나이트', 'Mercenary', 'Lord', 'Samurai', 'Daimyo', 'Berserker/Jarl', 'Dark Knight', 'Death Knight'];
-// Rogue classes
-const ROGUE_CLASSES = ['트릭스터', '정복자', '길잡이', '닌자', '센세이', '댄서', '아크로뱃', 'Trickster', 'Conquistador', 'Pathfinder', 'Ninja', 'Sensei', 'Dancer/Acrobat'];
-// Spellcaster classes
-const SPELLCASTER_CLASSES = ['주교', '성직자', '크로노맨서', '운명직공', '비숍', '클레릭', 'Bishop', 'Cleric', 'Chronomancer', 'Fateweaver'];
+// Fighter line (전사 계열): 병사~죽음의 기사
+const FIGHTER_CLASSES = [
+  '병사', '용병',
+  '야만전사', '족장',
+  '기사', '군주',
+  '레인저', '관리인',
+  '사무라이', '다이묘',
+  '광전사', '잘',
+  '어둠의 기사', '죽음의 기사',
+  // English aliases (legacy)
+  'Mercenary', 'Lord', 'Samurai', 'Daimyo', 'Berserker', 'Jarl', 'Dark Knight', 'Death Knight',
+];
+// Rogue line (로그 계열): 도둑~근위병
+const ROGUE_CLASSES = [
+  '도둑', '사기꾼',
+  '수도승', '그랜드 마스터',
+  '머스킷병', '정복자',
+  '방랑자', '길잡이',
+  '닌자', '센세',
+  '무희', '곡예가',
+  '경보병', '근위병',
+  // English aliases (legacy)
+  'Trickster', 'Grand Master', 'Musketeer', 'Conquistador', 'Pathfinder', 'Ninja', 'Sensei', 'Dancer', 'Acrobat',
+];
+// Spellcaster line (주문술사 계열): 마법사~페이트위버
+const SPELLCASTER_CLASSES = [
+  '마법사', '대마법사',
+  '성직자', '비숍',
+  '드루이드', '아크 드루이드',
+  '소서러', '워록',
+  '마법검', '스펠나이트',
+  '풍수사', '아스트라맨서',
+  '크로노맨서', '페이트위버',
+  // English aliases (legacy)
+  'Bishop', 'Cleric', 'Chronomancer', 'Fateweaver', 'Druid', 'Sorcerer', 'Warlock', 'Spellknight',
+];
 
 // Champion names (Korean)
 const CHAMPION_NAMES = ['아르곤', '애슐리', '비외른', '도노반', '헴마', '릴루', '맬러디', '폴로니아', '라인홀드', '루도', '시아', '야미', '타마스'];
