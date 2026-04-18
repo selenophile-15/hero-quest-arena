@@ -1263,13 +1263,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (round >= rudoRounds) rudoBonus = 0;
 
       // ─── Check win/lose ───
+      let wasWin = false;
+      let wasLose = false;
       if (mobHpCurrent <= 0) {
         contFight = false;
+        wasWin = true;
         timesQuestWon++;
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] > 0) timesSurvived[i]++;
           hpRemainingAvg[i] += Math.max(hp[i], 0);
           hpRemainingMax[i] = Math.max(hpRemainingMax[i], hp[i]);
+          if (hp[i] > 0) winSurvived[i]++;
+          winHpRemain[i] += Math.max(hp[i], 0);
         }
         roundsAvg += round;
         roundsMax = Math.max(roundsMax, round);
@@ -1281,19 +1286,27 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
       if (heroesAlive === 0) {
         contFight = false;
+        wasLose = true;
         loseCount++;
         loseRoundsSum += round;
         loseRoundsMin = Math.min(loseRoundsMin, round);
         loseRoundsMax = Math.max(loseRoundsMax, round);
+        for (let i = 0; i < numHeroes; i++) {
+          loseHpRemain[i] += Math.max(hp[i], 0);
+        }
       }
 
       if (contFight && round >= 499) {
         contFight = false;
+        wasLose = true;
         roundLimitTimes++;
         loseCount++;
         loseRoundsSum += round;
         loseRoundsMin = Math.min(loseRoundsMin, round);
         loseRoundsMax = Math.max(loseRoundsMax, round);
+        for (let i = 0; i < numHeroes; i++) {
+          loseHpRemain[i] += Math.max(hp[i], 0);
+        }
       }
 
       if (!contFight) {
@@ -1310,6 +1323,33 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
           singleTargetHitsTotal[i] += singleHitsTaken[i];
+
+          // Bucket per-fight values into win or lose
+          if (wasWin) {
+            winDmgDealt[i] += damageFight[i];
+            winNormalDmg[i] += normalDmgFight[i];
+            winCritDmg[i] += critDmgFight[i];
+            winDmgMax[i] = Math.max(winDmgMax[i], damageFight[i]);
+            if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
+            winRoundsArr[i] += round;
+            winDmgTaken[i] += simDmgTaken[i];
+            winTimesHit[i] += simTimesHit[i];
+            winSingleHits[i] += singleHitsTaken[i];
+            winTargeted[i] += simTargeted[i];
+            winEvaded[i] += simEvaded[i];
+          } else if (wasLose) {
+            loseDmgDealt[i] += damageFight[i];
+            loseNormalDmg[i] += normalDmgFight[i];
+            loseCritDmg[i] += critDmgFight[i];
+            loseDmgMax[i] = Math.max(loseDmgMax[i], damageFight[i]);
+            if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
+            loseRoundsArr[i] += round;
+            loseDmgTaken[i] += simDmgTaken[i];
+            loseTimesHit[i] += simTimesHit[i];
+            loseSingleHits[i] += singleHitsTaken[i];
+            loseTargeted[i] += simTargeted[i];
+            loseEvaded[i] += simEvaded[i];
+          }
         }
       }
 
