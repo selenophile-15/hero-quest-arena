@@ -1796,19 +1796,35 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   const winAgg = aggregateBucket('win');
   const loseAgg = aggregateBucket('lose');
 
+  // Aggregate min/max across all sub-simulations (overall, win, lose)
+  const allMins = miniBossResults.map(m => m.minRounds).filter((v): v is number => v != null && v > 0);
+  const allMaxs = miniBossResults.map(m => m.maxRounds).filter((v): v is number => v != null);
+  const winMins = miniBossResults.map(m => m.winMinRounds).filter((v): v is number => v != null && v > 0);
+  const winMaxs = miniBossResults.map(m => m.winMaxRounds).filter((v): v is number => v != null);
+  const loseMins = miniBossResults.map(m => m.loseMinRounds).filter((v): v is number => v != null && v > 0);
+  const loseMaxs = miniBossResults.map(m => m.loseMaxRounds).filter((v): v is number => v != null);
+
   return {
     winRate: Math.round(combinedWinRate * 100) / 100,
     rawWinRate: Math.round(combinedWinRate * 100) / 100,
     avgRounds: Math.round(combinedAvgRounds * 100) / 100,
-    minRounds: normalResult.minRounds,
-    maxRounds: Math.max(normalResult.maxRounds, ...miniBossResults.slice(1).map(m => m.avgRounds * 2)),
+    minRounds: allMins.length > 0 ? Math.min(...allMins) : 0,
+    maxRounds: allMaxs.length > 0 ? Math.max(...allMaxs) : 0,
     heroResults: aggregatedHeroResults,
     winHeroResults: winAgg?.results,
     loseHeroResults: loseAgg?.results,
     winSimCount: winAgg?.count,
     loseSimCount: loseAgg?.count,
-    winRounds: winAgg && winAgg.count > 0 ? { avg: Math.round((winAgg.roundsSum / winAgg.count) * 100) / 100, min: 1, max: normalResult.winRounds?.max || 0 } : undefined,
-    loseRounds: loseAgg && loseAgg.count > 0 ? { avg: Math.round((loseAgg.roundsSum / loseAgg.count) * 100) / 100, min: 1, max: normalResult.loseRounds?.max || 499 } : undefined,
+    winRounds: winAgg && winAgg.count > 0 ? {
+      avg: Math.round((winAgg.roundsSum / winAgg.count) * 100) / 100,
+      min: winMins.length > 0 ? Math.min(...winMins) : 0,
+      max: winMaxs.length > 0 ? Math.max(...winMaxs) : 0,
+    } : undefined,
+    loseRounds: loseAgg && loseAgg.count > 0 ? {
+      avg: Math.round((loseAgg.roundsSum / loseAgg.count) * 100) / 100,
+      min: loseMins.length > 0 ? Math.min(...loseMins) : 0,
+      max: loseMaxs.length > 0 ? Math.max(...loseMaxs) : 0,
+    } : undefined,
     roundLimitRate: normalResult.roundLimitRate,
     totalSimulations: totalSims,
     miniBossResults,
