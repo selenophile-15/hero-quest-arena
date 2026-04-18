@@ -611,7 +611,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Find Lord and Fateweaver (always needed for combat logic)
   for (let i = 0; i < numHeroes; i++) {
     if (heroIsLord[i]) { lordPresent = true; lordHero = i; }
-    if (isClass(activeHeroes[i], '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')) {
+    if (isClass(activeHeroes[i], '크로노맨서', '페이트위버', '운명직공', 'Chronomancer', 'Fateweaver')) {
       fateweaverPresent = true;
     }
   }
@@ -1433,7 +1433,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       berserkerThresholds,
       berserkerAtkBonus,
       berserkerEvaBonus,
-      chronomancerRetries: fateweaverPresent && isClass(h, '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')
+      chronomancerRetries: fateweaverPresent && isClass(h, '크로노맨서', '페이트위버', '운명직공', 'Chronomancer', 'Fateweaver')
         ? Math.round((actualSimCount - timesQuestWon) / actualSimCount * 100 * 10) / 10
         : undefined,
       chronomancerRetrySuccessRate: retryWinRate,
