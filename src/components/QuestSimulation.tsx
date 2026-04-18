@@ -1906,10 +1906,27 @@ export default function QuestSimulation() {
             </div>
             {(() => {
               // Get the hero results based on filter
+              // Priority: miniboss filter (if random mode and chosen) > outcome filter
               let displayResults = simResult.heroResults;
               if (simResultsFilter !== 'all' && simResult.miniBossResults) {
                 const filtered = simResult.miniBossResults.find(m => m.type === simResultsFilter);
-                if (filtered) displayResults = filtered.heroResults;
+                if (filtered) {
+                  if (mainResultsTab === 'win' && filtered.winHero) displayResults = filtered.winHero;
+                  else if (mainResultsTab === 'lose' && filtered.loseHero) displayResults = filtered.loseHero;
+                  else displayResults = filtered.heroResults;
+                }
+              } else if (mainResultsTab === 'win' && simResult.winHeroResults) {
+                displayResults = simResult.winHeroResults;
+              } else if (mainResultsTab === 'lose' && simResult.loseHeroResults) {
+                displayResults = simResult.loseHeroResults;
+              }
+              const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
+              if (!displayResults || displayResults.length === 0 || noBucket) {
+                return (
+                  <div className="text-center text-xs text-muted-foreground py-8">
+                    {mainResultsTab === 'win' ? '성공한 판 없음' : mainResultsTab === 'lose' ? '실패한 판 없음' : '데이터 없음'}
+                  </div>
+                );
               }
               return (
                 <div className="space-y-8">
