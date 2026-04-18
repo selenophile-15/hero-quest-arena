@@ -136,6 +136,13 @@ export interface MiniBossResult {
   winRate: number;
   avgRounds: number;
   heroResults: HeroSimResult[];
+  // Optional bucketed
+  winHero?: HeroSimResult[];
+  loseHero?: HeroSimResult[];
+  winN?: number;
+  loseN?: number;
+  winRoundsSum?: number;
+  loseRoundsSum?: number;
 }
 
 export interface SimulationResult {
@@ -146,6 +153,12 @@ export interface SimulationResult {
   minRounds: number;
   maxRounds: number;
   heroResults: HeroSimResult[];
+  // Bucketed hero results (only damage/taken/rounds related fields are meaningful per-bucket;
+  // other static stats fall back to the overall results)
+  winHeroResults?: HeroSimResult[];
+  loseHeroResults?: HeroSimResult[];
+  winSimCount?: number;
+  loseSimCount?: number;
   roundLimitRate: number;    // % of sims hitting 499 round limit
   totalSimulations: number;
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
@@ -164,12 +177,42 @@ const CLASS_LINE_MAP: Record<string, 'fighter' | 'rogue' | 'spellcaster'> = {
   '주문술사': 'spellcaster',
 };
 
-// Fighter classes
-const FIGHTER_CLASSES = ['용병', '기사', '사무라이', '다이묘', '광전사', '야를', '암흑기사', '데스나이트', 'Mercenary', 'Lord', 'Samurai', 'Daimyo', 'Berserker/Jarl', 'Dark Knight', 'Death Knight'];
-// Rogue classes
-const ROGUE_CLASSES = ['트릭스터', '정복자', '길잡이', '닌자', '센세이', '댄서', '아크로뱃', 'Trickster', 'Conquistador', 'Pathfinder', 'Ninja', 'Sensei', 'Dancer/Acrobat'];
-// Spellcaster classes
-const SPELLCASTER_CLASSES = ['주교', '성직자', '크로노맨서', '운명직공', '비숍', '클레릭', 'Bishop', 'Cleric', 'Chronomancer', 'Fateweaver'];
+// Fighter line (전사 계열): 병사~죽음의 기사
+const FIGHTER_CLASSES = [
+  '병사', '용병',
+  '야만전사', '족장',
+  '기사', '군주',
+  '레인저', '관리인',
+  '사무라이', '다이묘',
+  '광전사', '잘',
+  '어둠의 기사', '죽음의 기사',
+  // English aliases (legacy)
+  'Mercenary', 'Lord', 'Samurai', 'Daimyo', 'Berserker', 'Jarl', 'Dark Knight', 'Death Knight',
+];
+// Rogue line (로그 계열): 도둑~근위병
+const ROGUE_CLASSES = [
+  '도둑', '사기꾼',
+  '수도승', '그랜드 마스터',
+  '머스킷병', '정복자',
+  '방랑자', '길잡이',
+  '닌자', '센세',
+  '무희', '곡예가',
+  '경보병', '근위병',
+  // English aliases (legacy)
+  'Trickster', 'Grand Master', 'Musketeer', 'Conquistador', 'Pathfinder', 'Ninja', 'Sensei', 'Dancer', 'Acrobat',
+];
+// Spellcaster line (주문술사 계열): 마법사~페이트위버
+const SPELLCASTER_CLASSES = [
+  '마법사', '대마법사',
+  '성직자', '비숍',
+  '드루이드', '아크 드루이드',
+  '소서러', '워록',
+  '마법검', '스펠나이트',
+  '풍수사', '아스트라맨서',
+  '크로노맨서', '페이트위버',
+  // English aliases (legacy)
+  'Bishop', 'Cleric', 'Chronomancer', 'Fateweaver', 'Druid', 'Sorcerer', 'Warlock', 'Spellknight',
+];
 
 // Champion names (Korean)
 const CHAMPION_NAMES = ['아르곤', '애슐리', '비외른', '도노반', '헴마', '릴루', '맬러디', '폴로니아', '라인홀드', '루도', '시아', '야미', '타마스'];
@@ -494,19 +537,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
     // Class flags
     heroIsNinja.push(isClass(h, '닌자', 'Ninja'));
-    heroIsSensei.push(isClass(h, '센세이', 'Sensei'));
+    heroIsSensei.push(isClass(h, '센세', '센세이', 'Sensei'));
     heroIsSamurai.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyo.push(isClass(h, '다이묘', 'Daimyo'));
-    heroIsDancer.push(isClass(h, '댄서', '아크로뱃', 'Dancer', 'Acrobat'));
+    heroIsDancer.push(isClass(h, '무희', '곡예가', '댄서', '아크로뱃', 'Dancer', 'Acrobat'));
     heroIsConquistador.push(isClass(h, '정복자', 'Conquistador'));
-    heroIsDarkKnight.push(isClass(h, '암흑기사', '데스나이트', 'Dark Knight', 'Death Knight'));
-    heroIsLord.push(isClass(h, '기사', 'Lord'));
+    heroIsDarkKnight.push(isClass(h, '어둠의 기사', '죽음의 기사', '암흑기사', '데스나이트', 'Dark Knight', 'Death Knight'));
+    heroIsLord.push(isClass(h, '기사', '군주', 'Lord', 'Knight'));
     heroIsMercenary.push(isMercenary(h));
-    heroIsCleric.push(isClass(h, '클레릭', '성직자', 'Cleric'));
+    heroIsCleric.push(isClass(h, '성직자', '클레릭', 'Cleric'));
     heroIsBishop.push(isClass(h, '비숍', '주교', 'Bishop'));
 
     // Berserker level
-    heroBerserkerLevel.push(isClass(h, '광전사', '야를', 'Berserker', 'Jarl') ? Math.min(tier, 4) : 0);
+    heroBerserkerLevel.push(isClass(h, '광전사', '잘', '야를', 'Berserker', 'Jarl') ? Math.min(tier, 4) : 0);
 
     // Spirits - read from equipment slots
     const spirits = (h.equipmentSlots || [])
@@ -581,7 +624,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Find Lord and Fateweaver (always needed for combat logic)
   for (let i = 0; i < numHeroes; i++) {
     if (heroIsLord[i]) { lordPresent = true; lordHero = i; }
-    if (isClass(activeHeroes[i], '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')) {
+    if (isClass(activeHeroes[i], '크로노맨서', '페이트위버', '운명직공', 'Chronomancer', 'Fateweaver')) {
       fateweaverPresent = true;
     }
   }
@@ -874,6 +917,37 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const totalTimesHitAccum = new Float64Array(numHeroes);
   const singleTargetHitsTotal = new Float64Array(numHeroes);
 
+  // ─── Win/Lose bucket accumulators (per-hero, per-outcome) ───
+  const winDmgDealt = new Float64Array(numHeroes);
+  const winNormalDmg = new Float64Array(numHeroes);
+  const winCritDmg = new Float64Array(numHeroes);
+  const winDmgMax = new Float64Array(numHeroes);
+  const winDmgMin = new Float64Array(numHeroes).fill(1e9);
+  const winRoundsArr = new Float64Array(numHeroes);
+  const winDmgTaken = new Float64Array(numHeroes);
+  const winTimesHit = new Float64Array(numHeroes);
+  const winSingleHits = new Float64Array(numHeroes);
+  const winSurvived = new Float64Array(numHeroes);
+  const winHpRemain = new Float64Array(numHeroes);
+  const winTargeted = new Float64Array(numHeroes);
+  const winEvaded = new Float64Array(numHeroes);
+
+  const loseDmgDealt = new Float64Array(numHeroes);
+  const loseNormalDmg = new Float64Array(numHeroes);
+  const loseCritDmg = new Float64Array(numHeroes);
+  const loseDmgMax = new Float64Array(numHeroes);
+  const loseDmgMin = new Float64Array(numHeroes).fill(1e9);
+  const loseRoundsArr = new Float64Array(numHeroes);
+  const loseDmgTaken = new Float64Array(numHeroes);
+  const loseTimesHit = new Float64Array(numHeroes);
+  const loseSingleHits = new Float64Array(numHeroes);
+  const loseHpRemain = new Float64Array(numHeroes);
+  const loseTargeted = new Float64Array(numHeroes);
+  const loseEvaded = new Float64Array(numHeroes);
+  // Per-fight targeted/evaded snapshots
+  const fightTargetedTmp = new Float64Array(numHeroes);
+  const fightEvadedTmp = new Float64Array(numHeroes);
+
   // Tamas random range
   const isTamas = champName.includes('타마스') || champName === 'Tamas';
   const tamasMin = isTamas ? (champTier < 3 ? 0.05 + 0.05 * champTier : 0.1 * champTier) : 0;
@@ -899,6 +973,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simDmgTaken = new Float64Array(numHeroes);
     const simTimesHit = new Float64Array(numHeroes);
     const singleHitsTaken = new Float64Array(numHeroes);
+    const simTargeted = new Float64Array(numHeroes);
+    const simEvaded = new Float64Array(numHeroes);
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
@@ -983,6 +1059,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
           timesTargeted[i]++;
+          simTargeted[i]++;
 
           const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
           const cappedEva = Math.min(totalEva, heroEvaCap[i]);
@@ -990,6 +1067,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (guaranteedEvade[i] || (Math.random() < cappedEva && !heroArtNoEvasion[i])) {
             // Evaded
             timesEvaded[i]++;
+            simEvaded[i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
@@ -1044,12 +1122,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
 
         timesTargeted[target]++;
+        simTargeted[target]++;
 
         const totalEva = heroEvasion[target] + berserkerStage[target] * 0.1 + ninjaEvasion[target];
         const cappedEva = Math.min(totalEva, heroEvaCap[target]);
 
         if (guaranteedEvade[target] || (Math.random() < cappedEva && !heroArtNoEvasion[target])) {
           timesEvaded[target]++;
+          simEvaded[target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
@@ -1196,13 +1276,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (round >= rudoRounds) rudoBonus = 0;
 
       // ─── Check win/lose ───
+      let wasWin = false;
+      let wasLose = false;
       if (mobHpCurrent <= 0) {
         contFight = false;
+        wasWin = true;
         timesQuestWon++;
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] > 0) timesSurvived[i]++;
           hpRemainingAvg[i] += Math.max(hp[i], 0);
           hpRemainingMax[i] = Math.max(hpRemainingMax[i], hp[i]);
+          if (hp[i] > 0) winSurvived[i]++;
+          winHpRemain[i] += Math.max(hp[i], 0);
         }
         roundsAvg += round;
         roundsMax = Math.max(roundsMax, round);
@@ -1214,19 +1299,27 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
       if (heroesAlive === 0) {
         contFight = false;
+        wasLose = true;
         loseCount++;
         loseRoundsSum += round;
         loseRoundsMin = Math.min(loseRoundsMin, round);
         loseRoundsMax = Math.max(loseRoundsMax, round);
+        for (let i = 0; i < numHeroes; i++) {
+          loseHpRemain[i] += Math.max(hp[i], 0);
+        }
       }
 
       if (contFight && round >= 499) {
         contFight = false;
+        wasLose = true;
         roundLimitTimes++;
         loseCount++;
         loseRoundsSum += round;
         loseRoundsMin = Math.min(loseRoundsMin, round);
         loseRoundsMax = Math.max(loseRoundsMax, round);
+        for (let i = 0; i < numHeroes; i++) {
+          loseHpRemain[i] += Math.max(hp[i], 0);
+        }
       }
 
       if (!contFight) {
@@ -1243,6 +1336,33 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
           singleTargetHitsTotal[i] += singleHitsTaken[i];
+
+          // Bucket per-fight values into win or lose
+          if (wasWin) {
+            winDmgDealt[i] += damageFight[i];
+            winNormalDmg[i] += normalDmgFight[i];
+            winCritDmg[i] += critDmgFight[i];
+            winDmgMax[i] = Math.max(winDmgMax[i], damageFight[i]);
+            if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
+            winRoundsArr[i] += round;
+            winDmgTaken[i] += simDmgTaken[i];
+            winTimesHit[i] += simTimesHit[i];
+            winSingleHits[i] += singleHitsTaken[i];
+            winTargeted[i] += simTargeted[i];
+            winEvaded[i] += simEvaded[i];
+          } else if (wasLose) {
+            loseDmgDealt[i] += damageFight[i];
+            loseNormalDmg[i] += normalDmgFight[i];
+            loseCritDmg[i] += critDmgFight[i];
+            loseDmgMax[i] = Math.max(loseDmgMax[i], damageFight[i]);
+            if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
+            loseRoundsArr[i] += round;
+            loseDmgTaken[i] += simDmgTaken[i];
+            loseTimesHit[i] += simTimesHit[i];
+            loseSingleHits[i] += singleHitsTaken[i];
+            loseTargeted[i] += simTargeted[i];
+            loseEvaded[i] += simEvaded[i];
+          }
         }
       }
 
@@ -1403,7 +1523,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       berserkerThresholds,
       berserkerAtkBonus,
       berserkerEvaBonus,
-      chronomancerRetries: fateweaverPresent && isClass(h, '크로노맨서', '운명직공', 'Chronomancer', 'Fateweaver')
+      chronomancerRetries: fateweaverPresent && isClass(h, '크로노맨서', '페이트위버', '운명직공', 'Chronomancer', 'Fateweaver')
         ? Math.round((actualSimCount - timesQuestWon) / actualSimCount * 100 * 10) / 10
         : undefined,
       chronomancerRetrySuccessRate: retryWinRate,
@@ -1415,6 +1535,51 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     };
   });
 
+  // Build win/lose hero result variants
+  const buildBucketResult = (i: number, base: HeroSimResult, bucketCount: number, bucket: 'win' | 'lose'): HeroSimResult => {
+    if (bucketCount <= 0) return base;
+    const dDealt = bucket === 'win' ? winDmgDealt[i] : loseDmgDealt[i];
+    const dNorm = bucket === 'win' ? winNormalDmg[i] : loseNormalDmg[i];
+    const dCrit = bucket === 'win' ? winCritDmg[i] : loseCritDmg[i];
+    const dMax = bucket === 'win' ? winDmgMax[i] : loseDmgMax[i];
+    const dMin = bucket === 'win' ? winDmgMin[i] : loseDmgMin[i];
+    const r = bucket === 'win' ? winRoundsArr[i] : loseRoundsArr[i];
+    const dTaken = bucket === 'win' ? winDmgTaken[i] : loseDmgTaken[i];
+    const tHit = bucket === 'win' ? winTimesHit[i] : loseTimesHit[i];
+    const sHit = bucket === 'win' ? winSingleHits[i] : loseSingleHits[i];
+    const surv = bucket === 'win' ? winSurvived[i] : 0;
+    const hpRem = bucket === 'win' ? winHpRemain[i] : loseHpRemain[i];
+    const tgt = bucket === 'win' ? winTargeted[i] : loseTargeted[i];
+    const ev = bucket === 'win' ? winEvaded[i] : loseEvaded[i];
+    const avgR = r / bucketCount;
+    const totalSingle = bucket === 'win'
+      ? Array.from(winSingleHits).reduce((s, v) => s + v, 0)
+      : Array.from(loseSingleHits).reduce((s, v) => s + v, 0);
+    return {
+      ...base,
+      survivalRate: bucket === 'win' ? (surv / bucketCount) * 100 : 0,
+      avgHpRemaining: hpRem / bucketCount,
+      avgDamageDealt: dDealt / bucketCount,
+      maxDamageDealt: dMax,
+      minDamageDealt: dMin >= 1e9 ? 0 : dMin,
+      normalDmgDealtAvg: dNorm / bucketCount,
+      critDmgDealtAvg: dCrit / bucketCount,
+      avgDamagePerTurn: avgR > 0 ? (dDealt / bucketCount) / avgR : 0,
+      totalDamageTakenAvg: Math.round(dTaken / bucketCount),
+      avgDamageTakenPerHit: tHit > 0 ? Math.round(dTaken / tHit) : 0,
+      avgDamageTakenPerTurn: avgR > 0 ? Math.round(dTaken / bucketCount / avgR) : 0,
+      evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
+      tankingRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
+    };
+  };
+
+  const winHeroResults = timesQuestWon > 0
+    ? heroResults.map((b, i) => buildBucketResult(i, b, timesQuestWon, 'win'))
+    : undefined;
+  const loseHeroResults = loseCount > 0
+    ? heroResults.map((b, i) => buildBucketResult(i, b, loseCount, 'lose'))
+    : undefined;
+
   return {
     winRate: Math.round(winRate * 100) / 100,
     rawWinRate: Math.round(rawWinRate * 100) / 100,
@@ -1423,6 +1588,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     minRounds: roundsMin >= 1000 ? 0 : roundsMin,
     maxRounds: roundsMax,
     heroResults,
+    winHeroResults,
+    loseHeroResults,
+    winSimCount: timesQuestWon,
+    loseSimCount: loseCount,
     roundLimitRate: (roundLimitTimes / actualSimCount) * 100,
     totalSimulations: actualSimCount,
     retrySimulations,
@@ -1461,7 +1630,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   });
 
   // Run each mini-boss type simulation
-  const miniBossResults: MiniBossResult[] = [
+  const miniBossResults: (MiniBossResult & { winHero?: HeroSimResult[]; loseHero?: HeroSimResult[]; winN?: number; loseN?: number; winRoundsSum?: number; loseRoundsSum?: number; })[] = [
     {
       type: 'normal',
       encounters: normalSimCount,
@@ -1469,6 +1638,12 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       winRate: normalResult.winRate,
       avgRounds: normalResult.avgRounds,
       heroResults: normalResult.heroResults,
+      winHero: normalResult.winHeroResults,
+      loseHero: normalResult.loseHeroResults,
+      winN: normalResult.winSimCount || 0,
+      loseN: normalResult.loseSimCount || 0,
+      winRoundsSum: (normalResult.winRounds?.avg || 0) * (normalResult.winSimCount || 0),
+      loseRoundsSum: (normalResult.loseRounds?.avg || 0) * (normalResult.loseSimCount || 0),
     },
   ];
 
@@ -1492,6 +1667,12 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       winRate: mbResult.winRate,
       avgRounds: mbResult.avgRounds,
       heroResults: mbResult.heroResults,
+      winHero: mbResult.winHeroResults,
+      loseHero: mbResult.loseHeroResults,
+      winN: mbResult.winSimCount || 0,
+      loseN: mbResult.loseSimCount || 0,
+      winRoundsSum: (mbResult.winRounds?.avg || 0) * (mbResult.winSimCount || 0),
+      loseRoundsSum: (mbResult.loseRounds?.avg || 0) * (mbResult.loseSimCount || 0),
     });
 
     totalWins += wins;
@@ -1503,7 +1684,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   const combinedWinRate = (totalWins / totalSims) * 100;
   const combinedAvgRounds = totalRounds / totalSims;
 
-  // Aggregate hero results (weighted average)
+  // Aggregate hero results (weighted average) — overall (all)
   const aggregatedHeroResults: HeroSimResult[] = normalResult.heroResults.map((hr, idx) => {
     let survivalSum = hr.survivalRate * normalSimCount;
     let dmgSum = hr.avgDamageDealt * normalSimCount;
@@ -1529,16 +1710,60 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
     };
   });
 
+  // Aggregate win-only / lose-only hero results
+  const aggregateBucket = (bucket: 'win' | 'lose'): { results: HeroSimResult[]; count: number; roundsSum: number } | undefined => {
+    let totalCount = 0;
+    let roundsSum = 0;
+    for (const mbr of miniBossResults) {
+      const n = bucket === 'win' ? (mbr.winN || 0) : (mbr.loseN || 0);
+      totalCount += n;
+      roundsSum += bucket === 'win' ? (mbr.winRoundsSum || 0) : (mbr.loseRoundsSum || 0);
+    }
+    if (totalCount === 0) return undefined;
+    const results = normalResult.heroResults.map((hr, idx) => {
+      let dmgSum = 0, normSum = 0, critSum = 0, takenSum = 0;
+      let maxDmg = 0, minDmg = 1e9;
+      for (const mbr of miniBossResults) {
+        const n = bucket === 'win' ? (mbr.winN || 0) : (mbr.loseN || 0);
+        const arr = bucket === 'win' ? mbr.winHero : mbr.loseHero;
+        if (!arr || !arr[idx] || n === 0) continue;
+        const r = arr[idx];
+        dmgSum += r.avgDamageDealt * n;
+        normSum += r.normalDmgDealtAvg * n;
+        critSum += r.critDmgDealtAvg * n;
+        takenSum += r.totalDamageTakenAvg * n;
+        maxDmg = Math.max(maxDmg, r.maxDamageDealt);
+        if (r.minDamageDealt > 0) minDmg = Math.min(minDmg, r.minDamageDealt);
+      }
+      return {
+        ...hr,
+        avgDamageDealt: dmgSum / totalCount,
+        normalDmgDealtAvg: normSum / totalCount,
+        critDmgDealtAvg: critSum / totalCount,
+        totalDamageTakenAvg: Math.round(takenSum / totalCount),
+        maxDamageDealt: maxDmg,
+        minDamageDealt: minDmg >= 1e9 ? 0 : minDmg,
+      };
+    });
+    return { results, count: totalCount, roundsSum };
+  };
+
+  const winAgg = aggregateBucket('win');
+  const loseAgg = aggregateBucket('lose');
+
   return {
     winRate: Math.round(combinedWinRate * 100) / 100,
     rawWinRate: Math.round(combinedWinRate * 100) / 100,
     avgRounds: Math.round(combinedAvgRounds * 100) / 100,
-    minRounds: Math.min(normalResult.minRounds, ...miniBossResults.slice(1).map(m => {
-      // Need to get min from the actual simulation - use 1 as placeholder
-      return 1;
-    })),
-    maxRounds: Math.max(normalResult.maxRounds, ...miniBossResults.slice(1).map(m => m.avgRounds * 2)), // Approximate
+    minRounds: normalResult.minRounds,
+    maxRounds: Math.max(normalResult.maxRounds, ...miniBossResults.slice(1).map(m => m.avgRounds * 2)),
     heroResults: aggregatedHeroResults,
+    winHeroResults: winAgg?.results,
+    loseHeroResults: loseAgg?.results,
+    winSimCount: winAgg?.count,
+    loseSimCount: loseAgg?.count,
+    winRounds: winAgg && winAgg.count > 0 ? { avg: Math.round((winAgg.roundsSum / winAgg.count) * 100) / 100, min: 1, max: normalResult.winRounds?.max || 0 } : undefined,
+    loseRounds: loseAgg && loseAgg.count > 0 ? { avg: Math.round((loseAgg.roundsSum / loseAgg.count) * 100) / 100, min: 1, max: normalResult.loseRounds?.max || 499 } : undefined,
     roundLimitRate: normalResult.roundLimitRate,
     totalSimulations: totalSims,
     miniBossResults,
@@ -1685,10 +1910,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
     // Class flags
     heroIsNinjaFlag.push(isClass(h, '닌자', 'Ninja'));
-    heroIsSenseiFlag.push(isClass(h, '센세이', 'Sensei'));
-    heroIsBerserker.push(isClass(h, '광전사', '야를', 'Berserker', 'Jarl'));
+    heroIsSenseiFlag.push(isClass(h, '센세', '센세이', 'Sensei'));
+    heroIsBerserker.push(isClass(h, '광전사', '잘', '야를', 'Berserker', 'Jarl'));
     heroIsConquistadorFlag.push(isClass(h, '정복자', 'Conquistador'));
-    heroIsLordFlag.push(isClass(h, '기사', 'Lord'));
+    heroIsLordFlag.push(isClass(h, '기사', '군주', 'Lord', 'Knight'));
     heroIsSamuraiFlag.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyoFlag.push(isClass(h, '다이묘', 'Daimyo'));
 
@@ -1713,8 +1938,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroArmadilloVal.push(armadilloV);
 
     // Class flags for crit survival
-    heroIsClericFlag.push(isClass(h, '클레릭', 'Cleric'));
-    heroIsBishopFlag.push(isClass(h, '비숍', 'Bishop', '주교', '성직자'));
+    heroIsClericFlag.push(isClass(h, '성직자', '클레릭', 'Cleric'));
+    heroIsBishopFlag.push(isClass(h, '비숍', '주교', 'Bishop'));
   }
 
   // Berserker HP thresholds

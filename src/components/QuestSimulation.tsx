@@ -198,6 +198,7 @@ export default function QuestSimulation() {
   const [jobDisplayMode, setJobDisplayMode] = useState<'icon' | 'illust' | 'none'>('icon');
   const [simResultsFilter, setSimResultsFilter] = useState<string>('all');
   const [mainResultsTab, setMainResultsTab] = useState<'all' | 'win' | 'lose'>('all');
+  const [boosterOpen, setBoosterOpen] = useState(false);
 
   // Load quest data
   useEffect(() => {
@@ -785,7 +786,7 @@ export default function QuestSimulation() {
             )}
 
             {/* Booster slot - top right, symmetric with region icon */}
-            <Popover open={undefined}>
+            <Popover open={boosterOpen} onOpenChange={setBoosterOpen}>
               <PopoverTrigger asChild>
                 <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
                   {selectedBooster !== 'none' && commonData?.boosters ? (() => {
@@ -805,7 +806,7 @@ export default function QuestSimulation() {
                 <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
                 <div className="space-y-1.5">
                   <button
-                    onClick={() => { setSelectedBooster('none'); document.body.click(); }}
+                    onClick={() => { setSelectedBooster('none'); setBoosterOpen(false); }}
                     className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === 'none' ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
                   >
                     <span className="w-8 h-8 rounded flex items-center justify-center bg-secondary/50 text-muted-foreground shrink-0">✕</span>
@@ -818,7 +819,7 @@ export default function QuestSimulation() {
                     return (
                       <button
                         key={bType}
-                        onClick={() => { setSelectedBooster(bType); document.body.click(); }}
+                        onClick={() => { setSelectedBooster(bType); setBoosterOpen(false); }}
                         className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
                       >
                         {bEntry && <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />}
@@ -1663,8 +1664,11 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">대미지 기여도</span>
                 </div>
                 {(() => {
-                  const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                  const sorted = [...simResult.heroResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
+                  const bucketResults = mainResultsTab === 'win' && simResult.winHeroResults ? simResult.winHeroResults
+                    : mainResultsTab === 'lose' && simResult.loseHeroResults ? simResult.loseHeroResults
+                    : simResult.heroResults;
+                  const totalDmg = bucketResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
+                  const sorted = [...bucketResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
                   const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
                   const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
@@ -1695,7 +1699,10 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">탱킹 기여도</span>
                 </div>
                 {(() => {
-                  const sorted = [...simResult.heroResults].sort((a, b) => b.tankingRate - a.tankingRate);
+                  const bucketResults = mainResultsTab === 'win' && simResult.winHeroResults ? simResult.winHeroResults
+                    : mainResultsTab === 'lose' && simResult.loseHeroResults ? simResult.loseHeroResults
+                    : simResult.heroResults;
+                  const sorted = [...bucketResults].sort((a, b) => b.tankingRate - a.tankingRate);
                   const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
                   const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
@@ -1828,6 +1835,16 @@ export default function QuestSimulation() {
           <div className="flex items-center gap-2 mt-4 mb-3">
             <ListChecks className="w-5 h-5 text-primary" />
             <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
+            <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
+              <SelectTrigger className="h-7 w-24 text-[11px] ml-auto">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">전체</SelectItem>
+                <SelectItem value="win">성공</SelectItem>
+                <SelectItem value="lose">실패</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="card-fantasy p-4">
 
@@ -1895,10 +1912,27 @@ export default function QuestSimulation() {
             </div>
             {(() => {
               // Get the hero results based on filter
+              // Priority: miniboss filter (if random mode and chosen) > outcome filter
               let displayResults = simResult.heroResults;
               if (simResultsFilter !== 'all' && simResult.miniBossResults) {
                 const filtered = simResult.miniBossResults.find(m => m.type === simResultsFilter);
-                if (filtered) displayResults = filtered.heroResults;
+                if (filtered) {
+                  if (mainResultsTab === 'win' && filtered.winHero) displayResults = filtered.winHero;
+                  else if (mainResultsTab === 'lose' && filtered.loseHero) displayResults = filtered.loseHero;
+                  else displayResults = filtered.heroResults;
+                }
+              } else if (mainResultsTab === 'win' && simResult.winHeroResults) {
+                displayResults = simResult.winHeroResults;
+              } else if (mainResultsTab === 'lose' && simResult.loseHeroResults) {
+                displayResults = simResult.loseHeroResults;
+              }
+              const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
+              if (!displayResults || displayResults.length === 0 || noBucket) {
+                return (
+                  <div className="text-center text-xs text-muted-foreground py-8">
+                    {mainResultsTab === 'win' ? '성공한 판 없음' : mainResultsTab === 'lose' ? '실패한 판 없음' : '데이터 없음'}
+                  </div>
+                );
               }
               return (
                 <div className="space-y-8">
