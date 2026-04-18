@@ -1528,6 +1528,51 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     };
   });
 
+  // Build win/lose hero result variants
+  const buildBucketResult = (i: number, base: HeroSimResult, bucketCount: number, bucket: 'win' | 'lose'): HeroSimResult => {
+    if (bucketCount <= 0) return base;
+    const dDealt = bucket === 'win' ? winDmgDealt[i] : loseDmgDealt[i];
+    const dNorm = bucket === 'win' ? winNormalDmg[i] : loseNormalDmg[i];
+    const dCrit = bucket === 'win' ? winCritDmg[i] : loseCritDmg[i];
+    const dMax = bucket === 'win' ? winDmgMax[i] : loseDmgMax[i];
+    const dMin = bucket === 'win' ? winDmgMin[i] : loseDmgMin[i];
+    const r = bucket === 'win' ? winRoundsArr[i] : loseRoundsArr[i];
+    const dTaken = bucket === 'win' ? winDmgTaken[i] : loseDmgTaken[i];
+    const tHit = bucket === 'win' ? winTimesHit[i] : loseTimesHit[i];
+    const sHit = bucket === 'win' ? winSingleHits[i] : loseSingleHits[i];
+    const surv = bucket === 'win' ? winSurvived[i] : 0;
+    const hpRem = bucket === 'win' ? winHpRemain[i] : loseHpRemain[i];
+    const tgt = bucket === 'win' ? winTargeted[i] : loseTargeted[i];
+    const ev = bucket === 'win' ? winEvaded[i] : loseEvaded[i];
+    const avgR = r / bucketCount;
+    const totalSingle = bucket === 'win'
+      ? Array.from(winSingleHits).reduce((s, v) => s + v, 0)
+      : Array.from(loseSingleHits).reduce((s, v) => s + v, 0);
+    return {
+      ...base,
+      survivalRate: bucket === 'win' ? (surv / bucketCount) * 100 : 0,
+      avgHpRemaining: hpRem / bucketCount,
+      avgDamageDealt: dDealt / bucketCount,
+      maxDamageDealt: dMax,
+      minDamageDealt: dMin >= 1e9 ? 0 : dMin,
+      normalDmgDealtAvg: dNorm / bucketCount,
+      critDmgDealtAvg: dCrit / bucketCount,
+      avgDamagePerTurn: avgR > 0 ? (dDealt / bucketCount) / avgR : 0,
+      totalDamageTakenAvg: Math.round(dTaken / bucketCount),
+      avgDamageTakenPerHit: tHit > 0 ? Math.round(dTaken / tHit) : 0,
+      avgDamageTakenPerTurn: avgR > 0 ? Math.round(dTaken / bucketCount / avgR) : 0,
+      evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
+      tankingRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
+    };
+  };
+
+  const winHeroResults = timesQuestWon > 0
+    ? heroResults.map((b, i) => buildBucketResult(i, b, timesQuestWon, 'win'))
+    : undefined;
+  const loseHeroResults = loseCount > 0
+    ? heroResults.map((b, i) => buildBucketResult(i, b, loseCount, 'lose'))
+    : undefined;
+
   return {
     winRate: Math.round(winRate * 100) / 100,
     rawWinRate: Math.round(rawWinRate * 100) / 100,
@@ -1536,6 +1581,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     minRounds: roundsMin >= 1000 ? 0 : roundsMin,
     maxRounds: roundsMax,
     heroResults,
+    winHeroResults,
+    loseHeroResults,
+    winSimCount: timesQuestWon,
+    loseSimCount: loseCount,
     roundLimitRate: (roundLimitTimes / actualSimCount) * 100,
     totalSimulations: actualSimCount,
     retrySimulations,
