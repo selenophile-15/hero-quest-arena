@@ -960,6 +960,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simDmgTaken = new Float64Array(numHeroes);
     const simTimesHit = new Float64Array(numHeroes);
     const singleHitsTaken = new Float64Array(numHeroes);
+    const simTargeted = new Float64Array(numHeroes);
+    const simEvaded = new Float64Array(numHeroes);
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
