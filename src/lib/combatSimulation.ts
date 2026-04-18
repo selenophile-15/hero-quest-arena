@@ -146,6 +146,12 @@ export interface SimulationResult {
   minRounds: number;
   maxRounds: number;
   heroResults: HeroSimResult[];
+  // Bucketed hero results (only damage/taken/rounds related fields are meaningful per-bucket;
+  // other static stats fall back to the overall results)
+  winHeroResults?: HeroSimResult[];
+  loseHeroResults?: HeroSimResult[];
+  winSimCount?: number;
+  loseSimCount?: number;
   roundLimitRate: number;    // % of sims hitting 499 round limit
   totalSimulations: number;
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
