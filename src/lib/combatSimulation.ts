@@ -1663,7 +1663,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   });
 
   // Run each mini-boss type simulation
-  const miniBossResults: (MiniBossResult & { winHero?: HeroSimResult[]; loseHero?: HeroSimResult[]; winN?: number; loseN?: number; winRoundsSum?: number; loseRoundsSum?: number; })[] = [
+  const miniBossResults: MiniBossResult[] = [
     {
       type: 'normal',
       encounters: normalSimCount,
@@ -1677,6 +1677,12 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       loseN: normalResult.loseSimCount || 0,
       winRoundsSum: (normalResult.winRounds?.avg || 0) * (normalResult.winSimCount || 0),
       loseRoundsSum: (normalResult.loseRounds?.avg || 0) * (normalResult.loseSimCount || 0),
+      minRounds: normalResult.minRounds,
+      maxRounds: normalResult.maxRounds,
+      winMinRounds: normalResult.winRounds?.min,
+      winMaxRounds: normalResult.winRounds?.max,
+      loseMinRounds: normalResult.loseRounds?.min,
+      loseMaxRounds: normalResult.loseRounds?.max,
     },
   ];
 
@@ -1706,6 +1712,12 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       loseN: mbResult.loseSimCount || 0,
       winRoundsSum: (mbResult.winRounds?.avg || 0) * (mbResult.winSimCount || 0),
       loseRoundsSum: (mbResult.loseRounds?.avg || 0) * (mbResult.loseSimCount || 0),
+      minRounds: mbResult.minRounds,
+      maxRounds: mbResult.maxRounds,
+      winMinRounds: mbResult.winRounds?.min,
+      winMaxRounds: mbResult.winRounds?.max,
+      loseMinRounds: mbResult.loseRounds?.min,
+      loseMaxRounds: mbResult.loseRounds?.max,
     });
 
     totalWins += wins;
