@@ -904,6 +904,37 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const totalTimesHitAccum = new Float64Array(numHeroes);
   const singleTargetHitsTotal = new Float64Array(numHeroes);
 
+  // ─── Win/Lose bucket accumulators (per-hero, per-outcome) ───
+  const winDmgDealt = new Float64Array(numHeroes);
+  const winNormalDmg = new Float64Array(numHeroes);
+  const winCritDmg = new Float64Array(numHeroes);
+  const winDmgMax = new Float64Array(numHeroes);
+  const winDmgMin = new Float64Array(numHeroes).fill(1e9);
+  const winRoundsArr = new Float64Array(numHeroes);
+  const winDmgTaken = new Float64Array(numHeroes);
+  const winTimesHit = new Float64Array(numHeroes);
+  const winSingleHits = new Float64Array(numHeroes);
+  const winSurvived = new Float64Array(numHeroes);
+  const winHpRemain = new Float64Array(numHeroes);
+  const winTargeted = new Float64Array(numHeroes);
+  const winEvaded = new Float64Array(numHeroes);
+
+  const loseDmgDealt = new Float64Array(numHeroes);
+  const loseNormalDmg = new Float64Array(numHeroes);
+  const loseCritDmg = new Float64Array(numHeroes);
+  const loseDmgMax = new Float64Array(numHeroes);
+  const loseDmgMin = new Float64Array(numHeroes).fill(1e9);
+  const loseRoundsArr = new Float64Array(numHeroes);
+  const loseDmgTaken = new Float64Array(numHeroes);
+  const loseTimesHit = new Float64Array(numHeroes);
+  const loseSingleHits = new Float64Array(numHeroes);
+  const loseHpRemain = new Float64Array(numHeroes);
+  const loseTargeted = new Float64Array(numHeroes);
+  const loseEvaded = new Float64Array(numHeroes);
+  // Per-fight targeted/evaded snapshots
+  const fightTargetedTmp = new Float64Array(numHeroes);
+  const fightEvadedTmp = new Float64Array(numHeroes);
+
   // Tamas random range
   const isTamas = champName.includes('타마스') || champName === 'Tamas';
   const tamasMin = isTamas ? (champTier < 3 ? 0.05 + 0.05 * champTier : 0.1 * champTier) : 0;
