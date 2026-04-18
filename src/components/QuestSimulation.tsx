@@ -1664,8 +1664,11 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">대미지 기여도</span>
                 </div>
                 {(() => {
-                  const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                  const sorted = [...simResult.heroResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
+                  const bucketResults = mainResultsTab === 'win' && simResult.winHeroResults ? simResult.winHeroResults
+                    : mainResultsTab === 'lose' && simResult.loseHeroResults ? simResult.loseHeroResults
+                    : simResult.heroResults;
+                  const totalDmg = bucketResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
+                  const sorted = [...bucketResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
                   const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
                   const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
@@ -1696,7 +1699,10 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">탱킹 기여도</span>
                 </div>
                 {(() => {
-                  const sorted = [...simResult.heroResults].sort((a, b) => b.tankingRate - a.tankingRate);
+                  const bucketResults = mainResultsTab === 'win' && simResult.winHeroResults ? simResult.winHeroResults
+                    : mainResultsTab === 'lose' && simResult.loseHeroResults ? simResult.loseHeroResults
+                    : simResult.heroResults;
+                  const sorted = [...bucketResults].sort((a, b) => b.tankingRate - a.tankingRate);
                   const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
                   const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
                   return (
