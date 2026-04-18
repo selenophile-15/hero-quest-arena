@@ -136,6 +136,13 @@ export interface MiniBossResult {
   winRate: number;
   avgRounds: number;
   heroResults: HeroSimResult[];
+  // Optional bucketed
+  winHero?: HeroSimResult[];
+  loseHero?: HeroSimResult[];
+  winN?: number;
+  loseN?: number;
+  winRoundsSum?: number;
+  loseRoundsSum?: number;
 }
 
 export interface SimulationResult {
