@@ -1743,8 +1743,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroArmadilloVal.push(armadilloV);
 
     // Class flags for crit survival
-    heroIsClericFlag.push(isClass(h, '클레릭', 'Cleric'));
-    heroIsBishopFlag.push(isClass(h, '비숍', 'Bishop', '주교', '성직자'));
+    heroIsClericFlag.push(isClass(h, '성직자', '클레릭', 'Cleric'));
+    heroIsBishopFlag.push(isClass(h, '비숍', '주교', 'Bishop'));
   }
 
   // Berserker HP thresholds
