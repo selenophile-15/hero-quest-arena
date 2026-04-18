@@ -524,7 +524,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
     // Class flags
     heroIsNinja.push(isClass(h, '닌자', 'Ninja'));
-    heroIsSensei.push(isClass(h, '센세이', 'Sensei'));
+    heroIsSensei.push(isClass(h, '센세', '센세이', 'Sensei'));
+    // ... other entries below preserved by indentation context
+    heroIsDancer.push(isClass(h, '무희', '곡예가', '댄서', '아크로뱃', 'Dancer', 'Acrobat'));
+    // dark knight line
+    heroIsDarkKnight.push(isClass(h, '어둠의 기사', '죽음의 기사', '암흑기사', '데스나이트', 'Dark Knight', 'Death Knight'));
+    // healers
+    heroIsCleric.push(isClass(h, '성직자', '클레릭', 'Cleric'));
+    heroIsBishop.push(isClass(h, '비숍', '주교', 'Bishop'));
+    // berserker
+    heroBerserkerLevel.push(isClass(h, '광전사', '잘', '야를', 'Berserker', 'Jarl') ? Math.min(tier, 4) : 0);
     heroIsSamurai.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyo.push(isClass(h, '다이묘', 'Daimyo'));
     heroIsDancer.push(isClass(h, '댄서', '아크로뱃', 'Dancer', 'Acrobat'));
