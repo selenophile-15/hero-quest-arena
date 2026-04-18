@@ -1054,6 +1054,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (guaranteedEvade[i] || (Math.random() < cappedEva && !heroArtNoEvasion[i])) {
             // Evaded
             timesEvaded[i]++;
+            simEvaded[i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
@@ -1108,12 +1109,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
 
         timesTargeted[target]++;
+        simTargeted[target]++;
 
         const totalEva = heroEvasion[target] + berserkerStage[target] * 0.1 + ninjaEvasion[target];
         const cappedEva = Math.min(totalEva, heroEvaCap[target]);
 
         if (guaranteedEvade[target] || (Math.random() < cappedEva && !heroArtNoEvasion[target])) {
           timesEvaded[target]++;
+          simEvaded[target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
