@@ -186,8 +186,14 @@ const FIGHTER_CLASSES = [
   '사무라이', '다이묘',
   '광전사', '잘',
   '어둠의 기사', '죽음의 기사',
-  // English aliases (legacy)
-  'Mercenary', 'Lord', 'Samurai', 'Daimyo', 'Berserker', 'Jarl', 'Dark Knight', 'Death Knight',
+  // English aliases (legacy / fallback only — primary matching is done via classLine)
+  'Soldier', 'Mercenary',
+  'Barbarian', 'Chieftain',
+  'Knight', 'Lord',
+  'Ranger', 'Warden',
+  'Samurai', 'Daimyo',
+  'Berserker', 'Jarl',
+  'Dark Knight', 'Death Knight',
 ];
 // Rogue line (로그 계열): 도둑~근위병
 const ROGUE_CLASSES = [
@@ -198,8 +204,14 @@ const ROGUE_CLASSES = [
   '닌자', '센세',
   '무희', '곡예가',
   '경보병', '근위병',
-  // English aliases (legacy)
-  'Trickster', 'Grand Master', 'Musketeer', 'Conquistador', 'Pathfinder', 'Ninja', 'Sensei', 'Dancer', 'Acrobat',
+  // English aliases (legacy / fallback only)
+  'Thief', 'Trickster',
+  'Monk', 'Grand Master',
+  'Musketeer', 'Conquistador',
+  'Wanderer', 'Pathfinder',
+  'Ninja', 'Sensei',
+  'Dancer', 'Acrobat',
+  'Light Infantry', 'Royal Guard',
 ];
 // Spellcaster line (주문술사 계열): 마법사~페이트위버
 const SPELLCASTER_CLASSES = [
@@ -210,8 +222,14 @@ const SPELLCASTER_CLASSES = [
   '마법검', '스펠나이트',
   '풍수사', '아스트라맨서',
   '크로노맨서', '페이트위버',
-  // English aliases (legacy)
-  'Bishop', 'Cleric', 'Chronomancer', 'Fateweaver', 'Druid', 'Sorcerer', 'Warlock', 'Spellknight',
+  // English aliases (legacy / fallback only)
+  'Mage', 'Archmage',
+  'Cleric', 'Bishop',
+  'Druid', 'Archdruid',
+  'Sorcerer', 'Warlock',
+  'Spellblade', 'Spellknight',
+  'Geomancer', 'Astramancer',
+  'Chronomancer', 'Fateweaver',
 ];
 
 // Champion names (Korean)
