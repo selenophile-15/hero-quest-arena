@@ -1322,6 +1322,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         loseRoundsSum += round;
         loseRoundsMin = Math.min(loseRoundsMin, round);
         loseRoundsMax = Math.max(loseRoundsMax, round);
+        // Include lose rounds in overall (전체) totals
+        roundsAvg += round;
+        roundsMax = Math.max(roundsMax, round);
+        roundsMin = Math.min(roundsMin, round);
         for (let i = 0; i < numHeroes; i++) {
           loseHpRemain[i] += Math.max(hp[i], 0);
         }
@@ -1335,6 +1339,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         loseRoundsSum += round;
         loseRoundsMin = Math.min(loseRoundsMin, round);
         loseRoundsMax = Math.max(loseRoundsMax, round);
+        // Include lose rounds in overall (전체) totals
+        roundsAvg += round;
+        roundsMax = Math.max(roundsMax, round);
+        roundsMin = Math.min(roundsMin, round);
         for (let i = 0; i < numHeroes; i++) {
           loseHpRemain[i] += Math.max(hp[i], 0);
         }
