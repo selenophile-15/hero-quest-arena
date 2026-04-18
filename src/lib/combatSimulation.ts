@@ -143,6 +143,13 @@ export interface MiniBossResult {
   loseN?: number;
   winRoundsSum?: number;
   loseRoundsSum?: number;
+  // Round min/max breakdown (overall + per bucket)
+  minRounds?: number;
+  maxRounds?: number;
+  winMinRounds?: number;
+  winMaxRounds?: number;
+  loseMinRounds?: number;
+  loseMaxRounds?: number;
 }
 
 export interface SimulationResult {
