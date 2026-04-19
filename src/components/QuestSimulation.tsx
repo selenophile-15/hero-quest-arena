@@ -1894,7 +1894,7 @@ export default function QuestSimulation() {
                 <>
                   <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
                   <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
-                    <SelectTrigger className="h-6 w-[100px] text-[12px]">
+                    <SelectTrigger className="h-8 w-[120px] text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
