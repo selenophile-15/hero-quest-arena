@@ -441,7 +441,7 @@ function DistBar({ label, labelNode, total, owned, planned, maxCount, color }: {
         {planned > 0 && <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />}
       </div>
       <span className="text-sm font-bold text-foreground tabular-nums w-6 text-right">{total}</span>
-      <span className="text-sm font-bold text-muted-foreground tabular-nums w-20 text-right">
+      <span className="text-sm font-bold text-muted-foreground tabular-nums w-16 text-right -ml-1">
         ( {owned > 0 ? owned : '-'} / {planned > 0 ? planned : '-'} )
       </span>
     </div>
