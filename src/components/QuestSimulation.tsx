@@ -1943,22 +1943,22 @@ export default function QuestSimulation() {
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                         return (
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/20 [&_th]:border [&_th]:border-border/20">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
                         <thead>
-                          <tr className="border-b border-border/40">
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium whitespace-nowrap w-20" rowSpan={2}>영웅</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={4}>가하는 대미지</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={2}>일반/치명 비중</th>
-                            <th className="text-center py-1.5 px-2 bg-muted/30 text-foreground/60 font-medium border-l border-border/20" colSpan={2}>딜링 비중</th>
+                          <tr className="border-b-2 border-border/60">
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap w-20" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={4}>가하는 대미지</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>일반/치명 비중</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>딜링 비중</th>
                           </tr>
-                          <tr className="border-b border-border/30 text-[12px] text-foreground/50">
-                            <th className="text-center py-1 px-2 border-l border-border/20">총 평균</th>
+                          <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
+                            <th className="text-center py-1 px-2 border-l-2 border-border/60">총 평균</th>
                             <th className="text-center py-1 px-2">턴당 평균</th>
                             <th className="text-center py-1 px-2">최소</th>
                             <th className="text-center py-1 px-2">최대</th>
-                            <th className="text-center py-1 px-2 border-l border-border/20">일반</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
-                            <th className="text-center py-1 px-2 border-l border-border/20">비율</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-border/60">비율</th>
                             <th className="text-center py-1 px-2 w-24">그래프</th>
                           </tr>
                         </thead>
