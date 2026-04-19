@@ -474,7 +474,7 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
         {ELEMENT_ORDER.map(el => (
           <DistBar
             key={el}
-            labelNode={<><ElementIcon element={el} size={16} /><span className="text-xs font-medium text-foreground">{el}</span></>}
+            labelNode={<><ElementIcon element={el} size={18} /><span className="text-sm font-medium text-foreground">{el}</span></>}
             total={data[el].owned + data[el].planned}
             owned={data[el].owned}
             planned={data[el].planned}
@@ -516,7 +516,7 @@ function ClassLineSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }
         {allLines.map(cl => (
           <DistBar
             key={cl}
-            labelNode={<span className={`text-xs font-medium ${cl === '챔피언' ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || '')}`}>{cl}</span>}
+            labelNode={<span className={`text-sm font-medium ${cl === '챔피언' ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || '')}`}>{cl}</span>}
             total={(data[cl]?.owned || 0) + (data[cl]?.planned || 0)}
             owned={data[cl]?.owned || 0}
             planned={data[cl]?.planned || 0}
@@ -556,7 +556,7 @@ function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
         {posData.map(([pos, d]) => (
           <DistBar
             key={pos}
-            labelNode={<span className={`text-xs font-medium ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>{pos}</span>}
+            labelNode={<span className={`text-sm font-medium ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>{pos}</span>}
             total={d.owned + d.planned}
             owned={d.owned}
             planned={d.planned}
