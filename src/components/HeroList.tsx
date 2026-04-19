@@ -1045,6 +1045,8 @@ export default function HeroList() {
                         if (elementVal >= skThresholds[t]) skLevel = t + 1;
                       }
                     }
+                    // Cap common skill at level 3 for non-promoted heroes
+                    if (!isChampion && !hero.promoted) skLevel = Math.min(skLevel, 3);
                     const cLevelNames = skData?.['레벨별_스킬명'] || [];
                     const cDescs = skData?.['스킬_설명'] || [];
                     const cCurrentName = cLevelNames[skLevel - 1] || sk;
