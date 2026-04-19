@@ -348,7 +348,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-primary flex items-center gap-1.5">
           <Users size={14} />
-          전체 ({grandTotal}) <span className="text-xs font-normal text-muted-foreground">[보유 중 : {Array.from(ownedIds).length}명 / 추가 예정 : {Array.from(plannedIds).length}명]</span>
+          전체 ({grandTotal}) <span className="text-sm font-bold text-foreground">[보유 중 : {Array.from(ownedIds).length}명 / 추가 예정 : {Array.from(plannedIds).length}명]</span>
         </h3>
         <Button size="sm" onClick={onAdd} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
           <Plus size={14} /> 추가
@@ -375,12 +375,13 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
               const rowH = isChamp ? CHAMP_ROW_H : HERO_ROW_H;
               const maxInRow = Math.max(...ELEMENT_ORDER.map(el => matrix[cl]?.[el]?.length || 0));
               const capacity = 4;
-              const dynamicH = maxInRow > capacity ? maxInRow * 26 + 12 : rowH;
+              const perItemH = 30; // larger font requires more vertical space per entry
+              const dynamicH = maxInRow > capacity ? maxInRow * perItemH + 12 : rowH;
               const topBorderClass = isChamp ? 'border-t-2 border-border' : (clIdx > 0 ? 'border-t border-border' : '');
               return (
                 <tr key={cl} className={topBorderClass}>
                   <td
-                    className={`py-2 px-2 font-bold whitespace-nowrap text-sm text-center ${isChamp ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')}`}
+                    className={`py-2 px-2 font-bold whitespace-nowrap text-base text-center ${isChamp ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || 'text-foreground')}`}
                     style={{ background: CLASS_LINE_HEADER_BG[cl] || 'transparent' }}
                   >
                     {cl}
@@ -395,10 +396,10 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
                             const pos = h.position || '미지정';
                             return (
                               <div key={h.id} className={`flex items-center gap-1 justify-center ${isPlanned ? 'italic opacity-60' : ''}`}>
-                                <span className="text-[11px] font-semibold text-white">
+                                <span className="text-[13px] font-semibold text-white">
                                   {h.type === 'hero' ? h.heroClass : (h.championName || h.name)}
                                 </span>
-                                <span className={`text-[10px] font-bold px-1 rounded stat-box-white ${pos === '미지정' ? 'bg-gray-600' : (POSITION_COLORS[pos] || 'bg-secondary')}`}>
+                                <span className={`text-[12px] font-bold px-1 rounded stat-box-white ${pos === '미지정' ? 'bg-gray-600' : (POSITION_COLORS[pos] || 'bg-secondary')}`}>
                                   {pos}
                                 </span>
                               </div>
@@ -433,15 +434,15 @@ function DistBar({ label, labelNode, total, owned, planned, maxCount, color }: {
   return (
     <div className="flex items-center gap-2">
       <div className="w-20 text-right flex items-center justify-end gap-1">
-        {labelNode || <span className="text-xs font-medium text-foreground">{label}</span>}
+        {labelNode || <span className="text-sm font-medium text-foreground">{label}</span>}
       </div>
       <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
         {owned > 0 && <div className="h-full transition-all" style={{ width: `${ownedPct}%`, backgroundColor: color }} />}
         {planned > 0 && <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />}
       </div>
-      <span className="text-xs font-bold text-foreground tabular-nums w-6 text-right">{total}</span>
-      <span className="text-xs font-bold text-muted-foreground tabular-nums w-20 text-right">
-        ({owned > 0 ? owned : '-'} / {planned > 0 ? planned : '-'})
+      <span className="text-sm font-bold text-foreground tabular-nums w-8 text-right pl-1">{total}</span>
+      <span className="text-sm font-bold text-muted-foreground tabular-nums w-24 text-right">
+        ( {owned > 0 ? owned : '-'} / {planned > 0 ? planned : '-'} )
       </span>
     </div>
   );
@@ -473,7 +474,7 @@ function ElementSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }) 
         {ELEMENT_ORDER.map(el => (
           <DistBar
             key={el}
-            labelNode={<><ElementIcon element={el} size={16} /><span className="text-xs font-medium text-foreground">{el}</span></>}
+            labelNode={<><ElementIcon element={el} size={18} /><span className="text-sm font-medium text-foreground">{el}</span></>}
             total={data[el].owned + data[el].planned}
             owned={data[el].owned}
             planned={data[el].planned}
@@ -515,7 +516,7 @@ function ClassLineSummary({ owned, planned }: { owned: Hero[]; planned: Hero[] }
         {allLines.map(cl => (
           <DistBar
             key={cl}
-            labelNode={<span className={`text-xs font-medium ${cl === '챔피언' ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || '')}`}>{cl}</span>}
+            labelNode={<span className={`text-sm font-medium ${cl === '챔피언' ? 'text-purple-400' : (CLASS_LINE_COLORS[cl] || '')}`}>{cl}</span>}
             total={(data[cl]?.owned || 0) + (data[cl]?.planned || 0)}
             owned={data[cl]?.owned || 0}
             planned={data[cl]?.planned || 0}
@@ -555,7 +556,7 @@ function PositionChart({ owned, planned }: { owned: Hero[]; planned: Hero[] }) {
         {posData.map(([pos, d]) => (
           <DistBar
             key={pos}
-            labelNode={<span className={`text-xs font-medium ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>{pos}</span>}
+            labelNode={<span className={`text-sm font-medium ${POSITION_TEXT_COLORS[pos] || 'text-muted-foreground'}`}>{pos}</span>}
             total={d.owned + d.planned}
             owned={d.owned}
             planned={d.planned}

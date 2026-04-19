@@ -453,12 +453,13 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       });
     }
 
-    // Common skills
+    // Common skills (cap at level 3 / index 2 when not promoted)
     for (const skillName of selectedSkills) {
       const skillData = commonSkillsData[skillName];
       if (!skillData?.['스탯_보너스']) continue;
       const thresholds = (skillData['원소_기준치'] || [0]).map(Number).filter(Number.isFinite);
-      const lvl = getSkillLevel(thresholds);
+      let lvl = getSkillLevel(thresholds);
+      if (!promoted) lvl = Math.min(lvl, 2);
       inputs.push({
         bonusData: skillData['스탯_보너스'],
         appliedEquip: skillData['적용_장비'],
@@ -469,7 +470,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     }
 
     return inputs;
-  }, [uniqueSkillData, selectedSkills, commonSkillsData, jobElementValue]);
+  }, [uniqueSkillData, selectedSkills, commonSkillsData, jobElementValue, promoted]);
 
   // Build skill inputs for general bonus parsing (with names)
   const skillInputs = useMemo((): SkillBonusInput[] => {
@@ -496,16 +497,18 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       const skillData = commonSkillsData[skillName];
       if (!skillData?.['스탯_보너스']) continue;
       const thresholds = (skillData['원소_기준치'] || [0]).map(Number).filter(Number.isFinite);
+      let lvl = getSkillLevel2(thresholds);
+      if (!promoted) lvl = Math.min(lvl, 2);
       inputs.push({
         name: skillName,
         type: 'common',
         bonusData: skillData['스탯_보너스'],
-        skillLevel: getSkillLevel2(thresholds),
+        skillLevel: lvl,
       });
     }
 
     return inputs;
-  }, [uniqueSkillData, uniqueSkillName, selectedSkills, commonSkillsData, jobElementValue]);
+  }, [uniqueSkillData, uniqueSkillName, selectedSkills, commonSkillsData, jobElementValue, promoted]);
 
   // Auto-calculate stats (Phase 3: full formula)
   useEffect(() => {
@@ -996,9 +999,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
               for (let t = 0; t < commonThresholds.length; t++) {
                 if (jobElementValue >= commonThresholds[t]) commonSkillLevelIndex = t;
               }
+              // Cap common skill at level 3 (index 2) for non-promoted heroes
+              if (!promoted) commonSkillLevelIndex = Math.min(commonSkillLevelIndex, 2);
               const commonCurrentName = skillData?.['레벨별_스킬명']?.[commonSkillLevelIndex] || (skillName || '-');
               const commonCurrentDesc = skillData?.['스킬_설명']?.[commonSkillLevelIndex] || '-';
-              const commonNextThreshold = commonThresholds[commonSkillLevelIndex + 1] ?? '-';
+              const commonNextThreshold = promoted ? (commonThresholds[commonSkillLevelIndex + 1] ?? '-') : (commonSkillLevelIndex >= 2 ? '-' : (commonThresholds[commonSkillLevelIndex + 1] ?? '-'));
               const commonLevel = skillName ? commonSkillLevelIndex + 1 : '-';
 
               return (
