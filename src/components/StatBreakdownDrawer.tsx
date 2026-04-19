@@ -434,11 +434,11 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       {slot && slot.itemType === 'bow' && 
                         calcStats?.equipResult?.slots?.some((s: any) => s.itemType === 'quiver') && (
                         <tr className="border-b border-border/20">
-                          <td className="px-2 py-1 text-green-400 text-[11px]">
-                            <span className="text-[9px] mr-1 px-1 rounded bg-green-700/40">화살통</span>
+                          <td className="px-2 py-1 text-lime-700 dark:text-lime-400 text-[11px]">
+                            <span className="text-[9px] mr-1 px-1 rounded bg-lime-700/50 text-white">화살통</span>
                             화살통 보너스 (보너스 전 ×30%)
                           </td>
-                          <td className="px-2 py-1 text-right tabular-nums text-green-400">
+                          <td className="px-2 py-1 text-right tabular-nums text-lime-700 dark:text-lime-400">
                             +{formatNumber(slot ? getSlotStatDirect(slot, quiverBonusKey as keyof EquipSlotCalc) : 0)}
                           </td>
                         </tr>
