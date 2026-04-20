@@ -1943,10 +1943,16 @@ export default function QuestSimulation() {
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                         return (
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                        <colgroup>
+                          <col style={{ width: '110px' }} />
+                          <col style={{ width: '95px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} /><col style={{ width: '85px' }} />
+                          <col style={{ width: '120px' }} /><col style={{ width: '120px' }} />
+                          <col style={{ width: '70px' }} /><col style={{ width: '110px' }} />
+                        </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap w-20" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={4}>가하는 대미지</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>일반/치명 비중</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>딜링 비중</th>
@@ -1959,7 +1965,7 @@ export default function QuestSimulation() {
                             <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2 border-l-2 border-border/60">비율</th>
-                            <th className="text-center py-1 px-2 w-24">그래프</th>
+                            <th className="text-center py-1 px-2">그래프</th>
                           </tr>
                         </thead>
                         <tbody>
