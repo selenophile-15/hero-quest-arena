@@ -269,12 +269,12 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                                 ) : (
                                   <div className="space-y-0.5">
                                     {effectivePct !== 0 && (
-                                      <div className="text-green-400/80 text-sm font-mono">
+                                      <div className="text-lime-700 dark:text-lime-400/90 text-sm font-mono">
                                         +{effectivePct.toFixed(1)}%
                                       </div>
                                     )}
                                     {flatVal !== 0 && (
-                                      <div className="text-green-400/70 text-xs font-mono">
+                                      <div className="text-lime-700/80 dark:text-lime-400/70 text-xs font-mono">
                                         +{formatNumber(flatVal)} (깡)
                                       </div>
                                     )}
@@ -291,7 +291,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                                 {hasLW && isChamp ? (
                                   <span className="text-red-400 text-xs">무효</span>
                                 ) : effectivePct !== 0 ? (
-                                  <div className="text-green-400/80 text-sm font-mono">
+                                  <div className="text-lime-700 dark:text-lime-400/90 text-sm font-mono">
                                     +{effectivePct.toFixed(1)}%
                                   </div>
                                 ) : (
@@ -307,7 +307,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
                   {/* Combined multiplier row for mult stats */}
                   {isMultStat && relevantSources.length > 0 && (
-                    <tr className="border-b border-border/20 bg-green-900/20">
+                    <tr className="border-b border-border/20 bg-lime-700/10 dark:bg-lime-900/20">
                       <td className="py-2 px-3">
                         <div className="text-foreground text-sm font-semibold">합산 배율</div>
                         <div className="text-xs text-muted-foreground">(1 + Σ버프%)</div>
@@ -338,7 +338,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         return (
                           <td key={h.id} className="py-2 px-2 text-center">
                             <div className="space-y-0.5">
-                              <div className="text-green-400 text-base font-mono font-bold">
+                              <div className="text-lime-700 dark:text-lime-400 text-base font-mono font-bold">
                                 ×{(1 + effectiveTotalPct / 100).toFixed(3)}
                               </div>
                               <div className="text-muted-foreground text-xs font-mono">
@@ -348,7 +348,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                                 <div className="text-yellow-400 text-xs">용병 ×1.25 적용</div>
                               )}
                               {isMerc && boosterPct > 0 && (
-                                <div className="text-green-300 text-xs">부스터 {boosterPct}% (용병 미적용)</div>
+                                <div className="text-lime-700 dark:text-lime-300 text-xs">부스터 {boosterPct}% (용병 미적용)</div>
                               )}
                             </div>
                           </td>
@@ -359,7 +359,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
                   {/* Combined additive row for crit/eva */}
                   {!isMultStat && relevantSources.length > 0 && (
-                    <tr className="border-b border-border/20 bg-green-900/20">
+                    <tr className="border-b border-border/20 bg-lime-700/10 dark:bg-lime-900/20">
                       <td className="py-2 px-3">
                         <div className="text-foreground text-sm font-semibold">합산 보너스</div>
                       </td>
@@ -383,7 +383,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
                         return (
                           <td key={h.id} className="py-2 px-2 text-center">
-                            <div className="text-green-400 text-base font-mono font-bold">
+                            <div className="text-lime-700 dark:text-lime-400 text-base font-mono font-bold">
                               +{effectiveTotal.toFixed(1)}%
                             </div>
                             {isMerc && (
@@ -476,7 +476,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                             {critCapNote && <span className="text-xs text-muted-foreground ml-1">{critCapNote}</span>}
                           </div>
                           {delta !== 0 && (
-                            <div className={`text-xs font-mono ${delta > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            <div className={`text-xs font-mono ${delta > 0 ? 'text-lime-700 dark:text-lime-400' : 'text-red-400'}`}>
                               {delta > 0 ? '+' : ''}{suffix ? `${delta}${suffix}` : formatNumber(delta)}
                             </div>
                           )}
@@ -505,7 +505,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                           <td key={h.id} className="py-2.5 px-2 text-center">
                             <div className="font-bold font-mono text-lg text-yellow-300">{formatNumber(critAtk)}</div>
                             {delta !== 0 && (
-                              <div className="text-xs text-green-400 font-mono">+{formatNumber(delta)}</div>
+                              <div className="text-xs text-lime-700 dark:text-lime-400 font-mono">+{formatNumber(delta)}</div>
                             )}
                           </td>
                         );
@@ -569,7 +569,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   return (
                     <div key={i} className="bg-secondary/50 border border-border/30 rounded-lg px-3 py-2 text-sm">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <span className={isBooster ? 'text-green-400' : isChamp ? 'text-yellow-400' : 'text-purple-400'}>
+                        <span className={isBooster ? 'text-lime-700 dark:text-lime-400' : isChamp ? 'text-yellow-400' : 'text-purple-400'}>
                           {isBooster ? '⚡' : isChamp ? '👑' : '🎵'}
                         </span>
                         <span className="text-foreground font-medium">{src.name}</span>
