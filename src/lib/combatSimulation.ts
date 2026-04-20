@@ -1736,6 +1736,10 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
     let maxDmg = hr.maxDamageDealt;
     let minDmg = hr.minDamageDealt;
 
+    // tankingRate aggregation across miniboss types (each subResult sums to 100%)
+    let tankWeightedSum = hr.tankingRate * normalSimCount;
+    let tankTotalWeight = normalSimCount;
+
     for (const mbr of miniBossResults.slice(1)) {
       const mbHr = mbr.heroResults[idx];
       if (mbHr) {
@@ -1743,6 +1747,8 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
         dmgSum += mbHr.avgDamageDealt * mbr.encounters;
         maxDmg = Math.max(maxDmg, mbHr.maxDamageDealt);
         minDmg = Math.min(minDmg, mbHr.minDamageDealt);
+        tankWeightedSum += mbHr.tankingRate * mbr.encounters;
+        tankTotalWeight += mbr.encounters;
       }
     }
 
@@ -1752,6 +1758,9 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       avgDamageDealt: dmgSum / totalSims,
       maxDamageDealt: maxDmg,
       minDamageDealt: minDmg,
+      tankingRate: tankTotalWeight > 0
+        ? Math.round((tankWeightedSum / tankTotalWeight) * 10) / 10
+        : hr.tankingRate,
     };
   });
 
