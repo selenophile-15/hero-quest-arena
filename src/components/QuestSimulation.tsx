@@ -2179,6 +2179,28 @@ export default function QuestSimulation() {
                               <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
                             </tr>
                           ))}
+                          {/* Party total row */}
+                          {(() => {
+                            const partyTakenPerTurn = displayResults.reduce((s, hr) => s + (hr.avgDamageTakenPerTurn || 0), 0);
+                            const partyTakenTotal = displayResults.reduce((s, hr) => s + (hr.totalDamageTakenAvg || 0), 0);
+                            const partyAvgSurvival = displayResults.length > 0
+                              ? displayResults.reduce((s, hr) => s + hr.survivalRate, 0) / displayResults.length
+                              : 0;
+                            return (
+                              <tr className="border-t-2 border-border/60 bg-primary/10 font-bold">
+                                <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">파티 합계</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-foreground border-l-2 border-border/60 whitespace-nowrap">{partyAvgSurvival.toFixed(1)}%</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-2 border-border/60 whitespace-nowrap">-</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-orange-300 whitespace-nowrap">{formatNumber(Math.round(partyTakenPerTurn))}</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(Math.round(partyTakenTotal))}</td>
+                              </tr>
+                            );
+                          })()}
                         </tbody>
                       </table>
                     </div>
