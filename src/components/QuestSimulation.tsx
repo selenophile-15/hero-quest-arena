@@ -1604,7 +1604,7 @@ export default function QuestSimulation() {
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
                 {currentQuest && simResult && selectedHeroes.length > 0 && (
                   <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
-                    <SelectTrigger className="h-7 w-24 text-[11px] ml-auto">
+                    <SelectTrigger className="h-8 w-24 text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm ml-auto">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1943,10 +1943,16 @@ export default function QuestSimulation() {
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                         return (
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                        <colgroup>
+                          <col style={{ width: '110px' }} />
+                          <col style={{ width: '95px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} /><col style={{ width: '85px' }} />
+                          <col style={{ width: '120px' }} /><col style={{ width: '120px' }} />
+                          <col style={{ width: '70px' }} /><col style={{ width: '110px' }} />
+                        </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap w-20" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={4}>가하는 대미지</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>일반/치명 비중</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>딜링 비중</th>
@@ -1959,7 +1965,7 @@ export default function QuestSimulation() {
                             <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2 border-l-2 border-border/60">비율</th>
-                            <th className="text-center py-1 px-2 w-24">그래프</th>
+                            <th className="text-center py-1 px-2">그래프</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -2004,13 +2010,21 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Target className="w-4 h-4 text-foreground" />특수 대미지 (상어 / 공룡 / 광전사)</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                        <colgroup>
+                          <col style={{ width: '110px' }} />
+                          <col style={{ width: '70px' }} /><col style={{ width: '70px' }} /><col style={{ width: '70px' }} />
+                          <col style={{ width: '70px' }} /><col style={{ width: '70px' }} />
+                          <col /><col /><col /><col /><col /><col /><col /><col /><col />
+                        </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap w-20" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}>🦈 상어</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>🦕 공룡</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 (일반 / 치명 / 평균)</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 1단계</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 2단계</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 3단계</th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
                             <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
@@ -2018,9 +2032,15 @@ export default function QuestSimulation() {
                             <th className="text-center py-1 px-2">총 평균</th>
                             <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">1단계 ATK</th>
-                            <th className="text-center py-1 px-2">2단계 ATK</th>
-                            <th className="text-center py-1 px-2">3단계 ATK</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2">치명</th>
+                            <th className="text-center py-1 px-2">평균</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2">치명</th>
+                            <th className="text-center py-1 px-2">평균</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2">치명</th>
+                            <th className="text-center py-1 px-2">평균</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -2028,8 +2048,9 @@ export default function QuestSimulation() {
                             const sharkGray = !hr.hasSharkSpirit;
                             const dinoGray = !hr.hasDinosaurSpirit && !hr.isSamuraiOrDaimyo;
                             const brkGray = !hr.berserkerAtkBonus;
-                            const renderBerserkerCell = (stage: number) => {
-                              if (brkGray) return <span className="text-muted-foreground/30">-</span>;
+                            // Compute per-stage normal/crit/avg damage for berserker
+                            const brkVals = (stage: number) => {
+                              if (brkGray) return null;
                               const atkMul = 1 + (hr.berserkerAtkBonus![stage] / 100);
                               const baseAtk = hr.finalAtk || 0;
                               const stageAtk = Math.floor(baseAtk * atkMul);
@@ -2037,19 +2058,10 @@ export default function QuestSimulation() {
                               const normalDmg = stageAtk;
                               const critDmg = Math.floor(stageAtk * critMul);
                               const avgDmg = Math.floor((normalDmg + critDmg) / 2);
-                              return (
-                                <div className="flex flex-col items-center leading-tight">
-                                  <span className="text-[10px] text-red-400 font-semibold">+{hr.berserkerAtkBonus![stage]}%</span>
-                                  <div className="flex justify-center gap-1 text-[11px]">
-                                    <span className="text-blue-300">{formatNumber(normalDmg)}</span>
-                                    <span className="text-muted-foreground">/</span>
-                                    <span className="text-yellow-300">{formatNumber(critDmg)}</span>
-                                    <span className="text-muted-foreground">/</span>
-                                    <span className="text-foreground">{formatNumber(avgDmg)}</span>
-                                  </div>
-                                </div>
-                              );
+                              return { normalDmg, critDmg, avgDmg };
                             };
+                            const v0 = brkVals(0); const v1 = brkVals(1); const v2 = brkVals(2);
+                            const dash = <span className="text-muted-foreground/30">-</span>;
                             return (
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
@@ -2058,9 +2070,18 @@ export default function QuestSimulation() {
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-200'}`}>{sharkGray ? '-' : formatNumber(Math.round(((hr.sharkNormalDmg || 0) + (hr.sharkCritDmg || 0)) / 2))}</td>
                                 <td className={`py-1 px-2 text-center font-mono border-l-2 border-border/60 whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-400'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurNormalDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-300'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurCritDmg)}</td>
-                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-2 border-border/60">{renderBerserkerCell(0)}</td>
-                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap">{renderBerserkerCell(1)}</td>
-                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap">{renderBerserkerCell(2)}</td>
+                                {/* 광전사 1단계 */}
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-2 border-border/60 text-blue-300">{v0 ? formatNumber(v0.normalDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-yellow-300">{v0 ? formatNumber(v0.critDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-foreground">{v0 ? formatNumber(v0.avgDmg) : dash}</td>
+                                {/* 광전사 2단계 */}
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-2 border-border/60 text-blue-300">{v1 ? formatNumber(v1.normalDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-yellow-300">{v1 ? formatNumber(v1.critDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-foreground">{v1 ? formatNumber(v1.avgDmg) : dash}</td>
+                                {/* 광전사 3단계 */}
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-2 border-border/60 text-blue-300">{v2 ? formatNumber(v2.normalDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-yellow-300">{v2 ? formatNumber(v2.critDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-foreground">{v2 ? formatNumber(v2.avgDmg) : dash}</td>
                               </tr>
                             );
                           })}
@@ -2073,10 +2094,15 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />생존 & 방어</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                        <colgroup>
+                          <col style={{ width: '110px' }} />
+                          <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} /><col style={{ width: '85px' }} /><col style={{ width: '95px' }} />
+                          <col style={{ width: '85px' }} /><col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '110px' }} />
+                        </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap w-20" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={5}>기본</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={4}>받는 대미지</th>
                           </tr>
@@ -2121,10 +2147,14 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />회복 & 보호</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                        <colgroup>
+                          <col style={{ width: '110px' }} />
+                          <col /><col /><col /><col />
+                        </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap w-20"></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap"></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">총 회복량</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">턴당 회복</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">군주 보호</th>
@@ -2186,10 +2216,14 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-foreground" />시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                        <colgroup>
+                          <col style={{ width: '110px' }} />
+                          <col /><col /><col /><col /><col /><col /><col />
+                        </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap w-20"></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap"></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">ATK</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">HP</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">DEF</th>

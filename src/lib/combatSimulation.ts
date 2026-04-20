@@ -1736,6 +1736,10 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
     let maxDmg = hr.maxDamageDealt;
     let minDmg = hr.minDamageDealt;
 
+    // tankingRate aggregation across miniboss types (each subResult sums to 100%)
+    let tankWeightedSum = hr.tankingRate * normalSimCount;
+    let tankTotalWeight = normalSimCount;
+
     for (const mbr of miniBossResults.slice(1)) {
       const mbHr = mbr.heroResults[idx];
       if (mbHr) {
@@ -1743,6 +1747,8 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
         dmgSum += mbHr.avgDamageDealt * mbr.encounters;
         maxDmg = Math.max(maxDmg, mbHr.maxDamageDealt);
         minDmg = Math.min(minDmg, mbHr.minDamageDealt);
+        tankWeightedSum += mbHr.tankingRate * mbr.encounters;
+        tankTotalWeight += mbr.encounters;
       }
     }
 
@@ -1752,6 +1758,9 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       avgDamageDealt: dmgSum / totalSims,
       maxDamageDealt: maxDmg,
       minDamageDealt: minDmg,
+      tankingRate: tankTotalWeight > 0
+        ? Math.round((tankWeightedSum / tankTotalWeight) * 10) / 10
+        : hr.tankingRate,
     };
   });
 
@@ -1765,6 +1774,23 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
       roundsSum += bucket === 'win' ? (mbr.winRoundsSum || 0) : (mbr.loseRoundsSum || 0);
     }
     if (totalCount === 0) return undefined;
+    // Compute total single-target hits per hero across all miniboss types in this bucket
+    // (weighted by encounter count) so tankingRate reflects the chosen bucket.
+    const singleHitsAgg = normalResult.heroResults.map(() => 0);
+    let totalSingleAgg = 0;
+    for (const mbr of miniBossResults) {
+      const n = bucket === 'win' ? (mbr.winN || 0) : (mbr.loseN || 0);
+      const arr = bucket === 'win' ? mbr.winHero : mbr.loseHero;
+      if (!arr || n === 0) continue;
+      // Recover sHit per hero by inverting tankingRate stored on bucket entry.
+      // (tankingRate already = sHit / totalSingleInBucket * 100). We sum sHit shares
+      // by weighting each hero's tankingRate by encounter count. Result is a relative
+      // weighted share across heroes.
+      arr.forEach((r, idx) => {
+        singleHitsAgg[idx] += (r.tankingRate || 0) * n;
+      });
+      totalSingleAgg += 100 * n; // each bucket sums to 100% × n
+    }
     const results = normalResult.heroResults.map((hr, idx) => {
       let dmgSum = 0, normSum = 0, critSum = 0, takenSum = 0;
       let maxDmg = 0, minDmg = 1e9;
@@ -1780,6 +1806,9 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
         maxDmg = Math.max(maxDmg, r.maxDamageDealt);
         if (r.minDamageDealt > 0) minDmg = Math.min(minDmg, r.minDamageDealt);
       }
+      const tankingRate = totalSingleAgg > 0
+        ? Math.round((singleHitsAgg[idx] / totalSingleAgg) * 1000) / 10
+        : 0;
       return {
         ...hr,
         avgDamageDealt: dmgSum / totalCount,
@@ -1788,6 +1817,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
         totalDamageTakenAvg: Math.round(takenSum / totalCount),
         maxDamageDealt: maxDmg,
         minDamageDealt: minDmg >= 1e9 ? 0 : minDmg,
+        tankingRate,
       };
     });
     return { results, count: totalCount, roundsSum };
