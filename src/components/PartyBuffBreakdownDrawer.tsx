@@ -15,13 +15,12 @@ interface PartyBuffBreakdownDrawerProps {
   hasEvasionPenalty?: boolean;
 }
 
-type StatTab = 'atk' | 'def' | 'hp' | 'hpRegen' | 'critChance' | 'critDmg' | 'evasion';
+type StatTab = 'atk' | 'def' | 'hp' | 'critChance' | 'critDmg' | 'evasion';
 
 const STAT_TABS: { key: StatTab; label: string; icon: string; color: string; headerBg: string }[] = [
   { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-900/60' },
   { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-900/60' },
   { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#a85200]/60' },
-  { key: 'hpRegen', label: '체력 재생', icon: STAT_ICON_MAP.hp, color: 'text-green-400', headerBg: 'bg-green-900/40' },
   { key: 'critChance', label: '치명타 확률', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-[#6b5a14]/60' },
   { key: 'critDmg', label: '치명타 대미지', icon: STAT_ICON_MAP.critDmg, color: 'text-orange-300', headerBg: 'bg-orange-500/30' },
   { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-cyan-400', headerBg: 'bg-[#175e5e]/60' },
