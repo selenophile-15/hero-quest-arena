@@ -490,6 +490,18 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
               </div>
             )}
 
+            {/* Ninja / Sensei notes for crit & evasion */}
+            {(activeTab === 'critChance' || activeTab === 'evasion') && heroes.some(h => (h.heroClass === '닌자' || h.heroClass === '센세')) && (
+              <div className="mt-3 px-3">
+                <div className="rounded bg-purple-900/20 border border-purple-500/30 px-3 py-2">
+                  <p className="text-xs text-purple-200 leading-relaxed">
+                    🥷 <span className="font-bold">닌자/센세</span> 고유 스킬의 {activeTab === 'critChance' ? '치명타 확률' : '회피'} 보너스는 <span className="font-bold">피격 시 해제</span>됩니다.
+                    {heroes.some(h => h.heroClass === '센세') && <span className="ml-1">(센세는 2라운드 후 재획득)</span>}
+                  </p>
+                </div>
+              </div>
+            )}
+
 
             {/* Artifact effects */}
             {heroes.some(h => h.equipmentSlots?.some((s: any) => doesArtifactAffectStat(s.item?.name, activeTab))) && (
