@@ -123,7 +123,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[92vh] flex flex-col bg-card border-t border-primary/30">
+      <SheetContent side="right" className="w-full sm:max-w-[1100px] h-full flex flex-col bg-card border-l border-primary/30 overflow-y-auto">
         <SheetHeader className="shrink-0 pb-2">
           <SheetTitle className="text-foreground flex items-center gap-2 text-lg">
             📊 파티 버프 스탯 계산표
@@ -486,6 +486,18 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   <div>• 회피 캡: 길잡이 <span className="text-teal-300 font-mono">78%</span>, 그 외 <span className="text-teal-300 font-mono">75%</span></div>
                   <div>• 익스트림 / 공포의 탑: 회피 <span className="text-red-400 font-mono">-20%</span> 페널티 적용</div>
                   <div>• 락 스톰퍼: 회피 <span className="text-amber-400 font-mono">0%</span> 고정 (페널티 무시)</div>
+                </div>
+              </div>
+            )}
+
+            {/* Ninja / Sensei notes for crit & evasion */}
+            {(activeTab === 'critChance' || activeTab === 'evasion') && heroes.some(h => (h.heroClass === '닌자' || h.heroClass === '센세')) && (
+              <div className="mt-3 px-3">
+                <div className="rounded bg-purple-900/20 border border-purple-500/30 px-3 py-2">
+                  <p className="text-xs text-purple-200 leading-relaxed">
+                    🥷 <span className="font-bold">닌자/센세</span> 고유 스킬의 {activeTab === 'critChance' ? '치명타 확률' : '회피'} 보너스는 <span className="font-bold">피격 시 해제</span>됩니다.
+                    {heroes.some(h => h.heroClass === '센세') && <span className="ml-1">(센세는 2라운드 후 재획득)</span>}
+                  </p>
                 </div>
               </div>
             )}
