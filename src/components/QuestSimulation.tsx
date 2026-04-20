@@ -1604,7 +1604,7 @@ export default function QuestSimulation() {
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
                 {currentQuest && simResult && selectedHeroes.length > 0 && (
                   <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
-                    <SelectTrigger className="h-7 w-24 text-[11px] ml-auto">
+                    <SelectTrigger className="h-8 w-24 text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm ml-auto">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
