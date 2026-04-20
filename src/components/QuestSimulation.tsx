@@ -2216,10 +2216,14 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-foreground" />시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                        <colgroup>
+                          <col style={{ width: '110px' }} />
+                          <col /><col /><col /><col /><col /><col /><col />
+                        </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap w-20"></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap"></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">ATK</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">HP</th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">DEF</th>
