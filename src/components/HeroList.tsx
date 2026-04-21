@@ -255,14 +255,19 @@ export default function HeroList() {
             if (colorMode === 'light') {
               clonedEl.style.backgroundColor = '#ffffff';
             }
-            // Force zebra striping + visible cell borders inline so html2canvas always renders them
-            const zebraBg = colorMode === 'light' ? '#f1f1f4' : '#2a2a3a';
+            // Force zebra striping + visible horizontal borders inline so html2canvas always renders them
+            // Use HSL of current theme primary for header + zebra so they match the active color mode
+            const primaryHsl = (window.getComputedStyle(document.documentElement).getPropertyValue('--primary') || '40 85% 55%').trim();
+            const headerBg = `hsla(${primaryHsl} / 0.07)`;
+            const zebraBg = `hsla(${primaryHsl} / 0.04)`;
             const borderColor = colorMode === 'light' ? '#d4d4d8' : '#3f3f55';
             clonedEl.querySelectorAll('table').forEach(t => {
               (t as HTMLElement).style.borderCollapse = 'collapse';
             });
             clonedEl.querySelectorAll('thead tr').forEach(tr => {
-              (tr as HTMLElement).style.borderBottom = `2px solid ${borderColor}`;
+              const el = tr as HTMLElement;
+              el.style.borderBottom = `2px solid ${borderColor}`;
+              el.style.backgroundColor = headerBg;
             });
             clonedEl.querySelectorAll('tbody tr.table-zebra-row').forEach((tr, idx) => {
               const el = tr as HTMLElement;
@@ -272,10 +277,9 @@ export default function HeroList() {
             clonedEl.querySelectorAll('td, th').forEach(cell => {
               const el = cell as HTMLElement;
               el.style.verticalAlign = 'middle';
-              // Add right border for cell separation (skip last cell of row by checking nextSibling)
-              if (el.nextElementSibling) {
-                el.style.borderRight = `1px solid ${borderColor}`;
-              }
+              // Remove any vertical cell borders for clean horizontal-only look
+              el.style.borderRight = 'none';
+              el.style.borderLeft = 'none';
             });
             clonedEl.querySelectorAll('img, span, svg').forEach(el => {
               const s = window.getComputedStyle(el);
@@ -1606,10 +1610,10 @@ export default function HeroList() {
           <div ref={tableContentRef} data-screenshot-target className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
             <table className="w-full text-sm font-bold">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-border bg-primary/5">
                   {activeCols.map(col => (
                     <th key={col.key} onClick={() => handleSort(col.key)}
-                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center border-r border-border/50 last:border-r-0 ${
+                      className={`${col.key === 'skills' ? 'px-1' : 'px-3'} py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/80 text-center ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
                       } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[80px]' : 'min-w-[150px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
@@ -1665,17 +1669,17 @@ export default function HeroList() {
                     <Fragment key={hero.id}>
                       <tr
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
-                        className={`border-b border-border/50 transition-colors cursor-pointer select-none ${
+                        className={`border-b border-border/50 transition-colors cursor-pointer select-none even:bg-primary/[0.04] ${
                           isExpanded ? 'bg-primary/15' : ''
                         } table-zebra-row`}
                         style={{ height: '52px' }}
                       >
                       {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-1 text-center border-r border-border/40 last:border-r-0" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
+                            return <td key={col.key} className={`${col.key === 'skills' ? 'px-1' : 'px-3'} py-1 text-center`} style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-1 text-center border-r border-border/40 last:border-r-0" style={{ verticalAlign: 'middle' }}>
+                            <td key={col.key} className={`${col.key === 'skills' ? 'px-1' : 'px-3'} py-1 text-center`} style={{ verticalAlign: 'middle' }}>
                               {captureMode ? (
                                 renderCell(hero, col.key, true)
                               ) : (
