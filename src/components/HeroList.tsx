@@ -1665,17 +1665,17 @@ export default function HeroList() {
                     <Fragment key={hero.id}>
                       <tr
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
-                        className={`border-b border-border/50 transition-colors cursor-pointer select-none ${
+                        className={`border-b border-border/50 transition-colors cursor-pointer select-none even:bg-primary/[0.04] ${
                           isExpanded ? 'bg-primary/15' : ''
                         } table-zebra-row`}
                         style={{ height: '52px' }}
                       >
                       {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-1 text-center border-r border-border/40 last:border-r-0" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
+                            return <td key={col.key} className={`${col.key === 'skills' ? 'px-1' : 'px-3'} py-1 text-center`} style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-1 text-center border-r border-border/40 last:border-r-0" style={{ verticalAlign: 'middle' }}>
+                            <td key={col.key} className={`${col.key === 'skills' ? 'px-1' : 'px-3'} py-1 text-center`} style={{ verticalAlign: 'middle' }}>
                               {captureMode ? (
                                 renderCell(hero, col.key, true)
                               ) : (
