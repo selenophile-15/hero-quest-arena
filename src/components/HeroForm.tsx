@@ -522,6 +522,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       totalElementPoints: totalEquipElement,
       skillBonusInputs,
       skillInputs,
+      uniqueSkillLevel: skillBonusInputs.find(s => s.skillType === 'unique')?.skillLevel ?? 0,
     }).then(result => {
       setCalcStats(result);
       if (result) {
