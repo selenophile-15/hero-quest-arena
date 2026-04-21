@@ -255,8 +255,27 @@ export default function HeroList() {
             if (colorMode === 'light') {
               clonedEl.style.backgroundColor = '#ffffff';
             }
+            // Force zebra striping + visible cell borders inline so html2canvas always renders them
+            const zebraBg = colorMode === 'light' ? '#f1f1f4' : '#2a2a3a';
+            const borderColor = colorMode === 'light' ? '#d4d4d8' : '#3f3f55';
+            clonedEl.querySelectorAll('table').forEach(t => {
+              (t as HTMLElement).style.borderCollapse = 'collapse';
+            });
+            clonedEl.querySelectorAll('thead tr').forEach(tr => {
+              (tr as HTMLElement).style.borderBottom = `2px solid ${borderColor}`;
+            });
+            clonedEl.querySelectorAll('tbody tr.table-zebra-row').forEach((tr, idx) => {
+              const el = tr as HTMLElement;
+              if (idx % 2 === 1) el.style.backgroundColor = zebraBg;
+              el.style.borderBottom = `1px solid ${borderColor}`;
+            });
             clonedEl.querySelectorAll('td, th').forEach(cell => {
-              (cell as HTMLElement).style.verticalAlign = 'middle';
+              const el = cell as HTMLElement;
+              el.style.verticalAlign = 'middle';
+              // Add right border for cell separation (skip last cell of row by checking nextSibling)
+              if (el.nextElementSibling) {
+                el.style.borderRight = `1px solid ${borderColor}`;
+              }
             });
             clonedEl.querySelectorAll('img, span, svg').forEach(el => {
               const s = window.getComputedStyle(el);
@@ -276,7 +295,6 @@ export default function HeroList() {
               clonedEl.querySelectorAll('*').forEach(el => {
                 const htmlEl = el as HTMLElement;
                 const bg = htmlEl.style.background || '';
-                const computedBg = window.getComputedStyle(htmlEl).background || '';
                 // Replace transparent in radial-gradient with #ffffff
                 if (bg.includes('transparent')) {
                   htmlEl.style.background = bg.replace(/transparent/g, '#ffffff');
@@ -287,7 +305,8 @@ export default function HeroList() {
                   htmlEl.style.boxShadow = 'none';
                 }
               });
-              clonedEl.querySelectorAll('.card-fantasy, .album-card-front, .album-card-back, table, thead, tbody, tr, td, th').forEach(el => {
+              // Apply white background only where backgroundColor is unset/transparent — preserve zebra
+              clonedEl.querySelectorAll('.card-fantasy, .album-card-front, .album-card-back, table, thead, tbody').forEach(el => {
                 const htmlEl = el as HTMLElement;
                 const bg = window.getComputedStyle(htmlEl).backgroundColor;
                 if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
@@ -933,6 +952,7 @@ export default function HeroList() {
               <div className="space-y-1 text-xs">
                 {[
                   { icon: STAT_ICON_MAP.power, value: hero.power, suffix: '' },
+                  { icon: STAT_ICON_MAP.airshipPower, value: 0, suffix: '', isAirship: true },
                   { icon: STAT_ICON_MAP.hp, value: hero.hp, suffix: '' },
                   { icon: STAT_ICON_MAP.atk, value: hero.atk, suffix: '' },
                   { icon: STAT_ICON_MAP.def, value: hero.def, suffix: '' },
@@ -944,7 +964,7 @@ export default function HeroList() {
                 ].map((s, i) => (
                   <div key={i} className={`flex items-center gap-2 py-0.5 px-1 ${dimClass(s.value)}`}>
                     <img src={s.icon} alt="" className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm ml-auto tabular-nums">{s.value ? (() => {
+                    <span className="text-sm ml-auto tabular-nums">{(s as any).isAirship ? '-' : (s.value ? (() => {
                       if ((s as any).isCritDmg) return `x${(Number(s.value) / 100).toFixed(1)}`;
                       const v = `${formatNumber(s.value)}${s.suffix}`;
                       if ((s as any).isEvasion && s.value) {
@@ -952,16 +972,12 @@ export default function HeroList() {
                         if (Number(s.value) > cap) return <>{v} <span className="text-xs text-muted-foreground">({cap}%)</span></>;
                       }
                       return v;
-                    })() : '0'}</span>
+                    })() : '0')}</span>
                   </div>
                 ))}
                 <div className="flex items-center gap-2 py-0.5 px-1">
                   <ElementIcon element={isAllElement ? '모든 원소' : hero.element} size={20} />
                   <span className={`text-sm ml-auto tabular-nums ${!hero.elementValue ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue ? formatNumber(hero.elementValue) : '0'}</span>
-                </div>
-                <div className={`flex items-center gap-2 py-0.5 px-1 ${dimClass(0)}`}>
-                  <img src={STAT_ICON_MAP.airshipPower} alt="" className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm ml-auto tabular-nums">-</span>
                 </div>
               </div>
               {hero.seeds && (
@@ -1593,7 +1609,7 @@ export default function HeroList() {
                 <tr className="border-b border-border">
                   {activeCols.map(col => (
                     <th key={col.key} onClick={() => handleSort(col.key)}
-                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center ${
+                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center border-r border-border/50 last:border-r-0 ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
                       } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[80px]' : 'min-w-[150px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
@@ -1656,10 +1672,10 @@ export default function HeroList() {
                       >
                       {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
+                            return <td key={col.key} className="px-3 py-1 text-center border-r border-border/40 last:border-r-0" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}>
+                            <td key={col.key} className="px-3 py-1 text-center border-r border-border/40 last:border-r-0" style={{ verticalAlign: 'middle' }}>
                               {captureMode ? (
                                 renderCell(hero, col.key, true)
                               ) : (

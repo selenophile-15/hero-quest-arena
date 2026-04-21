@@ -522,6 +522,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       totalElementPoints: totalEquipElement,
       skillBonusInputs,
       skillInputs,
+      uniqueSkillLevel: skillBonusInputs.find(s => s.skillType === 'unique')?.skillLevel ?? 0,
     }).then(result => {
       setCalcStats(result);
       if (result) {
@@ -786,6 +787,11 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   <span className="text-sm text-foreground ml-auto tabular-nums">{power ? formatNumber(Number(power)) : '-'}</span>
                 )}
               </div>
+              {/* 에어쉽 파워 (전투력 바로 아래) */}
+              <div className="flex items-center gap-2 py-0.5 px-1">
+                <img src={STAT_ICON_MAP.airshipPower} alt="에어쉽 파워" className="w-5 h-5 flex-shrink-0" />
+                <span className="text-sm text-foreground ml-auto tabular-nums">-</span>
+              </div>
               {(() => {
                 const statItems = [
                   { icon: STAT_ICON_MAP.hp, value: hp, suffix: '', baseKey: 'totalHp' as const },
@@ -829,10 +835,6 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                 <span className="text-sm text-foreground ml-auto tabular-nums">
                   {jobElementValue ? formatNumber(jobElementValue) : '-'}
                 </span>
-              </div>
-              <div className="flex items-center gap-2 py-0.5 px-1">
-                <img src={STAT_ICON_MAP.airshipPower} alt="에어쉽 파워" className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm text-foreground ml-auto tabular-nums">-</span>
               </div>
             </div>
           </div>

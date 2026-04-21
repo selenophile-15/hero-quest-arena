@@ -84,10 +84,12 @@ export interface CalcInput {
   }>;
   // Skill data for general stat parsing (with names)
   skillInputs: SkillBonusInput[];
+  // Unique skill level (0-indexed). For 잘: lvl<3 → 75/50/25, lvl===3 → 80/55/30
+  uniqueSkillLevel?: number;
 }
 
 export async function calculateHeroStats(input: CalcInput): Promise<CalculatedStats | null> {
-  const { jobName, level, seeds, equipmentSlots, hasRangedWeapon, totalElementPoints, skillBonusInputs, skillInputs } = input;
+  const { jobName, level, seeds, equipmentSlots, hasRangedWeapon, totalElementPoints, skillBonusInputs, skillInputs, uniqueSkillLevel } = input;
   if (!jobName || !level) return null;
 
   const statsData = await lookupHeroStats(jobName, level);
@@ -315,25 +317,24 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   }
 
   // Berserker: tier-aware thresholds and per-stage ATK/EVA bonuses
+  // 잘 + 고유스킬 4레벨(skillLevel===3) → 80/55/30, 그 외(잘 1~3, 광전사) → 75/50/25
   const isBerserker = jobName === '광전사' || jobName === '잘';
   const berserkerLabel = jobName === '잘' ? '잘' : '광전사';
-  if (isBerserker && d.berserkerAtkPct) {
-    const isT4 = jobName === '잘';
-    const t1 = isT4 ? 80 : 75;
-    const t2 = isT4 ? 55 : 50;
-    const t3 = isT4 ? 30 : 25;
-    detailStats[`${berserkerLabel} - 1단계 (${t2}%<HP≤${t1}%) 공격력 증가%`] = d.berserkerAtkPct;
-    detailStats[`${berserkerLabel} - 2단계 (${t3}%<HP≤${t2}%) 공격력 증가%`] = d.berserkerAtkPct * 2;
-    detailStats[`${berserkerLabel} - 3단계 (HP≤${t3}%) 공격력 증가%`] = d.berserkerAtkPct * 3;
-  }
-  if (isBerserker && d.berserkerEvaPct) {
-    const isT4 = jobName === '잘';
-    const t1 = isT4 ? 80 : 75;
-    const t2 = isT4 ? 55 : 50;
-    const t3 = isT4 ? 30 : 25;
-    detailStats[`${berserkerLabel} - 1단계 (${t2}%<HP≤${t1}%) 회피 증가%`] = d.berserkerEvaPct;
-    detailStats[`${berserkerLabel} - 2단계 (${t3}%<HP≤${t2}%) 회피 증가%`] = d.berserkerEvaPct * 2;
-    detailStats[`${berserkerLabel} - 3단계 (HP≤${t3}%) 회피 증가%`] = d.berserkerEvaPct * 3;
+  if (isBerserker && (d.berserkerAtkPct || d.berserkerEvaPct)) {
+    const isJarlT4 = jobName === '잘' && (uniqueSkillLevel ?? 0) >= 3;
+    const t1 = isJarlT4 ? 80 : 75;
+    const t2 = isJarlT4 ? 55 : 50;
+    const t3 = isJarlT4 ? 30 : 25;
+    if (d.berserkerAtkPct) {
+      detailStats[`${berserkerLabel} - 1단계 (${t2}%<HP≤${t1}%) 공격력 증가%`] = d.berserkerAtkPct;
+      detailStats[`${berserkerLabel} - 2단계 (${t3}%<HP≤${t2}%) 공격력 증가%`] = d.berserkerAtkPct * 2;
+      detailStats[`${berserkerLabel} - 3단계 (HP≤${t3}%) 공격력 증가%`] = d.berserkerAtkPct * 3;
+    }
+    if (d.berserkerEvaPct) {
+      detailStats[`${berserkerLabel} - 1단계 (${t2}%<HP≤${t1}%) 회피 증가%`] = d.berserkerEvaPct;
+      detailStats[`${berserkerLabel} - 2단계 (${t3}%<HP≤${t2}%) 회피 증가%`] = d.berserkerEvaPct * 2;
+      detailStats[`${berserkerLabel} - 3단계 (HP≤${t3}%) 회피 증가%`] = d.berserkerEvaPct * 3;
+    }
   }
 
   return {
