@@ -625,6 +625,26 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
           }
           const clonedEl = doc.querySelector('[data-summary-screenshot]') as HTMLElement | null;
           if (clonedEl) {
+            // Force visible borders + zebra striping for table screenshots
+            const borderColor = colorMode === 'light' ? '#d4d4d8' : '#3f3f55';
+            const zebraBg = colorMode === 'light' ? '#f1f1f4' : '#2a2a3a';
+            clonedEl.querySelectorAll('table').forEach(t => {
+              (t as HTMLElement).style.borderCollapse = 'collapse';
+            });
+            clonedEl.querySelectorAll('thead tr').forEach(tr => {
+              (tr as HTMLElement).style.borderBottom = `2px solid ${borderColor}`;
+            });
+            clonedEl.querySelectorAll('tbody tr').forEach((tr, idx) => {
+              const el = tr as HTMLElement;
+              if (idx > 0) el.style.borderTop = `1px solid ${borderColor}`;
+            });
+            clonedEl.querySelectorAll('td, th').forEach(cell => {
+              const el = cell as HTMLElement;
+              if (el.previousElementSibling) {
+                el.style.borderLeft = `1px solid ${borderColor}`;
+              }
+            });
+
             if (colorMode === 'light') {
               clonedEl.style.backgroundColor = '#ffffff';
               // Replace transparent in gradients with white, remove boxShadow
@@ -639,7 +659,8 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
                   htmlEl.style.boxShadow = 'none';
                 }
               });
-              clonedEl.querySelectorAll('.card-fantasy, table, thead, tbody, tr, td, th').forEach(node => {
+              // Apply white only where bg is unset; preserve element header tints
+              clonedEl.querySelectorAll('.card-fantasy, table, thead, tbody').forEach(node => {
                 const htmlEl = node as HTMLElement;
                 const bg = window.getComputedStyle(htmlEl).backgroundColor;
                 if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
