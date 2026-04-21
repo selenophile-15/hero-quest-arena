@@ -933,6 +933,7 @@ export default function HeroList() {
               <div className="space-y-1 text-xs">
                 {[
                   { icon: STAT_ICON_MAP.power, value: hero.power, suffix: '' },
+                  { icon: STAT_ICON_MAP.airshipPower, value: 0, suffix: '', isAirship: true },
                   { icon: STAT_ICON_MAP.hp, value: hero.hp, suffix: '' },
                   { icon: STAT_ICON_MAP.atk, value: hero.atk, suffix: '' },
                   { icon: STAT_ICON_MAP.def, value: hero.def, suffix: '' },
@@ -944,7 +945,7 @@ export default function HeroList() {
                 ].map((s, i) => (
                   <div key={i} className={`flex items-center gap-2 py-0.5 px-1 ${dimClass(s.value)}`}>
                     <img src={s.icon} alt="" className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm ml-auto tabular-nums">{s.value ? (() => {
+                    <span className="text-sm ml-auto tabular-nums">{(s as any).isAirship ? '-' : (s.value ? (() => {
                       if ((s as any).isCritDmg) return `x${(Number(s.value) / 100).toFixed(1)}`;
                       const v = `${formatNumber(s.value)}${s.suffix}`;
                       if ((s as any).isEvasion && s.value) {
@@ -952,16 +953,12 @@ export default function HeroList() {
                         if (Number(s.value) > cap) return <>{v} <span className="text-xs text-muted-foreground">({cap}%)</span></>;
                       }
                       return v;
-                    })() : '0'}</span>
+                    })() : '0')}</span>
                   </div>
                 ))}
                 <div className="flex items-center gap-2 py-0.5 px-1">
                   <ElementIcon element={isAllElement ? '모든 원소' : hero.element} size={20} />
                   <span className={`text-sm ml-auto tabular-nums ${!hero.elementValue ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue ? formatNumber(hero.elementValue) : '0'}</span>
-                </div>
-                <div className={`flex items-center gap-2 py-0.5 px-1 ${dimClass(0)}`}>
-                  <img src={STAT_ICON_MAP.airshipPower} alt="" className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm ml-auto tabular-nums">-</span>
                 </div>
               </div>
               {hero.seeds && (
