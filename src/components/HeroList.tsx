@@ -255,14 +255,19 @@ export default function HeroList() {
             if (colorMode === 'light') {
               clonedEl.style.backgroundColor = '#ffffff';
             }
-            // Force zebra striping + visible cell borders inline so html2canvas always renders them
-            const zebraBg = colorMode === 'light' ? '#f1f1f4' : '#2a2a3a';
+            // Force zebra striping + visible horizontal borders inline so html2canvas always renders them
+            // Use HSL of current theme primary for header + zebra so they match the active color mode
+            const primaryHsl = (window.getComputedStyle(document.documentElement).getPropertyValue('--primary') || '40 85% 55%').trim();
+            const headerBg = `hsla(${primaryHsl} / 0.07)`;
+            const zebraBg = `hsla(${primaryHsl} / 0.04)`;
             const borderColor = colorMode === 'light' ? '#d4d4d8' : '#3f3f55';
             clonedEl.querySelectorAll('table').forEach(t => {
               (t as HTMLElement).style.borderCollapse = 'collapse';
             });
             clonedEl.querySelectorAll('thead tr').forEach(tr => {
-              (tr as HTMLElement).style.borderBottom = `2px solid ${borderColor}`;
+              const el = tr as HTMLElement;
+              el.style.borderBottom = `2px solid ${borderColor}`;
+              el.style.backgroundColor = headerBg;
             });
             clonedEl.querySelectorAll('tbody tr.table-zebra-row').forEach((tr, idx) => {
               const el = tr as HTMLElement;
@@ -272,10 +277,9 @@ export default function HeroList() {
             clonedEl.querySelectorAll('td, th').forEach(cell => {
               const el = cell as HTMLElement;
               el.style.verticalAlign = 'middle';
-              // Add right border for cell separation (skip last cell of row by checking nextSibling)
-              if (el.nextElementSibling) {
-                el.style.borderRight = `1px solid ${borderColor}`;
-              }
+              // Remove any vertical cell borders for clean horizontal-only look
+              el.style.borderRight = 'none';
+              el.style.borderLeft = 'none';
             });
             clonedEl.querySelectorAll('img, span, svg').forEach(el => {
               const s = window.getComputedStyle(el);
