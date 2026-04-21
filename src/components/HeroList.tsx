@@ -1590,7 +1590,7 @@ export default function HeroList() {
                 <tr className="border-b border-border">
                   {activeCols.map(col => (
                     <th key={col.key} onClick={() => handleSort(col.key)}
-                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center ${
+                      className={`px-3 py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/70 text-center border-r border-border/50 last:border-r-0 ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
                       } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[80px]' : 'min-w-[150px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
@@ -1653,10 +1653,10 @@ export default function HeroList() {
                       >
                       {activeCols.map(col => {
                           if (isExpanded && !EXPANDED_VISIBLE_KEYS.has(col.key)) {
-                            return <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
+                            return <td key={col.key} className="px-3 py-1 text-center border-r border-border/40 last:border-r-0" style={{ verticalAlign: 'middle' }}><div className={captureMode ? '' : 'h-[36px]'} /></td>;
                           }
                           return (
-                            <td key={col.key} className="px-3 py-1 text-center" style={{ verticalAlign: 'middle' }}>
+                            <td key={col.key} className="px-3 py-1 text-center border-r border-border/40 last:border-r-0" style={{ verticalAlign: 'middle' }}>
                               {captureMode ? (
                                 renderCell(hero, col.key, true)
                               ) : (
