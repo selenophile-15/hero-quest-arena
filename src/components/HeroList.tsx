@@ -255,8 +255,27 @@ export default function HeroList() {
             if (colorMode === 'light') {
               clonedEl.style.backgroundColor = '#ffffff';
             }
+            // Force zebra striping + visible cell borders inline so html2canvas always renders them
+            const zebraBg = colorMode === 'light' ? '#f1f1f4' : '#2a2a3a';
+            const borderColor = colorMode === 'light' ? '#d4d4d8' : '#3f3f55';
+            clonedEl.querySelectorAll('table').forEach(t => {
+              (t as HTMLElement).style.borderCollapse = 'collapse';
+            });
+            clonedEl.querySelectorAll('thead tr').forEach(tr => {
+              (tr as HTMLElement).style.borderBottom = `2px solid ${borderColor}`;
+            });
+            clonedEl.querySelectorAll('tbody tr.table-zebra-row').forEach((tr, idx) => {
+              const el = tr as HTMLElement;
+              if (idx % 2 === 1) el.style.backgroundColor = zebraBg;
+              el.style.borderBottom = `1px solid ${borderColor}`;
+            });
             clonedEl.querySelectorAll('td, th').forEach(cell => {
-              (cell as HTMLElement).style.verticalAlign = 'middle';
+              const el = cell as HTMLElement;
+              el.style.verticalAlign = 'middle';
+              // Add right border for cell separation (skip last cell of row by checking nextSibling)
+              if (el.nextElementSibling) {
+                el.style.borderRight = `1px solid ${borderColor}`;
+              }
             });
             clonedEl.querySelectorAll('img, span, svg').forEach(el => {
               const s = window.getComputedStyle(el);
@@ -276,7 +295,6 @@ export default function HeroList() {
               clonedEl.querySelectorAll('*').forEach(el => {
                 const htmlEl = el as HTMLElement;
                 const bg = htmlEl.style.background || '';
-                const computedBg = window.getComputedStyle(htmlEl).background || '';
                 // Replace transparent in radial-gradient with #ffffff
                 if (bg.includes('transparent')) {
                   htmlEl.style.background = bg.replace(/transparent/g, '#ffffff');
@@ -287,7 +305,8 @@ export default function HeroList() {
                   htmlEl.style.boxShadow = 'none';
                 }
               });
-              clonedEl.querySelectorAll('.card-fantasy, .album-card-front, .album-card-back, table, thead, tbody, tr, td, th').forEach(el => {
+              // Apply white background only where backgroundColor is unset/transparent — preserve zebra
+              clonedEl.querySelectorAll('.card-fantasy, .album-card-front, .album-card-back, table, thead, tbody').forEach(el => {
                 const htmlEl = el as HTMLElement;
                 const bg = window.getComputedStyle(htmlEl).backgroundColor;
                 if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
