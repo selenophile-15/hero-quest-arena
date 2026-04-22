@@ -171,6 +171,19 @@ export interface MiniBossResult {
   winMaxRounds?: number;
   loseMinRounds?: number;
   loseMaxRounds?: number;
+  // Party-level aggregates from this miniboss bucket
+  partyDmgDealt?: PartyAggregate;
+  partyDmgPerTurn?: PartyAggregate;
+  partyDmgTaken?: PartyAggregate;
+  partyDmgTakenPerTurn?: PartyAggregate;
+  winPartyDmgDealt?: PartyAggregate;
+  winPartyDmgPerTurn?: PartyAggregate;
+  winPartyDmgTaken?: PartyAggregate;
+  winPartyDmgTakenPerTurn?: PartyAggregate;
+  losePartyDmgDealt?: PartyAggregate;
+  losePartyDmgPerTurn?: PartyAggregate;
+  losePartyDmgTaken?: PartyAggregate;
+  losePartyDmgTakenPerTurn?: PartyAggregate;
 }
 
 export interface SimulationResult {
