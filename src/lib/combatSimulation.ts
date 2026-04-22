@@ -1077,6 +1077,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const singleHitsTaken = new Float64Array(numHeroes);
     const simTargeted = new Float64Array(numHeroes);
     const simEvaded = new Float64Array(numHeroes);
+    const simAoeDmgTaken = new Float64Array(numHeroes);
+    const simSingleDmgTaken = new Float64Array(numHeroes);
+    const simLordSingleSaved = new Float64Array(numHeroes);
+    const simLordAoeSaved = new Float64Array(numHeroes);
+    const simLordAbsorbedSingle = new Float64Array(numHeroes);
+    const simLordAbsorbedAoe = new Float64Array(numHeroes);
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
