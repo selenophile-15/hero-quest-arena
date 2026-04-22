@@ -1713,8 +1713,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       totalHealingAvg: totalHealing[i] / actualSimCount,
       healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
       lordProtectionAvg: lordProtections[i] / actualSimCount,
+      lordProtectedSingleAvg: lordProtectedSingle[i] / actualSimCount,
+      lordProtectedAoeAvg: lordProtectedAoe[i] / actualSimCount,
+      lordAbsorbedSingleDmg: lordAbsorbedSingle[i] / actualSimCount,
+      lordAbsorbedAoeDmg: lordAbsorbedAoe[i] / actualSimCount,
       critSurvivalCount: critSurvivals[i] / actualSimCount,
+      critSurvivalChance: Math.round((heroArmadillo[i] || (heroIsCleric[i] || heroIsBishop[i] ? 100 : 0)) * 10) / 10,
       tankingRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
+      singleTargetRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
+      minDamageTaken: dmgTakenMin[i] >= 1e9 ? 0 : Math.round(dmgTakenMin[i]),
+      maxDamageTaken: Math.round(dmgTakenMax[i]),
+      aoeDmgTakenTotal: aoeDmgTakenAccum[i] / actualSimCount,
+      singleDmgTakenTotal: singleDmgTakenAccum[i] / actualSimCount,
     };
   });
 
