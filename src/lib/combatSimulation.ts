@@ -1798,6 +1798,66 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       min: loseRoundsMin >= 1000 ? 0 : loseRoundsMin,
       max: loseRoundsMax,
     } : undefined,
+    partyDmgDealt: partySimCount > 0 ? {
+      min: partyDmgMin === Infinity ? 0 : Math.round(partyDmgMin),
+      avg: Math.round(partyDmgSum / partySimCount),
+      max: Math.round(partyDmgMax),
+    } : undefined,
+    partyDmgPerTurn: partySimCount > 0 ? {
+      min: partyDmgPerTurnMin === Infinity ? 0 : Math.round(partyDmgPerTurnMin),
+      avg: Math.round(partyDmgPerTurnSum / partySimCount),
+      max: Math.round(partyDmgPerTurnMax),
+    } : undefined,
+    partyDmgTaken: partySimCount > 0 ? {
+      min: partyTakenMin === Infinity ? 0 : Math.round(partyTakenMin),
+      avg: Math.round(partyTakenSum / partySimCount),
+      max: Math.round(partyTakenMax),
+    } : undefined,
+    partyDmgTakenPerTurn: partySimCount > 0 ? {
+      min: partyTakenPerTurnMin === Infinity ? 0 : Math.round(partyTakenPerTurnMin),
+      avg: Math.round(partyTakenPerTurnSum / partySimCount),
+      max: Math.round(partyTakenPerTurnMax),
+    } : undefined,
+    winPartyDmgDealt: winPartyCount > 0 ? {
+      min: winPartyDmgMin === Infinity ? 0 : Math.round(winPartyDmgMin),
+      avg: Math.round(winPartyDmgSum / winPartyCount),
+      max: Math.round(winPartyDmgMax),
+    } : undefined,
+    winPartyDmgPerTurn: winPartyCount > 0 ? {
+      min: winPartyDmgPerTurnMin === Infinity ? 0 : Math.round(winPartyDmgPerTurnMin),
+      avg: Math.round(winPartyDmgPerTurnSum / winPartyCount),
+      max: Math.round(winPartyDmgPerTurnMax),
+    } : undefined,
+    winPartyDmgTaken: winPartyCount > 0 ? {
+      min: winPartyTakenMin === Infinity ? 0 : Math.round(winPartyTakenMin),
+      avg: Math.round(winPartyTakenSum / winPartyCount),
+      max: Math.round(winPartyTakenMax),
+    } : undefined,
+    winPartyDmgTakenPerTurn: winPartyCount > 0 ? {
+      min: winPartyTakenPerTurnMin === Infinity ? 0 : Math.round(winPartyTakenPerTurnMin),
+      avg: Math.round(winPartyTakenPerTurnSum / winPartyCount),
+      max: Math.round(winPartyTakenPerTurnMax),
+    } : undefined,
+    losePartyDmgDealt: losePartyCount > 0 ? {
+      min: losePartyDmgMin === Infinity ? 0 : Math.round(losePartyDmgMin),
+      avg: Math.round(losePartyDmgSum / losePartyCount),
+      max: Math.round(losePartyDmgMax),
+    } : undefined,
+    losePartyDmgPerTurn: losePartyCount > 0 ? {
+      min: losePartyDmgPerTurnMin === Infinity ? 0 : Math.round(losePartyDmgPerTurnMin),
+      avg: Math.round(losePartyDmgPerTurnSum / losePartyCount),
+      max: Math.round(losePartyDmgPerTurnMax),
+    } : undefined,
+    losePartyDmgTaken: losePartyCount > 0 ? {
+      min: losePartyTakenMin === Infinity ? 0 : Math.round(losePartyTakenMin),
+      avg: Math.round(losePartyTakenSum / losePartyCount),
+      max: Math.round(losePartyTakenMax),
+    } : undefined,
+    losePartyDmgTakenPerTurn: losePartyCount > 0 ? {
+      min: losePartyTakenPerTurnMin === Infinity ? 0 : Math.round(losePartyTakenPerTurnMin),
+      avg: Math.round(losePartyTakenPerTurnSum / losePartyCount),
+      max: Math.round(losePartyTakenPerTurnMax),
+    } : undefined,
   };
 }
 
