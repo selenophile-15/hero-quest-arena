@@ -195,6 +195,20 @@ export interface SimulationResult {
   // Win/loss round breakdown
   winRounds?: { avg: number; min: number; max: number };
   loseRounds?: { avg: number; min: number; max: number };
+  // Party-level aggregates: per-sim party totals (sum across heroes per sim → distribution)
+  partyDmgDealt?: PartyAggregate;
+  partyDmgPerTurn?: PartyAggregate;
+  partyDmgTaken?: PartyAggregate;
+  partyDmgTakenPerTurn?: PartyAggregate;
+  // Win/lose bucketed party aggregates
+  winPartyDmgDealt?: PartyAggregate;
+  winPartyDmgPerTurn?: PartyAggregate;
+  winPartyDmgTaken?: PartyAggregate;
+  winPartyDmgTakenPerTurn?: PartyAggregate;
+  losePartyDmgDealt?: PartyAggregate;
+  losePartyDmgPerTurn?: PartyAggregate;
+  losePartyDmgTaken?: PartyAggregate;
+  losePartyDmgTakenPerTurn?: PartyAggregate;
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
