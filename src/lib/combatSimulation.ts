@@ -981,6 +981,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const timesEvaded = new Float64Array(numHeroes);
   const totalHealing = new Float64Array(numHeroes);
   const lordProtections = new Float64Array(numHeroes);
+  const lordProtectedSingle = new Float64Array(numHeroes);
+  const lordProtectedAoe = new Float64Array(numHeroes);
+  const lordAbsorbedSingle = new Float64Array(numHeroes);
+  const lordAbsorbedAoe = new Float64Array(numHeroes);
   const critSurvivals = new Float64Array(numHeroes);
   const berserkerBelowT1 = new Float64Array(numHeroes);
   const berserkerBelowT2 = new Float64Array(numHeroes);
@@ -989,6 +993,31 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const totalDmgTakenAccum = new Float64Array(numHeroes);
   const totalTimesHitAccum = new Float64Array(numHeroes);
   const singleTargetHitsTotal = new Float64Array(numHeroes);
+  const aoeDmgTakenAccum = new Float64Array(numHeroes);
+  const singleDmgTakenAccum = new Float64Array(numHeroes);
+  const dmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const dmgTakenMax = new Float64Array(numHeroes);
+
+  // Per-sim party-level aggregates (sum across heroes per sim → distribution)
+  // We'll track sums/min/max across sims for: party damage dealt, party damage taken
+  let partyDmgSum = 0, partyDmgSqSum = 0;
+  let partyDmgMin = Infinity, partyDmgMax = 0;
+  let partyTakenSum = 0;
+  let partyTakenMin = Infinity, partyTakenMax = 0;
+  let partyDmgPerTurnSum = 0, partyDmgPerTurnMin = Infinity, partyDmgPerTurnMax = 0;
+  let partyTakenPerTurnSum = 0, partyTakenPerTurnMin = Infinity, partyTakenPerTurnMax = 0;
+  let partySimCount = 0;
+  // Win/lose bucketed party aggregates
+  let winPartyDmgSum = 0, winPartyDmgMin = Infinity, winPartyDmgMax = 0;
+  let winPartyTakenSum = 0, winPartyTakenMin = Infinity, winPartyTakenMax = 0;
+  let winPartyDmgPerTurnSum = 0, winPartyDmgPerTurnMin = Infinity, winPartyDmgPerTurnMax = 0;
+  let winPartyTakenPerTurnSum = 0, winPartyTakenPerTurnMin = Infinity, winPartyTakenPerTurnMax = 0;
+  let winPartyCount = 0;
+  let losePartyDmgSum = 0, losePartyDmgMin = Infinity, losePartyDmgMax = 0;
+  let losePartyTakenSum = 0, losePartyTakenMin = Infinity, losePartyTakenMax = 0;
+  let losePartyDmgPerTurnSum = 0, losePartyDmgPerTurnMin = Infinity, losePartyDmgPerTurnMax = 0;
+  let losePartyTakenPerTurnSum = 0, losePartyTakenPerTurnMin = Infinity, losePartyTakenPerTurnMax = 0;
+  let losePartyCount = 0;
 
   // ─── Win/Lose bucket accumulators (per-hero, per-outcome) ───
   const winDmgDealt = new Float64Array(numHeroes);
