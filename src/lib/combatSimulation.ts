@@ -86,6 +86,12 @@ export interface HeroSimResult {
   totalDamageTakenAvg: number;
   avgDamageTakenPerHit: number;
   avgDamageTakenPerTurn: number; // Average damage taken per turn
+  // Min/Max total damage taken across sims
+  minDamageTaken: number;
+  maxDamageTaken: number;
+  // AoE-only / single-only damage taken (avg per sim)
+  aoeDmgTakenTotal: number;
+  singleDmgTakenTotal: number;
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
@@ -109,6 +115,8 @@ export interface HeroSimResult {
   // Targeting
   targetingRate: number;         // % of times targeted (threat-based)
   evasionRate: number;           // % of attacks evaded among targeted
+  // Single-target targeting rate (% of single-target hits this hero received)
+  singleTargetRate: number;
   // Monster crit chance against this hero (%)
   monsterCritChance: number;
   // Berserker thresholds
@@ -124,9 +132,22 @@ export interface HeroSimResult {
   healPerTurn: number;
   // Lord protection
   lordProtectionAvg: number;
+  // Lord protection split by attack type (avg per sim)
+  lordProtectedSingleAvg: number;
+  lordProtectedAoeAvg: number;
+  // Damage absorbed by lord when protecting this hero (avg per sim, single & aoe)
+  lordAbsorbedSingleDmg: number;
+  lordAbsorbedAoeDmg: number;
   // Crit survival (armadillo, cleric/bishop)
-  critSurvivalCount: number;
+  critSurvivalCount: number;     // avg applied count per sim
+  critSurvivalChance: number;    // % chance (configured)
   tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
+}
+
+export interface PartyAggregate {
+  min: number;
+  avg: number;
+  max: number;
 }
 
 export interface MiniBossResult {
