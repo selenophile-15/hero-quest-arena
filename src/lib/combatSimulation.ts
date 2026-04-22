@@ -1445,6 +1445,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
 
       if (!contFight) {
+        // Per-sim party totals
+        let simPartyDmg = 0;
+        let simPartyTaken = 0;
         for (let i = 0; i < numHeroes; i++) {
           damageDealtAvg[i] += damageFight[i];
           normalDmgDealtAccum[i] += normalDmgFight[i];
@@ -1458,6 +1461,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
           singleTargetHitsTotal[i] += singleHitsTaken[i];
+          aoeDmgTakenAccum[i] += simAoeDmgTaken[i];
+          singleDmgTakenAccum[i] += simSingleDmgTaken[i];
+          if (simDmgTaken[i] > 0) {
+            dmgTakenMin[i] = Math.min(dmgTakenMin[i], simDmgTaken[i]);
+          }
+          dmgTakenMax[i] = Math.max(dmgTakenMax[i], simDmgTaken[i]);
+          lordProtectedSingle[i] += simLordSingleSaved[i];
+          lordProtectedAoe[i] += simLordAoeSaved[i];
+          lordAbsorbedSingle[i] += simLordAbsorbedSingle[i];
+          lordAbsorbedAoe[i] += simLordAbsorbedAoe[i];
+
+          simPartyDmg += damageFight[i];
+          simPartyTaken += simDmgTaken[i];
 
           // Bucket per-fight values into win or lose
           if (wasWin) {
@@ -1485,6 +1501,51 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseTargeted[i] += simTargeted[i];
             loseEvaded[i] += simEvaded[i];
           }
+        }
+        // Aggregate party-per-sim distributions
+        const simPartyDmgPerTurn = round > 0 ? simPartyDmg / round : 0;
+        const simPartyTakenPerTurn = round > 0 ? simPartyTaken / round : 0;
+        partyDmgSum += simPartyDmg;
+        if (simPartyDmg < partyDmgMin) partyDmgMin = simPartyDmg;
+        if (simPartyDmg > partyDmgMax) partyDmgMax = simPartyDmg;
+        partyDmgPerTurnSum += simPartyDmgPerTurn;
+        if (simPartyDmgPerTurn < partyDmgPerTurnMin) partyDmgPerTurnMin = simPartyDmgPerTurn;
+        if (simPartyDmgPerTurn > partyDmgPerTurnMax) partyDmgPerTurnMax = simPartyDmgPerTurn;
+        partyTakenSum += simPartyTaken;
+        if (simPartyTaken < partyTakenMin) partyTakenMin = simPartyTaken;
+        if (simPartyTaken > partyTakenMax) partyTakenMax = simPartyTaken;
+        partyTakenPerTurnSum += simPartyTakenPerTurn;
+        if (simPartyTakenPerTurn < partyTakenPerTurnMin) partyTakenPerTurnMin = simPartyTakenPerTurn;
+        if (simPartyTakenPerTurn > partyTakenPerTurnMax) partyTakenPerTurnMax = simPartyTakenPerTurn;
+        partySimCount++;
+        if (wasWin) {
+          winPartyDmgSum += simPartyDmg;
+          if (simPartyDmg < winPartyDmgMin) winPartyDmgMin = simPartyDmg;
+          if (simPartyDmg > winPartyDmgMax) winPartyDmgMax = simPartyDmg;
+          winPartyDmgPerTurnSum += simPartyDmgPerTurn;
+          if (simPartyDmgPerTurn < winPartyDmgPerTurnMin) winPartyDmgPerTurnMin = simPartyDmgPerTurn;
+          if (simPartyDmgPerTurn > winPartyDmgPerTurnMax) winPartyDmgPerTurnMax = simPartyDmgPerTurn;
+          winPartyTakenSum += simPartyTaken;
+          if (simPartyTaken < winPartyTakenMin) winPartyTakenMin = simPartyTaken;
+          if (simPartyTaken > winPartyTakenMax) winPartyTakenMax = simPartyTaken;
+          winPartyTakenPerTurnSum += simPartyTakenPerTurn;
+          if (simPartyTakenPerTurn < winPartyTakenPerTurnMin) winPartyTakenPerTurnMin = simPartyTakenPerTurn;
+          if (simPartyTakenPerTurn > winPartyTakenPerTurnMax) winPartyTakenPerTurnMax = simPartyTakenPerTurn;
+          winPartyCount++;
+        } else if (wasLose) {
+          losePartyDmgSum += simPartyDmg;
+          if (simPartyDmg < losePartyDmgMin) losePartyDmgMin = simPartyDmg;
+          if (simPartyDmg > losePartyDmgMax) losePartyDmgMax = simPartyDmg;
+          losePartyDmgPerTurnSum += simPartyDmgPerTurn;
+          if (simPartyDmgPerTurn < losePartyDmgPerTurnMin) losePartyDmgPerTurnMin = simPartyDmgPerTurn;
+          if (simPartyDmgPerTurn > losePartyDmgPerTurnMax) losePartyDmgPerTurnMax = simPartyDmgPerTurn;
+          losePartyTakenSum += simPartyTaken;
+          if (simPartyTaken < losePartyTakenMin) losePartyTakenMin = simPartyTaken;
+          if (simPartyTaken > losePartyTakenMax) losePartyTakenMax = simPartyTaken;
+          losePartyTakenPerTurnSum += simPartyTakenPerTurn;
+          if (simPartyTakenPerTurn < losePartyTakenPerTurnMin) losePartyTakenPerTurnMin = simPartyTakenPerTurn;
+          if (simPartyTakenPerTurn > losePartyTakenPerTurnMax) losePartyTakenPerTurnMax = simPartyTakenPerTurn;
+          losePartyCount++;
         }
       }
 
