@@ -1942,17 +1942,22 @@ export default function QuestSimulation() {
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                        // Party totals
-                        const partyAvg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                        const partyMin = displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
-                        const partyMax = displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
-                        const partyAvgPerTurn = displayResults.reduce((s, hr) => s + (hr.avgDamagePerTurn || 0), 0);
-                        // Per-turn min/max derived from per-turn-to-total ratio
-                        const partyMinPerTurn = displayResults.reduce((s, hr) => {
+                        // Party totals — use per-sim party distribution from engine when available,
+                        // bucketed by current results tab. Fallback to summed individual values.
+                        const pAgg = mainResultsTab === 'win'
+                          ? { dmg: simResult.winPartyDmgDealt, perTurn: simResult.winPartyDmgPerTurn }
+                          : mainResultsTab === 'lose'
+                          ? { dmg: simResult.losePartyDmgDealt, perTurn: simResult.losePartyDmgPerTurn }
+                          : { dmg: simResult.partyDmgDealt, perTurn: simResult.partyDmgPerTurn };
+                        const partyAvg = pAgg.dmg?.avg ?? displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
+                        const partyMin = pAgg.dmg?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
+                        const partyMax = pAgg.dmg?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
+                        const partyAvgPerTurn = pAgg.perTurn?.avg ?? displayResults.reduce((s, hr) => s + (hr.avgDamagePerTurn || 0), 0);
+                        const partyMinPerTurn = pAgg.perTurn?.min ?? displayResults.reduce((s, hr) => {
                           const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
                           return s + (hr.minDamageDealt || 0) * ratio;
                         }, 0);
-                        const partyMaxPerTurn = displayResults.reduce((s, hr) => {
+                        const partyMaxPerTurn = pAgg.perTurn?.max ?? displayResults.reduce((s, hr) => {
                           const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
                           return s + (hr.maxDamageDealt || 0) * ratio;
                         }, 0);
