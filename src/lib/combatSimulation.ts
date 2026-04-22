@@ -1182,6 +1182,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             const dmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio);
             hp[i] -= dmg;
             simDmgTaken[i] += dmg;
+            simAoeDmgTaken[i] += dmg;
             simTimesHit[i]++;
 
             if (hp[i] <= 0) {
@@ -1191,8 +1192,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
                   lordSave = false;
                   lordProtections[i]++;
+                  simLordAoeSaved[i]++;
                   hp[i] += dmg; // Restore this hero
                   const lordDmg = Math.ceil(damageTaken[lordHero] * mobAoeDmgRatio);
+                  simLordAbsorbedAoe[lordHero] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (hp[lordHero] <= 0) {
                     if (!handleFatalBlow(lordHero)) {
@@ -1244,6 +1247,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const dmg = isCrit ? critDamageTaken[target] : damageTaken[target];
           hp[target] -= dmg;
           simDmgTaken[target] += dmg;
+          simSingleDmgTaken[target] += dmg;
           simTimesHit[target]++;
           singleHitsTaken[target]++;
 
@@ -1253,9 +1257,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
                 lordProtections[target]++;
+                simLordSingleSaved[target]++;
                 singleHitsTaken[target]--;
                 singleHitsTaken[lordHero]++;
                 hp[target] += dmg;
+                simLordAbsorbedSingle[lordHero] += damageTaken[lordHero];
                 hp[lordHero] -= damageTaken[lordHero];
                 if (hp[lordHero] <= 0) {
                   if (!handleFatalBlow(lordHero)) {
