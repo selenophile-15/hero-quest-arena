@@ -86,6 +86,12 @@ export interface HeroSimResult {
   totalDamageTakenAvg: number;
   avgDamageTakenPerHit: number;
   avgDamageTakenPerTurn: number; // Average damage taken per turn
+  // Min/Max total damage taken across sims
+  minDamageTaken?: number;
+  maxDamageTaken?: number;
+  // AoE-only / single-only damage taken (avg per sim)
+  aoeDmgTakenTotal?: number;
+  singleDmgTakenTotal?: number;
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
@@ -109,6 +115,8 @@ export interface HeroSimResult {
   // Targeting
   targetingRate: number;         // % of times targeted (threat-based)
   evasionRate: number;           // % of attacks evaded among targeted
+  // Single-target targeting rate (% of single-target hits this hero received)
+  singleTargetRate?: number;
   // Monster crit chance against this hero (%)
   monsterCritChance: number;
   // Berserker thresholds
@@ -124,9 +132,22 @@ export interface HeroSimResult {
   healPerTurn: number;
   // Lord protection
   lordProtectionAvg: number;
+  // Lord protection split by attack type (avg per sim)
+  lordProtectedSingleAvg?: number;
+  lordProtectedAoeAvg?: number;
+  // Damage absorbed by lord when protecting this hero (avg per sim, single & aoe)
+  lordAbsorbedSingleDmg?: number;
+  lordAbsorbedAoeDmg?: number;
   // Crit survival (armadillo, cleric/bishop)
-  critSurvivalCount: number;
+  critSurvivalCount: number;     // avg applied count per sim
+  critSurvivalChance?: number;   // % chance (configured)
   tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
+}
+
+export interface PartyAggregate {
+  min: number;
+  avg: number;
+  max: number;
 }
 
 export interface MiniBossResult {
@@ -150,6 +171,19 @@ export interface MiniBossResult {
   winMaxRounds?: number;
   loseMinRounds?: number;
   loseMaxRounds?: number;
+  // Party-level aggregates from this miniboss bucket
+  partyDmgDealt?: PartyAggregate;
+  partyDmgPerTurn?: PartyAggregate;
+  partyDmgTaken?: PartyAggregate;
+  partyDmgTakenPerTurn?: PartyAggregate;
+  winPartyDmgDealt?: PartyAggregate;
+  winPartyDmgPerTurn?: PartyAggregate;
+  winPartyDmgTaken?: PartyAggregate;
+  winPartyDmgTakenPerTurn?: PartyAggregate;
+  losePartyDmgDealt?: PartyAggregate;
+  losePartyDmgPerTurn?: PartyAggregate;
+  losePartyDmgTaken?: PartyAggregate;
+  losePartyDmgTakenPerTurn?: PartyAggregate;
 }
 
 export interface SimulationResult {
@@ -174,6 +208,20 @@ export interface SimulationResult {
   // Win/loss round breakdown
   winRounds?: { avg: number; min: number; max: number };
   loseRounds?: { avg: number; min: number; max: number };
+  // Party-level aggregates: per-sim party totals (sum across heroes per sim → distribution)
+  partyDmgDealt?: PartyAggregate;
+  partyDmgPerTurn?: PartyAggregate;
+  partyDmgTaken?: PartyAggregate;
+  partyDmgTakenPerTurn?: PartyAggregate;
+  // Win/lose bucketed party aggregates
+  winPartyDmgDealt?: PartyAggregate;
+  winPartyDmgPerTurn?: PartyAggregate;
+  winPartyDmgTaken?: PartyAggregate;
+  winPartyDmgTakenPerTurn?: PartyAggregate;
+  losePartyDmgDealt?: PartyAggregate;
+  losePartyDmgPerTurn?: PartyAggregate;
+  losePartyDmgTaken?: PartyAggregate;
+  losePartyDmgTakenPerTurn?: PartyAggregate;
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
@@ -933,6 +981,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const timesEvaded = new Float64Array(numHeroes);
   const totalHealing = new Float64Array(numHeroes);
   const lordProtections = new Float64Array(numHeroes);
+  const lordProtectedSingle = new Float64Array(numHeroes);
+  const lordProtectedAoe = new Float64Array(numHeroes);
+  const lordAbsorbedSingle = new Float64Array(numHeroes);
+  const lordAbsorbedAoe = new Float64Array(numHeroes);
   const critSurvivals = new Float64Array(numHeroes);
   const berserkerBelowT1 = new Float64Array(numHeroes);
   const berserkerBelowT2 = new Float64Array(numHeroes);
@@ -941,6 +993,31 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const totalDmgTakenAccum = new Float64Array(numHeroes);
   const totalTimesHitAccum = new Float64Array(numHeroes);
   const singleTargetHitsTotal = new Float64Array(numHeroes);
+  const aoeDmgTakenAccum = new Float64Array(numHeroes);
+  const singleDmgTakenAccum = new Float64Array(numHeroes);
+  const dmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const dmgTakenMax = new Float64Array(numHeroes);
+
+  // Per-sim party-level aggregates (sum across heroes per sim → distribution)
+  // We'll track sums/min/max across sims for: party damage dealt, party damage taken
+  let partyDmgSum = 0, partyDmgSqSum = 0;
+  let partyDmgMin = Infinity, partyDmgMax = 0;
+  let partyTakenSum = 0;
+  let partyTakenMin = Infinity, partyTakenMax = 0;
+  let partyDmgPerTurnSum = 0, partyDmgPerTurnMin = Infinity, partyDmgPerTurnMax = 0;
+  let partyTakenPerTurnSum = 0, partyTakenPerTurnMin = Infinity, partyTakenPerTurnMax = 0;
+  let partySimCount = 0;
+  // Win/lose bucketed party aggregates
+  let winPartyDmgSum = 0, winPartyDmgMin = Infinity, winPartyDmgMax = 0;
+  let winPartyTakenSum = 0, winPartyTakenMin = Infinity, winPartyTakenMax = 0;
+  let winPartyDmgPerTurnSum = 0, winPartyDmgPerTurnMin = Infinity, winPartyDmgPerTurnMax = 0;
+  let winPartyTakenPerTurnSum = 0, winPartyTakenPerTurnMin = Infinity, winPartyTakenPerTurnMax = 0;
+  let winPartyCount = 0;
+  let losePartyDmgSum = 0, losePartyDmgMin = Infinity, losePartyDmgMax = 0;
+  let losePartyTakenSum = 0, losePartyTakenMin = Infinity, losePartyTakenMax = 0;
+  let losePartyDmgPerTurnSum = 0, losePartyDmgPerTurnMin = Infinity, losePartyDmgPerTurnMax = 0;
+  let losePartyTakenPerTurnSum = 0, losePartyTakenPerTurnMin = Infinity, losePartyTakenPerTurnMax = 0;
+  let losePartyCount = 0;
 
   // ─── Win/Lose bucket accumulators (per-hero, per-outcome) ───
   const winDmgDealt = new Float64Array(numHeroes);
@@ -1000,6 +1077,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const singleHitsTaken = new Float64Array(numHeroes);
     const simTargeted = new Float64Array(numHeroes);
     const simEvaded = new Float64Array(numHeroes);
+    const simAoeDmgTaken = new Float64Array(numHeroes);
+    const simSingleDmgTaken = new Float64Array(numHeroes);
+    const simLordSingleSaved = new Float64Array(numHeroes);
+    const simLordAoeSaved = new Float64Array(numHeroes);
+    const simLordAbsorbedSingle = new Float64Array(numHeroes);
+    const simLordAbsorbedAoe = new Float64Array(numHeroes);
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
@@ -1099,6 +1182,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             const dmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio);
             hp[i] -= dmg;
             simDmgTaken[i] += dmg;
+            simAoeDmgTaken[i] += dmg;
             simTimesHit[i]++;
 
             if (hp[i] <= 0) {
@@ -1108,8 +1192,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
                   lordSave = false;
                   lordProtections[i]++;
+                  simLordAoeSaved[i]++;
                   hp[i] += dmg; // Restore this hero
                   const lordDmg = Math.ceil(damageTaken[lordHero] * mobAoeDmgRatio);
+                  simLordAbsorbedAoe[lordHero] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (hp[lordHero] <= 0) {
                     if (!handleFatalBlow(lordHero)) {
@@ -1161,6 +1247,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const dmg = isCrit ? critDamageTaken[target] : damageTaken[target];
           hp[target] -= dmg;
           simDmgTaken[target] += dmg;
+          simSingleDmgTaken[target] += dmg;
           simTimesHit[target]++;
           singleHitsTaken[target]++;
 
@@ -1170,9 +1257,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
                 lordProtections[target]++;
+                simLordSingleSaved[target]++;
                 singleHitsTaken[target]--;
                 singleHitsTaken[lordHero]++;
                 hp[target] += dmg;
+                simLordAbsorbedSingle[lordHero] += damageTaken[lordHero];
                 hp[lordHero] -= damageTaken[lordHero];
                 if (hp[lordHero] <= 0) {
                   if (!handleFatalBlow(lordHero)) {
@@ -1356,6 +1445,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
 
       if (!contFight) {
+        // Per-sim party totals
+        let simPartyDmg = 0;
+        let simPartyTaken = 0;
         for (let i = 0; i < numHeroes; i++) {
           damageDealtAvg[i] += damageFight[i];
           normalDmgDealtAccum[i] += normalDmgFight[i];
@@ -1369,6 +1461,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
           singleTargetHitsTotal[i] += singleHitsTaken[i];
+          aoeDmgTakenAccum[i] += simAoeDmgTaken[i];
+          singleDmgTakenAccum[i] += simSingleDmgTaken[i];
+          if (simDmgTaken[i] > 0) {
+            dmgTakenMin[i] = Math.min(dmgTakenMin[i], simDmgTaken[i]);
+          }
+          dmgTakenMax[i] = Math.max(dmgTakenMax[i], simDmgTaken[i]);
+          lordProtectedSingle[i] += simLordSingleSaved[i];
+          lordProtectedAoe[i] += simLordAoeSaved[i];
+          lordAbsorbedSingle[i] += simLordAbsorbedSingle[i];
+          lordAbsorbedAoe[i] += simLordAbsorbedAoe[i];
+
+          simPartyDmg += damageFight[i];
+          simPartyTaken += simDmgTaken[i];
 
           // Bucket per-fight values into win or lose
           if (wasWin) {
@@ -1396,6 +1501,51 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseTargeted[i] += simTargeted[i];
             loseEvaded[i] += simEvaded[i];
           }
+        }
+        // Aggregate party-per-sim distributions
+        const simPartyDmgPerTurn = round > 0 ? simPartyDmg / round : 0;
+        const simPartyTakenPerTurn = round > 0 ? simPartyTaken / round : 0;
+        partyDmgSum += simPartyDmg;
+        if (simPartyDmg < partyDmgMin) partyDmgMin = simPartyDmg;
+        if (simPartyDmg > partyDmgMax) partyDmgMax = simPartyDmg;
+        partyDmgPerTurnSum += simPartyDmgPerTurn;
+        if (simPartyDmgPerTurn < partyDmgPerTurnMin) partyDmgPerTurnMin = simPartyDmgPerTurn;
+        if (simPartyDmgPerTurn > partyDmgPerTurnMax) partyDmgPerTurnMax = simPartyDmgPerTurn;
+        partyTakenSum += simPartyTaken;
+        if (simPartyTaken < partyTakenMin) partyTakenMin = simPartyTaken;
+        if (simPartyTaken > partyTakenMax) partyTakenMax = simPartyTaken;
+        partyTakenPerTurnSum += simPartyTakenPerTurn;
+        if (simPartyTakenPerTurn < partyTakenPerTurnMin) partyTakenPerTurnMin = simPartyTakenPerTurn;
+        if (simPartyTakenPerTurn > partyTakenPerTurnMax) partyTakenPerTurnMax = simPartyTakenPerTurn;
+        partySimCount++;
+        if (wasWin) {
+          winPartyDmgSum += simPartyDmg;
+          if (simPartyDmg < winPartyDmgMin) winPartyDmgMin = simPartyDmg;
+          if (simPartyDmg > winPartyDmgMax) winPartyDmgMax = simPartyDmg;
+          winPartyDmgPerTurnSum += simPartyDmgPerTurn;
+          if (simPartyDmgPerTurn < winPartyDmgPerTurnMin) winPartyDmgPerTurnMin = simPartyDmgPerTurn;
+          if (simPartyDmgPerTurn > winPartyDmgPerTurnMax) winPartyDmgPerTurnMax = simPartyDmgPerTurn;
+          winPartyTakenSum += simPartyTaken;
+          if (simPartyTaken < winPartyTakenMin) winPartyTakenMin = simPartyTaken;
+          if (simPartyTaken > winPartyTakenMax) winPartyTakenMax = simPartyTaken;
+          winPartyTakenPerTurnSum += simPartyTakenPerTurn;
+          if (simPartyTakenPerTurn < winPartyTakenPerTurnMin) winPartyTakenPerTurnMin = simPartyTakenPerTurn;
+          if (simPartyTakenPerTurn > winPartyTakenPerTurnMax) winPartyTakenPerTurnMax = simPartyTakenPerTurn;
+          winPartyCount++;
+        } else if (wasLose) {
+          losePartyDmgSum += simPartyDmg;
+          if (simPartyDmg < losePartyDmgMin) losePartyDmgMin = simPartyDmg;
+          if (simPartyDmg > losePartyDmgMax) losePartyDmgMax = simPartyDmg;
+          losePartyDmgPerTurnSum += simPartyDmgPerTurn;
+          if (simPartyDmgPerTurn < losePartyDmgPerTurnMin) losePartyDmgPerTurnMin = simPartyDmgPerTurn;
+          if (simPartyDmgPerTurn > losePartyDmgPerTurnMax) losePartyDmgPerTurnMax = simPartyDmgPerTurn;
+          losePartyTakenSum += simPartyTaken;
+          if (simPartyTaken < losePartyTakenMin) losePartyTakenMin = simPartyTaken;
+          if (simPartyTaken > losePartyTakenMax) losePartyTakenMax = simPartyTaken;
+          losePartyTakenPerTurnSum += simPartyTakenPerTurn;
+          if (simPartyTakenPerTurn < losePartyTakenPerTurnMin) losePartyTakenPerTurnMin = simPartyTakenPerTurn;
+          if (simPartyTakenPerTurn > losePartyTakenPerTurnMax) losePartyTakenPerTurnMax = simPartyTakenPerTurn;
+          losePartyCount++;
         }
       }
 
@@ -1563,8 +1713,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       totalHealingAvg: totalHealing[i] / actualSimCount,
       healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
       lordProtectionAvg: lordProtections[i] / actualSimCount,
+      lordProtectedSingleAvg: lordProtectedSingle[i] / actualSimCount,
+      lordProtectedAoeAvg: lordProtectedAoe[i] / actualSimCount,
+      lordAbsorbedSingleDmg: lordAbsorbedSingle[i] / actualSimCount,
+      lordAbsorbedAoeDmg: lordAbsorbedAoe[i] / actualSimCount,
       critSurvivalCount: critSurvivals[i] / actualSimCount,
+      critSurvivalChance: Math.round((heroArmadillo[i] || (heroIsCleric[i] || heroIsBishop[i] ? 100 : 0)) * 10) / 10,
       tankingRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
+      singleTargetRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
+      minDamageTaken: dmgTakenMin[i] >= 1e9 ? 0 : Math.round(dmgTakenMin[i]),
+      maxDamageTaken: Math.round(dmgTakenMax[i]),
+      aoeDmgTakenTotal: aoeDmgTakenAccum[i] / actualSimCount,
+      singleDmgTakenTotal: singleDmgTakenAccum[i] / actualSimCount,
     };
   });
 
@@ -1637,6 +1797,66 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       avg: Math.round((loseRoundsSum / loseCount) * 100) / 100,
       min: loseRoundsMin >= 1000 ? 0 : loseRoundsMin,
       max: loseRoundsMax,
+    } : undefined,
+    partyDmgDealt: partySimCount > 0 ? {
+      min: partyDmgMin === Infinity ? 0 : Math.round(partyDmgMin),
+      avg: Math.round(partyDmgSum / partySimCount),
+      max: Math.round(partyDmgMax),
+    } : undefined,
+    partyDmgPerTurn: partySimCount > 0 ? {
+      min: partyDmgPerTurnMin === Infinity ? 0 : Math.round(partyDmgPerTurnMin),
+      avg: Math.round(partyDmgPerTurnSum / partySimCount),
+      max: Math.round(partyDmgPerTurnMax),
+    } : undefined,
+    partyDmgTaken: partySimCount > 0 ? {
+      min: partyTakenMin === Infinity ? 0 : Math.round(partyTakenMin),
+      avg: Math.round(partyTakenSum / partySimCount),
+      max: Math.round(partyTakenMax),
+    } : undefined,
+    partyDmgTakenPerTurn: partySimCount > 0 ? {
+      min: partyTakenPerTurnMin === Infinity ? 0 : Math.round(partyTakenPerTurnMin),
+      avg: Math.round(partyTakenPerTurnSum / partySimCount),
+      max: Math.round(partyTakenPerTurnMax),
+    } : undefined,
+    winPartyDmgDealt: winPartyCount > 0 ? {
+      min: winPartyDmgMin === Infinity ? 0 : Math.round(winPartyDmgMin),
+      avg: Math.round(winPartyDmgSum / winPartyCount),
+      max: Math.round(winPartyDmgMax),
+    } : undefined,
+    winPartyDmgPerTurn: winPartyCount > 0 ? {
+      min: winPartyDmgPerTurnMin === Infinity ? 0 : Math.round(winPartyDmgPerTurnMin),
+      avg: Math.round(winPartyDmgPerTurnSum / winPartyCount),
+      max: Math.round(winPartyDmgPerTurnMax),
+    } : undefined,
+    winPartyDmgTaken: winPartyCount > 0 ? {
+      min: winPartyTakenMin === Infinity ? 0 : Math.round(winPartyTakenMin),
+      avg: Math.round(winPartyTakenSum / winPartyCount),
+      max: Math.round(winPartyTakenMax),
+    } : undefined,
+    winPartyDmgTakenPerTurn: winPartyCount > 0 ? {
+      min: winPartyTakenPerTurnMin === Infinity ? 0 : Math.round(winPartyTakenPerTurnMin),
+      avg: Math.round(winPartyTakenPerTurnSum / winPartyCount),
+      max: Math.round(winPartyTakenPerTurnMax),
+    } : undefined,
+    losePartyDmgDealt: losePartyCount > 0 ? {
+      min: losePartyDmgMin === Infinity ? 0 : Math.round(losePartyDmgMin),
+      avg: Math.round(losePartyDmgSum / losePartyCount),
+      max: Math.round(losePartyDmgMax),
+    } : undefined,
+    losePartyDmgPerTurn: losePartyCount > 0 ? {
+      min: losePartyDmgPerTurnMin === Infinity ? 0 : Math.round(losePartyDmgPerTurnMin),
+      avg: Math.round(losePartyDmgPerTurnSum / losePartyCount),
+      max: Math.round(losePartyDmgPerTurnMax),
+    } : undefined,
+    losePartyDmgTaken: losePartyCount > 0 ? {
+      min: losePartyTakenMin === Infinity ? 0 : Math.round(losePartyTakenMin),
+      avg: Math.round(losePartyTakenSum / losePartyCount),
+      max: Math.round(losePartyTakenMax),
+    } : undefined,
+    losePartyDmgTakenPerTurn: losePartyCount > 0 ? {
+      min: losePartyTakenPerTurnMin === Infinity ? 0 : Math.round(losePartyTakenPerTurnMin),
+      avg: Math.round(losePartyTakenPerTurnSum / losePartyCount),
+      max: Math.round(losePartyTakenPerTurnMax),
     } : undefined,
   };
 }

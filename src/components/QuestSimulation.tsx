@@ -1942,17 +1942,22 @@ export default function QuestSimulation() {
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                        // Party totals
-                        const partyAvg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                        const partyMin = displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
-                        const partyMax = displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
-                        const partyAvgPerTurn = displayResults.reduce((s, hr) => s + (hr.avgDamagePerTurn || 0), 0);
-                        // Per-turn min/max derived from per-turn-to-total ratio
-                        const partyMinPerTurn = displayResults.reduce((s, hr) => {
+                        // Party totals — use per-sim party distribution from engine when available,
+                        // bucketed by current results tab. Fallback to summed individual values.
+                        const pAgg = mainResultsTab === 'win'
+                          ? { dmg: simResult.winPartyDmgDealt, perTurn: simResult.winPartyDmgPerTurn }
+                          : mainResultsTab === 'lose'
+                          ? { dmg: simResult.losePartyDmgDealt, perTurn: simResult.losePartyDmgPerTurn }
+                          : { dmg: simResult.partyDmgDealt, perTurn: simResult.partyDmgPerTurn };
+                        const partyAvg = pAgg.dmg?.avg ?? displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
+                        const partyMin = pAgg.dmg?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
+                        const partyMax = pAgg.dmg?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
+                        const partyAvgPerTurn = pAgg.perTurn?.avg ?? displayResults.reduce((s, hr) => s + (hr.avgDamagePerTurn || 0), 0);
+                        const partyMinPerTurn = pAgg.perTurn?.min ?? displayResults.reduce((s, hr) => {
                           const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
                           return s + (hr.minDamageDealt || 0) * ratio;
                         }, 0);
-                        const partyMaxPerTurn = displayResults.reduce((s, hr) => {
+                        const partyMaxPerTurn = pAgg.perTurn?.max ?? displayResults.reduce((s, hr) => {
                           const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
                           return s + (hr.maxDamageDealt || 0) * ratio;
                         }, 0);
@@ -1970,21 +1975,21 @@ export default function QuestSimulation() {
                         <thead>
                           <tr className="border-b-2 border-border/60">
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}>가하는 대미지 (전체)</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}>가하는 대미지 (턴)</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>일반/치명 비중</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>딜링 비중</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>가하는 대미지 (전체)</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>가하는 대미지 (턴)</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>일반/치명 비중</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>딜링 비중</th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">최소</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                             <th className="text-center py-1 px-2">평균</th>
                             <th className="text-center py-1 px-2">최대</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">최소</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                             <th className="text-center py-1 px-2">평균</th>
                             <th className="text-center py-1 px-2">최대</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">비율</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">비율</th>
                             <th className="text-center py-1 px-2">그래프</th>
                           </tr>
                         </thead>
@@ -1999,11 +2004,11 @@ export default function QuestSimulation() {
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                 {/* 전체 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-border/60 whitespace-nowrap">{formatNumber(Math.round(hr.minDamageDealt))}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(hr.minDamageDealt))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
                                 {/* 턴 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-border/60 whitespace-nowrap">{formatNumber(Math.round(minPerTurn))}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(minPerTurn))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamagePerTurn))}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(maxPerTurn))}</td>
                                 {/* Normal/Crit damage breakdown */}
@@ -2012,12 +2017,12 @@ export default function QuestSimulation() {
                                   const critPct = hr.avgDamageDealt > 0 ? (hr.critDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
                                   return (
                                     <>
-                                      <td className="py-1 px-2 text-center font-mono text-blue-300 border-l-2 border-border/60 whitespace-nowrap">{formatNumber(Math.round(hr.normalDmgDealtAvg))} ({normalPct.toFixed(1)}%)</td>
+                                      <td className="py-1 px-2 text-center font-mono text-blue-300 border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(hr.normalDmgDealtAvg))} ({normalPct.toFixed(1)}%)</td>
                                       <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(Math.round(hr.critDmgDealtAvg))} ({critPct.toFixed(1)}%)</td>
                                     </>
                                   );
                                 })()}
-                                <td className="py-1 px-2 text-center font-mono border-l-2 border-border/60 whitespace-nowrap" style={{ color: ['#ef4444','#3b82f6','#84cc16','#eab308','#a855f7'][idx % 5] }}>{dmgPct.toFixed(1)}%</td>
+                                <td className="py-1 px-2 text-center font-mono border-l-4 border-border whitespace-nowrap" style={{ color: ['#ef4444','#3b82f6','#84cc16','#eab308','#a855f7'][idx % 5] }}>{dmgPct.toFixed(1)}%</td>
                                 <td className="py-1 px-2">
                                   <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
                                     <div className={`h-full rounded-full ${barColors[idx % barColors.length]} transition-all`} style={{ width: `${dmgPct}%` }} />
@@ -2028,16 +2033,16 @@ export default function QuestSimulation() {
                           })}
                           {/* Party total row */}
                           <tr className="border-t-2 border-border/60 bg-primary/10 font-bold">
-                            <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">파티 합계</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-2 border-border/60 whitespace-nowrap">{formatNumber(Math.round(partyMin))}</td>
+                            <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">전체</td>
+                            <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyMin))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(partyAvg))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyMax))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-2 border-border/60 whitespace-nowrap">{formatNumber(Math.round(partyMinPerTurn))}</td>
+                            <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyMinPerTurn))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(Math.round(partyAvgPerTurn))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyMaxPerTurn))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-blue-300 border-l-2 border-border/60 whitespace-nowrap">{formatNumber(Math.round(partyNormal))}</td>
+                            <td className="py-1.5 px-2 text-center font-mono text-blue-300 border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyNormal))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(Math.round(partyCrit))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-foreground border-l-2 border-border/60 whitespace-nowrap">100%</td>
+                            <td className="py-1.5 px-2 text-center font-mono text-foreground border-l-4 border-border whitespace-nowrap">100%</td>
                             <td className="py-1.5 px-2"></td>
                           </tr>
                         </tbody>
@@ -2061,25 +2066,25 @@ export default function QuestSimulation() {
                         <thead>
                           <tr className="border-b-2 border-border/60">
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}>🦈 상어</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={2}>🦕 공룡</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 1단계</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 2단계</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 3단계</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>🦈 상어</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>🦕 공룡</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 1단계</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 2단계</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><Flame className="w-3 h-3 inline mr-0.5" /> 광전사 3단계</th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2">총 평균</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
-                            <th className="text-center py-1 px-2">치명</th>
-                            <th className="text-center py-1 px-2">평균</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2">평균</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
+                            <th className="text-center py-1 px-2">치명</th>
+                            <th className="text-center py-1 px-2">평균</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2">평균</th>
                           </tr>
@@ -2106,21 +2111,21 @@ export default function QuestSimulation() {
                             return (
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                <td className={`py-1 px-2 text-center font-mono border-l-2 border-border/60 whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-400'}`}>{sharkGray ? '-' : formatNumber(hr.sharkNormalDmg)}</td>
+                                <td className={`py-1 px-2 text-center font-mono border-l-4 border-border whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-400'}`}>{sharkGray ? '-' : formatNumber(hr.sharkNormalDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-300'}`}>{sharkGray ? '-' : formatNumber(hr.sharkCritDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${sharkGray ? 'text-muted-foreground/30' : 'text-cyan-200'}`}>{sharkGray ? '-' : formatNumber(Math.round(((hr.sharkNormalDmg || 0) + (hr.sharkCritDmg || 0)) / 2))}</td>
-                                <td className={`py-1 px-2 text-center font-mono border-l-2 border-border/60 whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-400'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurNormalDmg)}</td>
+                                <td className={`py-1 px-2 text-center font-mono border-l-4 border-border whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-400'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurNormalDmg)}</td>
                                 <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${dinoGray ? 'text-muted-foreground/30' : 'text-lime-300'}`}>{dinoGray ? '-' : formatNumber(hr.dinosaurCritDmg)}</td>
                                 {/* 광전사 1단계 */}
-                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-2 border-border/60 text-blue-300">{v0 ? formatNumber(v0.normalDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-4 border-border text-blue-300">{v0 ? formatNumber(v0.normalDmg) : dash}</td>
                                 <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-yellow-300">{v0 ? formatNumber(v0.critDmg) : dash}</td>
                                 <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-foreground">{v0 ? formatNumber(v0.avgDmg) : dash}</td>
                                 {/* 광전사 2단계 */}
-                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-2 border-border/60 text-blue-300">{v1 ? formatNumber(v1.normalDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-4 border-border text-blue-300">{v1 ? formatNumber(v1.normalDmg) : dash}</td>
                                 <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-yellow-300">{v1 ? formatNumber(v1.critDmg) : dash}</td>
                                 <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-foreground">{v1 ? formatNumber(v1.avgDmg) : dash}</td>
                                 {/* 광전사 3단계 */}
-                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-2 border-border/60 text-blue-300">{v2 ? formatNumber(v2.normalDmg) : dash}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap border-l-4 border-border text-blue-300">{v2 ? formatNumber(v2.normalDmg) : dash}</td>
                                 <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-yellow-300">{v2 ? formatNumber(v2.critDmg) : dash}</td>
                                 <td className="py-1 px-2 text-center font-mono whitespace-nowrap text-foreground">{v2 ? formatNumber(v2.avgDmg) : dash}</td>
                               </tr>
@@ -2144,16 +2149,16 @@ export default function QuestSimulation() {
                         <thead>
                           <tr className="border-b-2 border-border/60">
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={5}>기본</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-2 border-border/60" colSpan={4}>받는 대미지</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={5}>기본</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={4}>받는 대미지</th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">생존률</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">생존률</th>
                             <th className="text-center py-1 px-2">대미지 보정</th>
                             <th className="text-center py-1 px-2">피격 확률</th>
                             <th className="text-center py-1 px-2">회피 비율</th>
                             <th className="text-center py-1 px-2 text-red-400">몬스터 치확</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-border/60">일반</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
                             <th className="text-center py-1 px-2">치명</th>
                             <th className="text-center py-1 px-2">턴당 평균</th>
                             <th className="text-center py-1 px-2">받은 총 대미지</th>
@@ -2163,7 +2168,7 @@ export default function QuestSimulation() {
                           {displayResults.map((hr, idx) => (
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                               <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                              <td className={`py-1 px-2 text-center font-mono border-l-2 border-border/60 whitespace-nowrap ${
+                              <td className={`py-1 px-2 text-center font-mono border-l-4 border-border whitespace-nowrap ${
                                 hr.survivalRate >= 90 ? 'text-lime-400' :
                                 hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
                               }`}>{hr.survivalRate.toFixed(1)}%</td>
@@ -2173,7 +2178,7 @@ export default function QuestSimulation() {
                               <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.targetingRate.toFixed(1)}%</td>
                               <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.evasionRate.toFixed(1)}%</td>
                               <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.monsterCritChance}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-border/60 whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
+                              <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(hr.normalDamageTaken)}</td>
                               <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(hr.critDamageTakenVal)}</td>
                               <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(hr.avgDamageTakenPerTurn)}</td>
                               <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(hr.totalDamageTakenAvg)}</td>
@@ -2188,13 +2193,13 @@ export default function QuestSimulation() {
                               : 0;
                             return (
                               <tr className="border-t-2 border-border/60 bg-primary/10 font-bold">
-                                <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">파티 합계</td>
-                                <td className="py-1.5 px-2 text-center font-mono text-foreground border-l-2 border-border/60 whitespace-nowrap">{partyAvgSurvival.toFixed(1)}%</td>
+                                <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">전체</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-foreground border-l-4 border-border whitespace-nowrap">{partyAvgSurvival.toFixed(1)}%</td>
                                 <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
                                 <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
                                 <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
                                 <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
-                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-2 border-border/60 whitespace-nowrap">-</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">-</td>
                                 <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">-</td>
                                 <td className="py-1.5 px-2 text-center font-mono text-orange-300 whitespace-nowrap">{formatNumber(Math.round(partyTakenPerTurn))}</td>
                                 <td className="py-1.5 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(Math.round(partyTakenTotal))}</td>

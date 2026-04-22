@@ -258,8 +258,8 @@ export default function HeroList() {
             // Force zebra striping + visible horizontal borders inline so html2canvas always renders them
             // Use HSL of current theme primary for header + zebra so they match the active color mode
             const primaryHsl = (window.getComputedStyle(document.documentElement).getPropertyValue('--primary') || '40 85% 55%').trim();
-            const headerBg = `hsla(${primaryHsl} / 0.07)`;
-            const zebraBg = `hsla(${primaryHsl} / 0.04)`;
+            const headerBg = `hsla(${primaryHsl} / 0.12)`;
+            const zebraBg = `hsla(${primaryHsl} / 0.12)`;
             const borderColor = colorMode === 'light' ? '#d4d4d8' : '#3f3f55';
             clonedEl.querySelectorAll('table').forEach(t => {
               (t as HTMLElement).style.borderCollapse = 'collapse';
@@ -642,7 +642,7 @@ export default function HeroList() {
   const renderCell = (hero: Hero, colKey: string, capture = false) => {
     // Capture-mode classes: use inline-block + align-middle + leading-none for html2canvas compat
     const lh = capture ? 'leading-none' : 'leading-[20px]';
-    const iconCls = capture ? 'inline-block align-middle w-5 h-5' : 'w-5 h-5 flex-shrink-0';
+    const iconCls = capture ? 'inline-block align-middle w-6 h-6' : 'w-6 h-6 flex-shrink-0';
     const wrapCls = capture
       ? 'inline-block whitespace-nowrap align-middle leading-none'
       : 'inline-flex items-center gap-1';
@@ -712,7 +712,7 @@ export default function HeroList() {
       const isDimEl = elVal === 0;
       return (
         <span className={`${wrapCls} ${lh}`}>
-          <ElementIcon element={hero.element} size={20} />
+          <ElementIcon element={hero.element} size={24} />
           {spacer}
           <span className={`tabular-nums font-bold ${capture ? 'inline-block align-middle leading-none' : ''} ${isDimEl ? 'text-foreground/20' : 'text-foreground'}`}>{formatNumber(elVal)}</span>
         </span>
@@ -1610,10 +1610,10 @@ export default function HeroList() {
           <div ref={tableContentRef} data-screenshot-target className="card-fantasy overflow-x-auto scrollbar-fantasy mx-auto" style={{ maxWidth: `${tableMaxWidth}px` }}>
             <table className="w-full text-sm font-bold">
               <thead>
-                <tr className="border-b border-border bg-primary/5">
+                <tr className="border-b border-border bg-primary/[0.12] table-header-row">
                   {activeCols.map(col => (
                     <th key={col.key} onClick={() => handleSort(col.key)}
-                      className={`${col.key === 'skills' ? 'px-1' : 'px-3'} py-3 font-medium cursor-pointer hover:text-primary transition-colors select-none text-foreground/80 text-center ${
+                      className={`${col.key === 'skills' ? 'px-1' : 'px-3'} py-3 font-bold cursor-pointer hover:text-primary transition-colors select-none text-foreground text-center ${
                         col.key === 'heroClass' || col.key === 'name' ? 'min-w-[110px]' : ''
                       } ${col.key === 'championName' ? 'min-w-[100px]' : ''} ${col.key === 'skills' ? (listTab === 'champion' ? 'min-w-[80px]' : 'min-w-[150px]') : ''} ${col.key === 'equipment' ? 'min-w-[80px]' : ''} ${col.key === 'seeds' ? 'min-w-[120px]' : ''} ${(col.key === 'position' || col.key === 'label') ? 'min-w-[90px]' : ''}`}>
                       <span className="flex items-center gap-1 justify-center">
@@ -1669,8 +1669,8 @@ export default function HeroList() {
                     <Fragment key={hero.id}>
                       <tr
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
-                        className={`border-b border-border/50 transition-colors cursor-pointer select-none even:bg-primary/[0.04] ${
-                          isExpanded ? 'bg-primary/15' : ''
+                        className={`border-b border-border/50 transition-colors cursor-pointer select-none even:bg-primary/[0.12] ${
+                          isExpanded ? 'bg-primary/[0.07]' : ''
                         } table-zebra-row`}
                         style={{ height: '52px' }}
                       >
