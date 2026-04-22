@@ -258,8 +258,8 @@ export default function HeroList() {
             // Force zebra striping + visible horizontal borders inline so html2canvas always renders them
             // Use HSL of current theme primary for header + zebra so they match the active color mode
             const primaryHsl = (window.getComputedStyle(document.documentElement).getPropertyValue('--primary') || '40 85% 55%').trim();
-            const headerBg = `hsla(${primaryHsl} / 0.07)`;
-            const zebraBg = `hsla(${primaryHsl} / 0.04)`;
+            const headerBg = `hsla(${primaryHsl} / 0.12)`;
+            const zebraBg = `hsla(${primaryHsl} / 0.12)`;
             const borderColor = colorMode === 'light' ? '#d4d4d8' : '#3f3f55';
             clonedEl.querySelectorAll('table').forEach(t => {
               (t as HTMLElement).style.borderCollapse = 'collapse';
