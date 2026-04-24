@@ -1196,6 +1196,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (hp[i] <= 0) continue;
           timesTargeted[i]++;
           simTargeted[i]++;
+          // Berserker stage targeting
+          const bStage = berserkerStage[i];
+          if (bStage >= 1 && bStage <= 3) simBrkStageTargeted[bStage - 1][i]++;
 
           const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
           const cappedEva = Math.min(totalEva, heroEvaCap[i]);
@@ -1204,6 +1207,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             // Evaded
             timesEvaded[i]++;
             simEvaded[i]++;
+            if (bStage >= 1 && bStage <= 3) simBrkStageEvaded[bStage - 1][i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
@@ -1216,13 +1220,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (hp[i] <= 0) {
               const survived = handleFatalBlow(i);
               if (!survived) {
-                // Lord save check
+                // Lord save check (lords cannot protect lords)
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
                   lordSave = false;
                   lordProtections[i]++;
                   simLordAoeSaved[i]++;
                   hp[i] += dmg; // Restore this hero
-                  const lordDmg = Math.ceil(damageTaken[lordHero] * mobAoeDmgRatio);
+                  // New lord absorb: random pick between monster raw aoe atk and ally's actual taken (non-crit) dmg, never below monster raw
+                  const monRaw = Math.round(mobDamage * mobAoeDmgRatio);
+                  const allyDmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio); // ally non-crit (AoE has no crit)
+                  const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
+                  const lordDmg = Math.max(monRaw, randPick);
                   simLordAbsorbedAoe[lordHero] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (hp[lordHero] <= 0) {
