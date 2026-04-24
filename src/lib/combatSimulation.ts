@@ -997,6 +997,24 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const singleDmgTakenAccum = new Float64Array(numHeroes);
   const dmgTakenMin = new Float64Array(numHeroes).fill(1e9);
   const dmgTakenMax = new Float64Array(numHeroes);
+  // Per-turn taken min/max across sims
+  const dmgTakenPerTurnMin = new Float64Array(numHeroes).fill(1e9);
+  const dmgTakenPerTurnMax = new Float64Array(numHeroes);
+  // Single-attack hit type counts (across all sims)
+  const singleNormalHitsTotal = new Float64Array(numHeroes);
+  const singleCritHitsTotal = new Float64Array(numHeroes);
+  // Sims where lord protected this hero at least once
+  const lordProtectedSims = new Float64Array(numHeroes);
+  // Win-only HP remaining distribution (per-sim per-hero, win sims only)
+  const winHpRemainMin = new Float64Array(numHeroes).fill(1e9);
+  const winHpRemainMax = new Float64Array(numHeroes);
+  // Berserker per-stage attack/evade counts (single+aoe targeting)
+  const brkStageTargeted = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const brkStageEvaded = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
 
   // Per-sim party-level aggregates (sum across heroes per sim → distribution)
   // We'll track sums/min/max across sims for: party damage dealt, party damage taken
