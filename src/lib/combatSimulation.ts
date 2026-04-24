@@ -132,6 +132,8 @@ export interface HeroSimResult {
   healPerTurn: number;
   // Lord protection
   lordProtectionAvg: number;
+  // % of sims where this hero was protected at least once
+  lordProtectionSimRate?: number;
   // Lord protection split by attack type (avg per sim)
   lordProtectedSingleAvg?: number;
   lordProtectedAoeAvg?: number;
@@ -141,6 +143,20 @@ export interface HeroSimResult {
   // Crit survival (armadillo, cleric/bishop)
   critSurvivalCount: number;     // avg applied count per sim
   critSurvivalChance?: number;   // % chance (configured)
+  // % of sims where crit survival actually triggered (>=1 trigger)
+  critSurvivalApplyRate?: number;
+  // Per-turn taken min/max
+  minDamageTakenPerTurn?: number;
+  maxDamageTakenPerTurn?: number;
+  // Single-attack hit-type ratios (% of single attacks that were normal vs crit)
+  singleNormalHitShare?: number;
+  singleCritHitShare?: number;
+  // Win-only HP remaining (min/avg/max)
+  winHpRemainMin?: number;
+  winHpRemainAvg?: number;
+  winHpRemainMax?: number;
+  // Berserker per-stage actual evasion rate (%) (stage1, 2, 3)
+  berserkerStageEvaRate?: number[];
   tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
 }
 
@@ -997,6 +1013,24 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const singleDmgTakenAccum = new Float64Array(numHeroes);
   const dmgTakenMin = new Float64Array(numHeroes).fill(1e9);
   const dmgTakenMax = new Float64Array(numHeroes);
+  // Per-turn taken min/max across sims
+  const dmgTakenPerTurnMin = new Float64Array(numHeroes).fill(1e9);
+  const dmgTakenPerTurnMax = new Float64Array(numHeroes);
+  // Single-attack hit type counts (across all sims)
+  const singleNormalHitsTotal = new Float64Array(numHeroes);
+  const singleCritHitsTotal = new Float64Array(numHeroes);
+  // Sims where lord protected this hero at least once
+  const lordProtectedSims = new Float64Array(numHeroes);
+  // Win-only HP remaining distribution (per-sim per-hero, win sims only)
+  const winHpRemainMin = new Float64Array(numHeroes).fill(1e9);
+  const winHpRemainMax = new Float64Array(numHeroes);
+  // Berserker per-stage attack/evade counts (single+aoe targeting)
+  const brkStageTargeted = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const brkStageEvaded = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
 
   // Per-sim party-level aggregates (sum across heroes per sim → distribution)
   // We'll track sums/min/max across sims for: party damage dealt, party damage taken
@@ -1083,6 +1117,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simLordAoeSaved = new Float64Array(numHeroes);
     const simLordAbsorbedSingle = new Float64Array(numHeroes);
     const simLordAbsorbedAoe = new Float64Array(numHeroes);
+    // Per-sim single-attack hit type counts
+    const simSingleNormalHits = new Float64Array(numHeroes);
+    const simSingleCritHits = new Float64Array(numHeroes);
+    // Per-sim berserker stage targeting/evasion (stage 1..3)
+    const simBrkStageTargeted = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simBrkStageEvaded = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
@@ -1168,6 +1212,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (hp[i] <= 0) continue;
           timesTargeted[i]++;
           simTargeted[i]++;
+          // Berserker stage targeting
+          const bStage = berserkerStage[i];
+          if (bStage >= 1 && bStage <= 3) simBrkStageTargeted[bStage - 1][i]++;
 
           const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
           const cappedEva = Math.min(totalEva, heroEvaCap[i]);
@@ -1176,6 +1223,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             // Evaded
             timesEvaded[i]++;
             simEvaded[i]++;
+            if (bStage >= 1 && bStage <= 3) simBrkStageEvaded[bStage - 1][i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
@@ -1188,13 +1236,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (hp[i] <= 0) {
               const survived = handleFatalBlow(i);
               if (!survived) {
-                // Lord save check
+                // Lord save check (lords cannot protect lords)
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
                   lordSave = false;
                   lordProtections[i]++;
                   simLordAoeSaved[i]++;
                   hp[i] += dmg; // Restore this hero
-                  const lordDmg = Math.ceil(damageTaken[lordHero] * mobAoeDmgRatio);
+                  // New lord absorb: random pick between monster raw aoe atk and ally's actual taken (non-crit) dmg, never below monster raw
+                  const monRaw = Math.round(mobDamage * mobAoeDmgRatio);
+                  const allyDmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio); // ally non-crit (AoE has no crit)
+                  const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
+                  const lordDmg = Math.max(monRaw, randPick);
                   simLordAbsorbedAoe[lordHero] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (hp[lordHero] <= 0) {
@@ -1234,6 +1286,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         timesTargeted[target]++;
         simTargeted[target]++;
+        // Berserker stage targeting
+        const bStageT = berserkerStage[target];
+        if (bStageT >= 1 && bStageT <= 3) simBrkStageTargeted[bStageT - 1][target]++;
 
         const totalEva = heroEvasion[target] + berserkerStage[target] * 0.1 + ninjaEvasion[target];
         const cappedEva = Math.min(totalEva, heroEvaCap[target]);
@@ -1241,6 +1296,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (guaranteedEvade[target] || (Math.random() < cappedEva && !heroArtNoEvasion[target])) {
           timesEvaded[target]++;
           simEvaded[target]++;
+          if (bStageT >= 1 && bStageT <= 3) simBrkStageEvaded[bStageT - 1][target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
@@ -1250,6 +1306,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           simSingleDmgTaken[target] += dmg;
           simTimesHit[target]++;
           singleHitsTaken[target]++;
+          // Track single-attack hit type counts
+          if (isCrit) simSingleCritHits[target]++;
+          else simSingleNormalHits[target]++;
 
           if (hp[target] <= 0) {
             const survived = handleFatalBlow(target);
@@ -1261,8 +1320,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 singleHitsTaken[target]--;
                 singleHitsTaken[lordHero]++;
                 hp[target] += dmg;
-                simLordAbsorbedSingle[lordHero] += damageTaken[lordHero];
-                hp[lordHero] -= damageTaken[lordHero];
+                // New lord absorb: random pick between monster raw atk and ally's actual taken (non-crit) dmg, never below monster raw
+                const monRaw = mobDamage;
+                const allyDmg = damageTaken[target]; // ally normal (non-crit) taken
+                const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
+                const lordDmg = Math.max(monRaw, randPick);
+                simLordAbsorbedSingle[lordHero] += lordDmg;
+                hp[lordHero] -= lordDmg;
                 if (hp[lordHero] <= 0) {
                   if (!handleFatalBlow(lordHero)) {
                     hp[lordHero] = 0;
@@ -1467,10 +1531,30 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             dmgTakenMin[i] = Math.min(dmgTakenMin[i], simDmgTaken[i]);
           }
           dmgTakenMax[i] = Math.max(dmgTakenMax[i], simDmgTaken[i]);
+          // Per-turn dmg taken min/max (across sims)
+          const perTurnTaken = round > 0 ? simDmgTaken[i] / round : 0;
+          if (perTurnTaken > 0) dmgTakenPerTurnMin[i] = Math.min(dmgTakenPerTurnMin[i], perTurnTaken);
+          dmgTakenPerTurnMax[i] = Math.max(dmgTakenPerTurnMax[i], perTurnTaken);
           lordProtectedSingle[i] += simLordSingleSaved[i];
           lordProtectedAoe[i] += simLordAoeSaved[i];
           lordAbsorbedSingle[i] += simLordAbsorbedSingle[i];
           lordAbsorbedAoe[i] += simLordAbsorbedAoe[i];
+          // Sims where lord protected this hero at least once
+          if ((simLordSingleSaved[i] + simLordAoeSaved[i]) > 0) lordProtectedSims[i]++;
+          // Single-attack hit type counts (per sim)
+          singleNormalHitsTotal[i] += simSingleNormalHits[i];
+          singleCritHitsTotal[i] += simSingleCritHits[i];
+          // Berserker stage targeting/evasion
+          for (let s = 0; s < 3; s++) {
+            brkStageTargeted[s][i] += simBrkStageTargeted[s][i];
+            brkStageEvaded[s][i] += simBrkStageEvaded[s][i];
+          }
+          // Win-only HP remaining min/max (per-sim)
+          if (wasWin) {
+            const hpEnd = Math.max(hp[i], 0);
+            if (hpEnd < winHpRemainMin[i]) winHpRemainMin[i] = hpEnd;
+            if (hpEnd > winHpRemainMax[i]) winHpRemainMax[i] = hpEnd;
+          }
 
           simPartyDmg += damageFight[i];
           simPartyTaken += simDmgTaken[i];
@@ -1713,18 +1797,34 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       totalHealingAvg: totalHealing[i] / actualSimCount,
       healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
       lordProtectionAvg: lordProtections[i] / actualSimCount,
+      lordProtectionSimRate: Math.round((lordProtectedSims[i] / actualSimCount) * 100 * 10) / 10,
       lordProtectedSingleAvg: lordProtectedSingle[i] / actualSimCount,
       lordProtectedAoeAvg: lordProtectedAoe[i] / actualSimCount,
       lordAbsorbedSingleDmg: lordAbsorbedSingle[i] / actualSimCount,
       lordAbsorbedAoeDmg: lordAbsorbedAoe[i] / actualSimCount,
       critSurvivalCount: critSurvivals[i] / actualSimCount,
       critSurvivalChance: Math.round((heroArmadillo[i] || (heroIsCleric[i] || heroIsBishop[i] ? 100 : 0)) * 10) / 10,
+      critSurvivalApplyRate: Math.round((critSurvivals[i] / actualSimCount) * 100 * 10) / 10,
       tankingRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
       singleTargetRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
       minDamageTaken: dmgTakenMin[i] >= 1e9 ? 0 : Math.round(dmgTakenMin[i]),
       maxDamageTaken: Math.round(dmgTakenMax[i]),
+      minDamageTakenPerTurn: dmgTakenPerTurnMin[i] >= 1e9 ? 0 : Math.round(dmgTakenPerTurnMin[i]),
+      maxDamageTakenPerTurn: Math.round(dmgTakenPerTurnMax[i]),
       aoeDmgTakenTotal: aoeDmgTakenAccum[i] / actualSimCount,
       singleDmgTakenTotal: singleDmgTakenAccum[i] / actualSimCount,
+      singleNormalHitShare: (singleNormalHitsTotal[i] + singleCritHitsTotal[i]) > 0
+        ? Math.round((singleNormalHitsTotal[i] / (singleNormalHitsTotal[i] + singleCritHitsTotal[i])) * 100 * 10) / 10
+        : 0,
+      singleCritHitShare: (singleNormalHitsTotal[i] + singleCritHitsTotal[i]) > 0
+        ? Math.round((singleCritHitsTotal[i] / (singleNormalHitsTotal[i] + singleCritHitsTotal[i])) * 100 * 10) / 10
+        : 0,
+      winHpRemainMin: timesQuestWon > 0 && winHpRemainMin[i] < 1e9 ? Math.round(winHpRemainMin[i]) : 0,
+      winHpRemainAvg: timesQuestWon > 0 ? Math.round(winHpRemain[i] / timesQuestWon) : 0,
+      winHpRemainMax: timesQuestWon > 0 ? Math.round(winHpRemainMax[i]) : 0,
+      berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s =>
+        brkStageTargeted[s][i] > 0 ? Math.round((brkStageEvaded[s][i] / brkStageTargeted[s][i]) * 100 * 10) / 10 : 0
+      ) : undefined,
     };
   });
 
