@@ -1515,10 +1515,30 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             dmgTakenMin[i] = Math.min(dmgTakenMin[i], simDmgTaken[i]);
           }
           dmgTakenMax[i] = Math.max(dmgTakenMax[i], simDmgTaken[i]);
+          // Per-turn dmg taken min/max (across sims)
+          const perTurnTaken = round > 0 ? simDmgTaken[i] / round : 0;
+          if (perTurnTaken > 0) dmgTakenPerTurnMin[i] = Math.min(dmgTakenPerTurnMin[i], perTurnTaken);
+          dmgTakenPerTurnMax[i] = Math.max(dmgTakenPerTurnMax[i], perTurnTaken);
           lordProtectedSingle[i] += simLordSingleSaved[i];
           lordProtectedAoe[i] += simLordAoeSaved[i];
           lordAbsorbedSingle[i] += simLordAbsorbedSingle[i];
           lordAbsorbedAoe[i] += simLordAbsorbedAoe[i];
+          // Sims where lord protected this hero at least once
+          if ((simLordSingleSaved[i] + simLordAoeSaved[i]) > 0) lordProtectedSims[i]++;
+          // Single-attack hit type counts (per sim)
+          singleNormalHitsTotal[i] += simSingleNormalHits[i];
+          singleCritHitsTotal[i] += simSingleCritHits[i];
+          // Berserker stage targeting/evasion
+          for (let s = 0; s < 3; s++) {
+            brkStageTargeted[s][i] += simBrkStageTargeted[s][i];
+            brkStageEvaded[s][i] += simBrkStageEvaded[s][i];
+          }
+          // Win-only HP remaining min/max (per-sim)
+          if (wasWin) {
+            const hpEnd = Math.max(hp[i], 0);
+            if (hpEnd < winHpRemainMin[i]) winHpRemainMin[i] = hpEnd;
+            if (hpEnd > winHpRemainMax[i]) winHpRemainMax[i] = hpEnd;
+          }
 
           simPartyDmg += damageFight[i];
           simPartyTaken += simDmgTaken[i];
