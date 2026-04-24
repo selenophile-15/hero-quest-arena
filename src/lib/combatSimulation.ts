@@ -1797,18 +1797,34 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       totalHealingAvg: totalHealing[i] / actualSimCount,
       healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
       lordProtectionAvg: lordProtections[i] / actualSimCount,
+      lordProtectionSimRate: Math.round((lordProtectedSims[i] / actualSimCount) * 100 * 10) / 10,
       lordProtectedSingleAvg: lordProtectedSingle[i] / actualSimCount,
       lordProtectedAoeAvg: lordProtectedAoe[i] / actualSimCount,
       lordAbsorbedSingleDmg: lordAbsorbedSingle[i] / actualSimCount,
       lordAbsorbedAoeDmg: lordAbsorbedAoe[i] / actualSimCount,
       critSurvivalCount: critSurvivals[i] / actualSimCount,
       critSurvivalChance: Math.round((heroArmadillo[i] || (heroIsCleric[i] || heroIsBishop[i] ? 100 : 0)) * 10) / 10,
+      critSurvivalApplyRate: Math.round((critSurvivals[i] / actualSimCount) * 100 * 10) / 10,
       tankingRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
       singleTargetRate: totalAllSingleHits > 0 ? Math.round((singleTargetHitsTotal[i] / totalAllSingleHits) * 1000) / 10 : 0,
       minDamageTaken: dmgTakenMin[i] >= 1e9 ? 0 : Math.round(dmgTakenMin[i]),
       maxDamageTaken: Math.round(dmgTakenMax[i]),
+      minDamageTakenPerTurn: dmgTakenPerTurnMin[i] >= 1e9 ? 0 : Math.round(dmgTakenPerTurnMin[i]),
+      maxDamageTakenPerTurn: Math.round(dmgTakenPerTurnMax[i]),
       aoeDmgTakenTotal: aoeDmgTakenAccum[i] / actualSimCount,
       singleDmgTakenTotal: singleDmgTakenAccum[i] / actualSimCount,
+      singleNormalHitShare: (singleNormalHitsTotal[i] + singleCritHitsTotal[i]) > 0
+        ? Math.round((singleNormalHitsTotal[i] / (singleNormalHitsTotal[i] + singleCritHitsTotal[i])) * 100 * 10) / 10
+        : 0,
+      singleCritHitShare: (singleNormalHitsTotal[i] + singleCritHitsTotal[i]) > 0
+        ? Math.round((singleCritHitsTotal[i] / (singleNormalHitsTotal[i] + singleCritHitsTotal[i])) * 100 * 10) / 10
+        : 0,
+      winHpRemainMin: timesQuestWon > 0 && winHpRemainMin[i] < 1e9 ? Math.round(winHpRemainMin[i]) : 0,
+      winHpRemainAvg: timesQuestWon > 0 ? Math.round(winHpRemain[i] / timesQuestWon) : 0,
+      winHpRemainMax: timesQuestWon > 0 ? Math.round(winHpRemainMax[i]) : 0,
+      berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s =>
+        brkStageTargeted[s][i] > 0 ? Math.round((brkStageEvaded[s][i] / brkStageTargeted[s][i]) * 100 * 10) / 10 : 0
+      ) : undefined,
     };
   });
 
