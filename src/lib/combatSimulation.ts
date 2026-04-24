@@ -132,6 +132,8 @@ export interface HeroSimResult {
   healPerTurn: number;
   // Lord protection
   lordProtectionAvg: number;
+  // % of sims where this hero was protected at least once
+  lordProtectionSimRate?: number;
   // Lord protection split by attack type (avg per sim)
   lordProtectedSingleAvg?: number;
   lordProtectedAoeAvg?: number;
@@ -141,6 +143,20 @@ export interface HeroSimResult {
   // Crit survival (armadillo, cleric/bishop)
   critSurvivalCount: number;     // avg applied count per sim
   critSurvivalChance?: number;   // % chance (configured)
+  // % of sims where crit survival actually triggered (>=1 trigger)
+  critSurvivalApplyRate?: number;
+  // Per-turn taken min/max
+  minDamageTakenPerTurn?: number;
+  maxDamageTakenPerTurn?: number;
+  // Single-attack hit-type ratios (% of single attacks that were normal vs crit)
+  singleNormalHitShare?: number;
+  singleCritHitShare?: number;
+  // Win-only HP remaining (min/avg/max)
+  winHpRemainMin?: number;
+  winHpRemainAvg?: number;
+  winHpRemainMax?: number;
+  // Berserker per-stage actual evasion rate (%) (stage1, 2, 3)
+  berserkerStageEvaRate?: number[];
   tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
 }
 
