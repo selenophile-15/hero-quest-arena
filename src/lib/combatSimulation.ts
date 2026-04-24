@@ -1270,6 +1270,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         timesTargeted[target]++;
         simTargeted[target]++;
+        // Berserker stage targeting
+        const bStageT = berserkerStage[target];
+        if (bStageT >= 1 && bStageT <= 3) simBrkStageTargeted[bStageT - 1][target]++;
 
         const totalEva = heroEvasion[target] + berserkerStage[target] * 0.1 + ninjaEvasion[target];
         const cappedEva = Math.min(totalEva, heroEvaCap[target]);
@@ -1277,6 +1280,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (guaranteedEvade[target] || (Math.random() < cappedEva && !heroArtNoEvasion[target])) {
           timesEvaded[target]++;
           simEvaded[target]++;
+          if (bStageT >= 1 && bStageT <= 3) simBrkStageEvaded[bStageT - 1][target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
@@ -1286,6 +1290,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           simSingleDmgTaken[target] += dmg;
           simTimesHit[target]++;
           singleHitsTaken[target]++;
+          // Track single-attack hit type counts
+          if (isCrit) simSingleCritHits[target]++;
+          else simSingleNormalHits[target]++;
 
           if (hp[target] <= 0) {
             const survived = handleFatalBlow(target);
@@ -1297,8 +1304,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 singleHitsTaken[target]--;
                 singleHitsTaken[lordHero]++;
                 hp[target] += dmg;
-                simLordAbsorbedSingle[lordHero] += damageTaken[lordHero];
-                hp[lordHero] -= damageTaken[lordHero];
+                // New lord absorb: random pick between monster raw atk and ally's actual taken (non-crit) dmg, never below monster raw
+                const monRaw = mobDamage;
+                const allyDmg = damageTaken[target]; // ally normal (non-crit) taken
+                const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
+                const lordDmg = Math.max(monRaw, randPick);
+                simLordAbsorbedSingle[lordHero] += lordDmg;
+                hp[lordHero] -= lordDmg;
                 if (hp[lordHero] <= 0) {
                   if (!handleFatalBlow(lordHero)) {
                     hp[lordHero] = 0;
