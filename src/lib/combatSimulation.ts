@@ -1101,6 +1101,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simLordAoeSaved = new Float64Array(numHeroes);
     const simLordAbsorbedSingle = new Float64Array(numHeroes);
     const simLordAbsorbedAoe = new Float64Array(numHeroes);
+    // Per-sim single-attack hit type counts
+    const simSingleNormalHits = new Float64Array(numHeroes);
+    const simSingleCritHits = new Float64Array(numHeroes);
+    // Per-sim berserker stage targeting/evasion (stage 1..3)
+    const simBrkStageTargeted = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simBrkStageEvaded = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
