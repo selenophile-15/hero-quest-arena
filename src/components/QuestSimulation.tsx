@@ -35,7 +35,26 @@ import { saveSimulationResult, SavedSimulationSummary } from '@/lib/savedSimulat
 import { toast } from '@/hooks/use-toast';
 import { saveCanvasImage } from '@/lib/fileDownload';
 
-// Quest data types
+// Group header label with optional info tooltip (?) icon, kept centered.
+function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.ReactNode }) {
+  if (!info) return <>{label}</>;
+  return (
+    <span className="relative inline-flex items-center justify-center w-full">
+      <span className="text-center">{label}</span>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button type="button" className="absolute right-1 inline-flex items-center justify-center text-muted-foreground hover:text-foreground" aria-label="설명">
+            <HelpCircle className="w-3.5 h-3.5" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs text-left whitespace-pre-line">
+          {info}
+        </TooltipContent>
+      </Tooltip>
+    </span>
+  );
+}
+
 interface QuestTime {
   base: number;
   additional: number;
