@@ -1280,8 +1280,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (heroIsNinja[i] || heroIsSensei[i]) {
         ninjaBonus[i] = 0.1 + Math.min(heroTier[i], 4) * 0.1;
         ninjaEvasion[i] = heroTier[i] >= 4 ? 0.25 : heroTier[i] >= 3 ? 0.20 : 0.15;
+        prevInnateActive[i] = 1;
       }
       if (heroIsDaimyo[i]) guaranteedEvade[i] = 1;
+      if (hp[i] > 0) simAliveTurns[i] = 0; // will be incremented per round below
     }
 
     let mobHpCurrent = mobHp;
