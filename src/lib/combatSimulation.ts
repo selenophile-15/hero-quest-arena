@@ -155,9 +155,48 @@ export interface HeroSimResult {
   winHpRemainMin?: number;
   winHpRemainAvg?: number;
   winHpRemainMax?: number;
+  // Lose-only HP remaining (min/avg/max)
+  loseHpRemainMin?: number;
+  loseHpRemainAvg?: number;
+  loseHpRemainMax?: number;
+  // Overall HP remaining min/max (across all sims)
+  overallHpRemainMin?: number;
+  overallHpRemainMax?: number;
+  // Win-only HP remaining by bucket (alias used by UI)
   // Berserker per-stage actual evasion rate (%) (stage1, 2, 3)
   berserkerStageEvaRate?: number[];
+  // Berserker per-stage actual damage dealt (avg per sim, [normal, crit, total])
+  berserkerStageDmg?: { normal: number; crit: number; total: number }[];
   tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
+  // Alive turn distribution (overall / win / lose)
+  aliveTurnsMin?: number;
+  aliveTurnsAvg?: number;
+  aliveTurnsMax?: number;
+  winAliveTurnsMin?: number;
+  winAliveTurnsAvg?: number;
+  winAliveTurnsMax?: number;
+  loseAliveTurnsMin?: number;
+  loseAliveTurnsAvg?: number;
+  loseAliveTurnsMax?: number;
+  // % of sims where this hero was alive when round-limit reached
+  roundLimitAliveRate?: number;
+  // Hemma drain absorbed from this ally (avg dmg per sim, only non-hemma allies)
+  hemmaAbsorbedDmg?: number;
+  hemmaAbsorbedCount?: number; // avg drain count from this ally per sim
+  // Lord absorbed damage breakdown — when THIS hero was the protected ally
+  lordSavedSingleAvgDmg?: number;  // avg single dmg absorbed by lord saving this hero per sim
+  lordSavedAoeAvgDmg?: number;     // avg aoe dmg absorbed by lord saving this hero per sim
+  // Conqueror per-stack metrics (index 0..4 = stack count)
+  conquerorStackTurnRate?: number[];   // % of attack-turns spent at each stack (0..4)
+  conquerorStackCritDmg?: number[];    // avg crit damage dealt at each stack
+  conquerorStackResetRate?: number[];  // % of attacks at this stack that ended in reset (non-crit)
+  conquerorAvgStack?: number;          // overall avg stack count when attacking
+  conquerorAvgCritBonus?: number;      // overall avg crit% bonus from stacks (0..100)
+  // Ninja/Sensei innate bonus tracking
+  innateLossCount?: number;     // avg # of times innate bonus was lost (per sim)
+  innateRegenCount?: number;    // avg # of times sensei regenerated bonus (per sim)
+  withInnateAvgDmg?: number;    // avg dmg dealt while bonus active (per sim total)
+  withoutInnateAvgDmg?: number; // avg dmg dealt while bonus inactive (per sim total)
 }
 
 export interface PartyAggregate {
@@ -1024,6 +1063,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Win-only HP remaining distribution (per-sim per-hero, win sims only)
   const winHpRemainMin = new Float64Array(numHeroes).fill(1e9);
   const winHpRemainMax = new Float64Array(numHeroes);
+  // Lose-only & overall HP remaining tracking
+  const loseHpRemainMin = new Float64Array(numHeroes).fill(1e9);
+  const loseHpRemainMax = new Float64Array(numHeroes);
+  const overallHpRemainMin = new Float64Array(numHeroes).fill(1e9);
+  const overallHpRemainMax = new Float64Array(numHeroes);
   // Berserker per-stage attack/evade counts (single+aoe targeting)
   const brkStageTargeted = [
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
@@ -1031,6 +1075,57 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const brkStageEvaded = [
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
+  // Berserker per-stage damage dealt (normal/crit) accumulators
+  const brkStageNormalDmg = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const brkStageCritDmg = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  // Alive-turns tracking (overall/win/lose) per-sim per-hero
+  const aliveTurnsSum = new Float64Array(numHeroes);
+  const aliveTurnsMin = new Float64Array(numHeroes).fill(1e9);
+  const aliveTurnsMax = new Float64Array(numHeroes);
+  const winAliveTurnsSum = new Float64Array(numHeroes);
+  const winAliveTurnsMin = new Float64Array(numHeroes).fill(1e9);
+  const winAliveTurnsMax = new Float64Array(numHeroes);
+  const loseAliveTurnsSum = new Float64Array(numHeroes);
+  const loseAliveTurnsMin = new Float64Array(numHeroes).fill(1e9);
+  const loseAliveTurnsMax = new Float64Array(numHeroes);
+  // Round-limit-alive count (per hero)
+  const roundLimitAliveCount = new Float64Array(numHeroes);
+  // Hemma drain tracking per-ally (drained by hemma)
+  const hemmaAbsorbedDmgAccum = new Float64Array(numHeroes);
+  const hemmaAbsorbedCountAccum = new Float64Array(numHeroes);
+  // Lord-saved tracking per protected ally (single/aoe)
+  const lordSavedSingleDmgAccum = new Float64Array(numHeroes);
+  const lordSavedAoeDmgAccum = new Float64Array(numHeroes);
+  // Conqueror stack accumulators (stacks 0..4) — per attacking turn
+  const conqStackTurns = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackCritDmgAccum = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackCritCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackResetCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackAttackCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  // Ninja/Sensei innate tracking
+  const innateLossAccum = new Float64Array(numHeroes);
+  const innateRegenAccum = new Float64Array(numHeroes);
+  const withInnateDmgAccum = new Float64Array(numHeroes);
+  const withoutInnateDmgAccum = new Float64Array(numHeroes);
 
   // Per-sim party-level aggregates (sum across heroes per sim → distribution)
   // We'll track sums/min/max across sims for: party damage dealt, party damage taken
@@ -1117,6 +1212,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simLordAoeSaved = new Float64Array(numHeroes);
     const simLordAbsorbedSingle = new Float64Array(numHeroes);
     const simLordAbsorbedAoe = new Float64Array(numHeroes);
+    // Per-sim per-protected-ally lord saved damage (indexed by SAVED hero, not lord)
+    const simLordSavedSingleDmg = new Float64Array(numHeroes);
+    const simLordSavedAoeDmg = new Float64Array(numHeroes);
     // Per-sim single-attack hit type counts
     const simSingleNormalHits = new Float64Array(numHeroes);
     const simSingleCritHits = new Float64Array(numHeroes);
@@ -1127,6 +1225,47 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simBrkStageEvaded = [
       new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
+    // Per-sim berserker stage damage dealt (normal/crit) per hero
+    const simBrkStageNormalDmg = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simBrkStageCritDmg = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    // Per-sim alive turns (last round this hero was alive)
+    const simAliveTurns = new Float64Array(numHeroes);
+    // Per-sim hemma drain absorbed from each ally (dmg + count)
+    const simHemmaAbsorbedDmg = new Float64Array(numHeroes);
+    const simHemmaAbsorbedCount = new Float64Array(numHeroes);
+    // Per-sim conqueror stack metrics
+    const simConqStackTurns = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackCritDmgAccum = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackCritCount = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackResetCount = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackAttackCount = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    // Per-sim innate (ninja/sensei) tracking
+    const simInnateLossCount = new Float64Array(numHeroes);
+    const simInnateRegenCount = new Float64Array(numHeroes);
+    const simWithInnateDmg = new Float64Array(numHeroes);
+    const simWithoutInnateDmg = new Float64Array(numHeroes);
+    // Track previous-round innate state per hero (1 if had bonus at start of round)
+    const prevInnateActive = new Uint8Array(numHeroes);
+
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
@@ -1144,8 +1283,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (heroIsNinja[i] || heroIsSensei[i]) {
         ninjaBonus[i] = 0.1 + Math.min(heroTier[i], 4) * 0.1;
         ninjaEvasion[i] = heroTier[i] >= 4 ? 0.25 : heroTier[i] >= 3 ? 0.20 : 0.15;
+        prevInnateActive[i] = 1;
       }
       if (heroIsDaimyo[i]) guaranteedEvade[i] = 1;
+      if (hp[i] > 0) simAliveTurns[i] = 0; // will be incremented per round below
     }
 
     let mobHpCurrent = mobHp;
@@ -1189,7 +1330,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (heroIsSensei[i] && lostInnate[i] === round - 2) {
           ninjaBonus[i] = 0.1 + Math.min(heroTier[i], 4) * 0.1;
           ninjaEvasion[i] = heroTier[i] >= 4 ? 0.25 : heroTier[i] >= 3 ? 0.20 : 0.15;
+          simInnateRegenCount[i]++;
         }
+      }
+      // Snapshot innate state for hero-attack damage attribution
+      for (let i = 0; i < numHeroes; i++) {
+        if (heroIsNinja[i] || heroIsSensei[i]) {
+          prevInnateActive[i] = ninjaBonus[i] > 0 ? 1 : 0;
+        }
+      }
+      // Increment alive turns for any hero alive at start of this round
+      for (let i = 0; i < numHeroes; i++) {
+        if (hp[i] > 0) simAliveTurns[i] = round;
       }
 
       // ─── Extreme crit bonus from negative evasion ───
@@ -1248,6 +1400,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
                   const lordDmg = Math.max(monRaw, randPick);
                   simLordAbsorbedAoe[lordHero] += lordDmg;
+                  simLordSavedAoeDmg[i] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (hp[lordHero] <= 0) {
                     if (!handleFatalBlow(lordHero)) {
@@ -1326,6 +1479,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
                 const lordDmg = Math.max(monRaw, randPick);
                 simLordAbsorbedSingle[lordHero] += lordDmg;
+                simLordSavedSingleDmg[target] += lordDmg;
                 hp[lordHero] -= lordDmg;
                 if (hp[lordHero] <= 0) {
                   if (!handleFatalBlow(lordHero)) {
@@ -1357,7 +1511,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
         }
         if (drainTarget >= 0) {
-          hp[drainTarget] -= drainThreshold * finalHp[drainTarget];
+          const drainAmt = drainThreshold * finalHp[drainTarget];
+          hp[drainTarget] -= drainAmt;
+          // Track per-ally drain absorbed
+          simHemmaAbsorbedDmg[drainTarget] += drainAmt;
+          simHemmaAbsorbedCount[drainTarget]++;
           if (heroIsSensei[drainTarget] && lostInnate[drainTarget] !== round - 1) {
             lostInnate[drainTarget] = round;
           }
@@ -1396,6 +1554,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         const jj = attackOrder[ii];
         if (hp[jj] <= 0) continue;
 
+        // Track ninja/sensei innate loss event (state transition active→inactive)
+        if ((heroIsNinja[jj] || heroIsSensei[jj]) && prevInnateActive[jj] === 1 && ninjaBonus[jj] === 0) {
+          simInnateLossCount[jj]++;
+          prevInnateActive[jj] = 0;
+        }
+
         // Mob evasion check
         if (mobEvasion >= 0 && Math.random() < mobEvasion) continue;
 
@@ -1415,6 +1579,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         const isCrit = Math.random() < totalCritChance || guaranteedCrit[jj];
 
+        // Snapshot conqueror stack for this attack (0..4)
+        const preStacks = heroIsConquistador[jj]
+          ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25))
+          : 0;
+
         let damage: number;
         if (isCrit) {
           const critMult = heroCritMult[jj] + consecutiveCritBonus[jj];
@@ -1429,13 +1598,40 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
         } else {
           damage = baseHeroDmg * barrierMod;
-          if (heroIsConquistador[jj]) consecutiveCritBonus[jj] = 0;
+          if (heroIsConquistador[jj]) {
+            // Reset event at this stack
+            if (preStacks > 0) simConqStackResetCount[preStacks][jj]++;
+            consecutiveCritBonus[jj] = 0;
+          }
         }
 
         mobHpCurrent -= damage;
         damageFight[jj] += damage;
         if (isCrit) critDmgFight[jj] += damage;
         else normalDmgFight[jj] += damage;
+
+        // Conqueror per-stack tracking
+        if (heroIsConquistador[jj]) {
+          simConqStackTurns[preStacks][jj]++;
+          simConqStackAttackCount[preStacks][jj]++;
+          if (isCrit) {
+            simConqStackCritDmgAccum[preStacks][jj] += damage;
+            simConqStackCritCount[preStacks][jj]++;
+          }
+        }
+
+        // Berserker per-stage damage tracking
+        const bSt = berserkerStage[jj];
+        if (heroBerserkerLevel[jj] > 0 && bSt >= 1 && bSt <= 3) {
+          if (isCrit) simBrkStageCritDmg[bSt - 1][jj] += damage;
+          else simBrkStageNormalDmg[bSt - 1][jj] += damage;
+        }
+
+        // Ninja/Sensei with/without innate damage attribution
+        if (heroIsNinja[jj] || heroIsSensei[jj]) {
+          if (ninjaBonus[jj] > 0) simWithInnateDmg[jj] += damage;
+          else simWithoutInnateDmg[jj] += damage;
+        }
 
         // Dark Knight / Death Knight execute at 10% HP
         if (heroIsDarkKnight[jj] && mobHpCurrent < mobHp * 0.1) {
@@ -1491,9 +1687,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
       }
 
+      let wasRoundLimit = false;
       if (contFight && round >= 499) {
         contFight = false;
         wasLose = true;
+        wasRoundLimit = true;
         roundLimitTimes++;
         loseCount++;
         loseRoundsSum += round;
@@ -1505,6 +1703,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         roundsMin = Math.min(roundsMin, round);
         for (let i = 0; i < numHeroes; i++) {
           loseHpRemain[i] += Math.max(hp[i], 0);
+          // Track which heroes were still alive at round limit
+          if (hp[i] > 0) roundLimitAliveCount[i]++;
         }
       }
 
@@ -1549,12 +1749,61 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             brkStageTargeted[s][i] += simBrkStageTargeted[s][i];
             brkStageEvaded[s][i] += simBrkStageEvaded[s][i];
           }
-          // Win-only HP remaining min/max (per-sim)
+          // Win/lose/overall HP remaining min/max (per-sim)
+          const hpEnd = Math.max(hp[i], 0);
+          if (hpEnd < overallHpRemainMin[i]) overallHpRemainMin[i] = hpEnd;
+          if (hpEnd > overallHpRemainMax[i]) overallHpRemainMax[i] = hpEnd;
           if (wasWin) {
-            const hpEnd = Math.max(hp[i], 0);
             if (hpEnd < winHpRemainMin[i]) winHpRemainMin[i] = hpEnd;
             if (hpEnd > winHpRemainMax[i]) winHpRemainMax[i] = hpEnd;
+          } else if (wasLose) {
+            if (hpEnd < loseHpRemainMin[i]) loseHpRemainMin[i] = hpEnd;
+            if (hpEnd > loseHpRemainMax[i]) loseHpRemainMax[i] = hpEnd;
           }
+
+          // Alive turns aggregation
+          const at = simAliveTurns[i];
+          aliveTurnsSum[i] += at;
+          if (at < aliveTurnsMin[i]) aliveTurnsMin[i] = at;
+          if (at > aliveTurnsMax[i]) aliveTurnsMax[i] = at;
+          if (wasWin) {
+            winAliveTurnsSum[i] += at;
+            if (at < winAliveTurnsMin[i]) winAliveTurnsMin[i] = at;
+            if (at > winAliveTurnsMax[i]) winAliveTurnsMax[i] = at;
+          } else if (wasLose) {
+            loseAliveTurnsSum[i] += at;
+            if (at < loseAliveTurnsMin[i]) loseAliveTurnsMin[i] = at;
+            if (at > loseAliveTurnsMax[i]) loseAliveTurnsMax[i] = at;
+          }
+
+          // Hemma drain absorbed (from this ally)
+          hemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
+          hemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
+
+          // Lord saved damage applied to this ally (when this hero was the protected one)
+          lordSavedSingleDmgAccum[i] += simLordSavedSingleDmg[i];
+          lordSavedAoeDmgAccum[i] += simLordSavedAoeDmg[i];
+
+          // Conqueror per-stack
+          for (let s = 0; s < 5; s++) {
+            conqStackTurns[s][i] += simConqStackTurns[s][i];
+            conqStackCritDmgAccum[s][i] += simConqStackCritDmgAccum[s][i];
+            conqStackCritCount[s][i] += simConqStackCritCount[s][i];
+            conqStackResetCount[s][i] += simConqStackResetCount[s][i];
+            conqStackAttackCount[s][i] += simConqStackAttackCount[s][i];
+          }
+
+          // Berserker per-stage damage
+          for (let s = 0; s < 3; s++) {
+            brkStageNormalDmg[s][i] += simBrkStageNormalDmg[s][i];
+            brkStageCritDmg[s][i] += simBrkStageCritDmg[s][i];
+          }
+
+          // Innate (ninja/sensei)
+          innateLossAccum[i] += simInnateLossCount[i];
+          innateRegenAccum[i] += simInnateRegenCount[i];
+          withInnateDmgAccum[i] += simWithInnateDmg[i];
+          withoutInnateDmgAccum[i] += simWithoutInnateDmg[i];
 
           simPartyDmg += damageFight[i];
           simPartyTaken += simDmgTaken[i];
@@ -1822,9 +2071,72 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       winHpRemainMin: timesQuestWon > 0 && winHpRemainMin[i] < 1e9 ? Math.round(winHpRemainMin[i]) : 0,
       winHpRemainAvg: timesQuestWon > 0 ? Math.round(winHpRemain[i] / timesQuestWon) : 0,
       winHpRemainMax: timesQuestWon > 0 ? Math.round(winHpRemainMax[i]) : 0,
+      loseHpRemainMin: loseCount > 0 && loseHpRemainMin[i] < 1e9 ? Math.round(loseHpRemainMin[i]) : 0,
+      loseHpRemainAvg: loseCount > 0 ? Math.round(loseHpRemain[i] / loseCount) : 0,
+      loseHpRemainMax: loseCount > 0 ? Math.round(loseHpRemainMax[i]) : 0,
+      overallHpRemainMin: overallHpRemainMin[i] < 1e9 ? Math.round(overallHpRemainMin[i]) : 0,
+      overallHpRemainMax: Math.round(overallHpRemainMax[i]),
       berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s =>
         brkStageTargeted[s][i] > 0 ? Math.round((brkStageEvaded[s][i] / brkStageTargeted[s][i]) * 100 * 10) / 10 : 0
       ) : undefined,
+      berserkerStageDmg: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s => ({
+        normal: Math.round(brkStageNormalDmg[s][i] / actualSimCount),
+        crit: Math.round(brkStageCritDmg[s][i] / actualSimCount),
+        total: Math.round((brkStageNormalDmg[s][i] + brkStageCritDmg[s][i]) / actualSimCount),
+      })) : undefined,
+      // Alive turns
+      aliveTurnsMin: aliveTurnsMin[i] >= 1e9 ? 0 : Math.round(aliveTurnsMin[i]),
+      aliveTurnsAvg: actualSimCount > 0 ? Math.round((aliveTurnsSum[i] / actualSimCount) * 10) / 10 : 0,
+      aliveTurnsMax: Math.round(aliveTurnsMax[i]),
+      winAliveTurnsMin: timesQuestWon > 0 && winAliveTurnsMin[i] < 1e9 ? Math.round(winAliveTurnsMin[i]) : 0,
+      winAliveTurnsAvg: timesQuestWon > 0 ? Math.round((winAliveTurnsSum[i] / timesQuestWon) * 10) / 10 : 0,
+      winAliveTurnsMax: timesQuestWon > 0 ? Math.round(winAliveTurnsMax[i]) : 0,
+      loseAliveTurnsMin: loseCount > 0 && loseAliveTurnsMin[i] < 1e9 ? Math.round(loseAliveTurnsMin[i]) : 0,
+      loseAliveTurnsAvg: loseCount > 0 ? Math.round((loseAliveTurnsSum[i] / loseCount) * 10) / 10 : 0,
+      loseAliveTurnsMax: loseCount > 0 ? Math.round(loseAliveTurnsMax[i]) : 0,
+      roundLimitAliveRate: actualSimCount > 0 ? Math.round((roundLimitAliveCount[i] / actualSimCount) * 100 * 10) / 10 : 0,
+      // Hemma drain absorbed (avg per sim)
+      hemmaAbsorbedDmg: actualSimCount > 0 ? Math.round(hemmaAbsorbedDmgAccum[i] / actualSimCount) : 0,
+      hemmaAbsorbedCount: actualSimCount > 0 ? Math.round((hemmaAbsorbedCountAccum[i] / actualSimCount) * 10) / 10 : 0,
+      // Lord saved damage (when this hero was protected)
+      lordSavedSingleAvgDmg: actualSimCount > 0 ? Math.round(lordSavedSingleDmgAccum[i] / actualSimCount) : 0,
+      lordSavedAoeAvgDmg: actualSimCount > 0 ? Math.round(lordSavedAoeDmgAccum[i] / actualSimCount) : 0,
+      // Conqueror per-stack metrics
+      conquerorStackTurnRate: heroIsConquistador[i] ? (() => {
+        const totalTurns = conqStackTurns.reduce((s, arr) => s + arr[i], 0);
+        return totalTurns > 0
+          ? [0, 1, 2, 3, 4].map(s => Math.round((conqStackTurns[s][i] / totalTurns) * 100 * 10) / 10)
+          : [0, 0, 0, 0, 0];
+      })() : undefined,
+      conquerorStackCritDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
+        conqStackCritCount[s][i] > 0 ? Math.round(conqStackCritDmgAccum[s][i] / conqStackCritCount[s][i]) : 0
+      ) : undefined,
+      conquerorStackResetRate: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
+        conqStackAttackCount[s][i] > 0
+          ? Math.round((conqStackResetCount[s][i] / conqStackAttackCount[s][i]) * 100 * 10) / 10
+          : 0
+      ) : undefined,
+      conquerorAvgStack: heroIsConquistador[i] ? (() => {
+        const totalTurns = conqStackTurns.reduce((s, arr) => s + arr[i], 0);
+        if (totalTurns === 0) return 0;
+        const sum = [0, 1, 2, 3, 4].reduce((acc, s) => acc + s * conqStackTurns[s][i], 0);
+        return Math.round((sum / totalTurns) * 100) / 100;
+      })() : undefined,
+      conquerorAvgCritBonus: heroIsConquistador[i] ? (() => {
+        const totalTurns = conqStackTurns.reduce((s, arr) => s + arr[i], 0);
+        if (totalTurns === 0) return 0;
+        const sum = [0, 1, 2, 3, 4].reduce((acc, s) => acc + s * 25 * conqStackTurns[s][i], 0);
+        return Math.round((sum / totalTurns) * 10) / 10;
+      })() : undefined,
+      // Innate (ninja/sensei)
+      innateLossCount: (heroIsNinja[i] || heroIsSensei[i]) && actualSimCount > 0
+        ? Math.round((innateLossAccum[i] / actualSimCount) * 10) / 10 : undefined,
+      innateRegenCount: heroIsSensei[i] && actualSimCount > 0
+        ? Math.round((innateRegenAccum[i] / actualSimCount) * 10) / 10 : undefined,
+      withInnateAvgDmg: (heroIsNinja[i] || heroIsSensei[i]) && actualSimCount > 0
+        ? Math.round(withInnateDmgAccum[i] / actualSimCount) : undefined,
+      withoutInnateAvgDmg: (heroIsNinja[i] || heroIsSensei[i]) && actualSimCount > 0
+        ? Math.round(withoutInnateDmgAccum[i] / actualSimCount) : undefined,
     };
   });
 
