@@ -1327,7 +1327,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (heroIsSensei[i] && lostInnate[i] === round - 2) {
           ninjaBonus[i] = 0.1 + Math.min(heroTier[i], 4) * 0.1;
           ninjaEvasion[i] = heroTier[i] >= 4 ? 0.25 : heroTier[i] >= 3 ? 0.20 : 0.15;
+          simInnateRegenCount[i]++;
         }
+      }
+      // Snapshot innate state for hero-attack damage attribution
+      for (let i = 0; i < numHeroes; i++) {
+        if (heroIsNinja[i] || heroIsSensei[i]) {
+          prevInnateActive[i] = ninjaBonus[i] > 0 ? 1 : 0;
+        }
+      }
+      // Increment alive turns for any hero alive at start of this round
+      for (let i = 0; i < numHeroes; i++) {
+        if (hp[i] > 0) simAliveTurns[i] = round;
       }
 
       // ─── Extreme crit bonus from negative evasion ───
