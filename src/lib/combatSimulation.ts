@@ -1687,9 +1687,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
       }
 
+      let wasRoundLimit = false;
       if (contFight && round >= 499) {
         contFight = false;
         wasLose = true;
+        wasRoundLimit = true;
         roundLimitTimes++;
         loseCount++;
         loseRoundsSum += round;
@@ -1701,6 +1703,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         roundsMin = Math.min(roundsMin, round);
         for (let i = 0; i < numHeroes; i++) {
           loseHpRemain[i] += Math.max(hp[i], 0);
+          // Track which heroes were still alive at round limit
+          if (hp[i] > 0) roundLimitAliveCount[i]++;
         }
       }
 
