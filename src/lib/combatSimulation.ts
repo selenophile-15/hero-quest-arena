@@ -1400,6 +1400,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
                   const lordDmg = Math.max(monRaw, randPick);
                   simLordAbsorbedAoe[lordHero] += lordDmg;
+                  simLordSavedAoeDmg[i] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (hp[lordHero] <= 0) {
                     if (!handleFatalBlow(lordHero)) {
@@ -1478,6 +1479,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
                 const lordDmg = Math.max(monRaw, randPick);
                 simLordAbsorbedSingle[lordHero] += lordDmg;
+                simLordSavedSingleDmg[target] += lordDmg;
                 hp[lordHero] -= lordDmg;
                 if (hp[lordHero] <= 0) {
                   if (!handleFatalBlow(lordHero)) {
