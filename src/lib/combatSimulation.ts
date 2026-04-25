@@ -2071,9 +2071,72 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       winHpRemainMin: timesQuestWon > 0 && winHpRemainMin[i] < 1e9 ? Math.round(winHpRemainMin[i]) : 0,
       winHpRemainAvg: timesQuestWon > 0 ? Math.round(winHpRemain[i] / timesQuestWon) : 0,
       winHpRemainMax: timesQuestWon > 0 ? Math.round(winHpRemainMax[i]) : 0,
+      loseHpRemainMin: loseCount > 0 && loseHpRemainMin[i] < 1e9 ? Math.round(loseHpRemainMin[i]) : 0,
+      loseHpRemainAvg: loseCount > 0 ? Math.round(loseHpRemain[i] / loseCount) : 0,
+      loseHpRemainMax: loseCount > 0 ? Math.round(loseHpRemainMax[i]) : 0,
+      overallHpRemainMin: overallHpRemainMin[i] < 1e9 ? Math.round(overallHpRemainMin[i]) : 0,
+      overallHpRemainMax: Math.round(overallHpRemainMax[i]),
       berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s =>
         brkStageTargeted[s][i] > 0 ? Math.round((brkStageEvaded[s][i] / brkStageTargeted[s][i]) * 100 * 10) / 10 : 0
       ) : undefined,
+      berserkerStageDmg: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s => ({
+        normal: Math.round(brkStageNormalDmg[s][i] / actualSimCount),
+        crit: Math.round(brkStageCritDmg[s][i] / actualSimCount),
+        total: Math.round((brkStageNormalDmg[s][i] + brkStageCritDmg[s][i]) / actualSimCount),
+      })) : undefined,
+      // Alive turns
+      aliveTurnsMin: aliveTurnsMin[i] >= 1e9 ? 0 : Math.round(aliveTurnsMin[i]),
+      aliveTurnsAvg: actualSimCount > 0 ? Math.round((aliveTurnsSum[i] / actualSimCount) * 10) / 10 : 0,
+      aliveTurnsMax: Math.round(aliveTurnsMax[i]),
+      winAliveTurnsMin: timesQuestWon > 0 && winAliveTurnsMin[i] < 1e9 ? Math.round(winAliveTurnsMin[i]) : 0,
+      winAliveTurnsAvg: timesQuestWon > 0 ? Math.round((winAliveTurnsSum[i] / timesQuestWon) * 10) / 10 : 0,
+      winAliveTurnsMax: timesQuestWon > 0 ? Math.round(winAliveTurnsMax[i]) : 0,
+      loseAliveTurnsMin: loseCount > 0 && loseAliveTurnsMin[i] < 1e9 ? Math.round(loseAliveTurnsMin[i]) : 0,
+      loseAliveTurnsAvg: loseCount > 0 ? Math.round((loseAliveTurnsSum[i] / loseCount) * 10) / 10 : 0,
+      loseAliveTurnsMax: loseCount > 0 ? Math.round(loseAliveTurnsMax[i]) : 0,
+      roundLimitAliveRate: actualSimCount > 0 ? Math.round((roundLimitAliveCount[i] / actualSimCount) * 100 * 10) / 10 : 0,
+      // Hemma drain absorbed (avg per sim)
+      hemmaAbsorbedDmg: actualSimCount > 0 ? Math.round(hemmaAbsorbedDmgAccum[i] / actualSimCount) : 0,
+      hemmaAbsorbedCount: actualSimCount > 0 ? Math.round((hemmaAbsorbedCountAccum[i] / actualSimCount) * 10) / 10 : 0,
+      // Lord saved damage (when this hero was protected)
+      lordSavedSingleAvgDmg: actualSimCount > 0 ? Math.round(lordSavedSingleDmgAccum[i] / actualSimCount) : 0,
+      lordSavedAoeAvgDmg: actualSimCount > 0 ? Math.round(lordSavedAoeDmgAccum[i] / actualSimCount) : 0,
+      // Conqueror per-stack metrics
+      conquerorStackTurnRate: heroIsConquistador[i] ? (() => {
+        const totalTurns = conqStackTurns.reduce((s, arr) => s + arr[i], 0);
+        return totalTurns > 0
+          ? [0, 1, 2, 3, 4].map(s => Math.round((conqStackTurns[s][i] / totalTurns) * 100 * 10) / 10)
+          : [0, 0, 0, 0, 0];
+      })() : undefined,
+      conquerorStackCritDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
+        conqStackCritCount[s][i] > 0 ? Math.round(conqStackCritDmgAccum[s][i] / conqStackCritCount[s][i]) : 0
+      ) : undefined,
+      conquerorStackResetRate: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
+        conqStackAttackCount[s][i] > 0
+          ? Math.round((conqStackResetCount[s][i] / conqStackAttackCount[s][i]) * 100 * 10) / 10
+          : 0
+      ) : undefined,
+      conquerorAvgStack: heroIsConquistador[i] ? (() => {
+        const totalTurns = conqStackTurns.reduce((s, arr) => s + arr[i], 0);
+        if (totalTurns === 0) return 0;
+        const sum = [0, 1, 2, 3, 4].reduce((acc, s) => acc + s * conqStackTurns[s][i], 0);
+        return Math.round((sum / totalTurns) * 100) / 100;
+      })() : undefined,
+      conquerorAvgCritBonus: heroIsConquistador[i] ? (() => {
+        const totalTurns = conqStackTurns.reduce((s, arr) => s + arr[i], 0);
+        if (totalTurns === 0) return 0;
+        const sum = [0, 1, 2, 3, 4].reduce((acc, s) => acc + s * 25 * conqStackTurns[s][i], 0);
+        return Math.round((sum / totalTurns) * 10) / 10;
+      })() : undefined,
+      // Innate (ninja/sensei)
+      innateLossCount: (heroIsNinja[i] || heroIsSensei[i]) && actualSimCount > 0
+        ? Math.round((innateLossAccum[i] / actualSimCount) * 10) / 10 : undefined,
+      innateRegenCount: heroIsSensei[i] && actualSimCount > 0
+        ? Math.round((innateRegenAccum[i] / actualSimCount) * 10) / 10 : undefined,
+      withInnateAvgDmg: (heroIsNinja[i] || heroIsSensei[i]) && actualSimCount > 0
+        ? Math.round(withInnateDmgAccum[i] / actualSimCount) : undefined,
+      withoutInnateAvgDmg: (heroIsNinja[i] || heroIsSensei[i]) && actualSimCount > 0
+        ? Math.round(withoutInnateDmgAccum[i] / actualSimCount) : undefined,
     };
   });
 
