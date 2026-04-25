@@ -2033,7 +2033,7 @@ export default function QuestSimulation() {
                           })}
                           {/* Party total row */}
                           <tr className="border-t-2 border-border/60 bg-primary/10 font-bold">
-                            <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">전체</td>
+                            <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">파티</td>
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyMin))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(partyAvg))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyMax))}</td>
