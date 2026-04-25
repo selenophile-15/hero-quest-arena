@@ -1549,6 +1549,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         const jj = attackOrder[ii];
         if (hp[jj] <= 0) continue;
 
+        // Track ninja/sensei innate loss event (state transition active→inactive)
+        if ((heroIsNinja[jj] || heroIsSensei[jj]) && prevInnateActive[jj] === 1 && ninjaBonus[jj] === 0) {
+          simInnateLossCount[jj]++;
+          prevInnateActive[jj] = 0;
+        }
+
         // Mob evasion check
         if (mobEvasion >= 0 && Math.random() < mobEvasion) continue;
 
@@ -1568,6 +1574,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         const isCrit = Math.random() < totalCritChance || guaranteedCrit[jj];
 
+        // Snapshot conqueror stack for this attack (0..4)
+        const preStacks = heroIsConquistador[jj]
+          ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25))
+          : 0;
+
         let damage: number;
         if (isCrit) {
           const critMult = heroCritMult[jj] + consecutiveCritBonus[jj];
@@ -1582,13 +1593,40 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
         } else {
           damage = baseHeroDmg * barrierMod;
-          if (heroIsConquistador[jj]) consecutiveCritBonus[jj] = 0;
+          if (heroIsConquistador[jj]) {
+            // Reset event at this stack
+            if (preStacks > 0) simConqStackResetCount[preStacks][jj]++;
+            consecutiveCritBonus[jj] = 0;
+          }
         }
 
         mobHpCurrent -= damage;
         damageFight[jj] += damage;
         if (isCrit) critDmgFight[jj] += damage;
         else normalDmgFight[jj] += damage;
+
+        // Conqueror per-stack tracking
+        if (heroIsConquistador[jj]) {
+          simConqStackTurns[preStacks][jj]++;
+          simConqStackAttackCount[preStacks][jj]++;
+          if (isCrit) {
+            simConqStackCritDmgAccum[preStacks][jj] += damage;
+            simConqStackCritCount[preStacks][jj]++;
+          }
+        }
+
+        // Berserker per-stage damage tracking
+        const bSt = berserkerStage[jj];
+        if (heroBerserkerLevel[jj] > 0 && bSt >= 1 && bSt <= 3) {
+          if (isCrit) simBrkStageCritDmg[bSt - 1][jj] += damage;
+          else simBrkStageNormalDmg[bSt - 1][jj] += damage;
+        }
+
+        // Ninja/Sensei with/without innate damage attribution
+        if (heroIsNinja[jj] || heroIsSensei[jj]) {
+          if (ninjaBonus[jj] > 0) simWithInnateDmg[jj] += damage;
+          else simWithoutInnateDmg[jj] += damage;
+        }
 
         // Dark Knight / Death Knight execute at 10% HP
         if (heroIsDarkKnight[jj] && mobHpCurrent < mobHp * 0.1) {
