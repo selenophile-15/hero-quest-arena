@@ -2227,59 +2227,53 @@ export default function QuestSimulation() {
                       const monAtk = currentQuest?.atk || 0;
                       const monAoe = currentQuest?.aoe || 0;
 
-                      // ─── Table 3-A: 전체 (단일+광역) ───
-                      // Layout: name | [기본: 단일 raw, 광역 raw, 보정%, 단일 일반, 단일 치명, 광역 일반] | 받은 대미지 (전체) [min,avg,max] (turn)
+                      // ─── Table 3-A: 전체 ───
+                      // Layout: name | [기본: 단일 raw, 광역 raw, 보정%, 단일 일반, 단일 치명, 광역 일반] | 받은 대미지 (전체) [min,avg,max]
                       const renderTotalTable = () => (
                         <div className="mb-4">
-                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">전체 (단일+광역)</div>
+                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">전체</div>
                           <div className="overflow-x-auto">
                             <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                               <colgroup>
                                 <col style={{ width: '110px' }} />
                                 {/* 기본: 단일 raw, 광역 raw, 보정, 단일 일반, 단일 치명, 광역 일반 */}
                                 <col style={{ width: '85px' }} /><col style={{ width: '85px' }} /><col style={{ width: '80px' }} />
-                                <col style={{ width: '85px' }} /><col style={{ width: '85px' }} /><col style={{ width: '85px' }} />
+                                <col style={{ width: '90px' }} /><col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
                                 {/* 받은 대미지 (전체): min/avg/max */}
                                 <col style={{ width: '90px' }} /><col style={{ width: '95px' }} /><col style={{ width: '90px' }} />
-                                {/* 받은 대미지 (턴): min/avg/max */}
-                                <col style={{ width: '85px' }} /><col style={{ width: '90px' }} /><col style={{ width: '85px' }} />
                               </colgroup>
                               <thead>
                                 <tr className="border-b-2 border-border/60">
                                   <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                                  <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={6}>기본</th>
-                                  <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>받은 대미지 (전체)</th>
-                                  <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>받은 대미지 (턴)</th>
+                                  <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={6}>
+                                    <GroupHeader label="기본" info={'· 단일: 몬스터의 단일 공격력(원본).\n· 광역: 몬스터의 광역 공격력(원본).\n· 보정: 방어력으로 인한 대미지 적용률(%).\n· 단일 일반/치명: 단일 공격에서 일반/치명 평균 받은 대미지.\n· 광역 일반: 광역 공격에서 평균 받은 대미지(광역은 치명 없음).'} />
+                                  </th>
+                                  <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                    <GroupHeader label="받은 대미지 (전체)" info={'각 시뮬레이션에서 단일 / 광역 공격을 모두 합산한 총 받은 대미지 분포(최소 / 평균 / 최대). 단순 단일+광역 합이 아니라 매턴 실제로 발생한 대미지를 반영함. 헴마 자해 대미지 포함.'} />
+                                  </th>
                                 </tr>
-                                <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
+                                <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
                                   <th className="text-center py-1 px-2 border-l-4 border-border">단일</th>
                                   <th className="text-center py-1 px-2">광역</th>
                                   <th className="text-center py-1 px-2">보정</th>
-                                  <th className="text-center py-1 px-2 text-blue-300">단일 일반</th>
-                                  <th className="text-center py-1 px-2 text-yellow-300">단일 치명</th>
-                                  <th className="text-center py-1 px-2 text-blue-300">광역 일반</th>
-                                  <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
-                                  <th className="text-center py-1 px-2">평균</th>
-                                  <th className="text-center py-1 px-2">최대</th>
+                                  <th className="text-center py-1 px-2">단일 일반</th>
+                                  <th className="text-center py-1 px-2">단일 치명</th>
+                                  <th className="text-center py-1 px-2">광역 일반</th>
                                   <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                   <th className="text-center py-1 px-2">평균</th>
                                   <th className="text-center py-1 px-2">최대</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {/* Raw monster damage row (single cell spans all heroes — show one shared row at top) */}
                                 {displayResults.map((hr, idx) => {
                                   const dar = hr.damageApplicationRate || 0;
                                   const minTotal = hr.minDamageTaken ?? 0;
                                   const avgTotal = hr.totalDamageTakenAvg ?? 0;
                                   const maxTotal = hr.maxDamageTaken ?? 0;
-                                  const minTurn = hr.minDamageTakenPerTurn ?? 0;
-                                  const avgTurn = hr.avgDamageTakenPerTurn ?? 0;
-                                  const maxTurn = hr.maxDamageTakenPerTurn ?? 0;
                                   return (
                                     <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                       <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                      {/* 단일/광역 raw cells: only show on first row, blank on others */}
+                                      {/* 단일/광역 raw cells: only show on first row (rowSpan) */}
                                       {idx === 0 ? (
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap" rowSpan={displayResults.length}>{monAtk > 0 ? formatNumber(monAtk) : blank}</td>
                                       ) : null}
@@ -2287,34 +2281,18 @@ export default function QuestSimulation() {
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap" rowSpan={displayResults.length}>{monAoe > 0 ? formatNumber(monAoe) : blank}</td>
                                       ) : null}
                                       <td className="py-1 px-2 text-center font-mono whitespace-nowrap" style={{
-                                        color: dar <= 25 ? '#e5e5e5' : dar <= 50 ? '#84cc16' : dar <= 100 ? '#eab308' : '#ef4444'
+                                        color: dar <= 25 ? 'hsl(var(--muted-foreground))' : dar <= 50 ? '#84cc16' : dar <= 100 ? '#eab308' : '#ef4444'
                                       }}>{dar > 0 ? `${dar}%` : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-blue-300 whitespace-nowrap">{hr.normalDamageTaken > 0 ? formatNumber(hr.normalDamageTaken) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{hr.critDamageTakenVal > 0 ? formatNumber(hr.critDamageTakenVal) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-blue-300 whitespace-nowrap">{hr.aoeDamageTaken > 0 ? formatNumber(hr.aoeDamageTaken) : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.normalDamageTaken > 0 ? formatNumber(hr.normalDamageTaken) : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.critDamageTakenVal > 0 ? formatNumber(hr.critDamageTakenVal) : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.aoeDamageTaken > 0 ? formatNumber(hr.aoeDamageTaken) : blank}</td>
                                       {/* 받은 대미지 전체 */}
                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(minTotal)) : blank}</td>
                                       <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(avgTotal)) : blank}</td>
                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(maxTotal)) : blank}</td>
-                                      {/* 받은 대미지 턴 */}
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{avgTurn > 0 ? formatNumber(Math.round(minTurn)) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-orange-300 whitespace-nowrap">{avgTurn > 0 ? formatNumber(Math.round(avgTurn)) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{avgTurn > 0 ? formatNumber(Math.round(maxTurn)) : blank}</td>
                                     </tr>
                                   );
                                 })}
-                                {/* 전체 (party) row */}
-                                <tr className="border-t-2 border-border/60 bg-primary/10 font-bold">
-                                  <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">전체</td>
-                                  {/* Single/AoE raw + 보정 + 일반/치명 cells: not relevant for party — render no-border blank */}
-                                  <td className="py-1.5 px-2 border-l-4 border-border" style={{ background: 'transparent', border: 'none' }} colSpan={6}></td>
-                                  <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{partyTakenAvg > 0 ? formatNumber(Math.round(partyTakenMin)) : blank}</td>
-                                  <td className="py-1.5 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{partyTakenAvg > 0 ? formatNumber(Math.round(partyTakenAvg)) : blank}</td>
-                                  <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{partyTakenAvg > 0 ? formatNumber(Math.round(partyTakenMax)) : blank}</td>
-                                  <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{partyTakenAvgT > 0 ? formatNumber(Math.round(partyTakenMinT)) : blank}</td>
-                                  <td className="py-1.5 px-2 text-center font-mono text-orange-300 whitespace-nowrap">{partyTakenAvgT > 0 ? formatNumber(Math.round(partyTakenAvgT)) : blank}</td>
-                                  <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{partyTakenAvgT > 0 ? formatNumber(Math.round(partyTakenMaxT)) : blank}</td>
-                                </tr>
                               </tbody>
                             </table>
                           </div>
