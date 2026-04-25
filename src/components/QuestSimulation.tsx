@@ -1999,7 +1999,7 @@ export default function QuestSimulation() {
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="딜링 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
                           </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
+                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
                             <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                             <th className="text-center py-1 px-2">평균</th>
                             <th className="text-center py-1 px-2">최대</th>
