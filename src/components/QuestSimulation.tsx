@@ -2064,8 +2064,8 @@ export default function QuestSimulation() {
                               const nPct = partyTotal > 0 ? (partyNormal / partyTotal) * 100 : 0;
                               const cPct = partyTotal > 0 ? (partyCrit / partyTotal) * 100 : 0;
                               return (<>
-                                <td className="py-1.5 px-2 text-center font-mono text-blue-300 border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyNormal))} ({nPct.toFixed(1)}%)</td>
-                                <td className="py-1.5 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(Math.round(partyCrit))} ({cPct.toFixed(1)}%)</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyNormal))} ({nPct.toFixed(1)}%)</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyCrit))} ({cPct.toFixed(1)}%)</td>
                               </>);
                             })()}
                             <td className="py-1.5 px-2 border-l-4 border-border" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
