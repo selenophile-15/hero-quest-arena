@@ -155,9 +155,48 @@ export interface HeroSimResult {
   winHpRemainMin?: number;
   winHpRemainAvg?: number;
   winHpRemainMax?: number;
+  // Lose-only HP remaining (min/avg/max)
+  loseHpRemainMin?: number;
+  loseHpRemainAvg?: number;
+  loseHpRemainMax?: number;
+  // Overall HP remaining min/max (across all sims)
+  overallHpRemainMin?: number;
+  overallHpRemainMax?: number;
+  // Win-only HP remaining by bucket (alias used by UI)
   // Berserker per-stage actual evasion rate (%) (stage1, 2, 3)
   berserkerStageEvaRate?: number[];
+  // Berserker per-stage actual damage dealt (avg per sim, [normal, crit, total])
+  berserkerStageDmg?: { normal: number; crit: number; total: number }[];
   tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
+  // Alive turn distribution (overall / win / lose)
+  aliveTurnsMin?: number;
+  aliveTurnsAvg?: number;
+  aliveTurnsMax?: number;
+  winAliveTurnsMin?: number;
+  winAliveTurnsAvg?: number;
+  winAliveTurnsMax?: number;
+  loseAliveTurnsMin?: number;
+  loseAliveTurnsAvg?: number;
+  loseAliveTurnsMax?: number;
+  // % of sims where this hero was alive when round-limit reached
+  roundLimitAliveRate?: number;
+  // Hemma drain absorbed from this ally (avg dmg per sim, only non-hemma allies)
+  hemmaAbsorbedDmg?: number;
+  hemmaAbsorbedCount?: number; // avg drain count from this ally per sim
+  // Lord absorbed damage breakdown — when THIS hero was the protected ally
+  lordSavedSingleAvgDmg?: number;  // avg single dmg absorbed by lord saving this hero per sim
+  lordSavedAoeAvgDmg?: number;     // avg aoe dmg absorbed by lord saving this hero per sim
+  // Conqueror per-stack metrics (index 0..4 = stack count)
+  conquerorStackTurnRate?: number[];   // % of attack-turns spent at each stack (0..4)
+  conquerorStackCritDmg?: number[];    // avg crit damage dealt at each stack
+  conquerorStackResetRate?: number[];  // % of attacks at this stack that ended in reset (non-crit)
+  conquerorAvgStack?: number;          // overall avg stack count when attacking
+  conquerorAvgCritBonus?: number;      // overall avg crit% bonus from stacks (0..100)
+  // Ninja/Sensei innate bonus tracking
+  innateLossCount?: number;     // avg # of times innate bonus was lost (per sim)
+  innateRegenCount?: number;    // avg # of times sensei regenerated bonus (per sim)
+  withInnateAvgDmg?: number;    // avg dmg dealt while bonus active (per sim total)
+  withoutInnateAvgDmg?: number; // avg dmg dealt while bonus inactive (per sim total)
 }
 
 export interface PartyAggregate {
