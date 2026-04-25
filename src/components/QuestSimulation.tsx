@@ -1994,10 +1994,10 @@ export default function QuestSimulation() {
                         <thead>
                           <tr className="border-b-2 border-border/60">
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>가하는 대미지 (전체)</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>가하는 대미지 (턴)</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>일반 / 치명</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>딜링 비중</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><GroupHeader label="가하는 대미지 (전체)" info={'시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><GroupHeader label="가하는 대미지 (턴)" info={'시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="딜링 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
                             <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
