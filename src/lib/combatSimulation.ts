@@ -1749,12 +1749,61 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             brkStageTargeted[s][i] += simBrkStageTargeted[s][i];
             brkStageEvaded[s][i] += simBrkStageEvaded[s][i];
           }
-          // Win-only HP remaining min/max (per-sim)
+          // Win/lose/overall HP remaining min/max (per-sim)
+          const hpEnd = Math.max(hp[i], 0);
+          if (hpEnd < overallHpRemainMin[i]) overallHpRemainMin[i] = hpEnd;
+          if (hpEnd > overallHpRemainMax[i]) overallHpRemainMax[i] = hpEnd;
           if (wasWin) {
-            const hpEnd = Math.max(hp[i], 0);
             if (hpEnd < winHpRemainMin[i]) winHpRemainMin[i] = hpEnd;
             if (hpEnd > winHpRemainMax[i]) winHpRemainMax[i] = hpEnd;
+          } else if (wasLose) {
+            if (hpEnd < loseHpRemainMin[i]) loseHpRemainMin[i] = hpEnd;
+            if (hpEnd > loseHpRemainMax[i]) loseHpRemainMax[i] = hpEnd;
           }
+
+          // Alive turns aggregation
+          const at = simAliveTurns[i];
+          aliveTurnsSum[i] += at;
+          if (at < aliveTurnsMin[i]) aliveTurnsMin[i] = at;
+          if (at > aliveTurnsMax[i]) aliveTurnsMax[i] = at;
+          if (wasWin) {
+            winAliveTurnsSum[i] += at;
+            if (at < winAliveTurnsMin[i]) winAliveTurnsMin[i] = at;
+            if (at > winAliveTurnsMax[i]) winAliveTurnsMax[i] = at;
+          } else if (wasLose) {
+            loseAliveTurnsSum[i] += at;
+            if (at < loseAliveTurnsMin[i]) loseAliveTurnsMin[i] = at;
+            if (at > loseAliveTurnsMax[i]) loseAliveTurnsMax[i] = at;
+          }
+
+          // Hemma drain absorbed (from this ally)
+          hemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
+          hemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
+
+          // Lord saved damage applied to this ally (when this hero was the protected one)
+          lordSavedSingleDmgAccum[i] += simLordSavedSingleDmg[i];
+          lordSavedAoeDmgAccum[i] += simLordSavedAoeDmg[i];
+
+          // Conqueror per-stack
+          for (let s = 0; s < 5; s++) {
+            conqStackTurns[s][i] += simConqStackTurns[s][i];
+            conqStackCritDmgAccum[s][i] += simConqStackCritDmgAccum[s][i];
+            conqStackCritCount[s][i] += simConqStackCritCount[s][i];
+            conqStackResetCount[s][i] += simConqStackResetCount[s][i];
+            conqStackAttackCount[s][i] += simConqStackAttackCount[s][i];
+          }
+
+          // Berserker per-stage damage
+          for (let s = 0; s < 3; s++) {
+            brkStageNormalDmg[s][i] += simBrkStageNormalDmg[s][i];
+            brkStageCritDmg[s][i] += simBrkStageCritDmg[s][i];
+          }
+
+          // Innate (ninja/sensei)
+          innateLossAccum[i] += simInnateLossCount[i];
+          innateRegenAccum[i] += simInnateRegenCount[i];
+          withInnateDmgAccum[i] += simWithInnateDmg[i];
+          withoutInnateDmgAccum[i] += simWithoutInnateDmg[i];
 
           simPartyDmg += damageFight[i];
           simPartyTaken += simDmgTaken[i];
