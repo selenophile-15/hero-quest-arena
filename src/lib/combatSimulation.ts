@@ -1063,6 +1063,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Win-only HP remaining distribution (per-sim per-hero, win sims only)
   const winHpRemainMin = new Float64Array(numHeroes).fill(1e9);
   const winHpRemainMax = new Float64Array(numHeroes);
+  // Lose-only & overall HP remaining tracking
+  const loseHpRemainMin = new Float64Array(numHeroes).fill(1e9);
+  const loseHpRemainMax = new Float64Array(numHeroes);
+  const overallHpRemainMin = new Float64Array(numHeroes).fill(1e9);
+  const overallHpRemainMax = new Float64Array(numHeroes);
   // Berserker per-stage attack/evade counts (single+aoe targeting)
   const brkStageTargeted = [
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
@@ -1070,6 +1075,57 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const brkStageEvaded = [
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
+  // Berserker per-stage damage dealt (normal/crit) accumulators
+  const brkStageNormalDmg = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const brkStageCritDmg = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  // Alive-turns tracking (overall/win/lose) per-sim per-hero
+  const aliveTurnsSum = new Float64Array(numHeroes);
+  const aliveTurnsMin = new Float64Array(numHeroes).fill(1e9);
+  const aliveTurnsMax = new Float64Array(numHeroes);
+  const winAliveTurnsSum = new Float64Array(numHeroes);
+  const winAliveTurnsMin = new Float64Array(numHeroes).fill(1e9);
+  const winAliveTurnsMax = new Float64Array(numHeroes);
+  const loseAliveTurnsSum = new Float64Array(numHeroes);
+  const loseAliveTurnsMin = new Float64Array(numHeroes).fill(1e9);
+  const loseAliveTurnsMax = new Float64Array(numHeroes);
+  // Round-limit-alive count (per hero)
+  const roundLimitAliveCount = new Float64Array(numHeroes);
+  // Hemma drain tracking per-ally (drained by hemma)
+  const hemmaAbsorbedDmgAccum = new Float64Array(numHeroes);
+  const hemmaAbsorbedCountAccum = new Float64Array(numHeroes);
+  // Lord-saved tracking per protected ally (single/aoe)
+  const lordSavedSingleDmgAccum = new Float64Array(numHeroes);
+  const lordSavedAoeDmgAccum = new Float64Array(numHeroes);
+  // Conqueror stack accumulators (stacks 0..4) — per attacking turn
+  const conqStackTurns = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackCritDmgAccum = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackCritCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackResetCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackAttackCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  // Ninja/Sensei innate tracking
+  const innateLossAccum = new Float64Array(numHeroes);
+  const innateRegenAccum = new Float64Array(numHeroes);
+  const withInnateDmgAccum = new Float64Array(numHeroes);
+  const withoutInnateDmgAccum = new Float64Array(numHeroes);
 
   // Per-sim party-level aggregates (sum across heroes per sim → distribution)
   // We'll track sums/min/max across sims for: party damage dealt, party damage taken
