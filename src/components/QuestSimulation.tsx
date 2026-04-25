@@ -2080,39 +2080,69 @@ export default function QuestSimulation() {
 
                   {/* (Removed Table 1.5: 특수 대미지 — 데이터는 특수 정보 그룹으로 이동) */}
 
-                  {/* Table 2-A: 생존 — 생존률 / 남은 체력 / 치명타 생존 / 회복 */}
+                  {/* Table 2: 생존 — 생존률 / 턴 / 남은 체력(필터) / 타겟팅 / 치명타 생존 / 회복 */}
+                  {(() => {
+                    // Bucket selector for remaining HP based on mainResultsTab
+                    const hpKey = mainResultsTab === 'win' ? 'win' : mainResultsTab === 'lose' ? 'lose' : 'all';
+                    const hpLabel = hpKey === 'win' ? '성공판' : hpKey === 'lose' ? '실패판' : '전체판';
+                    return (
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                         <colgroup>
                           <col style={{ width: '110px' }} />
-                          {/* 생존률 */}
+                          {/* 기본: 생존률 */}
                           <col style={{ width: '90px' }} />
-                          {/* 남은 체력: min/avg/max (성공판만) */}
-                          <col style={{ width: '90px' }} /><col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
-                          {/* 치명타 생존: 확률, 적용 비율 */}
-                          <col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
-                          {/* 회복: 턴, 전체 */}
-                          <col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
+                          {/* 턴: 최소/평균/최대/라운드 도달 */}
+                          <col style={{ width: '75px' }} /><col style={{ width: '80px' }} /><col style={{ width: '75px' }} /><col style={{ width: '90px' }} />
+                          {/* 남은 체력: min/avg/max */}
+                          <col style={{ width: '85px' }} /><col style={{ width: '90px' }} /><col style={{ width: '85px' }} />
+                          {/* 타겟팅: 위협도, 실제, 회피 */}
+                          <col style={{ width: '85px' }} /><col style={{ width: '85px' }} /><col style={{ width: '85px' }} />
+                          {/* 치명타 생존: 확률, 발동 비율 */}
+                          <col style={{ width: '85px' }} /><col style={{ width: '90px' }} />
+                          {/* 회복: 턴, 전체 평균 */}
+                          <col style={{ width: '85px' }} /><col style={{ width: '95px' }} />
                         </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={1}>기본</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>남은 체력 (성공판)</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>치명타 생존</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>회복</th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={1}>
+                              <GroupHeader label="기본" info={'생존률 — 전체 시뮬레이션 중 끝까지 생존한 비율(%).'} />
+                            </th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={4}>
+                              <GroupHeader label="턴" info={'각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한을 넘겨도 살아남은 시뮬레이션의 비율.'} />
+                            </th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                              <GroupHeader label={`남은 체력 (${hpLabel})`} info={'시뮬레이션 종료 시 남은 HP의 분포.\n· 전체판: 모든 판\n· 성공판: 성공한 판만 (실패판은 0 HP일 가능성이 높아 평균을 왜곡하므로 제외)\n· 실패판: 실패한 판만'} />
+                            </th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                              <GroupHeader label="타겟팅" info={'· 위협도: 위협도 기반 단일 공격 피격 확률.\n· 실제: 실제 단일 공격을 받은 비율 (= 탱킹 기여도). 마지막 1인이 남는 시점까지의 단일공격 가능 턴이 분모.\n· 회피: 단일+광역 공격 중 회피한 비율.'} />
+                            </th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>
+                              <GroupHeader label="치명타 생존" info={'· 확률: 치명타 생존 발동 확률 (스탯 기준).\n· 발동 비율: 전체 시뮬레이션 중 치명타 생존이 한 번이라도 발동된 판의 비율.'} />
+                            </th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>
+                              <GroupHeader label="회복" info={'· 턴: 평균 턴당 회복량.\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
+                            </th>
                           </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
+                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
                             <th className="text-center py-1 px-2 border-l-4 border-border">생존률</th>
                             <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                             <th className="text-center py-1 px-2">평균</th>
                             <th className="text-center py-1 px-2">최대</th>
-                            <th className="text-center py-1 px-2 border-l-4 border-border text-purple-400">확률</th>
-                            <th className="text-center py-1 px-2 text-purple-400">적용 비율</th>
-                            <th className="text-center py-1 px-2 border-l-4 border-border text-lime-300">턴</th>
-                            <th className="text-center py-1 px-2 text-lime-400">전체</th>
+                            <th className="text-center py-1 px-2">라운드 제한</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
+                            <th className="text-center py-1 px-2">평균</th>
+                            <th className="text-center py-1 px-2">최대</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">위협도</th>
+                            <th className="text-center py-1 px-2">실제</th>
+                            <th className="text-center py-1 px-2">회피</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">확률</th>
+                            <th className="text-center py-1 px-2">발동 비율</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border">턴</th>
+                            <th className="text-center py-1 px-2">전체 평균</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -2123,92 +2153,46 @@ export default function QuestSimulation() {
                             const csApply = hr.critSurvivalApplyRate ?? 0;
                             const heal = hr.totalHealingAvg || 0;
                             const healT = hr.healPerTurn || 0;
-                            const hpMin = hr.winHpRemainMin ?? 0;
-                            const hpAvg = hr.winHpRemainAvg ?? 0;
-                            const hpMax = hr.winHpRemainMax ?? 0;
+                            // HP based on filter
+                            const hpMin = hpKey === 'win' ? (hr.winHpRemainMin ?? 0)
+                                       : hpKey === 'lose' ? (hr.loseHpRemainMin ?? 0)
+                                       : (hr.overallHpRemainMin ?? 0);
+                            const hpAvg = hpKey === 'win' ? (hr.winHpRemainAvg ?? 0)
+                                       : hpKey === 'lose' ? (hr.loseHpRemainAvg ?? 0)
+                                       : ((((hr.winHpRemainAvg ?? 0) * (hr.survivalRate / 100)) + ((hr.loseHpRemainAvg ?? 0) * (1 - hr.survivalRate / 100))) | 0);
+                            const hpMax = hpKey === 'win' ? (hr.winHpRemainMax ?? 0)
+                                       : hpKey === 'lose' ? (hr.loseHpRemainMax ?? 0)
+                                       : (hr.overallHpRemainMax ?? 0);
+                            const aMin = hr.aliveTurnsMin ?? 0;
+                            const aAvg = hr.aliveTurnsAvg ?? 0;
+                            const aMax = hr.aliveTurnsMax ?? 0;
+                            const aLimit = hr.roundLimitAliveRate ?? 0;
                             return (
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
+                                {/* 기본: 생존률 */}
                                 <td className={`py-1 px-2 text-center font-mono border-l-4 border-border whitespace-nowrap ${
                                   hr.survivalRate >= 90 ? 'text-lime-400' : hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
                                 }`}>{hr.survivalRate.toFixed(1)}%</td>
-                                <td className="py-1 px-2 text-center font-mono text-orange-300 border-l-4 border-border whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpMin) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpAvg) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-orange-300 whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpMax) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono border-l-4 border-border whitespace-nowrap">{fadeZero(`${csChance.toFixed(1)}%`, csChance === 0)}</td>
-                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap">{fadeZero(`${csApply.toFixed(1)}%`, csApply === 0)}</td>
-                                <td className="py-1 px-2 text-center font-mono text-lime-300 border-l-4 border-border whitespace-nowrap">{healT > 0 ? healT.toFixed(1) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-lime-400 whitespace-nowrap">{heal > 0 ? formatNumber(Math.round(heal)) : blank}</td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  {/* Table 2-B: 보호 — 타겟팅 / 군주 / 광전사 */}
-                  <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />보호</div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
-                        <colgroup>
-                          <col style={{ width: '110px' }} />
-                          {/* 타겟팅: 위협도, 실제, 회피 */}
-                          <col style={{ width: '90px' }} /><col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
-                          {/* 군주: 보호 비율, 단일 받은, 광역 받은 */}
-                          <col style={{ width: '90px' }} /><col style={{ width: '110px' }} /><col style={{ width: '110px' }} />
-                          {/* 광전사: 1단계, 2단계, 3단계 회피 비율 */}
-                          <col style={{ width: '85px' }} /><col style={{ width: '85px' }} /><col style={{ width: '85px' }} />
-                        </colgroup>
-                        <thead>
-                          <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>타겟팅</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>군주</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>광전사 (단계별 실 회피)</th>
-                          </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
-                            <th className="text-center py-1 px-2 border-l-4 border-border">위협도</th>
-                            <th className="text-center py-1 px-2">실제</th>
-                            <th className="text-center py-1 px-2">회피 비율</th>
-                            <th className="text-center py-1 px-2 border-l-4 border-border text-yellow-400">보호 비율</th>
-                            <th className="text-center py-1 px-2 text-yellow-300">단일</th>
-                            <th className="text-center py-1 px-2 text-yellow-300">광역</th>
-                            <th className="text-center py-1 px-2 border-l-4 border-border text-red-400">1단계</th>
-                            <th className="text-center py-1 px-2 text-red-400">2단계</th>
-                            <th className="text-center py-1 px-2 text-red-400">3단계</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {displayResults.map((hr, idx) => {
-                            const blank = '';
-                            const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30">{s}</span> : <>{s}</>;
-                            const isLord = (hr as any).heroName && /기사|군주|Lord|Knight/i.test(hr.heroName);
-                            const protectRate = hr.lordProtectionSimRate ?? 0;
-                            const showProtect = !isLord && protectRate > 0;
-                            const absSingle = hr.lordAbsorbedSingleDmg || 0;
-                            const absAoe = hr.lordAbsorbedAoeDmg || 0;
-                            const showAbsorb = (absSingle + absAoe) > 0;
-                            const brkEva = hr.berserkerStageEvaRate;
-                            return (
-                              <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
+                                {/* 턴 */}
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{aAvg > 0 ? formatNumber(aMin) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aAvg > 0 ? aAvg.toFixed(1) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aAvg > 0 ? formatNumber(aMax) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap">{fadeZero(`${aLimit.toFixed(1)}%`, aLimit === 0)}</td>
+                                {/* 남은 체력 */}
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpMin) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpAvg) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpMax) : blank}</td>
+                                {/* 타겟팅 */}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{fadeZero(`${hr.targetingRate.toFixed(1)}%`, hr.targetingRate === 0)}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${(hr.singleTargetRate ?? 0).toFixed(1)}%`, (hr.singleTargetRate ?? 0) === 0)}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${hr.evasionRate.toFixed(1)}%`, hr.evasionRate === 0)}</td>
-                                <td className="py-1 px-2 text-center font-mono text-yellow-400 border-l-4 border-border whitespace-nowrap">{showProtect ? `${protectRate.toFixed(1)}%` : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{showAbsorb && absSingle > 0 ? formatNumber(Math.round(absSingle)) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{showAbsorb && absAoe > 0 ? formatNumber(Math.round(absAoe)) : blank}</td>
-                                {brkEva ? (<>
-                                  <td className="py-1 px-2 text-center font-mono text-red-400 border-l-4 border-border whitespace-nowrap">{fadeZero(`${brkEva[0].toFixed(1)}%`, brkEva[0] === 0)}</td>
-                                  <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{fadeZero(`${brkEva[1].toFixed(1)}%`, brkEva[1] === 0)}</td>
-                                  <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{fadeZero(`${brkEva[2].toFixed(1)}%`, brkEva[2] === 0)}</td>
-                                </>) : (<>
-                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground/30 border-l-4 border-border whitespace-nowrap">{blank}</td>
-                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground/30 whitespace-nowrap">{blank}</td>
-                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground/30 whitespace-nowrap">{blank}</td>
-                                </>)}
+                                {/* 치명타 생존 */}
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{fadeZero(`${csChance.toFixed(1)}%`, csChance === 0)}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${csApply.toFixed(1)}%`, csApply === 0)}</td>
+                                {/* 회복 */}
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{healT > 0 ? healT.toFixed(1) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{heal > 0 ? formatNumber(Math.round(heal)) : blank}</td>
                               </tr>
                             );
                           })}
@@ -2216,6 +2200,8 @@ export default function QuestSimulation() {
                       </table>
                     </div>
                   </div>
+                    );
+                  })()}
 
                   {/* Table 3: 받는 대미지 — 전체(단일+광역) / 단일+광역 합본 */}
                   <div>
