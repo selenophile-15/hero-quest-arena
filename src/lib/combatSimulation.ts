@@ -1222,6 +1222,47 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simBrkStageEvaded = [
       new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
+    // Per-sim berserker stage damage dealt (normal/crit) per hero
+    const simBrkStageNormalDmg = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simBrkStageCritDmg = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    // Per-sim alive turns (last round this hero was alive)
+    const simAliveTurns = new Float64Array(numHeroes);
+    // Per-sim hemma drain absorbed from each ally (dmg + count)
+    const simHemmaAbsorbedDmg = new Float64Array(numHeroes);
+    const simHemmaAbsorbedCount = new Float64Array(numHeroes);
+    // Per-sim conqueror stack metrics
+    const simConqStackTurns = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackCritDmgAccum = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackCritCount = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackResetCount = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackAttackCount = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    // Per-sim innate (ninja/sensei) tracking
+    const simInnateLossCount = new Float64Array(numHeroes);
+    const simInnateRegenCount = new Float64Array(numHeroes);
+    const simWithInnateDmg = new Float64Array(numHeroes);
+    const simWithoutInnateDmg = new Float64Array(numHeroes);
+    // Track previous-round innate state per hero (1 if had bonus at start of round)
+    const prevInnateActive = new Uint8Array(numHeroes);
+
 
     let rudoBonus = rudoBonusBase;
     let tamasBonus = isTamas ? tamasMin + Math.random() * (tamasMax - tamasMin) : 0;
