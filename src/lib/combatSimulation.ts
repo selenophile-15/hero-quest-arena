@@ -1212,6 +1212,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simLordAoeSaved = new Float64Array(numHeroes);
     const simLordAbsorbedSingle = new Float64Array(numHeroes);
     const simLordAbsorbedAoe = new Float64Array(numHeroes);
+    // Per-sim per-protected-ally lord saved damage (indexed by SAVED hero, not lord)
+    const simLordSavedSingleDmg = new Float64Array(numHeroes);
+    const simLordSavedAoeDmg = new Float64Array(numHeroes);
     // Per-sim single-attack hit type counts
     const simSingleNormalHits = new Float64Array(numHeroes);
     const simSingleCritHits = new Float64Array(numHeroes);
