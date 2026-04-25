@@ -1506,7 +1506,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
         }
         if (drainTarget >= 0) {
-          hp[drainTarget] -= drainThreshold * finalHp[drainTarget];
+          const drainAmt = drainThreshold * finalHp[drainTarget];
+          hp[drainTarget] -= drainAmt;
+          // Track per-ally drain absorbed
+          simHemmaAbsorbedDmg[drainTarget] += drainAmt;
+          simHemmaAbsorbedCount[drainTarget]++;
           if (heroIsSensei[drainTarget] && lostInnate[drainTarget] !== round - 1) {
             lostInnate[drainTarget] = round;
           }
