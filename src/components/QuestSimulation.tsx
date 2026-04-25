@@ -2302,7 +2302,6 @@ export default function QuestSimulation() {
                       // ─── Table 3-B: 단일/광역 합본 ───
                       // Layout: name | [단일: 받은(전체) min/avg/max + 일반%/치명%] | [광역: 받은(전체) min/avg/max]
                       const renderSplitTable = () => {
-                        // For per-hero single/aoe min/max — scale total min/max by ratio
                         return (
                           <div className="mb-4">
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">단일 / 광역</div>
@@ -2319,15 +2318,19 @@ export default function QuestSimulation() {
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={5}>단일 - 받은 대미지 (전체)</th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>광역 - 받은 대미지 (전체)</th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={5}>
+                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대) 및 몬스터 단일 공격의 일반 / 치명 비중. 비중은 각 판마다 단일 공격 중 일반/치명이 발생한 횟수의 평균.'} />
+                                    </th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                      <GroupHeader label="광역" info={'광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음.'} />
+                                    </th>
                                   </tr>
-                                  <tr className="border-b-2 border-border/60 text-[12px] text-foreground font-semibold bg-primary/5">
+                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
-                                    <th className="text-center py-1 px-2 text-blue-300">일반</th>
-                                    <th className="text-center py-1 px-2 text-yellow-300">치명</th>
+                                    <th className="text-center py-1 px-2">일반</th>
+                                    <th className="text-center py-1 px-2">치명</th>
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
@@ -2352,37 +2355,14 @@ export default function QuestSimulation() {
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{singleAvg > 0 ? formatNumber(Math.round(sMin)) : blank}</td>
                                         <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{singleAvg > 0 ? formatNumber(Math.round(singleAvg)) : blank}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{singleAvg > 0 ? formatNumber(Math.round(sMax)) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-blue-300 whitespace-nowrap">{fadeZero(`${nShare.toFixed(1)}%`, nShare === 0)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{fadeZero(`${cShare.toFixed(1)}%`, cShare === 0)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${nShare.toFixed(1)}%`, nShare === 0)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${cShare.toFixed(1)}%`, cShare === 0)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{aoeAvg > 0 ? formatNumber(Math.round(aMin)) : blank}</td>
                                         <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{aoeAvg > 0 ? formatNumber(Math.round(aoeAvg)) : blank}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aoeAvg > 0 ? formatNumber(Math.round(aMax)) : blank}</td>
                                       </tr>
                                     );
                                   })}
-                                  {/* 전체 (party) row — sums of singles/aoes per sim — approximate via ratio from party totals */}
-                                  {(() => {
-                                    const partySingleAvg = displayResults.reduce((s, hr) => s + (hr.singleDmgTakenTotal || 0), 0);
-                                    const partyAoeAvg = displayResults.reduce((s, hr) => s + (hr.aoeDmgTakenTotal || 0), 0);
-                                    const sR = partyTakenAvg > 0 ? partySingleAvg / partyTakenAvg : 0;
-                                    const aR = partyTakenAvg > 0 ? partyAoeAvg / partyTakenAvg : 0;
-                                    const sMin = partyTakenMin * sR, sMax = partyTakenMax * sR;
-                                    const aMin = partyTakenMin * aR, aMax = partyTakenMax * aR;
-                                    return (
-                                      <tr className="border-t-2 border-border/60 bg-primary/10 font-bold">
-                                        <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">전체</td>
-                                        <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{partySingleAvg > 0 ? formatNumber(Math.round(sMin)) : blank}</td>
-                                        <td className="py-1.5 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{partySingleAvg > 0 ? formatNumber(Math.round(partySingleAvg)) : blank}</td>
-                                        <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{partySingleAvg > 0 ? formatNumber(Math.round(sMax)) : blank}</td>
-                                        {/* 일반/치명 비중 — party row not meaningful; leave blank */}
-                                        <td className="py-1.5 px-2" style={{ background: 'transparent', border: 'none' }}></td>
-                                        <td className="py-1.5 px-2" style={{ background: 'transparent', border: 'none' }}></td>
-                                        <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{partyAoeAvg > 0 ? formatNumber(Math.round(aMin)) : blank}</td>
-                                        <td className="py-1.5 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{partyAoeAvg > 0 ? formatNumber(Math.round(partyAoeAvg)) : blank}</td>
-                                        <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{partyAoeAvg > 0 ? formatNumber(Math.round(aMax)) : blank}</td>
-                                      </tr>
-                                    );
-                                  })()}
                                 </tbody>
                               </table>
                             </div>
