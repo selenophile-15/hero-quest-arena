@@ -2040,10 +2040,17 @@ export default function QuestSimulation() {
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyMinPerTurn))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(Math.round(partyAvgPerTurn))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyMaxPerTurn))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-blue-300 border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyNormal))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(Math.round(partyCrit))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-foreground border-l-4 border-border whitespace-nowrap">100%</td>
-                            <td className="py-1.5 px-2"></td>
+                            {(() => {
+                              const partyTotal = partyNormal + partyCrit;
+                              const nPct = partyTotal > 0 ? (partyNormal / partyTotal) * 100 : 0;
+                              const cPct = partyTotal > 0 ? (partyCrit / partyTotal) * 100 : 0;
+                              return (<>
+                                <td className="py-1.5 px-2 text-center font-mono text-blue-300 border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyNormal))} ({nPct.toFixed(1)}%)</td>
+                                <td className="py-1.5 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(Math.round(partyCrit))} ({cPct.toFixed(1)}%)</td>
+                              </>);
+                            })()}
+                            <td className="py-1.5 px-2 border-l-4 border-border" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
+                            <td className="py-1.5 px-2" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
                           </tr>
                         </tbody>
                       </table>
