@@ -197,6 +197,14 @@ export interface HeroSimResult {
   innateRegenCount?: number;    // avg # of times sensei regenerated bonus (per sim)
   withInnateAvgDmg?: number;    // avg dmg dealt while bonus active (per sim total)
   withoutInnateAvgDmg?: number; // avg dmg dealt while bonus inactive (per sim total)
+  // Class/spirit flags for special-info table rendering
+  isLordHero?: boolean;
+  isHemmaHero?: boolean;
+  isConquerorHero?: boolean;
+  isNinjaHero?: boolean;
+  isSenseiHero?: boolean;
+  isBerserkerHero?: boolean;
+  berserkerStageNum?: number; // 1..3
 }
 
 export interface PartyAggregate {
