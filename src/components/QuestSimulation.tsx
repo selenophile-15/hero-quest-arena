@@ -1152,6 +1152,8 @@ export default function QuestSimulation() {
                             </div>
                           ))}
                         </div>
+                        {/* Spacer column to widen gap between bar and connector lines */}
+                        <div aria-hidden="true" />
                         <div className="relative ml-1.5">
                           {rows.map(r => (
                             <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-2" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
