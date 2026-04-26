@@ -1129,7 +1129,7 @@ export default function QuestSimulation() {
 
                     return (
                     <div className="mt-6 pt-4 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      <div className="relative grid grid-cols-[50px_18px_1fr] gap-x-1.5" style={{ height: `${barH}px` }}>
+                      <div className="relative grid gap-x-1.5" style={{ height: `${barH}px`, gridTemplateColumns: '50px 18px 32px 1fr' }}>
                         <div className="relative">
                           {rows.map(r => (
                             <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
