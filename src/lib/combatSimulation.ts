@@ -197,6 +197,14 @@ export interface HeroSimResult {
   innateRegenCount?: number;    // avg # of times sensei regenerated bonus (per sim)
   withInnateAvgDmg?: number;    // avg dmg dealt while bonus active (per sim total)
   withoutInnateAvgDmg?: number; // avg dmg dealt while bonus inactive (per sim total)
+  // Class/spirit flags for special-info table rendering
+  isLordHero?: boolean;
+  isHemmaHero?: boolean;
+  isConquerorHero?: boolean;
+  isNinjaHero?: boolean;
+  isSenseiHero?: boolean;
+  isBerserkerHero?: boolean;
+  berserkerStageNum?: number; // 1..3
 }
 
 export interface PartyAggregate {
@@ -2137,6 +2145,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         ? Math.round(withInnateDmgAccum[i] / actualSimCount) : undefined,
       withoutInnateAvgDmg: (heroIsNinja[i] || heroIsSensei[i]) && actualSimCount > 0
         ? Math.round(withoutInnateDmgAccum[i] / actualSimCount) : undefined,
+      // Class flags
+      isLordHero: heroIsLord[i],
+      isHemmaHero: hemmaWho === i,
+      isConquerorHero: heroIsConquistador[i],
+      isNinjaHero: heroIsNinja[i],
+      isSenseiHero: heroIsSensei[i],
+      isBerserkerHero: heroBerserkerLevel[i] > 0,
+      berserkerStageNum: heroBerserkerLevel[i] > 0 ? 3 : undefined,
     };
   });
 
