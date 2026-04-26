@@ -2145,6 +2145,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         ? Math.round(withInnateDmgAccum[i] / actualSimCount) : undefined,
       withoutInnateAvgDmg: (heroIsNinja[i] || heroIsSensei[i]) && actualSimCount > 0
         ? Math.round(withoutInnateDmgAccum[i] / actualSimCount) : undefined,
+      // Class flags
+      isLordHero: heroIsLord[i],
+      isHemmaHero: hemmaWho === i,
+      isConquerorHero: heroIsConquistador[i],
+      isNinjaHero: heroIsNinja[i],
+      isSenseiHero: heroIsSensei[i],
+      isBerserkerHero: heroBerserkerLevel[i] > 0,
+      berserkerStageNum: heroBerserkerLevel[i] > 0 ? 3 : undefined,
     };
   });
 
