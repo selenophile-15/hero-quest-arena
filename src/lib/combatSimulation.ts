@@ -2152,6 +2152,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       loseHpRemainMax: loseCount > 0 ? Math.round(loseHpRemainMax[i]) : 0,
       overallHpRemainMin: overallHpRemainMin[i] < 1e9 ? Math.round(overallHpRemainMin[i]) : 0,
       overallHpRemainMax: Math.round(overallHpRemainMax[i]),
+      overallHpRemainAvg: overallHpRemainCount[i] > 0 ? Math.round(overallHpRemainSum[i] / overallHpRemainCount[i]) : 0,
       berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s =>
         brkStageTargeted[s][i] > 0 ? Math.round((brkStageEvaded[s][i] / brkStageTargeted[s][i]) * 100 * 10) / 10 : 0
       ) : undefined,
