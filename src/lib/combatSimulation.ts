@@ -1313,6 +1313,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simWithoutInnateDmg = new Float64Array(numHeroes);
     // Track previous-round innate state per hero (1 if had bonus at start of round)
     const prevInnateActive = new Uint8Array(numHeroes);
+    // Per-sim Polonia loot tracking (per attacker)
+    const simPoloniaStolen = new Float64Array(numHeroes);
 
 
     let rudoBonus = rudoBonusBase;
