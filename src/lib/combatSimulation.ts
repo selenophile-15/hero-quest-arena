@@ -1110,6 +1110,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const loseHpRemainMax = new Float64Array(numHeroes);
   const overallHpRemainMin = new Float64Array(numHeroes).fill(1e9);
   const overallHpRemainMax = new Float64Array(numHeroes);
+  const overallHpRemainSum = new Float64Array(numHeroes);
+  const overallHpRemainCount = new Float64Array(numHeroes);
   // Berserker per-stage attack/evade counts (single+aoe targeting)
   const brkStageTargeted = [
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
