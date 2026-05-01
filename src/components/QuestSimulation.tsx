@@ -2229,7 +2229,7 @@ export default function QuestSimulation() {
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     {(() => {
                       const blank = '';
-                      const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30">{s}</span> : <>{s}</>;
+                      const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                       // Party-level distributions (true sim-based)
                       const pTaken = mainResultsTab === 'win' ? simResult.winPartyDmgTaken
                         : mainResultsTab === 'lose' ? simResult.losePartyDmgTaken
@@ -2401,7 +2401,7 @@ export default function QuestSimulation() {
                   {/* Table 4: 특수 정보 — 3개 표 (상어/공룡/헴마, 군주/정복자/닌자센세, 광전사) */}
                   {(() => {
                     const blank = '';
-                    const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30">{s}</span> : <>{s}</>;
+                    const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                     const partyAvgDmg = displayResults.reduce((s, hr) => s + (hr.avgDamageDealt || 0), 0);
 
                     // ── Table A: 상어 / 공룡 / 헴마 ──
