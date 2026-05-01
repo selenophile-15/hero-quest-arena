@@ -1890,6 +1890,23 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseEvaded[i] += simEvaded[i];
           }
         }
+        // Polonia loot — apply per-sim cap on the party total, distribute proportionally for per-hero accum
+        if (poloniaActive) {
+          let simStolenTotal = 0;
+          for (let i = 0; i < numHeroes; i++) simStolenTotal += simPoloniaStolen[i];
+          const cappedTotal = Math.min(simStolenTotal, poloniaLootCap);
+          // Distribute cap proportionally so per-hero shares sum to cappedTotal
+          if (simStolenTotal > 0) {
+            const ratio = cappedTotal / simStolenTotal;
+            for (let i = 0; i < numHeroes; i++) {
+              poloniaStolenAccum[i] += simPoloniaStolen[i] * ratio;
+            }
+          }
+          poloniaTotAcrossSims += cappedTotal;
+          if (cappedTotal < poloniaMinPerSim) poloniaMinPerSim = cappedTotal;
+          if (cappedTotal > poloniaMaxPerSim) poloniaMaxPerSim = cappedTotal;
+          if (simStolenTotal >= poloniaLootCap) poloniaCapHits++;
+        }
         // Aggregate party-per-sim distributions
         const simPartyDmgPerTurn = round > 0 ? simPartyDmg / round : 0;
         const simPartyTakenPerTurn = round > 0 ? simPartyTaken / round : 0;
