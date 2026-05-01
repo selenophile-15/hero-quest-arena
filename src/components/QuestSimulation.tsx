@@ -55,6 +55,31 @@ function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.Rea
   );
 }
 
+// Inline 3-button toggle for All/Win/Lose, used at the right of each group title row.
+function ResultTabsToggle({ value, onChange }: { value: 'all' | 'win' | 'lose'; onChange: (v: 'all' | 'win' | 'lose') => void }) {
+  const opts: Array<{ v: 'all' | 'win' | 'lose'; label: string }> = [
+    { v: 'all', label: '전체' },
+    { v: 'win', label: '성공' },
+    { v: 'lose', label: '실패' },
+  ];
+  return (
+    <div className="inline-flex items-center rounded-md border border-primary/40 bg-primary/5 overflow-hidden h-7 ml-auto">
+      {opts.map(o => (
+        <button
+          key={o.v}
+          type="button"
+          onClick={() => onChange(o.v)}
+          className={`px-2 text-[11px] font-bold leading-none h-full transition-colors ${
+            value === o.v ? 'bg-primary/20 text-foreground' : 'text-muted-foreground hover:bg-primary/10'
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 interface QuestTime {
   base: number;
   additional: number;
@@ -1129,14 +1154,9 @@ export default function QuestSimulation() {
 
                     return (
                     <div className="mt-6 pt-4 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      <div className="relative grid gap-x-1.5" style={{ height: `${barH}px`, gridTemplateColumns: '50px 18px 32px 1fr' }}>
-                        <div className="relative">
-                          {rows.map(r => (
-                            <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
-                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{r.label}</span>
-                            </div>
-                          ))}
-                        </div>
+                      {/* Left-aligned layout: bar at far left, numbers right next to bar, then connectors+names */}
+                      <div className="relative grid gap-x-1.5" style={{ height: `${barH}px`, gridTemplateColumns: '18px 110px 32px 1fr' }}>
+                        {/* Column 1: bar */}
                         <div className="relative">
                           <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
                             background: 'linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
@@ -1152,22 +1172,25 @@ export default function QuestSimulation() {
                             </div>
                           ))}
                         </div>
-                        {/* Spacer column to widen gap between bar and connector lines */}
-                        <div aria-hidden="true" />
-                        <div className="relative ml-1.5">
+                        {/* Column 2: numbers (DEF threshold value + applied %) directly next to bar */}
+                        <div className="relative pl-2">
                           {rows.map(r => (
-                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-2" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                            <div key={`thr-${r.key}`} className="absolute left-2 flex items-center gap-2" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
                               <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          {/* SVG bezier curves for connecting hero pins to labels */}
+                        </div>
+                        {/* Spacer column */}
+                        <div aria-hidden="true" />
+                        {/* Column 4: connectors + hero name labels */}
+                        <div className="relative ml-1.5">
                           <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
                             {heroLayout.map(h => {
                               const yPin = (1 - h.pinPct / 100) * barH;
                               const yLabel = (1 - h.labelPct / 100) * barH;
-                              const x1 = 70;
-                              const x2 = 98;
+                              const x1 = 0;
+                              const x2 = 28;
                               const cx = (x1 + x2) / 2;
                               return (
                                 <path key={`line-${h.id}`}
@@ -1178,8 +1201,8 @@ export default function QuestSimulation() {
                             })}
                           </svg>
                           {heroLayout.map(h => (
-                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '100px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[11px] font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '32px', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[11px] font-semibold truncate max-w-[120px] leading-tight" style={{ color: h.color }}>{h.name}</span>
                               <span className="text-[10px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
@@ -1856,16 +1879,6 @@ export default function QuestSimulation() {
           <div className="flex items-center gap-2 mt-4 mb-3">
             <ListChecks className="w-5 h-5 text-primary" />
             <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
-            <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
-              <SelectTrigger className="h-8 w-28 text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="win">성공</SelectItem>
-                <SelectItem value="lose">실패</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <div className="card-fantasy p-4">
 
@@ -1959,7 +1972,7 @@ export default function QuestSimulation() {
                 <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />대미지</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
@@ -2089,7 +2102,7 @@ export default function QuestSimulation() {
                     const hpLabel = hpKey === 'win' ? '성공판' : hpKey === 'lose' ? '실패판' : '전체판';
                     return (
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                         <colgroup>
@@ -2207,7 +2220,7 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 받는 대미지 — 전체(단일+광역) / 단일+광역 합본 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />받는 대미지</div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     {(() => {
                       const blank = '';
                       const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30">{s}</span> : <>{s}</>;
@@ -2413,7 +2426,7 @@ export default function QuestSimulation() {
 
                     return (
                       <div>
-                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보</div>
+                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                         <div className="space-y-6">
 
                           {/* ===== Table A: 상어 / 공룡 / 헴마 ===== */}

@@ -205,6 +205,22 @@ export interface HeroSimResult {
   isSenseiHero?: boolean;
   isBerserkerHero?: boolean;
   berserkerStageNum?: number; // 1..3
+  // Polonia loot — per hero (avg # of items stolen per sim by this hero)
+  poloniaStolenAvg?: number;
+  // Trickster flag (for Polonia loot UI)
+  isTricksterHero?: boolean;
+}
+
+// Polonia loot summary
+export interface PoloniaLootInfo {
+  hasPolonia: boolean;
+  baseChance: number;        // % per attack (final, after trickster bonus)
+  capMax: number;            // max items per sim (after trickster bonus)
+  numTricksters: number;     // # of trickster heroes (excluding champion)
+  avgPerSim: number;         // avg items stolen per sim (after cap)
+  minPerSim: number;
+  maxPerSim: number;
+  capHitRate: number;        // % of sims that hit the cap
 }
 
 export interface PartyAggregate {
@@ -285,6 +301,8 @@ export interface SimulationResult {
   losePartyDmgPerTurn?: PartyAggregate;
   losePartyDmgTaken?: PartyAggregate;
   losePartyDmgTakenPerTurn?: PartyAggregate;
+  // Polonia loot summary
+  poloniaLoot?: PoloniaLootInfo;
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
@@ -756,6 +774,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let lordPresent = false;
   let lordHero = -1;
   let fateweaverPresent = false;
+  // Polonia loot state
+  let poloniaActive = false;
+  let poloniaBaseChance = 0;
+  let poloniaLootChance = 0;
+  let poloniaLootCap = 20;
+  let poloniaNumTricksters = 0;
 
   // Find Lord and Fateweaver (always needed for combat logic)
   for (let i = 0; i < numHeroes; i++) {
@@ -844,6 +868,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       const mult = heroIsMercenary[i] ? 1.25 * heroArtChampionMod[i] : heroArtChampionMod[i];
       heroEvasion[i] += (champTier < 3 ? 0.05 : 0.1) * mult;
     }
+    // Polonia loot setup
+    poloniaActive = true;
+    poloniaBaseChance = champTier === 1 ? 0.30 : champTier === 2 ? 0.35 : champTier === 3 ? 0.40 : 0.50;
+    let numTricksters = 0;
+    for (let i = 0; i < numHeroes; i++) {
+      if ((activeHeroes[i].heroClass === '사기꾼' || activeHeroes[i].heroClass === 'Trickster')) numTricksters++;
+    }
+    poloniaNumTricksters = numTricksters;
+    poloniaLootChance = poloniaBaseChance + numTricksters * 0.02;
+    poloniaLootCap = 20 + numTricksters * 2;
   } else if (champName.includes('라인홀드') || champName === 'Reinhold') {
     champAtkBonus = 0.05 + 0.05 * champTier + 0.05 * Math.max(champTier - 3, 0);
     champDefBonus = 0.05 + 0.05 * champTier + 0.05 * Math.max(champTier - 3, 0);
@@ -1134,6 +1168,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const innateRegenAccum = new Float64Array(numHeroes);
   const withInnateDmgAccum = new Float64Array(numHeroes);
   const withoutInnateDmgAccum = new Float64Array(numHeroes);
+  // Polonia loot accumulators
+  const poloniaStolenAccum = new Float64Array(numHeroes); // per-hero across sims
+  let poloniaTotAcrossSims = 0;
+  let poloniaMinPerSim = Infinity;
+  let poloniaMaxPerSim = 0;
+  let poloniaCapHits = 0;
 
   // Per-sim party-level aggregates (sum across heroes per sim → distribution)
   // We'll track sums/min/max across sims for: party damage dealt, party damage taken
@@ -1273,6 +1313,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simWithoutInnateDmg = new Float64Array(numHeroes);
     // Track previous-round innate state per hero (1 if had bonus at start of round)
     const prevInnateActive = new Uint8Array(numHeroes);
+    // Per-sim Polonia loot tracking (per attacker)
+    const simPoloniaStolen = new Float64Array(numHeroes);
 
 
     let rudoBonus = rudoBonusBase;
@@ -1649,6 +1691,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // Shark activates at 50% mob HP
         if (mobHpCurrent < mobHp / 2) sharkActive = 1;
 
+        // Polonia loot attempt — each hero attack is a chance to steal
+        if (poloniaActive && Math.random() < poloniaLootChance) {
+          simPoloniaStolen[jj]++;
+        }
+
         guaranteedCrit[jj] = 0;
       }
 
@@ -1842,6 +1889,23 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseTargeted[i] += simTargeted[i];
             loseEvaded[i] += simEvaded[i];
           }
+        }
+        // Polonia loot — apply per-sim cap on the party total, distribute proportionally for per-hero accum
+        if (poloniaActive) {
+          let simStolenTotal = 0;
+          for (let i = 0; i < numHeroes; i++) simStolenTotal += simPoloniaStolen[i];
+          const cappedTotal = Math.min(simStolenTotal, poloniaLootCap);
+          // Distribute cap proportionally so per-hero shares sum to cappedTotal
+          if (simStolenTotal > 0) {
+            const ratio = cappedTotal / simStolenTotal;
+            for (let i = 0; i < numHeroes; i++) {
+              poloniaStolenAccum[i] += simPoloniaStolen[i] * ratio;
+            }
+          }
+          poloniaTotAcrossSims += cappedTotal;
+          if (cappedTotal < poloniaMinPerSim) poloniaMinPerSim = cappedTotal;
+          if (cappedTotal > poloniaMaxPerSim) poloniaMaxPerSim = cappedTotal;
+          if (simStolenTotal >= poloniaLootCap) poloniaCapHits++;
         }
         // Aggregate party-per-sim distributions
         const simPartyDmgPerTurn = round > 0 ? simPartyDmg / round : 0;
@@ -2153,6 +2217,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       isSenseiHero: heroIsSensei[i],
       isBerserkerHero: heroBerserkerLevel[i] > 0,
       berserkerStageNum: heroBerserkerLevel[i] > 0 ? 3 : undefined,
+      isTricksterHero: activeHeroes[i].heroClass === '사기꾼' || activeHeroes[i].heroClass === 'Trickster',
+      poloniaStolenAvg: poloniaActive && actualSimCount > 0
+        ? Math.round((poloniaStolenAccum[i] / actualSimCount) * 100) / 100
+        : undefined,
     };
   });
 
@@ -2191,6 +2259,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       avgDamageTakenPerTurn: avgR > 0 ? Math.round(dTaken / bucketCount / avgR) : 0,
       evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
       tankingRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
+      singleTargetRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
     };
   };
 
@@ -2285,6 +2354,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       min: losePartyTakenPerTurnMin === Infinity ? 0 : Math.round(losePartyTakenPerTurnMin),
       avg: Math.round(losePartyTakenPerTurnSum / losePartyCount),
       max: Math.round(losePartyTakenPerTurnMax),
+    } : undefined,
+    poloniaLoot: poloniaActive ? {
+      hasPolonia: true,
+      baseChance: Math.round(poloniaLootChance * 100 * 10) / 10,
+      capMax: poloniaLootCap,
+      numTricksters: poloniaNumTricksters,
+      avgPerSim: actualSimCount > 0 ? Math.round((poloniaTotAcrossSims / actualSimCount) * 100) / 100 : 0,
+      minPerSim: poloniaMinPerSim === Infinity ? 0 : Math.round(poloniaMinPerSim),
+      maxPerSim: Math.round(poloniaMaxPerSim),
+      capHitRate: actualSimCount > 0 ? Math.round((poloniaCapHits / actualSimCount) * 100 * 10) / 10 : 0,
     } : undefined,
   };
 }
