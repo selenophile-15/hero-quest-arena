@@ -2169,7 +2169,7 @@ export default function QuestSimulation() {
                         <tbody>
                           {displayResults.map((hr, idx) => {
                             const blank = '';
-                            const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30">{s}</span> : <>{s}</>;
+                            const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                             const csChance = hr.critSurvivalChance ?? 0;
                             const csApply = hr.critSurvivalApplyRate ?? 0;
                             const heal = hr.totalHealingAvg || 0;
