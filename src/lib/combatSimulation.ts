@@ -1691,6 +1691,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // Shark activates at 50% mob HP
         if (mobHpCurrent < mobHp / 2) sharkActive = 1;
 
+        // Polonia loot attempt — each hero attack is a chance to steal
+        if (poloniaActive && Math.random() < poloniaLootChance) {
+          simPoloniaStolen[jj]++;
+        }
+
         guaranteedCrit[jj] = 0;
       }
 
