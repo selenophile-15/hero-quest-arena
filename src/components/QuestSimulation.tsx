@@ -1154,9 +1154,17 @@ export default function QuestSimulation() {
 
                     return (
                     <div className="mt-6 pt-4 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      {/* Left-aligned layout: bar at far left, numbers right next to bar, then connectors+names */}
-                      <div className="relative grid gap-x-1.5" style={{ height: `${barH}px`, gridTemplateColumns: '18px 110px 32px 1fr' }}>
-                        {/* Column 1: bar */}
+                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names], threshold value aligned with monster info icons (px-1 = 4px) */}
+                      <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 24px 1fr', paddingLeft: '4px' }}>
+                        {/* Column 1: threshold values (aligned with monster info icons on left) */}
+                        <div className="relative">
+                          {rows.map(r => (
+                            <div key={`thrv-${r.key}`} className="absolute left-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Column 2: bar */}
                         <div className="relative">
                           <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
                             background: 'linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
@@ -1172,18 +1180,17 @@ export default function QuestSimulation() {
                             </div>
                           ))}
                         </div>
-                        {/* Column 2: numbers (DEF threshold value + applied %) directly next to bar */}
-                        <div className="relative pl-2">
+                        {/* Column 3: applied % (right next to bar) */}
+                        <div className="relative pl-1">
                           {rows.map(r => (
-                            <div key={`thr-${r.key}`} className="absolute left-2 flex items-center gap-2" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                            <div key={`thrp-${r.key}`} className="absolute left-1 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
                         </div>
                         {/* Spacer column */}
                         <div aria-hidden="true" />
-                        {/* Column 4: connectors + hero name labels */}
+                        {/* Column 5: connectors + hero name labels */}
                         <div className="relative ml-1.5">
                           <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
                             {heroLayout.map(h => {
