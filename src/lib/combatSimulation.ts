@@ -2217,6 +2217,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       isSenseiHero: heroIsSensei[i],
       isBerserkerHero: heroBerserkerLevel[i] > 0,
       berserkerStageNum: heroBerserkerLevel[i] > 0 ? 3 : undefined,
+      isTricksterHero: activeHeroes[i].heroClass === '사기꾼' || activeHeroes[i].heroClass === 'Trickster',
+      poloniaStolenAvg: poloniaActive && actualSimCount > 0
+        ? Math.round((poloniaStolenAccum[i] / actualSimCount) * 100) / 100
+        : undefined,
     };
   });
 
