@@ -55,6 +55,31 @@ function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.Rea
   );
 }
 
+// Inline 3-button toggle for All/Win/Lose, used at the right of each group title row.
+function ResultTabsToggle({ value, onChange }: { value: 'all' | 'win' | 'lose'; onChange: (v: 'all' | 'win' | 'lose') => void }) {
+  const opts: Array<{ v: 'all' | 'win' | 'lose'; label: string }> = [
+    { v: 'all', label: '전체' },
+    { v: 'win', label: '성공' },
+    { v: 'lose', label: '실패' },
+  ];
+  return (
+    <div className="inline-flex items-center rounded-md border border-primary/40 bg-primary/5 overflow-hidden h-7 ml-auto">
+      {opts.map(o => (
+        <button
+          key={o.v}
+          type="button"
+          onClick={() => onChange(o.v)}
+          className={`px-2 text-[11px] font-bold leading-none h-full transition-colors ${
+            value === o.v ? 'bg-primary/20 text-foreground' : 'text-muted-foreground hover:bg-primary/10'
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 interface QuestTime {
   base: number;
   additional: number;
