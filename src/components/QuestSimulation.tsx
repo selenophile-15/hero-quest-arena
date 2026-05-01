@@ -2133,10 +2133,10 @@ export default function QuestSimulation() {
                               <GroupHeader label="기본" info={'생존률 — 전체 시뮬레이션 중 끝까지 생존한 비율(%).'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={4}>
-                              <GroupHeader label="턴" info={'각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한을 넘겨도 살아남은 시뮬레이션의 비율.'} />
+                              <GroupHeader label="생존 턴" info={'각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한에 도달했음에도 살아있어 종료된 시뮬레이션의 비율.'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
-                              <GroupHeader label={`남은 체력 (${hpLabel})`} info={'시뮬레이션 종료 시 남은 HP의 분포.\n· 전체판: 모든 판\n· 성공판: 성공한 판만 (실패판은 0 HP일 가능성이 높아 평균을 왜곡하므로 제외)\n· 실패판: 실패한 판만'} />
+                              <GroupHeader label="남은 체력" info={'시뮬레이션 종료 시 남은 HP의 분포 (최소 / 평균 / 최대).\n선택된 필터(전체/성공/실패)에 해당하는 판만 반영.'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
                               <GroupHeader label="타겟팅" info={'· 위협도: 위협도 기반 단일 공격 피격 확률.\n· 실제: 실제 단일 공격을 받은 비율 (= 탱킹 기여도). 마지막 1인이 남는 시점까지의 단일공격 가능 턴이 분모.\n· 회피: 단일+광역 공격 중 회피한 비율.'} />
