@@ -862,6 +862,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       const mult = heroIsMercenary[i] ? 1.25 * heroArtChampionMod[i] : heroArtChampionMod[i];
       heroEvasion[i] += (champTier < 3 ? 0.05 : 0.1) * mult;
     }
+    // Polonia loot setup
+    poloniaActive = true;
+    poloniaBaseChance = champTier === 1 ? 0.30 : champTier === 2 ? 0.35 : champTier === 3 ? 0.40 : 0.50;
+    let numTricksters = 0;
+    for (let i = 0; i < numHeroes; i++) {
+      if ((activeHeroes[i].heroClass === '사기꾼' || activeHeroes[i].heroClass === 'Trickster')) numTricksters++;
+    }
+    poloniaNumTricksters = numTricksters;
+    poloniaLootChance = poloniaBaseChance + numTricksters * 0.02;
+    poloniaLootCap = 20 + numTricksters * 2;
   } else if (champName.includes('라인홀드') || champName === 'Reinhold') {
     champAtkBonus = 0.05 + 0.05 * champTier + 0.05 * Math.max(champTier - 3, 0);
     champDefBonus = 0.05 + 0.05 * champTier + 0.05 * Math.max(champTier - 3, 0);
