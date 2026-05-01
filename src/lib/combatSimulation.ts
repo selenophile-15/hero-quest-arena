@@ -1168,6 +1168,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const innateRegenAccum = new Float64Array(numHeroes);
   const withInnateDmgAccum = new Float64Array(numHeroes);
   const withoutInnateDmgAccum = new Float64Array(numHeroes);
+  // Polonia loot accumulators
+  const poloniaStolenAccum = new Float64Array(numHeroes); // per-hero across sims
+  let poloniaTotAcrossSims = 0;
+  let poloniaMinPerSim = Infinity;
+  let poloniaMaxPerSim = 0;
+  let poloniaCapHits = 0;
 
   // Per-sim party-level aggregates (sum across heroes per sim → distribution)
   // We'll track sums/min/max across sims for: party damage dealt, party damage taken
