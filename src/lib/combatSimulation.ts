@@ -774,6 +774,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let lordPresent = false;
   let lordHero = -1;
   let fateweaverPresent = false;
+  // Polonia loot state
+  let poloniaActive = false;
+  let poloniaBaseChance = 0;
+  let poloniaLootChance = 0;
+  let poloniaLootCap = 20;
+  let poloniaNumTricksters = 0;
 
   // Find Lord and Fateweaver (always needed for combat logic)
   for (let i = 0; i < numHeroes; i++) {
