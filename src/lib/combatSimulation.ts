@@ -2355,6 +2355,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       avg: Math.round(losePartyTakenPerTurnSum / losePartyCount),
       max: Math.round(losePartyTakenPerTurnMax),
     } : undefined,
+    poloniaLoot: poloniaActive ? {
+      hasPolonia: true,
+      baseChance: Math.round(poloniaLootChance * 100 * 10) / 10,
+      capMax: poloniaLootCap,
+      numTricksters: poloniaNumTricksters,
+      avgPerSim: actualSimCount > 0 ? Math.round((poloniaTotAcrossSims / actualSimCount) * 100) / 100 : 0,
+      minPerSim: poloniaMinPerSim === Infinity ? 0 : Math.round(poloniaMinPerSim),
+      maxPerSim: Math.round(poloniaMaxPerSim),
+      capHitRate: actualSimCount > 0 ? Math.round((poloniaCapHits / actualSimCount) * 100 * 10) / 10 : 0,
+    } : undefined,
   };
 }
 
