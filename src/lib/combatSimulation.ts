@@ -1810,6 +1810,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const hpEnd = Math.max(hp[i], 0);
           if (hpEnd < overallHpRemainMin[i]) overallHpRemainMin[i] = hpEnd;
           if (hpEnd > overallHpRemainMax[i]) overallHpRemainMax[i] = hpEnd;
+          overallHpRemainSum[i] += hpEnd;
+          overallHpRemainCount[i]++;
           if (wasWin) {
             if (hpEnd < winHpRemainMin[i]) winHpRemainMin[i] = hpEnd;
             if (hpEnd > winHpRemainMax[i]) winHpRemainMax[i] = hpEnd;
