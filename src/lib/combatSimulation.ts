@@ -301,6 +301,8 @@ export interface SimulationResult {
   losePartyDmgPerTurn?: PartyAggregate;
   losePartyDmgTaken?: PartyAggregate;
   losePartyDmgTakenPerTurn?: PartyAggregate;
+  // Polonia loot summary
+  poloniaLoot?: PoloniaLootInfo;
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
