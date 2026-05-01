@@ -162,6 +162,7 @@ export interface HeroSimResult {
   // Overall HP remaining min/max (across all sims)
   overallHpRemainMin?: number;
   overallHpRemainMax?: number;
+  overallHpRemainAvg?: number;
   // Win-only HP remaining by bucket (alias used by UI)
   // Berserker per-stage actual evasion rate (%) (stage1, 2, 3)
   berserkerStageEvaRate?: number[];
