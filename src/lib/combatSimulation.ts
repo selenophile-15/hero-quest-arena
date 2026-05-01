@@ -205,6 +205,22 @@ export interface HeroSimResult {
   isSenseiHero?: boolean;
   isBerserkerHero?: boolean;
   berserkerStageNum?: number; // 1..3
+  // Polonia loot — per hero (avg # of items stolen per sim by this hero)
+  poloniaStolenAvg?: number;
+  // Trickster flag (for Polonia loot UI)
+  isTricksterHero?: boolean;
+}
+
+// Polonia loot summary
+export interface PoloniaLootInfo {
+  hasPolonia: boolean;
+  baseChance: number;        // % per attack (final, after trickster bonus)
+  capMax: number;            // max items per sim (after trickster bonus)
+  numTricksters: number;     // # of trickster heroes (excluding champion)
+  avgPerSim: number;         // avg items stolen per sim (after cap)
+  minPerSim: number;
+  maxPerSim: number;
+  capHitRate: number;        // % of sims that hit the cap
 }
 
 export interface PartyAggregate {
