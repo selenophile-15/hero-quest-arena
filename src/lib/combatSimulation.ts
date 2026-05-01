@@ -162,6 +162,7 @@ export interface HeroSimResult {
   // Overall HP remaining min/max (across all sims)
   overallHpRemainMin?: number;
   overallHpRemainMax?: number;
+  overallHpRemainAvg?: number;
   // Win-only HP remaining by bucket (alias used by UI)
   // Berserker per-stage actual evasion rate (%) (stage1, 2, 3)
   berserkerStageEvaRate?: number[];
@@ -1110,6 +1111,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const loseHpRemainMax = new Float64Array(numHeroes);
   const overallHpRemainMin = new Float64Array(numHeroes).fill(1e9);
   const overallHpRemainMax = new Float64Array(numHeroes);
+  const overallHpRemainSum = new Float64Array(numHeroes);
+  const overallHpRemainCount = new Float64Array(numHeroes);
   // Berserker per-stage attack/evade counts (single+aoe targeting)
   const brkStageTargeted = [
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
@@ -1808,6 +1811,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const hpEnd = Math.max(hp[i], 0);
           if (hpEnd < overallHpRemainMin[i]) overallHpRemainMin[i] = hpEnd;
           if (hpEnd > overallHpRemainMax[i]) overallHpRemainMax[i] = hpEnd;
+          overallHpRemainSum[i] += hpEnd;
+          overallHpRemainCount[i]++;
           if (wasWin) {
             if (hpEnd < winHpRemainMin[i]) winHpRemainMin[i] = hpEnd;
             if (hpEnd > winHpRemainMax[i]) winHpRemainMax[i] = hpEnd;
@@ -2148,6 +2153,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       loseHpRemainMax: loseCount > 0 ? Math.round(loseHpRemainMax[i]) : 0,
       overallHpRemainMin: overallHpRemainMin[i] < 1e9 ? Math.round(overallHpRemainMin[i]) : 0,
       overallHpRemainMax: Math.round(overallHpRemainMax[i]),
+      overallHpRemainAvg: overallHpRemainCount[i] > 0 ? Math.round(overallHpRemainSum[i] / overallHpRemainCount[i]) : 0,
       berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s =>
         brkStageTargeted[s][i] > 0 ? Math.round((brkStageEvaded[s][i] / brkStageTargeted[s][i]) * 100 * 10) / 10 : 0
       ) : undefined,

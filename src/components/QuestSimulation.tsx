@@ -1154,9 +1154,17 @@ export default function QuestSimulation() {
 
                     return (
                     <div className="mt-6 pt-4 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      {/* Left-aligned layout: bar at far left, numbers right next to bar, then connectors+names */}
-                      <div className="relative grid gap-x-1.5" style={{ height: `${barH}px`, gridTemplateColumns: '18px 110px 32px 1fr' }}>
-                        {/* Column 1: bar */}
+                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names], threshold value aligned with monster info icons (px-1 = 4px) */}
+                      <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 24px 1fr', paddingLeft: '4px' }}>
+                        {/* Column 1: threshold values (aligned with monster info icons on left) */}
+                        <div className="relative">
+                          {rows.map(r => (
+                            <div key={`thrv-${r.key}`} className="absolute left-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Column 2: bar */}
                         <div className="relative">
                           <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
                             background: 'linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
@@ -1172,18 +1180,17 @@ export default function QuestSimulation() {
                             </div>
                           ))}
                         </div>
-                        {/* Column 2: numbers (DEF threshold value + applied %) directly next to bar */}
-                        <div className="relative pl-2">
+                        {/* Column 3: applied % (right next to bar) */}
+                        <div className="relative pl-1">
                           {rows.map(r => (
-                            <div key={`thr-${r.key}`} className="absolute left-2 flex items-center gap-2" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                            <div key={`thrp-${r.key}`} className="absolute left-1 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
                         </div>
                         {/* Spacer column */}
                         <div aria-hidden="true" />
-                        {/* Column 4: connectors + hero name labels */}
+                        {/* Column 5: connectors + hero name labels */}
                         <div className="relative ml-1.5">
                           <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
                             {heroLayout.map(h => {
@@ -2099,10 +2106,9 @@ export default function QuestSimulation() {
                   {(() => {
                     // Bucket selector for remaining HP based on mainResultsTab
                     const hpKey = mainResultsTab === 'win' ? 'win' : mainResultsTab === 'lose' ? 'lose' : 'all';
-                    const hpLabel = hpKey === 'win' ? '성공판' : hpKey === 'lose' ? '실패판' : '전체판';
                     return (
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2"><span className="flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</span><ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                         <colgroup>
@@ -2127,10 +2133,10 @@ export default function QuestSimulation() {
                               <GroupHeader label="기본" info={'생존률 — 전체 시뮬레이션 중 끝까지 생존한 비율(%).'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={4}>
-                              <GroupHeader label="턴" info={'각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한을 넘겨도 살아남은 시뮬레이션의 비율.'} />
+                              <GroupHeader label="생존 턴" info={'각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한에 도달했음에도 살아있어 종료된 시뮬레이션의 비율.'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
-                              <GroupHeader label={`남은 체력 (${hpLabel})`} info={'시뮬레이션 종료 시 남은 HP의 분포.\n· 전체판: 모든 판\n· 성공판: 성공한 판만 (실패판은 0 HP일 가능성이 높아 평균을 왜곡하므로 제외)\n· 실패판: 실패한 판만'} />
+                              <GroupHeader label="남은 체력" info={'시뮬레이션 종료 시 남은 HP의 분포 (최소 / 평균 / 최대).\n선택된 필터(전체/성공/실패)에 해당하는 판만 반영.'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
                               <GroupHeader label="타겟팅" info={'· 위협도: 위협도 기반 단일 공격 피격 확률.\n· 실제: 실제 단일 공격을 받은 비율 (= 탱킹 기여도). 마지막 1인이 남는 시점까지의 단일공격 가능 턴이 분모.\n· 회피: 단일+광역 공격 중 회피한 비율.'} />
@@ -2163,7 +2169,7 @@ export default function QuestSimulation() {
                         <tbody>
                           {displayResults.map((hr, idx) => {
                             const blank = '';
-                            const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30">{s}</span> : <>{s}</>;
+                            const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                             const csChance = hr.critSurvivalChance ?? 0;
                             const csApply = hr.critSurvivalApplyRate ?? 0;
                             const heal = hr.totalHealingAvg || 0;
@@ -2174,7 +2180,7 @@ export default function QuestSimulation() {
                                        : (hr.overallHpRemainMin ?? 0);
                             const hpAvg = hpKey === 'win' ? (hr.winHpRemainAvg ?? 0)
                                        : hpKey === 'lose' ? (hr.loseHpRemainAvg ?? 0)
-                                       : ((((hr.winHpRemainAvg ?? 0) * (hr.survivalRate / 100)) + ((hr.loseHpRemainAvg ?? 0) * (1 - hr.survivalRate / 100))) | 0);
+                                       : (hr.overallHpRemainAvg ?? 0);
                             const hpMax = hpKey === 'win' ? (hr.winHpRemainMax ?? 0)
                                        : hpKey === 'lose' ? (hr.loseHpRemainMax ?? 0)
                                        : (hr.overallHpRemainMax ?? 0);
@@ -2223,7 +2229,7 @@ export default function QuestSimulation() {
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     {(() => {
                       const blank = '';
-                      const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30">{s}</span> : <>{s}</>;
+                      const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                       // Party-level distributions (true sim-based)
                       const pTaken = mainResultsTab === 'win' ? simResult.winPartyDmgTaken
                         : mainResultsTab === 'lose' ? simResult.losePartyDmgTaken
@@ -2395,7 +2401,7 @@ export default function QuestSimulation() {
                   {/* Table 4: 특수 정보 — 3개 표 (상어/공룡/헴마, 군주/정복자/닌자센세, 광전사) */}
                   {(() => {
                     const blank = '';
-                    const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30">{s}</span> : <>{s}</>;
+                    const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                     const partyAvgDmg = displayResults.reduce((s, hr) => s + (hr.avgDamageDealt || 0), 0);
 
                     // ── Table A: 상어 / 공룡 / 헴마 ──
