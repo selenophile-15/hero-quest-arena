@@ -1154,14 +1154,9 @@ export default function QuestSimulation() {
 
                     return (
                     <div className="mt-6 pt-4 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      <div className="relative grid gap-x-1.5" style={{ height: `${barH}px`, gridTemplateColumns: '50px 18px 32px 1fr' }}>
-                        <div className="relative">
-                          {rows.map(r => (
-                            <div key={r.key} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)' }}>
-                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{r.label}</span>
-                            </div>
-                          ))}
-                        </div>
+                      {/* Left-aligned layout: bar at far left, numbers right next to bar, then connectors+names */}
+                      <div className="relative grid gap-x-1.5" style={{ height: `${barH}px`, gridTemplateColumns: '18px 110px 32px 1fr' }}>
+                        {/* Column 1: bar */}
                         <div className="relative">
                           <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
                             background: 'linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
@@ -1177,22 +1172,25 @@ export default function QuestSimulation() {
                             </div>
                           ))}
                         </div>
-                        {/* Spacer column to widen gap between bar and connector lines */}
-                        <div aria-hidden="true" />
-                        <div className="relative ml-1.5">
+                        {/* Column 2: numbers (DEF threshold value + applied %) directly next to bar */}
+                        <div className="relative pl-2">
                           {rows.map(r => (
-                            <div key={`thr-${r.key}`} className="absolute left-0 flex items-center gap-2" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                            <div key={`thr-${r.key}`} className="absolute left-2 flex items-center gap-2" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
                               <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
                               <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
-                          {/* SVG bezier curves for connecting hero pins to labels */}
+                        </div>
+                        {/* Spacer column */}
+                        <div aria-hidden="true" />
+                        {/* Column 4: connectors + hero name labels */}
+                        <div className="relative ml-1.5">
                           <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
                             {heroLayout.map(h => {
                               const yPin = (1 - h.pinPct / 100) * barH;
                               const yLabel = (1 - h.labelPct / 100) * barH;
-                              const x1 = 70;
-                              const x2 = 98;
+                              const x1 = 0;
+                              const x2 = 28;
                               const cx = (x1 + x2) / 2;
                               return (
                                 <path key={`line-${h.id}`}
@@ -1203,8 +1201,8 @@ export default function QuestSimulation() {
                             })}
                           </svg>
                           {heroLayout.map(h => (
-                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '100px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[11px] font-semibold truncate max-w-[90px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '32px', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[11px] font-semibold truncate max-w-[120px] leading-tight" style={{ color: h.color }}>{h.name}</span>
                               <span className="text-[10px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
