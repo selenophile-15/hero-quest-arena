@@ -2259,6 +2259,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       avgDamageTakenPerTurn: avgR > 0 ? Math.round(dTaken / bucketCount / avgR) : 0,
       evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
       tankingRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
+      singleTargetRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
     };
   };
 
