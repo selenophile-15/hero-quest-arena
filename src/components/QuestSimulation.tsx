@@ -2180,7 +2180,7 @@ export default function QuestSimulation() {
                                        : (hr.overallHpRemainMin ?? 0);
                             const hpAvg = hpKey === 'win' ? (hr.winHpRemainAvg ?? 0)
                                        : hpKey === 'lose' ? (hr.loseHpRemainAvg ?? 0)
-                                       : ((((hr.winHpRemainAvg ?? 0) * (hr.survivalRate / 100)) + ((hr.loseHpRemainAvg ?? 0) * (1 - hr.survivalRate / 100))) | 0);
+                                       : (hr.overallHpRemainAvg ?? 0);
                             const hpMax = hpKey === 'win' ? (hr.winHpRemainMax ?? 0)
                                        : hpKey === 'lose' ? (hr.loseHpRemainMax ?? 0)
                                        : (hr.overallHpRemainMax ?? 0);
