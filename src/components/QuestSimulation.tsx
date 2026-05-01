@@ -1856,16 +1856,6 @@ export default function QuestSimulation() {
           <div className="flex items-center gap-2 mt-4 mb-3">
             <ListChecks className="w-5 h-5 text-primary" />
             <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
-            <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
-              <SelectTrigger className="h-8 w-28 text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="win">성공</SelectItem>
-                <SelectItem value="lose">실패</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <div className="card-fantasy p-4">
 
