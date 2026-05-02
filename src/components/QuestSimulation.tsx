@@ -2398,34 +2398,25 @@ export default function QuestSimulation() {
                     })()}
                   </div>
 
-                  {/* Table 4: 특수 정보 — 3개 표 (상어/공룡/헴마, 군주/정복자/닌자센세, 광전사) */}
+                  {/* Table 4: 특수 정보 — 항상 4개 표 (상어/공룡/헴마, 군주/정복자/닌자센세, 광전사, 폴로니아) */}
                   {(() => {
                     const blank = '';
                     const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                     const partyAvgDmg = displayResults.reduce((s, hr) => s + (hr.avgDamageDealt || 0), 0);
 
-                    // ── Table A: 상어 / 공룡 / 헴마 ──
-                    const sharkRows = displayResults.filter(hr => hr.hasSharkSpirit);
-                    const dinoRows = displayResults.filter(hr => hr.hasDinosaurSpirit);
+                    // ── Table A: 상어 / 공룡 / 헴마 — 항상 표시, 파티원 전체 노출 ──
                     const hemmaRow = displayResults.find(hr => hr.isHemmaHero);
-                    const hemmaAllies = hemmaRow ? displayResults.filter(hr => !hr.isHemmaHero) : [];
-                    const showTableA = sharkRows.length > 0 || dinoRows.length > 0 || !!hemmaRow;
 
                     // ── Table B: 군주 / 정복자 / 닌자·센세 ──
                     const lordRow = displayResults.find(hr => hr.isLordHero);
-                    const lordProtected = lordRow ? displayResults.filter(hr => !hr.isLordHero && ((hr.lordSavedSingleAvgDmg ?? 0) > 0 || (hr.lordSavedAoeAvgDmg ?? 0) > 0 || (hr.lordProtectionSimRate ?? 0) > 0)) : [];
+                    const lordProtected = lordRow ? displayResults.filter(hr => !hr.isLordHero) : [];
                     const conquerorRows = displayResults.filter(hr => hr.isConquerorHero);
                     const ninjaSenseiRows = displayResults.filter(hr => hr.isNinjaHero || hr.isSenseiHero);
                     const showLord = !!lordRow;
-                    const showConq = conquerorRows.length > 0;
-                    const showNinja = ninjaSenseiRows.length > 0;
-                    const showTableB = showLord || showConq || showNinja;
 
-                    // ── Table C: 광전사 ──
-                    const berserkerRows = displayResults.filter(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
-                    const showTableC = berserkerRows.length > 0;
-
-                    if (!showTableA && !showTableB && !showTableC) return null;
+                    // ── Table D: 폴로니아 도둑질 ──
+                    const poloniaLoot = simResult.poloniaLoot;
+                    const hasPolonia = !!poloniaLoot?.hasPolonia;
 
                     const monAtk = currentQuest?.atk || 0;
                     const monAoe = currentQuest?.aoe || 0;
