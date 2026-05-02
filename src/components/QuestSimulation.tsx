@@ -2426,291 +2426,349 @@ export default function QuestSimulation() {
                         <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                         <div className="space-y-6">
 
-                          {/* ===== Table A: 상어 / 공룡 / 헴마 ===== */}
-                          {showTableA && (
-                            <div>
-                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">상어 / 공룡 / 헴마</div>
-                              <div className="overflow-x-auto">
-                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60">
-                                  <thead>
-                                    <tr className="border-b-2 border-border/60">
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" style={{ width: '90px' }}>구분</th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" style={{ width: '110px' }}>파티원</th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                        <GroupHeader label="상세" info={'상어/공룡: 일반·치명타 시 추가된 평균 대미지와 총 평균(전체 평균 대미지 중 비중%).\n헴마: 동료에게서 흡수한 평균 대미지 / 평균 흡수 횟수 / 누적 공격력 증가량.'} />
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {/* 상어 */}
-                                    {sharkRows.map((hr, idx) => {
-                                      const total = (hr.sharkNormalDmg + hr.sharkCritDmg) / 2;
-                                      const pct = partyAvgDmg > 0 ? (total / partyAvgDmg) * 100 : 0;
-                                      return (
-                                        <tr key={`shark-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                          <td className="py-1 px-2 text-center text-muted-foreground font-medium">상어</td>
-                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                          <td className="py-1 px-2 text-muted-foreground">
-                                            <span className="font-mono">일반 {formatNumber(hr.sharkNormalDmg)}</span>
-                                            <span className="mx-2">·</span>
-                                            <span className="font-mono">치명 {formatNumber(hr.sharkCritDmg)}</span>
-                                            <span className="mx-2">·</span>
-                                            <span className="font-mono">총 평균 {formatNumber(Math.round(total))} <span className="opacity-70">({pct.toFixed(1)}%)</span></span>
-                                          </td>
-                                        </tr>
-                                      );
-                                    })}
-                                    {/* 공룡 (첫 턴) */}
-                                    {dinoRows.map((hr, idx) => {
-                                      const total = (hr.dinosaurNormalDmg + hr.dinosaurCritDmg) / 2;
-                                      const critPct = partyAvgDmg > 0 ? (hr.dinosaurCritDmg / partyAvgDmg) * 100 : 0;
-                                      return (
-                                        <tr key={`dino-${hr.heroId}`} className={`border-b border-border/10 ${(sharkRows.length + idx) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                          <td className="py-1 px-2 text-center text-muted-foreground font-medium">첫 턴 (공룡, 다이묘)</td>
-                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                          <td className="py-1 px-2 text-muted-foreground">
-                                            <span className="font-mono">일반 {hr.dinosaurNormalDmg > 0 ? formatNumber(hr.dinosaurNormalDmg) : blank}</span>
-                                            <span className="mx-2">·</span>
-                                            <span className="font-mono">치명 {hr.dinosaurCritDmg > 0 ? <>{formatNumber(hr.dinosaurCritDmg)} <span className="opacity-70">({critPct.toFixed(1)}%)</span></> : blank}</span>
-                                          </td>
-                                        </tr>
-                                      );
-                                    })}
-                                    {/* 헴마 */}
-                                    {hemmaRow && hemmaAllies.length > 0 && (
-                                      <tr className={`border-b border-border/10 ${(sharkRows.length + dinoRows.length) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                        <td className="py-1 px-2 text-center text-muted-foreground font-medium">헴마</td>
-                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hemmaRow.heroName}</td>
-                                        <td className="py-1 px-2 text-muted-foreground">
-                                          <div className="flex flex-wrap gap-x-4 gap-y-1">
-                                            {hemmaAllies.map(a => (
-                                              <span key={a.heroId} className="font-mono text-xs">
-                                                <span className="text-foreground">{a.heroName}</span>: 흡수 {formatNumber(a.hemmaAbsorbedDmg ?? 0)} / {(a.hemmaAbsorbedCount ?? 0).toFixed(1)}회
-                                              </span>
-                                            ))}
-                                          </div>
+                          {/* ===== Table A: 상어 / 공룡 / 헴마 — 항상 표시, 모든 파티원 노출 ===== */}
+                          <div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">상어 / 공룡 / 헴마</div>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                <colgroup>
+                                  <col style={{ width: '110px' }} />
+                                  <col /><col /><col />
+                                </colgroup>
+                                <thead>
+                                  <tr className="border-b-2 border-border/60">
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <GroupHeader label="상어 (영혼)" info={'상어 영혼 보유 시 일반/치명 시 추가된 평균 대미지와 총 평균(전체 평균 대미지 중 비중%).'} />
+                                    </th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <GroupHeader label="공룡 / 다이묘 (첫 턴)" info={'공룡 영혼/다이묘 직업 보유 시 첫 턴 일반/치명 평균 대미지(전체 평균 중 비중%).'} />
+                                    </th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <GroupHeader label="헴마 (흡수)" info={'헴마: 동료에게서 흡수한 평균 대미지 / 평균 흡수 횟수. 헴마가 파티에 있을 때 동료별 표시.'} />
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {displayResults.map((hr, idx) => {
+                                    const sharkTotal = hr.hasSharkSpirit ? (hr.sharkNormalDmg + hr.sharkCritDmg) / 2 : 0;
+                                    const sharkPct = partyAvgDmg > 0 ? (sharkTotal / partyAvgDmg) * 100 : 0;
+                                    const dinoCritPct = partyAvgDmg > 0 && hr.hasDinosaurSpirit ? (hr.dinosaurCritDmg / partyAvgDmg) * 100 : 0;
+                                    return (
+                                      <tr key={`spc-a-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                        <td className="py-1 px-2 text-muted-foreground text-[12px]">
+                                          {hr.hasSharkSpirit ? (
+                                            <span className="font-mono">일반 {formatNumber(hr.sharkNormalDmg)} · 치명 {formatNumber(hr.sharkCritDmg)} · 총 {formatNumber(Math.round(sharkTotal))} <span className="opacity-70">({sharkPct.toFixed(1)}%)</span></span>
+                                          ) : blank}
+                                        </td>
+                                        <td className="py-1 px-2 text-muted-foreground text-[12px]">
+                                          {hr.hasDinosaurSpirit ? (
+                                            <span className="font-mono">
+                                              일반 {hr.dinosaurNormalDmg > 0 ? formatNumber(hr.dinosaurNormalDmg) : '-'} · 치명 {hr.dinosaurCritDmg > 0 ? <>{formatNumber(hr.dinosaurCritDmg)} <span className="opacity-70">({dinoCritPct.toFixed(1)}%)</span></> : '-'}
+                                            </span>
+                                          ) : blank}
+                                        </td>
+                                        <td className="py-1 px-2 text-muted-foreground text-[12px]">
+                                          {hemmaRow ? (
+                                            hr.isHemmaHero ? <span className="opacity-60">(헴마 본인)</span>
+                                            : <span className="font-mono">흡수 {formatNumber(hr.hemmaAbsorbedDmg ?? 0)} / {(hr.hemmaAbsorbedCount ?? 0).toFixed(1)}회</span>
+                                          ) : blank}
                                         </td>
                                       </tr>
-                                    )}
-                                  </tbody>
-                                </table>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 군주는 군주가 있을 때만 ===== */}
+                          <div className="space-y-4">
+                            {/* 군주 */}
+                            {showLord && lordRow && (
+                              <div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">군주 보호</div>
+                                <div className="overflow-x-auto">
+                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                    <colgroup>
+                                      <col style={{ width: '110px' }} /><col style={{ width: '110px' }} /><col /><col />
+                                    </colgroup>
+                                    <thead>
+                                      <tr className="border-b-2 border-border/60">
+                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">군주</th>
+                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">보호받은 동료</th>
+                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                          <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
+                                        </th>
+                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                          <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. (실제 받은 값 / 던전 원본 대미지).'} />
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {lordProtected.length === 0 ? (
+                                        <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">동료 없음</td></tr>
+                                      ) : lordProtected.map((a, idx) => {
+                                        const single = a.lordSavedSingleAvgDmg ?? 0;
+                                        const aoe = a.lordSavedAoeAvgDmg ?? 0;
+                                        const protRate = a.lordProtectionSimRate ?? 0;
+                                        return (
+                                          <tr key={`lord-${a.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                            {idx === 0 && (
+                                              <td rowSpan={lordProtected.length} className="py-1 px-2 text-center text-foreground font-medium">{lordRow.heroName}</td>
+                                            )}
+                                            <td className="py-1 px-2 text-center text-foreground font-medium">{a.heroName}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${protRate.toFixed(1)}%`, protRate === 0)}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground text-[12px]">
+                                              <span>단일: {single > 0 ? `${formatNumber(single)} / ${formatNumber(monAtk)}` : blank}</span>
+                                              <span className="mx-2">·</span>
+                                              <span>광역: {aoe > 0 ? `${formatNumber(aoe)} / ${formatNumber(monAoe)}` : blank}</span>
+                                            </td>
+                                          </tr>
+                                        );
+                                      })}
+                                    </tbody>
+                                  </table>
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
 
-                          {/* ===== Table B: 군주 / 정복자 / 닌자·센세 ===== */}
-                          {showTableB && (
-                            <div className="space-y-4">
-                              {/* 군주 */}
-                              {showLord && lordRow && (
-                                <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">군주 보호</div>
-                                  <div className="overflow-x-auto">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
-                                      <colgroup>
-                                        <col style={{ width: '110px' }} /><col style={{ width: '110px' }} /><col /><col />
-                                      </colgroup>
-                                      <thead>
-                                        <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">군주</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">보호받은 동료</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
-                                          </th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. (실제 받은 값 / 던전 원본 대미지) 중 둘 중 하나로 결정됨.'} />
-                                          </th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {lordProtected.length === 0 ? (
-                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">보호 발동된 동료 없음</td></tr>
-                                        ) : lordProtected.map((a, idx) => {
-                                          const single = a.lordSavedSingleAvgDmg ?? 0;
-                                          const aoe = a.lordSavedAoeAvgDmg ?? 0;
-                                          return (
-                                            <tr key={`lord-${a.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                              {idx === 0 && (
-                                                <td rowSpan={lordProtected.length} className="py-1 px-2 text-center text-foreground font-medium">{lordRow.heroName}</td>
-                                              )}
-                                              <td className="py-1 px-2 text-center text-foreground font-medium">{a.heroName}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${(a.lordProtectionSimRate ?? 0).toFixed(1)}%`, (a.lordProtectionSimRate ?? 0) === 0)}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
-                                                <span>단일: {single > 0 ? `${formatNumber(single)} / ${formatNumber(monAtk)}` : blank}</span>
-                                                <span className="mx-2">·</span>
-                                                <span>광역: {aoe > 0 ? `${formatNumber(aoe)} / ${formatNumber(monAoe)}` : blank}</span>
-                                              </td>
-                                            </tr>
-                                          );
-                                        })}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* 정복자 */}
-                              {showConq && (
-                                <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">정복자 (스택 0~4)</div>
-                                  <div className="overflow-x-auto">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
-                                      <colgroup>
-                                        <col style={{ width: '110px' }} /><col style={{ width: '70px' }} />
-                                        <col /><col /><col />
-                                      </colgroup>
-                                      <thead>
-                                        <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" rowSpan={2}>파티원</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" rowSpan={2}>스택</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴이 전체 공격 턴 중 차지하는 비율.'} />
-                                          </th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="실제 치명 대미지" info={'해당 스택 상태에서 치명타가 적용된 평균 대미지.'} />
-                                          </th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="리셋 비율" info={'해당 스택 상태에서 공격 후 연속 치명이 끊겨 스택이 0으로 초기화된 비율.'} />
-                                          </th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {conquerorRows.map((hr, hi) => (
-                                          [0, 1, 2, 3, 4].map(s => {
-                                            const turn = hr.conquerorStackTurnRate?.[s] ?? 0;
-                                            const cdmg = hr.conquerorStackCritDmg?.[s] ?? 0;
-                                            const reset = hr.conquerorStackResetRate?.[s] ?? 0;
-                                            return (
-                                              <tr key={`conq-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi * 5 + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                                {s === 0 && (
-                                                  <td rowSpan={5} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                                )}
-                                                <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}</td>
-                                                <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${turn.toFixed(1)}%`, turn === 0)}</td>
-                                                <td className="py-1 px-2 text-center font-mono text-muted-foreground">{cdmg > 0 ? formatNumber(cdmg) : blank}</td>
-                                                <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${reset.toFixed(1)}%`, reset === 0)}</td>
-                                              </tr>
-                                            );
-                                          })
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* 닌자/센세 */}
-                              {showNinja && (
-                                <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">닌자 / 센세</div>
-                                  <div className="overflow-x-auto">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
-                                      <colgroup>
-                                        <col style={{ width: '110px' }} /><col /><col /><col /><col />
-                                      </colgroup>
-                                      <thead>
-                                        <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="보너스 소실" info={'고유 치확/회피 보너스가 사라진 평균 횟수.'} />
-                                          </th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="보너스 재생성" info={'센세 한정 — 보너스가 다시 생성된 평균 횟수.'} />
-                                          </th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="보너스 ON 평균 대미지" info={'고유 보너스가 활성 상태일 때 가한 평균 대미지 (전체 평균 중 비중%).'} />
-                                          </th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                            <GroupHeader label="보너스 OFF 평균 대미지" info={'고유 보너스가 비활성 상태일 때 가한 평균 대미지 (전체 평균 중 비중%).'} />
-                                          </th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {ninjaSenseiRows.map((hr, idx) => {
-                                          const wIn = hr.withInnateAvgDmg ?? 0;
-                                          const wOut = hr.withoutInnateAvgDmg ?? 0;
-                                          const tot = wIn + wOut;
-                                          const inPct = tot > 0 ? (wIn / tot) * 100 : 0;
-                                          const outPct = tot > 0 ? (wOut / tot) * 100 : 0;
-                                          return (
-                                            <tr key={`ns-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                              <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{(hr.innateLossCount ?? 0).toFixed(1)}회</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isSenseiHero ? `${(hr.innateRegenCount ?? 0).toFixed(1)}회` : blank}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{wIn > 0 ? <>{formatNumber(wIn)} <span className="opacity-70">({inPct.toFixed(1)}%)</span></> : blank}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{wOut > 0 ? <>{formatNumber(wOut)} <span className="opacity-70">({outPct.toFixed(1)}%)</span></> : blank}</td>
-                                            </tr>
-                                          );
-                                        })}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* ===== Table C: 광전사 ===== */}
-                          {showTableC && (
+                            {/* 정복자 — 항상 표시, 정복자 아니면 빈 행 */}
                             <div>
-                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">광전사 (HP 단계별)</div>
+                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">정복자 (스택 0~4)</div>
                               <div className="overflow-x-auto">
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                                   <colgroup>
-                                    <col style={{ width: '110px' }} /><col style={{ width: '60px' }} />
-                                    <col /><col /><col /><col /><col /><col />
+                                    <col style={{ width: '110px' }} /><col style={{ width: '70px' }} />
+                                    <col /><col /><col />
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" rowSpan={2}>파티원</th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" rowSpan={2}>단계</th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
-                                        <GroupHeader label="실 공격력 / 회피" info={'각 HP 단계에서 실제 가한 일반 / 치명 평균 대미지 및 회피 발동률.'} />
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">스택</th>
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴의 비율.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
-                                        <GroupHeader label="단계 발동" info={'각 HP 단계의 발동 비율과, 해당 단계에서 입힌 평균 대미지(전체 딜 중 비중%) 및 단계별 실제 회피 발동률.'} />
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <GroupHeader label="실제 치명 대미지" info={'해당 스택 상태에서의 평균 치명 대미지.'} />
                                       </th>
-                                    </tr>
-                                    <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
-                                      <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
-                                      <th className="text-center py-1 px-2">치명</th>
-                                      <th className="text-center py-1 px-2">회피</th>
-                                      <th className="text-center py-1 px-2 border-l-4 border-border">단계 비율</th>
-                                      <th className="text-center py-1 px-2">평균 대미지</th>
-                                      <th className="text-center py-1 px-2">실제 회피 발동률</th>
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <GroupHeader label="리셋 비율" info={'해당 스택 상태에서 연속 치명이 끊겨 0으로 초기화된 비율.'} />
+                                      </th>
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {berserkerRows.map((hr, hi) => (
-                                      [0, 1, 2].map(s => {
-                                        const stageDmg = hr.berserkerStageDmg?.[s];
-                                        const stageEva = hr.berserkerStageEvaRate?.[s] ?? 0;
-                                        const stageRate = hr.berserkerThresholds?.[s]?.belowRate ?? 0;
-                                        const totalDmg = stageDmg?.total ?? 0;
-                                        const dmgPct = partyAvgDmg > 0 ? (totalDmg / partyAvgDmg) * 100 : 0;
-                                        const atkBonus = hr.berserkerAtkBonus?.[s] ?? 0;
-                                        const evaBonus = hr.berserkerEvaBonus?.[s] ?? 0;
+                                    {displayResults.map((hr, hi) => {
+                                      const isConq = !!hr.isConquerorHero;
+                                      if (!isConq) {
                                         return (
-                                          <tr key={`brk-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi * 3 + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            {s === 0 && (
-                                              <td rowSpan={3} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                            )}
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s + 1}단계</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">{stageDmg && stageDmg.normal > 0 ? formatNumber(stageDmg.normal) : blank} <span className="opacity-60 text-[10px]">+{atkBonus}%</span></td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.crit > 0 ? formatNumber(stageDmg.crit) : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">+{evaBonus}%</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">{fadeZero(`${stageRate.toFixed(1)}%`, stageRate === 0)}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{totalDmg > 0 ? <>{formatNumber(totalDmg)} <span className="opacity-70">({dmgPct.toFixed(1)}%)</span></> : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
+                                          <tr key={`conq-${hr.heroId}`} className={`border-b border-border/10 ${hi % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground/40">-</td>
+                                            <td className="py-1 px-2 text-center font-mono">{blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono">{blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono">{blank}</td>
                                           </tr>
                                         );
-                                      })
-                                    ))}
+                                      }
+                                      return [0, 1, 2, 3, 4].map(s => {
+                                        const turn = hr.conquerorStackTurnRate?.[s] ?? 0;
+                                        const cdmg = hr.conquerorStackCritDmg?.[s] ?? 0;
+                                        const reset = hr.conquerorStackResetRate?.[s] ?? 0;
+                                        return (
+                                          <tr key={`conq-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                            {s === 0 && (
+                                              <td rowSpan={5} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                            )}
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${turn.toFixed(1)}%`, turn === 0)}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{cdmg > 0 ? formatNumber(cdmg) : blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${reset.toFixed(1)}%`, reset === 0)}</td>
+                                          </tr>
+                                        );
+                                      });
+                                    })}
                                   </tbody>
                                 </table>
                               </div>
                             </div>
-                          )}
+
+                            {/* 닌자/센세 — 항상 표시, 해당 직업 아니면 빈 행 */}
+                            <div>
+                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">닌자 / 센세</div>
+                              <div className="overflow-x-auto">
+                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                  <colgroup>
+                                    <col style={{ width: '110px' }} /><col /><col /><col /><col />
+                                  </colgroup>
+                                  <thead>
+                                    <tr className="border-b-2 border-border/60">
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <GroupHeader label="보너스 소실" info={'고유 치확/회피 보너스가 사라진 평균 횟수.'} />
+                                      </th>
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <GroupHeader label="보너스 재생성" info={'센세 한정 — 보너스가 다시 생성된 평균 횟수.'} />
+                                      </th>
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <GroupHeader label="보너스 ON 평균 대미지" info={'고유 보너스가 활성 상태일 때의 평균 대미지(전체 평균 중 비중%).'} />
+                                      </th>
+                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <GroupHeader label="보너스 OFF 평균 대미지" info={'고유 보너스가 비활성 상태일 때의 평균 대미지(전체 평균 중 비중%).'} />
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {displayResults.map((hr, idx) => {
+                                      const isNS = !!(hr.isNinjaHero || hr.isSenseiHero);
+                                      const wIn = hr.withInnateAvgDmg ?? 0;
+                                      const wOut = hr.withoutInnateAvgDmg ?? 0;
+                                      const tot = wIn + wOut;
+                                      const inPct = tot > 0 ? (wIn / tot) * 100 : 0;
+                                      const outPct = tot > 0 ? (wOut / tot) * 100 : 0;
+                                      return (
+                                        <tr key={`ns-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{isNS ? `${(hr.innateLossCount ?? 0).toFixed(1)}회` : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{isNS && hr.isSenseiHero ? `${(hr.innateRegenCount ?? 0).toFixed(1)}회` : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{isNS && wIn > 0 ? <>{formatNumber(wIn)} <span className="opacity-70">({inPct.toFixed(1)}%)</span></> : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{isNS && wOut > 0 ? <>{formatNumber(wOut)} <span className="opacity-70">({outPct.toFixed(1)}%)</span></> : blank}</td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* ===== Table C: 광전사 — 항상 표시, 광전사 아니면 빈 행 ===== */}
+                          <div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">광전사 (HP 단계별)</div>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                <colgroup>
+                                  <col style={{ width: '110px' }} /><col style={{ width: '60px' }} />
+                                  <col /><col /><col /><col /><col /><col />
+                                </colgroup>
+                                <thead>
+                                  <tr className="border-b-2 border-border/60">
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" rowSpan={2}>파티원</th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" rowSpan={2}>단계</th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                      <GroupHeader label="실 공격력 / 회피" info={'각 HP 단계에서 실제 가한 일반 / 치명 평균 대미지 및 회피 발동률.'} />
+                                    </th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                      <GroupHeader label="단계 발동" info={'각 HP 단계의 발동 비율과 입힌 평균 대미지(전체 딜 중 비중%) 및 단계별 실제 회피 발동률.'} />
+                                    </th>
+                                  </tr>
+                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
+                                    <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
+                                    <th className="text-center py-1 px-2">치명</th>
+                                    <th className="text-center py-1 px-2">회피</th>
+                                    <th className="text-center py-1 px-2 border-l-4 border-border">단계 비율</th>
+                                    <th className="text-center py-1 px-2">평균 대미지</th>
+                                    <th className="text-center py-1 px-2">실제 회피 발동률</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {displayResults.map((hr, hi) => {
+                                    const isB = !!(hr.isBerserkerHero && hr.berserkerStageDmg);
+                                    if (!isB) {
+                                      return (
+                                        <tr key={`brk-${hr.heroId}`} className={`border-b border-border/10 ${hi % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground/40">-</td>
+                                          <td className="py-1 px-2 border-l-4 border-border">{blank}</td>
+                                          <td className="py-1 px-2">{blank}</td>
+                                          <td className="py-1 px-2">{blank}</td>
+                                          <td className="py-1 px-2 border-l-4 border-border">{blank}</td>
+                                          <td className="py-1 px-2">{blank}</td>
+                                          <td className="py-1 px-2">{blank}</td>
+                                        </tr>
+                                      );
+                                    }
+                                    return [0, 1, 2].map(s => {
+                                      const stageDmg = hr.berserkerStageDmg?.[s];
+                                      const stageEva = hr.berserkerStageEvaRate?.[s] ?? 0;
+                                      const stageRate = hr.berserkerThresholds?.[s]?.belowRate ?? 0;
+                                      const totalDmg = stageDmg?.total ?? 0;
+                                      const dmgPct = partyAvgDmg > 0 ? (totalDmg / partyAvgDmg) * 100 : 0;
+                                      const atkBonus = hr.berserkerAtkBonus?.[s] ?? 0;
+                                      const evaBonus = hr.berserkerEvaBonus?.[s] ?? 0;
+                                      return (
+                                        <tr key={`brk-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                          {s === 0 && (
+                                            <td rowSpan={3} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                          )}
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s + 1}단계</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">{stageDmg && stageDmg.normal > 0 ? formatNumber(stageDmg.normal) : blank} <span className="opacity-60 text-[10px]">+{atkBonus}%</span></td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.crit > 0 ? formatNumber(stageDmg.crit) : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">+{evaBonus}%</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">{fadeZero(`${stageRate.toFixed(1)}%`, stageRate === 0)}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{totalDmg > 0 ? <>{formatNumber(totalDmg)} <span className="opacity-70">({dmgPct.toFixed(1)}%)</span></> : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
+                                        </tr>
+                                      );
+                                    });
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* ===== Table D: 폴로니아 도둑질 — 항상 표시, 폴로니아 없으면 안내 ===== */}
+                          <div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1 flex items-center gap-2">
+                              <span>폴로니아 도둑질</span>
+                              {hasPolonia && poloniaLoot && (
+                                <span className="text-[11px] font-normal text-muted-foreground">
+                                  · 훔칠 확률 {(poloniaLoot.baseChance * 100).toFixed(1)}% · 최대 {poloniaLoot.capMax}개
+                                  {poloniaLoot.numTricksters > 0 && <> · 사기꾼 {poloniaLoot.numTricksters}명 (+{(poloniaLoot.numTricksters * 2)}% 확률 / +{poloniaLoot.numTricksters * 2}개 한도)</>}
+                                </span>
+                              )}
+                            </div>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                <colgroup>
+                                  <col style={{ width: '110px' }} />
+                                  <col /><col />
+                                </colgroup>
+                                <thead>
+                                  <tr className="border-b-2 border-border/60">
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <GroupHeader label="평균 훔친 수" info={'시뮬레이션 1회당 해당 파티원이 훔친 평균 아이템 수. 폴로니아 본인뿐 아니라 모든 파티원이 공격 시도마다 훔칠 수 있음. 사기꾼 직업 보유 시 훔칠 확률 +2%.'} />
+                                    </th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <GroupHeader label="사기꾼" info={'사기꾼 직업 여부. 사기꾼 1명당 파티 전체 훔칠 확률 +2%, 최대 한도 +2개.'} />
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {!hasPolonia ? (
+                                    <tr><td colSpan={3} className="py-2 px-2 text-center text-muted-foreground/60 italic">폴로니아 챔피언이 파티에 없음</td></tr>
+                                  ) : displayResults.map((hr, idx) => (
+                                    <tr key={`pol-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                      <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground">{(hr.poloniaStolenAvg ?? 0) > 0 ? `${(hr.poloniaStolenAvg ?? 0).toFixed(2)}개` : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isTricksterHero ? '✓' : blank}</td>
+                                    </tr>
+                                  ))}
+                                  {hasPolonia && poloniaLoot && (
+                                    <tr className="border-t-2 border-border/60 bg-primary/5 font-bold">
+                                      <td className="py-1 px-2 text-center text-foreground">파티 합계</td>
+                                      <td className="py-1 px-2 text-center font-mono text-foreground" colSpan={2}>
+                                        평균 {poloniaLoot.avgPerSim.toFixed(2)}개 · 최소 {poloniaLoot.minPerSim}개 · 최대 {poloniaLoot.maxPerSim}개
+                                        <span className="ml-2 opacity-70 font-normal">(한도 도달률 {poloniaLoot.capHitRate.toFixed(1)}%)</span>
+                                      </td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
 
                         </div>
                       </div>
