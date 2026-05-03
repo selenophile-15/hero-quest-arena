@@ -1881,6 +1881,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
             winRoundsArr[i] += round;
             winDmgTaken[i] += simDmgTaken[i];
+            if (simDmgTaken[i] > 0) winDmgTakenMin[i] = Math.min(winDmgTakenMin[i], simDmgTaken[i]);
+            winDmgTakenMax[i] = Math.max(winDmgTakenMax[i], simDmgTaken[i]);
             winTimesHit[i] += simTimesHit[i];
             winSingleHits[i] += singleHitsTaken[i];
             winTargeted[i] += simTargeted[i];
@@ -1893,6 +1895,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
             loseRoundsArr[i] += round;
             loseDmgTaken[i] += simDmgTaken[i];
+            if (simDmgTaken[i] > 0) loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], simDmgTaken[i]);
+            loseDmgTakenMax[i] = Math.max(loseDmgTakenMax[i], simDmgTaken[i]);
             loseTimesHit[i] += simTimesHit[i];
             loseSingleHits[i] += singleHitsTaken[i];
             loseTargeted[i] += simTargeted[i];
