@@ -1207,6 +1207,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const winDmgMin = new Float64Array(numHeroes).fill(1e9);
   const winRoundsArr = new Float64Array(numHeroes);
   const winDmgTaken = new Float64Array(numHeroes);
+  const winDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const winDmgTakenMax = new Float64Array(numHeroes);
   const winTimesHit = new Float64Array(numHeroes);
   const winSingleHits = new Float64Array(numHeroes);
   const winSurvived = new Float64Array(numHeroes);
@@ -1221,6 +1223,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const loseDmgMin = new Float64Array(numHeroes).fill(1e9);
   const loseRoundsArr = new Float64Array(numHeroes);
   const loseDmgTaken = new Float64Array(numHeroes);
+  const loseDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const loseDmgTakenMax = new Float64Array(numHeroes);
   const loseTimesHit = new Float64Array(numHeroes);
   const loseSingleHits = new Float64Array(numHeroes);
   const loseHpRemain = new Float64Array(numHeroes);
@@ -1877,6 +1881,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
             winRoundsArr[i] += round;
             winDmgTaken[i] += simDmgTaken[i];
+            if (simDmgTaken[i] > 0) winDmgTakenMin[i] = Math.min(winDmgTakenMin[i], simDmgTaken[i]);
+            winDmgTakenMax[i] = Math.max(winDmgTakenMax[i], simDmgTaken[i]);
             winTimesHit[i] += simTimesHit[i];
             winSingleHits[i] += singleHitsTaken[i];
             winTargeted[i] += simTargeted[i];
@@ -1889,6 +1895,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
             loseRoundsArr[i] += round;
             loseDmgTaken[i] += simDmgTaken[i];
+            if (simDmgTaken[i] > 0) loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], simDmgTaken[i]);
+            loseDmgTakenMax[i] = Math.max(loseDmgTakenMax[i], simDmgTaken[i]);
             loseTimesHit[i] += simTimesHit[i];
             loseSingleHits[i] += singleHitsTaken[i];
             loseTargeted[i] += simTargeted[i];
@@ -2261,6 +2269,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       critDmgDealtAvg: dCrit / bucketCount,
       avgDamagePerTurn: avgR > 0 ? (dDealt / bucketCount) / avgR : 0,
       totalDamageTakenAvg: Math.round(dTaken / bucketCount),
+      minDamageTaken: bucket === 'win'
+        ? (winDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winDmgTakenMin[i]))
+        : (loseDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseDmgTakenMin[i])),
+      maxDamageTaken: bucket === 'win' ? Math.round(winDmgTakenMax[i]) : Math.round(loseDmgTakenMax[i]),
       avgDamageTakenPerHit: tHit > 0 ? Math.round(dTaken / tHit) : 0,
       avgDamageTakenPerTurn: avgR > 0 ? Math.round(dTaken / bucketCount / avgR) : 0,
       evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
