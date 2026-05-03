@@ -2269,6 +2269,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       critDmgDealtAvg: dCrit / bucketCount,
       avgDamagePerTurn: avgR > 0 ? (dDealt / bucketCount) / avgR : 0,
       totalDamageTakenAvg: Math.round(dTaken / bucketCount),
+      minDamageTaken: bucket === 'win'
+        ? (winDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winDmgTakenMin[i]))
+        : (loseDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseDmgTakenMin[i])),
+      maxDamageTaken: bucket === 'win' ? Math.round(winDmgTakenMax[i]) : Math.round(loseDmgTakenMax[i]),
       avgDamageTakenPerHit: tHit > 0 ? Math.round(dTaken / tHit) : 0,
       avgDamageTakenPerTurn: avgR > 0 ? Math.round(dTaken / bucketCount / avgR) : 0,
       evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
