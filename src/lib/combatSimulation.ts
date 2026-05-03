@@ -1095,6 +1095,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const singleDmgTakenAccum = new Float64Array(numHeroes);
   const dmgTakenMin = new Float64Array(numHeroes).fill(1e9);
   const dmgTakenMax = new Float64Array(numHeroes);
+  // Per-sim min/max for single-only and aoe-only taken (across all sims)
+  const singleDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const singleDmgTakenMax = new Float64Array(numHeroes);
+  const singleDmgTakenSimCount = new Float64Array(numHeroes); // sims hero took at least one single hit
+  const aoeDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const aoeDmgTakenMax = new Float64Array(numHeroes);
+  const aoeDmgTakenSimCount = new Float64Array(numHeroes);
   // Per-turn taken min/max across sims
   const dmgTakenPerTurnMin = new Float64Array(numHeroes).fill(1e9);
   const dmgTakenPerTurnMax = new Float64Array(numHeroes);
