@@ -1816,6 +1816,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             dmgTakenMin[i] = Math.min(dmgTakenMin[i], simDmgTaken[i]);
           }
           dmgTakenMax[i] = Math.max(dmgTakenMax[i], simDmgTaken[i]);
+          if (simSingleDmgTaken[i] > 0) {
+            singleDmgTakenMin[i] = Math.min(singleDmgTakenMin[i], simSingleDmgTaken[i]);
+            singleDmgTakenMax[i] = Math.max(singleDmgTakenMax[i], simSingleDmgTaken[i]);
+            singleDmgTakenSimCount[i]++;
+          }
+          if (simAoeDmgTaken[i] > 0) {
+            aoeDmgTakenMin[i] = Math.min(aoeDmgTakenMin[i], simAoeDmgTaken[i]);
+            aoeDmgTakenMax[i] = Math.max(aoeDmgTakenMax[i], simAoeDmgTaken[i]);
+            aoeDmgTakenSimCount[i]++;
+          }
           // Per-turn dmg taken min/max (across sims)
           const perTurnTaken = round > 0 ? simDmgTaken[i] / round : 0;
           if (perTurnTaken > 0) dmgTakenPerTurnMin[i] = Math.min(dmgTakenPerTurnMin[i], perTurnTaken);
