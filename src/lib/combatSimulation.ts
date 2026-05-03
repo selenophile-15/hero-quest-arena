@@ -1216,6 +1216,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const winDmgTaken = new Float64Array(numHeroes);
   const winDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
   const winDmgTakenMax = new Float64Array(numHeroes);
+  const winSingleDmgTakenAccum = new Float64Array(numHeroes);
+  const winSingleDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const winSingleDmgTakenMax = new Float64Array(numHeroes);
+  const winSingleDmgTakenSimCount = new Float64Array(numHeroes);
+  const winAoeDmgTakenAccum = new Float64Array(numHeroes);
+  const winAoeDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const winAoeDmgTakenMax = new Float64Array(numHeroes);
+  const winAoeDmgTakenSimCount = new Float64Array(numHeroes);
   const winTimesHit = new Float64Array(numHeroes);
   const winSingleHits = new Float64Array(numHeroes);
   const winSurvived = new Float64Array(numHeroes);
