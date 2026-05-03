@@ -1240,6 +1240,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const loseDmgTaken = new Float64Array(numHeroes);
   const loseDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
   const loseDmgTakenMax = new Float64Array(numHeroes);
+  const loseSingleDmgTakenAccum = new Float64Array(numHeroes);
+  const loseSingleDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const loseSingleDmgTakenMax = new Float64Array(numHeroes);
+  const loseSingleDmgTakenSimCount = new Float64Array(numHeroes);
+  const loseAoeDmgTakenAccum = new Float64Array(numHeroes);
+  const loseAoeDmgTakenMin = new Float64Array(numHeroes).fill(1e9);
+  const loseAoeDmgTakenMax = new Float64Array(numHeroes);
+  const loseAoeDmgTakenSimCount = new Float64Array(numHeroes);
   const loseTimesHit = new Float64Array(numHeroes);
   const loseSingleHits = new Float64Array(numHeroes);
   const loseHpRemain = new Float64Array(numHeroes);
