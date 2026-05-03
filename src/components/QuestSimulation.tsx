@@ -2359,28 +2359,25 @@ export default function QuestSimulation() {
                                 </thead>
                                 <tbody>
                                   {displayResults.map((hr, idx) => {
-                                    const totalAvg = hr.totalDamageTakenAvg || 0;
-                                    const singleAvg = hr.singleDmgTakenTotal || 0;
-                                    const aoeAvg = hr.aoeDmgTakenTotal || 0;
-                                    const sR = totalAvg > 0 ? singleAvg / totalAvg : 0;
-                                    const aR = totalAvg > 0 ? aoeAvg / totalAvg : 0;
-                                    const minTotal = hr.minDamageTaken ?? 0;
-                                    const maxTotal = hr.maxDamageTaken ?? 0;
-                                    const sMin = minTotal * sR, sMax = maxTotal * sR;
-                                    const aMin = minTotal * aR, aMax = maxTotal * aR;
+                                    const singleAvg = hr.singleDmgTakenAvg ?? Math.round(hr.singleDmgTakenTotal || 0);
+                                    const aoeAvg = hr.aoeDmgTakenAvg ?? Math.round(hr.aoeDmgTakenTotal || 0);
+                                    const sMin = hr.singleDmgTakenMin ?? 0;
+                                    const sMax = hr.singleDmgTakenMax ?? 0;
+                                    const aMin = hr.aoeDmgTakenMin ?? 0;
+                                    const aMax = hr.aoeDmgTakenMax ?? 0;
                                     const nShare = hr.singleNormalHitShare ?? 0;
                                     const cShare = hr.singleCritHitShare ?? 0;
                                     return (
                                       <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                         <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{singleAvg > 0 ? formatNumber(Math.round(sMin)) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{singleAvg > 0 ? formatNumber(Math.round(singleAvg)) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{singleAvg > 0 ? formatNumber(Math.round(sMax)) : blank}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{singleAvg > 0 ? formatNumber(sMin) : blank}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{singleAvg > 0 ? formatNumber(singleAvg) : blank}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{singleAvg > 0 ? formatNumber(sMax) : blank}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${nShare.toFixed(1)}%`, nShare === 0)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${cShare.toFixed(1)}%`, cShare === 0)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{aoeAvg > 0 ? formatNumber(Math.round(aMin)) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{aoeAvg > 0 ? formatNumber(Math.round(aoeAvg)) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aoeAvg > 0 ? formatNumber(Math.round(aMax)) : blank}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aMin) : blank}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aoeAvg) : blank}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aMax) : blank}</td>
                                       </tr>
                                     );
                                   })}
