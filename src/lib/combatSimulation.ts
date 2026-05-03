@@ -1942,6 +1942,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseDmgTaken[i] += simDmgTaken[i];
             if (simDmgTaken[i] > 0) loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], simDmgTaken[i]);
             loseDmgTakenMax[i] = Math.max(loseDmgTakenMax[i], simDmgTaken[i]);
+            loseSingleDmgTakenAccum[i] += simSingleDmgTaken[i];
+            if (simSingleDmgTaken[i] > 0) {
+              loseSingleDmgTakenMin[i] = Math.min(loseSingleDmgTakenMin[i], simSingleDmgTaken[i]);
+              loseSingleDmgTakenMax[i] = Math.max(loseSingleDmgTakenMax[i], simSingleDmgTaken[i]);
+              loseSingleDmgTakenSimCount[i]++;
+            }
+            loseAoeDmgTakenAccum[i] += simAoeDmgTaken[i];
+            if (simAoeDmgTaken[i] > 0) {
+              loseAoeDmgTakenMin[i] = Math.min(loseAoeDmgTakenMin[i], simAoeDmgTaken[i]);
+              loseAoeDmgTakenMax[i] = Math.max(loseAoeDmgTakenMax[i], simAoeDmgTaken[i]);
+              loseAoeDmgTakenSimCount[i]++;
+            }
             loseTimesHit[i] += simTimesHit[i];
             loseSingleHits[i] += singleHitsTaken[i];
             loseTargeted[i] += simTargeted[i];
