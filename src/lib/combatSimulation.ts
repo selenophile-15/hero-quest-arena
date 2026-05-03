@@ -2211,6 +2211,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       maxDamageTakenPerTurn: Math.round(dmgTakenPerTurnMax[i]),
       aoeDmgTakenTotal: aoeDmgTakenAccum[i] / actualSimCount,
       singleDmgTakenTotal: singleDmgTakenAccum[i] / actualSimCount,
+      singleDmgTakenAvg: actualSimCount > 0 ? Math.round(singleDmgTakenAccum[i] / actualSimCount) : 0,
+      singleDmgTakenMin: singleDmgTakenMin[i] >= 1e9 ? 0 : Math.round(singleDmgTakenMin[i]),
+      singleDmgTakenMax: Math.round(singleDmgTakenMax[i]),
+      aoeDmgTakenAvg: actualSimCount > 0 ? Math.round(aoeDmgTakenAccum[i] / actualSimCount) : 0,
+      aoeDmgTakenMin: aoeDmgTakenMin[i] >= 1e9 ? 0 : Math.round(aoeDmgTakenMin[i]),
+      aoeDmgTakenMax: Math.round(aoeDmgTakenMax[i]),
       singleNormalHitShare: (singleNormalHitsTotal[i] + singleCritHitsTotal[i]) > 0
         ? Math.round((singleNormalHitsTotal[i] / (singleNormalHitsTotal[i] + singleCritHitsTotal[i])) * 100 * 10) / 10
         : 0,
