@@ -92,6 +92,13 @@ export interface HeroSimResult {
   // AoE-only / single-only damage taken (avg per sim)
   aoeDmgTakenTotal?: number;
   singleDmgTakenTotal?: number;
+  // Min/Max single-only and aoe-only damage taken (across sims where any was taken)
+  singleDmgTakenMin?: number;
+  singleDmgTakenMax?: number;
+  singleDmgTakenAvg?: number;
+  aoeDmgTakenMin?: number;
+  aoeDmgTakenMax?: number;
+  aoeDmgTakenAvg?: number;
   // Shark stats
   sharkNormalDmg: number;        // Normal attack damage when shark active (+bonus)
   sharkCritDmg: number;          // Crit attack damage when shark active
