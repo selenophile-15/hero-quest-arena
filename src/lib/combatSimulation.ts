@@ -2345,6 +2345,22 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       maxDamageTaken: bucket === 'win' ? Math.round(winDmgTakenMax[i]) : Math.round(loseDmgTakenMax[i]),
       avgDamageTakenPerHit: tHit > 0 ? Math.round(dTaken / tHit) : 0,
       avgDamageTakenPerTurn: avgR > 0 ? Math.round(dTaken / bucketCount / avgR) : 0,
+      singleDmgTakenAvg: bucket === 'win'
+        ? Math.round(winSingleDmgTakenAccum[i] / bucketCount)
+        : Math.round(loseSingleDmgTakenAccum[i] / bucketCount),
+      singleDmgTakenMin: bucket === 'win'
+        ? (winSingleDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winSingleDmgTakenMin[i]))
+        : (loseSingleDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseSingleDmgTakenMin[i])),
+      singleDmgTakenMax: bucket === 'win' ? Math.round(winSingleDmgTakenMax[i]) : Math.round(loseSingleDmgTakenMax[i]),
+      singleDmgTakenTotal: bucket === 'win' ? winSingleDmgTakenAccum[i] / bucketCount : loseSingleDmgTakenAccum[i] / bucketCount,
+      aoeDmgTakenAvg: bucket === 'win'
+        ? Math.round(winAoeDmgTakenAccum[i] / bucketCount)
+        : Math.round(loseAoeDmgTakenAccum[i] / bucketCount),
+      aoeDmgTakenMin: bucket === 'win'
+        ? (winAoeDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winAoeDmgTakenMin[i]))
+        : (loseAoeDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseAoeDmgTakenMin[i])),
+      aoeDmgTakenMax: bucket === 'win' ? Math.round(winAoeDmgTakenMax[i]) : Math.round(loseAoeDmgTakenMax[i]),
+      aoeDmgTakenTotal: bucket === 'win' ? winAoeDmgTakenAccum[i] / bucketCount : loseAoeDmgTakenAccum[i] / bucketCount,
       evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
       tankingRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
       singleTargetRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
