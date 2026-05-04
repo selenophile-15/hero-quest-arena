@@ -1628,6 +1628,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           else if (hp[i] >= berserkHp2[i] * finalHp[i]) { berserkerStage[i] = 1; berserkerBelowT1[i]++; }
           else if (hp[i] >= berserkHp3[i] * finalHp[i]) { berserkerStage[i] = 2; berserkerBelowT1[i]++; berserkerBelowT2[i]++; }
           else { berserkerStage[i] = 3; berserkerBelowT1[i]++; berserkerBelowT2[i]++; berserkerBelowT3[i]++; }
+          // Count one round at this stage (for stage-time distribution)
+          simBrkStageRounds[berserkerStage[i]][i]++;
         }
 
         // Ninja loses innate when hit
