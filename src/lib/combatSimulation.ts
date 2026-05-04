@@ -1146,6 +1146,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
   const brkTotalRounds = new Float64Array(numHeroes);
+  // Per-stage attack counts (normal/crit) for averaging dmg per hit
+  const brkStageNormalCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const brkStageCritCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
   // Alive-turns tracking (overall/win/lose) per-sim per-hero
   const aliveTurnsSum = new Float64Array(numHeroes);
   const aliveTurnsMin = new Float64Array(numHeroes).fill(1e9);
