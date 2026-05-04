@@ -174,7 +174,7 @@ export interface HeroSimResult {
   // Berserker per-stage actual evasion rate (%) (stage1, 2, 3)
   berserkerStageEvaRate?: number[];
   // Berserker per-stage actual damage dealt (avg per sim, [normal, crit, total])
-  berserkerStageDmg?: { normal: number; crit: number; total: number }[];
+  berserkerStageDmg?: { normal: number; crit: number; avg: number; total: number }[];
   tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
   // Alive turn distribution (overall / win / lose)
   aliveTurnsMin?: number;
@@ -805,6 +805,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       hemmaWho = championIdx;
       hemmaMult = 0.15 + champTier * 0.05;
     }
+    // Polonia detection still needed for loot tracking
+    if (champName.includes('폴로니아') || champName === 'Polonia') {
+      poloniaActive = true;
+      poloniaBaseChance = champTier === 1 ? 0.30 : champTier === 2 ? 0.35 : champTier === 3 ? 0.40 : 0.50;
+      let numTricksters = 0;
+      for (let i = 0; i < numHeroes; i++) {
+        if (activeHeroes[i].heroClass === '사기꾼' || activeHeroes[i].heroClass === 'Trickster') numTricksters++;
+      }
+      poloniaNumTricksters = numTricksters;
+      poloniaLootChance = poloniaBaseChance + numTricksters * 0.02;
+      poloniaLootCap = 20 + numTricksters * 2;
+    }
 
     // Extreme penalty on evasion
     if (isExtreme) {
@@ -1127,19 +1139,31 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const overallHpRemainMax = new Float64Array(numHeroes);
   const overallHpRemainSum = new Float64Array(numHeroes);
   const overallHpRemainCount = new Float64Array(numHeroes);
-  // Berserker per-stage attack/evade counts (single+aoe targeting)
+  // Berserker per-stage attack/evade counts (single+aoe targeting) — stages 0..3
   const brkStageTargeted = [
-    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
   const brkStageEvaded = [
-    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
-  // Berserker per-stage damage dealt (normal/crit) accumulators
+  // Berserker per-stage damage dealt (normal/crit) accumulators — stages 0..3
   const brkStageNormalDmg = [
-    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
   const brkStageCritDmg = [
-    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  // Per-stage round count (across all sims) — used for stage rate% (sums to 100%)
+  const brkStageRounds = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const brkTotalRounds = new Float64Array(numHeroes);
+  // Per-stage attack counts (normal/crit) for averaging dmg per hit
+  const brkStageNormalCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const brkStageCritCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
   // Alive-turns tracking (overall/win/lose) per-sim per-hero
   const aliveTurnsSum = new Float64Array(numHeroes);
@@ -1303,19 +1327,23 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Per-sim single-attack hit type counts
     const simSingleNormalHits = new Float64Array(numHeroes);
     const simSingleCritHits = new Float64Array(numHeroes);
-    // Per-sim berserker stage targeting/evasion (stage 1..3)
+    // Per-sim berserker stage targeting/evasion (stage 0..3)
     const simBrkStageTargeted = [
-      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
     const simBrkStageEvaded = [
-      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
-    // Per-sim berserker stage damage dealt (normal/crit) per hero
+    // Per-sim berserker stage damage dealt (normal/crit) per hero — stages 0..3
     const simBrkStageNormalDmg = [
-      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
     const simBrkStageCritDmg = [
-      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    // Per-sim berserker round counts per stage (0..3)
+    const simBrkStageRounds = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
     // Per-sim alive turns (last round this hero was alive)
     const simAliveTurns = new Float64Array(numHeroes);
@@ -1451,9 +1479,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (hp[i] <= 0) continue;
           timesTargeted[i]++;
           simTargeted[i]++;
-          // Berserker stage targeting
+          // Berserker stage targeting (0..3)
           const bStage = berserkerStage[i];
-          if (bStage >= 1 && bStage <= 3) simBrkStageTargeted[bStage - 1][i]++;
+          if (heroBerserkerLevel[i] > 0) simBrkStageTargeted[bStage][i]++;
 
           const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
           const cappedEva = Math.min(totalEva, heroEvaCap[i]);
@@ -1462,7 +1490,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             // Evaded
             timesEvaded[i]++;
             simEvaded[i]++;
-            if (bStage >= 1 && bStage <= 3) simBrkStageEvaded[bStage - 1][i]++;
+            if (heroBerserkerLevel[i] > 0) simBrkStageEvaded[bStage][i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
@@ -1526,9 +1554,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         timesTargeted[target]++;
         simTargeted[target]++;
-        // Berserker stage targeting
+        // Berserker stage targeting (0..3)
         const bStageT = berserkerStage[target];
-        if (bStageT >= 1 && bStageT <= 3) simBrkStageTargeted[bStageT - 1][target]++;
+        if (heroBerserkerLevel[target] > 0) simBrkStageTargeted[bStageT][target]++;
 
         const totalEva = heroEvasion[target] + berserkerStage[target] * 0.1 + ninjaEvasion[target];
         const cappedEva = Math.min(totalEva, heroEvaCap[target]);
@@ -1536,7 +1564,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (guaranteedEvade[target] || (Math.random() < cappedEva && !heroArtNoEvasion[target])) {
           timesEvaded[target]++;
           simEvaded[target]++;
-          if (bStageT >= 1 && bStageT <= 3) simBrkStageEvaded[bStageT - 1][target]++;
+          if (heroBerserkerLevel[target] > 0) simBrkStageEvaded[bStageT][target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
@@ -1619,6 +1647,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           else if (hp[i] >= berserkHp2[i] * finalHp[i]) { berserkerStage[i] = 1; berserkerBelowT1[i]++; }
           else if (hp[i] >= berserkHp3[i] * finalHp[i]) { berserkerStage[i] = 2; berserkerBelowT1[i]++; berserkerBelowT2[i]++; }
           else { berserkerStage[i] = 3; berserkerBelowT1[i]++; berserkerBelowT2[i]++; berserkerBelowT3[i]++; }
+          // Count one round at this stage (for stage-time distribution)
+          simBrkStageRounds[berserkerStage[i]][i]++;
         }
 
         // Ninja loses innate when hit
@@ -1707,11 +1737,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
         }
 
-        // Berserker per-stage damage tracking
+        // Berserker per-stage damage tracking (stage 0..3)
         const bSt = berserkerStage[jj];
-        if (heroBerserkerLevel[jj] > 0 && bSt >= 1 && bSt <= 3) {
-          if (isCrit) simBrkStageCritDmg[bSt - 1][jj] += damage;
-          else simBrkStageNormalDmg[bSt - 1][jj] += damage;
+        if (heroBerserkerLevel[jj] > 0) {
+          if (isCrit) {
+            brkStageCritDmg[bSt][jj] += damage;
+            brkStageCritCount[bSt][jj]++;
+          } else {
+            brkStageNormalDmg[bSt][jj] += damage;
+            brkStageNormalCount[bSt][jj]++;
+          }
         }
 
         // Ninja/Sensei with/without innate damage attribution
@@ -1846,10 +1881,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           // Single-attack hit type counts (per sim)
           singleNormalHitsTotal[i] += simSingleNormalHits[i];
           singleCritHitsTotal[i] += simSingleCritHits[i];
-          // Berserker stage targeting/evasion
-          for (let s = 0; s < 3; s++) {
+          // Berserker stage targeting/evasion + round count (stages 0..3)
+          for (let s = 0; s < 4; s++) {
             brkStageTargeted[s][i] += simBrkStageTargeted[s][i];
             brkStageEvaded[s][i] += simBrkStageEvaded[s][i];
+            brkStageRounds[s][i] += simBrkStageRounds[s][i];
+            brkTotalRounds[i] += simBrkStageRounds[s][i];
           }
           // Win/lose/overall HP remaining min/max (per-sim)
           const hpEnd = Math.max(hp[i], 0);
@@ -1897,11 +1934,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             conqStackAttackCount[s][i] += simConqStackAttackCount[s][i];
           }
 
-          // Berserker per-stage damage
-          for (let s = 0; s < 3; s++) {
-            brkStageNormalDmg[s][i] += simBrkStageNormalDmg[s][i];
-            brkStageCritDmg[s][i] += simBrkStageCritDmg[s][i];
-          }
+          // Berserker per-stage damage is tracked directly on global accumulators
 
           // Innate (ninja/sensei)
           innateLossAccum[i] += simInnateLossCount[i];
@@ -2113,13 +2146,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Per-turn damage
     const avgRoundsForHero = totalRoundsPerHero[i] / actualSimCount;
     const avgDmgPerTurn = avgRoundsForHero > 0 ? (damageDealtAvg[i] / actualSimCount) / avgRoundsForHero : 0;
-    // Berserker thresholds
+    // Berserker thresholds — 4 stages (0..3)
+    // stage 0: HP >= Hp1 (no penalty), threshold = 100
+    // stage 1: HP >= Hp2, threshold = Hp1*100
+    // stage 2: HP >= Hp3, threshold = Hp2*100
+    // stage 3: HP <  Hp3, threshold = Hp3*100
     let berserkerThresholds: { threshold: number; belowRate: number }[] | undefined;
     if (heroBerserkerLevel[i] > 0) {
+      const totRounds = brkTotalRounds[i] || 1;
       berserkerThresholds = [
-        { threshold: Math.round(berserkHp1[i] * 100), belowRate: Math.round((berserkerBelowT1[i] / actualSimCount) * 100 * 10) / 10 },
-        { threshold: Math.round(berserkHp2[i] * 100), belowRate: Math.round((berserkerBelowT2[i] / actualSimCount) * 100 * 10) / 10 },
-        { threshold: Math.round(berserkHp3[i] * 100), belowRate: Math.round((berserkerBelowT3[i] / actualSimCount) * 100 * 10) / 10 },
+        { threshold: 100, belowRate: Math.round((brkStageRounds[0][i] / totRounds) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp1[i] * 100), belowRate: Math.round((brkStageRounds[1][i] / totRounds) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp2[i] * 100), belowRate: Math.round((brkStageRounds[2][i] / totRounds) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp3[i] * 100), belowRate: Math.round((brkStageRounds[3][i] / totRounds) * 100 * 10) / 10 },
       ];
     }
 
@@ -2136,17 +2175,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     }
     const monsterCritChance = Math.round(Math.min(monsterCritBase, 1) * 100 * 10) / 10;
 
-    // Berserker ATK/EVA bonus per stage
+    // Berserker ATK/EVA bonus per stage (0..3)
     let berserkerAtkBonus: number[] | undefined;
     let berserkerEvaBonus: number[] | undefined;
     if (heroBerserkerLevel[i] > 0) {
       const lvl = heroBerserkerLevel[i];
-      berserkerAtkBonus = [
-        Math.round(0.1 * (1 + lvl) * 1 * 100),
-        Math.round(0.1 * (1 + lvl) * 2 * 100),
-        Math.round(0.1 * (1 + lvl) * 3 * 100),
-      ];
-      berserkerEvaBonus = [10, 20, 30];
+      berserkerAtkBonus = [0, 1, 2, 3].map(s => Math.round(0.1 * (1 + lvl) * s * 100));
+      berserkerEvaBonus = [0, 10, 20, 30];
     }
 
     return {
@@ -2232,14 +2267,24 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       overallHpRemainMin: overallHpRemainMin[i] < 1e9 ? Math.round(overallHpRemainMin[i]) : 0,
       overallHpRemainMax: Math.round(overallHpRemainMax[i]),
       overallHpRemainAvg: overallHpRemainCount[i] > 0 ? Math.round(overallHpRemainSum[i] / overallHpRemainCount[i]) : 0,
-      berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s =>
+      berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2, 3].map(s =>
         brkStageTargeted[s][i] > 0 ? Math.round((brkStageEvaded[s][i] / brkStageTargeted[s][i]) * 100 * 10) / 10 : 0
       ) : undefined,
-      berserkerStageDmg: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s => ({
-        normal: Math.round(brkStageNormalDmg[s][i] / actualSimCount),
-        crit: Math.round(brkStageCritDmg[s][i] / actualSimCount),
-        total: Math.round((brkStageNormalDmg[s][i] + brkStageCritDmg[s][i]) / actualSimCount),
-      })) : undefined,
+      berserkerStageDmg: heroBerserkerLevel[i] > 0 ? [0, 1, 2, 3].map(s => {
+        const nC = brkStageNormalCount[s][i];
+        const cC = brkStageCritCount[s][i];
+        const nSum = brkStageNormalDmg[s][i];
+        const cSum = brkStageCritDmg[s][i];
+        const totalCount = nC + cC;
+        return {
+          normal: nC > 0 ? Math.round(nSum / nC) : 0,
+          crit: cC > 0 ? Math.round(cSum / cC) : 0,
+          // avg dmg per attack at this stage
+          avg: totalCount > 0 ? Math.round((nSum + cSum) / totalCount) : 0,
+          // total dmg dealt at this stage per sim (for stage-share bar)
+          total: Math.round((nSum + cSum) / actualSimCount),
+        };
+      }) : undefined,
       // Alive turns
       aliveTurnsMin: aliveTurnsMin[i] >= 1e9 ? 0 : Math.round(aliveTurnsMin[i]),
       aliveTurnsAvg: actualSimCount > 0 ? Math.round((aliveTurnsSum[i] / actualSimCount) * 10) / 10 : 0,
