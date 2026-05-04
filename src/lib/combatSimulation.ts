@@ -2134,13 +2134,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Per-turn damage
     const avgRoundsForHero = totalRoundsPerHero[i] / actualSimCount;
     const avgDmgPerTurn = avgRoundsForHero > 0 ? (damageDealtAvg[i] / actualSimCount) / avgRoundsForHero : 0;
-    // Berserker thresholds
+    // Berserker thresholds — 4 stages (0..3)
+    // stage 0: HP >= Hp1 (no penalty), threshold = 100
+    // stage 1: HP >= Hp2, threshold = Hp1*100
+    // stage 2: HP >= Hp3, threshold = Hp2*100
+    // stage 3: HP <  Hp3, threshold = Hp3*100
     let berserkerThresholds: { threshold: number; belowRate: number }[] | undefined;
     if (heroBerserkerLevel[i] > 0) {
+      const totRounds = brkTotalRounds[i] || 1;
       berserkerThresholds = [
-        { threshold: Math.round(berserkHp1[i] * 100), belowRate: Math.round((berserkerBelowT1[i] / actualSimCount) * 100 * 10) / 10 },
-        { threshold: Math.round(berserkHp2[i] * 100), belowRate: Math.round((berserkerBelowT2[i] / actualSimCount) * 100 * 10) / 10 },
-        { threshold: Math.round(berserkHp3[i] * 100), belowRate: Math.round((berserkerBelowT3[i] / actualSimCount) * 100 * 10) / 10 },
+        { threshold: 100, belowRate: Math.round((brkStageRounds[0][i] / totRounds) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp1[i] * 100), belowRate: Math.round((brkStageRounds[1][i] / totRounds) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp2[i] * 100), belowRate: Math.round((brkStageRounds[2][i] / totRounds) * 100 * 10) / 10 },
+        { threshold: Math.round(berserkHp3[i] * 100), belowRate: Math.round((brkStageRounds[3][i] / totRounds) * 100 * 10) / 10 },
       ];
     }
 
@@ -2157,17 +2163,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     }
     const monsterCritChance = Math.round(Math.min(monsterCritBase, 1) * 100 * 10) / 10;
 
-    // Berserker ATK/EVA bonus per stage
+    // Berserker ATK/EVA bonus per stage (0..3)
     let berserkerAtkBonus: number[] | undefined;
     let berserkerEvaBonus: number[] | undefined;
     if (heroBerserkerLevel[i] > 0) {
       const lvl = heroBerserkerLevel[i];
-      berserkerAtkBonus = [
-        Math.round(0.1 * (1 + lvl) * 1 * 100),
-        Math.round(0.1 * (1 + lvl) * 2 * 100),
-        Math.round(0.1 * (1 + lvl) * 3 * 100),
-      ];
-      berserkerEvaBonus = [10, 20, 30];
+      berserkerAtkBonus = [0, 1, 2, 3].map(s => Math.round(0.1 * (1 + lvl) * s * 100));
+      berserkerEvaBonus = [0, 10, 20, 30];
     }
 
     return {
