@@ -2629,8 +2629,9 @@ export default function QuestSimulation() {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {displayResults.map((hr, idx) => {
-                                      const isNS = !!(hr.isNinjaHero || hr.isSenseiHero);
+                                    {ninjaSenseiRows.length === 0 ? (
+                                      <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">닌자 / 센세 직업 파티원 없음</td></tr>
+                                    ) : ninjaSenseiRows.map((hr, idx) => {
                                       const wIn = hr.withInnateAvgDmg ?? 0;
                                       const wOut = hr.withoutInnateAvgDmg ?? 0;
                                       const tot = wIn + wOut;
@@ -2639,10 +2640,10 @@ export default function QuestSimulation() {
                                       return (
                                         <tr key={`ns-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                           <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{isNS ? `${(hr.innateLossCount ?? 0).toFixed(1)}회` : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{isNS && hr.isSenseiHero ? `${(hr.innateRegenCount ?? 0).toFixed(1)}회` : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{isNS && wIn > 0 ? <>{formatNumber(wIn)} <span className="opacity-70">({inPct.toFixed(1)}%)</span></> : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{isNS && wOut > 0 ? <>{formatNumber(wOut)} <span className="opacity-70">({outPct.toFixed(1)}%)</span></> : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{`${(hr.innateLossCount ?? 0).toFixed(1)}회`}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isSenseiHero ? `${(hr.innateRegenCount ?? 0).toFixed(1)}회` : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{wIn > 0 ? <>{formatNumber(wIn)} <span className="opacity-70">({inPct.toFixed(1)}%)</span></> : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{wOut > 0 ? <>{formatNumber(wOut)} <span className="opacity-70">({outPct.toFixed(1)}%)</span></> : blank}</td>
                                         </tr>
                                       );
                                     })}
