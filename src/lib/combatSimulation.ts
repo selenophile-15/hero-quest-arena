@@ -1308,19 +1308,23 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Per-sim single-attack hit type counts
     const simSingleNormalHits = new Float64Array(numHeroes);
     const simSingleCritHits = new Float64Array(numHeroes);
-    // Per-sim berserker stage targeting/evasion (stage 1..3)
+    // Per-sim berserker stage targeting/evasion (stage 0..3)
     const simBrkStageTargeted = [
-      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
     const simBrkStageEvaded = [
-      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
-    // Per-sim berserker stage damage dealt (normal/crit) per hero
+    // Per-sim berserker stage damage dealt (normal/crit) per hero — stages 0..3
     const simBrkStageNormalDmg = [
-      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
     const simBrkStageCritDmg = [
-      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    // Per-sim berserker round counts per stage (0..3)
+    const simBrkStageRounds = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
     // Per-sim alive turns (last round this hero was alive)
     const simAliveTurns = new Float64Array(numHeroes);
