@@ -174,7 +174,7 @@ export interface HeroSimResult {
   // Berserker per-stage actual evasion rate (%) (stage1, 2, 3)
   berserkerStageEvaRate?: number[];
   // Berserker per-stage actual damage dealt (avg per sim, [normal, crit, total])
-  berserkerStageDmg?: { normal: number; crit: number; total: number }[];
+  berserkerStageDmg?: { normal: number; crit: number; avg: number; total: number }[];
   tankingRate: number;       // % of single-target hits absorbed (excluding AoE)
   // Alive turn distribution (overall / win / lose)
   aliveTurnsMin?: number;
