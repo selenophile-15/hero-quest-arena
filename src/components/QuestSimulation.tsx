@@ -2423,62 +2423,84 @@ export default function QuestSimulation() {
                         <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                         <div className="space-y-6">
 
-                          {/* ===== Table A: 상어 / 공룡 / 헴마 — 항상 표시, 모든 파티원 노출 ===== */}
-                          <div>
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">상어 / 공룡 / 헴마</div>
-                            <div className="overflow-x-auto">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
-                                <colgroup>
-                                  <col style={{ width: '110px' }} />
-                                  <col /><col /><col />
-                                </colgroup>
-                                <thead>
-                                  <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                      <GroupHeader label="상어 (영혼)" info={'상어 영혼 보유 시 일반/치명 시 추가된 평균 대미지와 총 평균(전체 평균 대미지 중 비중%).'} />
-                                    </th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                      <GroupHeader label="공룡 / 다이묘 (첫 턴)" info={'공룡 영혼/다이묘 직업 보유 시 첫 턴 일반/치명 평균 대미지(전체 평균 중 비중%).'} />
-                                    </th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                      <GroupHeader label="헴마 (흡수)" info={'헴마: 동료에게서 흡수한 평균 대미지 / 평균 흡수 횟수. 헴마가 파티에 있을 때 동료별 표시.'} />
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {displayResults.map((hr, idx) => {
-                                    const sharkTotal = hr.hasSharkSpirit ? (hr.sharkNormalDmg + hr.sharkCritDmg) / 2 : 0;
-                                    const sharkPct = partyAvgDmg > 0 ? (sharkTotal / partyAvgDmg) * 100 : 0;
-                                    const dinoCritPct = partyAvgDmg > 0 && hr.hasDinosaurSpirit ? (hr.dinosaurCritDmg / partyAvgDmg) * 100 : 0;
-                                    return (
-                                      <tr key={`spc-a-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                        <td className="py-1 px-2 text-muted-foreground text-[12px]">
-                                          {hr.hasSharkSpirit ? (
-                                            <span className="font-mono">일반 {formatNumber(hr.sharkNormalDmg)} · 치명 {formatNumber(hr.sharkCritDmg)} · 총 {formatNumber(Math.round(sharkTotal))} <span className="opacity-70">({sharkPct.toFixed(1)}%)</span></span>
-                                          ) : blank}
-                                        </td>
-                                        <td className="py-1 px-2 text-muted-foreground text-[12px]">
-                                          {hr.hasDinosaurSpirit ? (
-                                            <span className="font-mono">
-                                              일반 {hr.dinosaurNormalDmg > 0 ? formatNumber(hr.dinosaurNormalDmg) : '-'} · 치명 {hr.dinosaurCritDmg > 0 ? <>{formatNumber(hr.dinosaurCritDmg)} <span className="opacity-70">({dinoCritPct.toFixed(1)}%)</span></> : '-'}
-                                            </span>
-                                          ) : blank}
-                                        </td>
-                                        <td className="py-1 px-2 text-muted-foreground text-[12px]">
-                                          {hemmaRow ? (
-                                            hr.isHemmaHero ? <span className="opacity-60">(헴마 본인)</span>
-                                            : <span className="font-mono">흡수 {formatNumber(hr.hemmaAbsorbedDmg ?? 0)} / {(hr.hemmaAbsorbedCount ?? 0).toFixed(1)}회</span>
-                                          ) : blank}
-                                        </td>
-                                      </tr>
-                                    );
-                                  })}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
+                          {/* ===== Table A: 상어 / 공룡·다이묘 — 해당 파티원만 ===== */}
+                          {(() => {
+                            const sharkHeroes = displayResults.filter(hr => hr.hasSharkSpirit);
+                            const dinoHeroes = displayResults.filter(hr => hr.hasDinosaurSpirit || hr.isSamuraiOrDaimyo);
+                            return (
+                              <div className="space-y-4">
+                                <div>
+                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">상어 (영혼)</div>
+                                  <div className="overflow-x-auto">
+                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                      <colgroup>
+                                        <col style={{ width: '110px' }} /><col /><col /><col />
+                                      </colgroup>
+                                      <thead>
+                                        <tr className="border-b-2 border-border/60">
+                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
+                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">일반</th>
+                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">치명</th>
+                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">평균</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {sharkHeroes.length === 0 ? (
+                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">상어 영혼 보유 파티원 없음</td></tr>
+                                        ) : sharkHeroes.map((hr, idx) => {
+                                          const avg = Math.round((hr.sharkNormalDmg + hr.sharkCritDmg) / 2);
+                                          return (
+                                            <tr key={`shk-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                              <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{formatNumber(hr.sharkNormalDmg)}</td>
+                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{formatNumber(hr.sharkCritDmg)}</td>
+                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{formatNumber(avg)}</td>
+                                            </tr>
+                                          );
+                                        })}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">공룡 / 다이묘 (첫 턴)</div>
+                                  <div className="overflow-x-auto">
+                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                      <colgroup>
+                                        <col style={{ width: '110px' }} /><col /><col /><col />
+                                      </colgroup>
+                                      <thead>
+                                        <tr className="border-b-2 border-border/60">
+                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
+                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">일반</th>
+                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">치명</th>
+                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">전체 딜 비중</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {dinoHeroes.length === 0 ? (
+                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">공룡 영혼 / 다이묘 직업 파티원 없음</td></tr>
+                                        ) : dinoHeroes.map((hr, idx) => {
+                                          const norm = hr.dinosaurNormalDmg;
+                                          const crit = hr.dinosaurCritDmg;
+                                          const total = norm + crit;
+                                          const pct = hr.avgDamageDealt > 0 ? (total / 2 / hr.avgDamageDealt) * 100 : 0;
+                                          return (
+                                            <tr key={`dino-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                              <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{norm > 0 ? formatNumber(norm) : '-'}</td>
+                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{crit > 0 ? formatNumber(crit) : '-'}</td>
+                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{pct > 0 ? `${pct.toFixed(1)}%` : '-'}</td>
+                                            </tr>
+                                          );
+                                        })}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })()}
 
                           {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 군주는 군주가 있을 때만 ===== */}
                           <div className="space-y-4">
