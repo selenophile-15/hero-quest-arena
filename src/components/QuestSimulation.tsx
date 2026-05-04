@@ -2715,57 +2715,109 @@ export default function QuestSimulation() {
                             </div>
                           </div>
 
-                          {/* ===== Table D: 폴로니아 도둑질 — 항상 표시, 폴로니아 없으면 안내 ===== */}
+                          {/* ===== Table D: 폴로니아 ===== */}
                           <div>
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1 flex items-center gap-2">
-                              <span>폴로니아 도둑질</span>
-                              {hasPolonia && poloniaLoot && (
-                                <span className="text-[11px] font-normal text-muted-foreground">
-                                  · 훔칠 확률 {(poloniaLoot.baseChance * 100).toFixed(1)}% · 최대 {poloniaLoot.capMax}개
-                                  {poloniaLoot.numTricksters > 0 && <> · 사기꾼 {poloniaLoot.numTricksters}명 (+{(poloniaLoot.numTricksters * 2)}% 확률 / +{poloniaLoot.numTricksters * 2}개 한도)</>}
-                                </span>
-                              )}
-                            </div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">폴로니아</div>
                             <div className="overflow-x-auto">
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
-                                  <col /><col />
+                                  <col /><col /><col />
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                      <GroupHeader label="평균 훔친 수" info={'시뮬레이션 1회당 해당 파티원이 훔친 평균 아이템 수. 폴로니아 본인뿐 아니라 모든 파티원이 공격 시도마다 훔칠 수 있음. 사기꾼 직업 보유 시 훔칠 확률 +2%.'} />
+                                      <GroupHeader label="훔친 수" info={'시뮬레이션 1회당 해당 파티원이 훔친 평균 아이템 수.'} />
                                     </th>
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                      <GroupHeader label="사기꾼" info={'사기꾼 직업 여부. 사기꾼 1명당 파티 전체 훔칠 확률 +2%, 최대 한도 +2개.'} />
+                                      <GroupHeader label="훔칠 확률" info={'시뮬레이션에 적용된 훔칠 확률 (폴로니아 리더 스킬 + 사기꾼 1명당 +2%).'} />
+                                    </th>
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <GroupHeader label="훔치기 한도" info={'시뮬레이션에 적용된 한도 (기본 20 + 사기꾼 1명당 +2).'} />
                                     </th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {!hasPolonia ? (
-                                    <tr><td colSpan={3} className="py-2 px-2 text-center text-muted-foreground/60 italic">폴로니아 챔피언이 파티에 없음</td></tr>
-                                  ) : displayResults.map((hr, idx) => (
-                                    <tr key={`pol-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                      <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground">{(hr.poloniaStolenAvg ?? 0) > 0 ? `${(hr.poloniaStolenAvg ?? 0).toFixed(2)}개` : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isTricksterHero ? '✓' : blank}</td>
-                                    </tr>
-                                  ))}
-                                  {hasPolonia && poloniaLoot && (
-                                    <tr className="border-t-2 border-border/60 bg-primary/5 font-bold">
-                                      <td className="py-1 px-2 text-center text-foreground">파티 합계</td>
-                                      <td className="py-1 px-2 text-center font-mono text-foreground" colSpan={2}>
-                                        평균 {poloniaLoot.avgPerSim.toFixed(2)}개 · 최소 {poloniaLoot.minPerSim}개 · 최대 {poloniaLoot.maxPerSim}개
-                                        <span className="ml-2 opacity-70 font-normal">(한도 도달률 {poloniaLoot.capHitRate.toFixed(1)}%)</span>
-                                      </td>
-                                    </tr>
-                                  )}
+                                    <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">폴로니아 챔피언이 파티에 없음</td></tr>
+                                  ) : (<>
+                                    {displayResults.map((hr, idx) => (
+                                      <tr key={`pol-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}{hr.isTricksterHero ? <span className="ml-1 text-[10px] opacity-70">(사기꾼)</span> : null}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground">{(hr.poloniaStolenAvg ?? 0) > 0 ? `${(hr.poloniaStolenAvg ?? 0).toFixed(2)}개` : blank}</td>
+                                        {idx === 0 && poloniaLoot && (
+                                          <>
+                                            <td rowSpan={displayResults.length} className="py-1 px-2 text-center font-mono text-muted-foreground align-middle">
+                                              {poloniaLoot.baseChance.toFixed(1)}%
+                                              {poloniaLoot.numTricksters > 0 && <span className="ml-1 text-[10px] opacity-70">(+{poloniaLoot.numTricksters * 2}%)</span>}
+                                            </td>
+                                            <td rowSpan={displayResults.length} className="py-1 px-2 text-center font-mono text-muted-foreground align-middle">
+                                              {poloniaLoot.capMax}개
+                                              {poloniaLoot.numTricksters > 0 && <span className="ml-1 text-[10px] opacity-70">(+{poloniaLoot.numTricksters * 2})</span>}
+                                            </td>
+                                          </>
+                                        )}
+                                      </tr>
+                                    ))}
+                                    {poloniaLoot && (
+                                      <tr className="border-t-2 border-border/60 bg-primary/5 font-bold">
+                                        <td className="py-1 px-2 text-center text-foreground">파티 합계</td>
+                                        <td className="py-1 px-2 text-center font-mono text-foreground" colSpan={3}>
+                                          평균 {poloniaLoot.avgPerSim.toFixed(2)}개 · 최소 {poloniaLoot.minPerSim}개 · 최대 {poloniaLoot.maxPerSim}개
+                                          <span className="ml-2 opacity-70 font-normal">(한도 도달률 {poloniaLoot.capHitRate.toFixed(1)}%)</span>
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </>)}
                                 </tbody>
                               </table>
                             </div>
                           </div>
+
+                          {/* ===== Table E: 헴마 (별도 분리) ===== */}
+                          {(() => {
+                            const hasHemma = !!displayResults.find(hr => hr.isHemmaHero);
+                            return (
+                              <div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">헴마</div>
+                                <div className="overflow-x-auto">
+                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                    <colgroup>
+                                      <col style={{ width: '110px' }} />
+                                      <col /><col /><col />
+                                    </colgroup>
+                                    <thead>
+                                      <tr className="border-b-2 border-border/60">
+                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
+                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                          <GroupHeader label="흡수 턴" info={'헴마 흡수가 적용된 평균 턴 수.'} />
+                                        </th>
+                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                          <GroupHeader label="흡수 공격력" info={'헴마 흡수로 증가한 평균 공격 대미지.'} />
+                                        </th>
+                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                          <GroupHeader label="동료 체력 [깎인 체력]" info={'헴마 스킬로 인해 깎인 동료들의 체력.'} />
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {!hasHemma ? (
+                                        <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">헴마 챔피언이 파티에 없음</td></tr>
+                                      ) : displayResults.map((hr, idx) => (
+                                        <tr key={`hem-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}{hr.isHemmaHero ? <span className="ml-1 text-[10px] opacity-70">(헴마)</span> : null}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? `${(hr.hemmaAbsorbedCount ?? 0).toFixed(1)}회` : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? formatNumber(hr.hemmaAbsorbedDmg ?? 0) : blank}</td>
+                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{!hr.isHemmaHero && (hr.hemmaAbsorbedCount ?? 0) > 0 ? formatNumber(hr.hemmaAbsorbedDmg ?? 0) : blank}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            );
+                          })()}
 
                         </div>
                       </div>
