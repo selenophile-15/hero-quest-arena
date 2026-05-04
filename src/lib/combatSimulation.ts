@@ -1728,8 +1728,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // Berserker per-stage damage tracking (stage 0..3)
         const bSt = berserkerStage[jj];
         if (heroBerserkerLevel[jj] > 0) {
-          if (isCrit) simBrkStageCritDmg[bSt][jj] += damage;
-          else simBrkStageNormalDmg[bSt][jj] += damage;
+          if (isCrit) {
+            brkStageCritDmg[bSt][jj] += damage;
+            brkStageCritCount[bSt][jj]++;
+          } else {
+            brkStageNormalDmg[bSt][jj] += damage;
+            brkStageNormalCount[bSt][jj]++;
+          }
         }
 
         // Ninja/Sensei with/without innate damage attribution
