@@ -1460,9 +1460,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (hp[i] <= 0) continue;
           timesTargeted[i]++;
           simTargeted[i]++;
-          // Berserker stage targeting
+          // Berserker stage targeting (0..3)
           const bStage = berserkerStage[i];
-          if (bStage >= 1 && bStage <= 3) simBrkStageTargeted[bStage - 1][i]++;
+          if (heroBerserkerLevel[i] > 0) simBrkStageTargeted[bStage][i]++;
 
           const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
           const cappedEva = Math.min(totalEva, heroEvaCap[i]);
@@ -1471,7 +1471,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             // Evaded
             timesEvaded[i]++;
             simEvaded[i]++;
-            if (bStage >= 1 && bStage <= 3) simBrkStageEvaded[bStage - 1][i]++;
+            if (heroBerserkerLevel[i] > 0) simBrkStageEvaded[bStage][i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
