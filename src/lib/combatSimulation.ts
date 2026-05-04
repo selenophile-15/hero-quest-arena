@@ -1910,8 +1910,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             conqStackAttackCount[s][i] += simConqStackAttackCount[s][i];
           }
 
-          // Berserker per-stage damage
-          for (let s = 0; s < 3; s++) {
+          // Berserker per-stage damage (stages 0..3)
+          for (let s = 0; s < 4; s++) {
             brkStageNormalDmg[s][i] += simBrkStageNormalDmg[s][i];
             brkStageCritDmg[s][i] += simBrkStageCritDmg[s][i];
           }
