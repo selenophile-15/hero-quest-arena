@@ -805,6 +805,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       hemmaWho = championIdx;
       hemmaMult = 0.15 + champTier * 0.05;
     }
+    // Polonia detection still needed for loot tracking
+    if (champName.includes('폴로니아') || champName === 'Polonia') {
+      poloniaActive = true;
+      poloniaBaseChance = champTier === 1 ? 0.30 : champTier === 2 ? 0.35 : champTier === 3 ? 0.40 : 0.50;
+      let numTricksters = 0;
+      for (let i = 0; i < numHeroes; i++) {
+        if (activeHeroes[i].heroClass === '사기꾼' || activeHeroes[i].heroClass === 'Trickster') numTricksters++;
+      }
+      poloniaNumTricksters = numTricksters;
+      poloniaLootChance = poloniaBaseChance + numTricksters * 0.02;
+      poloniaLootCap = 20 + numTricksters * 2;
+    }
 
     // Extreme penalty on evasion
     if (isExtreme) {
