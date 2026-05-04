@@ -1857,10 +1857,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           // Single-attack hit type counts (per sim)
           singleNormalHitsTotal[i] += simSingleNormalHits[i];
           singleCritHitsTotal[i] += simSingleCritHits[i];
-          // Berserker stage targeting/evasion
-          for (let s = 0; s < 3; s++) {
+          // Berserker stage targeting/evasion + round count (stages 0..3)
+          for (let s = 0; s < 4; s++) {
             brkStageTargeted[s][i] += simBrkStageTargeted[s][i];
             brkStageEvaded[s][i] += simBrkStageEvaded[s][i];
+            brkStageRounds[s][i] += simBrkStageRounds[s][i];
+            brkTotalRounds[i] += simBrkStageRounds[s][i];
           }
           // Win/lose/overall HP remaining min/max (per-sim)
           const hpEnd = Math.max(hp[i], 0);
