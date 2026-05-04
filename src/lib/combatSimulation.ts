@@ -2255,14 +2255,24 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       overallHpRemainMin: overallHpRemainMin[i] < 1e9 ? Math.round(overallHpRemainMin[i]) : 0,
       overallHpRemainMax: Math.round(overallHpRemainMax[i]),
       overallHpRemainAvg: overallHpRemainCount[i] > 0 ? Math.round(overallHpRemainSum[i] / overallHpRemainCount[i]) : 0,
-      berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s =>
+      berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2, 3].map(s =>
         brkStageTargeted[s][i] > 0 ? Math.round((brkStageEvaded[s][i] / brkStageTargeted[s][i]) * 100 * 10) / 10 : 0
       ) : undefined,
-      berserkerStageDmg: heroBerserkerLevel[i] > 0 ? [0, 1, 2].map(s => ({
-        normal: Math.round(brkStageNormalDmg[s][i] / actualSimCount),
-        crit: Math.round(brkStageCritDmg[s][i] / actualSimCount),
-        total: Math.round((brkStageNormalDmg[s][i] + brkStageCritDmg[s][i]) / actualSimCount),
-      })) : undefined,
+      berserkerStageDmg: heroBerserkerLevel[i] > 0 ? [0, 1, 2, 3].map(s => {
+        const nC = brkStageNormalCount[s][i];
+        const cC = brkStageCritCount[s][i];
+        const nSum = brkStageNormalDmg[s][i];
+        const cSum = brkStageCritDmg[s][i];
+        const totalCount = nC + cC;
+        return {
+          normal: nC > 0 ? Math.round(nSum / nC) : 0,
+          crit: cC > 0 ? Math.round(cSum / cC) : 0,
+          // avg dmg per attack at this stage
+          avg: totalCount > 0 ? Math.round((nSum + cSum) / totalCount) : 0,
+          // total dmg dealt at this stage per sim (for stage-share bar)
+          total: Math.round((nSum + cSum) / actualSimCount),
+        };
+      }) : undefined,
       // Alive turns
       aliveTurnsMin: aliveTurnsMin[i] >= 1e9 ? 0 : Math.round(aliveTurnsMin[i]),
       aliveTurnsAvg: actualSimCount > 0 ? Math.round((aliveTurnsSum[i] / actualSimCount) * 10) / 10 : 0,
