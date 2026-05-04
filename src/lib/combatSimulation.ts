@@ -1922,11 +1922,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             conqStackAttackCount[s][i] += simConqStackAttackCount[s][i];
           }
 
-          // Berserker per-stage damage (stages 0..3)
-          for (let s = 0; s < 4; s++) {
-            brkStageNormalDmg[s][i] += simBrkStageNormalDmg[s][i];
-            brkStageCritDmg[s][i] += simBrkStageCritDmg[s][i];
-          }
+          // Berserker per-stage damage is tracked directly on global accumulators
 
           // Innate (ninja/sensei)
           innateLossAccum[i] += simInnateLossCount[i];
