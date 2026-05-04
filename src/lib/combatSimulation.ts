@@ -1535,9 +1535,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         timesTargeted[target]++;
         simTargeted[target]++;
-        // Berserker stage targeting
+        // Berserker stage targeting (0..3)
         const bStageT = berserkerStage[target];
-        if (bStageT >= 1 && bStageT <= 3) simBrkStageTargeted[bStageT - 1][target]++;
+        if (heroBerserkerLevel[target] > 0) simBrkStageTargeted[bStageT][target]++;
 
         const totalEva = heroEvasion[target] + berserkerStage[target] * 0.1 + ninjaEvasion[target];
         const cappedEva = Math.min(totalEva, heroEvaCap[target]);
@@ -1545,7 +1545,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (guaranteedEvade[target] || (Math.random() < cappedEva && !heroArtNoEvasion[target])) {
           timesEvaded[target]++;
           simEvaded[target]++;
-          if (bStageT >= 1 && bStageT <= 3) simBrkStageEvaded[bStageT - 1][target]++;
+          if (heroBerserkerLevel[target] > 0) simBrkStageEvaded[bStageT][target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
