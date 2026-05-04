@@ -1127,20 +1127,25 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const overallHpRemainMax = new Float64Array(numHeroes);
   const overallHpRemainSum = new Float64Array(numHeroes);
   const overallHpRemainCount = new Float64Array(numHeroes);
-  // Berserker per-stage attack/evade counts (single+aoe targeting)
+  // Berserker per-stage attack/evade counts (single+aoe targeting) — stages 0..3
   const brkStageTargeted = [
-    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
   const brkStageEvaded = [
-    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
-  // Berserker per-stage damage dealt (normal/crit) accumulators
+  // Berserker per-stage damage dealt (normal/crit) accumulators — stages 0..3
   const brkStageNormalDmg = [
-    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
   const brkStageCritDmg = [
-    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
+  // Per-stage round count (across all sims) — used for stage rate% (sums to 100%)
+  const brkStageRounds = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const brkTotalRounds = new Float64Array(numHeroes);
   // Alive-turns tracking (overall/win/lose) per-sim per-hero
   const aliveTurnsSum = new Float64Array(numHeroes);
   const aliveTurnsMin = new Float64Array(numHeroes).fill(1e9);
