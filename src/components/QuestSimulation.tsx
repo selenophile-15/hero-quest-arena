@@ -2578,19 +2578,9 @@ export default function QuestSimulation() {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {displayResults.map((hr, hi) => {
-                                      const isConq = !!hr.isConquerorHero;
-                                      if (!isConq) {
-                                        return (
-                                          <tr key={`conq-${hr.heroId}`} className={`border-b border-border/10 ${hi % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground/40">-</td>
-                                            <td className="py-1 px-2 text-center font-mono">{blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono">{blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono">{blank}</td>
-                                          </tr>
-                                        );
-                                      }
+                                    {conquerorRows.length === 0 ? (
+                                      <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">정복자 직업 파티원 없음</td></tr>
+                                    ) : conquerorRows.map((hr, hi) => {
                                       return [0, 1, 2, 3, 4].map(s => {
                                         const turn = hr.conquerorStackTurnRate?.[s] ?? 0;
                                         const cdmg = hr.conquerorStackCritDmg?.[s] ?? 0;
