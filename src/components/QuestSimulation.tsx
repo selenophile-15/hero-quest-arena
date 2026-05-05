@@ -2330,17 +2330,14 @@ export default function QuestSimulation() {
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
-                                  {/* 단일: min/avg/max + 일반%/치명% */}
-                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} />
-                                  <col style={{ width: '80px' }} /><col style={{ width: '80px' }} />
-                                  {/* 광역: min/avg/max */}
-                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} />
+                                  <col style={{ width: '95px' }} /><col style={{ width: '105px' }} /><col style={{ width: '95px' }} />
+                                  <col style={{ width: '95px' }} /><col style={{ width: '105px' }} /><col style={{ width: '95px' }} />
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={5}>
-                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대) 및 몬스터 단일 공격의 일반 / 치명 비중. 비중은 각 판마다 단일 공격 중 일반/치명이 발생한 횟수의 평균.'} />
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 시뮬레이션마다의 합산 분포(맞지 않은 판은 0).'} />
                                     </th>
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
                                       <GroupHeader label="광역" info={'광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음.'} />
@@ -2350,8 +2347,6 @@ export default function QuestSimulation() {
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
-                                    <th className="text-center py-1 px-2">일반</th>
-                                    <th className="text-center py-1 px-2">치명</th>
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
@@ -2359,25 +2354,21 @@ export default function QuestSimulation() {
                                 </thead>
                                 <tbody>
                                   {displayResults.map((hr, idx) => {
-                                    const singleAvg = hr.singleDmgTakenAvg ?? Math.round(hr.singleDmgTakenTotal || 0);
-                                    const aoeAvg = hr.aoeDmgTakenAvg ?? Math.round(hr.aoeDmgTakenTotal || 0);
                                     const sMin = hr.singleDmgTakenMin ?? 0;
+                                    const sAvg = hr.singleDmgTakenAvg ?? 0;
                                     const sMax = hr.singleDmgTakenMax ?? 0;
                                     const aMin = hr.aoeDmgTakenMin ?? 0;
+                                    const aAvg = hr.aoeDmgTakenAvg ?? 0;
                                     const aMax = hr.aoeDmgTakenMax ?? 0;
-                                    const nShare = hr.singleNormalHitShare ?? 0;
-                                    const cShare = hr.singleCritHitShare ?? 0;
                                     return (
                                       <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                         <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{singleAvg > 0 ? formatNumber(sMin) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{singleAvg > 0 ? formatNumber(singleAvg) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{singleAvg > 0 ? formatNumber(sMax) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${nShare.toFixed(1)}%`, nShare === 0)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${cShare.toFixed(1)}%`, cShare === 0)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aMin) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aoeAvg) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aMax) : blank}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(sMin)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(sAvg)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(sMax)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(aMin)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(aAvg)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(aMax)}</td>
                                       </tr>
                                     );
                                   })}
