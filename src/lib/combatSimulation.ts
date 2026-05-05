@@ -1854,20 +1854,20 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           singleTargetHitsTotal[i] += singleHitsTaken[i];
           aoeDmgTakenAccum[i] += simAoeDmgTaken[i];
           singleDmgTakenAccum[i] += simSingleDmgTaken[i];
-          if (simDmgTaken[i] > 0) {
-            dmgTakenMin[i] = Math.min(dmgTakenMin[i], simDmgTaken[i]);
-          }
-          dmgTakenMax[i] = Math.max(dmgTakenMax[i], simDmgTaken[i]);
-          if (simSingleDmgTaken[i] > 0) {
-            singleDmgTakenMin[i] = Math.min(singleDmgTakenMin[i], simSingleDmgTaken[i]);
-            singleDmgTakenMax[i] = Math.max(singleDmgTakenMax[i], simSingleDmgTaken[i]);
-            singleDmgTakenSimCount[i]++;
-          }
-          if (simAoeDmgTaken[i] > 0) {
-            aoeDmgTakenMin[i] = Math.min(aoeDmgTakenMin[i], simAoeDmgTaken[i]);
-            aoeDmgTakenMax[i] = Math.max(aoeDmgTakenMax[i], simAoeDmgTaken[i]);
-            aoeDmgTakenSimCount[i]++;
-          }
+          // Cap max at hero's max HP (cannot take more damage than HP since they die)
+          const hpCap = finalHp[i];
+          const cappedDmg = Math.min(simDmgTaken[i], hpCap);
+          const cappedSingle = Math.min(simSingleDmgTaken[i], hpCap);
+          const cappedAoe = Math.min(simAoeDmgTaken[i], hpCap);
+          // Include all sims (even 0-damage) in min/max distribution
+          dmgTakenMin[i] = Math.min(dmgTakenMin[i], cappedDmg);
+          dmgTakenMax[i] = Math.max(dmgTakenMax[i], cappedDmg);
+          singleDmgTakenMin[i] = Math.min(singleDmgTakenMin[i], cappedSingle);
+          singleDmgTakenMax[i] = Math.max(singleDmgTakenMax[i], cappedSingle);
+          singleDmgTakenSimCount[i]++;
+          aoeDmgTakenMin[i] = Math.min(aoeDmgTakenMin[i], cappedAoe);
+          aoeDmgTakenMax[i] = Math.max(aoeDmgTakenMax[i], cappedAoe);
+          aoeDmgTakenSimCount[i]++;
           // Per-turn dmg taken min/max (across sims)
           const perTurnTaken = round > 0 ? simDmgTaken[i] / round : 0;
           if (perTurnTaken > 0) dmgTakenPerTurnMin[i] = Math.min(dmgTakenPerTurnMin[i], perTurnTaken);
