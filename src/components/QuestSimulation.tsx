@@ -2330,17 +2330,14 @@ export default function QuestSimulation() {
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
-                                  {/* 단일: min/avg/max + 일반%/치명% */}
-                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} />
-                                  <col style={{ width: '80px' }} /><col style={{ width: '80px' }} />
-                                  {/* 광역: min/avg/max */}
-                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} />
+                                  <col style={{ width: '95px' }} /><col style={{ width: '105px' }} /><col style={{ width: '95px' }} />
+                                  <col style={{ width: '95px' }} /><col style={{ width: '105px' }} /><col style={{ width: '95px' }} />
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={5}>
-                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대) 및 몬스터 단일 공격의 일반 / 치명 비중. 비중은 각 판마다 단일 공격 중 일반/치명이 발생한 횟수의 평균.'} />
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 시뮬레이션마다의 합산 분포(맞지 않은 판은 0).'} />
                                     </th>
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
                                       <GroupHeader label="광역" info={'광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음.'} />
@@ -2350,8 +2347,6 @@ export default function QuestSimulation() {
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
-                                    <th className="text-center py-1 px-2">일반</th>
-                                    <th className="text-center py-1 px-2">치명</th>
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
@@ -2359,25 +2354,21 @@ export default function QuestSimulation() {
                                 </thead>
                                 <tbody>
                                   {displayResults.map((hr, idx) => {
-                                    const singleAvg = hr.singleDmgTakenAvg ?? Math.round(hr.singleDmgTakenTotal || 0);
-                                    const aoeAvg = hr.aoeDmgTakenAvg ?? Math.round(hr.aoeDmgTakenTotal || 0);
                                     const sMin = hr.singleDmgTakenMin ?? 0;
+                                    const sAvg = hr.singleDmgTakenAvg ?? 0;
                                     const sMax = hr.singleDmgTakenMax ?? 0;
                                     const aMin = hr.aoeDmgTakenMin ?? 0;
+                                    const aAvg = hr.aoeDmgTakenAvg ?? 0;
                                     const aMax = hr.aoeDmgTakenMax ?? 0;
-                                    const nShare = hr.singleNormalHitShare ?? 0;
-                                    const cShare = hr.singleCritHitShare ?? 0;
                                     return (
                                       <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                         <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{singleAvg > 0 ? formatNumber(sMin) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{singleAvg > 0 ? formatNumber(singleAvg) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{singleAvg > 0 ? formatNumber(sMax) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${nShare.toFixed(1)}%`, nShare === 0)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${cShare.toFixed(1)}%`, cShare === 0)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aMin) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aoeAvg) : blank}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aoeAvg > 0 ? formatNumber(aMax) : blank}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(sMin)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(sAvg)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(sMax)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(aMin)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(aAvg)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(aMax)}</td>
                                       </tr>
                                     );
                                   })}
@@ -2409,7 +2400,7 @@ export default function QuestSimulation() {
                     const lordProtected = lordRow ? displayResults.filter(hr => !hr.isLordHero) : [];
                     const conquerorRows = displayResults.filter(hr => hr.isConquerorHero);
                     const ninjaSenseiRows = displayResults.filter(hr => hr.isNinjaHero || hr.isSenseiHero);
-                    const showLord = !!lordRow;
+                    const showLord = true;
 
                     // ── Table D: 폴로니아 도둑질 ──
                     const poloniaLoot = simResult.poloniaLoot;
@@ -2505,7 +2496,7 @@ export default function QuestSimulation() {
                           {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 군주는 군주가 있을 때만 ===== */}
                           <div className="space-y-4">
                             {/* 군주 */}
-                            {showLord && lordRow && (
+                            {showLord && (
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">군주 보호</div>
                                 <div className="overflow-x-auto">
@@ -2521,12 +2512,14 @@ export default function QuestSimulation() {
                                           <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
                                         </th>
                                         <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                          <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. (실제 받은 값 / 던전 원본 대미지).'} />
+                                          <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. 항상 던전 몬스터 원본 대미지 이상으로 받음. (실제 받은 값 / 던전 원본 대미지).'} />
                                         </th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {lordProtected.length === 0 ? (
+                                      {!lordRow ? (
+                                        <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">군주 직업 파티원 없음</td></tr>
+                                      ) : lordProtected.length === 0 ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">동료 없음</td></tr>
                                       ) : lordProtected.map((a, idx) => {
                                         const single = a.lordSavedSingleAvgDmg ?? 0;
@@ -2535,7 +2528,7 @@ export default function QuestSimulation() {
                                         return (
                                           <tr key={`lord-${a.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                             {idx === 0 && (
-                                              <td rowSpan={lordProtected.length} className="py-1 px-2 text-center text-foreground font-medium">{lordRow.heroName}</td>
+                                              <td rowSpan={lordProtected.length} className="py-1 px-2 text-center text-foreground font-medium">{lordRow!.heroName}</td>
                                             )}
                                             <td className="py-1 px-2 text-center text-foreground font-medium">{a.heroName}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${protRate.toFixed(1)}%`, protRate === 0)}</td>
@@ -2692,60 +2685,56 @@ export default function QuestSimulation() {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {displayResults.map((hr, hi) => {
-                                    const isB = !!(hr.isBerserkerHero && hr.berserkerStageDmg);
-                                    if (!isB) {
+                                  {(() => {
+                                    const brkRows = displayResults.filter(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
+                                    if (brkRows.length === 0) {
                                       return (
-                                        <tr key={`brk-${hr.heroId}`} className={`border-b border-border/10 ${hi % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground/40">-</td>
-                                          {Array.from({ length: 10 }).map((_, k) => <td key={k} className={`py-1 px-2${k === 2 || k === 7 ? ' border-l-4 border-border' : ''}`}>{blank}</td>)}
-                                        </tr>
+                                        <tr><td colSpan={12} className="py-2 px-2 text-center text-muted-foreground/60 italic">광전사 / 잘 직업 파티원 없음</td></tr>
                                       );
                                     }
-                                    // Total dmg across stages for share-bar
-                                    const stageTotals = hr.berserkerStageDmg!.map(d => d.total);
-                                    const sumTotal = stageTotals.reduce((a, b) => a + b, 0);
-                                    // hp thresholds: stage 0 has none (100%), stages 1..3 use berserkerThresholds[1..3]
-                                    return [0, 1, 2, 3].map(s => {
-                                      const stageDmg = hr.berserkerStageDmg?.[s];
-                                      const stageEva = hr.berserkerStageEvaRate?.[s] ?? 0;
-                                      const stageRate = hr.berserkerThresholds?.[s]?.belowRate ?? 0;
-                                      const thr = hr.berserkerThresholds?.[s]?.threshold ?? 100;
-                                      const totalDmg = stageDmg?.total ?? 0;
-                                      const dmgPct = sumTotal > 0 ? (totalDmg / sumTotal) * 100 : 0;
-                                      const atkBonus = hr.berserkerAtkBonus?.[s] ?? 0;
-                                      const evaBonus = hr.berserkerEvaBonus?.[s] ?? 0;
-                                      const finalEva = (hr.finalEvasion ?? 0) + evaBonus;
-                                      return (
-                                        <tr key={`brk-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                          {s === 0 && (
-                                            <td rowSpan={4} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                          )}
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}단계</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s === 0 ? '-' : `${thr}%`}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageRate.toFixed(1)}%`, stageRate === 0)}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{atkBonus}%</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.normal > 0 ? formatNumber(stageDmg.normal) : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.crit > 0 ? formatNumber(stageDmg.crit) : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.avg > 0 ? formatNumber(stageDmg.avg) : blank}</td>
-                                          <td className="py-1 px-2 font-mono text-muted-foreground text-[11px]">
-                                            {totalDmg > 0 ? (
-                                              <div className="flex items-center gap-1">
-                                                <div className="flex-1 bg-secondary/40 h-2 rounded overflow-hidden">
-                                                  <div className="h-full bg-primary/70" style={{ width: `${Math.min(dmgPct, 100)}%` }} />
+                                    return brkRows.map((hr, hi) => {
+                                      const stageTotals = hr.berserkerStageDmg!.map(d => d.total);
+                                      const sumTotal = stageTotals.reduce((a, b) => a + b, 0);
+                                      return [0, 1, 2, 3].map(s => {
+                                        const stageDmg = hr.berserkerStageDmg?.[s];
+                                        const stageEva = hr.berserkerStageEvaRate?.[s] ?? 0;
+                                        const stageRate = hr.berserkerThresholds?.[s]?.belowRate ?? 0;
+                                        const thr = hr.berserkerThresholds?.[s]?.threshold ?? 100;
+                                        const totalDmg = stageDmg?.total ?? 0;
+                                        const dmgPct = sumTotal > 0 ? (totalDmg / sumTotal) * 100 : 0;
+                                        const atkBonus = hr.berserkerAtkBonus?.[s] ?? 0;
+                                        const evaBonus = hr.berserkerEvaBonus?.[s] ?? 0;
+                                        const finalEva = (hr.finalEvasion ?? 0) + evaBonus;
+                                        return (
+                                          <tr key={`brk-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                            {s === 0 && (
+                                              <td rowSpan={4} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                            )}
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}단계</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s === 0 ? '-' : `${thr}%`}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageRate.toFixed(1)}%`, stageRate === 0)}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{atkBonus}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.normal > 0 ? formatNumber(stageDmg.normal) : blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.crit > 0 ? formatNumber(stageDmg.crit) : blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.avg > 0 ? formatNumber(stageDmg.avg) : blank}</td>
+                                            <td className="py-1 px-2 font-mono text-muted-foreground text-[11px]">
+                                              {totalDmg > 0 ? (
+                                                <div className="flex items-center gap-1">
+                                                  <div className="flex-1 bg-secondary/40 h-2 rounded overflow-hidden">
+                                                    <div className="h-full bg-primary/70" style={{ width: `${Math.min(dmgPct, 100)}%` }} />
+                                                  </div>
+                                                  <span className="opacity-70 whitespace-nowrap">{dmgPct.toFixed(1)}%</span>
                                                 </div>
-                                                <span className="opacity-70 whitespace-nowrap">{dmgPct.toFixed(1)}%</span>
-                                              </div>
-                                            ) : blank}
-                                          </td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{evaBonus}%</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{finalEva.toFixed(1)}%</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
-                                        </tr>
-                                      );
+                                              ) : blank}
+                                            </td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{evaBonus}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{finalEva.toFixed(1)}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
+                                          </tr>
+                                        );
+                                      });
                                     });
-                                  })}
+                                  })()}
                                 </tbody>
                               </table>
                             </div>
