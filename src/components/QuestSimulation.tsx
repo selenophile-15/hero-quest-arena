@@ -2694,60 +2694,56 @@ export default function QuestSimulation() {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {displayResults.map((hr, hi) => {
-                                    const isB = !!(hr.isBerserkerHero && hr.berserkerStageDmg);
-                                    if (!isB) {
+                                  {(() => {
+                                    const brkRows = displayResults.filter(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
+                                    if (brkRows.length === 0) {
                                       return (
-                                        <tr key={`brk-${hr.heroId}`} className={`border-b border-border/10 ${hi % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground/40">-</td>
-                                          {Array.from({ length: 10 }).map((_, k) => <td key={k} className={`py-1 px-2${k === 2 || k === 7 ? ' border-l-4 border-border' : ''}`}>{blank}</td>)}
-                                        </tr>
+                                        <tr><td colSpan={12} className="py-2 px-2 text-center text-muted-foreground/60 italic">광전사 / 잘 직업 파티원 없음</td></tr>
                                       );
                                     }
-                                    // Total dmg across stages for share-bar
-                                    const stageTotals = hr.berserkerStageDmg!.map(d => d.total);
-                                    const sumTotal = stageTotals.reduce((a, b) => a + b, 0);
-                                    // hp thresholds: stage 0 has none (100%), stages 1..3 use berserkerThresholds[1..3]
-                                    return [0, 1, 2, 3].map(s => {
-                                      const stageDmg = hr.berserkerStageDmg?.[s];
-                                      const stageEva = hr.berserkerStageEvaRate?.[s] ?? 0;
-                                      const stageRate = hr.berserkerThresholds?.[s]?.belowRate ?? 0;
-                                      const thr = hr.berserkerThresholds?.[s]?.threshold ?? 100;
-                                      const totalDmg = stageDmg?.total ?? 0;
-                                      const dmgPct = sumTotal > 0 ? (totalDmg / sumTotal) * 100 : 0;
-                                      const atkBonus = hr.berserkerAtkBonus?.[s] ?? 0;
-                                      const evaBonus = hr.berserkerEvaBonus?.[s] ?? 0;
-                                      const finalEva = (hr.finalEvasion ?? 0) + evaBonus;
-                                      return (
-                                        <tr key={`brk-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                          {s === 0 && (
-                                            <td rowSpan={4} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                          )}
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}단계</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s === 0 ? '-' : `${thr}%`}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageRate.toFixed(1)}%`, stageRate === 0)}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{atkBonus}%</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.normal > 0 ? formatNumber(stageDmg.normal) : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.crit > 0 ? formatNumber(stageDmg.crit) : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.avg > 0 ? formatNumber(stageDmg.avg) : blank}</td>
-                                          <td className="py-1 px-2 font-mono text-muted-foreground text-[11px]">
-                                            {totalDmg > 0 ? (
-                                              <div className="flex items-center gap-1">
-                                                <div className="flex-1 bg-secondary/40 h-2 rounded overflow-hidden">
-                                                  <div className="h-full bg-primary/70" style={{ width: `${Math.min(dmgPct, 100)}%` }} />
+                                    return brkRows.map((hr, hi) => {
+                                      const stageTotals = hr.berserkerStageDmg!.map(d => d.total);
+                                      const sumTotal = stageTotals.reduce((a, b) => a + b, 0);
+                                      return [0, 1, 2, 3].map(s => {
+                                        const stageDmg = hr.berserkerStageDmg?.[s];
+                                        const stageEva = hr.berserkerStageEvaRate?.[s] ?? 0;
+                                        const stageRate = hr.berserkerThresholds?.[s]?.belowRate ?? 0;
+                                        const thr = hr.berserkerThresholds?.[s]?.threshold ?? 100;
+                                        const totalDmg = stageDmg?.total ?? 0;
+                                        const dmgPct = sumTotal > 0 ? (totalDmg / sumTotal) * 100 : 0;
+                                        const atkBonus = hr.berserkerAtkBonus?.[s] ?? 0;
+                                        const evaBonus = hr.berserkerEvaBonus?.[s] ?? 0;
+                                        const finalEva = (hr.finalEvasion ?? 0) + evaBonus;
+                                        return (
+                                          <tr key={`brk-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                            {s === 0 && (
+                                              <td rowSpan={4} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                            )}
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}단계</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s === 0 ? '-' : `${thr}%`}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageRate.toFixed(1)}%`, stageRate === 0)}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{atkBonus}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.normal > 0 ? formatNumber(stageDmg.normal) : blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.crit > 0 ? formatNumber(stageDmg.crit) : blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.avg > 0 ? formatNumber(stageDmg.avg) : blank}</td>
+                                            <td className="py-1 px-2 font-mono text-muted-foreground text-[11px]">
+                                              {totalDmg > 0 ? (
+                                                <div className="flex items-center gap-1">
+                                                  <div className="flex-1 bg-secondary/40 h-2 rounded overflow-hidden">
+                                                    <div className="h-full bg-primary/70" style={{ width: `${Math.min(dmgPct, 100)}%` }} />
+                                                  </div>
+                                                  <span className="opacity-70 whitespace-nowrap">{dmgPct.toFixed(1)}%</span>
                                                 </div>
-                                                <span className="opacity-70 whitespace-nowrap">{dmgPct.toFixed(1)}%</span>
-                                              </div>
-                                            ) : blank}
-                                          </td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{evaBonus}%</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{finalEva.toFixed(1)}%</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
-                                        </tr>
-                                      );
+                                              ) : blank}
+                                            </td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{evaBonus}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{finalEva.toFixed(1)}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
+                                          </tr>
+                                        );
+                                      });
                                     });
-                                  })}
+                                  })()}
                                 </tbody>
                               </table>
                             </div>
