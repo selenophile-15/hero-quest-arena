@@ -1756,8 +1756,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
 
         // Dark Knight / Death Knight execute at 10% HP
-        if (heroIsDarkKnight[jj] && mobHpCurrent < mobHp * 0.1) {
-          mobHpCurrent = -1;
+        // Execution adds the monster's remaining HP (just before execute) as bonus damage to this hero's contribution.
+        if (heroIsDarkKnight[jj] && mobHpCurrent > 0 && mobHpCurrent < mobHp * 0.1) {
+          const execBonus = mobHpCurrent;
+          mobHpCurrent = 0;
+          damageFight[jj] += execBonus;
+          if (isCrit) critDmgFight[jj] += execBonus;
+          else normalDmgFight[jj] += execBonus;
         }
 
         // Shark activates at 50% mob HP
