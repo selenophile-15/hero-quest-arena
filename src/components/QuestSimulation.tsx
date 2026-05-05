@@ -2409,7 +2409,7 @@ export default function QuestSimulation() {
                     const lordProtected = lordRow ? displayResults.filter(hr => !hr.isLordHero) : [];
                     const conquerorRows = displayResults.filter(hr => hr.isConquerorHero);
                     const ninjaSenseiRows = displayResults.filter(hr => hr.isNinjaHero || hr.isSenseiHero);
-                    const showLord = !!lordRow;
+                    const showLord = true;
 
                     // ── Table D: 폴로니아 도둑질 ──
                     const poloniaLoot = simResult.poloniaLoot;
