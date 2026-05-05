@@ -699,19 +699,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
     // Class flags
     heroIsNinja.push(isClass(h, '닌자', 'Ninja'));
-    heroIsSensei.push(isClass(h, '센세', '센세이', 'Sensei'));
+    heroIsSensei.push(isClass(h, '센세', 'Sensei'));
     heroIsSamurai.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyo.push(isClass(h, '다이묘', 'Daimyo'));
-    heroIsDancer.push(isClass(h, '무희', '곡예가', '댄서', '아크로뱃', 'Dancer', 'Acrobat'));
+    heroIsDancer.push(isClass(h, '무희', '곡예가','Dancer', 'Acrobat'));
     heroIsConquistador.push(isClass(h, '정복자', 'Conquistador'));
-    heroIsDarkKnight.push(isClass(h, '어둠의 기사', '죽음의 기사', '암흑기사', '데스나이트', 'Dark Knight', 'Death Knight'));
+    heroIsDarkKnight.push(isClass(h, '어둠의 기사', '죽음의 기사', 'Dark Knight', 'Death Knight'));
     heroIsLord.push(isClass(h, '기사', '군주', 'Lord', 'Knight'));
     heroIsMercenary.push(isMercenary(h));
-    heroIsCleric.push(isClass(h, '성직자', '클레릭', 'Cleric'));
-    heroIsBishop.push(isClass(h, '비숍', '주교', 'Bishop'));
+    heroIsCleric.push(isClass(h, '성직자', 'Cleric'));
+    heroIsBishop.push(isClass(h, '비숍', 'Bishop'));
 
     // Berserker level
-    heroBerserkerLevel.push(isClass(h, '광전사', '잘', '야를', 'Berserker', 'Jarl') ? Math.min(tier, 4) : 0);
+    heroBerserkerLevel.push(isClass(h, '광전사', '잘','Berserker', 'Jarl') ? Math.min(tier, 4) : 0);
 
     // Spirits - read from equipment slots
     const spirits = (h.equipmentSlots || [])
@@ -792,7 +792,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Find Lord and Fateweaver (always needed for combat logic)
   for (let i = 0; i < numHeroes; i++) {
     if (heroIsLord[i]) { lordPresent = true; lordHero = i; }
-    if (isClass(activeHeroes[i], '크로노맨서', '페이트위버', '운명직공', 'Chronomancer', 'Fateweaver')) {
+    if (isClass(activeHeroes[i], '크로노맨서', '페이트위버','Chronomancer', 'Fateweaver')) {
       fateweaverPresent = true;
     }
   }
@@ -2874,8 +2874,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
     // Class flags
     heroIsNinjaFlag.push(isClass(h, '닌자', 'Ninja'));
-    heroIsSenseiFlag.push(isClass(h, '센세', '센세이', 'Sensei'));
-    heroIsBerserker.push(isClass(h, '광전사', '잘', '야를', 'Berserker', 'Jarl'));
+    heroIsSenseiFlag.push(isClass(h, '센세', 'Sensei'));
+    heroIsBerserker.push(isClass(h, '광전사', '잘', 'Berserker', 'Jarl'));
     heroIsConquistadorFlag.push(isClass(h, '정복자', 'Conquistador'));
     heroIsLordFlag.push(isClass(h, '기사', '군주', 'Lord', 'Knight'));
     heroIsSamuraiFlag.push(isClass(h, '사무라이', 'Samurai'));
