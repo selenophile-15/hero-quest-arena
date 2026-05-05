@@ -2505,7 +2505,7 @@ export default function QuestSimulation() {
                           {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 군주는 군주가 있을 때만 ===== */}
                           <div className="space-y-4">
                             {/* 군주 */}
-                            {showLord && lordRow && (
+                            {showLord && (
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">군주 보호</div>
                                 <div className="overflow-x-auto">
@@ -2521,12 +2521,14 @@ export default function QuestSimulation() {
                                           <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
                                         </th>
                                         <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                          <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. (실제 받은 값 / 던전 원본 대미지).'} />
+                                          <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. 항상 던전 몬스터 원본 대미지 이상으로 받음. (실제 받은 값 / 던전 원본 대미지).'} />
                                         </th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {lordProtected.length === 0 ? (
+                                      {!lordRow ? (
+                                        <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">군주 직업 파티원 없음</td></tr>
+                                      ) : lordProtected.length === 0 ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">동료 없음</td></tr>
                                       ) : lordProtected.map((a, idx) => {
                                         const single = a.lordSavedSingleAvgDmg ?? 0;
@@ -2535,7 +2537,7 @@ export default function QuestSimulation() {
                                         return (
                                           <tr key={`lord-${a.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                             {idx === 0 && (
-                                              <td rowSpan={lordProtected.length} className="py-1 px-2 text-center text-foreground font-medium">{lordRow.heroName}</td>
+                                              <td rowSpan={lordProtected.length} className="py-1 px-2 text-center text-foreground font-medium">{lordRow!.heroName}</td>
                                             )}
                                             <td className="py-1 px-2 text-center text-foreground font-medium">{a.heroName}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${protRate.toFixed(1)}%`, protRate === 0)}</td>
