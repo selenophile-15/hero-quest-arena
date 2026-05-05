@@ -1954,20 +1954,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
             winRoundsArr[i] += round;
             winDmgTaken[i] += simDmgTaken[i];
-            if (simDmgTaken[i] > 0) winDmgTakenMin[i] = Math.min(winDmgTakenMin[i], simDmgTaken[i]);
-            winDmgTakenMax[i] = Math.max(winDmgTakenMax[i], simDmgTaken[i]);
+            winDmgTakenMin[i] = Math.min(winDmgTakenMin[i], cappedDmg);
+            winDmgTakenMax[i] = Math.max(winDmgTakenMax[i], cappedDmg);
             winSingleDmgTakenAccum[i] += simSingleDmgTaken[i];
-            if (simSingleDmgTaken[i] > 0) {
-              winSingleDmgTakenMin[i] = Math.min(winSingleDmgTakenMin[i], simSingleDmgTaken[i]);
-              winSingleDmgTakenMax[i] = Math.max(winSingleDmgTakenMax[i], simSingleDmgTaken[i]);
-              winSingleDmgTakenSimCount[i]++;
-            }
+            winSingleDmgTakenMin[i] = Math.min(winSingleDmgTakenMin[i], cappedSingle);
+            winSingleDmgTakenMax[i] = Math.max(winSingleDmgTakenMax[i], cappedSingle);
+            winSingleDmgTakenSimCount[i]++;
             winAoeDmgTakenAccum[i] += simAoeDmgTaken[i];
-            if (simAoeDmgTaken[i] > 0) {
-              winAoeDmgTakenMin[i] = Math.min(winAoeDmgTakenMin[i], simAoeDmgTaken[i]);
-              winAoeDmgTakenMax[i] = Math.max(winAoeDmgTakenMax[i], simAoeDmgTaken[i]);
-              winAoeDmgTakenSimCount[i]++;
-            }
+            winAoeDmgTakenMin[i] = Math.min(winAoeDmgTakenMin[i], cappedAoe);
+            winAoeDmgTakenMax[i] = Math.max(winAoeDmgTakenMax[i], cappedAoe);
+            winAoeDmgTakenSimCount[i]++;
             winTimesHit[i] += simTimesHit[i];
             winSingleHits[i] += singleHitsTaken[i];
             winTargeted[i] += simTargeted[i];
@@ -1980,20 +1976,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
             loseRoundsArr[i] += round;
             loseDmgTaken[i] += simDmgTaken[i];
-            if (simDmgTaken[i] > 0) loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], simDmgTaken[i]);
-            loseDmgTakenMax[i] = Math.max(loseDmgTakenMax[i], simDmgTaken[i]);
+            loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], cappedDmg);
+            loseDmgTakenMax[i] = Math.max(loseDmgTakenMax[i], cappedDmg);
             loseSingleDmgTakenAccum[i] += simSingleDmgTaken[i];
-            if (simSingleDmgTaken[i] > 0) {
-              loseSingleDmgTakenMin[i] = Math.min(loseSingleDmgTakenMin[i], simSingleDmgTaken[i]);
-              loseSingleDmgTakenMax[i] = Math.max(loseSingleDmgTakenMax[i], simSingleDmgTaken[i]);
-              loseSingleDmgTakenSimCount[i]++;
-            }
+            loseSingleDmgTakenMin[i] = Math.min(loseSingleDmgTakenMin[i], cappedSingle);
+            loseSingleDmgTakenMax[i] = Math.max(loseSingleDmgTakenMax[i], cappedSingle);
+            loseSingleDmgTakenSimCount[i]++;
             loseAoeDmgTakenAccum[i] += simAoeDmgTaken[i];
-            if (simAoeDmgTaken[i] > 0) {
-              loseAoeDmgTakenMin[i] = Math.min(loseAoeDmgTakenMin[i], simAoeDmgTaken[i]);
-              loseAoeDmgTakenMax[i] = Math.max(loseAoeDmgTakenMax[i], simAoeDmgTaken[i]);
-              loseAoeDmgTakenSimCount[i]++;
-            }
+            loseAoeDmgTakenMin[i] = Math.min(loseAoeDmgTakenMin[i], cappedAoe);
+            loseAoeDmgTakenMax[i] = Math.max(loseAoeDmgTakenMax[i], cappedAoe);
+            loseAoeDmgTakenSimCount[i]++;
             loseTimesHit[i] += simTimesHit[i];
             loseSingleHits[i] += singleHitsTaken[i];
             loseTargeted[i] += simTargeted[i];
