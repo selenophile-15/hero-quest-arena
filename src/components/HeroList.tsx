@@ -1543,7 +1543,7 @@ export default function HeroList() {
                <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 btn-force-white" style={{ color: 'white' }}>
                 <Shield className="w-3.5 h-3.5" style={{ color: 'white' }} /> 새 영웅 추가
                </Button>
-               <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 btn-force-white" style={{ color: 'white' }}>
+               <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 btn-force-white" style={{ color: 'white' }}>
                 <Crown className="w-3.5 h-3.5" style={{ color: 'white' }} /> 새 챔피언 추가
                </Button>
               <div className="w-px h-5 bg-border mx-1" />
