@@ -1075,12 +1075,22 @@ a.bg-accent *,
   font-weight: 700;
 }
 
-/* Zebra striping for table rows */
+/* Zebra striping for table rows — neutral light gray */
 .table-zebra-row:nth-child(even) {
-  background-color: hsl(var(--muted) / 0.45);
+  background-color: hsl(0 0% 100% / 0.04);
 }
 :root[data-color-mode="light"] .table-zebra-row:nth-child(even) {
-  background-color: hsl(var(--muted) / 0.5);
+  background-color: hsl(0 0% 0% / 0.045);
+}
+
+/* Selected/expanded row uses theme-tinted primary color */
+.table-zebra-row.row-expanded,
+.table-zebra-row.row-expanded:nth-child(even) {
+  background-color: hsl(var(--primary) / 0.18) !important;
+}
+:root[data-color-mode="light"] .table-zebra-row.row-expanded,
+:root[data-color-mode="light"] .table-zebra-row.row-expanded:nth-child(even) {
+  background-color: hsl(var(--primary) / 0.2) !important;
 }
 
 /* Table row hover with theme-aware color */
