@@ -419,14 +419,19 @@ export default function HeroList() {
         return sortDir === 'asc' ? aKey - bKey : bKey - aKey;
       });
     } else if (sortKey === 'element') {
+      const ELEMENT_SORT_ORDER: Record<string, number> = {
+        '모든 원소': 0, '불': 1, '물': 2, '공기': 3, '대지': 4, '빛': 5, '어둠': 6, '골드': 7,
+      };
       list.sort((a, b) => {
-        const elemCompare = sortDir === 'asc'
-          ? String(a.element).localeCompare(String(b.element))
-          : String(b.element).localeCompare(String(a.element));
-        if (elemCompare !== 0) return elemCompare;
-        return sortDir === 'asc'
-          ? (b.elementValue || 0) - (a.elementValue || 0)
-          : (a.elementValue || 0) - (b.elementValue || 0);
+        const aIdx = ELEMENT_SORT_ORDER[a.element || ''] ?? 99;
+        const bIdx = ELEMENT_SORT_ORDER[b.element || ''] ?? 99;
+        if (aIdx !== bIdx) return sortDir === 'asc' ? aIdx - bIdx : bIdx - aIdx;
+        // Same element → fall back to class line/job order
+        const aJob = getJobSortKey(a);
+        const bJob = getJobSortKey(b);
+        if (aJob !== bJob) return aJob - bJob;
+        // Same job → higher elementValue first
+        return (b.elementValue || 0) - (a.elementValue || 0);
       });
     } else {
       list.sort((a, b) => {
