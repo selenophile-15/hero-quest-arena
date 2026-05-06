@@ -1669,9 +1669,9 @@ export default function HeroList() {
                     <Fragment key={hero.id}>
                       <tr
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
-                        className={`border-b border-border/50 transition-colors cursor-pointer select-none even:bg-primary/[0.12] ${
-                          isExpanded ? 'bg-primary/[0.07]' : ''
-                        } table-zebra-row`}
+                        className={`border-b border-border/50 transition-colors cursor-pointer select-none table-zebra-row ${
+                          isExpanded ? 'row-expanded' : ''
+                        }`}
                         style={{ height: '52px' }}
                       >
                       {activeCols.map(col => {
