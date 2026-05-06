@@ -124,7 +124,7 @@ export default function Dashboard() {
 
       {/* Tabs */}
       <div className="border-b border-border bg-card/40">
-        <div className="w-full px-6 flex gap-1">
+        <div className="w-full px-6 flex gap-1 items-center">
           {TABS.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -149,6 +149,18 @@ export default function Dashboard() {
               </button>
             );
           })}
+          <div className="flex-1" />
+          <a
+            href="https://www.buymeacoffee.com/libry8039s"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Buy me a subscription"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+            style={{ fontFamily: "'Cookie', cursive" }}
+          >
+            <span className="text-base">💻</span>
+            <span>Buy me a subscription</span>
+          </a>
         </div>
       </div>
 
