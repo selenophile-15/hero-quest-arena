@@ -89,12 +89,14 @@ export default function Dashboard() {
             {/* Theme Color Picker */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
+                <button
+                  title={THEMES.find(t => t.id === theme)?.label}
+                  className="flex items-center justify-center w-8 h-8 rounded-md border border-border bg-secondary/50 hover:bg-secondary transition-colors"
+                >
                   <span
-                    className="w-5 h-3.5 rounded-sm border border-border/50"
+                    className="w-4 h-4 rounded-sm border border-border/50"
                     style={{ backgroundColor: THEMES.find(t => t.id === theme)?.color }}
                   />
-                  <span className="hidden sm:inline">{THEMES.find(t => t.id === theme)?.label}</span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
