@@ -243,7 +243,7 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
 
   return (
     <Dialog open={open} onOpenChange={v => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
+      <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="sr-only">선택</DialogTitle>
         </DialogHeader>
@@ -267,19 +267,15 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
           <Button variant="outline" size="sm" onClick={deselectAll}>전체 해제</Button>
           <span className="ml-auto text-sm text-muted-foreground">{currentCount}명 선택</span>
         </div>
-        <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-          {heroItems.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-1">영웅</p>
-              <div className="space-y-0.5">{heroItems.map(renderRow)}</div>
-            </div>
-          )}
-          {champItems.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-1">챔피언</p>
-              <div className="space-y-0.5">{champItems.map(renderRow)}</div>
-            </div>
-          )}
+        <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground mb-1">영웅</p>
+            <div className="space-y-0.5">{heroItems.map(renderRow)}</div>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground mb-1">챔피언</p>
+            <div className="space-y-0.5">{champItems.map(renderRow)}</div>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>취소</Button>
