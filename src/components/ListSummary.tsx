@@ -363,7 +363,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
               {ELEMENT_ORDER.map(el => (
                 <th key={el} className="py-2 px-1 text-center border-l border-border" style={{ background: ELEMENT_HEADER_BG[el] || 'transparent' }}>
                   <div className="flex items-center justify-center">
-                    <ElementIcon element={el} size={18} />
+                    <ElementIcon element={el} size={28} />
                   </div>
                 </th>
               ))}

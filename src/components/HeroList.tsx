@@ -419,14 +419,19 @@ export default function HeroList() {
         return sortDir === 'asc' ? aKey - bKey : bKey - aKey;
       });
     } else if (sortKey === 'element') {
+      const ELEMENT_SORT_ORDER: Record<string, number> = {
+        '모든 원소': 0, '불': 1, '물': 2, '공기': 3, '대지': 4, '빛': 5, '어둠': 6, '골드': 7,
+      };
       list.sort((a, b) => {
-        const elemCompare = sortDir === 'asc'
-          ? String(a.element).localeCompare(String(b.element))
-          : String(b.element).localeCompare(String(a.element));
-        if (elemCompare !== 0) return elemCompare;
-        return sortDir === 'asc'
-          ? (b.elementValue || 0) - (a.elementValue || 0)
-          : (a.elementValue || 0) - (b.elementValue || 0);
+        const aIdx = ELEMENT_SORT_ORDER[a.element || ''] ?? 99;
+        const bIdx = ELEMENT_SORT_ORDER[b.element || ''] ?? 99;
+        if (aIdx !== bIdx) return sortDir === 'asc' ? aIdx - bIdx : bIdx - aIdx;
+        // Same element → fall back to class line/job order
+        const aJob = getJobSortKey(a);
+        const bJob = getJobSortKey(b);
+        if (aJob !== bJob) return aJob - bJob;
+        // Same job → higher elementValue first
+        return (b.elementValue || 0) - (a.elementValue || 0);
       });
     } else {
       list.sort((a, b) => {
@@ -936,7 +941,7 @@ export default function HeroList() {
     const seedColor = (val: number) => val === 80 ? 'theme-highlight-80' : val === 40 ? 'theme-highlight-40' : val === 0 ? 'text-foreground/20' : '';
 
     return (
-      <tr id={`expanded-${hero.id}`} className="bg-primary/10 border-b border-primary/20">
+      <tr id={`expanded-${hero.id}`} className="border-b border-primary/20" style={{ backgroundColor: 'hsl(var(--primary) / 0.18)' }}>
         <td colSpan={activeCols.length + 1} className="px-4 py-4">
           <div className="flex gap-4">
             {/* Stats Box */}
@@ -1538,7 +1543,7 @@ export default function HeroList() {
                <Button onClick={() => setAddingType('hero')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 btn-force-white" style={{ color: 'white' }}>
                 <Shield className="w-3.5 h-3.5" style={{ color: 'white' }} /> 새 영웅 추가
                </Button>
-               <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-accent hover:bg-accent/80 btn-force-white" style={{ color: 'white' }}>
+               <Button onClick={() => setAddingType('champion')} className="gap-1.5 text-xs font-medium h-[32px] px-3 bg-primary hover:bg-primary/80 btn-force-white" style={{ color: 'white' }}>
                 <Crown className="w-3.5 h-3.5" style={{ color: 'white' }} /> 새 챔피언 추가
                </Button>
               <div className="w-px h-5 bg-border mx-1" />
@@ -1669,9 +1674,9 @@ export default function HeroList() {
                     <Fragment key={hero.id}>
                       <tr
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
-                        className={`border-b border-border/50 transition-colors cursor-pointer select-none even:bg-primary/[0.12] ${
-                          isExpanded ? 'bg-primary/[0.07]' : ''
-                        } table-zebra-row`}
+                        className={`border-b border-border/50 transition-colors cursor-pointer select-none table-zebra-row ${
+                          isExpanded ? 'row-expanded' : ''
+                        }`}
                         style={{ height: '52px' }}
                       >
                       {activeCols.map(col => {
