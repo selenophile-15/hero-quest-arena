@@ -1145,7 +1145,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       className={`flex items-stretch gap-0 rounded border-[2.5px] cursor-pointer transition-all overflow-hidden ${
                         (i === 0 && equipDialogType === 'familiar') || (i === 1 && equipDialogType === 'aurasong') ? 'border-primary ring-1 ring-primary/30' :
                         s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
-                      }`}
+                      } ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
                       style={s.item ? { boxShadow: QUALITY_SHADOW_COLOR[s.quality] } : {}}
                     >
                       {/* Slot number with quality background */}
