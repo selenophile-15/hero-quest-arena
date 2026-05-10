@@ -1113,7 +1113,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                     <div
                       key={i}
                       onClick={() => setEquipDialogType(i === 0 ? 'familiar' : 'aurasong')}
-                      className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
+                      className={`flex items-stretch gap-0 rounded border-[2.5px] cursor-pointer transition-all overflow-hidden ${
                         (i === 0 && equipDialogType === 'familiar') || (i === 1 && equipDialogType === 'aurasong') ? 'border-primary ring-1 ring-primary/30' :
                         s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
                       }`}
