@@ -670,6 +670,7 @@ export default function EquipmentSelectDialog({
                       newSlots[activeSlot] = {
                         item: { ...item },
                         quality: existingSlot?.quality || slotQuality,
+                        heavenly: (item as any)['천상'] === 1.25 ? true : !!existingSlot?.heavenly,
                         element: slotElement,
                         spirit: slotSpirit,
                       };
