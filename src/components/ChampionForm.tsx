@@ -705,6 +705,30 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                           전체
                         </Button>
 
+                        <label
+                          className="flex items-center gap-1 text-xs cursor-pointer ml-2"
+                          title="천상 적용 시 장비 스탯 ×1.25 (장비 데이터의 '천상' 값이 1.25일 때만 적용)"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!!equipmentSlots[slotIdx]?.heavenly}
+                            onChange={(e) => {
+                              const v = e.target.checked;
+                              setEquipmentSlots(prev => prev.map((s, i) => i === slotIdx ? { ...s, heavenly: v } : s));
+                            }}
+                            className="w-3.5 h-3.5 cursor-pointer"
+                          />
+                          <span className="text-foreground/80">천상</span>
+                        </label>
+                        <Button size="sm" variant="outline" className="h-7 text-xs bg-primary/30 border-primary/40 text-white hover:bg-primary/50"
+                          onClick={() => {
+                            const v = !!equipmentSlots[slotIdx]?.heavenly;
+                            setEquipmentSlots(prev => prev.map(s => ({ ...s, heavenly: v })));
+                          }}
+                        >
+                          전체
+                        </Button>
+
                         <div className="flex-1" />
 
                         <div className="flex rounded border border-border overflow-hidden flex-shrink-0" style={{ width: '62px' }}>
@@ -745,6 +769,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                         newSlots[slotIdx] = {
                           item: { ...item },
                           quality: existingSlot?.quality || equipSlotQuality,
+                          heavenly: (item as any)['천상'] === 1.25 ? true : !!existingSlot?.heavenly,
                           element: slotElement,
                           spirit: slotSpirit,
                         };
@@ -862,7 +887,9 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                     }
 
                                     const quality = equipmentSlots[slotIdx]?.quality || 'common';
-                                    newSlots[slotIdx] = { item: { ...item }, quality, element: newElement, spirit: newSpirit };
+                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.heavenly;
+                                    const heavenly = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
+                                    newSlots[slotIdx] = { item: { ...item }, quality, heavenly, element: newElement, spirit: newSpirit };
                                   }
                                   setEquipmentSlots(newSlots);
                                 }}
@@ -963,13 +990,15 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                       }
                                     }
 
-                                    newSlots[slotIdx] = { item: { ...item }, quality, element: newElement, spirit: newSpirit };
+                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.heavenly;
+                                    const heavenly = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
+                                    newSlots[slotIdx] = { item: { ...item }, quality, heavenly, element: newElement, spirit: newSpirit };
                                   }
                                   setEquipmentSlots(newSlots);
                                 }}
                                 className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
-                                }`}
+                                } ${isSelected && equipmentSlots[slotIdx]?.heavenly ? `equip-heavenly equip-q-${quality}` : ''}`}
                                 style={isSelected ? {
                                   background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 100%)`,
                                   boxShadow: QUALITY_SHADOW_COLOR[quality],
@@ -1116,7 +1145,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                       className={`flex items-stretch gap-0 rounded border-[2.5px] cursor-pointer transition-all overflow-hidden ${
                         (i === 0 && equipDialogType === 'familiar') || (i === 1 && equipDialogType === 'aurasong') ? 'border-primary ring-1 ring-primary/30' :
                         s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
-                      }`}
+                      } ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
                       style={s.item ? { boxShadow: QUALITY_SHADOW_COLOR[s.quality] } : {}}
                     >
                       {/* Slot number with quality background */}

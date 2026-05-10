@@ -335,11 +335,22 @@ export async function calculateChampionStats(params: {
     const spiritCapHp = capEnchant(spiritRaw.hp, baseHp);
 
     // Final = quality + capped enchants
-    const finalAtk = qualityAtk + elementCapAtk + spiritCapAtk;
-    const finalDef = qualityDef + elementCapDef + spiritCapDef;
-    const finalHp = qualityHp + elementCapHp + spiritCapHp;
-    const finalCrit = baseCrit;
-    const finalEvasion = baseEvasion;
+    let finalAtk = qualityAtk + elementCapAtk + spiritCapAtk;
+    let finalDef = qualityDef + elementCapDef + spiritCapDef;
+    let finalHp = qualityHp + elementCapHp + spiritCapHp;
+    let finalCrit = baseCrit;
+    let finalEvasion = baseEvasion;
+
+    // 천상 (Airship Heaven) 적용: 장비 데이터의 "천상" 값(1.25)일 때 슬롯 heavenly 활성 시 최종값 ×1.25
+    const itemHeavenlyMul = (typeof item['천상'] === 'number') ? item['천상'] : 1;
+    const heavenlyActive = !!slot.heavenly && itemHeavenlyMul === 1.25;
+    if (heavenlyActive) {
+      finalAtk = Math.round(finalAtk * 1.25);
+      finalDef = Math.round(finalDef * 1.25);
+      finalHp = Math.round(finalHp * 1.25);
+      finalCrit = Math.round(finalCrit * 1.25 * 10) / 10;
+      finalEvasion = Math.round(finalEvasion * 1.25 * 10) / 10;
+    }
 
     equipSlots.push({
       slotName: SLOT_NAMES[i],
