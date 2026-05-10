@@ -172,6 +172,7 @@ function emptyData(): ManualEquipmentData {
     uniqueSpirit: '',
     isRelic: false,
     relicBonuses: [],
+    heavenly: false,
   };
 }
 
