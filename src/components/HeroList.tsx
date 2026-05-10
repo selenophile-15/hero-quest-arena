@@ -1264,7 +1264,7 @@ export default function HeroList() {
         <div className={`album-card-flip-inner ${isFlipped ? 'flipped' : ''}`}>
           {/* Front face */}
           <div
-            className="album-card-front card-fantasy p-3 border-2 rounded-xl flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-all"
+            className="album-card-front card-fantasy p-3 border-2 rounded-xl flex flex-col items-center gap-1.5 cursor-pointer hover:scale-[1.02] transition-transform"
             style={{ borderColor, boxShadow: borderShadow }}
             onClick={handleFlip}
           >

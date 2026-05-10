@@ -1264,6 +1264,14 @@ a.bg-accent *,
   transform: rotateY(180deg);
 }
 
+/* Album card hover: remove fuzzy glow/opacity effects */
+.album-card-front:hover,
+.album-card-back:hover {
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
 /* Stat breakdown: keep dark box colors in light mode */
 .stat-breakdown-box {
   color: white !important;
