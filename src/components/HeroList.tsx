@@ -9,6 +9,7 @@ import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_
 import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import { saveCanvasImage } from '@/lib/fileDownload';
+import { preloadImages } from '@/lib/imagePreloader';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
 import ListSummary, { ListSummaryHandle } from './ListSummary';
