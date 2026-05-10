@@ -1034,7 +1034,7 @@ export default function EquipmentSelectDialog({
                   onClick={() => setActiveSlot(i)}
                   className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
                     s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
-                  } ${s.heavenly ? `equip-heavenly equip-q-${quality}` : ''}`}
+                  } ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
                   style={s.item ? { boxShadow: `0 0 4px ${QUALITY_RADIAL[s.quality]?.replace(/[\d.]+\)$/, '0.3)')}` } : {}}
                 >
                   {/* Slot number with quality background */}
