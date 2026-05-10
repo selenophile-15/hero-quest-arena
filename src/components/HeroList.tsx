@@ -163,7 +163,7 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
 }
 
 // Default hidden columns
-const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg', 'position'];
+const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'critDmg', 'position', 'label'];
 
 function createScreenshotOverlay() {
   const overlay = document.createElement('div');
