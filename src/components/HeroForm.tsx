@@ -930,7 +930,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬</h3>
             <div className="flex items-center gap-2">
-              <Button size="sm" className="h-7 text-xs gap-1 bg-accent hover:bg-accent/80 text-accent-foreground"
+              <Button size="sm" className="h-7 text-xs gap-1 btn-force-white"
                 onClick={() => setSkillDialogOpen(true)} disabled={!heroClass}>
                 <Plus className="w-3 h-3" />스킬 선택
               </Button>
