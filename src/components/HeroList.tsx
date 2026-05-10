@@ -467,7 +467,7 @@ export default function HeroList() {
   // Album filtered list
   const albumFiltered = useMemo(() => {
     let list = [...activeList];
-    if (albumFilterClassLine !== 'all') list = list.filter(h => h.classLine === albumFilterClassLine);
+    if (albumFilterClassLine !== 'all') list = list.filter(h => getEffectiveClassLine(h) === albumFilterClassLine);
     if (albumFilterElement !== 'all') list = list.filter(h => h.element === albumFilterElement);
     if (albumFilterJob !== 'all') list = list.filter(h => h.heroClass === albumFilterJob);
 
