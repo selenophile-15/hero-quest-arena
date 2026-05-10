@@ -1646,7 +1646,7 @@ export default function HeroList() {
                     </th>
                   ))}
                   {!captureMode && (
-                  <th className="px-3 py-3 text-center text-muted-foreground font-medium">
+                  <th className="px-3 py-3 text-center font-bold min-w-[110px]">
                     <div className="flex items-center justify-center gap-1">
                       <button
                         onClick={() => {
@@ -1661,7 +1661,7 @@ export default function HeroList() {
                             setSelectedForDelete(new Set());
                           }
                         }}
-                        className={`text-sm font-medium transition-colors ${manageMode ? 'text-yellow-400' : 'text-muted-foreground hover:text-foreground'}`}
+                        className={`text-sm font-bold transition-colors ${manageMode ? 'text-primary' : 'text-foreground hover:text-primary'}`}
                       >
                         관리
                       </button>
