@@ -214,9 +214,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [equipmentSlots, setEquipmentSlots] = useState<Array<{
     item: any | null;
     quality: string;
+    heavenly?: boolean;
     element: any | null;
     spirit: any | null;
-  }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+  }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', heavenly: false, element: null, spirit: null })));
   const isInitialHeroClass = useRef(!!hero);
   const isPromotionToggle = useRef(false);
   const previousJobRef = useRef(heroClass);
