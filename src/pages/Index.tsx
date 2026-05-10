@@ -15,7 +15,7 @@ const Index = () => {
   const particlesRef = useRef<HTMLDivElement>(null);
   const shootingStarsRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
-  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+  
 
   useMobileGestures(desktopMode);
 
