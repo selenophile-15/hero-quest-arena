@@ -104,6 +104,7 @@ export interface RelicEffect {
 interface SlotInput {
   item: any | null;
   quality: string;
+  heavenly?: boolean;
   element: { type: string; tier: number; affinity: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
