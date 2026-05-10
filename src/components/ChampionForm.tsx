@@ -1008,7 +1008,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                   <span className="absolute top-1 left-1 text-[10px] font-bold text-muted-foreground bg-background/80 rounded px-1 z-10">T{item.tier}</span>
                                   <div className="flex-1 w-full flex items-center justify-center pt-3">
                                     {item.imagePath ? (
-                                      <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                      <img src={item.imagePath} alt={item.name} className="w-20 h-20 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                                     ) : (
                                       <span className="text-[9px] text-muted-foreground text-center">{item.name.slice(0, 8)}</span>
                                     )}
