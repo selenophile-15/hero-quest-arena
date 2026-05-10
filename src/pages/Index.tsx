@@ -237,9 +237,8 @@ const Index = () => {
               active:scale-95"
             style={{
               background: 'linear-gradient(135deg, hsl(235 45% 22%) 0%, hsl(255 35% 28%) 50%, hsl(225 45% 20%) 100%)',
-              boxShadow: '0 0 24px rgba(160,170,255,0.18), 0 6px 26px rgba(0,0,0,0.5), inset 0 1px 0 rgba(210,220,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.4)',
-              border: '1px solid',
-              borderImage: 'linear-gradient(135deg, rgba(220,225,255,0.7), rgba(160,170,255,0.4), rgba(190,160,255,0.7)) 1',
+              boxShadow: '0 0 24px rgba(160,170,255,0.18), 0 6px 26px rgba(0,0,0,0.5), inset 0 1px 0 rgba(220,225,255,0.32), inset 0 0 0 1px rgba(190,180,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.4)',
+              border: '1px solid rgba(200,205,255,0.45)',
               borderRadius: '10px',
             }}
           >
