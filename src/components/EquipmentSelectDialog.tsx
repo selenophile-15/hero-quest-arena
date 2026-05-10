@@ -20,6 +20,7 @@ import {
 interface EquipmentSlotData {
   item: EquipmentItem | null;
   quality: string;
+  heavenly?: boolean;
   element: { type: string; tier: number; affinity: boolean; allElementAffinity?: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
