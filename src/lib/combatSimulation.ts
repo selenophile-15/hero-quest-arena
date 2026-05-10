@@ -767,7 +767,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
       return sum;
     }, 0);
-    heroArmadillo.push(armadilloVal);
+    // Use unified detailStats survival chance if available (skill+soul aggregated, clamped to 100, cleric/bishop forced 100)
+    const detailSurvival = (h as any).detailStats?.['치명타 생존 확률%'] || 0;
+    heroArmadillo.push(Math.min(100, Math.max(armadilloVal, detailSurvival)));
   }
 
   // ─── Mundra only works on bosses ───
