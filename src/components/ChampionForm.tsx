@@ -967,7 +967,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                   }
                                   setEquipmentSlots(newSlots);
                                 }}
-                                className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
+                                className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                                 }`}
                                 style={isSelected ? {
