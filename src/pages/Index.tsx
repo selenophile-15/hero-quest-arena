@@ -264,65 +264,92 @@ const Index = () => {
 
       {/* ===== SPONSORS SECTION ===== */}
       <div className="relative z-10 max-w-2xl mx-auto px-6 pb-32" style={{ marginTop: '-2rem' }}>
+        {/* Outer shimmer frame */}
         <div
-          className="relative rounded-2xl p-[2px] overflow-hidden"
+          className="relative rounded-[28px] p-[3px] overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, #dbe1ff 0%, #a8b4e8 18%, #7d8acc 32%, #b6a5e0 50%, #e0d2f0 65%, #8e9bd6 80%, #c9d1f5 100%)',
             backgroundSize: '300% 300%',
             animation: 'royalShimmer 9s ease-in-out infinite',
-            boxShadow: '0 12px 50px rgba(120,110,200,0.35), 0 0 28px rgba(180,170,240,0.25), inset 0 0 0 1px rgba(255,255,255,0.15)',
+            boxShadow: '0 12px 50px rgba(120,110,200,0.4), 0 0 32px rgba(180,170,240,0.3), inset 0 0 0 1px rgba(255,255,255,0.18)',
           }}
         >
+          {/* Inner thin gold-violet line */}
           <div
-            className="rounded-2xl px-10 py-12 relative"
+            className="rounded-[26px] p-[1px]"
             style={{
-              background: 'linear-gradient(180deg, rgba(18,18,32,0.96) 0%, rgba(22,20,40,0.97) 50%, rgba(18,18,32,0.96) 100%)',
-              boxShadow: 'inset 0 1px 0 rgba(220,220,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.5)',
+              background: 'linear-gradient(135deg, rgba(255,230,170,0.55), rgba(190,170,255,0.55), rgba(255,230,170,0.55))',
             }}
           >
-            {/* Corner ornaments */}
-            <div className="absolute top-3 left-3 text-base" style={{ color: 'hsl(250 40% 75%)', textShadow: '0 0 8px rgba(180,170,255,0.6)' }}>✦</div>
-            <div className="absolute top-3 right-3 text-base" style={{ color: 'hsl(250 40% 75%)', textShadow: '0 0 8px rgba(180,170,255,0.6)' }}>✦</div>
-            <div className="absolute bottom-3 left-3 text-base" style={{ color: 'hsl(250 40% 75%)', textShadow: '0 0 8px rgba(180,170,255,0.6)' }}>✦</div>
-            <div className="absolute bottom-3 right-3 text-base" style={{ color: 'hsl(250 40% 75%)', textShadow: '0 0 8px rgba(180,170,255,0.6)' }}>✦</div>
+            <div
+              className="rounded-[25px] px-12 py-14 relative"
+              style={{
+                background: 'radial-gradient(ellipse at top, rgba(40,32,68,0.97) 0%, rgba(18,18,32,0.98) 60%, rgba(14,14,26,0.98) 100%)',
+                boxShadow: 'inset 0 1px 0 rgba(220,220,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.5), inset 0 0 60px rgba(140,120,220,0.08)',
+              }}
+            >
+              {/* Ornate corner flourishes */}
+              <div className="absolute top-2 left-3 text-2xl leading-none" style={{ color: 'hsl(250 50% 80%)', textShadow: '0 0 10px rgba(200,180,255,0.7)' }}>❦</div>
+              <div className="absolute top-2 right-3 text-2xl leading-none" style={{ color: 'hsl(250 50% 80%)', textShadow: '0 0 10px rgba(200,180,255,0.7)', transform: 'scaleX(-1)' }}>❦</div>
+              <div className="absolute bottom-2 left-3 text-2xl leading-none" style={{ color: 'hsl(250 50% 80%)', textShadow: '0 0 10px rgba(200,180,255,0.7)', transform: 'scaleY(-1)' }}>❦</div>
+              <div className="absolute bottom-2 right-3 text-2xl leading-none" style={{ color: 'hsl(250 50% 80%)', textShadow: '0 0 10px rgba(200,180,255,0.7)', transform: 'scale(-1,-1)' }}>❦</div>
 
-            <div className="text-center">
-              <div className="font-display tracking-[0.4em] text-[11px] uppercase mb-2" style={{
-                color: 'hsl(250 35% 75%)',
-                textShadow: '0 0 10px rgba(180,170,255,0.35)',
-              }}>
-                ─── Hall of Patrons ───
+              {/* Top medallion ribbon */}
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <span className="text-base" style={{ color: 'hsl(45 70% 75%)', textShadow: '0 0 10px rgba(255,220,160,0.6)' }}>━━━━</span>
+                <span className="text-xl" style={{ color: 'hsl(45 80% 78%)', textShadow: '0 0 14px rgba(255,220,160,0.85)' }}>♕</span>
+                <span
+                  className="font-display tracking-[0.45em] text-[12px] uppercase"
+                  style={{
+                    background: 'linear-gradient(135deg, #f5e6b8 0%, #e8d2ff 50%, #f5e6b8 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Hall of Patrons
+                </span>
+                <span className="text-xl" style={{ color: 'hsl(45 80% 78%)', textShadow: '0 0 14px rgba(255,220,160,0.85)' }}>♕</span>
+                <span className="text-base" style={{ color: 'hsl(45 70% 75%)', textShadow: '0 0 10px rgba(255,220,160,0.6)' }}>━━━━</span>
               </div>
-              <h2 className="font-display text-2xl mb-6 tracking-[0.25em]" style={{
-                background: 'linear-gradient(135deg, #e8ecff 0%, #b8a8e8 50%, #d6c5ee 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                textShadow: '0 0 20px rgba(180,170,255,0.2)',
-              }}>
-                후원자 명단
-              </h2>
 
-              <ul className="space-y-3 mt-4">
+              {/* Decorative divider */}
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <span className="h-[1px] w-16" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,180,255,0.6), transparent)' }} />
+                <span className="text-sm" style={{ color: 'hsl(250 40% 78%)' }}>✦</span>
+                <span className="text-xs" style={{ color: 'hsl(45 70% 78%)' }}>❖</span>
+                <span className="text-sm" style={{ color: 'hsl(250 40% 78%)' }}>✦</span>
+                <span className="h-[1px] w-16" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,180,255,0.6), transparent)' }} />
+              </div>
+
+              <ul className="space-y-4 text-center">
                 {sponsors.map((name) => (
                   <li
                     key={name}
-                    className="text-center"
                     style={{
                       fontFamily: "'Cormorant Garamond', serif",
                       fontWeight: 600,
                       fontStyle: 'italic',
-                      fontSize: '1.4rem',
-                      letterSpacing: '0.06em',
-                      background: 'linear-gradient(180deg, #f5f3ff 0%, #d4c8ee 60%, #f0e2c8 100%)',
+                      fontSize: '1.55rem',
+                      letterSpacing: '0.08em',
+                      background: 'linear-gradient(180deg, #fff8e0 0%, #e6d4ff 50%, #f8e4b8 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
-                      textShadow: '0 0 18px rgba(200,180,255,0.25)',
+                      textShadow: '0 0 20px rgba(220,200,255,0.35)',
                     }}
                   >
+                    <span style={{ color: 'hsl(45 70% 70%)', WebkitTextFillColor: 'hsl(45 70% 72%)', marginRight: '0.6em', fontSize: '0.85em' }}>❈</span>
                     {name}
+                    <span style={{ color: 'hsl(45 70% 70%)', WebkitTextFillColor: 'hsl(45 70% 72%)', marginLeft: '0.6em', fontSize: '0.85em' }}>❈</span>
                   </li>
                 ))}
               </ul>
+
+              {/* Bottom divider */}
+              <div className="flex items-center justify-center gap-2 mt-7">
+                <span className="h-[1px] w-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,180,255,0.5), transparent)' }} />
+                <span className="text-sm" style={{ color: 'hsl(45 70% 78%)' }}>❖</span>
+                <span className="h-[1px] w-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,180,255,0.5), transparent)' }} />
+              </div>
             </div>
           </div>
         </div>
