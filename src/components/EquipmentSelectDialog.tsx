@@ -20,6 +20,7 @@ import {
 interface EquipmentSlotData {
   item: EquipmentItem | null;
   quality: string;
+  heavenly?: boolean;
   element: { type: string; tier: number; affinity: boolean; allElementAffinity?: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
@@ -549,7 +550,7 @@ export default function EquipmentSelectDialog({
                       </button>
                     </div>
 
-                    {/* Sub-row 2: 등급 전체 ... [앨범|테이블] on right */}
+                    {/* Sub-row 2: 등급 + 천상 + [앨범|테이블] on right */}
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground">등급:</span>
                       <Select value={slotQuality} onValueChange={handleQualityChange}>
@@ -561,6 +562,30 @@ export default function EquipmentSelectDialog({
                         </SelectContent>
                       </Select>
                       <Button size="sm" variant="outline" className="h-7 text-xs bg-primary/30 border-primary/40 text-white hover:bg-primary/50" onClick={handleBatchQuality}>
+                        전체
+                      </Button>
+
+                      <label
+                        className="flex items-center gap-1 text-xs cursor-pointer ml-2"
+                        title="천상 적용 시 장비 스탯 ×1.25 (장비 데이터의 '천상' 값이 1.25일 때만 적용)"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={!!slots[activeSlot]?.heavenly}
+                          onChange={(e) => {
+                            const v = e.target.checked;
+                            setSlots(prev => prev.map((s, i) => i === activeSlot ? { ...s, heavenly: v } : s));
+                          }}
+                          className="w-3.5 h-3.5 cursor-pointer"
+                        />
+                        <span className="text-foreground/80">천상</span>
+                      </label>
+                      <Button size="sm" variant="outline" className="h-7 text-xs bg-primary/30 border-primary/40 text-white hover:bg-primary/50"
+                        onClick={() => {
+                          const v = !!slots[activeSlot]?.heavenly;
+                          setSlots(prev => prev.map(s => ({ ...s, heavenly: v })));
+                        }}
+                      >
                         전체
                       </Button>
 
@@ -1008,7 +1033,7 @@ export default function EquipmentSelectDialog({
                   onClick={() => setActiveSlot(i)}
                   className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
                     s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
-                  }`}
+                  } ${s.heavenly ? 'equip-heavenly' : ''}`}
                   style={s.item ? { boxShadow: `0 0 4px ${QUALITY_RADIAL[s.quality]?.replace(/[\d.]+\)$/, '0.3)')}` } : {}}
                 >
                   {/* Slot number with quality background */}

@@ -184,9 +184,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
   const [equipmentSlots, setEquipmentSlots] = useState<Array<{
     item: any | null;
     quality: string;
+    heavenly?: boolean;
     element: any | null;
     spirit: any | null;
-  }>>(hero?.equipmentSlots || Array.from({ length: 2 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+  }>>(hero?.equipmentSlots || Array.from({ length: 2 }, () => ({ item: null, quality: 'common', heavenly: false, element: null, spirit: null })));
 
   const [championSkillsData, setChampionSkillsData] = useState<Record<string, any>>({});
   const [familiarItems, setFamiliarItems] = useState<EquipmentItem[]>([]);
@@ -437,7 +438,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         }}
       >
         <div
-          className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
+          className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} ${slotData?.heavenly ? 'equip-heavenly' : ''} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
           style={equipItem ? {
             background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
             boxShadow: QUALITY_SHADOW_COLOR[quality],

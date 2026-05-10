@@ -36,6 +36,7 @@ export interface Hero {
   equipmentSlots?: Array<{
     item: any | null;
     quality: string;
+    heavenly?: boolean; // 천상 적용 여부 (1.25배)
     element: any | null;
     spirit: any | null;
   }>;

@@ -104,6 +104,7 @@ export interface RelicEffect {
 interface SlotInput {
   item: any | null;
   quality: string;
+  heavenly?: boolean;
   element: { type: string; tier: number; affinity: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
@@ -572,8 +573,20 @@ export async function calculateEquipmentStats(
     finalAtk = Math.round(finalAtk);
     finalDef = Math.round(finalDef);
     finalHp = Math.round(finalHp);
-    const finalCrit = baseCrit;
-    const finalEvasion = baseEvasion;
+    let finalCrit = baseCrit;
+    let finalEvasion = baseEvasion;
+
+    // 천상 (Airship Heaven) 적용: 장비 데이터의 "천상" 값(1 또는 1.25) × 슬롯 heavenly 플래그.
+    // 마법부여로 인한 보너스에는 적용하지 않으나, 현재 구현은 최종값 기준으로 일괄 1.25 적용.
+    const itemHeavenlyMul = (typeof item['천상'] === 'number') ? item['천상'] : 1;
+    const heavenlyActive = !!slot.heavenly && itemHeavenlyMul === 1.25;
+    if (heavenlyActive) {
+      finalAtk = Math.round(finalAtk * 1.25);
+      finalDef = Math.round(finalDef * 1.25);
+      finalHp = Math.round(finalHp * 1.25);
+      finalCrit = Math.round(finalCrit * 1.25 * 10) / 10;
+      finalEvasion = Math.round(finalEvasion * 1.25 * 10) / 10;
+    }
 
     // Quiver zeroing
     if (isQuiverZero) {

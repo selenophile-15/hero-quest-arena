@@ -274,7 +274,7 @@ export default function EnchantPickerDialog({
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>마법 부여 (원소 / 영혼)</DialogTitle>
           <DialogDescription className="sr-only">각 슬롯의 원소와 영혼을 선택하세요</DialogDescription>
@@ -343,7 +343,7 @@ export default function EnchantPickerDialog({
                 const elValue = slot?.element ? getElementValue(slot.element.tier, slot.element.affinity, !!(slot.element as any).allElementAffinity) : 0;
 
                 return (
-                  <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_80px] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
+                  <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_80px] gap-3 items-center px-3 py-1.5 border border-border/50 rounded bg-secondary/10 min-h-[44px] ${!hasItem ? 'opacity-40' : ''}`}>
                     <div className="text-center">
                       <span className="text-sm font-bold text-primary">슬롯 {i + 1}</span>
                       <p className="text-xs text-foreground truncate">{itemNames[i] || '-'}</p>
@@ -457,7 +457,7 @@ export default function EnchantPickerDialog({
                   : spiritEffect;
 
                 return (
-                  <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_1fr] gap-3 items-center p-3 border border-border/50 rounded bg-secondary/10 min-h-[56px] ${!hasItem ? 'opacity-40' : ''}`}>
+                  <div key={i} className={`grid grid-cols-[80px_1fr_220px_60px_1fr] gap-3 items-center px-3 py-1.5 border border-border/50 rounded bg-secondary/10 min-h-[44px] ${!hasItem ? 'opacity-40' : ''}`}>
                     <div className="text-center">
                       <span className="text-sm font-bold text-primary">슬롯 {i + 1}</span>
                       <p className="text-xs text-foreground truncate">{itemNames[i] || '-'}</p>

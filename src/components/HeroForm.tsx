@@ -135,7 +135,7 @@ const DETAIL_STATS_BASE = [
   '공통 방어력 계수',
   '공통 체력 계수',
   '매 턴 체력 재생',
-  '죽기 전 공격 한 번 버틸 확률',
+  '치명타 생존 확률%',
   '휴식시간 감소%',
 ];
 
@@ -214,9 +214,10 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
   const [equipmentSlots, setEquipmentSlots] = useState<Array<{
     item: any | null;
     quality: string;
+    heavenly?: boolean;
     element: any | null;
     spirit: any | null;
-  }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null })));
+  }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', heavenly: false, element: null, spirit: null })));
   const isInitialHeroClass = useRef(!!hero);
   const isPromotionToggle = useRef(false);
   const previousJobRef = useRef(heroClass);
@@ -930,7 +931,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스킬</h3>
             <div className="flex items-center gap-2">
-              <Button size="sm" className="h-7 text-xs gap-1 bg-accent hover:bg-accent/80 text-accent-foreground"
+              <Button size="sm" className="h-7 text-xs gap-1 btn-force-white"
                 onClick={() => setSkillDialogOpen(true)} disabled={!heroClass}>
                 <Plus className="w-3 h-3" />스킬 선택
               </Button>
@@ -1074,7 +1075,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                   }}
                 >
                   <div
-                    className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
+                    className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} ${slotData?.heavenly ? 'equip-heavenly' : ''} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
                     style={equipItem ? {
                       background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                       boxShadow: QUALITY_SHADOW_COLOR[quality],
@@ -1187,7 +1188,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                             return (
                               <div key={si} className="flex items-center gap-0.5">
                                 <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                                <span className={`text-xs font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : 'text-foreground'}`}>
+                                <span className={`text-sm font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : 'text-foreground'}`}>
                                   {formatEquipStatVal(stat.key, statVal)}
                                 </span>
                               </div>
