@@ -150,11 +150,11 @@ const Index = () => {
 
       {/* Background image */}
       <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
-        <div className="relative w-full" style={{ height: '100vh', minHeight: 720 }}>
+        <div className="relative w-full" style={{ aspectRatio: '1920 / 1280' }}>
           <img
             src={landingBg}
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain object-top"
             width={1920}
             height={1280}
             fetchPriority="high"
