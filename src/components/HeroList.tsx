@@ -9,6 +9,7 @@ import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_
 import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import { saveCanvasImage } from '@/lib/fileDownload';
+import { preloadImages } from '@/lib/imagePreloader';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
 import ListSummary, { ListSummaryHandle } from './ListSummary';
@@ -411,14 +412,23 @@ export default function HeroList() {
       });
       hero.equipmentSlots?.forEach((slot: any) => {
         if (slot?.item?.imagePath) imagesToPreload.add(slot.item.imagePath);
+        const el = slot?.element;
+        if (el?.type && el?.tier) {
+          imagesToPreload.add(`/images/enchant/element/${ELEMENT_ENG_MAP[el.type] || el.type}${el.tier}_${el.affinity ? '2' : '1'}.webp`);
+        }
+        const sp = slot?.spirit;
+        if (sp?.name === '문드라') {
+          imagesToPreload.add('/images/enchant/spirit/mundra.webp');
+        } else if (sp?.name) {
+          const eng = SPIRIT_NAME_MAP[sp.name];
+          if (eng) imagesToPreload.add(`/images/enchant/spirit/${eng}_${sp.affinity ? '2' : '1'}.webp`);
+        }
       });
     });
-    imagesToPreload.forEach(src => {
-      if (src) {
-        const img = new Image();
-        img.src = src;
-      }
-    });
+    // Add element + stat icons (used in list summary, expanded rows, album)
+    Object.values(ELEMENT_ICON_MAP).forEach(p => imagesToPreload.add(p));
+    Object.values(STAT_ICON_MAP).forEach(p => imagesToPreload.add(p));
+    preloadImages(imagesToPreload);
   }, [heroes]);
 
   const heroList = useMemo(() => heroes.filter(h => h.type === 'hero'), [heroes]);
