@@ -1314,14 +1314,18 @@ a.bg-accent *,
     radial-gradient(ellipse at 50% 50%, rgba(255,210,235,0.28) 0%, transparent 60%),
     linear-gradient(135deg, #1a1d3e 0%, #2a1f4d 45%, #3b2a5e 100%) !important;
 }
-/* 라이트모드: 어두운 톤 → 밝게, 가운데 빨강/주황 계열 */
+/* 라이트모드: 오팔(opal) 톤 — 가장자리 밝게(테두리 강조) + 중앙 무지갯빛 파스텔 */
 [data-color-mode="light"] .equip-heavenly {
   background:
-    radial-gradient(ellipse at 28% 38%, rgba(255,200,180,0.65) 0%, transparent 45%),
-    radial-gradient(ellipse at 72% 62%, rgba(255,180,160,0.55) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(255,160,120,0.38) 0%, transparent 60%),
-    radial-gradient(ellipse at 50% 45%, rgba(255,220,200,0.50) 0%, transparent 55%),
-    linear-gradient(135deg, #fff5f0 0%, #ffe8e0 35%, #ffd4c4 65%, #ffc8b0 100%) !important;
+    /* 가장자리 밝은 후광 — 등급 테두리 가시성 ↑ */
+    radial-gradient(ellipse at 50% 50%, transparent 52%, rgba(255,255,255,0.85) 78%, rgba(255,255,255,0.95) 100%),
+    /* 오팔 무지갯빛 반점들 (파스텔 옐로/민트/시안/피치/라벤더) */
+    radial-gradient(ellipse at 30% 32%, rgba(255,240,170,0.70) 0%, transparent 38%),
+    radial-gradient(ellipse at 68% 28%, rgba(180,240,210,0.65) 0%, transparent 40%),
+    radial-gradient(ellipse at 72% 68%, rgba(170,220,255,0.65) 0%, transparent 42%),
+    radial-gradient(ellipse at 28% 72%, rgba(255,200,180,0.65) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(220,200,255,0.45) 0%, transparent 55%),
+    linear-gradient(135deg, #fffdf5 0%, #fff3e6 35%, #ffe8d8 65%, #ffdcc8 100%) !important;
 }
 .equip-heavenly::after {
   content: '';
@@ -1344,19 +1348,31 @@ a.bg-accent *,
   filter: drop-shadow(0 0 1.4px rgba(255,255,255,0.9));
   animation: heavenly-twinkle 2.6s ease-in-out infinite;
 }
-/* 라이트모드 반짝임: 빨강/주황/금빛 톤 */
+/* 라이트모드: 별빛 대신 햇살(sun flare) — 가운데서 퍼지는 부드러운 광선 + 렌즈 플레어 */
 [data-color-mode="light"] .equip-heavenly::after {
   background-image:
-    radial-gradient(circle at 14% 22%, rgba(255,240,220,0.95) 0, rgba(255,240,220,0) 1.6px),
-    radial-gradient(circle at 78% 18%, rgba(255,200,150,0.9) 0, rgba(255,200,150,0) 1.2px),
-    radial-gradient(circle at 36% 70%, rgba(255,180,140,0.95) 0, rgba(255,180,140,0) 1.6px),
-    radial-gradient(circle at 86% 76%, rgba(255,220,180,0.9) 0, rgba(255,220,180,0) 1.3px),
-    radial-gradient(circle at 22% 86%, rgba(255,160,120,0.85) 0, rgba(255,160,120,0) 1.2px),
-    radial-gradient(circle at 62% 12%, rgba(255,200,160,0.9) 0, rgba(255,200,160,0) 1px),
-    radial-gradient(circle at 52% 48%, rgba(255,140,100,0.95) 0, rgba(255,140,100,0) 1.5px),
-    radial-gradient(circle at 8% 58%, rgba(255,220,170,0.85) 0, rgba(255,220,170,0) 1px),
-    radial-gradient(circle at 92% 42%, rgba(255,190,140,0.9) 0, rgba(255,190,140,0) 1.1px);
-  filter: drop-shadow(0 0 1.4px rgba(255,160,100,0.9));
+    /* 코너에 컬러 스파클 (오팔 컬러) */
+    radial-gradient(circle at 18% 20%, rgba(255,235,150,0.95) 0, rgba(255,235,150,0) 2px),
+    radial-gradient(circle at 80% 24%, rgba(170,230,200,0.9) 0, rgba(170,230,200,0) 1.6px),
+    radial-gradient(circle at 22% 80%, rgba(180,215,255,0.9) 0, rgba(180,215,255,0) 1.6px),
+    radial-gradient(circle at 82% 78%, rgba(255,200,180,0.95) 0, rgba(255,200,180,0) 2px),
+    /* 햇살 코어 글로우 */
+    radial-gradient(circle at 38% 32%, rgba(255,250,220,0.75) 0%, rgba(255,250,220,0) 28%),
+    /* 콘 그라디언트 햇살(선버스트) */
+    conic-gradient(from 35deg at 40% 35%,
+      rgba(255,255,230,0.55) 0deg, rgba(255,255,230,0) 14deg,
+      rgba(255,255,230,0.45) 60deg, rgba(255,255,230,0) 74deg,
+      rgba(255,255,230,0.5) 130deg, rgba(255,255,230,0) 144deg,
+      rgba(255,255,230,0.4) 200deg, rgba(255,255,230,0) 214deg,
+      rgba(255,255,230,0.5) 280deg, rgba(255,255,230,0) 294deg,
+      rgba(255,255,230,0.45) 340deg, rgba(255,255,230,0) 360deg);
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 2px rgba(255,230,180,0.85));
+  animation: heavenly-sunflare 4.5s ease-in-out infinite;
+}
+@keyframes heavenly-sunflare {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
 }
 @keyframes heavenly-twinkle {
   0%, 100% { opacity: 0.75; }
