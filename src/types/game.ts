@@ -105,6 +105,7 @@ export const HERO_STAT_COLUMNS = [
 ];
 
 export const CHAMPION_STAT_COLUMNS = [
+  { key: 'classLine' as const, label: '계열' },
   { key: 'heroClass' as const, label: '직업' },
   { key: 'name' as const, label: '이름' },
   { key: 'level' as const, label: 'Lv' },
