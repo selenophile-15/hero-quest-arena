@@ -135,6 +135,7 @@ export interface ManualEquipmentData {
   uniqueSpirit: string;
   isRelic: boolean;
   relicBonuses: RelicStatBonus[];
+  heavenly?: boolean;
 }
 
 interface ManualEquipmentFormProps {
