@@ -834,7 +834,7 @@ export default function EquipmentSelectDialog({
                               <button
                                 onClick={() => !isRelicBlocked && handleSelectItem(item)}
                                 disabled={isRelicBlocked}
-                                className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
+                                className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                                 }`}
@@ -1032,7 +1032,7 @@ export default function EquipmentSelectDialog({
                 <div
                   key={i}
                   onClick={() => setActiveSlot(i)}
-                  className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
+                  className={`flex items-stretch gap-0 rounded border-[2.5px] cursor-pointer transition-all overflow-hidden ${
                     s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
                   } ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
                   style={s.item ? { boxShadow: `0 0 4px ${QUALITY_RADIAL[s.quality]?.replace(/[\d.]+\)$/, '0.3)')}` } : {}}

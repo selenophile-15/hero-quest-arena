@@ -438,7 +438,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
         }}
       >
         <div
-          className={`relative w-full rounded-lg border-2 ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} ${slotData?.heavenly ? `equip-heavenly equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
+          className={`relative w-full rounded-lg border-[2.5px] ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} ${slotData?.heavenly ? `equip-heavenly equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
           style={equipItem ? {
             background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
             boxShadow: QUALITY_SHADOW_COLOR[quality],
@@ -967,7 +967,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                   }
                                   setEquipmentSlots(newSlots);
                                 }}
-                                className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
+                                className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                                 }`}
                                 style={isSelected ? {
@@ -1113,7 +1113,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                     <div
                       key={i}
                       onClick={() => setEquipDialogType(i === 0 ? 'familiar' : 'aurasong')}
-                      className={`flex items-stretch gap-0 rounded border-2 cursor-pointer transition-all overflow-hidden ${
+                      className={`flex items-stretch gap-0 rounded border-[2.5px] cursor-pointer transition-all overflow-hidden ${
                         (i === 0 && equipDialogType === 'familiar') || (i === 1 && equipDialogType === 'aurasong') ? 'border-primary ring-1 ring-primary/30' :
                         s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
                       }`}
