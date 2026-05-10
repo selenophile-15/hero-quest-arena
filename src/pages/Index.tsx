@@ -199,7 +199,7 @@ const Index = () => {
             <div
               className="mx-auto"
               style={{
-                width: 'min(520px, 85vw)',
+                width: 'min(760px, 92vw)',
                 aspectRatio: '1584 / 672',
               }}
             >
