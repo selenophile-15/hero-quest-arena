@@ -834,7 +834,7 @@ export default function EquipmentSelectDialog({
                               <button
                                 onClick={() => !isRelicBlocked && handleSelectItem(item)}
                                 disabled={isRelicBlocked}
-                                className={`relative flex flex-col rounded-lg border-2 transition-all cursor-pointer aspect-square overflow-hidden ${
+                                className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
                                 }`}
