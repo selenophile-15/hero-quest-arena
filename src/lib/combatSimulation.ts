@@ -2901,7 +2901,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       const name = typeof sp === 'string' ? sp : sp?.name || '';
       return name.includes('아르마딜로') || name.includes('Armadillo') ? sum + (typeof sp === 'object' ? (sp?.value || 15) : 15) : sum;
     }, 0);
-    heroArmadilloVal.push(armadilloV);
+    const detailSurvivalV = (h as any).detailStats?.['치명타 생존 확률%'] || 0;
+    heroArmadilloVal.push(Math.min(100, Math.max(armadilloV, detailSurvivalV)));
 
     // Class flags for crit survival
     heroIsClericFlag.push(isClass(h, '성직자', '클레릭', 'Cleric'));
