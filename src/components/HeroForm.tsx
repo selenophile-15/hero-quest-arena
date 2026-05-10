@@ -1187,7 +1187,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
                             return (
                               <div key={si} className="flex items-center gap-0.5">
                                 <img src={EQUIP_STAT_ICONS[stat.key] || ''} alt="" className="w-4 h-4" />
-                                <span className={`text-xs font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : 'text-foreground'}`}>
+                                <span className={`text-sm font-semibold tabular-nums ${isQuiverZero ? 'text-red-400 line-through' : 'text-foreground'}`}>
                                   {formatEquipStatVal(stat.key, statVal)}
                                 </span>
                               </div>
