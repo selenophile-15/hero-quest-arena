@@ -1200,8 +1200,9 @@ export default function HeroList() {
       : hero.heroClass ? getJobIllustPath(hero.heroClass) : '';
     const isChampion = hero.type === 'champion';
     const equipSlots = hero.equipmentSlots || Array.from({ length: isChampion ? 2 : 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null }));
-    const borderColor = hero.classLine ? (CLASS_LINE_BORDER_COLOR[hero.classLine] || '#6b7280') : '#a855f7';
-    const borderShadow = hero.classLine ? (CLASS_LINE_SHADOW_STYLE[hero.classLine] || 'none') : '0 0 12px rgba(168,85,247,0.3)';
+    const effClassLine = getEffectiveClassLine(hero);
+    const borderColor = effClassLine ? (CLASS_LINE_BORDER_COLOR[effClassLine] || '#6b7280') : '#a855f7';
+    const borderShadow = effClassLine ? (CLASS_LINE_SHADOW_STYLE[effClassLine] || 'none') : '0 0 12px rgba(168,85,247,0.3)';
     const isFlipped = flippedCards.has(hero.id);
 
     let leaderSkillIcon = '';
