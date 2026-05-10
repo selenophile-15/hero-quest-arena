@@ -302,7 +302,8 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
       manual: true,
       manualData: { ...data, type: effectiveType },
       relicStatBonuses: (isAurasong || data.isRelic) ? data.relicBonuses : undefined,
-    };
+      ['천상' as any]: data.heavenly ? 1.25 : 1,
+    } as EquipmentItem;
 
     onConfirm(item, data);
   };
