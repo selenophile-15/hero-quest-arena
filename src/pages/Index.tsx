@@ -1,12 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Monitor, Swords } from "lucide-react";
+import { Monitor, Swords, Shield, Trophy } from "lucide-react";
 import { useMobileGestures } from "@/hooks/use-mobile-gestures";
 import { useDesktopModeState } from "@/hooks/use-desktop-mode";
 
 import landingBg from "@/assets/landing-bg.jpg";
 import titleLogo from "@/assets/title-logo.png";
+import featureList from "@/assets/feature-list.jpg";
+import featureQuest from "@/assets/feature-quest.jpg";
+import featureRanking from "@/assets/feature-ranking.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -15,7 +18,7 @@ const Index = () => {
   const particlesRef = useRef<HTMLDivElement>(null);
   const shootingStarsRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
-  
+  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
   useMobileGestures(desktopMode);
 
@@ -70,20 +73,25 @@ const Index = () => {
     }
   }, []);
 
-  const sponsors = ['Dogpyo', '거지왕'];
+  const features = [
+    { num: '01', title: "리스트 관리", desc: "영웅과 챔피언의 스탯을 정밀하게 관리하고 비교하세요", icon: Shield, color: '#3b82f6', img: featureList },
+    { num: '02', title: "퀘스트 시뮬레이션", desc: "던전에 파티를 보내 결과를 미리 확인하세요", icon: Swords, color: '#ef4444', img: featureQuest },
+    { num: '03', title: "랭킹", desc: "다른 플레이어와 시뮬레이션 결과를 비교하세요", icon: Trophy, color: '#eab308', img: featureRanking },
+  ];
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-[200vh] bg-background relative overflow-hidden">
       <div className="fixed top-4 right-4 z-20">
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setDesktopMode((value) => !value)}
           title={desktopMode ? '모바일 모드로 전환' : '데스크탑 모드로 전환'}
-          className={`flex items-center justify-center w-9 h-9 rounded-md border border-border/70 backdrop-blur-sm transition-colors ${
-            desktopMode ? 'bg-primary text-primary-foreground' : 'bg-card/80 text-foreground hover:bg-card'
-          }`}
+          className="h-9 gap-2 border-border/70 bg-card/80 px-3 text-xs text-foreground backdrop-blur-sm"
         >
           <Monitor className="w-4 h-4" />
-        </button>
+          {desktopMode ? '데스크탑 모드 ON' : '데스크탑 모드'}
+        </Button>
       </div>
 
       <style>{`
@@ -110,22 +118,13 @@ const Index = () => {
           0%, 100% { filter: drop-shadow(0 0 15px rgba(180,200,255,0.4)) drop-shadow(0 0 40px rgba(120,160,255,0.15)) drop-shadow(0 0 60px rgba(200,147,10,0.1)); }
           50% { filter: drop-shadow(0 0 25px rgba(180,200,255,0.7)) drop-shadow(0 0 50px rgba(120,160,255,0.3)) drop-shadow(0 0 80px rgba(200,147,10,0.2)); }
         }
+        @keyframes subtitleReveal {
+          0% { opacity: 0; letter-spacing: 0.5em; }
+          100% { opacity: 1; letter-spacing: 0.2em; }
+        }
         @keyframes starSparkle {
           0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
           50% { opacity: 1; transform: scale(1.3) rotate(180deg); }
-        }
-        @keyframes bulbFlicker {
-          0%, 6%   { opacity: 0.15; text-shadow: none; }
-          7%       { opacity: 1; }
-          8%, 10%  { opacity: 0.2; }
-          11%      { opacity: 1; }
-          12%, 13% { opacity: 0.15; }
-          14%      { opacity: 1; }
-          15%, 70% { opacity: 1; }
-          71%, 72% { opacity: 0.25; }
-          73%      { opacity: 1; }
-          74%, 75% { opacity: 0.2; }
-          76%, 100%{ opacity: 1; }
         }
         @keyframes btnShine {
           0% { left: -100%; }
@@ -139,31 +138,21 @@ const Index = () => {
           left: -100%;
           width: 50%;
           height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-          animation: btnShine 3.5s ease-in-out infinite;
-        }
-        @keyframes royalShimmer {
-          0%, 100% { background-position: 0% 50%; }
-          50%      { background-position: 100% 50%; }
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          animation: btnShine 3s ease-in-out infinite;
         }
       `}</style>
 
-      {/* Background image */}
+      {/* Background image - single, scrolls with page */}
       <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
-        <div className="relative w-full" style={{ aspectRatio: '1920 / 1280' }}>
-          <img
-            src={landingBg}
-            alt=""
-            className="w-full h-full object-contain object-top"
-            width={1920}
-            height={1280}
-            fetchPriority="high"
-            decoding="async"
-          />
+        <div className="relative w-full" style={{ height: '200vh' }}>
+          <img src={landingBg} alt="" className="w-full h-full object-cover" width={1920} height={1280} />
+          {/* Dark overlay on top portion for title readability */}
           <div className="absolute top-0 left-0 right-0 h-[50%]" style={{
             background: 'linear-gradient(180deg, rgba(5,8,20,0.85) 0%, rgba(10,15,30,0.6) 40%, transparent 100%)'
           }} />
-          <div className="absolute bottom-0 left-0 right-0 h-[25%]" style={{
+          {/* Bottom fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-[20%]" style={{
             background: 'linear-gradient(0deg, rgba(10,10,15,0.95) 0%, transparent 100%)'
           }} />
         </div>
@@ -173,51 +162,49 @@ const Index = () => {
       <div ref={starsRef} className="fixed inset-0 z-[1] pointer-events-none" style={{
         opacity: Math.max(0, 1 - scrollY / 1200),
       }} />
+
+      {/* Shooting stars */}
       <div ref={shootingStarsRef} className="fixed inset-0 z-[1] pointer-events-none" />
+
+      {/* Rising particles (embers) */}
       <div ref={particlesRef} className="absolute inset-x-0 z-[3] pointer-events-none" style={{ top: '60vh', height: '140vh' }} />
 
       {/* ===== HERO SECTION ===== */}
       <div className="relative z-10 min-h-screen flex items-center justify-center">
-        <div className="text-center px-4 py-16" style={{
+        <div className="text-center px-4 py-20" style={{
           opacity: Math.max(0, 1 - scrollY / 600),
         }}>
           <div className="mb-6 relative" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
+            {/* Decorative star sparkles around title */}
             <div className="absolute -top-6 -left-12 text-blue-200 text-lg" style={{ animation: 'starSparkle 3s ease-in-out infinite' }}>✦</div>
             <div className="absolute -top-4 -right-10 text-purple-200 text-sm" style={{ animation: 'starSparkle 4s ease-in-out infinite 1s' }}>✧</div>
             <div className="absolute -bottom-4 -left-8 text-purple-300/60 text-sm" style={{ animation: 'starSparkle 3.5s ease-in-out infinite 0.5s' }}>✦</div>
             <div className="absolute -bottom-6 -right-14 text-blue-300/50 text-base" style={{ animation: 'starSparkle 5s ease-in-out infinite 2s' }}>✧</div>
 
-            <span className="font-display text-[13px] tracking-[0.2em] uppercase block mb-4" style={{
-              color: 'hsl(260 40% 70%)',
-              animation: 'bulbFlicker 5s ease-in-out infinite',
-              textShadow: '0 0 12px rgba(160,130,255,0.5), 0 0 24px rgba(160,130,255,0.25)',
+            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{
+              color: 'hsl(260 40% 65%)',
+              animation: 'subtitleReveal 1.5s ease-out forwards',
+              textShadow: '0 0 12px rgba(160,130,255,0.3)',
             }}>
               ⚔ 셀레노필 제작 ⚔
             </span>
 
-            {/* Title logo with reserved space (1584:672 ≈ 2.357) */}
-            <div
-              className="mx-auto"
+            {/* Game logo image */}
+            <img
+              src={titleLogo}
+              alt="샵타이탄 퀘스트 시뮬레이터"
+              className="mx-auto select-none"
+              width={1584}
+              height={672}
               style={{
-                width: 'min(760px, 92vw)',
-                aspectRatio: '1584 / 672',
+                maxWidth: 'min(520px, 85vw)',
+                height: 'auto',
+                filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
+                animation: 'glowPulse 4s ease-in-out infinite',
               }}
-            >
-              <img
-                src={titleLogo}
-                alt="샵타이탄 퀘스트 시뮬레이터"
-                className="w-full h-full select-none"
-                width={1584}
-                height={672}
-                fetchPriority="high"
-                decoding="async"
-                style={{
-                  filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
-                  animation: 'glowPulse 4s ease-in-out infinite',
-                }}
-              />
-            </div>
+            />
 
+            {/* Subtitle tagline */}
             <p className="mt-3 text-[12px] tracking-[0.15em]" style={{
               color: 'hsl(260 30% 60%)',
               textShadow: '0 0 8px rgba(160,130,255,0.2)',
@@ -226,35 +213,37 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="mt-2 mb-10" />
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
+            영웅과 챔피언을 관리하고, 미리 던전에 보내<br />
+            최적의 전략을 찾아보세요.
+          </p>
 
           <Button
             size="lg"
             onClick={() => navigate("/dashboard")}
-            className="btn-shine px-14 py-7 font-display tracking-wider relative group
+            className="btn-shine text-base px-12 py-7 font-display tracking-wider relative group
               transition-all duration-300 ease-out
-              hover:scale-105 hover:shadow-[0_0_36px_rgba(180,160,255,0.45),0_0_70px_rgba(200,147,10,0.18)]
+              hover:scale-105 hover:shadow-[0_0_30px_rgba(140,170,255,0.3),0_0_60px_rgba(200,147,10,0.2)]
               active:scale-95"
             style={{
-              background: 'linear-gradient(135deg, hsl(235 45% 22%) 0%, hsl(255 35% 28%) 50%, hsl(225 45% 20%) 100%)',
-              boxShadow: '0 0 24px rgba(160,170,255,0.18), 0 6px 26px rgba(0,0,0,0.5), inset 0 1px 0 rgba(220,225,255,0.32), inset 0 0 0 1px rgba(190,180,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.4)',
-              border: '1px solid rgba(200,205,255,0.45)',
-              borderRadius: '10px',
+              background: 'linear-gradient(135deg, hsl(225 40% 30%), hsl(230 35% 25%))',
+              boxShadow: '0 0 20px rgba(140,170,255,0.15), 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(180,200,255,0.2)',
+              border: '1px solid rgba(140,170,255,0.2)',
             }}
           >
-            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" style={{ color: '#dbe4ff' }} />
+            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" style={{ color: '#c8d8ff' }} />
             <span style={{
               fontFamily: "'Noto Sans KR', sans-serif",
               fontWeight: 700,
-              letterSpacing: '0.2em',
-              fontSize: '1.15rem',
-              background: 'linear-gradient(180deg, #f3f6ff 0%, #d8c8ff 50%, #ffd97a 100%)',
+              letterSpacing: '0.15em',
+              fontSize: '1.1rem',
+              background: 'linear-gradient(180deg, #e8efff, #ffd97a)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-            }}>로그인</span>
+            }}>모험 시작</span>
           </Button>
 
-          <div className="mt-16 animate-bounce opacity-40">
+          <div className="mt-20 animate-bounce opacity-40">
             <div className="w-6 h-10 rounded-full border-2 border-foreground/30 mx-auto flex justify-center pt-2">
               <div className="w-1 h-3 bg-foreground/40 rounded-full" />
             </div>
@@ -262,96 +251,72 @@ const Index = () => {
         </div>
       </div>
 
-      {/* ===== SPONSORS SECTION ===== */}
-      <div className="relative z-10 max-w-2xl mx-auto px-6 pb-32" style={{ marginTop: '-2rem' }}>
-        {/* Outer shimmer frame */}
-        <div
-          className="relative rounded-[28px] p-[3px] overflow-hidden"
-          style={{
-            background: 'linear-gradient(135deg, #dbe1ff 0%, #a8b4e8 18%, #7d8acc 32%, #b6a5e0 50%, #e0d2f0 65%, #8e9bd6 80%, #c9d1f5 100%)',
-            backgroundSize: '300% 300%',
-            animation: 'royalShimmer 9s ease-in-out infinite',
-            boxShadow: '0 12px 50px rgba(120,110,200,0.4), 0 0 32px rgba(180,170,240,0.3), inset 0 0 0 1px rgba(255,255,255,0.18)',
-          }}
-        >
-          {/* Inner thin gold-violet line */}
-          <div
-            className="rounded-[26px] p-[1px]"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,230,170,0.55), rgba(190,170,255,0.55), rgba(255,230,170,0.55))',
-            }}
-          >
-            <div
-              className="rounded-[25px] px-12 py-14 relative"
-              style={{
-                background: 'radial-gradient(ellipse at top, rgba(40,32,68,0.97) 0%, rgba(18,18,32,0.98) 60%, rgba(14,14,26,0.98) 100%)',
-                boxShadow: 'inset 0 1px 0 rgba(220,220,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.5), inset 0 0 60px rgba(140,120,220,0.08)',
-              }}
-            >
-              {/* Ornate corner flourishes */}
-              <div className="absolute top-2 left-3 text-2xl leading-none" style={{ color: 'hsl(250 50% 80%)', textShadow: '0 0 10px rgba(200,180,255,0.7)' }}>❦</div>
-              <div className="absolute top-2 right-3 text-2xl leading-none" style={{ color: 'hsl(250 50% 80%)', textShadow: '0 0 10px rgba(200,180,255,0.7)', transform: 'scaleX(-1)' }}>❦</div>
-              <div className="absolute bottom-2 left-3 text-2xl leading-none" style={{ color: 'hsl(250 50% 80%)', textShadow: '0 0 10px rgba(200,180,255,0.7)', transform: 'scaleY(-1)' }}>❦</div>
-              <div className="absolute bottom-2 right-3 text-2xl leading-none" style={{ color: 'hsl(250 50% 80%)', textShadow: '0 0 10px rgba(200,180,255,0.7)', transform: 'scale(-1,-1)' }}>❦</div>
-
-              {/* Top medallion ribbon */}
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <span className="text-base" style={{ color: 'hsl(45 70% 75%)', textShadow: '0 0 10px rgba(255,220,160,0.6)' }}>━━━━</span>
-                <span className="text-xl" style={{ color: 'hsl(45 80% 78%)', textShadow: '0 0 14px rgba(255,220,160,0.85)' }}>♕</span>
-                <span
-                  className="font-display tracking-[0.45em] text-[12px] uppercase"
+      {/* ===== FEATURES SECTION ===== */}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 pb-32" style={{ marginTop: '-4rem' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {features.map((f, i) => {
+            const Icon = f.icon;
+            const isHovered = hoveredFeature === i;
+            return (
+              <div
+                key={f.title}
+                className="relative cursor-pointer select-none"
+                onMouseEnter={() => setHoveredFeature(i)}
+                onMouseLeave={() => setHoveredFeature(null)}
+                onClick={() => navigate("/dashboard")}
+                style={{
+                  transform: isHovered ? 'translateY(-6px) scale(1.02)' : 'translateY(0) scale(1)',
+                  transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                }}
+              >
+                <div
+                  className="rounded-xl overflow-hidden relative"
                   style={{
-                    background: 'linear-gradient(135deg, #f5e6b8 0%, #e8d2ff 50%, #f5e6b8 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
+                    border: `1px solid ${isHovered ? f.color + '80' : 'hsl(230 12% 22%)'}`,
+                    boxShadow: isHovered
+                      ? `0 8px 32px rgba(0,0,0,0.4), 0 0 24px ${f.color}30`
+                      : '0 2px 8px rgba(0,0,0,0.3)',
+                    transition: 'all 0.3s ease',
                   }}
                 >
-                  Hall of Patrons
-                </span>
-                <span className="text-xl" style={{ color: 'hsl(45 80% 78%)', textShadow: '0 0 14px rgba(255,220,160,0.85)' }}>♕</span>
-                <span className="text-base" style={{ color: 'hsl(45 70% 75%)', textShadow: '0 0 10px rgba(255,220,160,0.6)' }}>━━━━</span>
-              </div>
+                  {/* Card background image */}
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={f.img}
+                      alt={f.title}
+                      className="w-full h-full object-cover transition-transform duration-500"
+                      loading="lazy"
+                      style={{
+                        transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+                      }}
+                    />
+                    <div className="absolute inset-0" style={{
+                      background: `linear-gradient(180deg, transparent 30%, rgba(15,15,25,0.95) 100%)`,
+                    }} />
+                    {/* Top accent line */}
+                    <div className="absolute top-0 left-0 right-0 h-[2px]" style={{
+                      background: `linear-gradient(90deg, transparent, ${f.color}${isHovered ? 'cc' : '40'}, transparent)`,
+                      transition: 'all 0.3s ease',
+                    }} />
+                    {/* Icon overlay */}
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center" style={{
+                      background: 'rgba(0,0,0,0.5)',
+                      border: `1px solid ${f.color}40`,
+                    }}>
+                      <Icon className="w-4 h-4" style={{ color: f.color }} />
+                    </div>
+                  </div>
 
-              {/* Decorative divider */}
-              <div className="flex items-center justify-center gap-2 mb-6">
-                <span className="h-[1px] w-16" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,180,255,0.6), transparent)' }} />
-                <span className="text-sm" style={{ color: 'hsl(250 40% 78%)' }}>✦</span>
-                <span className="text-xs" style={{ color: 'hsl(45 70% 78%)' }}>❖</span>
-                <span className="text-sm" style={{ color: 'hsl(250 40% 78%)' }}>✦</span>
-                <span className="h-[1px] w-16" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,180,255,0.6), transparent)' }} />
+                  {/* Card content */}
+                  <div className="p-4" style={{ background: 'hsl(230 15% 10%)' }}>
+                    <span className="font-display text-[10px] tracking-[0.3em] block mb-1" style={{ color: f.color + '60' }}>{f.num}</span>
+                    <h3 className="text-sm mb-1.5 font-bold" style={{ color: isHovered ? f.color : 'hsl(40 85% 55%)', transition: 'color 0.3s ease' }}>{f.title}</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">{f.desc}</p>
+                  </div>
+                </div>
               </div>
-
-              <ul className="space-y-4 text-center">
-                {sponsors.map((name) => (
-                  <li
-                    key={name}
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontWeight: 600,
-                      fontStyle: 'italic',
-                      fontSize: '1.55rem',
-                      letterSpacing: '0.08em',
-                      background: 'linear-gradient(180deg, #fff8e0 0%, #e6d4ff 50%, #f8e4b8 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      textShadow: '0 0 20px rgba(220,200,255,0.35)',
-                    }}
-                  >
-                    <span style={{ color: 'hsl(45 70% 70%)', WebkitTextFillColor: 'hsl(45 70% 72%)', marginRight: '0.6em', fontSize: '0.85em' }}>❈</span>
-                    {name}
-                    <span style={{ color: 'hsl(45 70% 70%)', WebkitTextFillColor: 'hsl(45 70% 72%)', marginLeft: '0.6em', fontSize: '0.85em' }}>❈</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Bottom divider */}
-              <div className="flex items-center justify-center gap-2 mt-7">
-                <span className="h-[1px] w-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,180,255,0.5), transparent)' }} />
-                <span className="text-sm" style={{ color: 'hsl(45 70% 78%)' }}>❖</span>
-                <span className="h-[1px] w-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,180,255,0.5), transparent)' }} />
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>
