@@ -64,6 +64,21 @@ for (const [, jobs] of Object.entries(HERO_CLASS_MAP)) {
 
 const CLASS_LINE_ORDER: Record<string, number> = { '전사': 0, '로그': 1, '주문술사': 2 };
 
+// Champion → 계열 매핑
+const CHAMPION_CLASS_LINE_MAP: Record<string, '전사' | '로그' | '주문술사'> = {
+  '아르곤': '전사', '루도': '전사', '애쉴리': '전사', '비외른': '전사', '라인홀드': '전사',
+  '시아': '로그', '야미': '로그', '폴로니아': '로그', '태마스': '로그',
+  '릴루': '주문술사', '도노반': '주문술사', '헴마': '주문술사', '맬러디': '주문술사',
+};
+
+function getEffectiveClassLine(hero: Hero): string {
+  if (hero.classLine) return hero.classLine;
+  if (hero.type === 'champion' && hero.championName) {
+    return CHAMPION_CLASS_LINE_MAP[hero.championName] || '';
+  }
+  return '';
+}
+
 const PROMOTED_JOBS = new Set<string>();
 for (const jobs of Object.values(HERO_CLASS_MAP)) {
   for (let i = 1; i < jobs.length; i += 2) {
@@ -72,7 +87,8 @@ for (const jobs of Object.values(HERO_CLASS_MAP)) {
 }
 
 function getJobSortKey(hero: Hero): number {
-  const classLineVal = CLASS_LINE_ORDER[hero.classLine] ?? 99;
+  const cl = getEffectiveClassLine(hero);
+  const classLineVal = CLASS_LINE_ORDER[cl] ?? 99;
   const jobVal = JOB_ORDER[hero.heroClass] ?? 999;
   const promoVal = PROMOTED_JOBS.has(hero.heroClass) ? 1 : 0;
   return classLineVal * 10000 + jobVal * 10 + promoVal;
