@@ -1039,10 +1039,10 @@ export default function EquipmentSelectDialog({
                 >
                   {/* Slot number with quality background */}
                   <div
-                    className="w-5 flex items-center justify-center flex-shrink-0"
+                    className={`w-5 flex items-center justify-center flex-shrink-0 ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
                     style={{ background: s.item ? qualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
                   >
-                    <span className={`text-[10px] font-bold ${s.heavenly ? 'text-white' : 'text-black'}`}>{i + 1}</span>
+                    <span className={`text-[10px] font-bold ${s.heavenly ? 'text-black dark:text-white' : 'text-black'}`}>{i + 1}</span>
                   </div>
                   {s.item ? (
                     <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">
