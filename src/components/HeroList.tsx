@@ -685,8 +685,9 @@ export default function HeroList() {
       );
     }
     if (colKey === 'classLine') {
-      if (!hero.classLine) return <span className="text-muted-foreground">-</span>;
-      return <span className={`${lh} ${CLASS_LINE_COLORS[hero.classLine] || 'text-foreground'}`}>{hero.classLine}</span>;
+      const cl = getEffectiveClassLine(hero);
+      if (!cl) return <span className="text-muted-foreground">-</span>;
+      return <span className={`${lh} ${CLASS_LINE_COLORS[cl] || 'text-foreground'}`}>{cl}</span>;
     }
     if (colKey === 'heroClass') {
       // For champions: show champion name + icon + promoted badge
