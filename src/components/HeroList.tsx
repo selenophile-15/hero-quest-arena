@@ -64,6 +64,21 @@ for (const [, jobs] of Object.entries(HERO_CLASS_MAP)) {
 
 const CLASS_LINE_ORDER: Record<string, number> = { '전사': 0, '로그': 1, '주문술사': 2 };
 
+// Champion → 계열 매핑
+const CHAMPION_CLASS_LINE_MAP: Record<string, '전사' | '로그' | '주문술사'> = {
+  '아르곤': '전사', '루도': '전사', '애쉴리': '전사', '비외른': '전사', '라인홀드': '전사',
+  '시아': '로그', '야미': '로그', '폴로니아': '로그', '태마스': '로그',
+  '릴루': '주문술사', '도노반': '주문술사', '헴마': '주문술사', '맬러디': '주문술사',
+};
+
+function getEffectiveClassLine(hero: Hero): string {
+  if (hero.classLine) return hero.classLine;
+  if (hero.type === 'champion' && hero.championName) {
+    return CHAMPION_CLASS_LINE_MAP[hero.championName] || '';
+  }
+  return '';
+}
+
 const PROMOTED_JOBS = new Set<string>();
 for (const jobs of Object.values(HERO_CLASS_MAP)) {
   for (let i = 1; i < jobs.length; i += 2) {
@@ -72,7 +87,8 @@ for (const jobs of Object.values(HERO_CLASS_MAP)) {
 }
 
 function getJobSortKey(hero: Hero): number {
-  const classLineVal = CLASS_LINE_ORDER[hero.classLine] ?? 99;
+  const cl = getEffectiveClassLine(hero);
+  const classLineVal = CLASS_LINE_ORDER[cl] ?? 99;
   const jobVal = JOB_ORDER[hero.heroClass] ?? 999;
   const promoVal = PROMOTED_JOBS.has(hero.heroClass) ? 1 : 0;
   return classLineVal * 10000 + jobVal * 10 + promoVal;
@@ -147,7 +163,7 @@ function findUniqueSkillByJob(allUnique: Record<string, any>, jobName: string) {
 }
 
 // Default hidden columns
-const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'type', 'critDmg', 'position'];
+const DEFAULT_HIDDEN_COLS = ['classLine', 'threat', 'seeds', 'airshipPower', 'critDmg', 'position', 'label'];
 
 function createScreenshotOverlay() {
   const overlay = document.createElement('div');
@@ -451,7 +467,7 @@ export default function HeroList() {
   // Album filtered list
   const albumFiltered = useMemo(() => {
     let list = [...activeList];
-    if (albumFilterClassLine !== 'all') list = list.filter(h => h.classLine === albumFilterClassLine);
+    if (albumFilterClassLine !== 'all') list = list.filter(h => getEffectiveClassLine(h) === albumFilterClassLine);
     if (albumFilterElement !== 'all') list = list.filter(h => h.element === albumFilterElement);
     if (albumFilterJob !== 'all') list = list.filter(h => h.heroClass === albumFilterJob);
 
@@ -669,8 +685,9 @@ export default function HeroList() {
       );
     }
     if (colKey === 'classLine') {
-      if (!hero.classLine) return <span className="text-muted-foreground">-</span>;
-      return <span className={`${lh} ${CLASS_LINE_COLORS[hero.classLine] || 'text-foreground'}`}>{hero.classLine}</span>;
+      const cl = getEffectiveClassLine(hero);
+      if (!cl) return <span className="text-muted-foreground">-</span>;
+      return <span className={`${lh} ${CLASS_LINE_COLORS[cl] || 'text-foreground'}`}>{cl}</span>;
     }
     if (colKey === 'heroClass') {
       // For champions: show champion name + icon + promoted badge
@@ -1183,8 +1200,9 @@ export default function HeroList() {
       : hero.heroClass ? getJobIllustPath(hero.heroClass) : '';
     const isChampion = hero.type === 'champion';
     const equipSlots = hero.equipmentSlots || Array.from({ length: isChampion ? 2 : 6 }, () => ({ item: null, quality: 'common', element: null, spirit: null }));
-    const borderColor = hero.classLine ? (CLASS_LINE_BORDER_COLOR[hero.classLine] || '#6b7280') : '#a855f7';
-    const borderShadow = hero.classLine ? (CLASS_LINE_SHADOW_STYLE[hero.classLine] || 'none') : '0 0 12px rgba(168,85,247,0.3)';
+    const effClassLine = getEffectiveClassLine(hero);
+    const borderColor = effClassLine ? (CLASS_LINE_BORDER_COLOR[effClassLine] || '#6b7280') : '#a855f7';
+    const borderShadow = effClassLine ? (CLASS_LINE_SHADOW_STYLE[effClassLine] || 'none') : '0 0 12px rgba(168,85,247,0.3)';
     const isFlipped = flippedCards.has(hero.id);
 
     let leaderSkillIcon = '';
@@ -1628,7 +1646,7 @@ export default function HeroList() {
                     </th>
                   ))}
                   {!captureMode && (
-                  <th className="px-3 py-3 text-center text-muted-foreground font-medium">
+                  <th className="px-3 py-3 text-center font-bold min-w-[110px]">
                     <div className="flex items-center justify-center gap-1">
                       <button
                         onClick={() => {
@@ -1643,7 +1661,7 @@ export default function HeroList() {
                             setSelectedForDelete(new Set());
                           }
                         }}
-                        className={`text-sm font-medium transition-colors ${manageMode ? 'text-yellow-400' : 'text-muted-foreground hover:text-foreground'}`}
+                        className={`text-sm font-bold transition-colors ${manageMode ? 'text-primary' : 'text-foreground hover:text-primary'}`}
                       >
                         관리
                       </button>
@@ -1696,21 +1714,33 @@ export default function HeroList() {
                           );
                         })}
                         {!captureMode && (
-                        <td className="px-3 py-3 text-center align-middle">
+                        <td className="px-3 py-3 text-center align-middle min-w-[110px]">
                           <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
                             {manageMode ? (
-                              <button
-                                onClick={() => toggleSelectForDelete(hero.id)}
-                                className={`p-1.5 rounded transition-colors ${isSelectedForDel ? 'text-yellow-400' : 'text-muted-foreground hover:text-destructive'}`}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                              <>
+                                <button className="p-1.5 rounded invisible" tabIndex={-1} aria-hidden>
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => toggleSelectForDelete(hero.id)}
+                                  className={`p-1.5 rounded transition-colors ${
+                                    isSelectedForDel
+                                      ? 'bg-primary/20 text-primary'
+                                      : 'text-muted-foreground hover:bg-primary/20 hover:text-primary'
+                                  }`}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                                <button className="p-1.5 rounded invisible" tabIndex={-1} aria-hidden>
+                                  <Copy className="w-4 h-4" />
+                                </button>
+                              </>
                             ) : (
                               <>
                                 <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                                   <Pencil className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                                <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-primary/20 transition-colors text-muted-foreground hover:text-primary">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                                 <button onClick={() => handleCopyHero(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary" title="복사">
