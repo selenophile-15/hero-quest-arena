@@ -1304,3 +1304,43 @@ a.bg-accent *,
 .stat-breakdown-box .text-white\/70 { color: rgba(255,255,255,0.85) !important; }
 .stat-breakdown-box .text-white\/80 { color: rgba(255,255,255,0.9) !important; }
 .stat-breakdown-box .text-muted-foreground { color: hsl(0 0% 65%) !important; }
+
+/* ─── 천상(Airship Heaven) 적용 장비 박스 ─── */
+.equip-heavenly {
+  position: relative;
+  border-color: transparent !important;
+  background-clip: padding-box;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.4),
+    0 0 8px 2px rgba(180, 230, 255, 0.55),
+    0 0 14px 4px rgba(255, 180, 230, 0.35) !important;
+}
+.equip-heavenly::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: repeating-linear-gradient(
+    45deg,
+    #ff5e5e 0,
+    #ffb84d 12px,
+    #fff45e 24px,
+    #6dffb0 36px,
+    #5edcff 48px,
+    #c97bff 60px,
+    #ff7bd4 72px,
+    #ff5e5e 84px
+  );
+  background-size: 200% 200%;
+  animation: heavenly-spin 6s linear infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes heavenly-spin {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 200%; }
+}
