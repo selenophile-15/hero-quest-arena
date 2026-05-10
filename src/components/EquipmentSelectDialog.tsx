@@ -837,7 +837,7 @@ export default function EquipmentSelectDialog({
                                 className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
-                                }`}
+                                } ${isSelected && slots[activeSlot]?.heavenly ? `equip-heavenly equip-q-${quality}` : ''}`}
                                 style={isSelected ? {
                                   background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 100%)`,
                                   boxShadow: QUALITY_SHADOW[quality],
