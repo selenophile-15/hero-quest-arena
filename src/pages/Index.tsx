@@ -1,15 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Monitor, Swords, Shield, Trophy } from "lucide-react";
+import { Monitor, Swords } from "lucide-react";
 import { useMobileGestures } from "@/hooks/use-mobile-gestures";
 import { useDesktopModeState } from "@/hooks/use-desktop-mode";
 
 import landingBg from "@/assets/landing-bg.jpg";
 import titleLogo from "@/assets/title-logo.png";
-import featureList from "@/assets/feature-list.jpg";
-import featureQuest from "@/assets/feature-quest.jpg";
-import featureRanking from "@/assets/feature-ranking.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
