@@ -155,10 +155,10 @@ export default function Dashboard() {
             target="_blank"
             rel="noopener noreferrer"
             title="Buy me a subscription"
-            className="flex items-center gap-2 px-4 py-1.5 rounded-md text-base font-semibold border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
-            style={{ fontFamily: "'Cookie', cursive", marginRight: '120px' }}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-md text-lg font-semibold border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+            style={{ fontFamily: "'Cookie', cursive" }}
           >
-            <span className="text-lg">💻</span>
+            <span className="text-base">💻</span>
             <span>Buy me a subscription</span>
           </a>
         </div>
