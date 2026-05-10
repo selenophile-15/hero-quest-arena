@@ -413,12 +413,10 @@ export default function HeroList() {
         if (slot?.item?.imagePath) imagesToPreload.add(slot.item.imagePath);
       });
     });
-    imagesToPreload.forEach(src => {
-      if (src) {
-        const img = new Image();
-        img.src = src;
-      }
-    });
+    // Add element + stat icons (used in list summary, expanded rows, album)
+    Object.values(ELEMENT_ICON_MAP).forEach(p => imagesToPreload.add(p));
+    Object.values(STAT_ICON_MAP).forEach(p => imagesToPreload.add(p));
+    preloadImages(imagesToPreload);
   }, [heroes]);
 
   const heroList = useMemo(() => heroes.filter(h => h.type === 'hero'), [heroes]);
