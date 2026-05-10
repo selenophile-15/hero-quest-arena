@@ -1336,7 +1336,7 @@ a.bg-accent *,
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
   background-image:
     radial-gradient(circle at 14% 22%, rgba(255,255,255,0.95) 0, rgba(255,255,255,0) 1.6px),
     radial-gradient(circle at 78% 18%, rgba(220,235,255,0.9) 0, rgba(220,235,255,0) 1.2px),
