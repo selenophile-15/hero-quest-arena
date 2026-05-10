@@ -887,7 +887,9 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                                     }
 
                                     const quality = equipmentSlots[slotIdx]?.quality || 'common';
-                                    newSlots[slotIdx] = { item: { ...item }, quality, element: newElement, spirit: newSpirit };
+                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.heavenly;
+                                    const heavenly = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
+                                    newSlots[slotIdx] = { item: { ...item }, quality, heavenly, element: newElement, spirit: newSpirit };
                                   }
                                   setEquipmentSlots(newSlots);
                                 }}
