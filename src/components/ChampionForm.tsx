@@ -769,6 +769,7 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
                         newSlots[slotIdx] = {
                           item: { ...item },
                           quality: existingSlot?.quality || equipSlotQuality,
+                          heavenly: (item as any)['천상'] === 1.25 ? true : !!existingSlot?.heavenly,
                           element: slotElement,
                           spirit: slotSpirit,
                         };
