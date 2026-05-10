@@ -1313,7 +1313,10 @@ a.bg-accent *,
     radial-gradient(ellipse at 72% 62%, rgba(230,190,240,0.45) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 50%, rgba(255,210,235,0.28) 0%, transparent 60%),
     linear-gradient(135deg, #1a1d3e 0%, #2a1f4d 45%, #3b2a5e 100%) !important;
+  isolation: isolate;
 }
+/* 자식 콘텐츠(장비 이미지·텍스트)가 항상 ::after 광채 위에 올라오도록 스택 정리 */
+.equip-heavenly > * { position: relative; z-index: 2; }
 /* 라이트모드: 오팔(opal) 톤 — 가장자리 밝게(테두리 강조) + 중앙 무지갯빛 파스텔 */
 [data-color-mode="light"] .equip-heavenly {
   background:
@@ -1333,7 +1336,7 @@ a.bg-accent *,
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
   background-image:
     radial-gradient(circle at 14% 22%, rgba(255,255,255,0.95) 0, rgba(255,255,255,0) 1.6px),
     radial-gradient(circle at 78% 18%, rgba(220,235,255,0.9) 0, rgba(220,235,255,0) 1.2px),
