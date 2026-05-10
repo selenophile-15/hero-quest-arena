@@ -412,6 +412,17 @@ export default function HeroList() {
       });
       hero.equipmentSlots?.forEach((slot: any) => {
         if (slot?.item?.imagePath) imagesToPreload.add(slot.item.imagePath);
+        const el = slot?.element;
+        if (el?.type && el?.tier) {
+          imagesToPreload.add(`/images/enchant/element/${ELEMENT_ENG_MAP[el.type] || el.type}${el.tier}_${el.affinity ? '2' : '1'}.webp`);
+        }
+        const sp = slot?.spirit;
+        if (sp?.name === '문드라') {
+          imagesToPreload.add('/images/enchant/spirit/mundra.webp');
+        } else if (sp?.name) {
+          const eng = SPIRIT_NAME_MAP[sp.name];
+          if (eng) imagesToPreload.add(`/images/enchant/spirit/${eng}_${sp.affinity ? '2' : '1'}.webp`);
+        }
       });
     });
     // Add element + stat icons (used in list summary, expanded rows, album)
