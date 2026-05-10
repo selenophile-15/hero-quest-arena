@@ -135,6 +135,7 @@ export interface ManualEquipmentData {
   uniqueSpirit: string;
   isRelic: boolean;
   relicBonuses: RelicStatBonus[];
+  heavenly?: boolean;
 }
 
 interface ManualEquipmentFormProps {
@@ -171,6 +172,7 @@ function emptyData(): ManualEquipmentData {
     uniqueSpirit: '',
     isRelic: false,
     relicBonuses: [],
+    heavenly: false,
   };
 }
 
@@ -300,7 +302,8 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
       manual: true,
       manualData: { ...data, type: effectiveType },
       relicStatBonuses: (isAurasong || data.isRelic) ? data.relicBonuses : undefined,
-    };
+      ['천상' as any]: data.heavenly ? 1.25 : 1,
+    } as EquipmentItem;
 
     onConfirm(item, data);
   };
@@ -373,7 +376,18 @@ const ManualEquipmentForm = forwardRef<ManualEquipmentFormRef, ManualEquipmentFo
           {/* Stats */}
           <div className="grid grid-cols-[64px_1fr] gap-2 items-center text-sm mt-1">
             <span className="text-foreground font-medium">스탯</span>
-            <span className="text-yellow-400 text-xs font-semibold">⚠ 일반 등급 기준</span>
+            <div className="flex items-center gap-3">
+              <span className="text-yellow-400 text-xs font-semibold">⚠ 일반 등급 기준</span>
+              <label className="flex items-center gap-1 text-xs cursor-pointer ml-auto" title="천상 적용 시 장비 스탯 ×1.25">
+                <input
+                  type="checkbox"
+                  checked={!!data.heavenly}
+                  onChange={e => update('heavenly', e.target.checked)}
+                  className="w-3.5 h-3.5 cursor-pointer"
+                />
+                <span className="text-foreground/80">천상 (×1.25)</span>
+              </label>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm">
             {/* Left: atk, def, hp */}

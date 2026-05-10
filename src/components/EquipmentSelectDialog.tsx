@@ -670,6 +670,7 @@ export default function EquipmentSelectDialog({
                       newSlots[activeSlot] = {
                         item: { ...item },
                         quality: existingSlot?.quality || slotQuality,
+                        heavenly: (item as any)['천상'] === 1.25 ? true : !!existingSlot?.heavenly,
                         element: slotElement,
                         spirit: slotSpirit,
                       };
@@ -856,7 +857,7 @@ export default function EquipmentSelectDialog({
                                   )}
                                   <div className="flex-1 w-full flex items-center justify-center pt-3">
                                     {item.imagePath ? (
-                                      <img src={item.imagePath} alt={item.name} className="w-16 h-16 object-contain"
+                                      <img src={item.imagePath} alt={item.name} className="w-20 h-20 object-contain"
                                         onError={e => {
                                           e.currentTarget.style.display = 'none';
                                           const p = e.currentTarget.parentElement;
