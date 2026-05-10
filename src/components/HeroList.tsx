@@ -1714,21 +1714,33 @@ export default function HeroList() {
                           );
                         })}
                         {!captureMode && (
-                        <td className="px-3 py-3 text-center align-middle">
+                        <td className="px-3 py-3 text-center align-middle min-w-[110px]">
                           <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
                             {manageMode ? (
-                              <button
-                                onClick={() => toggleSelectForDelete(hero.id)}
-                                className={`p-1.5 rounded transition-colors ${isSelectedForDel ? 'text-yellow-400' : 'text-muted-foreground hover:text-destructive'}`}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                              <>
+                                <button className="p-1.5 rounded invisible" tabIndex={-1} aria-hidden>
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => toggleSelectForDelete(hero.id)}
+                                  className={`p-1.5 rounded transition-colors ${
+                                    isSelectedForDel
+                                      ? 'bg-primary/20 text-primary'
+                                      : 'text-muted-foreground hover:bg-primary/20 hover:text-primary'
+                                  }`}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                                <button className="p-1.5 rounded invisible" tabIndex={-1} aria-hidden>
+                                  <Copy className="w-4 h-4" />
+                                </button>
+                              </>
                             ) : (
                               <>
                                 <button onClick={() => setEditing(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                                   <Pencil className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-destructive/20 transition-colors text-muted-foreground hover:text-destructive">
+                                <button onClick={() => setDeleteTarget(hero)} className="p-1.5 rounded hover:bg-primary/20 transition-colors text-muted-foreground hover:text-primary">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                                 <button onClick={() => handleCopyHero(hero)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary" title="복사">
