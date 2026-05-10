@@ -837,7 +837,7 @@ export default function EquipmentSelectDialog({
                                 className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
-                                }`}
+                                } ${isSelected && slots[activeSlot]?.heavenly ? `equip-heavenly equip-q-${quality}` : ''}`}
                                 style={isSelected ? {
                                   background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 100%)`,
                                   boxShadow: QUALITY_SHADOW[quality],
@@ -1034,12 +1034,12 @@ export default function EquipmentSelectDialog({
                   onClick={() => setActiveSlot(i)}
                   className={`flex items-stretch gap-0 rounded border-[2.5px] cursor-pointer transition-all overflow-hidden ${
                     s.item ? QUALITY_BORDER[s.quality] : 'border-border/30 opacity-60'
-                  } ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
+                  }`}
                   style={s.item ? { boxShadow: `0 0 4px ${QUALITY_RADIAL[s.quality]?.replace(/[\d.]+\)$/, '0.3)')}` } : {}}
                 >
                   {/* Slot number with quality background */}
                   <div
-                    className="w-5 flex items-center justify-center flex-shrink-0"
+                    className={`w-5 flex items-center justify-center flex-shrink-0 ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
                     style={{ background: s.item ? qualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
                   >
                     <span className="text-[10px] font-bold text-black">{i + 1}</span>
