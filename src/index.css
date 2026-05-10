@@ -1358,6 +1358,14 @@ a.bg-accent *,
     linear-gradient(135deg, #f5e8ff 0%, #e6f2ff 50%, #ecfff2 100%) !important;
 }
 
+.heavenly-slot-number {
+  color: hsl(0 0% 100%) !important;
+}
+
+[data-color-mode="light"] .heavenly-slot-number {
+  color: hsl(0 0% 0%) !important;
+}
+
 /* 등급별 내부 광채(외부 광채와 동일한 굵기·색상으로 안쪽으로 향함) */
 .equip-heavenly { position: relative; }
 .equip-heavenly > .equip-inner-glow,
