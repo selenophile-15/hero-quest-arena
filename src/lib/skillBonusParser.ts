@@ -268,7 +268,7 @@ export function combineBonuses(
     threat: skillResult.summary.threat + soulResult.summary.threat,
     detail: {
       hpRegenPerTurn: sd.hpRegenPerTurn + sod.hpRegenPerTurn,
-      survivalChance: sd.survivalChance + sod.survivalChance,
+      survivalChance: Math.min(100, sd.survivalChance + sod.survivalChance),
       restReduction: sd.restReduction + sod.restReduction,
       sharkAtkPct: sd.sharkAtkPct + sod.sharkAtkPct,
       dinoAtkPct: sd.dinoAtkPct + sod.dinoAtkPct,
