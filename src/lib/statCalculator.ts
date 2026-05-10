@@ -302,7 +302,10 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   detailStats['공통 방어력 계수'] = bonusSummary.pctDef;
   detailStats['공통 체력 계수'] = bonusSummary.pctHp;
   if (d.hpRegenPerTurn) detailStats['매 턴 체력 재생'] = d.hpRegenPerTurn;
-  if (d.survivalChance) detailStats['죽기 전 공격 한 번 버틸 확률'] = d.survivalChance;
+  // 치명타 생존 확률 — 비숍/성직자는 무조건 100%, 합산 후 100% 클램프
+  const isClericOrBishop = jobName === '비숍' || jobName === '성직자';
+  const survival = Math.min(100, isClericOrBishop ? 100 : (d.survivalChance || 0));
+  if (survival > 0) detailStats['치명타 생존 확률%'] = survival;
   if (d.restReduction) detailStats['휴식시간 감소%'] = d.restReduction;
 
   // Conditional ATK bonuses — store % values only (actual ATK computed in simulation)
