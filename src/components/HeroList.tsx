@@ -968,7 +968,7 @@ export default function HeroList() {
     const seedColor = (val: number) => val === 80 ? 'theme-highlight-80' : val === 40 ? 'theme-highlight-40' : val === 0 ? 'text-foreground/20' : '';
 
     return (
-      <tr id={`expanded-${hero.id}`} className="border-b border-primary/20" style={{ backgroundColor: 'hsl(var(--primary) / 0.18)' }}>
+      <tr id={`expanded-${hero.id}`} className="row-expanded-detail border-b border-primary/30">
         <td colSpan={activeCols.length + 1} className="px-4 py-4">
           <div className="flex gap-4">
             {/* Stats Box */}
