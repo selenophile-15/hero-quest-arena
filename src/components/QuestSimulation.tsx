@@ -2102,6 +2102,10 @@ export default function QuestSimulation() {
                           </tr>
                         </thead>
                         <tbody>
+                          {zeroBucket ? (
+                            <EmptyBucketRow tab={mainResultsTab} colSpan={11} />
+                          ) : (
+                          <>
                           {displayResults.map((hr, idx) => {
                             const dmgPct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
                             const barColors = ['bg-red-500', 'bg-blue-500', 'bg-lime-500', 'bg-yellow-500', 'bg-purple-500'];
