@@ -3299,6 +3299,23 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   if (rudoBonusBase > 0) {
     log.push({ round: 0, type: 'event', actor: champName, detail: `루도 리더 스킬: 치확 +${Math.round(rudoBonusBase * 100)}% (${rudoRounds}라운드)` });
   }
+  if (isPoloniaChamp) {
+    log.push({ round: 0, type: 'event', actor: champName, detail: `폴로니아 리더 스킬: 매 공격 ${(poloniaLootChance * 100).toFixed(1)}% 확률로 아이템 훔치기 (최대 ${poloniaLootCap}개)` });
+  }
+  for (let i = 0; i < numHeroes; i++) {
+    if (heroIsSamuraiFlag[i] || heroIsDaimyoFlag[i]) {
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsDaimyoFlag[i] ? '다이묘' : '사무라이'} 고유 스킬: 첫 턴 확정 치명타 + 배리어 무시` });
+    }
+    if (heroIsDaimyoFlag[i]) {
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `다이묘 고유 스킬: 첫 피격 확정 회피` });
+    }
+    if (heroIsDarkKnightFlag[i]) {
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `${activeHeroes[i].heroClass} 고유 스킬: 적 HP 10% 미만 시 처형` });
+    }
+    if (heroPersonalRegen[i] > 0) {
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `매 턴 체력 재생 +${formatNum(heroPersonalRegen[i])}` });
+    }
+  }
 
   let mobHpCurrent = totalMobHp;
   let heroesAlive = numHeroes;
