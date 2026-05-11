@@ -348,7 +348,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       >
         <span className="shrink-0 w-5 flex items-center justify-center">{icon}</span>
 
-        <div className="flex-1 min-w-0 flex items-center gap-1 flex-wrap">
+        <div className="flex-1 min-w-0 flex items-center gap-1">
           {/* Actor → Target */}
           {entry.actor && entry.actor !== '시스템' && (
             <span className="font-bold text-sm" style={{ color: getNameColor(entry.actor) }}>{entry.actor}</span>
@@ -364,18 +364,18 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           {(entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) ? (
             <>
               {damageText && (
-                <span className="font-mono font-bold text-sm ml-8" style={{ color: getDamageColor() }}>{damageText}</span>
+                <span className="font-mono font-bold text-sm ml-4 text-foreground/70">{damageText}</span>
               )}
 
               {hpText && (
-                <span className="font-mono font-bold text-sm ml-8" style={{ color: hpColor(getHpPctFromText()) }}>{hpText}</span>
+                <span className="font-mono font-bold text-sm ml-auto text-foreground/70 shrink-0">{hpText}</span>
               )}
             </>
           ) : entry.type === 'monster_attack' && !entry.target ? (
             // AOE header line
             <span className="ml-1 text-sm text-red-400 font-bold">{entry.detail}</span>
           ) : isEvasion ? (
-            <span className="text-teal-400 font-bold text-sm ml-8">회피</span>
+            <span className="text-teal-400 font-bold text-sm ml-4">회피</span>
           ) : (
             <span className={`ml-1 text-sm ${
               isDeath ? 'text-red-400 font-bold' :
