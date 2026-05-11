@@ -2939,7 +2939,9 @@ export default function QuestSimulation() {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {!hasHemma ? (
+                                      {zeroBucket ? (
+                                        <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                      ) : !hasHemma ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">헴마 챔피언이 파티에 없음</td></tr>
                                       ) : (() => {
                                         const totalCount = displayResults.reduce((s, r) => s + (r.isHemmaHero ? 0 : (r.hemmaAbsorbedCount ?? 0)), 0);
