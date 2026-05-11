@@ -2067,6 +2067,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             conqStackCritCount[s][i] += simConqStackCritCount[s][i];
             conqStackResetCount[s][i] += simConqStackResetCount[s][i];
             conqStackAttackCount[s][i] += simConqStackAttackCount[s][i];
+            conqStackTotalDmgAccum[s][i] += simConqStackTotalDmgAccum[s][i];
           }
 
           // Berserker per-stage damage is tracked directly on global accumulators
