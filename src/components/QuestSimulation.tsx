@@ -2726,7 +2726,9 @@ export default function QuestSimulation() {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {ninjaSenseiRows.length === 0 ? (
+                                    {zeroBucket ? (
+                                      <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
+                                    ) : ninjaSenseiRows.length === 0 ? (
                                       <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">닌자 / 센세 직업 파티원 없음</td></tr>
                                     ) : ninjaSenseiRows.map((hr, idx) => {
                                       const wIn = hr.withInnateAvgDmg ?? 0;
