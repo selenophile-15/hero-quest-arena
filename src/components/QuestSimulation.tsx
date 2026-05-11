@@ -2088,17 +2088,17 @@ export default function QuestSimulation() {
                             <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
                             <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}><GroupHeader label="대미지 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
                           </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
-                            <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
-                            <th className="text-center py-1 px-2">평균</th>
-                            <th className="text-center py-1 px-2">최대</th>
-                            <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
-                            <th className="text-center py-1 px-2">평균</th>
-                            <th className="text-center py-1 px-2">최대</th>
-                            <th className="text-center py-1 px-2 border-l-4 border-border">일반</th>
-                            <th className="text-center py-1 px-2">치명</th>
-                            <th className="text-center py-1 px-2 border-l-4 border-border">비율</th>
-                            <th className="text-center py-1 px-2">그래프</th>
+                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                            <th className="text-center py-1 px-2 border-l-4 border-border bg-secondary/60">최소</th>
+                            <th className="text-center py-1 px-2 bg-secondary/60">평균</th>
+                            <th className="text-center py-1 px-2 bg-secondary/60">최대</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border bg-secondary/30">최소</th>
+                            <th className="text-center py-1 px-2 bg-secondary/30">평균</th>
+                            <th className="text-center py-1 px-2 bg-secondary/30">최대</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border bg-secondary/60">일반</th>
+                            <th className="text-center py-1 px-2 bg-secondary/60">치명</th>
+                            <th className="text-center py-1 px-2 border-l-4 border-border bg-secondary/30">비율</th>
+                            <th className="text-center py-1 px-2 bg-secondary/30">그래프</th>
                           </tr>
                         </thead>
                         <tbody>
