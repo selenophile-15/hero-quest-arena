@@ -2411,10 +2411,8 @@ export default function QuestSimulation() {
                                     const aMin = hr.aoeDmgTakenMin ?? 0;
                                     const aAvg = hr.aoeDmgTakenAvg ?? 0;
                                     const aMax = hr.aoeDmgTakenMax ?? 0;
-                                    // 치명타 확률 = max(5, monsterCrit - evasion). 회피가 몬스터 치확보다 +20% 이상이면 최소 5%로 고정.
-                                    const monCrit = hr.monsterCritChance ?? 0;
-                                    const eva = hr.finalEvasion ?? 0;
-                                    const critProb = Math.max(5, Math.round((monCrit - eva) * 10) / 10);
+                                    // 치명타 확률 = 몬스터 기본 치확(미니보스 효과 포함) + 음수 회피 보너스(최대 +5%).
+                                    const critProb = Math.round((hr.monsterCritChance ?? 0) * 10) / 10;
                                     return (
                                       <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                         <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
