@@ -10,6 +10,7 @@
 
 import { Hero } from '@/types/game';
 import { getChampionLeaderSkillTier, getCombatSkillTier } from '@/lib/championTier';
+import { getAurasongBonusStatsSync } from '@/lib/championEquipUtils';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
