@@ -435,7 +435,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                         ) : (
                           <div className="flex items-center gap-1 justify-center">
                             {jobIconPath && <img src={jobIconPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                            <span className="text-xs whitespace-nowrap text-muted-foreground">{jobLabel}</span>
+                            <span className="text-xs whitespace-nowrap font-bold text-foreground">{jobLabel}</span>
                           </div>
                         )}
                       </td>
