@@ -2770,29 +2770,29 @@ export default function QuestSimulation() {
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide" rowSpan={2}>파티원</th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide" rowSpan={2}>단계</th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide" colSpan={2}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide" rowSpan={2}>파티원</th>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide" rowSpan={2}>단계</th>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide" colSpan={2}>
                                       <GroupHeader label="기본" info={'각 단계의 기준 체력과 발동 비율(단계별 합산 100%).'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={5}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={5}>
                                       <GroupHeader label="공격력" info={'단계별 공격력% 증가, 일반/치명/평균 대미지 및 단계별 가한 대미지 비중.'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
                                       <GroupHeader label="회피" info={'단계별 회피% 증가, 최종 회피, 실제 회피율.'} />
                                     </th>
                                   </tr>
-                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
-                                    <th className="text-center py-1 px-2">기준 체력</th>
-                                    <th className="text-center py-1 px-2">발동 비율</th>
-                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40">공격력%</th>
-                                    <th className="text-center py-1 px-2">일반</th>
-                                    <th className="text-center py-1 px-2">치명</th>
-                                    <th className="text-center py-1 px-2">평균</th>
-                                    <th className="text-center py-1 px-2">대미지 비중</th>
-                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40">회피%</th>
-                                    <th className="text-center py-1 px-2">최종 회피</th>
-                                    <th className="text-center py-1 px-2">실제 회피율</th>
+                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                                    <th className="text-center py-1 px-2 bg-secondary/20">기준 체력</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/20">발동 비율</th>
+                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">공격력%</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/70">일반</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/70">치명</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/70">대미지 비중</th>
+                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">회피%</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/20">최종 회피</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/20">실제 회피율</th>
                                   </tr>
                                 </thead>
                                 <tbody>
