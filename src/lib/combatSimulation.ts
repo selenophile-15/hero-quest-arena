@@ -707,14 +707,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     heroEvasion.push(ps ? ps.evasion / 100 : (h.evasion || 0) / 100);
     heroThreat.push(h.threat || 1);
 
-    // PDF formula fields — derive via inversion when not provided
+    // PDF formula fields — read pre-pct constants directly from detailStats.
+    // Inversion is only a legacy fallback for heroes computed before the field existed.
     heroAtkRaw.push(h.atk || 0);
     const cAtk = ps?.commonAtkPct ?? ((h as any).detailStats?.['공통 공격력 계수'] ?? 0) / 100;
     const cDef = ps?.commonDefPct ?? ((h as any).detailStats?.['공통 방어력 계수'] ?? 0) / 100;
     heroCommonAtkPct.push(cAtk);
     heroCommonDefPct.push(cDef);
-    heroAtkConst.push(ps?.atkConstant ?? ((1 + cAtk) > 0 ? (h.atk || 0) / (1 + cAtk) : 0));
-    heroDefConst.push(ps?.defConstant ?? ((1 + cDef) > 0 ? (h.def || 0) / (1 + cDef) : 0));
+    const storedAtkConst = (h as any).detailStats?.['공격력 상수'];
+    const storedDefConst = (h as any).detailStats?.['방어력 상수'];
+    heroAtkConst.push(ps?.atkConstant ?? storedAtkConst ?? ((1 + cAtk) > 0 ? (h.atk || 0) / (1 + cAtk) : 0));
+    heroDefConst.push(ps?.defConstant ?? storedDefConst ?? ((1 + cDef) > 0 ? (h.def || 0) / (1 + cDef) : 0));
     heroPartyAtkMult.push(ps?.partyAtkMult ?? 1);
     heroPartyDefMult.push(ps?.partyDefMult ?? 1);
 
@@ -1027,22 +1030,30 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
   } // end else (no precomputed stats)
 
+  // ─── Mundra fold-in (one-time, boss only) ───
+  // Mundra's +20%×stack ATK/DEF stays active for the entire boss fight, so we fold it
+  // into finalAtk/finalDef once instead of re-computing every turn. This also makes the
+  // displayed stat table reflect the buffed value (which is what the user expects for
+  // a permanent boss-fight buff, in contrast to Shark/Dino/Berserker/Hemma which are
+  // conditional/cumulative and stay excluded from the table).
+  if (monster.isBoss) {
+    for (let i = 0; i < numHeroes; i++) {
+      if (heroMundra[i] > 0) {
+        const atkAdd = heroAtkConst[i] * 0.2 * heroMundra[i] * (heroPartyAtkMult[i] || 1);
+        const defAdd = heroDefConst[i] * 0.2 * heroMundra[i] * (heroPartyDefMult[i] || 1);
+        finalAtk[i] += atkAdd;
+        finalDef[i] += defAdd;
+      }
+    }
+  }
+
   // ─── Damage taken calculation (using actual defense thresholds) ───
-  // Mundra spirit: when fighting a boss, adds +20% per stack to BOTH ATK and DEF
-  // (matches the detail-stats label '문드라 - 보스 상대 공격력/방어력 증가%').
-  // DEF bonus is constant per-hero, so we fold it into finalDef once here.
   const damageTaken: number[] = [];
   const critDamageTaken: number[] = [];
   const defThresholds: DefThresholds = monster.def;
 
   for (let i = 0; i < numHeroes; i++) {
-    let effDef = finalDef[i];
-    if (monster.isBoss && heroMundra[i] > 0) {
-      // Add atkConstant-equivalent for DEF: defConstant * 0.2 * mundra * partyDefMult
-      const defCondAdd = heroDefConst[i] * 0.2 * heroMundra[i] * (heroPartyDefMult[i] || 1);
-      effDef = finalDef[i] + defCondAdd;
-    }
-    const dmg = calcDamageTakenWithThresholds(effDef, mobDamage, defThresholds);
+    const dmg = calcDamageTakenWithThresholds(finalDef[i], mobDamage, defThresholds);
     damageTaken.push(dmg);
     critDamageTaken.push(calcCritDamageTaken(dmg, mobDamage));
   }
@@ -1702,13 +1713,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             lostInnate[drainTarget] = round;
           }
           // Hemma attack bonus: standalone ATK (with current condPct) × hemmaMult per drain.
-          // Per PDF: '그 턴의 (단독)최종ATK × hemmaMult' — scales with Shark/Dino/Mundra/Berserker.
+          // Per PDF: '그 턴의 (단독)최종ATK × hemmaMult' — scales with Shark/Dino/Berserker.
+          // Mundra is already folded into heroAtkConst*(1+commonPct) via finalAtk, so we
+          // derive standalone from finalAtk/partyAtkMult instead of reconstructing.
           {
-            const hCondPct = (monster.isBoss ? 0.2 * heroMundra[hemmaWho] : 0)
-              + sharkActive * 0.01 * heroShark[hemmaWho]
+            const standaloneNoCond = (heroPartyAtkMult[hemmaWho] || 1) > 0
+              ? finalAtk[hemmaWho] / (heroPartyAtkMult[hemmaWho] || 1)
+              : heroAtkRaw[hemmaWho];
+            const hCondPct = sharkActive * 0.01 * heroShark[hemmaWho]
               + dinosaurActive * heroDinosaur[hemmaWho] * 0.01
               + 0.1 * (1 + heroBerserkerLevel[hemmaWho]) * berserkerStage[hemmaWho];
-            const standalone = heroAtkRaw[hemmaWho] + heroAtkConst[hemmaWho] * hCondPct;
+            const standalone = standaloneNoCond + heroAtkConst[hemmaWho] * hCondPct;
             const gain = standalone * hemmaMult;
             hemmaBonus[hemmaWho] += gain;
             simHemmaAtkGain[hemmaWho] += gain;
@@ -1761,11 +1776,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         const tamasAtkMult = (jj === championIdx && isTamas) ? (1 + tamasBonus) : 1;
 
         // Hero attack calculation (PDF formula)
-        // standalone(t) = atkConstant * (1 + commonAtkPct + condPct(t))
-        // effectiveAtk = standalone(t) * partyAtkMult
-        // Mundra applies only vs bosses.
-        const condPct = (monster.isBoss ? 0.2 * heroMundra[jj] : 0)
-          + sharkActive * 0.01 * heroShark[jj]
+        // Mundra is pre-folded into finalAtk for boss fights. condPct here only includes
+        // turn-conditional bonuses (Shark<50%HP, Dinosaur round 1, Berserker stage).
+        const condPct = sharkActive * 0.01 * heroShark[jj]
           + dinosaurActive * heroDinosaur[jj] * 0.01
           + 0.1 * (1 + heroBerserkerLevel[jj]) * berserkerStage[jj];
         const condBonus = heroAtkConst[jj] * condPct * (heroPartyAtkMult[jj] || 1);
@@ -2222,13 +2235,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const normalHit = damageTaken[i];
     const aoeHit = Math.ceil(normalHit * (monster.aoe / monster.atk));
     const critHit = critDamageTaken[i];
-    const sharkBonus = heroShark[i] * 0.01;
-    const sharkNormal = Math.floor(finalAtk[i] * (1 + sharkBonus) * barrierMod);
-    const sharkCrit = Math.floor(finalAtk[i] * (1 + sharkBonus) * heroCritMult[i] * barrierMod);
+    // Shark / Dinosaur display damage — PDF-additive form:
+    //   atk_with_cond = finalAtk + atkConstant * condPct * partyAtkMult
+    // This avoids the double-multiplication that `finalAtk * (1 + condPct)` would cause
+    // when commonAtkPct ≠ 0. Mundra is already folded into finalAtk for boss fights.
+    const partyMultI = heroPartyAtkMult[i] || 1;
+    const sharkAdd = heroAtkConst[i] * (heroShark[i] * 0.01) * partyMultI;
+    const sharkNormal = Math.floor((finalAtk[i] + sharkAdd) * barrierMod);
+    const sharkCrit = Math.floor((finalAtk[i] + sharkAdd) * heroCritMult[i] * barrierMod);
     // Dinosaur first turn damage
-    const dinoBonus = heroDinosaur[i] * 0.01;
-    const dinoNormal = Math.floor(finalAtk[i] * (1 + dinoBonus) * barrierMod);
-    const dinoCrit = Math.floor(finalAtk[i] * (1 + dinoBonus) * heroCritMult[i] * barrierMod);
+    const dinoAdd = heroAtkConst[i] * (heroDinosaur[i] * 0.01) * partyMultI;
+    const dinoNormal = Math.floor((finalAtk[i] + dinoAdd) * barrierMod);
+    const dinoCrit = Math.floor((finalAtk[i] + dinoAdd) * heroCritMult[i] * barrierMod);
     // Damage application rate using actual thresholds
     const dmgAppRate = getDamageApplicationRate(finalDef[i], defThresholds);
     // Per-turn damage

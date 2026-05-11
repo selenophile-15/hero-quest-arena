@@ -251,9 +251,12 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   }
 
   // Final formula: (base + seed + Σequip + flat) × (1 + pct/100)
-  const totalAtk = Math.round((baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk) * (1 + bonusSummary.pctAtk / 100));
-  const totalDef = Math.round((baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef) * (1 + bonusSummary.pctDef / 100));
-  const totalHp = Math.round((baseHp + seedHp + equipResult.totalHp + bonusSummary.flatHp) * (1 + bonusSummary.pctHp / 100));
+  const atkConstant = baseAtk + seedAtk + equipResult.totalAtk + bonusSummary.flatAtk;
+  const defConstant = baseDef + seedDef + equipResult.totalDef + bonusSummary.flatDef;
+  const hpConstant  = baseHp  + seedHp  + equipResult.totalHp  + bonusSummary.flatHp;
+  const totalAtk = Math.round(atkConstant * (1 + bonusSummary.pctAtk / 100));
+  const totalDef = Math.round(defConstant * (1 + bonusSummary.pctDef / 100));
+  const totalHp  = Math.round(hpConstant  * (1 + bonusSummary.pctHp  / 100));
 
   // Additive stats
   let totalCrit = baseCrit + equipResult.totalCrit + bonusSummary.critRate;
@@ -301,6 +304,9 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   detailStats['공통 공격력 계수'] = bonusSummary.pctAtk;
   detailStats['공통 방어력 계수'] = bonusSummary.pctDef;
   detailStats['공통 체력 계수'] = bonusSummary.pctHp;
+  // Pre-pct constants (used by combat simulation to avoid floating-point inversion)
+  detailStats['공격력 상수'] = atkConstant;
+  detailStats['방어력 상수'] = defConstant;
   if (d.hpRegenPerTurn) detailStats['매 턴 체력 재생'] = d.hpRegenPerTurn;
   // 치명타 생존 확률 — 비숍/성직자는 무조건 100%, 합산 후 100% 클램프
   const isClericOrBishop = jobName === '비숍' || jobName === '성직자';
