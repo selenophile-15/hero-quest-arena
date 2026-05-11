@@ -1710,7 +1710,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
           if (hp[target] <= 0) {
             const survived = handleFatalBlow(target, dmg);
-            if (!survived) {
+            if (survived) {
+              // Damage nullified by crit survival — reverse received-damage tracking
+              simDmgTaken[target] -= dmg;
+              simSingleDmgTaken[target] -= dmg;
+            } else {
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
                 lordProtections[target]++;
@@ -1718,6 +1722,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 singleHitsTaken[target]--;
                 singleHitsTaken[lordHero]++;
                 hp[target] += dmg;
+                // Lord save absorbed the hit — reverse received-damage tracking for the saved hero
+                simDmgTaken[target] -= dmg;
+                simSingleDmgTaken[target] -= dmg;
                 // New lord absorb: random pick between monster raw atk and ally's actual taken (non-crit) dmg, never below monster raw
                 const monRaw = mobDamage;
                 const allyDmg = damageTaken[target]; // ally normal (non-crit) taken
