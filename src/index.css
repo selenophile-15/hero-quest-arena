@@ -1370,6 +1370,15 @@ a.bg-accent *,
 :root:not([data-color-mode="light"]) .text-foreground\/50 { color: hsl(0 0% 72%) !important; }
 :root:not([data-color-mode="light"]) .text-muted-foreground { color: hsl(0 0% 62%) !important; }
 
+/* Dark mode: brighten muted-foreground specifically inside 상세 정보 area */
+:root:not([data-color-mode="light"]) [data-detail-info] .text-muted-foreground { color: hsl(0 0% 75%) !important; }
+:root:not([data-color-mode="light"]) [data-detail-info] .text-foreground\/70 { color: hsl(0 0% 88%) !important; }
+
+/* 턴 수 stat boxes — slightly darker in light mode, brighter in dark mode */
+.turn-stat-box { background: hsl(var(--secondary) / 0.3); }
+:root[data-color-mode="light"] .turn-stat-box { background: hsl(var(--secondary) / 0.55); }
+:root:not([data-color-mode="light"]) .turn-stat-box { background: hsl(var(--secondary) / 0.55); }
+
 /* Dark mode formula box: brighter text for readability */
 .stat-breakdown-box .text-white\/70 { color: rgba(255,255,255,0.85) !important; }
 .stat-breakdown-box .text-white\/80 { color: rgba(255,255,255,0.9) !important; }
