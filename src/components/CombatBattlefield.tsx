@@ -4,7 +4,7 @@ import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Plus, Trophy, Shield, Sparkles, UserX } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Plus, Trophy, Shield, Sparkles, UserX, Bug, Sword, BowArrow, WandSparkles } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -122,7 +122,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     red: isLight ? '#b91c1c' : '#f87171',
     teal: isLight ? '#0f766e' : '#2dd4bf',
     green: isLight ? '#166534' : '#84cc16',
-    heal: isLight ? '#047857' : '#34d399',
+    heal: isLight ? '#c2410c' : '#fb923c', // orange
     monster: isLight ? '#a16207' : '#facc15',
   }), [isLight]);
 
@@ -137,6 +137,15 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       } else {
         map[h.name] = CLASS_LINE_COLORS[h.classLine || ''] || '#d1d5db';
       }
+    });
+    return map;
+  }, [activeHeroes]);
+
+  // Build name→classLine map for hero attack icons
+  const nameClassLineMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    activeHeroes.forEach(h => {
+      map[h.name] = h.classLine || '';
     });
     return map;
   }, [activeHeroes]);
@@ -360,20 +369,25 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     } else if (isSetup) {
       icon = <Settings className="w-4 h-4 text-muted-foreground" />;
     } else if (entry.type === 'monster_attack' && isAoe) {
-      icon = <Flame className="w-4 h-4 text-red-500" />;
+      icon = <Bug className="w-4 h-4 text-red-500" />;
     } else if (entry.type === 'monster_attack' && isCrit) {
-      icon = <Flame className="w-4 h-4 text-yellow-400" />;
+      icon = <Bug className="w-4 h-4 text-yellow-400" />;
+    } else if (entry.type === 'monster_attack' && entry.target) {
+      icon = <Bug className="w-4 h-4 text-foreground/60" />;
     } else if (entry.type === 'monster_attack') {
-      icon = <Flame className="w-4 h-4 text-foreground/60" />;
-    } else if (entry.type === 'hero_attack' && isCrit) {
-      icon = <Zap className="w-4 h-4 text-yellow-400" />;
+      icon = <Bug className="w-4 h-4 text-red-500" />;
     } else if (entry.type === 'hero_attack') {
-      icon = <Zap className="w-4 h-4 text-foreground/60" />;
+      const cl = nameClassLineMap[entry.actor || ''] || '';
+      const color = isCrit ? 'text-yellow-400' : 'text-foreground/60';
+      if (cl === '전사') icon = <Sword className={`w-4 h-4 ${color}`} />;
+      else if (cl === '로그') icon = <BowArrow className={`w-4 h-4 ${color}`} />;
+      else if (cl === '주문술사') icon = <WandSparkles className={`w-4 h-4 ${color}`} />;
+      else icon = <Zap className={`w-4 h-4 ${color}`} />;
     } else if (entry.type === 'heal') {
       icon = (
         <span className="relative inline-flex items-center justify-center w-4 h-4">
-          <Heart className="w-4 h-4 text-emerald-400" />
-          <Plus className="absolute w-2 h-2 text-emerald-400" strokeWidth={3} />
+          <Heart className="w-4 h-4 text-orange-400" />
+          <Plus className="absolute w-2 h-2 text-orange-400" strokeWidth={3} />
         </span>
       );
     } else {

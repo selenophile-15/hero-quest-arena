@@ -3077,13 +3077,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   if (activeHeroes.length === 0) return [{ round: 0, type: 'result', actor: '시스템', detail: '활성 영웅 없음' }];
 
   const numHeroes = activeHeroes.length;
-  const champion = activeHeroes.find(h => h.type === 'champion') || null;
+  const championIdx = activeHeroes.findIndex(h => h.type === 'champion');
+  const champion = championIdx >= 0 ? activeHeroes[championIdx] : null;
   const champName = champion?.championName || champion?.name || '';
   const champTier = champion ? getChampionLeaderSkillTier(champion) : 0;
   const rudoBonusBase = champName.includes('루도') || champName === 'Rudo'
     ? (champTier === 1 ? 0.3 : champTier === 2 ? 0.4 : champTier >= 3 ? 0.5 : 0)
     : 0;
   const rudoRounds = rudoBonusBase > 0 ? (champTier <= 2 ? 2 : champTier === 3 ? 3 : 4) : 0;
+  // Lilu leader skill: flat per-turn party heal (only while Lilu is alive)
+  const isLiluChamp = champName.includes('릴루') || champName === 'Lilu';
+  const liluHealFlat = isLiluChamp
+    ? (champTier === 1 ? 3 : champTier === 2 ? 5 : champTier === 3 ? 10 : champTier >= 4 ? 20 : 0)
+    : 0;
   const isExtreme = monster.isExtreme || isTerrorTower;
 
   // Mini boss modifiers
@@ -3249,6 +3255,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
   // Daimyo: guaranteed evade on first monster attack (one-time)
   const daimyoGuaranteedEvade: boolean[] = heroIsDaimyoFlag.map(v => v);
+  // Lilu death tracking (to log when her leader heal expires)
+  let liluHealExpiredLogged = false;
 
   // Polonia state
   const isPoloniaChamp = champName.includes('폴로니아') || champName === 'Polonia';
@@ -3343,6 +3351,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     if (heroPersonalRegen[i] > 0) {
       log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `매 턴 체력 재생 +${formatNum(heroPersonalRegen[i])}` });
     }
+  }
+  if (liluHealFlat > 0 && championIdx >= 0) {
+    log.push({ round: 0, type: 'event', actor: champName, detail: `릴루 리더 스킬: 매 턴 파티 체력 +${formatNum(liluHealFlat)} (릴루 생존 시)` });
   }
 
   let mobHpCurrent = totalMobHp;
@@ -3655,13 +3666,21 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
-    // ─── Per-turn regen ───
+    // ─── Per-turn regen (personal + Lilu leader skill if Lilu alive) ───
     if (mobHpCurrent > 0) {
+      const liluAlive = isLiluChamp && championIdx >= 0 && heroHp[championIdx] > 0;
+      if (isLiluChamp && !liluAlive && !liluHealExpiredLogged && liluHealFlat > 0) {
+        log.push({ round, type: 'event', actor: champName, detail: `릴루 리더 스킬 만료: 매 턴 파티 체력 +${formatNum(liluHealFlat)} 종료 (릴루 사망)` });
+        liluHealExpiredLogged = true;
+      }
+      const liluContrib = liluAlive ? liluHealFlat : 0;
       for (let i = 0; i < numHeroes; i++) {
-        if (heroHp[i] <= 0 || heroPersonalRegen[i] <= 0) continue;
+        if (heroHp[i] <= 0) continue;
+        const totalRegen = (heroPersonalRegen[i] || 0) + liluContrib;
+        if (totalRegen <= 0) continue;
         if (heroHp[i] >= heroMaxHp[i]) continue;
         const before = heroHp[i];
-        heroHp[i] = Math.min(heroHp[i] + heroPersonalRegen[i], heroMaxHp[i]);
+        heroHp[i] = Math.min(heroHp[i] + totalRegen, heroMaxHp[i]);
         const healed = heroHp[i] - before;
         if (healed > 0) {
           const hPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
