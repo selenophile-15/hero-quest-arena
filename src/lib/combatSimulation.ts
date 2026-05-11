@@ -3598,6 +3598,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
+    // ─── Per-turn regen (after Hemma so Hemma's drain happens first) ───
+    if (mobHpCurrent > 0) {
+      for (let i = 0; i < numHeroes; i++) {
+        if (heroHp[i] <= 0 || heroPersonalRegen[i] <= 0) continue;
+        if (heroHp[i] >= heroMaxHp[i]) continue;
+        const before = heroHp[i];
+        heroHp[i] = Math.min(heroHp[i] + heroPersonalRegen[i], heroMaxHp[i]);
+        const healed = heroHp[i] - before;
+        if (healed > 0) {
+          log.push({ round, type: 'heal', actor: activeHeroes[i].name, detail: `매 턴 재생: HP +${formatNum(healed)}` });
+        }
+      }
+    }
 
     // ─── Hemma drain (champion-level, end of round) ───
     if (hemmaIdx >= 0 && heroHp[hemmaIdx] > 0) {
