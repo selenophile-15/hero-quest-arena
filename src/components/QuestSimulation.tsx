@@ -2694,7 +2694,7 @@ export default function QuestSimulation() {
                                     </colgroup>
                                     <thead>
                                       <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">군주</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
                                         <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">보호받은 동료</th>
                                         <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
