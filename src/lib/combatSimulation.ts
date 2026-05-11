@@ -3228,6 +3228,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   // Dancer/Acrobat: guaranteed crit on next attack after evasion
   const dancerGuaranteedCrit: boolean[] = new Array(numHeroes).fill(false);
 
+  // Daimyo: guaranteed evade on first monster attack (one-time)
+  const daimyoGuaranteedEvade: boolean[] = heroIsDaimyoFlag.map(v => v);
+
+  // Polonia state
+  const isPoloniaChamp = champName.includes('폴로니아') || champName === 'Polonia';
+  const poloniaBaseChance = isPoloniaChamp
+    ? (champTier === 1 ? 0.30 : champTier === 2 ? 0.35 : champTier === 3 ? 0.40 : 0.50)
+    : 0;
+  const numTricksters = activeHeroes.filter(h => h.heroClass === '사기꾼' || h.heroClass === 'Trickster').length;
+  const poloniaLootChance = isPoloniaChamp ? poloniaBaseChance + numTricksters * 0.02 : 0;
+  const poloniaLootCap = isPoloniaChamp ? 20 + numTricksters * 2 : 0;
+  let poloniaStolen = 0;
+
   // Hemma tracking (only relevant if champion is Hemma)
   const isHemmaChamp = champName.includes('헴마') || champName === 'Hemma';
   let hemmaIdx = -1;
