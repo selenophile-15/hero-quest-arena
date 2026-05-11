@@ -72,6 +72,9 @@ export interface SimulationConfig {
   simulationCount?: number;  // Default 50000
   _isRetry?: boolean;        // Internal: prevents Fateweaver recursion
   _disableRetry?: boolean;   // Internal: used for aggregated random miniboss runs
+  // When true: forces simulationCount=1 and attaches an eventLog to the result.
+  // Existing callers leave this undefined → behavior is identical to before.
+  recordEvents?: boolean;
 }
 
 export interface HeroSimResult {
