@@ -2508,17 +2508,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           ? [0, 1, 2, 3, 4].map(s => Math.round((conqStackTurns[s][i] / totalTurns) * 100 * 10) / 10)
           : [0, 0, 0, 0, 0];
       })() : undefined,
-      conquerorStackCritDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
-        conqStackCritCount[s][i] > 0 ? Math.round(conqStackCritDmgAccum[s][i] / conqStackCritCount[s][i]) : 0
-      ) : undefined,
+      conquerorStackCritDmg: heroIsConquistador[i] ? (() => {
+        const avgBaseAtk = attackCountTotal[i] > 0 ? baseAtkSumTotal[i] / attackCountTotal[i] : 0;
+        return [0, 1, 2, 3, 4].map(s =>
+          Math.round(avgBaseAtk * (heroCritMult[i] + s * 0.25))
+        );
+      })() : undefined,
       conquerorStackAvgDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
-        conqStackAttackCount[s][i] > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / conqStackAttackCount[s][i]) : 0
+        attackCountTotal[i] > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / attackCountTotal[i]) : 0
       ) : undefined,
       conquerorStackResetRate: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
         conqStackAttackCount[s][i] > 0
           ? Math.round((conqStackResetCount[s][i] / conqStackAttackCount[s][i]) * 100 * 10) / 10
           : 0
       ) : undefined,
+      conquerorBaseCritMult: heroIsConquistador[i] ? heroCritMult[i] : undefined,
       conquerorAvgStack: heroIsConquistador[i] ? (() => {
         const totalTurns = conqStackTurns.reduce((s, arr) => s + arr[i], 0);
         if (totalTurns === 0) return 0;
