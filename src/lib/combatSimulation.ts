@@ -3236,7 +3236,6 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroIsBishopFlag.push(isClass(h, '비숍', '주교', 'Bishop'));
   }
   const heroSurvivalUsed: boolean[] = new Array(numHeroes).fill(false);
-  {
 
   // Berserker HP thresholds
   const berserkThresholds = heroTier.map(t => t === 4 ? [0.8, 0.55, 0.3] : [0.75, 0.5, 0.25]);
