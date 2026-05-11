@@ -1504,7 +1504,7 @@ export default function QuestSimulation() {
                         <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
                           {gearScore.toFixed(1)}
                         </div>
-                        <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono font-black mt-0.5">
+                        <div className="text-xs text-muted-foreground font-medium mt-0.5">
                           [ 장비 평균 : {partyAvgGear.toFixed(2)} ]
                         </div>
                       </>
