@@ -90,6 +90,16 @@ let familiarCache: EquipmentItem[] | null = null;
 let aurasongCache: EquipmentItem[] | null = null;
 let aurasongRawCache: Record<string, any> | null = null;
 
+export function getAurasongBonusStatsSync(aurasongName: string): Record<string, any> | null {
+  if (!aurasongRawCache || !aurasongName) return null;
+  for (const tierItems of Object.values(aurasongRawCache)) {
+    if (typeof tierItems !== 'object' || !tierItems) continue;
+    const item = (tierItems as Record<string, any>)[aurasongName];
+    if (item?.['스탯_보너스']) return item['스탯_보너스'];
+  }
+  return null;
+}
+
 export async function loadFamiliars(): Promise<EquipmentItem[]> {
   if (familiarCache) return familiarCache;
   try {
