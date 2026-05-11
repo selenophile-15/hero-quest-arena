@@ -210,6 +210,11 @@ export interface HeroSimResult {
   hemmaAbsorbedCount?: number; // avg drain count from this ally per sim
   // Hemma attack-bonus gain (per sim) — set only on hemma hero row
   hemmaAtkGainAvg?: number;
+  // Rudo bonus tracking
+  rudoCritBonusPct?: number;       // Rudo crit-chance bonus (%)
+  rudoFinalCritChance?: number;    // hero's final crit chance (%) with rudo bonus
+  rudoBonusDmgAvg?: number;        // avg dmg dealt during rudo bonus rounds (per sim)
+  isRudoInParty?: boolean;
   // Lord absorbed damage breakdown — when THIS hero was the protected ally
   lordSavedSingleAvgDmg?: number;  // avg single dmg absorbed by lord saving this hero per sim
   lordSavedAoeAvgDmg?: number;     // avg aoe dmg absorbed by lord saving this hero per sim
