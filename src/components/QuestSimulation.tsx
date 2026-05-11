@@ -649,7 +649,7 @@ export default function QuestSimulation() {
     { key: 'r0' as const, label: '0%', color: '#ef4444', textClass: 'text-red-400', value: currentQuest?.def.r0 || 0 },
     { key: 'r50' as const, label: '50%', color: '#eab308', textClass: 'text-yellow-400', value: currentQuest?.def.r50 || 0 },
     { key: 'r70' as const, label: '70%', color: '#84cc16', textClass: 'text-lime-400', value: currentQuest?.def.r70 || 0 },
-    { key: 'r75' as const, label: '75%', color: '#ffffff', textClass: 'text-white', value: currentQuest?.def.r75 || 0 },
+    { key: 'r75' as const, label: '75%', color: '#22d3ee', textClass: 'text-cyan-300', value: currentQuest?.def.r75 || 0 },
   ];
 
   // Calculate damage reduction % for a given defense value using threshold interpolation
