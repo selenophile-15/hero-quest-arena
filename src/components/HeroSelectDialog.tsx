@@ -303,7 +303,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
           <Select value={filterType} onValueChange={setFilterType}>
             <SelectTrigger className="w-[80px] h-7 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">전체</SelectItem>
+              <SelectItem value="all">유형</SelectItem>
               <SelectItem value="hero">영웅</SelectItem>
               <SelectItem value="champion">챔피언</SelectItem>
             </SelectContent>
