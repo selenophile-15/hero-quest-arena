@@ -2538,6 +2538,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       hemmaAbsorbedDmg: actualSimCount > 0 ? Math.round(hemmaAbsorbedDmgAccum[i] / actualSimCount) : 0,
       hemmaAbsorbedCount: actualSimCount > 0 ? Math.round(hemmaAbsorbedCountAccum[i] / actualSimCount) : 0,
       hemmaAtkGainAvg: actualSimCount > 0 ? Math.round(hemmaAtkGainAccum[i] / actualSimCount) : 0,
+      rudoCritBonusPct: rudoBonusBase > 0 ? Math.round(rudoBonusBase * 1000) / 10 : 0,
+      rudoFinalCritChance: rudoBonusBase > 0 ? Math.round(Math.min(heroCritChance[i] + rudoBonusBase, 1) * 1000) / 10 : 0,
+      rudoBonusDmgAvg: actualSimCount > 0 ? Math.round(rudoBonusDmgAccum[i] / actualSimCount) : 0,
+      isRudoInParty: rudoBonusBase > 0,
       // Lord saved damage (when this hero was protected)
       lordSavedSingleAvgDmg: actualSimCount > 0 ? Math.round(lordSavedSingleDmgAccum[i] / actualSimCount) : 0,
       lordSavedAoeAvgDmg: actualSimCount > 0 ? Math.round(lordSavedAoeDmgAccum[i] / actualSimCount) : 0,
