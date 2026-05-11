@@ -1946,6 +1946,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           // Hemma drain absorbed (from this ally)
           hemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
           hemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
+          // Hemma attack-bonus gain (per-sim → cumulative)
+          hemmaAtkGainAccum[i] += simHemmaAtkGain[i];
 
           // Lord saved damage applied to this ally (when this hero was the protected one)
           lordSavedSingleDmgAccum[i] += simLordSavedSingleDmg[i];
