@@ -3089,6 +3089,64 @@ export default function QuestSimulation() {
                             </div>
                           </div>
 
+                          {/* ===== Table D2: 루도 ===== */}
+                          {(() => {
+                            const hasRudo = !!displayResults.find(hr => hr.isRudoInParty);
+                            return (
+                              <div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">루도</div>
+                                <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                    <colgroup>
+                                      <col style={{ width: '20%' }} />
+                                      <col style={{ width: '16%' }} />
+                                      <col style={{ width: '16%' }} />
+                                      <col style={{ width: '24%' }} />
+                                      <col style={{ width: '24%' }} />
+                                    </colgroup>
+                                    <thead>
+                                      <tr className="border-b-2 border-border/60">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                          <GroupHeader label="치명타 확률 보너스" info={'루도 리더 스킬로 추가되는 치명타 확률 보너스.'} />
+                                        </th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                          <GroupHeader label="최종 치명타 확률" info={'루도 보너스가 더해진 최종 치명타 확률.'} />
+                                        </th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                          <GroupHeader label="보너스 라운드 평균 대미지" info={'루도 치명타 확률 보너스가 적용되는 동안 가한 총 평균 대미지(시뮬레이션당).'} />
+                                        </th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                          <GroupHeader label="대미지 비중" info={'루도 보너스 라운드 평균 대미지가 본 영웅 전체 평균 대미지에서 차지하는 비중.'} />
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {zeroBucket ? (
+                                        <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
+                                      ) : !hasRudo ? (
+                                        <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">루도 챔피언이 파티에 없음</td></tr>
+                                      ) : displayResults.map((hr, idx) => {
+                                        const share = (hr.avgDamageDealt && hr.avgDamageDealt > 0)
+                                          ? (hr.rudoBonusDmgAvg ?? 0) / hr.avgDamageDealt * 100
+                                          : 0;
+                                        return (
+                                          <tr key={`rudo-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-yellow-500 dark:text-yellow-300">+{(hr.rudoCritBonusPct ?? 0).toFixed(1)}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-yellow-500 dark:text-yellow-300">{(hr.rudoFinalCritChance ?? 0).toFixed(1)}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{formatNumber(hr.rudoBonusDmgAvg ?? 0)}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{share.toFixed(1)}%</td>
+                                          </tr>
+                                        );
+                                      })}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            );
+                          })()}
+
                           {/* ===== Table E: 헴마 (별도 분리) ===== */}
                           {(() => {
                             const hasHemma = !!displayResults.find(hr => hr.isHemmaHero);
