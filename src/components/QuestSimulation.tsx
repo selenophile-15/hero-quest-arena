@@ -197,7 +197,7 @@ const DEFAULT_TIME_SETTINGS: TimeSettingItem[] = [
 type QuestSubTab = 'simulation' | 'saved' | 'compare';
 
 const QUEST_SUB_TABS = [
-  { id: 'simulation' as const, label: '퀘스트 시뮬레이션', icon: Swords },
+  { id: 'simulation' as const, label: '시뮬레이션', icon: Swords },
   { id: 'saved' as const, label: '내 결과', icon: ListChecks },
   { id: 'compare' as const, label: '비교 분석실', icon: GitCompare },
 ];
@@ -1654,16 +1654,7 @@ export default function QuestSimulation() {
                 <Crown className="w-5 h-5 text-primary" />
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
                 {currentQuest && simResult && selectedHeroes.length > 0 && (
-                  <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
-                    <SelectTrigger className="h-8 w-24 text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm ml-auto">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
-                      <SelectItem value="win">성공</SelectItem>
-                      <SelectItem value="lose">실패</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} />
                 )}
               </div>
 
