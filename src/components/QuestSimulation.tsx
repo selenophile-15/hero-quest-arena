@@ -1802,9 +1802,9 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">턴 수</span>
                 </div>
                 {(() => {
-                  const rounds = mainResultsTab === 'win' ? simResult.winRounds
-                    : mainResultsTab === 'lose' ? simResult.loseRounds
-                    : { avg: simResult.avgRounds, min: simResult.minRounds, max: simResult.maxRounds };
+                  const rounds = mainResultsTab === 'win' ? dispSim!.winRounds
+                    : mainResultsTab === 'lose' ? dispSim!.loseRounds
+                    : { avg: dispSim!.avgRounds, min: dispSim!.minRounds, max: dispSim!.maxRounds };
                   if (!rounds) return (
                     <div className="text-center text-xs text-muted-foreground py-3">
                       {mainResultsTab === 'win' ? '성공한 판 없음' : '실패한 판 없음'}
@@ -1827,9 +1827,9 @@ export default function QuestSimulation() {
                     </div>
                   );
                 })()}
-                {simResult.roundLimitRate > 0 && (
+                {dispSim!.roundLimitRate > 0 && (
                   <div className="mt-2 text-center text-[10px] text-red-400">
-                    ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
+                    ⚠ 라운드 제한 도달: {dispSim!.roundLimitRate.toFixed(1)}%
                   </div>
                 )}
               </div>
@@ -1841,9 +1841,9 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">대미지 기여도</span>
                 </div>
                 {(() => {
-                  const bucketResults = mainResultsTab === 'win' && simResult.winHeroResults ? simResult.winHeroResults
-                    : mainResultsTab === 'lose' && simResult.loseHeroResults ? simResult.loseHeroResults
-                    : simResult.heroResults;
+                  const bucketResults = mainResultsTab === 'win' && dispSim!.winHeroResults ? dispSim!.winHeroResults
+                    : mainResultsTab === 'lose' && dispSim!.loseHeroResults ? dispSim!.loseHeroResults
+                    : dispSim!.heroResults;
                   const totalDmg = bucketResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                   const sorted = [...bucketResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
                   const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
@@ -1876,9 +1876,9 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">탱킹 기여도</span>
                 </div>
                 {(() => {
-                  const bucketResults = mainResultsTab === 'win' && simResult.winHeroResults ? simResult.winHeroResults
-                    : mainResultsTab === 'lose' && simResult.loseHeroResults ? simResult.loseHeroResults
-                    : simResult.heroResults;
+                  const bucketResults = mainResultsTab === 'win' && dispSim!.winHeroResults ? dispSim!.winHeroResults
+                    : mainResultsTab === 'lose' && dispSim!.loseHeroResults ? dispSim!.loseHeroResults
+                    : dispSim!.heroResults;
                   const sorted = [...bucketResults].sort((a, b) => b.tankingRate - a.tankingRate);
                   const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
                   const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
