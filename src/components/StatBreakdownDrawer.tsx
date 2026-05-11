@@ -542,7 +542,75 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
         <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-3 py-12">
           <Settings className="w-10 h-10" />
           <p className="text-sm">준비 중입니다</p>
-          <p className="text-xs text-muted-foreground/70">매턴 체력 회복, 기타 특수 효과 등이 추가될 예정입니다.</p>
+          <p className="text-xs text-muted-foreground/70">기타 특수 효과 등이 추가될 예정입니다.</p>
+        </div>
+      );
+    }
+
+    if (statType === 'regen') {
+      const sources = allSources.filter(s => (s.regenPerTurn || 0) !== 0);
+      const totalRegen = sources.reduce((s, src) => s + (src.regenPerTurn || 0), 0);
+      const conf = ADD_TABS.find(t => t.key === 'regen')!;
+      return (
+        <div className="grid grid-cols-1 gap-4 h-full">
+          <div className="space-y-3 overflow-y-auto">
+            <div className={`rounded-t ${conf.headerBg} px-3 py-2`}>
+              <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                <Heart className="w-4 h-4" fill="currentColor" />
+                매 턴 체력 회복
+              </h4>
+            </div>
+
+            <div className="px-3">
+              <h5 className="text-xs font-semibold text-primary mb-1">스킬 & 영혼 보너스</h5>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border/50">
+                    <th className="py-1 text-left text-foreground/60">스킬/영혼명</th>
+                    <th className="py-1 text-right text-foreground/60">매 턴 회복량</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sources.length === 0 ? (
+                    <tr className="border-b border-border/20">
+                      <td colSpan={2} className="py-1 text-center text-muted-foreground">보너스 없음</td>
+                    </tr>
+                  ) : sources.map((src, i) => {
+                    const tagClass = src.type === 'unique' ? 'bg-purple-700/60' : src.type === 'soul' ? 'bg-teal-700/60' : src.type === 'relic' ? 'bg-yellow-700/60' : src.type === 'job' ? 'bg-blue-700/60' : 'bg-amber-800/40';
+                    const tagLabel = src.type === 'unique' ? '고유' : src.type === 'soul' ? '영혼' : src.type === 'relic' ? '유물' : src.type === 'job' ? '직업' : '공용';
+                    return (
+                      <tr key={i} className="border-b border-border/20">
+                        <td className="py-1 text-foreground/70">
+                          <span className={`text-[9px] mr-1 px-1 rounded ${tagClass}`}>{tagLabel}</span>
+                          {src.name}
+                        </td>
+                        <td className="py-1 text-right tabular-nums text-emerald-400 font-semibold">+{formatNumber(src.regenPerTurn || 0)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="px-3 py-3 border-t border-border/40 flex items-center justify-between">
+              <span className="text-sm font-bold text-white">최종 매 턴 체력 회복 (영웅 단독)</span>
+              <span className="text-xl font-bold tabular-nums text-emerald-400">+{formatNumber(totalRegen)}</span>
+            </div>
+
+            <div className="px-3 pb-3 space-y-2">
+              <div className="rounded px-3 py-2 bg-emerald-500/5 border border-emerald-500/20">
+                <p className="text-[10px] text-emerald-300 leading-relaxed">
+                  ※ 표기된 값은 영웅 본인의 스킬·영혼 기반 회복량입니다.
+                </p>
+                <p className="text-[10px] text-emerald-300 leading-relaxed mt-1">
+                  ※ 챔피언의 <span className="font-bold">오라의 노래</span> 매 턴 체력 회복은 파티 전체에 추가로 적용되며, 시뮬레이션에서는 합산되어 매 라운드 회복합니다.
+                </p>
+                <p className="text-[10px] text-emerald-300 leading-relaxed mt-1">
+                  ※ 회복 적용 시점: 매 라운드 종료 시 (몬스터 처치 시 미적용).
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       );
     }
