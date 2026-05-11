@@ -1218,7 +1218,7 @@ export default function QuestSimulation() {
                     return (
                     <div className="mt-3 pt-6 border-t border-border/30" style={{ marginBottom: '8px' }}>
                       {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — bar group left-aligned with stat icons */}
-                      <div className="relative grid gap-x-1 px-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 1fr 100px' }}>
+                      <div className="relative grid gap-x-1 px-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 1fr 120px' }}>
                         {/* Column 1: threshold values (aligned with monster info icons on left) */}
                         <div className="relative">
                           {rows.map(r => (
@@ -1272,8 +1272,8 @@ export default function QuestSimulation() {
                             })}
                           </svg>
                           {heroLayout.map(h => (
-                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '32px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[13px] font-semibold truncate max-w-[140px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                            <div key={`label-${h.id}`} className="absolute flex flex-col items-end whitespace-nowrap text-right" style={{ bottom: `${h.labelPct}%`, right: '0', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[13px] font-semibold truncate max-w-[110px] leading-tight" style={{ color: h.color }}>{h.name}</span>
                               <span className="text-[12px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
