@@ -1894,6 +1894,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         mobHpCurrent -= damage;
         damageFight[jj] += damage;
+        if (rudoBonus > 0) simRudoBonusDmg[jj] += damage;
         if (isCrit) critDmgFight[jj] += damage;
         else normalDmgFight[jj] += damage;
         // Per-hit (per-attack-action) tracking for min/max
