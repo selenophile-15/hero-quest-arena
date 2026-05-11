@@ -2398,7 +2398,7 @@ export default function QuestSimulation() {
                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAoe > 0 && dar > 0) ? formatNumber(Math.round(monAoe * dar / 100)) : blank}</td>
                                       {/* 받은 대미지 전체 */}
                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(minTotal)) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(avgTotal)) : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(avgTotal)) : blank}</td>
                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(maxTotal)) : blank}</td>
                                     </tr>
                                   );
@@ -2462,11 +2462,11 @@ export default function QuestSimulation() {
                                       <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                         <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(sMin)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(sAvg)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(sAvg)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(sMax)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{critProb}%</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(aMin)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(aAvg)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(aAvg)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(aMax)}</td>
                                       </tr>
                                     );
