@@ -2228,10 +2228,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       chronomancerRetrySuccessRate: retryWinRate,
       totalHealingAvg: totalHealing[i] / actualSimCount,
       healPerTurn: (() => {
-        // 실제 매턴 체력 재생 수치 = 도마뱀(리저드) + 클레릭/비숍 회복 + 릴루 회복
-        let v = heroLizard[i] || 0;
-        if (heroIsCleric[i]) v += Math.max(0, Math.min(heroTier[i], 3) * 5 - 5);
-        else if (heroIsBishop[i]) v += heroTier[i] >= 3 ? 20 : heroTier[i] >= 2 ? 5 : 0;
+        // 실제 매턴 체력 재생 수치 = detailStats(영혼+스킬, 도마뱀/불사조/우로보로스/클레릭/비숍 포함)
+        //                          + 오라의 노래 매턴회복 + 챔피언 파티 회복(릴루 등)
+        const personal = (activeHeroes[i] as any).detailStats?.['매 턴 체력 재생'] || 0;
+        let v = personal + (aurasong.regenPerTurn || 0);
         if (liluHealFlat > 0) v += liluHealFlat * heroArtChampionMod[i];
         return v;
       })(),
