@@ -2202,42 +2202,42 @@ export default function QuestSimulation() {
                         </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={1}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={1}>
                               <GroupHeader label="기본" info={'생존률 — 전체 시뮬레이션 중 끝까지 생존한 비율(%).'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={4}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={4}>
                               <GroupHeader label="생존 턴" info={'각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한에 도달했음에도 살아있어 종료된 시뮬레이션의 비율.'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
                               <GroupHeader label="남은 체력" info={'시뮬레이션 종료 시 남은 HP의 분포 (최소 / 평균 / 최대).\n선택된 필터(전체/성공/실패)에 해당하는 판만 반영.'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
                               <GroupHeader label="타겟팅" info={'· 위협도: 위협도 기반 단일 공격 피격 확률.\n· 실제: 실제 단일 공격을 받은 비율 (= 탱킹 기여도). 마지막 1인이 남는 시점까지의 단일공격 가능 턴이 분모.\n· 회피: 단일+광역 공격 중 회피한 비율.'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={2}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={2}>
                               <GroupHeader label="치명타 생존" info={'· 확률: 치명타 생존 발동 확률 (스탯 기준).\n· 발동 비율: 전체 시뮬레이션 중 치명타 생존이 한 번이라도 발동된 판의 비율.'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={2}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={2}>
                               <GroupHeader label="회복" info={'· 턴: 매턴 실제 체력 재생 수치 (영혼/스킬 매턴체력회복(도마뱀·불사조·우로보로스·클레릭·비숍 등) + 오라의 노래 매턴회복 + 챔피언 회복(릴루 등) 합산).\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
                             </th>
                           </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40">생존률</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40">최소</th>
-                            <th className="text-center py-1 px-2">평균</th>
-                            <th className="text-center py-1 px-2">최대</th>
-                            <th className="text-center py-1 px-2">라운드 제한</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40">최소</th>
-                            <th className="text-center py-1 px-2">평균</th>
-                            <th className="text-center py-1 px-2">최대</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40">위협도</th>
-                            <th className="text-center py-1 px-2">실제</th>
-                            <th className="text-center py-1 px-2">회피</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40">확률</th>
-                            <th className="text-center py-1 px-2">발동 비율</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40">턴</th>
-                            <th className="text-center py-1 px-2">전체 평균</th>
+                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">생존률</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">최소</th>
+                            <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
+                            <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
+                            <th className="text-center py-1 px-2 bg-secondary/20">라운드 제한</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">최소</th>
+                            <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
+                            <th className="text-center py-1 px-2 bg-secondary/70">최대</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">위협도</th>
+                            <th className="text-center py-1 px-2 bg-secondary/20">실제</th>
+                            <th className="text-center py-1 px-2 bg-secondary/20">회피</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">확률</th>
+                            <th className="text-center py-1 px-2 bg-secondary/70">발동 비율</th>
+                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">턴</th>
+                            <th className="text-center py-1 px-2 bg-secondary/20">전체 평균</th>
                           </tr>
                         </thead>
                         <tbody>
