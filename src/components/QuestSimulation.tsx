@@ -2376,12 +2376,12 @@ export default function QuestSimulation() {
                       const blank = '';
                       const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                       // Party-level distributions (true sim-based)
-                      const pTaken = mainResultsTab === 'win' ? simResult.winPartyDmgTaken
-                        : mainResultsTab === 'lose' ? simResult.losePartyDmgTaken
-                        : simResult.partyDmgTaken;
-                      const pTakenT = mainResultsTab === 'win' ? simResult.winPartyDmgTakenPerTurn
-                        : mainResultsTab === 'lose' ? simResult.losePartyDmgTakenPerTurn
-                        : simResult.partyDmgTakenPerTurn;
+                      const pTaken = mainResultsTab === 'win' ? dispSim!.winPartyDmgTaken
+                        : mainResultsTab === 'lose' ? dispSim!.losePartyDmgTaken
+                        : dispSim!.partyDmgTaken;
+                      const pTakenT = mainResultsTab === 'win' ? dispSim!.winPartyDmgTakenPerTurn
+                        : mainResultsTab === 'lose' ? dispSim!.losePartyDmgTakenPerTurn
+                        : dispSim!.partyDmgTakenPerTurn;
                       const partyTakenAvg = pTaken?.avg ?? displayResults.reduce((s, hr) => s + (hr.totalDamageTakenAvg || 0), 0);
                       const partyTakenMin = pTaken?.min ?? 0;
                       const partyTakenMax = pTaken?.max ?? 0;
