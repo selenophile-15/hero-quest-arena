@@ -302,6 +302,7 @@ export interface SimulationResult {
   roundLimitRate: number;    // % of sims hitting 499 round limit
   totalSimulations: number;
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
+  retryResult?: SimulationResult; // Full retry sim result (only on first-pass result)
   // Per mini-boss breakdown (only for random mode)
   miniBossResults?: MiniBossResult[];
   // Win/loss round breakdown
