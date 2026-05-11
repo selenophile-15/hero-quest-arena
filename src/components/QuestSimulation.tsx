@@ -2677,7 +2677,20 @@ export default function QuestSimulation() {
 
                     return (
                       <div>
-                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
+                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setSpecialInfoOpen(v => !v)}
+                            className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
+                            aria-expanded={specialInfoOpen}
+                          >
+                            <Info className="w-4 h-4 text-foreground" />
+                            <span>특수 정보</span>
+                            <span className={`text-xs text-muted-foreground transition-transform ${specialInfoOpen ? 'rotate-0' : '-rotate-90'}`}>▼</span>
+                          </button>
+                          <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} />
+                        </div>
+                        {specialInfoOpen && (
                         <div className="space-y-6">
 
                           {/* ===== Table A: 상어 / 공룡·다이묘 — 해당 파티원만 ===== */}
