@@ -2011,6 +2011,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const perTurnTaken = round > 0 ? simDmgTaken[i] / round : 0;
           if (perTurnTaken > 0) dmgTakenPerTurnMin[i] = Math.min(dmgTakenPerTurnMin[i], perTurnTaken);
           dmgTakenPerTurnMax[i] = Math.max(dmgTakenPerTurnMax[i], perTurnTaken);
+          // Avg-when-hit: count sims where this hero took damage of that kind
+          if (simDmgTaken[i] > 0) totalDmgTakenHitSims[i]++;
+          if (simSingleDmgTaken[i] > 0) singleDmgTakenHitSims[i]++;
+          if (simAoeDmgTaken[i] > 0) aoeDmgTakenHitSims[i]++;
           lordProtectedSingle[i] += simLordSingleSaved[i];
           lordProtectedAoe[i] += simLordAoeSaved[i];
           lordAbsorbedSingle[i] += simLordAbsorbedSingle[i];
