@@ -2816,8 +2816,8 @@ export default function QuestSimulation() {
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
-                                    <col style={{ width: '110px' }} /><col style={{ width: '60px' }} /><col style={{ width: '144px' }} />
-                                    <col style={{ width: '144px' }} /><col style={{ width: '144px' }} /><col style={{ width: '100px' }} /><col style={{ width: '100px' }} />
+                                    <col style={{ width: '110px' }} /><col style={{ width: '60px' }} /><col style={{ width: '130px' }} />
+                                    <col style={{ width: '130px' }} /><col style={{ width: '130px' }} /><col style={{ width: '140px' }} /><col style={{ width: '140px' }} />
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
