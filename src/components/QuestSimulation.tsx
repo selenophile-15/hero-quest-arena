@@ -2743,7 +2743,7 @@ export default function QuestSimulation() {
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
                                     <col style={{ width: '110px' }} /><col style={{ width: '60px' }} /><col style={{ width: '120px' }} />
-                                    <col style={{ width: '110px' }} /><col /><col /><col />
+                                    <col style={{ width: '120px' }} /><col style={{ width: '120px' }} /><col /><col />
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
