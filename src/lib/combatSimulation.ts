@@ -1982,6 +1982,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (damageFight[i] > 0) {
             damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
           }
+          // Per-turn damage dealt min/max (only when hero dealt damage and rounds > 0)
+          if (damageFight[i] > 0 && round > 0) {
+            const perTurnDealt = damageFight[i] / round;
+            if (perTurnDealt < dmgDealtPerTurnMin[i]) dmgDealtPerTurnMin[i] = perTurnDealt;
+            if (perTurnDealt > dmgDealtPerTurnMax[i]) dmgDealtPerTurnMax[i] = perTurnDealt;
+          }
           totalRoundsPerHero[i] += round;
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
