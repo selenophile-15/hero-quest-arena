@@ -2176,6 +2176,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             winHemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
             winHemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
             winHemmaAtkGainAccum[i] += simHemmaAtkGain[i];
+            winRudoBonusDmgAccum[i] += simRudoBonusDmg[i];
           } else if (wasLose) {
             loseDmgDealt[i] += damageFight[i];
             loseNormalDmg[i] += normalDmgFight[i];
