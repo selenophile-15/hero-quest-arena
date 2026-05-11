@@ -80,6 +80,18 @@ function ResultTabsToggle({ value, onChange }: { value: 'all' | 'win' | 'lose'; 
   );
 }
 
+// Empty-state row shown when the selected outcome bucket (win/lose) has zero results.
+function EmptyBucketRow({ tab, colSpan }: { tab: 'all' | 'win' | 'lose'; colSpan: number }) {
+  const msg = tab === 'win' ? '성공한 판이 없습니다' : tab === 'lose' ? '실패한 판이 없습니다' : '데이터 없음';
+  return (
+    <tr>
+      <td colSpan={colSpan} className="py-4 px-2 text-center text-muted-foreground text-sm italic">
+        {msg}
+      </td>
+    </tr>
+  );
+}
+
 interface QuestTime {
   base: number;
   additional: number;
@@ -2023,7 +2035,7 @@ export default function QuestSimulation() {
               const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
               const zeroBucket = (mainResultsTab === 'win' && (simResult.winSimCount ?? 0) === 0)
                 || (mainResultsTab === 'lose' && (simResult.loseSimCount ?? 0) === 0);
-              if (!displayResults || displayResults.length === 0 || noBucket || zeroBucket) {
+              if (!displayResults || displayResults.length === 0 || noBucket) {
                 return (
                   <div className="text-center text-xs text-muted-foreground py-8">
                     {mainResultsTab === 'win' ? '성공한 판 없음' : mainResultsTab === 'lose' ? '실패한 판 없음' : '데이터 없음'}
@@ -2090,6 +2102,10 @@ export default function QuestSimulation() {
                           </tr>
                         </thead>
                         <tbody>
+                          {zeroBucket ? (
+                            <EmptyBucketRow tab={mainResultsTab} colSpan={11} />
+                          ) : (
+                          <>
                           {displayResults.map((hr, idx) => {
                             const dmgPct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
                             const barColors = ['bg-red-500', 'bg-blue-500', 'bg-lime-500', 'bg-yellow-500', 'bg-purple-500'];
@@ -2148,6 +2164,8 @@ export default function QuestSimulation() {
                             <td className="py-1.5 px-2 border-l-4 border-border" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
                             <td className="py-1.5 px-2" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
                           </tr>
+                          </>
+                          )}
                         </tbody>
                       </table>
                         );
@@ -2222,6 +2240,10 @@ export default function QuestSimulation() {
                           </tr>
                         </thead>
                         <tbody>
+                          {zeroBucket ? (
+                            <EmptyBucketRow tab={mainResultsTab} colSpan={16} />
+                          ) : (
+                          <>
                           {displayResults.map((hr, idx) => {
                             const blank = '';
                             const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
@@ -2272,6 +2294,8 @@ export default function QuestSimulation() {
                               </tr>
                             );
                           })}
+                          </>
+                          )}
                         </tbody>
                       </table>
                     </div>
@@ -2341,6 +2365,10 @@ export default function QuestSimulation() {
                                 </tr>
                               </thead>
                               <tbody>
+                                {zeroBucket ? (
+                                  <EmptyBucketRow tab={mainResultsTab} colSpan={10} />
+                                ) : (
+                                <>
                                 {displayResults.map((hr, idx) => {
                                   const dar = hr.damageApplicationRate || 0;
                                   const minTotal = hr.minDamageTaken ?? 0;
@@ -2370,6 +2398,8 @@ export default function QuestSimulation() {
                                     </tr>
                                   );
                                 })}
+                                </>
+                                )}
                               </tbody>
                             </table>
                           </div>
@@ -2410,6 +2440,10 @@ export default function QuestSimulation() {
                                   </tr>
                                 </thead>
                                 <tbody>
+                                  {zeroBucket ? (
+                                    <EmptyBucketRow tab={mainResultsTab} colSpan={8} />
+                                  ) : (
+                                  <>
                                   {displayResults.map((hr, idx) => {
                                     const sMin = hr.singleDmgTakenMin ?? 0;
                                     const sAvg = hr.singleDmgTakenAvg ?? 0;
@@ -2432,6 +2466,8 @@ export default function QuestSimulation() {
                                       </tr>
                                     );
                                   })}
+                                  </>
+                                  )}
                                 </tbody>
                               </table>
                             </div>
@@ -2496,7 +2532,9 @@ export default function QuestSimulation() {
                                         </tr>
                                       </thead>
                                       <tbody>
-                                        {sharkHeroes.length === 0 ? (
+                                        {zeroBucket ? (
+                                          <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                        ) : sharkHeroes.length === 0 ? (
                                           <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">상어 영혼 보유 파티원 없음</td></tr>
                                         ) : sharkHeroes.map((hr, idx) => {
                                           const avg = Math.round((hr.sharkNormalDmg + hr.sharkCritDmg) / 2);
@@ -2529,7 +2567,9 @@ export default function QuestSimulation() {
                                         </tr>
                                       </thead>
                                       <tbody>
-                                        {dinoHeroes.length === 0 ? (
+                                        {zeroBucket ? (
+                                          <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                        ) : dinoHeroes.length === 0 ? (
                                           <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">공룡 영혼 / 다이묘 직업 파티원 없음</td></tr>
                                         ) : dinoHeroes.map((hr, idx) => {
                                           const norm = hr.dinosaurNormalDmg;
@@ -2577,7 +2617,9 @@ export default function QuestSimulation() {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {!lordRow ? (
+                                      {zeroBucket ? (
+                                        <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                      ) : !lordRow ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">군주 직업 파티원 없음</td></tr>
                                       ) : lordProtected.length === 0 ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">동료 없음</td></tr>
@@ -2631,7 +2673,9 @@ export default function QuestSimulation() {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {conquerorRows.length === 0 ? (
+                                    {zeroBucket ? (
+                                      <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
+                                    ) : conquerorRows.length === 0 ? (
                                       <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">정복자 직업 파티원 없음</td></tr>
                                     ) : conquerorRows.map((hr, hi) => {
                                       return [0, 1, 2, 3, 4].map(s => {
@@ -2682,7 +2726,9 @@ export default function QuestSimulation() {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {ninjaSenseiRows.length === 0 ? (
+                                    {zeroBucket ? (
+                                      <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
+                                    ) : ninjaSenseiRows.length === 0 ? (
                                       <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">닌자 / 센세 직업 파티원 없음</td></tr>
                                     ) : ninjaSenseiRows.map((hr, idx) => {
                                       const wIn = hr.withInnateAvgDmg ?? 0;
@@ -2746,6 +2792,9 @@ export default function QuestSimulation() {
                                 </thead>
                                 <tbody>
                                   {(() => {
+                                    if (zeroBucket) {
+                                      return <EmptyBucketRow tab={mainResultsTab} colSpan={12} />;
+                                    }
                                     const brkRows = displayResults.filter(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
                                     if (brkRows.length === 0) {
                                       return (
@@ -2825,7 +2874,9 @@ export default function QuestSimulation() {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {!hasPolonia ? (
+                                  {zeroBucket ? (
+                                    <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                  ) : !hasPolonia ? (
                                     <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">폴로니아 챔피언이 파티에 없음</td></tr>
                                   ) : (<>
                                     {displayResults.map((hr, idx) => (
@@ -2888,7 +2939,9 @@ export default function QuestSimulation() {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {!hasHemma ? (
+                                      {zeroBucket ? (
+                                        <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                      ) : !hasHemma ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">헴마 챔피언이 파티에 없음</td></tr>
                                       ) : (() => {
                                         const totalCount = displayResults.reduce((s, r) => s + (r.isHemmaHero ? 0 : (r.hemmaAbsorbedCount ?? 0)), 0);
@@ -2935,6 +2988,10 @@ export default function QuestSimulation() {
                           </tr>
                         </thead>
                         <tbody>
+                          {zeroBucket ? (
+                            <EmptyBucketRow tab={mainResultsTab} colSpan={8} />
+                          ) : (
+                          <>
                           {displayResults.map((hr, idx) => (
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                               <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
@@ -2947,6 +3004,8 @@ export default function QuestSimulation() {
                               <td className="py-1 px-2 text-center font-mono text-cyan-500 dark:text-cyan-400 whitespace-nowrap">{hr.finalEvasion}%</td>
                             </tr>
                           ))}
+                          </>
+                          )}
                         </tbody>
                       </table>
                     </div>
