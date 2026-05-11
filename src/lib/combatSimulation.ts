@@ -2686,6 +2686,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       hemmaAbsorbedDmg: Math.round((bucket === 'win' ? winHemmaAbsorbedDmgAccum[i] : loseHemmaAbsorbedDmgAccum[i]) / bucketCount),
       hemmaAbsorbedCount: Math.round((bucket === 'win' ? winHemmaAbsorbedCountAccum[i] : loseHemmaAbsorbedCountAccum[i]) / bucketCount),
       hemmaAtkGainAvg: Math.round((bucket === 'win' ? winHemmaAtkGainAccum[i] : loseHemmaAtkGainAccum[i]) / bucketCount),
+      rudoCritBonusPct: rudoBonusBase > 0 ? Math.round(rudoBonusBase * 1000) / 10 : 0,
+      rudoFinalCritChance: rudoBonusBase > 0 ? Math.round(Math.min(heroCritChance[i] + rudoBonusBase, 1) * 1000) / 10 : 0,
+      rudoBonusDmgAvg: Math.round((bucket === 'win' ? winRudoBonusDmgAccum[i] : loseRudoBonusDmgAccum[i]) / bucketCount),
+      isRudoInParty: rudoBonusBase > 0,
     };
   };
 
