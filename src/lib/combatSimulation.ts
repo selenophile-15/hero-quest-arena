@@ -1192,13 +1192,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Per-turn taken min/max across sims
   const dmgTakenPerTurnMin = new Float64Array(numHeroes).fill(1e9);
   const dmgTakenPerTurnMax = new Float64Array(numHeroes);
-  // Per-turn damage DEALT min/max across sims (per-sim = damageFight/round)
-  const dmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
-  const dmgDealtPerTurnMax = new Float64Array(numHeroes);
-  const winDmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
-  const winDmgDealtPerTurnMax = new Float64Array(numHeroes);
-  const loseDmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
-  const loseDmgDealtPerTurnMax = new Float64Array(numHeroes);
+  // Per-hit damage DEALT min/max across all attack logs (one entry per attack action)
+  const dmgPerHitMin = new Float64Array(numHeroes).fill(1e18);
+  const dmgPerHitMax = new Float64Array(numHeroes);
+  const winDmgPerHitMin = new Float64Array(numHeroes).fill(1e18);
+  const winDmgPerHitMax = new Float64Array(numHeroes);
+  const loseDmgPerHitMin = new Float64Array(numHeroes).fill(1e18);
+  const loseDmgPerHitMax = new Float64Array(numHeroes);
+  // Per-hero attack-action count (overall + per-fight for win/lose bucketing)
+  const attackCountTotal = new Float64Array(numHeroes);
+  const winAttackCount = new Float64Array(numHeroes);
+  const loseAttackCount = new Float64Array(numHeroes);
+  const simAttackCount = new Float64Array(numHeroes); // reset per fight
   // Avg-when-hit counters (sims where this hero took damage of that kind)
   const totalDmgTakenHitSims = new Float64Array(numHeroes);
   const singleDmgTakenHitSims = new Float64Array(numHeroes);
