@@ -3501,6 +3501,35 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       break;
     }
 
+    // ─── Hemma drain (after monster attack, before hero attack) ───
+    if (hemmaIdx >= 0 && heroHp[hemmaIdx] > 0) {
+      let drainTarget = -1;
+      for (let i = 0; i < numHeroes; i++) {
+        if (i === hemmaIdx || heroHp[i] <= 0) continue;
+        if (heroHp[i] > hemmaDrainThreshold * heroMaxHp[i]) {
+          if (drainTarget === -1 || heroHp[i] / heroMaxHp[i] > heroHp[drainTarget] / heroMaxHp[drainTarget]) {
+            drainTarget = i;
+          }
+        }
+      }
+      if (drainTarget >= 0) {
+        const drainAmt = Math.round(hemmaDrainThreshold * heroMaxHp[drainTarget]);
+        heroHp[drainTarget] -= drainAmt;
+        const atkGain = Math.round(heroAtkVal[hemmaIdx] * hemmaMult);
+        hemmaAtkGainAccum += atkGain;
+        log.push({ round, type: 'event', actor: activeHeroes[hemmaIdx].name, detail: `헴마 스킬 발동! ${activeHeroes[drainTarget].name} HP -${formatNum(drainAmt)} → ATK +${formatNum(atkGain)} (누적 +${formatNum(hemmaAtkGainAccum)})` });
+        const selfHeal = (champTier + Math.min(champTier - 3, 0)) * 5;
+        if (selfHeal > 0 && heroHp[hemmaIdx] < heroMaxHp[hemmaIdx]) {
+          const before = heroHp[hemmaIdx];
+          heroHp[hemmaIdx] = Math.min(heroHp[hemmaIdx] + selfHeal, heroMaxHp[hemmaIdx]);
+          const healed = heroHp[hemmaIdx] - before;
+          if (healed > 0) {
+            log.push({ round, type: 'heal', actor: activeHeroes[hemmaIdx].name, detail: `${activeHeroes[hemmaIdx].name} 체력 +${formatNum(healed)} 회복` });
+          }
+        }
+      }
+    }
+
     // ─── Heroes attack ───
     for (let i = 0; i < numHeroes; i++) {
       if (heroHp[i] <= 0) continue;
@@ -3598,7 +3627,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
-    // ─── Per-turn regen (after Hemma so Hemma's drain happens first) ───
+    // ─── Per-turn regen ───
     if (mobHpCurrent > 0) {
       for (let i = 0; i < numHeroes; i++) {
         if (heroHp[i] <= 0 || heroPersonalRegen[i] <= 0) continue;
@@ -3612,36 +3641,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
-    // ─── Hemma drain (champion-level, end of round) ───
-    if (hemmaIdx >= 0 && heroHp[hemmaIdx] > 0) {
-      let drainTarget = -1;
-      for (let i = 0; i < numHeroes; i++) {
-        if (i === hemmaIdx || heroHp[i] <= 0) continue;
-        if (heroHp[i] > hemmaDrainThreshold * heroMaxHp[i]) {
-          if (drainTarget === -1 || heroHp[i] / heroMaxHp[i] > heroHp[drainTarget] / heroMaxHp[drainTarget]) {
-            drainTarget = i;
-          }
-        }
-      }
-      if (drainTarget >= 0) {
-        const drainAmt = Math.round(hemmaDrainThreshold * heroMaxHp[drainTarget]);
-        heroHp[drainTarget] -= drainAmt;
-        const atkGain = Math.round(heroAtkVal[hemmaIdx] * hemmaMult);
-        hemmaAtkGainAccum += atkGain;
-        log.push({ round, type: 'event', actor: activeHeroes[hemmaIdx].name, detail: `헴마 스킬 발동! ${activeHeroes[drainTarget].name} HP -${formatNum(drainAmt)} → ATK +${formatNum(atkGain)} (누적 +${formatNum(hemmaAtkGainAccum)})` });
-        // Self-heal
-        const selfHeal = (champTier + Math.min(champTier - 3, 0)) * 5;
-        if (selfHeal > 0 && heroHp[hemmaIdx] < heroMaxHp[hemmaIdx]) {
-          const before = heroHp[hemmaIdx];
-          heroHp[hemmaIdx] = Math.min(heroHp[hemmaIdx] + selfHeal, heroMaxHp[hemmaIdx]);
-          const healed = heroHp[hemmaIdx] - before;
-          if (healed > 0) {
-            log.push({ round, type: 'heal', actor: activeHeroes[hemmaIdx].name, detail: `${activeHeroes[hemmaIdx].name} 체력 +${formatNum(healed)} 회복` });
-          }
-        }
-      }
-    }
-
+    // ─── Hemma drain moved to before hero attack (see above) ───
     // ─── Rudo bonus expires ───
     if (rudoBonusBase > 0 && round === rudoRounds) {
       log.push({ round, type: 'event', actor: champName, detail: `루도 리더 스킬 만료: 파티 치확 보너스 +${Math.round(rudoBonusBase * 100)}% 종료` });
