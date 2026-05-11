@@ -351,7 +351,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
         </Button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-lg border border-border/70 shadow-[inset_0_0_0_1px_hsla(var(--primary)/0.08)]">
         <table className="w-full text-xs border-collapse table-fixed">
           <thead>
             <tr className="border-b-2 border-border">
