@@ -3,6 +3,7 @@ import { CombatLogEntry } from '@/lib/combatSimulation';
 import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Shield, Sparkles } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
 import { useTheme } from '@/hooks/use-theme';
