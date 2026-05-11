@@ -1332,6 +1332,16 @@ export default function QuestSimulation() {
                     }`}>
                       {simResult.winRate.toFixed(1)}%
                     </div>
+                    {(() => {
+                      const total = simResult.totalSimulations || 0;
+                      const wins = simResult.winSimCount ?? Math.round(simResult.winRate / 100 * total);
+                      const losses = simResult.loseSimCount ?? (total - wins);
+                      return (
+                        <div className="text-[11px] text-muted-foreground/80 font-mono mt-0.5">
+                          [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
+                        </div>
+                      );
+                    })()}
                   </>
                 ) : (
                   <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
