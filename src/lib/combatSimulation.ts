@@ -2114,6 +2114,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           hemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
           // Hemma attack-bonus gain (per-sim → cumulative)
           hemmaAtkGainAccum[i] += simHemmaAtkGain[i];
+          rudoBonusDmgAccum[i] += simRudoBonusDmg[i];
 
           // Lord saved damage applied to this ally (when this hero was the protected one)
           lordSavedSingleDmgAccum[i] += simLordSavedSingleDmg[i];
