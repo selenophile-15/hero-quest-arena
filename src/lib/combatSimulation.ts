@@ -1996,6 +1996,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             winSingleHits[i] += singleHitsTaken[i];
             winTargeted[i] += simTargeted[i];
             winEvaded[i] += simEvaded[i];
+            winHealingAccum[i] += simHealing[i];
+            winCritSurvivals[i] += simCritSurvivals[i];
+            winHemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
+            winHemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
+            winHemmaAtkGainAccum[i] += simHemmaAtkGain[i];
           } else if (wasLose) {
             loseDmgDealt[i] += damageFight[i];
             loseNormalDmg[i] += normalDmgFight[i];
