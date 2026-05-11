@@ -3189,6 +3189,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroIsSamuraiFlag.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyoFlag.push(isClass(h, '다이묘', 'Daimyo'));
     heroIsDancerFlag.push(isClass(h, '무희', '곡예가', 'Dancer', 'Acrobat'));
+    heroIsDarkKnightFlag.push(isClass(h, '어둠의 기사', '죽음의 기사', 'Dark Knight', 'Death Knight'));
+    heroPersonalRegen.push((h as any).detailStats?.['매 턴 체력 재생'] || 0);
 
     // Spirits
     const spirits = (h.equipmentSlots || []).map(s => s.spirit).filter(Boolean);
