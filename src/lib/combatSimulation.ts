@@ -1713,13 +1713,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             lostInnate[drainTarget] = round;
           }
           // Hemma attack bonus: standalone ATK (with current condPct) × hemmaMult per drain.
-          // Per PDF: '그 턴의 (단독)최종ATK × hemmaMult' — scales with Shark/Dino/Mundra/Berserker.
+          // Per PDF: '그 턴의 (단독)최종ATK × hemmaMult' — scales with Shark/Dino/Berserker.
+          // Mundra is already folded into heroAtkConst*(1+commonPct) via finalAtk, so we
+          // derive standalone from finalAtk/partyAtkMult instead of reconstructing.
           {
-            const hCondPct = (monster.isBoss ? 0.2 * heroMundra[hemmaWho] : 0)
-              + sharkActive * 0.01 * heroShark[hemmaWho]
+            const standaloneNoCond = (heroPartyAtkMult[hemmaWho] || 1) > 0
+              ? finalAtk[hemmaWho] / (heroPartyAtkMult[hemmaWho] || 1)
+              : heroAtkRaw[hemmaWho];
+            const hCondPct = sharkActive * 0.01 * heroShark[hemmaWho]
               + dinosaurActive * heroDinosaur[hemmaWho] * 0.01
               + 0.1 * (1 + heroBerserkerLevel[hemmaWho]) * berserkerStage[hemmaWho];
-            const standalone = heroAtkRaw[hemmaWho] + heroAtkConst[hemmaWho] * hCondPct;
+            const standalone = standaloneNoCond + heroAtkConst[hemmaWho] * hCondPct;
             const gain = standalone * hemmaMult;
             hemmaBonus[hemmaWho] += gain;
             simHemmaAtkGain[hemmaWho] += gain;
