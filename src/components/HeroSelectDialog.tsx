@@ -173,6 +173,13 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
       }
     } else if (sortKey === 'position') {
       list.sort((a, b) => sortDir === 'asc' ? (a.position || '').localeCompare(b.position || '') : (b.position || '').localeCompare(a.position || ''));
+    } else if (sortKey === 'type') {
+      // champion first when desc
+      list.sort((a, b) => {
+        const av = a.type === 'champion' ? 1 : 0;
+        const bv = b.type === 'champion' ? 1 : 0;
+        return sortDir === 'asc' ? av - bv : bv - av;
+      });
     } else if (sortKey === 'critDmg') {
       // Sort by computed crit damage (atk * critDmg / 100)
       list.sort((a, b) => {
