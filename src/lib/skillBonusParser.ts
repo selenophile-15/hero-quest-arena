@@ -201,7 +201,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
         case '영혼_회피%': src.evasion += adjusted; break;
         case '영혼_위협도': src.threat += adjusted; break;
         // Detail stats from spirits
-        case '영혼_매턴체력회복': case '매턴회복': detail.hpRegenPerTurn += adjusted; break;
+        case '영혼_매턴체력회복': case '매턴회복': detail.hpRegenPerTurn += adjusted; src.regenPerTurn = (src.regenPerTurn || 0) + adjusted; break;
         case '휴식시간감소%': detail.restReduction += adjusted; break;
         case '조건부공격력%': detail.sharkAtkPct += adjusted; break;
         case '영혼_첫라공격력%': detail.dinoAtkPct += adjusted; break;
