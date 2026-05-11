@@ -1859,6 +1859,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (heroIsConquistador[jj]) {
           simConqStackTurns[preStacks][jj]++;
           simConqStackAttackCount[preStacks][jj]++;
+          simConqStackTotalDmgAccum[preStacks][jj] += damage;
           if (isCrit) {
             simConqStackCritDmgAccum[preStacks][jj] += damage;
             simConqStackCritCount[preStacks][jj]++;
