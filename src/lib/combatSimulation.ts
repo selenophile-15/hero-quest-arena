@@ -1265,6 +1265,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const winHpRemain = new Float64Array(numHeroes);
   const winTargeted = new Float64Array(numHeroes);
   const winEvaded = new Float64Array(numHeroes);
+  const winHealingAccum = new Float64Array(numHeroes);
+  const winCritSurvivals = new Float64Array(numHeroes);
+  const winHemmaAbsorbedDmgAccum = new Float64Array(numHeroes);
+  const winHemmaAbsorbedCountAccum = new Float64Array(numHeroes);
+  let winSimCountForHero = 0;
 
   const loseDmgDealt = new Float64Array(numHeroes);
   const loseNormalDmg = new Float64Array(numHeroes);
