@@ -3321,6 +3321,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         if (heroHp[i] <= 0) continue;
         if (Math.random() < Math.max(0, heroEva[i])) {
           log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[i].name, detail: `회피` });
+          if (heroIsDancerFlag[i] && !dancerGuaranteedCrit[i]) {
+            dancerGuaranteedCrit[i] = true;
+            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsDancerFlag[i] && isClass(activeHeroes[i], '곡예가', 'Acrobat') ? '곡예가' : '무희'} 고유 스킬: 다음 공격 확정 치명타!` });
+          }
           continue;
         }
         // Ninja/Sensei lose innate on hit
