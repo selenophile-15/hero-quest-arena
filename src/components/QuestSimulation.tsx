@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt, Hourglass } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -56,24 +56,49 @@ function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.Rea
 }
 
 // Inline 3-button toggle for All/Win/Lose, used at the right of each group title row.
-function ResultTabsToggle({ value, onChange }: { value: 'all' | 'win' | 'lose'; onChange: (v: 'all' | 'win' | 'lose') => void }) {
+// Optional retry-only filter button (hourglass) shown when retry simulation data exists.
+function ResultTabsToggle({ value, onChange, retryOnly, onToggleRetryOnly, hasRetry }: {
+  value: 'all' | 'win' | 'lose';
+  onChange: (v: 'all' | 'win' | 'lose') => void;
+  retryOnly?: boolean;
+  onToggleRetryOnly?: () => void;
+  hasRetry?: boolean;
+}) {
   const opts: Array<{ v: 'all' | 'win' | 'lose'; label: string }> = [
     { v: 'all', label: '전체' },
     { v: 'win', label: '성공' },
     { v: 'lose', label: '실패' },
   ];
   return (
-    <div className="result-tabs-premium ml-auto">
-      {opts.map(o => (
+    <div className="ml-auto flex items-center gap-1.5">
+      {hasRetry && (
         <button
-          key={o.v}
           type="button"
-          onClick={() => onChange(o.v)}
-          data-active={value === o.v}
+          onClick={onToggleRetryOnly}
+          aria-pressed={!!retryOnly}
+          title={retryOnly ? '재시도 판만 보기 (켜짐)' : '재시도 판만 보기'}
+          className={
+            'inline-flex items-center justify-center w-7 h-7 rounded-md border transition-all ' +
+            (retryOnly
+              ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_10px_hsl(var(--primary)/0.45)]'
+              : 'bg-muted text-muted-foreground border-border hover:bg-muted/80 hover:text-foreground')
+          }
         >
-          {o.label}
+          <Hourglass className="w-3.5 h-3.5" />
         </button>
-      ))}
+      )}
+      <div className="result-tabs-premium">
+        {opts.map(o => (
+          <button
+            key={o.v}
+            type="button"
+            onClick={() => onChange(o.v)}
+            data-active={value === o.v}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -279,7 +304,18 @@ export default function QuestSimulation() {
   const [jobDisplayMode, setJobDisplayMode] = useState<'icon' | 'illust' | 'none'>('icon');
   const [simResultsFilter, setSimResultsFilter] = useState<string>('all');
   const [mainResultsTab, setMainResultsTab] = useState<'all' | 'win' | 'lose'>('all');
+  const [retryOnly, setRetryOnly] = useState(false);
   const [boosterOpen, setBoosterOpen] = useState(false);
+
+  // Reset retry-only filter whenever the underlying simulation no longer has retry data.
+  useEffect(() => { if (!simResult?.retryResult) setRetryOnly(false); }, [simResult]);
+
+  // Display source: when retry-only is active and retry data exists, swap the entire result.
+  const hasRetry = !!simResult?.retryResult;
+  const dispSim = (retryOnly && simResult?.retryResult) ? simResult.retryResult : simResult;
+  const retryBoosterActive = retryOnly && hasRetry;
+  // Extra +20% atk/def from the implicit retry booster (stacked on top of partyAtkMult/partyDefMult)
+  const RETRY_BOOSTER_EXTRA = 0.2;
 
   // Load quest data
   useEffect(() => {
@@ -1352,27 +1388,27 @@ export default function QuestSimulation() {
               <div className="mb-3 py-3 px-4 rounded-xl text-center relative overflow-hidden" style={{
                 background: !simResult 
                   ? 'linear-gradient(135deg, hsla(0,0%,50%,0.08) 0%, hsla(0,0%,50%,0.02) 100%)'
-                  : simResult.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
-                  : simResult.winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
+                  : dispSim!.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
+                  : dispSim!.winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
                   : 'linear-gradient(135deg, hsla(0,80%,50%,0.12) 0%, hsla(0,80%,50%,0.04) 100%)',
-                border: `1px solid ${!simResult ? 'hsla(0,0%,50%,0.15)' : simResult.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : simResult.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
-                boxShadow: simResult ? (simResult.winRate >= 90 ? '0 0 20px hsla(82,80%,45%,0.1), inset 0 0 30px hsla(82,80%,45%,0.05)' : simResult.winRate >= 50 ? '0 0 20px hsla(48,80%,50%,0.1), inset 0 0 30px hsla(48,80%,50%,0.05)' : '0 0 20px hsla(0,80%,50%,0.1)') : 'none',
+                border: `1px solid ${!simResult ? 'hsla(0,0%,50%,0.15)' : dispSim!.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : dispSim!.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
+                boxShadow: simResult ? (dispSim!.winRate >= 90 ? '0 0 20px hsla(82,80%,45%,0.1), inset 0 0 30px hsla(82,80%,45%,0.05)' : dispSim!.winRate >= 50 ? '0 0 20px hsla(48,80%,50%,0.1), inset 0 0 30px hsla(48,80%,50%,0.05)' : '0 0 20px hsla(0,80%,50%,0.1)') : 'none',
               }}>
                 <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
                 {simResult ? (
                   <>
                     <div className={`text-3xl font-black font-mono tracking-tight ${
-                      simResult.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
-                      simResult.winRate >= 70 ? 'text-lime-400' :
-                      simResult.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
-                      simResult.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
+                      dispSim!.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
+                      dispSim!.winRate >= 70 ? 'text-lime-400' :
+                      dispSim!.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
+                      dispSim!.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
                     }`}>
-                      {simResult.winRate.toFixed(1)}%
+                      {dispSim!.winRate.toFixed(1)}%
                     </div>
                     {(() => {
-                      const total = simResult.totalSimulations || 0;
-                      const wins = simResult.winSimCount ?? Math.round(simResult.winRate / 100 * total);
-                      const losses = simResult.loseSimCount ?? (total - wins);
+                      const total = dispSim!.totalSimulations || 0;
+                      const wins = dispSim!.winSimCount ?? Math.round(dispSim!.winRate / 100 * total);
+                      const losses = dispSim!.loseSimCount ?? (total - wins);
                       return (
                         <div className="text-[11px] text-muted-foreground/80 font-mono mt-0.5">
                           [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
@@ -1448,8 +1484,8 @@ export default function QuestSimulation() {
                     const hero = selectedHeroes[slotIdx];
                     if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
                     
-                    const heroResult = simResult?.heroResults.find(r => r.heroId === hero.id);
-                    const totalSims = simResult?.totalSimulations || 1;
+                    const heroResult = dispSim?.heroResults.find(r => r.heroId === hero.id);
+                    const totalSims = dispSim?.totalSimulations || 1;
                     const scale = totalSims / 20;
                     
                     let faceImg = '/images/quest/face/icon_shop_face_A.webp';
@@ -1462,7 +1498,7 @@ export default function QuestSimulation() {
                       else if (deathCount >= 8 * scale) faceImg = '/images/quest/face/icon_shop_face_B.webp';
                       else if (deathCount >= 3 * scale) faceImg = '/images/quest/face/icon_shop_face_A.webp';
                       else if (deathCount >= 0.01 * scale) faceImg = '/images/quest/face/icon_shop_face_S.webp';
-                      else if (simResult.avgRounds <= 1 && simResult.winRate >= 99.9) faceImg = '/images/quest/face/icon_shop_face_SSS.webp';
+                      else if (dispSim!.avgRounds <= 1 && dispSim!.winRate >= 99.9) faceImg = '/images/quest/face/icon_shop_face_SSS.webp';
                       else faceImg = '/images/quest/face/icon_shop_face_S.webp';
                     }
                     
@@ -1659,6 +1695,21 @@ export default function QuestSimulation() {
                                 ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
                                 : (hero as any)[stat.key] || 0;
                             }
+
+                            // Retry-booster (+20% atk/def) display override
+                            if (retryBoosterActive && bs && (stat.key === 'atk' || stat.key === 'def')) {
+                              const isAtk = stat.key === 'atk';
+                              const cPct = ((hero.detailStats?.[isAtk ? '공통 공격력 계수' : '공통 방어력 계수'] ?? 0)) / 100;
+                              const baseStat = isAtk ? (hero.atk || 0) : (hero.def || 0);
+                              const constant = hero.detailStats?.[isAtk ? '공격력 상수' : '방어력 상수']
+                                ?? ((1 + cPct) > 0 ? baseStat / (1 + cPct) : baseStat);
+                              const auraFlat = isAtk ? (buffSummary?.flatAtk || 0) : (buffSummary?.flatDef || 0);
+                              const bsVal = isAtk ? bs.atk : bs.def;
+                              const partyMult = baseStat > 0 ? (bsVal - auraFlat) / baseStat : 1;
+                              const boosted = Math.round(constant * (1 + cPct + RETRY_BOOSTER_EXTRA) * partyMult + auraFlat);
+                              delta += (boosted - val);
+                              val = boosted;
+                            }
                             
                             // Evasion special handling
                             let displayColor = stat.color;
@@ -1753,7 +1804,7 @@ export default function QuestSimulation() {
                 <Crown className="w-5 h-5 text-primary" />
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
                 {currentQuest && simResult && selectedHeroes.length > 0 && (
-                  <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} />
+                  <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} />
                 )}
               </div>
 
@@ -1766,9 +1817,9 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">턴 수</span>
                 </div>
                 {(() => {
-                  const rounds = mainResultsTab === 'win' ? simResult.winRounds
-                    : mainResultsTab === 'lose' ? simResult.loseRounds
-                    : { avg: simResult.avgRounds, min: simResult.minRounds, max: simResult.maxRounds };
+                  const rounds = mainResultsTab === 'win' ? dispSim!.winRounds
+                    : mainResultsTab === 'lose' ? dispSim!.loseRounds
+                    : { avg: dispSim!.avgRounds, min: dispSim!.minRounds, max: dispSim!.maxRounds };
                   if (!rounds) return (
                     <div className="text-center text-xs text-muted-foreground py-3">
                       {mainResultsTab === 'win' ? '성공한 판 없음' : '실패한 판 없음'}
@@ -1791,9 +1842,9 @@ export default function QuestSimulation() {
                     </div>
                   );
                 })()}
-                {simResult.roundLimitRate > 0 && (
+                {dispSim!.roundLimitRate > 0 && (
                   <div className="mt-2 text-center text-[10px] text-red-400">
-                    ⚠ 라운드 제한 도달: {simResult.roundLimitRate.toFixed(1)}%
+                    ⚠ 라운드 제한 도달: {dispSim!.roundLimitRate.toFixed(1)}%
                   </div>
                 )}
               </div>
@@ -1805,9 +1856,9 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">대미지 기여도</span>
                 </div>
                 {(() => {
-                  const bucketResults = mainResultsTab === 'win' && simResult.winHeroResults ? simResult.winHeroResults
-                    : mainResultsTab === 'lose' && simResult.loseHeroResults ? simResult.loseHeroResults
-                    : simResult.heroResults;
+                  const bucketResults = mainResultsTab === 'win' && dispSim!.winHeroResults ? dispSim!.winHeroResults
+                    : mainResultsTab === 'lose' && dispSim!.loseHeroResults ? dispSim!.loseHeroResults
+                    : dispSim!.heroResults;
                   const totalDmg = bucketResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                   const sorted = [...bucketResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
                   const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
@@ -1840,9 +1891,9 @@ export default function QuestSimulation() {
                   <span className="text-sm font-bold text-foreground">탱킹 기여도</span>
                 </div>
                 {(() => {
-                  const bucketResults = mainResultsTab === 'win' && simResult.winHeroResults ? simResult.winHeroResults
-                    : mainResultsTab === 'lose' && simResult.loseHeroResults ? simResult.loseHeroResults
-                    : simResult.heroResults;
+                  const bucketResults = mainResultsTab === 'win' && dispSim!.winHeroResults ? dispSim!.winHeroResults
+                    : mainResultsTab === 'lose' && dispSim!.loseHeroResults ? dispSim!.loseHeroResults
+                    : dispSim!.heroResults;
                   const sorted = [...bucketResults].sort((a, b) => b.tankingRate - a.tankingRate);
                   const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
                   const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
@@ -1980,11 +2031,11 @@ export default function QuestSimulation() {
           <div className="card-fantasy p-4">
 
           {/* Mini-boss breakdown (only for random mode, not boss quests) */}
-          {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
+          {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
             <div className="mb-4">
               <div className="text-xs text-muted-foreground mb-2 font-medium">미니보스별 결과</div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
-                {simResult.miniBossResults.map(mbr => {
+                {dispSim!.miniBossResults.map(mbr => {
                   const typeLabel = mbr.type === 'normal' ? '일반' :
                     mbr.type === 'huge' ? '거대한' :
                     mbr.type === 'agile' ? '민첩한' :
@@ -2021,7 +2072,7 @@ export default function QuestSimulation() {
           {/* Per-hero results - full width detailed table */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
+              {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
                 <>
                   <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
                   <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
@@ -2044,22 +2095,22 @@ export default function QuestSimulation() {
             {(() => {
               // Get the hero results based on filter
               // Priority: miniboss filter (if random mode and chosen) > outcome filter
-              let displayResults = simResult.heroResults;
-              if (simResultsFilter !== 'all' && simResult.miniBossResults) {
-                const filtered = simResult.miniBossResults.find(m => m.type === simResultsFilter);
+              let displayResults = dispSim!.heroResults;
+              if (simResultsFilter !== 'all' && dispSim!.miniBossResults) {
+                const filtered = dispSim!.miniBossResults.find(m => m.type === simResultsFilter);
                 if (filtered) {
                   if (mainResultsTab === 'win' && filtered.winHero) displayResults = filtered.winHero;
                   else if (mainResultsTab === 'lose' && filtered.loseHero) displayResults = filtered.loseHero;
                   else displayResults = filtered.heroResults;
                 }
-              } else if (mainResultsTab === 'win' && simResult.winHeroResults) {
-                displayResults = simResult.winHeroResults;
-              } else if (mainResultsTab === 'lose' && simResult.loseHeroResults) {
-                displayResults = simResult.loseHeroResults;
+              } else if (mainResultsTab === 'win' && dispSim!.winHeroResults) {
+                displayResults = dispSim!.winHeroResults;
+              } else if (mainResultsTab === 'lose' && dispSim!.loseHeroResults) {
+                displayResults = dispSim!.loseHeroResults;
               }
               const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
-              const zeroBucket = (mainResultsTab === 'win' && (simResult.winSimCount ?? 0) === 0)
-                || (mainResultsTab === 'lose' && (simResult.loseSimCount ?? 0) === 0);
+              const zeroBucket = (mainResultsTab === 'win' && (dispSim!.winSimCount ?? 0) === 0)
+                || (mainResultsTab === 'lose' && (dispSim!.loseSimCount ?? 0) === 0);
               if (!displayResults || displayResults.length === 0 || noBucket) {
                 return (
                   <div className="text-center text-xs text-muted-foreground py-8">
@@ -2071,17 +2122,17 @@ export default function QuestSimulation() {
                 <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />가하는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />가하는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
                     <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                         // Party totals — use per-sim party distribution from engine when available,
                         // bucketed by current results tab. Fallback to summed individual values.
                         const pAgg = mainResultsTab === 'win'
-                          ? { dmg: simResult.winPartyDmgDealt, perTurn: simResult.winPartyDmgPerTurn }
+                          ? { dmg: dispSim!.winPartyDmgDealt, perTurn: dispSim!.winPartyDmgPerTurn }
                           : mainResultsTab === 'lose'
-                          ? { dmg: simResult.losePartyDmgDealt, perTurn: simResult.losePartyDmgPerTurn }
-                          : { dmg: simResult.partyDmgDealt, perTurn: simResult.partyDmgPerTurn };
+                          ? { dmg: dispSim!.losePartyDmgDealt, perTurn: dispSim!.losePartyDmgPerTurn }
+                          : { dmg: dispSim!.partyDmgDealt, perTurn: dispSim!.partyDmgPerTurn };
                         const partyAvg = pAgg.dmg?.avg ?? displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                         const partyMin = pAgg.dmg?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
                         const partyMax = pAgg.dmg?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
@@ -2207,7 +2258,7 @@ export default function QuestSimulation() {
                     const hpKey = mainResultsTab === 'win' ? 'win' : mainResultsTab === 'lose' ? 'lose' : 'all';
                     return (
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2"><span className="flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</span><ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2"><span className="flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</span><ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
                     <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                       <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                         <colgroup>
@@ -2335,17 +2386,17 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 받는 대미지 — 전체(단일+광역) / 단일+광역 합본 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
                     {(() => {
                       const blank = '';
                       const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
                       // Party-level distributions (true sim-based)
-                      const pTaken = mainResultsTab === 'win' ? simResult.winPartyDmgTaken
-                        : mainResultsTab === 'lose' ? simResult.losePartyDmgTaken
-                        : simResult.partyDmgTaken;
-                      const pTakenT = mainResultsTab === 'win' ? simResult.winPartyDmgTakenPerTurn
-                        : mainResultsTab === 'lose' ? simResult.losePartyDmgTakenPerTurn
-                        : simResult.partyDmgTakenPerTurn;
+                      const pTaken = mainResultsTab === 'win' ? dispSim!.winPartyDmgTaken
+                        : mainResultsTab === 'lose' ? dispSim!.losePartyDmgTaken
+                        : dispSim!.partyDmgTaken;
+                      const pTakenT = mainResultsTab === 'win' ? dispSim!.winPartyDmgTakenPerTurn
+                        : mainResultsTab === 'lose' ? dispSim!.losePartyDmgTakenPerTurn
+                        : dispSim!.partyDmgTakenPerTurn;
                       const partyTakenAvg = pTaken?.avg ?? displayResults.reduce((s, hr) => s + (hr.totalDamageTakenAvg || 0), 0);
                       const partyTakenMin = pTaken?.min ?? 0;
                       const partyTakenMax = pTaken?.max ?? 0;
@@ -2529,7 +2580,7 @@ export default function QuestSimulation() {
                     const showLord = true;
 
                     // ── Table D: 폴로니아 도둑질 ──
-                    const poloniaLoot = simResult.poloniaLoot;
+                    const poloniaLoot = dispSim!.poloniaLoot;
                     const hasPolonia = !!poloniaLoot?.hasPolonia;
 
                     const monAtk = currentQuest?.atk || 0;
@@ -2537,7 +2588,7 @@ export default function QuestSimulation() {
 
                     return (
                       <div>
-                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
                         <div className="space-y-6">
 
                           {/* ===== Table A: 상어 / 공룡·다이묘 — 해당 파티원만 ===== */}

@@ -302,6 +302,7 @@ export interface SimulationResult {
   roundLimitRate: number;    // % of sims hitting 499 round limit
   totalSimulations: number;
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
+  retryResult?: SimulationResult; // Full retry sim result (only on first-pass result)
   // Per mini-boss breakdown (only for random mode)
   miniBossResults?: MiniBossResult[];
   // Win/loss round breakdown
@@ -2208,6 +2209,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let winRate = rawWinRate;
   let retryWinRate: number | undefined;
   let retrySimulations: number | undefined;
+  let retryResultFull: SimulationResult | undefined;
 
   // Fateweaver/Chronomancer retry: re-run simulation with added Normal booster
   if (fateweaverPresent && rawWinRate < 100 && !config._isRetry && !config._disableRetry) {
@@ -2220,6 +2222,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
     retryWinRate = retryResult.rawWinRate;
     retrySimulations = retryResult.totalSimulations;
+    retryResultFull = retryResult;
 
     // Combined win rate: win on first try OR (lose first try AND win on retry)
     // P(win) = P1 + (1 - P1) × P2
@@ -2554,6 +2557,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     roundLimitRate: (roundLimitTimes / actualSimCount) * 100,
     totalSimulations: actualSimCount,
     retrySimulations,
+    retryResult: retryResultFull,
     winRounds: timesQuestWon > 0 ? {
       avg: Math.round((winRoundsSum / timesQuestWon) * 100) / 100,
       min: winRoundsMin >= 1000 ? 0 : winRoundsMin,
