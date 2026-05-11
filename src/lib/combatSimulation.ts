@@ -1657,7 +1657,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             lostInnate[drainTarget] = round;
           }
           // Hemma attack bonus: base_atk × hemmaMult (flat add per drain)
-          hemmaBonus[hemmaWho] += heroAtk[hemmaWho] * hemmaMult;
+          { const gain = heroAtk[hemmaWho] * hemmaMult; hemmaBonus[hemmaWho] += gain; simHemmaAtkGain[hemmaWho] += gain; }
           hp[hemmaWho] = Math.min(hp[hemmaWho] + (champTier + Math.min(champTier - 3, 0)) * 5, finalHp[hemmaWho]);
         }
       }
