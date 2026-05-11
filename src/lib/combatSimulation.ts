@@ -3204,6 +3204,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   // Conqueror crit stacks (max 4)
   const conquStacks: number[] = new Array(numHeroes).fill(0);
 
+  // Dancer/Acrobat: guaranteed crit on next attack after evasion
+  const dancerGuaranteedCrit: boolean[] = new Array(numHeroes).fill(false);
+
+  // Hemma tracking (only relevant if champion is Hemma)
+  const isHemmaChamp = champName.includes('헴마') || champName === 'Hemma';
+  let hemmaIdx = -1;
+  if (isHemmaChamp) {
+    hemmaIdx = activeHeroes.findIndex(h => h.type === 'champion');
+  }
+  let hemmaAtkGainAccum = 0;
+  const hemmaMult = champTier === 1 ? 0.15 : champTier === 2 ? 0.2 : champTier === 3 ? 0.3 : 0.4;
+  const hemmaDrainThreshold = (0.11 - 0.01 * champTier);
+
   // Ninja/Sensei innate tracking — bonus is CRIT% + EVA% (tier-aware), NOT ATK.
   // heroCrit / heroEva from precomputedStats already include this innate bonus.
   // On hit → subtract delta; for Sensei recovery → re-add delta.
