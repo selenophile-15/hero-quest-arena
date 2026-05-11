@@ -351,6 +351,17 @@ export default function QuestSimulation() {
   const isBossQuest = currentQuest?.isBoss || false;
   const isFlashQuest = selectedQuestType === 'flash';
 
+  // Trim party from the right when dungeon maxMembers shrinks
+  useEffect(() => {
+    if (!currentRegion) return;
+    if (selectedHeroIds.size <= maxMembers) return;
+    // Preserve order using selectedHeroes (sorted: champions first); drop from the right
+    const keepIds = selectedHeroes.slice(0, maxMembers).map(h => h.id);
+    setSelectedHeroIds(new Set(keepIds));
+    // selectedHeroes is derived from selectedHeroIds; safe under React batching
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maxMembers]);
+
   // Rudo element bonus: +50% to total party element values (rounded)
   const champion = selectedHeroes.find(h => h.type === 'champion');
   const isRudo = champion && (champion.championName?.includes('루도') || champion.name?.includes('루도'));
