@@ -50,7 +50,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
   const [filter, setFilter] = useState<{ name: string } | null>(null);
-  const [showAllBright, setShowAllBright] = useState(false);
+  const showAllBright = false;
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const logScrollRef = useRef<HTMLDivElement>(null);
 
