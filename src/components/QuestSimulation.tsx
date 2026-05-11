@@ -351,6 +351,17 @@ export default function QuestSimulation() {
   const isBossQuest = currentQuest?.isBoss || false;
   const isFlashQuest = selectedQuestType === 'flash';
 
+  // Trim party from the right when dungeon maxMembers shrinks
+  useEffect(() => {
+    if (!currentRegion) return;
+    if (selectedHeroIds.size <= maxMembers) return;
+    // Preserve order using selectedHeroes (sorted: champions first); drop from the right
+    const keepIds = selectedHeroes.slice(0, maxMembers).map(h => h.id);
+    setSelectedHeroIds(new Set(keepIds));
+    // selectedHeroes is derived from selectedHeroIds; safe under React batching
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maxMembers]);
+
   // Rudo element bonus: +50% to total party element values (rounded)
   const champion = selectedHeroes.find(h => h.type === 'champion');
   const isRudo = champion && (champion.championName?.includes('루도') || champion.name?.includes('루도'));
@@ -1144,7 +1155,8 @@ export default function QuestSimulation() {
                       const upper = defThresholds[i];
                       const lower = defThresholds[i - 1];
                       if (def >= lower.value) {
-                        const segPct = upper.value > lower.value ? (def - lower.value) / (upper.value - lower.value) : 0;
+                        const range = upper.value - lower.value;
+                        const segPct = range > 0 ? Math.min(1, (def - lower.value) / range) : 0;
                         const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
                         const upperPos = (i / (defThresholds.length - 1)) * 100;
                         return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
@@ -1182,14 +1194,22 @@ export default function QuestSimulation() {
                   const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
 
                     return (
-                    <div className="mt-6 pt-4 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names], threshold value aligned with monster info icons (px-1 = 4px) */}
-                      <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 24px 1fr', paddingLeft: '4px' }}>
+                    <div className="mt-3 pt-3 border-t border-border/30" style={{ marginBottom: '8px' }}>
+                      {/* Column headers — explain what each column represents */}
+                      <div className="grid gap-x-1 mb-1.5" style={{ gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
+                        <div className="text-[11px] font-semibold text-foreground text-right pr-0.5 leading-tight">방어력 기준치</div>
+                        <div />
+                        <div className="text-[10px] font-semibold text-muted-foreground text-left leading-tight">(받는 대미지)</div>
+                        <div />
+                        <div className="text-[11px] font-semibold text-foreground text-left leading-tight ml-1.5">이름 &amp; 방어력 (받는 대미지)</div>
+                      </div>
+                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — spacer halved (24→12) */}
+                      <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
                         {/* Column 1: threshold values (aligned with monster info icons on left) */}
                         <div className="relative">
                           {rows.map(r => (
-                            <div key={`thrv-${r.key}`} className="absolute left-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                            <div key={`thrv-${r.key}`} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[13px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
                             </div>
                           ))}
                         </div>
@@ -1204,7 +1224,7 @@ export default function QuestSimulation() {
                             </div>
                           ))}
                           {heroEntries.map(h => (
-                            <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
+                            <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${Math.min(100, h.pinPct)}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
                               <div className="w-4 h-4 rounded-full border-[2.5px] shadow-[0_0_8px_rgba(255,255,255,0.6)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
                             </div>
                           ))}
@@ -1213,17 +1233,18 @@ export default function QuestSimulation() {
                         <div className="relative pl-1">
                           {rows.map(r => (
                             <div key={`thrp-${r.key}`} className="absolute left-1 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
+                              <span className={`text-[12px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
                         </div>
-                        {/* Spacer column */}
+                        {/* Spacer column — halved */}
                         <div aria-hidden="true" />
                         {/* Column 5: connectors + hero name labels */}
                         <div className="relative ml-1.5">
                           <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
                             {heroLayout.map(h => {
-                              const yPin = (1 - h.pinPct / 100) * barH;
+                              const clamped = Math.min(100, h.pinPct);
+                              const yPin = (1 - clamped / 100) * barH;
                               const yLabel = (1 - h.labelPct / 100) * barH;
                               const x1 = 0;
                               const x2 = 28;
@@ -1238,8 +1259,8 @@ export default function QuestSimulation() {
                           </svg>
                           {heroLayout.map(h => (
                             <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '32px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[11px] font-semibold truncate max-w-[120px] leading-tight" style={{ color: h.color }}>{h.name}</span>
-                              <span className="text-[10px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
+                              <span className="text-[13px] font-semibold truncate max-w-[140px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                              <span className="text-[12px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
                             </div>
@@ -2165,7 +2186,7 @@ export default function QuestSimulation() {
                               <GroupHeader label="치명타 생존" info={'· 확률: 치명타 생존 발동 확률 (스탯 기준).\n· 발동 비율: 전체 시뮬레이션 중 치명타 생존이 한 번이라도 발동된 판의 비율.'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>
-                              <GroupHeader label="회복" info={'· 턴: 매턴 실제 체력 재생 수치 (도마뱀 영혼 + 클레릭/비숍 회복 + 릴루 등 챔피언 회복 합산).\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
+                              <GroupHeader label="회복" info={'· 턴: 매턴 실제 체력 재생 수치 (영혼/스킬 매턴체력회복(도마뱀·불사조·우로보로스·클레릭·비숍 등) + 오라의 노래 매턴회복 + 챔피언 회복(릴루 등) 합산).\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
                             </th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
@@ -2324,9 +2345,10 @@ export default function QuestSimulation() {
                                       <td className="py-1 px-2 text-center font-mono whitespace-nowrap" style={{
                                         color: dar <= 25 ? 'hsl(var(--muted-foreground))' : dar <= 50 ? '#84cc16' : dar <= 100 ? '#eab308' : '#ef4444'
                                       }}>{dar > 0 ? `${dar}%` : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.normalDamageTaken > 0 ? formatNumber(hr.normalDamageTaken) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.critDamageTakenVal > 0 ? formatNumber(hr.critDamageTakenVal) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.aoeDamageTaken > 0 ? formatNumber(hr.aoeDamageTaken) : blank}</td>
+                                      {/* 단일 일반 = 원래 단일 대미지 × 보정%, 단일 치명 = 단일 일반 × 1.5, 광역 일반 = 원래 광역 대미지 × 보정% */}
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAtk > 0 && dar > 0) ? formatNumber(Math.round(monAtk * dar / 100)) : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAtk > 0 && dar > 0) ? formatNumber(Math.round(monAtk * dar / 100 * 1.5)) : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAoe > 0 && dar > 0) ? formatNumber(Math.round(monAoe * dar / 100)) : blank}</td>
                                       {/* 받은 대미지 전체 */}
                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(minTotal)) : blank}</td>
                                       <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(avgTotal)) : blank}</td>
@@ -2350,14 +2372,14 @@ export default function QuestSimulation() {
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
-                                  <col style={{ width: '95px' }} /><col style={{ width: '105px' }} /><col style={{ width: '95px' }} />
-                                  <col style={{ width: '95px' }} /><col style={{ width: '105px' }} /><col style={{ width: '95px' }} />
+                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} /><col style={{ width: '80px' }} />
+                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} />
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
-                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 시뮬레이션마다의 합산 분포(맞지 않은 판은 0).'} />
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={4}>
+                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 치명타 확률 = 몬스터 기본 치명타 확률에서 파티원 회피를 차감한 값(최소 5%).'} />
                                     </th>
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
                                       <GroupHeader label="광역" info={'광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음.'} />
@@ -2367,6 +2389,7 @@ export default function QuestSimulation() {
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
+                                    <th className="text-center py-1 px-2">치명타 확률</th>
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
@@ -2380,12 +2403,17 @@ export default function QuestSimulation() {
                                     const aMin = hr.aoeDmgTakenMin ?? 0;
                                     const aAvg = hr.aoeDmgTakenAvg ?? 0;
                                     const aMax = hr.aoeDmgTakenMax ?? 0;
+                                    // 치명타 확률 = max(5, monsterCrit - evasion). 회피가 몬스터 치확보다 +20% 이상이면 최소 5%로 고정.
+                                    const monCrit = hr.monsterCritChance ?? 0;
+                                    const eva = hr.finalEvasion ?? 0;
+                                    const critProb = Math.max(5, Math.round((monCrit - eva) * 10) / 10);
                                     return (
                                       <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                         <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(sMin)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(sAvg)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(sMax)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{critProb}%</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(aMin)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(aAvg)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(aMax)}</td>

@@ -422,11 +422,12 @@ interface AurasongBonuses {
   flatHp: number;
 }
 
-function getAurasongBonuses(champion: Hero | null): AurasongBonuses {
-  const result: AurasongBonuses = {
+function getAurasongBonuses(champion: Hero | null): AurasongBonuses & { regenPerTurn: number } {
+  const result: AurasongBonuses & { regenPerTurn: number } = {
     atkPct: 0, defPct: 0, hpPct: 0,
     critPct: 0, evaPct: 0, critDmgPct: 0,
     flatAtk: 0, flatDef: 0, flatHp: 0,
+    regenPerTurn: 0,
   };
   if (!champion) return result;
 
@@ -447,6 +448,7 @@ function getAurasongBonuses(champion: Hero | null): AurasongBonuses {
       case '오라_깡공격력': result.flatAtk += val; break;
       case '오라_깡방어력': result.flatDef += val; break;
       case '오라_깡체력': result.flatHp += val; break;
+      case '오라_매턴체력회복': result.regenPerTurn += val; break;
     }
   }
 
@@ -2063,19 +2065,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
       }
 
-      // ─── Healing (Lizard, Cleric, Bishop, Lilu) ───
+      // ─── Healing (per-turn regen from spirits/skills + champion party heal + aurasong) ───
+      // Per-hero spirit/skill regen comes from precomputed detailStats['매 턴 체력 재생'],
+      // which aggregates 도마뱀/불사조/우로보로스 등 all spirits + 클레릭/비숍 class skills.
       if (contFight) {
+        const aurasongRegen = aurasong.regenPerTurn || 0;
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
           const hpBefore = hp[i];
-          hp[i] = Math.min(hp[i] + heroLizard[i], finalHp[i]);
-          
-          if (heroIsCleric[i]) {
-            hp[i] = Math.min(hp[i] + Math.min(heroTier[i], 3) * 5 - 5, finalHp[i]);
-          } else if (heroIsBishop[i]) {
-            const bHeal = heroTier[i] >= 3 ? 20 : heroTier[i] >= 2 ? 5 : 0;
-            hp[i] = Math.min(hp[i] + bHeal, finalHp[i]);
-          }
+          const personalRegen = (activeHeroes[i] as any).detailStats?.['매 턴 체력 재생'] || 0;
+          hp[i] = Math.min(hp[i] + personalRegen + aurasongRegen, finalHp[i]);
 
           if (liluHealFlat > 0) {
             hp[i] = Math.min(hp[i] + liluHealFlat * heroArtChampionMod[i], finalHp[i]);
@@ -2229,10 +2228,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       chronomancerRetrySuccessRate: retryWinRate,
       totalHealingAvg: totalHealing[i] / actualSimCount,
       healPerTurn: (() => {
-        // 실제 매턴 체력 재생 수치 = 도마뱀(리저드) + 클레릭/비숍 회복 + 릴루 회복
-        let v = heroLizard[i] || 0;
-        if (heroIsCleric[i]) v += Math.max(0, Math.min(heroTier[i], 3) * 5 - 5);
-        else if (heroIsBishop[i]) v += heroTier[i] >= 3 ? 20 : heroTier[i] >= 2 ? 5 : 0;
+        // 실제 매턴 체력 재생 수치 = detailStats(영혼+스킬, 도마뱀/불사조/우로보로스/클레릭/비숍 포함)
+        //                          + 오라의 노래 매턴회복 + 챔피언 파티 회복(릴루 등)
+        const personal = (activeHeroes[i] as any).detailStats?.['매 턴 체력 재생'] || 0;
+        let v = personal + (aurasong.regenPerTurn || 0);
         if (liluHealFlat > 0) v += liluHealFlat * heroArtChampionMod[i];
         return v;
       })(),
