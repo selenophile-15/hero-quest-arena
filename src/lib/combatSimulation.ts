@@ -3169,6 +3169,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroIsLordFlag.push(isClass(h, '기사', '군주', 'Lord', 'Knight'));
     heroIsSamuraiFlag.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyoFlag.push(isClass(h, '다이묘', 'Daimyo'));
+    heroIsDancerFlag.push(isClass(h, '무희', '곡예가', 'Dancer', 'Acrobat'));
 
     // Spirits
     const spirits = (h.equipmentSlots || []).map(s => s.spirit).filter(Boolean);
