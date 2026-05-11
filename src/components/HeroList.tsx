@@ -1616,7 +1616,7 @@ export default function HeroList() {
       ) : viewMode === 'table' ? (
         <div ref={listRef}>
           {/* Column visibility - table only */}
-          <div className="card-fantasy p-3 mb-3 mt-3 transition-colors hover:border-primary/40">
+          <div className="card-fantasy p-3 mb-3 mt-3 border-primary/40 shadow-[0_0_16px_hsla(var(--primary)/0.25)]">
             <div className="flex flex-wrap gap-3">
               {activeColumns.map(col => (
                 <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer p-1.5 rounded border border-transparent hover:border-primary/30 hover:bg-secondary/10 transition-all">
