@@ -580,16 +580,27 @@ function getDamageReductionForDef(def: number, mobCap: number): number {
 
 export function runCombatSimulation(config: SimulationConfig): SimulationResult {
   const { heroes, monster, miniBoss, booster, questTypeKey, isTerrorTower, precomputedStats } = config;
-  const simCount = config.simulationCount || 50000;
+  // When recordEvents=true: force exactly one simulation and prepare an event log buffer.
+  // pushEv() is a no-op unless recordEvents=true, so this addition does not affect any
+  // existing call site (which leaves recordEvents undefined).
+  const recordEvents = config.recordEvents === true;
+  const simCount = recordEvents ? 1 : (config.simulationCount || 50000);
+  const eventLog: CombatLogEntry[] = [];
+  const pushEv = recordEvents
+    ? (entry: CombatLogEntry) => { eventLog.push(entry); }
+    : (_entry: CombatLogEntry) => { /* no-op */ };
 
   // Filter out heroes with 0 HP (empty slots)
   const activeHeroes = heroes.filter(h => h.hp > 0);
   if (activeHeroes.length === 0) {
-    return emptyResult(simCount);
+    const r = emptyResult(simCount);
+    if (recordEvents) r.eventLog = [{ round: 0, type: 'result', actor: '시스템', detail: '활성 영웅 없음' }];
+    return r;
   }
 
   // For random mode: run multiple simulations per mini-boss type
-  if (miniBoss === 'random') {
+  // (recordEvents mode bypasses random to keep the log linear.)
+  if (miniBoss === 'random' && !recordEvents) {
     return runRandomMiniBossSimulation(config, activeHeroes, simCount);
   }
 
