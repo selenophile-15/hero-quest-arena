@@ -351,7 +351,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
             <table className="w-full text-xs min-w-[900px]">
               <thead className="sticky top-0 bg-background z-10">
                 <tr className="border-b border-border text-muted-foreground">
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">유형</th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => handleSort('type')}>유형{sortIndicator('type')}</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => handleSort('heroClass')}>
                     직업{sortIndicator('heroClass')}
                   </th>
