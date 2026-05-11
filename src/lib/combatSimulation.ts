@@ -3117,6 +3117,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   const heroIsLordFlag: boolean[] = [];
   const heroIsSamuraiFlag: boolean[] = [];
   const heroIsDaimyoFlag: boolean[] = [];
+  const heroIsDancerFlag: boolean[] = [];
   const heroSharkVal: number[] = [];
   const heroDinoVal: number[] = [];
   const heroArmadilloVal: number[] = [];
