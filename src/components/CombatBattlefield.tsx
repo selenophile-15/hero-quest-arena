@@ -253,6 +253,35 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       if (entry.type === 'event' && entry.detail === '회피' && entry.target && i === currentIdx) {
         actionEffects.push({ target: entry.target, value: 'MISS', color: 'text-teal-400', key: i });
       }
+      // Heal entries: extract HP info to keep visualization in sync
+      if (entry.type === 'heal') {
+        const hpMatch = entry.detail.match(/HP: ([\d,]+)/);
+        if (hpMatch && entry.actor && entry.actor in heroHp) {
+          heroHp[entry.actor] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, '')));
+        }
+        const healMatch = entry.detail.match(/체력 ([\d,]+) 회복/);
+        if (healMatch && entry.actor && i === currentIdx) {
+          actionEffects.push({ target: entry.actor, value: `+${healMatch[1]}`, color: 'text-emerald-400', key: i });
+        }
+      }
+      // Hemma drain: parse the drained party member's remaining HP and the drain amount
+      if (entry.type === 'event' && entry.detail.includes('헴마 스킬 발동')) {
+        // Last HP block in the detail belongs to the drain target
+        const hpBlocks = [...entry.detail.matchAll(/(\S+?)\s*HP:\s*([\d,]+)/g)];
+        const last = hpBlocks[hpBlocks.length - 1];
+        if (last) {
+          const targetName = last[1].trim();
+          if (targetName in heroHp) {
+            heroHp[targetName] = Math.max(0, parseInt(last[2].replace(/,/g, '')));
+          }
+          if (i === currentIdx) {
+            const drainMatch = entry.detail.match(/HP -([\d,]+)/);
+            if (drainMatch) {
+              actionEffects.push({ target: targetName, value: `-${drainMatch[1]}`, color: 'text-purple-400', key: i });
+            }
+          }
+        }
+      }
     }
     return { heroHp, heroMaxHp, mobHpCurrent, currentRound, lastAction, actionEffects };
   };
