@@ -1030,22 +1030,30 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   }
   } // end else (no precomputed stats)
 
+  // ─── Mundra fold-in (one-time, boss only) ───
+  // Mundra's +20%×stack ATK/DEF stays active for the entire boss fight, so we fold it
+  // into finalAtk/finalDef once instead of re-computing every turn. This also makes the
+  // displayed stat table reflect the buffed value (which is what the user expects for
+  // a permanent boss-fight buff, in contrast to Shark/Dino/Berserker/Hemma which are
+  // conditional/cumulative and stay excluded from the table).
+  if (monster.isBoss) {
+    for (let i = 0; i < numHeroes; i++) {
+      if (heroMundra[i] > 0) {
+        const atkAdd = heroAtkConst[i] * 0.2 * heroMundra[i] * (heroPartyAtkMult[i] || 1);
+        const defAdd = heroDefConst[i] * 0.2 * heroMundra[i] * (heroPartyDefMult[i] || 1);
+        finalAtk[i] += atkAdd;
+        finalDef[i] += defAdd;
+      }
+    }
+  }
+
   // ─── Damage taken calculation (using actual defense thresholds) ───
-  // Mundra spirit: when fighting a boss, adds +20% per stack to BOTH ATK and DEF
-  // (matches the detail-stats label '문드라 - 보스 상대 공격력/방어력 증가%').
-  // DEF bonus is constant per-hero, so we fold it into finalDef once here.
   const damageTaken: number[] = [];
   const critDamageTaken: number[] = [];
   const defThresholds: DefThresholds = monster.def;
 
   for (let i = 0; i < numHeroes; i++) {
-    let effDef = finalDef[i];
-    if (monster.isBoss && heroMundra[i] > 0) {
-      // Add atkConstant-equivalent for DEF: defConstant * 0.2 * mundra * partyDefMult
-      const defCondAdd = heroDefConst[i] * 0.2 * heroMundra[i] * (heroPartyDefMult[i] || 1);
-      effDef = finalDef[i] + defCondAdd;
-    }
-    const dmg = calcDamageTakenWithThresholds(effDef, mobDamage, defThresholds);
+    const dmg = calcDamageTakenWithThresholds(finalDef[i], mobDamage, defThresholds);
     damageTaken.push(dmg);
     critDamageTaken.push(calcCritDamageTaken(dmg, mobDamage));
   }
