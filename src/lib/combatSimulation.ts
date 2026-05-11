@@ -1701,8 +1701,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (heroIsSensei[drainTarget] && lostInnate[drainTarget] !== round - 1) {
             lostInnate[drainTarget] = round;
           }
-          // Hemma attack bonus: base_atk × hemmaMult (flat add per drain)
-          { const gain = heroAtk[hemmaWho] * hemmaMult; hemmaBonus[hemmaWho] += gain; simHemmaAtkGain[hemmaWho] += gain; }
+          // Hemma attack bonus: standalone ATK (with current condPct) × hemmaMult per drain.
+          // Per PDF: '그 턴의 (단독)최종ATK × hemmaMult' — scales with Shark/Dino/Mundra/Berserker.
+          {
+            const hCondPct = (monster.isBoss ? 0.2 * heroMundra[hemmaWho] : 0)
+              + sharkActive * 0.01 * heroShark[hemmaWho]
+              + dinosaurActive * heroDinosaur[hemmaWho] * 0.01
+              + 0.1 * (1 + heroBerserkerLevel[hemmaWho]) * berserkerStage[hemmaWho];
+            const standalone = heroAtkRaw[hemmaWho] + heroAtkConst[hemmaWho] * hCondPct;
+            const gain = standalone * hemmaMult;
+            hemmaBonus[hemmaWho] += gain;
+            simHemmaAtkGain[hemmaWho] += gain;
+          }
           hp[hemmaWho] = Math.min(hp[hemmaWho] + (champTier + Math.min(champTier - 3, 0)) * 5, finalHp[hemmaWho]);
         }
       }
