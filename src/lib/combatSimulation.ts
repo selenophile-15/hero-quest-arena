@@ -210,6 +210,11 @@ export interface HeroSimResult {
   hemmaAbsorbedCount?: number; // avg drain count from this ally per sim
   // Hemma attack-bonus gain (per sim) — set only on hemma hero row
   hemmaAtkGainAvg?: number;
+  // Rudo bonus tracking
+  rudoCritBonusPct?: number;       // Rudo crit-chance bonus (%)
+  rudoFinalCritChance?: number;    // hero's final crit chance (%) with rudo bonus
+  rudoBonusDmgAvg?: number;        // avg dmg dealt during rudo bonus rounds (per sim)
+  isRudoInParty?: boolean;
   // Lord absorbed damage breakdown — when THIS hero was the protected ally
   lordSavedSingleAvgDmg?: number;  // avg single dmg absorbed by lord saving this hero per sim
   lordSavedAoeAvgDmg?: number;     // avg aoe dmg absorbed by lord saving this hero per sim
@@ -1393,6 +1398,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const hemmaAtkGainAccum = new Float64Array(numHeroes);
   const winHemmaAtkGainAccum = new Float64Array(numHeroes);
   const loseHemmaAtkGainAccum = new Float64Array(numHeroes);
+  // Rudo bonus-round damage accumulators (per hero)
+  const rudoBonusDmgAccum = new Float64Array(numHeroes);
+  const winRudoBonusDmgAccum = new Float64Array(numHeroes);
+  const loseRudoBonusDmgAccum = new Float64Array(numHeroes);
   // Per-fight targeted/evaded snapshots
   const fightTargetedTmp = new Float64Array(numHeroes);
   const fightEvadedTmp = new Float64Array(numHeroes);
@@ -1468,6 +1477,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simCritSurvivals = new Float64Array(numHeroes);
     // Per-sim hemma atk-bonus gain (only hemma index used)
     const simHemmaAtkGain = new Float64Array(numHeroes);
+    const simRudoBonusDmg = new Float64Array(numHeroes);
     // Per-sim conqueror stack metrics
     const simConqStackTurns = [
       new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
@@ -1889,6 +1899,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         mobHpCurrent -= damage;
         damageFight[jj] += damage;
+        if (rudoBonus > 0) simRudoBonusDmg[jj] += damage;
         if (isCrit) critDmgFight[jj] += damage;
         else normalDmgFight[jj] += damage;
         // Per-hit (per-attack-action) tracking for min/max
@@ -2108,6 +2119,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           hemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
           // Hemma attack-bonus gain (per-sim → cumulative)
           hemmaAtkGainAccum[i] += simHemmaAtkGain[i];
+          rudoBonusDmgAccum[i] += simRudoBonusDmg[i];
 
           // Lord saved damage applied to this ally (when this hero was the protected one)
           lordSavedSingleDmgAccum[i] += simLordSavedSingleDmg[i];
@@ -2169,6 +2181,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             winHemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
             winHemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
             winHemmaAtkGainAccum[i] += simHemmaAtkGain[i];
+            winRudoBonusDmgAccum[i] += simRudoBonusDmg[i];
           } else if (wasLose) {
             loseDmgDealt[i] += damageFight[i];
             loseNormalDmg[i] += normalDmgFight[i];
@@ -2202,6 +2215,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseHemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
             loseHemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
             loseHemmaAtkGainAccum[i] += simHemmaAtkGain[i];
+            loseRudoBonusDmgAccum[i] += simRudoBonusDmg[i];
           }
         }
         // Polonia loot — apply per-sim cap on the party total, distribute proportionally for per-hero accum
@@ -2524,6 +2538,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       hemmaAbsorbedDmg: actualSimCount > 0 ? Math.round(hemmaAbsorbedDmgAccum[i] / actualSimCount) : 0,
       hemmaAbsorbedCount: actualSimCount > 0 ? Math.round(hemmaAbsorbedCountAccum[i] / actualSimCount) : 0,
       hemmaAtkGainAvg: actualSimCount > 0 ? Math.round(hemmaAtkGainAccum[i] / actualSimCount) : 0,
+      rudoCritBonusPct: rudoBonusBase > 0 ? Math.round(rudoBonusBase * 1000) / 10 : 0,
+      rudoFinalCritChance: rudoBonusBase > 0 ? Math.round(Math.min(heroCritChance[i] + rudoBonusBase, 1) * 1000) / 10 : 0,
+      rudoBonusDmgAvg: actualSimCount > 0 ? Math.round(rudoBonusDmgAccum[i] / actualSimCount) : 0,
+      isRudoInParty: rudoBonusBase > 0,
       // Lord saved damage (when this hero was protected)
       lordSavedSingleAvgDmg: actualSimCount > 0 ? Math.round(lordSavedSingleDmgAccum[i] / actualSimCount) : 0,
       lordSavedAoeAvgDmg: actualSimCount > 0 ? Math.round(lordSavedAoeDmgAccum[i] / actualSimCount) : 0,
@@ -2668,6 +2686,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       hemmaAbsorbedDmg: Math.round((bucket === 'win' ? winHemmaAbsorbedDmgAccum[i] : loseHemmaAbsorbedDmgAccum[i]) / bucketCount),
       hemmaAbsorbedCount: Math.round((bucket === 'win' ? winHemmaAbsorbedCountAccum[i] : loseHemmaAbsorbedCountAccum[i]) / bucketCount),
       hemmaAtkGainAvg: Math.round((bucket === 'win' ? winHemmaAtkGainAccum[i] : loseHemmaAtkGainAccum[i]) / bucketCount),
+      rudoCritBonusPct: rudoBonusBase > 0 ? Math.round(rudoBonusBase * 1000) / 10 : 0,
+      rudoFinalCritChance: rudoBonusBase > 0 ? Math.round(Math.min(heroCritChance[i] + rudoBonusBase, 1) * 1000) / 10 : 0,
+      rudoBonusDmgAvg: Math.round((bucket === 'win' ? winRudoBonusDmgAccum[i] : loseRudoBonusDmgAccum[i]) / bucketCount),
+      isRudoInParty: rudoBonusBase > 0,
     };
   };
 
