@@ -2275,16 +2275,20 @@ export default function QuestSimulation() {
                                 }`}>{hr.survivalRate.toFixed(1)}%</td>
                                 {/* 턴 */}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{aAvg > 0 ? formatNumber(aMin) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aAvg > 0 ? aAvg.toFixed(1) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{aAvg > 0 ? aAvg.toFixed(1) : blank}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aAvg > 0 ? formatNumber(aMax) : blank}</td>
                                 <td className="py-1 px-2 text-center font-mono whitespace-nowrap">{fadeZero(`${aLimit.toFixed(1)}%`, aLimit === 0)}</td>
                                 {/* 남은 체력 */}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpMin) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpAvg) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpAvg) : blank}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpMax) : blank}</td>
                                 {/* 타겟팅 */}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{fadeZero(`${hr.targetingRate.toFixed(1)}%`, hr.targetingRate === 0)}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${(hr.singleTargetRate ?? 0).toFixed(1)}%`, (hr.singleTargetRate ?? 0) === 0)}</td>
+                                {(() => {
+                                  const tr = hr.singleTargetRate ?? 0;
+                                  const tankText = tr >= 81 ? 'text-lime-400' : tr >= 61 ? 'text-yellow-400' : tr >= 41 ? 'text-orange-400' : tr >= 21 ? 'text-red-400' : 'text-purple-400';
+                                  return <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${tr === 0 ? 'text-muted-foreground' : tankText}`}>{fadeZero(`${tr.toFixed(1)}%`, tr === 0)}</td>;
+                                })()}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${hr.evasionRate.toFixed(1)}%`, hr.evasionRate === 0)}</td>
                                 {/* 치명타 생존 */}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{fadeZero(`${Math.round(csChance)}%`, csChance === 0)}</td>
