@@ -554,9 +554,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           </div>
         )}
 
-        <div ref={logScrollRef} className="overflow-y-auto rounded border border-border/30 bg-secondary/20 flex-1 min-h-0">
+        <div ref={logScrollRef} className="overflow-y-auto rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/30 via-background/30 to-secondary/20 flex-1 min-h-0 shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
           {/* Controls inside log box */}
-          <div className="sticky top-0 z-20 flex justify-end gap-1.5 px-2 py-1 bg-secondary/80 border-b border-border/20">
+          <div className="sticky top-0 z-20 flex justify-end gap-1.5 px-2 py-1 bg-secondary/80 backdrop-blur-sm border-b border-primary/20">
             <Button
               variant="outline"
               size="sm"
@@ -566,15 +566,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             >
               <FastForward className="w-3 h-3" />
               진행 완료
-            </Button>
-            <Button
-              variant={showAllBright ? 'default' : 'outline'}
-              size="sm"
-              className="text-xs gap-1 h-6"
-              onClick={() => setShowAllBright(!showAllBright)}
-            >
-              <Eye className="w-3 h-3" />
-              전체 밝게
             </Button>
           </div>
 
