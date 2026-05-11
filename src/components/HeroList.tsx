@@ -1614,9 +1614,9 @@ export default function HeroList() {
           <ListSummary ref={summaryHandleRef} heroes={heroes} />
         </div>
       ) : viewMode === 'table' ? (
-        <div ref={listRef}>
+        <div ref={listRef} data-hero-list-glow>
           {/* Column visibility - table only */}
-          <div className="card-fantasy p-3 mb-3 mt-3 border-primary/40 shadow-[0_0_16px_hsla(var(--primary)/0.25)]">
+          <div className="card-fantasy p-3 mb-3 mt-3">
             <div className="flex flex-wrap gap-3">
               {activeColumns.map(col => (
                 <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
