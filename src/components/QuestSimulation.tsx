@@ -2673,7 +2673,9 @@ export default function QuestSimulation() {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {conquerorRows.length === 0 ? (
+                                    {zeroBucket ? (
+                                      <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
+                                    ) : conquerorRows.length === 0 ? (
                                       <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">정복자 직업 파티원 없음</td></tr>
                                     ) : conquerorRows.map((hr, hi) => {
                                       return [0, 1, 2, 3, 4].map(s => {
