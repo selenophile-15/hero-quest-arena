@@ -191,6 +191,8 @@ export interface HeroSimResult {
   // Hemma drain absorbed from this ally (avg dmg per sim, only non-hemma allies)
   hemmaAbsorbedDmg?: number;
   hemmaAbsorbedCount?: number; // avg drain count from this ally per sim
+  // Hemma attack-bonus gain (per sim) — set only on hemma hero row
+  hemmaAtkGainAvg?: number;
   // Lord absorbed damage breakdown — when THIS hero was the protected ally
   lordSavedSingleAvgDmg?: number;  // avg single dmg absorbed by lord saving this hero per sim
   lordSavedAoeAvgDmg?: number;     // avg aoe dmg absorbed by lord saving this hero per sim
@@ -1265,6 +1267,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const winHpRemain = new Float64Array(numHeroes);
   const winTargeted = new Float64Array(numHeroes);
   const winEvaded = new Float64Array(numHeroes);
+  const winHealingAccum = new Float64Array(numHeroes);
+  const winCritSurvivals = new Float64Array(numHeroes);
+  const winHemmaAbsorbedDmgAccum = new Float64Array(numHeroes);
+  const winHemmaAbsorbedCountAccum = new Float64Array(numHeroes);
+  let winSimCountForHero = 0;
 
   const loseDmgDealt = new Float64Array(numHeroes);
   const loseNormalDmg = new Float64Array(numHeroes);
@@ -1288,6 +1295,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const loseHpRemain = new Float64Array(numHeroes);
   const loseTargeted = new Float64Array(numHeroes);
   const loseEvaded = new Float64Array(numHeroes);
+  const loseHealingAccum = new Float64Array(numHeroes);
+  const loseCritSurvivals = new Float64Array(numHeroes);
+  const loseHemmaAbsorbedDmgAccum = new Float64Array(numHeroes);
+  const loseHemmaAbsorbedCountAccum = new Float64Array(numHeroes);
+  // Hemma attack-bonus gain accumulator (per hero, only hemma index is non-zero)
+  const hemmaAtkGainAccum = new Float64Array(numHeroes);
+  const winHemmaAtkGainAccum = new Float64Array(numHeroes);
+  const loseHemmaAtkGainAccum = new Float64Array(numHeroes);
   // Per-fight targeted/evaded snapshots
   const fightTargetedTmp = new Float64Array(numHeroes);
   const fightEvadedTmp = new Float64Array(numHeroes);
@@ -1354,6 +1369,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Per-sim hemma drain absorbed from each ally (dmg + count)
     const simHemmaAbsorbedDmg = new Float64Array(numHeroes);
     const simHemmaAbsorbedCount = new Float64Array(numHeroes);
+    // Per-sim healing accum (per hero) and crit-survival firings
+    const simHealing = new Float64Array(numHeroes);
+    const simCritSurvivals = new Float64Array(numHeroes);
+    // Per-sim hemma atk-bonus gain (only hemma index used)
+    const simHemmaAtkGain = new Float64Array(numHeroes);
     // Per-sim conqueror stack metrics
     const simConqStackTurns = [
       new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
@@ -1464,13 +1484,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
 
       // ─── Extreme crit bonus from negative evasion ───
+      // ─── Negative-evasion crit bonus (applies in all modes; ramps up to +5% at eva=-20%) ───
       const extremeCritBonus = new Float64Array(numHeroes);
-      if (isExtreme) {
-        for (let i = 0; i < numHeroes; i++) {
-          const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
-          if (totalEva < 0 && !heroArtNoEvasion[i]) {
-            extremeCritBonus[i] = -0.25 * totalEva; // Negative evasion → positive crit bonus
-          }
+      for (let i = 0; i < numHeroes; i++) {
+        const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
+        if (totalEva < 0 && !heroArtNoEvasion[i]) {
+          extremeCritBonus[i] = Math.min(-0.25 * totalEva, 0.05);
         }
       }
 
@@ -1639,7 +1658,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             lostInnate[drainTarget] = round;
           }
           // Hemma attack bonus: base_atk × hemmaMult (flat add per drain)
-          hemmaBonus[hemmaWho] += heroAtk[hemmaWho] * hemmaMult;
+          { const gain = heroAtk[hemmaWho] * hemmaMult; hemmaBonus[hemmaWho] += gain; simHemmaAtkGain[hemmaWho] += gain; }
           hp[hemmaWho] = Math.min(hp[hemmaWho] + (champTier + Math.min(champTier - 3, 0)) * 5, finalHp[hemmaWho]);
         }
       }
@@ -1863,11 +1882,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           singleTargetHitsTotal[i] += singleHitsTaken[i];
           aoeDmgTakenAccum[i] += simAoeDmgTaken[i];
           singleDmgTakenAccum[i] += simSingleDmgTaken[i];
-          // Cap max at hero's max HP (cannot take more damage than HP since they die)
-          const hpCap = finalHp[i];
-          const cappedDmg = Math.min(simDmgTaken[i], hpCap);
-          const cappedSingle = Math.min(simSingleDmgTaken[i], hpCap);
-          const cappedAoe = Math.min(simAoeDmgTaken[i], hpCap);
+          // Max damage taken can exceed HP when healing/regen sustains the hero across multiple hits
+          const cappedDmg = simDmgTaken[i];
+          const cappedSingle = simSingleDmgTaken[i];
+          const cappedAoe = simAoeDmgTaken[i];
           // Include all sims (even 0-damage) in min/max distribution
           dmgTakenMin[i] = Math.min(dmgTakenMin[i], cappedDmg);
           dmgTakenMax[i] = Math.max(dmgTakenMax[i], cappedDmg);
@@ -1929,6 +1947,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           // Hemma drain absorbed (from this ally)
           hemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
           hemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
+          // Hemma attack-bonus gain (per-sim → cumulative)
+          hemmaAtkGainAccum[i] += simHemmaAtkGain[i];
 
           // Lord saved damage applied to this ally (when this hero was the protected one)
           lordSavedSingleDmgAccum[i] += simLordSavedSingleDmg[i];
@@ -1977,6 +1997,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             winSingleHits[i] += singleHitsTaken[i];
             winTargeted[i] += simTargeted[i];
             winEvaded[i] += simEvaded[i];
+            winHealingAccum[i] += simHealing[i];
+            winCritSurvivals[i] += simCritSurvivals[i];
+            winHemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
+            winHemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
+            winHemmaAtkGainAccum[i] += simHemmaAtkGain[i];
           } else if (wasLose) {
             loseDmgDealt[i] += damageFight[i];
             loseNormalDmg[i] += normalDmgFight[i];
@@ -1999,6 +2024,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseSingleHits[i] += singleHitsTaken[i];
             loseTargeted[i] += simTargeted[i];
             loseEvaded[i] += simEvaded[i];
+            loseHealingAccum[i] += simHealing[i];
+            loseCritSurvivals[i] += simCritSurvivals[i];
+            loseHemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
+            loseHemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
+            loseHemmaAtkGainAccum[i] += simHemmaAtkGain[i];
           }
         }
         // Polonia loot — apply per-sim cap on the party total, distribute proportionally for per-hero accum
@@ -2079,7 +2109,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (liluHealFlat > 0) {
             hp[i] = Math.min(hp[i] + liluHealFlat * heroArtChampionMod[i], finalHp[i]);
           }
-          totalHealing[i] += hp[i] - hpBefore;
+          { const healed = hp[i] - hpBefore; totalHealing[i] += healed; simHealing[i] += healed; }
         }
       }
 
@@ -2095,6 +2125,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         hp[idx] += dmg;
         surviveChance[idx] = 0;
         critSurvivals[idx]++;
+        simCritSurvivals[idx]++;
         return true;
       }
       return false;
@@ -2166,11 +2197,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const avgTotalDmgTaken = totalDmgTakenAccum[i] / actualSimCount;
     const avgTimesHit = totalTimesHitAccum[i] / actualSimCount;
 
-    // Monster crit chance against this hero (accounts for negative evasion)
+    // Monster crit chance against this hero (accounts for negative evasion, capped at +5%)
     const heroFinalEva = heroArtNoEvasion[i] ? 0 : heroEvasion[i];
     let monsterCritBase = baseMobCritChance * mobCritChanceMod;
-    if (isExtreme && heroFinalEva < 0 && !heroArtNoEvasion[i]) {
-      monsterCritBase += -0.25 * heroFinalEva;
+    if (heroFinalEva < 0 && !heroArtNoEvasion[i]) {
+      monsterCritBase += Math.min(-0.25 * heroFinalEva, 0.05);
     }
     const monsterCritChance = Math.round(Math.min(monsterCritBase, 1) * 100 * 10) / 10;
 
@@ -2304,7 +2335,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       roundLimitAliveRate: actualSimCount > 0 ? Math.round((roundLimitAliveCount[i] / actualSimCount) * 100 * 10) / 10 : 0,
       // Hemma drain absorbed (avg per sim)
       hemmaAbsorbedDmg: actualSimCount > 0 ? Math.round(hemmaAbsorbedDmgAccum[i] / actualSimCount) : 0,
-      hemmaAbsorbedCount: actualSimCount > 0 ? Math.round((hemmaAbsorbedCountAccum[i] / actualSimCount) * 10) / 10 : 0,
+      hemmaAbsorbedCount: actualSimCount > 0 ? Math.round(hemmaAbsorbedCountAccum[i] / actualSimCount) : 0,
+      hemmaAtkGainAvg: actualSimCount > 0 ? Math.round(hemmaAtkGainAccum[i] / actualSimCount) : 0,
       // Lord saved damage (when this hero was protected)
       lordSavedSingleAvgDmg: actualSimCount > 0 ? Math.round(lordSavedSingleDmgAccum[i] / actualSimCount) : 0,
       lordSavedAoeAvgDmg: actualSimCount > 0 ? Math.round(lordSavedAoeDmgAccum[i] / actualSimCount) : 0,
@@ -2415,6 +2447,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
       tankingRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
       singleTargetRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
+      totalHealingAvg: (bucket === 'win' ? winHealingAccum[i] : loseHealingAccum[i]) / bucketCount,
+      critSurvivalApplyRate: Math.round(((bucket === 'win' ? winCritSurvivals[i] : loseCritSurvivals[i]) / bucketCount) * 100 * 10) / 10,
+      critSurvivalCount: (bucket === 'win' ? winCritSurvivals[i] : loseCritSurvivals[i]) / bucketCount,
+      hemmaAbsorbedDmg: Math.round((bucket === 'win' ? winHemmaAbsorbedDmgAccum[i] : loseHemmaAbsorbedDmgAccum[i]) / bucketCount),
+      hemmaAbsorbedCount: Math.round((bucket === 'win' ? winHemmaAbsorbedCountAccum[i] : loseHemmaAbsorbedCountAccum[i]) / bucketCount),
+      hemmaAtkGainAvg: Math.round((bucket === 'win' ? winHemmaAtkGainAccum[i] : loseHemmaAtkGainAccum[i]) / bucketCount),
     };
   };
 
