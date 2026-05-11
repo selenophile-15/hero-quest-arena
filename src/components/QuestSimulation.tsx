@@ -1144,12 +1144,13 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${mobEva > 0 ? 'text-teal-400' : 'text-foreground'}`}>{mobEva}%</span>
                       </div>
-                      {/* Always show defense bar label when monster is selected */}
+                      {/* Defense reference label row (with right-aligned helper) */}
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Shield className="w-3.5 h-3.5 text-blue-400" />
                           <span className="text-xs text-foreground">방어력 기준치</span>
                         </div>
+                        <span className="text-xs text-muted-foreground">[ 기준 (받는 대미지%) ]</span>
                       </div>
                     </div>
                   );
