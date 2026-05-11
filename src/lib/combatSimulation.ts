@@ -1393,6 +1393,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const hemmaAtkGainAccum = new Float64Array(numHeroes);
   const winHemmaAtkGainAccum = new Float64Array(numHeroes);
   const loseHemmaAtkGainAccum = new Float64Array(numHeroes);
+  // Rudo bonus-round damage accumulators (per hero)
+  const rudoBonusDmgAccum = new Float64Array(numHeroes);
+  const winRudoBonusDmgAccum = new Float64Array(numHeroes);
+  const loseRudoBonusDmgAccum = new Float64Array(numHeroes);
   // Per-fight targeted/evaded snapshots
   const fightTargetedTmp = new Float64Array(numHeroes);
   const fightEvadedTmp = new Float64Array(numHeroes);
