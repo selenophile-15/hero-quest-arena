@@ -1204,14 +1204,6 @@ export default function QuestSimulation() {
 
                     return (
                     <div className="mt-3 pt-3 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      {/* Column headers — explain what each column represents */}
-                      <div className="grid gap-x-1 mb-1.5" style={{ gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
-                        <div className="text-[11px] font-semibold text-foreground text-right pr-0.5 leading-tight">방어력 기준치</div>
-                        <div />
-                        <div className="text-[10px] font-semibold text-muted-foreground text-left leading-tight">(받는 대미지)</div>
-                        <div />
-                        <div className="text-[11px] font-semibold text-foreground text-left leading-tight ml-1.5">이름 &amp; 방어력 (받는 대미지)</div>
-                      </div>
                       {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — spacer halved (24→12) */}
                       <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
                         {/* Column 1: threshold values (aligned with monster info icons on left) */}
