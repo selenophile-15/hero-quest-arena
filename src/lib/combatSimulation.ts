@@ -3117,6 +3117,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   const heroIsLordFlag: boolean[] = [];
   const heroIsSamuraiFlag: boolean[] = [];
   const heroIsDaimyoFlag: boolean[] = [];
+  const heroIsDancerFlag: boolean[] = [];
   const heroSharkVal: number[] = [];
   const heroDinoVal: number[] = [];
   const heroArmadilloVal: number[] = [];
@@ -3168,6 +3169,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroIsLordFlag.push(isClass(h, '기사', '군주', 'Lord', 'Knight'));
     heroIsSamuraiFlag.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyoFlag.push(isClass(h, '다이묘', 'Daimyo'));
+    heroIsDancerFlag.push(isClass(h, '무희', '곡예가', 'Dancer', 'Acrobat'));
 
     // Spirits
     const spirits = (h.equipmentSlots || []).map(s => s.spirit).filter(Boolean);
@@ -3201,6 +3203,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
   // Conqueror crit stacks (max 4)
   const conquStacks: number[] = new Array(numHeroes).fill(0);
+
+  // Dancer/Acrobat: guaranteed crit on next attack after evasion
+  const dancerGuaranteedCrit: boolean[] = new Array(numHeroes).fill(false);
+
+  // Hemma tracking (only relevant if champion is Hemma)
+  const isHemmaChamp = champName.includes('헴마') || champName === 'Hemma';
+  let hemmaIdx = -1;
+  if (isHemmaChamp) {
+    hemmaIdx = activeHeroes.findIndex(h => h.type === 'champion');
+  }
+  let hemmaAtkGainAccum = 0;
+  const hemmaMult = champTier === 1 ? 0.15 : champTier === 2 ? 0.2 : champTier === 3 ? 0.3 : 0.4;
+  const hemmaDrainThreshold = (0.11 - 0.01 * champTier);
 
   // Ninja/Sensei innate tracking — bonus is CRIT% + EVA% (tier-aware), NOT ATK.
   // heroCrit / heroEva from precomputedStats already include this innate bonus.
@@ -3306,6 +3321,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         if (heroHp[i] <= 0) continue;
         if (Math.random() < Math.max(0, heroEva[i])) {
           log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[i].name, detail: `회피` });
+          if (heroIsDancerFlag[i] && !dancerGuaranteedCrit[i]) {
+            dancerGuaranteedCrit[i] = true;
+            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsDancerFlag[i] && isClass(activeHeroes[i], '곡예가', 'Acrobat') ? '곡예가' : '무희'} 고유 스킬: 다음 공격 확정 치명타!` });
+          }
           continue;
         }
         // Ninja/Sensei lose innate on hit
@@ -3371,6 +3390,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
       if (Math.random() < Math.max(0, heroEva[target])) {
         log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[target].name, detail: `회피` });
+        if (heroIsDancerFlag[target] && !dancerGuaranteedCrit[target]) {
+          dancerGuaranteedCrit[target] = true;
+          log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${isClass(activeHeroes[target], '곡예가', 'Acrobat') ? '곡예가' : '무희'} 고유 스킬: 다음 공격 확정 치명타!` });
+        }
       } else {
         // Ninja/Sensei lose innate on hit
         if ((heroIsNinjaFlag[target] || heroIsSenseiFlag[target]) && lostInnateRound[target] < 0) {
@@ -3446,8 +3469,21 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
 
       const effectiveAtk = heroAtkVal[i] + dinoBonus + sharkBonus;
-      const isCrit = Math.random() < Math.min(effectiveCrit, 1.0);
-      const dmg = Math.floor(effectiveAtk * (isCrit ? heroCritMult[i] : 1) * barrierMod);
+      // Dancer/Acrobat guaranteed crit on next attack after evasion
+      let usedDancerCrit = false;
+      let isCrit = Math.random() < Math.min(effectiveCrit, 1.0);
+      if (!isCrit && dancerGuaranteedCrit[i]) {
+        isCrit = true;
+        usedDancerCrit = true;
+      }
+      if (dancerGuaranteedCrit[i]) {
+        dancerGuaranteedCrit[i] = false;
+        if (usedDancerCrit) {
+          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `회피 후 확정 치명타 발동!` });
+        }
+      }
+      const hemmaBonusAtk = (i === hemmaIdx) ? hemmaAtkGainAccum : 0;
+      const dmg = Math.floor((effectiveAtk + hemmaBonusAtk) * (isCrit ? heroCritMult[i] : 1) * barrierMod);
       mobHpCurrent -= dmg;
       heroDmgDealt[i] += dmg;
 
@@ -3465,6 +3501,36 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       const mobPct = Math.max(0, mobHpCurrent / totalMobHp * 100);
       log.push({ round, type: 'hero_attack', actor: activeHeroes[i].name, target: mobDisplayName, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${mobDisplayName} HP: ${formatNum(Math.max(0, mobHpCurrent))} (${mobPct.toFixed(0)}%))` });
       if (mobHpCurrent <= 0) break;
+    }
+
+    // ─── Hemma drain (champion-level, end of round) ───
+    if (hemmaIdx >= 0 && heroHp[hemmaIdx] > 0) {
+      let drainTarget = -1;
+      for (let i = 0; i < numHeroes; i++) {
+        if (i === hemmaIdx || heroHp[i] <= 0) continue;
+        if (heroHp[i] > hemmaDrainThreshold * heroMaxHp[i]) {
+          if (drainTarget === -1 || heroHp[i] / heroMaxHp[i] > heroHp[drainTarget] / heroMaxHp[drainTarget]) {
+            drainTarget = i;
+          }
+        }
+      }
+      if (drainTarget >= 0) {
+        const drainAmt = Math.round(hemmaDrainThreshold * heroMaxHp[drainTarget]);
+        heroHp[drainTarget] -= drainAmt;
+        const atkGain = Math.round(heroAtkVal[hemmaIdx] * hemmaMult);
+        hemmaAtkGainAccum += atkGain;
+        log.push({ round, type: 'event', actor: activeHeroes[hemmaIdx].name, detail: `헴마 스킬 발동! ${activeHeroes[drainTarget].name} HP -${formatNum(drainAmt)} → ATK +${formatNum(atkGain)} (누적 +${formatNum(hemmaAtkGainAccum)})` });
+        // Self-heal
+        const selfHeal = (champTier + Math.min(champTier - 3, 0)) * 5;
+        if (selfHeal > 0 && heroHp[hemmaIdx] < heroMaxHp[hemmaIdx]) {
+          const before = heroHp[hemmaIdx];
+          heroHp[hemmaIdx] = Math.min(heroHp[hemmaIdx] + selfHeal, heroMaxHp[hemmaIdx]);
+          const healed = heroHp[hemmaIdx] - before;
+          if (healed > 0) {
+            log.push({ round, type: 'heal', actor: activeHeroes[hemmaIdx].name, detail: `${activeHeroes[hemmaIdx].name} 체력 +${formatNum(healed)} 회복` });
+          }
+        }
+      }
     }
 
     if (mobHpCurrent <= 0) {

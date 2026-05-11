@@ -3,7 +3,7 @@ import { CombatLogEntry } from '@/lib/combatSimulation';
 import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Shield, Sparkles } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -50,7 +50,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(500);
   const [filter, setFilter] = useState<{ name: string } | null>(null);
-  const [showAllBright, setShowAllBright] = useState(false);
+  const showAllBright = false;
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const logScrollRef = useRef<HTMLDivElement>(null);
 
@@ -511,29 +511,32 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           <span className="text-[10px] text-muted-foreground">{currentIdx + 1}/{log.length}</span>
         </div>
 
-        {/* Combat Stats - with extra spacing */}
-        <div className="mt-4 rounded border border-border/30 bg-secondary/20 p-2.5 flex-1 overflow-y-auto min-h-0 shrink">
-          <div className="text-sm font-bold text-foreground mb-1.5">📊 전투 통계</div>
+        {/* Combat Stats - premium */}
+        <div className="mt-4 rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/40 via-background/40 to-secondary/30 p-2.5 flex-1 overflow-y-auto min-h-0 shrink shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
+          <div className="text-sm font-bold text-foreground mb-1.5 flex items-center gap-1.5">
+            <BarChart3 className="w-4 h-4 text-primary" />
+            <span>전투 통계</span>
+          </div>
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border/30">
-                <th className="text-center py-1.5 px-1 text-muted-foreground font-medium w-[80px]">파티원</th>
-                <th className="text-center py-1.5 px-1 text-red-400 font-medium">입힌 대미지</th>
-                <th className="text-center py-1.5 px-1 text-orange-400 font-medium">대미지 비율</th>
-                <th className="text-center py-1.5 px-1 text-yellow-400 font-medium">타켓팅 수</th>
-                <th className="text-center py-1.5 px-1 text-teal-400 font-medium">회피 수</th>
-                <th className="text-center py-1.5 px-1 text-blue-400 font-medium">탱킹 비율</th>
+              <tr className="border-b border-border/40">
+                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-slate-700' : 'text-muted-foreground'} font-bold w-[80px]`}>파티원</th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-red-700' : 'text-red-400'} font-bold`}>입힌 대미지</th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-orange-700' : 'text-orange-400'} font-bold`}>대미지 비율</th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-yellow-700' : 'text-yellow-400'} font-bold`}>타켓팅 수</th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-teal-700' : 'text-teal-400'} font-bold`}>회피 수</th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-blue-700' : 'text-blue-400'} font-bold`}>탱킹 비율</th>
               </tr>
             </thead>
             <tbody>
               {heroStatsData.map((hs, idx) => (
                 <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                   <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-sm" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
-                  <td className="py-1.5 px-1 text-center font-mono font-bold text-red-400 text-sm">{formatNumber(hs.dmg)}</td>
-                  <td className="py-1.5 px-1 text-center font-mono font-bold text-orange-400 text-sm">{hs.dmgPct.toFixed(1)}%</td>
-                  <td className="py-1.5 px-1 text-center font-mono font-bold text-yellow-400 text-sm">{hs.targeted}</td>
-                  <td className="py-1.5 px-1 text-center font-mono font-bold text-teal-400 text-sm">{hs.dodged}</td>
-                  <td className="py-1.5 px-1 text-center font-mono font-bold text-blue-400 text-sm">{hs.tankPct.toFixed(1)}%</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-red-700' : 'text-red-400'}`}>{formatNumber(hs.dmg)}</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-orange-700' : 'text-orange-400'}`}>{hs.dmgPct.toFixed(1)}%</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-yellow-700' : 'text-yellow-400'}`}>{hs.targeted}</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-teal-700' : 'text-teal-400'}`}>{hs.dodged}</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-blue-700' : 'text-blue-400'}`}>{hs.tankPct.toFixed(1)}%</td>
                 </tr>
               ))}
             </tbody>
@@ -551,9 +554,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           </div>
         )}
 
-        <div ref={logScrollRef} className="overflow-y-auto rounded border border-border/30 bg-secondary/20 flex-1 min-h-0">
+        <div ref={logScrollRef} className="overflow-y-auto rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/30 via-background/30 to-secondary/20 flex-1 min-h-0 shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
           {/* Controls inside log box */}
-          <div className="sticky top-0 z-20 flex justify-end gap-1.5 px-2 py-1 bg-secondary/80 border-b border-border/20">
+          <div className="sticky top-0 z-20 flex justify-end gap-1.5 px-2 py-1 bg-secondary/80 backdrop-blur-sm border-b border-primary/20">
             <Button
               variant="outline"
               size="sm"
@@ -563,15 +566,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             >
               <FastForward className="w-3 h-3" />
               진행 완료
-            </Button>
-            <Button
-              variant={showAllBright ? 'default' : 'outline'}
-              size="sm"
-              className="text-xs gap-1 h-6"
-              onClick={() => setShowAllBright(!showAllBright)}
-            >
-              <Eye className="w-3 h-3" />
-              전체 밝게
             </Button>
           </div>
 
