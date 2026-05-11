@@ -1881,11 +1881,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           singleTargetHitsTotal[i] += singleHitsTaken[i];
           aoeDmgTakenAccum[i] += simAoeDmgTaken[i];
           singleDmgTakenAccum[i] += simSingleDmgTaken[i];
-          // Cap max at hero's max HP (cannot take more damage than HP since they die)
-          const hpCap = finalHp[i];
-          const cappedDmg = Math.min(simDmgTaken[i], hpCap);
-          const cappedSingle = Math.min(simSingleDmgTaken[i], hpCap);
-          const cappedAoe = Math.min(simAoeDmgTaken[i], hpCap);
+          // Max damage taken can exceed HP when healing/regen sustains the hero across multiple hits
+          const cappedDmg = simDmgTaken[i];
+          const cappedSingle = simSingleDmgTaken[i];
+          const cappedAoe = simAoeDmgTaken[i];
           // Include all sims (even 0-damage) in min/max distribution
           dmgTakenMin[i] = Math.min(dmgTakenMin[i], cappedDmg);
           dmgTakenMax[i] = Math.max(dmgTakenMax[i], cappedDmg);
