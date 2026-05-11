@@ -304,6 +304,7 @@ export default function QuestSimulation() {
   const [jobDisplayMode, setJobDisplayMode] = useState<'icon' | 'illust' | 'none'>('icon');
   const [simResultsFilter, setSimResultsFilter] = useState<string>('all');
   const [mainResultsTab, setMainResultsTab] = useState<'all' | 'win' | 'lose'>('all');
+  const [retryOnly, setRetryOnly] = useState(false);
   const [boosterOpen, setBoosterOpen] = useState(false);
 
   // Load quest data
