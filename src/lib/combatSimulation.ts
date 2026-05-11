@@ -3664,13 +3664,17 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
-    // ─── Per-turn regen ───
+    // ─── Per-turn regen (personal + Lilu leader skill if Lilu alive) ───
     if (mobHpCurrent > 0) {
+      const liluAlive = isLiluChamp && championIdx >= 0 && heroHp[championIdx] > 0;
+      const liluContrib = liluAlive ? liluHealFlat : 0;
       for (let i = 0; i < numHeroes; i++) {
-        if (heroHp[i] <= 0 || heroPersonalRegen[i] <= 0) continue;
+        if (heroHp[i] <= 0) continue;
+        const totalRegen = (heroPersonalRegen[i] || 0) + liluContrib;
+        if (totalRegen <= 0) continue;
         if (heroHp[i] >= heroMaxHp[i]) continue;
         const before = heroHp[i];
-        heroHp[i] = Math.min(heroHp[i] + heroPersonalRegen[i], heroMaxHp[i]);
+        heroHp[i] = Math.min(heroHp[i] + totalRegen, heroMaxHp[i]);
         const healed = heroHp[i] - before;
         if (healed > 0) {
           const hPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
