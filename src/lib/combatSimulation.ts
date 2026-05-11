@@ -2096,7 +2096,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (liluHealFlat > 0) {
             hp[i] = Math.min(hp[i] + liluHealFlat * heroArtChampionMod[i], finalHp[i]);
           }
-          totalHealing[i] += hp[i] - hpBefore;
+          { const healed = hp[i] - hpBefore; totalHealing[i] += healed; simHealing[i] += healed; }
         }
       }
 
