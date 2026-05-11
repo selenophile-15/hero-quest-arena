@@ -3294,6 +3294,15 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     }
   }
 
+  // ─── Add aurasong regenPerTurn to each hero's per-turn regen ───
+  const aurasongSingle = getAurasongBonuses(champion);
+  const aurasongRegenPerTurn = aurasongSingle.regenPerTurn || 0;
+  if (aurasongRegenPerTurn > 0) {
+    for (let i = 0; i < numHeroes; i++) {
+      heroPersonalRegen[i] = (heroPersonalRegen[i] || 0) + aurasongRegenPerTurn;
+    }
+  }
+
   const totalMobHp = Math.round(monster.hp * mobHpMod);
   log.push({ round: 0, type: 'event', actor: '시스템', detail: `전투 시작! ${mobDisplayName} HP: ${formatNum(totalMobHp)}, 파티원 ${numHeroes}명` });
   if (rudoBonusBase > 0) {
