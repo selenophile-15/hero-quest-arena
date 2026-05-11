@@ -31,7 +31,8 @@ import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 import CombatBattlefield from '@/components/CombatBattlefield';
 import SavedResults from '@/components/SavedResults';
 import CompareAnalysis from '@/components/CompareAnalysis';
-import { saveSimulationResult, SavedSimulationSummary } from '@/lib/savedSimulations';
+import { saveSimulationResult, overwriteSimulationResult, SavedSimulationSummary } from '@/lib/savedSimulations';
+import OverwriteSimulationDialog from './OverwriteSimulationDialog';
 import { toast } from '@/hooks/use-toast';
 import { saveCanvasImage } from '@/lib/fileDownload';
 
@@ -625,9 +626,9 @@ export default function QuestSimulation() {
     setConfigOpen(true);
   };
 
-  // Save current simulation result
-  const handleSaveResult = () => {
-    if (!simResult || !currentQuest || !currentRegion) return;
+  // Build a saved simulation summary object from current state
+  const buildSavedSim = (): SavedSimulationSummary | null => {
+    if (!simResult || !currentQuest || !currentRegion) return null;
     const selectedHeroList = allHeroes.filter(h => selectedHeroIds.has(h.id));
     const questData = questDataMap[selectedQuestType];
     const regionName = currentRegion.name;
@@ -644,7 +645,7 @@ export default function QuestSimulation() {
       damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg * 100) : 0,
     }));
 
-    saveSimulationResult({
+    return {
       id: crypto.randomUUID(),
       name: autoName,
       savedAt: Date.now(),
@@ -661,9 +662,24 @@ export default function QuestSimulation() {
       maxRounds: simResult.maxRounds,
       heroSummaries,
       heroSnapshots: selectedHeroList,
-    });
+    };
+  };
 
-    toast({ title: '결과 저장 완료', description: autoName });
+  // Save as a new entry
+  const handleSaveResult = () => {
+    const sim = buildSavedSim();
+    if (!sim) return;
+    saveSimulationResult(sim);
+    toast({ title: '결과 저장 완료', description: sim.name });
+  };
+
+  // Overwrite an existing saved entry
+  const [overwriteDialogOpen, setOverwriteDialogOpen] = useState(false);
+  const handleOverwriteResult = (targetId: string) => {
+    const sim = buildSavedSim();
+    if (!sim) return;
+    overwriteSimulationResult(targetId, sim);
+    toast({ title: '덮어쓰기 완료', description: sim.name });
   };
 
   // Load a saved simulation
@@ -789,9 +805,18 @@ export default function QuestSimulation() {
             <button
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
               onClick={handleSaveResult}
+              title="새로운 결과로 추가 저장"
             >
               <Save className="w-3.5 h-3.5" />
-              결과 저장
+              다른 항목으로 저장
+            </button>
+            <button
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
+              onClick={() => setOverwriteDialogOpen(true)}
+              title="기존 저장 결과 중 하나를 덮어쓰기"
+            >
+              <Save className="w-3.5 h-3.5" />
+              덮어쓰기
             </button>
             <button
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
@@ -1037,7 +1062,7 @@ export default function QuestSimulation() {
                 {/* Line 1: Region (parent) + Location */}
                 {currentRegion && currentRegion.name && currentRegion.name !== locationName && (
                   <div className="text-center">
-                    <span className="text-xs text-muted-foreground font-medium">{currentRegion.name}</span>
+                    <span className="text-sm text-foreground/80 font-medium">{currentRegion.name}</span>
                   </div>
                 )}
                 <div className="text-center">
@@ -1841,15 +1866,15 @@ export default function QuestSimulation() {
                   );
                   return (
                     <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="bg-secondary/30 rounded p-2">
+                      <div className="turn-stat-box rounded p-2">
                         <div className="text-[10px] text-muted-foreground">최소</div>
                         <div className="text-lg font-bold font-mono text-foreground">{rounds.min}</div>
                       </div>
-                      <div className="bg-secondary/30 rounded p-2">
+                      <div className="turn-stat-box rounded p-2">
                         <div className="text-[10px] text-muted-foreground">평균</div>
                         <div className="text-lg font-bold font-mono text-primary">{Math.round(rounds.avg)}</div>
                       </div>
-                      <div className="bg-secondary/30 rounded p-2">
+                      <div className="turn-stat-box rounded p-2">
                         <div className="text-[10px] text-muted-foreground">최대</div>
                         <div className="text-lg font-bold font-mono text-foreground">{rounds.max}</div>
                       </div>
@@ -2042,7 +2067,7 @@ export default function QuestSimulation() {
             <ListChecks className="w-5 h-5 text-primary" />
             <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
           </div>
-          <div className="card-fantasy p-4">
+          <div className="card-fantasy p-4" data-detail-info>
 
           {/* Mini-boss breakdown (only for random mode, not boss quests) */}
           {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
@@ -2986,7 +3011,7 @@ export default function QuestSimulation() {
                                   ) : (<>
                                     {displayResults.map((hr, idx) => (
                                       <tr key={`pol-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}{hr.isTricksterHero ? <span className="ml-1 text-[10px] opacity-70">(사기꾼)</span> : null}</td>
+                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground">{(hr.poloniaStolenAvg ?? 0) > 0 ? `${(hr.poloniaStolenAvg ?? 0).toFixed(2)}개` : blank}</td>
                                         {idx === 0 && poloniaLoot && (
                                           <>
@@ -3052,7 +3077,7 @@ export default function QuestSimulation() {
                                         const totalCount = displayResults.reduce((s, r) => s + (r.isHemmaHero ? 0 : (r.hemmaAbsorbedCount ?? 0)), 0);
                                         return displayResults.map((hr, idx) => (
                                           <tr key={`hem-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}{hr.isHemmaHero ? <span className="ml-1 text-[10px] opacity-70">(헴마)</span> : null}</td>
+                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? `${Math.round(totalCount)}회` : blank}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? formatNumber(hr.hemmaAtkGainAvg ?? 0) : blank}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{!hr.isHemmaHero && (hr.hemmaAbsorbedCount ?? 0) > 0 ? formatNumber(hr.hemmaAbsorbedDmg ?? 0) : blank}</td>
@@ -3211,6 +3236,13 @@ export default function QuestSimulation() {
         buffSummary={buffSummary}
         buffedStats={buffedStats}
         hasEvasionPenalty={!!(currentQuest && (currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')))}
+      />
+
+      {/* Overwrite Saved Simulation Dialog */}
+      <OverwriteSimulationDialog
+        open={overwriteDialogOpen}
+        onOpenChange={setOverwriteDialogOpen}
+        onConfirm={handleOverwriteResult}
       />
     </>
       )}

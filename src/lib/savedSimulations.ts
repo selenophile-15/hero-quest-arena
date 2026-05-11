@@ -44,6 +44,15 @@ export function saveSimulationResult(sim: SavedSimulationSummary) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 }
 
+export function overwriteSimulationResult(targetId: string, sim: SavedSimulationSummary) {
+  const list = getSavedSimulations();
+  const idx = list.findIndex(s => s.id === targetId);
+  if (idx === -1) return;
+  // Keep target id, update everything else (including savedAt)
+  list[idx] = { ...sim, id: targetId };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
 export function deleteSavedSimulation(id: string) {
   const list = getSavedSimulations().filter(s => s.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
