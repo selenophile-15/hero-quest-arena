@@ -2209,6 +2209,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let winRate = rawWinRate;
   let retryWinRate: number | undefined;
   let retrySimulations: number | undefined;
+  let retryResultFull: SimulationResult | undefined;
 
   // Fateweaver/Chronomancer retry: re-run simulation with added Normal booster
   if (fateweaverPresent && rawWinRate < 100 && !config._isRetry && !config._disableRetry) {
@@ -2221,6 +2222,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
     retryWinRate = retryResult.rawWinRate;
     retrySimulations = retryResult.totalSimulations;
+    retryResultFull = retryResult;
 
     // Combined win rate: win on first try OR (lose first try AND win on retry)
     // P(win) = P1 + (1 - P1) × P2
