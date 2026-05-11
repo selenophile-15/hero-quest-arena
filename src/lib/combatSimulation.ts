@@ -2090,9 +2090,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
     } // end while
 
-    function handleFatalBlow(idx: number): boolean {
+    function handleFatalBlow(idx: number, dmg: number = 0): boolean {
       if (Math.random() < surviveChance[idx]) {
-        hp[idx] = 1;
+        // Crit survival = ignore this damage entirely (HP unchanged, not set to 1)
+        hp[idx] += dmg;
         surviveChance[idx] = 0;
         critSurvivals[idx]++;
         return true;
