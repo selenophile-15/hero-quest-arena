@@ -2718,7 +2718,7 @@ export default function QuestSimulation() {
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">공룡 / 다이묘 (첫 턴)</div>
+                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">공룡 / 사무라이(다이묘) (첫 턴)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                     <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                       <colgroup>
