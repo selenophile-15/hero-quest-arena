@@ -2788,7 +2788,7 @@ export default function QuestSimulation() {
                                               ) : blank}
                                             </td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{evaBonus}%</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{finalEva.toFixed(1)}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{Math.round(finalEva)}%</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
                                           </tr>
                                         );
