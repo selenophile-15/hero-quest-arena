@@ -2151,14 +2151,8 @@ export default function QuestSimulation() {
                         const partyMin = pAgg.dmg?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
                         const partyMax = pAgg.dmg?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
                         const partyAvgPerTurn = pAgg.perTurn?.avg ?? displayResults.reduce((s, hr) => s + (hr.avgDamagePerTurn || 0), 0);
-                        const partyMinPerTurn = pAgg.perTurn?.min ?? displayResults.reduce((s, hr) => {
-                          const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
-                          return s + (hr.minDamageDealt || 0) * ratio;
-                        }, 0);
-                        const partyMaxPerTurn = pAgg.perTurn?.max ?? displayResults.reduce((s, hr) => {
-                          const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
-                          return s + (hr.maxDamageDealt || 0) * ratio;
-                        }, 0);
+                        const partyMinPerTurn = pAgg.perTurn?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamagePerTurn || 0), 0);
+                        const partyMaxPerTurn = pAgg.perTurn?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamagePerTurn || 0), 0);
                         const partyNormal = displayResults.reduce((s, hr) => s + hr.normalDmgDealtAvg, 0);
                         const partyCrit = displayResults.reduce((s, hr) => s + hr.critDmgDealtAvg, 0);
                         return (
