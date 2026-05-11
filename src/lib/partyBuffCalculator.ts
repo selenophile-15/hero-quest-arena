@@ -251,8 +251,11 @@ export async function calculatePartyBuffs(input: PartyBuffInput): Promise<{
     }
     if (isFlashQuest) champNote = '깜짝 퀘스트 2배 적용';
   } else if (champName.includes('도노반')) {
+    // Donovan himself is a spellcaster (counts toward ATK% bonus)
+    const donovanIsCountedAsSpell = getClassLine(champion) === 'spellcaster';
+    const effSpellcasters = donovanIsCountedAsSpell ? numSpellcasters : numSpellcasters + 1;
     const atkPerSpell = champTier === 1 ? 5 : champTier === 2 ? 8 : champTier === 3 ? 10 : 14;
-    champAtkPct = atkPerSpell * numSpellcasters;
+    champAtkPct = atkPerSpell * effSpellcasters;
     const hpPerFighter = 4 + champTier + 2 * Math.max(champTier - 3, 0);
     champHpPct = hpPerFighter * numFighters;
     const critEvaPerRogue = 2 + champTier + Math.max(champTier - 3, 0);
@@ -260,7 +263,7 @@ export async function calculatePartyBuffs(input: PartyBuffInput): Promise<{
       perHeroCrit[i] = critEvaPerRogue * numRogues;
       perHeroEva[i] = critEvaPerRogue * numRogues;
     }
-    champNote = `전사${numFighters} 로그${numRogues} 주문${numSpellcasters}`;
+    champNote = `전사${numFighters} 로그${numRogues} 주문${effSpellcasters}`;
   } else if (champName.includes('헴마')) {
     champHpPct = 5 * champTier + 5 * Math.max(champTier - 3, 0);
     champNote = '전투 중 공격력 누적 별도';
