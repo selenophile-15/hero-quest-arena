@@ -320,7 +320,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     // Icon selection
     let icon: React.ReactNode;
     if (entry.type === 'result') {
-      icon = <span className="text-base">🏁</span>;
+      icon = entry.detail.includes('승리')
+        ? <Trophy className="w-4 h-4 text-lime-400" />
+        : <Skull className="w-4 h-4 text-red-400" />;
     } else if (isDeath) {
       icon = <Skull className="w-4 h-4 text-red-400" />;
     } else if (isEvasion) {
@@ -338,7 +340,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     } else if (entry.type === 'hero_attack') {
       icon = <Zap className="w-4 h-4 text-foreground/60" />;
     } else if (entry.type === 'heal') {
-      icon = <span className="text-base">💚</span>;
+      icon = (
+        <span className="relative inline-flex items-center justify-center w-4 h-4">
+          <Heart className="w-4 h-4 text-emerald-400" fill="currentColor" />
+          <Plus className="absolute w-2 h-2 text-white" strokeWidth={4} />
+        </span>
+      );
     } else {
       icon = <Settings className="w-4 h-4 text-muted-foreground" />;
     }
