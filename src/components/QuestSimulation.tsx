@@ -56,24 +56,49 @@ function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.Rea
 }
 
 // Inline 3-button toggle for All/Win/Lose, used at the right of each group title row.
-function ResultTabsToggle({ value, onChange }: { value: 'all' | 'win' | 'lose'; onChange: (v: 'all' | 'win' | 'lose') => void }) {
+// Optional retry-only filter button (hourglass) shown when retry simulation data exists.
+function ResultTabsToggle({ value, onChange, retryOnly, onToggleRetryOnly, hasRetry }: {
+  value: 'all' | 'win' | 'lose';
+  onChange: (v: 'all' | 'win' | 'lose') => void;
+  retryOnly?: boolean;
+  onToggleRetryOnly?: () => void;
+  hasRetry?: boolean;
+}) {
   const opts: Array<{ v: 'all' | 'win' | 'lose'; label: string }> = [
     { v: 'all', label: '전체' },
     { v: 'win', label: '성공' },
     { v: 'lose', label: '실패' },
   ];
   return (
-    <div className="result-tabs-premium ml-auto">
-      {opts.map(o => (
+    <div className="ml-auto flex items-center gap-1.5">
+      {hasRetry && (
         <button
-          key={o.v}
           type="button"
-          onClick={() => onChange(o.v)}
-          data-active={value === o.v}
+          onClick={onToggleRetryOnly}
+          aria-pressed={!!retryOnly}
+          title={retryOnly ? '재시도 판만 보기 (켜짐)' : '재시도 판만 보기'}
+          className={
+            'inline-flex items-center justify-center w-7 h-7 rounded-md border transition-all ' +
+            (retryOnly
+              ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_10px_hsl(var(--primary)/0.45)]'
+              : 'bg-muted text-muted-foreground border-border hover:bg-muted/80 hover:text-foreground')
+          }
         >
-          {o.label}
+          <Hourglass className="w-3.5 h-3.5" />
         </button>
-      ))}
+      )}
+      <div className="result-tabs-premium">
+        {opts.map(o => (
+          <button
+            key={o.v}
+            type="button"
+            onClick={() => onChange(o.v)}
+            data-active={value === o.v}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
