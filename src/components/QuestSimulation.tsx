@@ -670,7 +670,8 @@ export default function QuestSimulation() {
     const sim = buildSavedSim();
     if (!sim) return;
     saveSimulationResult(sim);
-    toast({ title: '결과 저장 완료', description: sim.name });
+    const t = toast({ title: '결과 저장 완료', description: sim.name });
+    setTimeout(() => t.dismiss(), 1000);
   };
 
   // Overwrite an existing saved entry
@@ -679,7 +680,8 @@ export default function QuestSimulation() {
     const sim = buildSavedSim();
     if (!sim) return;
     overwriteSimulationResult(targetId, sim);
-    toast({ title: '덮어쓰기 완료', description: sim.name });
+    const t = toast({ title: '덮어쓰기 완료', description: sim.name });
+    setTimeout(() => t.dismiss(), 1000);
   };
 
   // Load a saved simulation
