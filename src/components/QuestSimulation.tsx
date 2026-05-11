@@ -568,6 +568,7 @@ export default function QuestSimulation() {
       minRounds: simResult.minRounds,
       maxRounds: simResult.maxRounds,
       heroSummaries,
+      heroSnapshots: selectedHeroList,
     });
 
     toast({ title: '결과 저장 완료', description: autoName });
@@ -579,6 +580,15 @@ export default function QuestSimulation() {
     setSelectedRegionIdx(sim.regionIdx);
     setSelectedSubAreaIdx(sim.subAreaIdx);
     setSelectedQuestIdx(sim.questIdx);
+    // For each saved hero id: prefer current list (latest data); fall back to snapshot if missing
+    const currentIds = new Set(allHeroesBase.map(h => h.id));
+    const missingSnapshots = (sim.heroSnapshots || []).filter(s => !currentIds.has(s.id));
+    if (missingSnapshots.length > 0) {
+      setFallbackHeroes(prev => {
+        const ids = new Set(prev.map(h => h.id));
+        return [...prev, ...missingSnapshots.filter(s => !ids.has(s.id))];
+      });
+    }
     setSelectedHeroIds(new Set(sim.heroIds));
     setSelectedBooster(sim.booster as any);
     setSelectedMiniBoss(sim.miniBoss as MiniBossType);
