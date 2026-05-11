@@ -2210,6 +2210,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseHemmaAbsorbedDmgAccum[i] += simHemmaAbsorbedDmg[i];
             loseHemmaAbsorbedCountAccum[i] += simHemmaAbsorbedCount[i];
             loseHemmaAtkGainAccum[i] += simHemmaAtkGain[i];
+            loseRudoBonusDmgAccum[i] += simRudoBonusDmg[i];
           }
         }
         // Polonia loot — apply per-sim cap on the party total, distribute proportionally for per-hero accum
