@@ -2259,9 +2259,9 @@ export default function QuestSimulation() {
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${hr.evasionRate.toFixed(1)}%`, hr.evasionRate === 0)}</td>
                                 {/* 치명타 생존 */}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{fadeZero(`${csChance.toFixed(1)}%`, csChance === 0)}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${csApply.toFixed(1)}%`, csApply === 0)}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${Math.round(csApply)}%`, csApply === 0)}</td>
                                 {/* 회복 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{healT > 0 ? healT.toFixed(1) : blank}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{healT > 0 ? formatNumber(Math.round(healT)) : blank}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{heal > 0 ? formatNumber(Math.round(heal)) : blank}</td>
                               </tr>
                             );
