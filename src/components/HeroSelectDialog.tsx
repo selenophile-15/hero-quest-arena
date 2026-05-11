@@ -452,7 +452,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       <td className="py-1.5 px-1 text-center">
                         <div className="flex items-center gap-0.5 justify-center">
                           <ElementIcon element={hero.element} size={14} />
-                          <span className={`text-[10px] tabular-nums ${!hero.elementValue ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+                          <span className={`text-[10px] tabular-nums font-bold ${!hero.elementValue ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
                         </div>
                       </td>
                       {/* 스킬 */}
