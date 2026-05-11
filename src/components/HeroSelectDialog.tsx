@@ -462,7 +462,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                             <>
                               {(() => {
                                 const champEng = hero.championName ? CHAMPION_NAME_MAP[hero.championName] : '';
-                                const tier = hero.cardLevel || 1;
+                                 const tier = hero.cardLevel || (hero.promoted ? 4 : 1);
                                 const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${tier}.webp` : '';
                                 return leaderIcon ? <img src={leaderIcon} alt="리더" className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                               })()}
