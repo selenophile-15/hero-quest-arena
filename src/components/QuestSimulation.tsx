@@ -3237,6 +3237,13 @@ export default function QuestSimulation() {
         buffedStats={buffedStats}
         hasEvasionPenalty={!!(currentQuest && (currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')))}
       />
+
+      {/* Overwrite Saved Simulation Dialog */}
+      <OverwriteSimulationDialog
+        open={overwriteDialogOpen}
+        onOpenChange={setOverwriteDialogOpen}
+        onConfirm={handleOverwriteResult}
+      />
     </>
       )}
       </div> {/* end simulation tab */}
