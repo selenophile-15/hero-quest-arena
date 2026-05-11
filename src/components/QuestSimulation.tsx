@@ -2792,6 +2792,9 @@ export default function QuestSimulation() {
                                 </thead>
                                 <tbody>
                                   {(() => {
+                                    if (zeroBucket) {
+                                      return <EmptyBucketRow tab={mainResultsTab} colSpan={12} />;
+                                    }
                                     const brkRows = displayResults.filter(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
                                     if (brkRows.length === 0) {
                                       return (
