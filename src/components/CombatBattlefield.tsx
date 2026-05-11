@@ -490,7 +490,53 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                 );
               })()}
             </>
-          ) : entry.type === 'monster_attack' && !entry.target ? (
+          ) : entry.type === 'heal' ? (() => {
+            const healMatch = entry.detail.match(/체력 ([\d,]+) 회복/);
+            const hpInfoMatch = entry.detail.match(/\((.+?HP: [\d,\-]+ \(\d+%\))\)/);
+            const m = hpInfoMatch ? hpInfoMatch[1].match(/^(.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)$/) : null;
+            return (
+              <>
+                {healMatch && (
+                  <span className="ml-4 inline-flex items-baseline gap-1 shrink-0">
+                    <span className="font-body font-bold text-sm" style={{ color: C.heal }}>체력</span>
+                    <span className="font-mono font-bold text-sm" style={{ color: C.heal }}>{healMatch[1]}</span>
+                    <span className="font-body font-bold text-sm" style={{ color: C.heal }}>회복</span>
+                  </span>
+                )}
+                {m && (
+                  <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
+                    <span className="font-body">(</span>
+                    <span className="font-body font-bold" style={{ color: getNameColor(m[1]) }}>{m[1]}</span>
+                    <span className="font-body">HP:</span>
+                    <span className="font-mono font-bold">{m[2]}</span>
+                    <span className="font-mono">({m[3]}%)</span>
+                    <span className="font-body">)</span>
+                  </span>
+                )}
+              </>
+            );
+          })() : entry.type === 'event' && entry.detail.includes('헴마 스킬 발동') ? (() => {
+            // Hemma drain — split into prefix + HP block tail
+            const tailMatch = entry.detail.match(/^(.*?)\s*\(([^()]+?HP:\s*[\d,\-]+\s*\(\d+%\))\)\s*$/);
+            const prefix = tailMatch ? tailMatch[1] : entry.detail;
+            const hpBlock = tailMatch ? tailMatch[2] : '';
+            const hpM = hpBlock.match(/^(.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)$/);
+            return (
+              <>
+                <span className="ml-1 text-sm font-body text-foreground/80">{prefix}</span>
+                {hpM && (
+                  <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
+                    <span className="font-body">(</span>
+                    <span className="font-body font-bold" style={{ color: getNameColor(hpM[1]) }}>{hpM[1]}</span>
+                    <span className="font-body">HP:</span>
+                    <span className="font-mono font-bold">{hpM[2]}</span>
+                    <span className="font-mono">({hpM[3]}%)</span>
+                    <span className="font-body">)</span>
+                  </span>
+                )}
+              </>
+            );
+          })() : entry.type === 'monster_attack' && !entry.target ? (
             <span className="ml-1 text-sm font-body font-bold" style={{ color: C.red }}>
               {entry.detail.replace(/\s*\(.*?\)\s*$/, '')}
             </span>
