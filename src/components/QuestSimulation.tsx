@@ -1037,7 +1037,7 @@ export default function QuestSimulation() {
                 {/* Line 1: Region (parent) + Location */}
                 {currentRegion && currentRegion.name && currentRegion.name !== locationName && (
                   <div className="text-center">
-                    <span className="text-xs text-muted-foreground font-medium">{currentRegion.name}</span>
+                    <span className="text-sm text-foreground/80 font-medium">{currentRegion.name}</span>
                   </div>
                 )}
                 <div className="text-center">
