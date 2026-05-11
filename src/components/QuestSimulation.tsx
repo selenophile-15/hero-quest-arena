@@ -484,14 +484,34 @@ export default function QuestSimulation() {
       // Boss quests never have mini-bosses
       const effectiveMiniBoss = currentQuest.isBoss ? 'none' as MiniBossType : selectedMiniBoss;
       // Always pass precomputed stats (buffedStats includes champion + aurasong + booster)
-      const precomputed = buffedStats.map(bs => ({
-        atk: bs.atk,
-        def: bs.def,
-        hp: bs.hp,
-        crit: bs.crit,
-        critDmg: bs.critDmg,
-        evasion: bs.evasion,
-      }));
+      // Also derive PDF-formula fields per hero so combatSimulation can apply
+      // conditional bonuses (shark/dino/mundra/berserker) inside the common ATK% sum
+      // instead of as an outer multiplier.
+      const auraFlatAtk = buffSummary?.flatAtk || 0;
+      const auraFlatDef = buffSummary?.flatDef || 0;
+      const precomputed = buffedStats.map((bs, i) => {
+        const hero = selectedHeroes[i];
+        const cAtk = (hero.detailStats?.['공통 공격력 계수'] ?? 0) / 100;
+        const cDef = (hero.detailStats?.['공통 방어력 계수'] ?? 0) / 100;
+        const atkConstant = (1 + cAtk) > 0 ? (hero.atk || 0) / (1 + cAtk) : (hero.atk || 0);
+        const defConstant = (1 + cDef) > 0 ? (hero.def || 0) / (1 + cDef) : (hero.def || 0);
+        const partyAtkMult = (hero.atk || 0) > 0 ? (bs.atk - auraFlatAtk) / hero.atk : 1;
+        const partyDefMult = (hero.def || 0) > 0 ? (bs.def - auraFlatDef) / hero.def : 1;
+        return {
+          atk: bs.atk,
+          def: bs.def,
+          hp: bs.hp,
+          crit: bs.crit,
+          critDmg: bs.critDmg,
+          evasion: bs.evasion,
+          atkConstant,
+          defConstant,
+          commonAtkPct: cAtk,
+          commonDefPct: cDef,
+          partyAtkMult,
+          partyDefMult,
+        };
+      });
       const result = runCombatSimulation({
         heroes: selectedHeroes,
         monster: questMonster,

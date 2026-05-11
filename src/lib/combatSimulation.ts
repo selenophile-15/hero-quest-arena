@@ -47,6 +47,16 @@ export interface PrecomputedHeroStats {
   crit: number;      // % (e.g., 87)
   critDmg: number;   // % (e.g., 700)
   evasion: number;    // % (e.g., 62)
+  // PDF damage formula fields — used to apply conditional bonuses (shark/dino/mundra/berserker)
+  // as additive entries to the common ATK% sum rather than as an outer multiplier.
+  // standalone(t) = atkConstant * (1 + commonAtkPct + condPct(t))
+  // effective(t)  = standalone(t) * partyAtkMult  (+ flat additions baked in)
+  atkConstant?: number;    // pre-common% constant (base + seed + equip + flat)
+  defConstant?: number;
+  commonAtkPct?: number;   // decimal, e.g. 1.85 means +185%
+  commonDefPct?: number;
+  partyAtkMult?: number;   // decimal, party-level multiplier (champion+aurasong+booster+lone wolf)
+  partyDefMult?: number;
 }
 
 export interface SimulationConfig {
@@ -672,6 +682,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const heroLizard: number[] = [];
   const heroArmadillo: number[] = []; // Survive chance (%)
 
+  // PDF damage formula: per-hero standalone-ATK fields
+  const heroAtkRaw: number[] = [];          // pre-party hero ATK (Hero.atk before party buffs)
+  const heroAtkConst: number[] = [];        // atkConstant: (base+seed+equip+flat) before common%
+  const heroDefConst: number[] = [];
+  const heroCommonAtkPct: number[] = [];    // decimal
+  const heroCommonDefPct: number[] = [];
+  const heroPartyAtkMult: number[] = [];    // decimal multiplier from party+booster
+  const heroPartyDefMult: number[] = [];
+
   for (let i = 0; i < numHeroes; i++) {
     const h = activeHeroes[i];
     const ps = precomputedStats?.[i];
@@ -687,6 +706,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     heroCritMult.push(ps ? ps.critDmg / 100 : (h.critDmg || 0) / 100);
     heroEvasion.push(ps ? ps.evasion / 100 : (h.evasion || 0) / 100);
     heroThreat.push(h.threat || 1);
+
+    // PDF formula fields — derive via inversion when not provided
+    heroAtkRaw.push(h.atk || 0);
+    const cAtk = ps?.commonAtkPct ?? ((h as any).detailStats?.['공통 공격력 계수'] ?? 0) / 100;
+    const cDef = ps?.commonDefPct ?? ((h as any).detailStats?.['공통 방어력 계수'] ?? 0) / 100;
+    heroCommonAtkPct.push(cAtk);
+    heroCommonDefPct.push(cDef);
+    heroAtkConst.push(ps?.atkConstant ?? ((1 + cAtk) > 0 ? (h.atk || 0) / (1 + cAtk) : 0));
+    heroDefConst.push(ps?.defConstant ?? ((1 + cDef) > 0 ? (h.def || 0) / (1 + cDef) : 0));
+    heroPartyAtkMult.push(ps?.partyAtkMult ?? 1);
+    heroPartyDefMult.push(ps?.partyDefMult ?? 1);
 
     // Evasion cap: Pathfinder = 78%, others = 75%
     heroEvaCap.push(isClass(h, '길잡이', 'Pathfinder') ? 0.78 : 0.75);
@@ -998,12 +1028,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   } // end else (no precomputed stats)
 
   // ─── Damage taken calculation (using actual defense thresholds) ───
+  // Mundra spirit: when fighting a boss, adds +20% per stack to BOTH ATK and DEF
+  // (matches the detail-stats label '문드라 - 보스 상대 공격력/방어력 증가%').
+  // DEF bonus is constant per-hero, so we fold it into finalDef once here.
   const damageTaken: number[] = [];
   const critDamageTaken: number[] = [];
   const defThresholds: DefThresholds = monster.def;
 
   for (let i = 0; i < numHeroes; i++) {
-    const dmg = calcDamageTakenWithThresholds(finalDef[i], mobDamage, defThresholds);
+    let effDef = finalDef[i];
+    if (monster.isBoss && heroMundra[i] > 0) {
+      // Add atkConstant-equivalent for DEF: defConstant * 0.2 * mundra * partyDefMult
+      const defCondAdd = heroDefConst[i] * 0.2 * heroMundra[i] * (heroPartyDefMult[i] || 1);
+      effDef = finalDef[i] + defCondAdd;
+    }
+    const dmg = calcDamageTakenWithThresholds(effDef, mobDamage, defThresholds);
     damageTaken.push(dmg);
     critDamageTaken.push(calcCritDamageTaken(dmg, mobDamage));
   }
@@ -1662,8 +1701,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (heroIsSensei[drainTarget] && lostInnate[drainTarget] !== round - 1) {
             lostInnate[drainTarget] = round;
           }
-          // Hemma attack bonus: base_atk × hemmaMult (flat add per drain)
-          { const gain = heroAtk[hemmaWho] * hemmaMult; hemmaBonus[hemmaWho] += gain; simHemmaAtkGain[hemmaWho] += gain; }
+          // Hemma attack bonus: standalone ATK (with current condPct) × hemmaMult per drain.
+          // Per PDF: '그 턴의 (단독)최종ATK × hemmaMult' — scales with Shark/Dino/Mundra/Berserker.
+          {
+            const hCondPct = (monster.isBoss ? 0.2 * heroMundra[hemmaWho] : 0)
+              + sharkActive * 0.01 * heroShark[hemmaWho]
+              + dinosaurActive * heroDinosaur[hemmaWho] * 0.01
+              + 0.1 * (1 + heroBerserkerLevel[hemmaWho]) * berserkerStage[hemmaWho];
+            const standalone = heroAtkRaw[hemmaWho] + heroAtkConst[hemmaWho] * hCondPct;
+            const gain = standalone * hemmaMult;
+            hemmaBonus[hemmaWho] += gain;
+            simHemmaAtkGain[hemmaWho] += gain;
+          }
           hp[hemmaWho] = Math.min(hp[hemmaWho] + (champTier + Math.min(champTier - 3, 0)) * 5, finalHp[hemmaWho]);
         }
       }
@@ -1711,12 +1760,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // Tamas bonus applied to attack
         const tamasAtkMult = (jj === championIdx && isTamas) ? (1 + tamasBonus) : 1;
 
-        // Hero attack calculation
-        const atkMod = 1.0 + 0.2 * heroMundra[jj] + sharkActive * 0.01 * heroShark[jj] 
-          + dinosaurActive * heroDinosaur[jj] * 0.01 
+        // Hero attack calculation (PDF formula)
+        // standalone(t) = atkConstant * (1 + commonAtkPct + condPct(t))
+        // effectiveAtk = standalone(t) * partyAtkMult
+        // Mundra applies only vs bosses.
+        const condPct = (monster.isBoss ? 0.2 * heroMundra[jj] : 0)
+          + sharkActive * 0.01 * heroShark[jj]
+          + dinosaurActive * heroDinosaur[jj] * 0.01
           + 0.1 * (1 + heroBerserkerLevel[jj]) * berserkerStage[jj];
-        
-        const baseHeroDmg = finalAtk[jj] * atkMod * tamasAtkMult + hemmaBonus[jj];
+        const condBonus = heroAtkConst[jj] * condPct * (heroPartyAtkMult[jj] || 1);
+        const baseHeroDmg = (finalAtk[jj] + condBonus) * tamasAtkMult + hemmaBonus[jj];
 
         const totalCritChance = Math.min(1.0,
           (heroCritChance[jj] + ninjaBonus[jj] + rudoBonus) * heroArtCritChanceMod[jj]
