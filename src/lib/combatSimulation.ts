@@ -215,11 +215,12 @@ export interface HeroSimResult {
   lordSavedAoeAvgDmg?: number;     // avg aoe dmg absorbed by lord saving this hero per sim
   // Conqueror per-stack metrics (index 0..4 = stack count)
   conquerorStackTurnRate?: number[];   // % of attack-turns spent at each stack (0..4)
-  conquerorStackCritDmg?: number[];    // avg crit damage dealt at each stack
-  conquerorStackAvgDmg?: number[];     // avg damage dealt at each stack (all attacks)
-  conquerorStackResetRate?: number[];  // % of attacks at this stack that ended in reset (non-crit)
+  conquerorStackCritDmg?: number[];    // theoretical crit damage at each stack (avgBaseAtk × (critMult + s*0.25))
+  conquerorStackAvgDmg?: number[];     // sum of damage at stack s ÷ total attack count
+  conquerorStackResetRate?: number[];  // (deprecated) % of attacks at this stack that ended in reset
   conquerorAvgStack?: number;          // overall avg stack count when attacking
   conquerorAvgCritBonus?: number;      // overall avg crit% bonus from stacks (0..100)
+  conquerorBaseCritMult?: number;      // base crit-damage multiplier (e.g. 4.0 for 400%)
   // Ninja/Sensei innate bonus tracking
   innateLossCount?: number;     // avg # of times innate bonus was lost (per sim)
   innateRegenCount?: number;    // avg # of times sensei regenerated bonus (per sim)
@@ -1297,6 +1298,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
+  // Sum of baseHeroDmg (pre-crit, pre-barrier) per attack, used for theoretical crit reference
+  const baseAtkSumTotal = new Float64Array(numHeroes);
   // Ninja/Sensei innate tracking
   const innateLossAccum = new Float64Array(numHeroes);
   const innateRegenAccum = new Float64Array(numHeroes);
@@ -1408,6 +1411,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const normalDmgFight = new Float64Array(numHeroes);
     const critDmgFight = new Float64Array(numHeroes);
     const simAttackCount = new Float64Array(numHeroes);
+    const simBaseAtkSum = new Float64Array(numHeroes);
     const simHitMin = new Float64Array(numHeroes).fill(1e18);
     const simHitMax = new Float64Array(numHeroes);
     const surviveChance = new Float64Array(numHeroes);
@@ -1863,6 +1867,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         else normalDmgFight[jj] += damage;
         // Per-hit (per-attack-action) tracking for min/max
         simAttackCount[jj]++;
+        simBaseAtkSum[jj] += baseHeroDmg;
         if (damage > 0) {
           if (damage < dmgPerHitMin[jj]) dmgPerHitMin[jj] = damage;
           if (damage > dmgPerHitMax[jj]) dmgPerHitMax[jj] = damage;
@@ -1999,6 +2004,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
           // Aggregate per-hit attack count
           attackCountTotal[i] += simAttackCount[i];
+          baseAtkSumTotal[i] += simBaseAtkSum[i];
           totalRoundsPerHero[i] += round;
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
@@ -2502,17 +2508,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           ? [0, 1, 2, 3, 4].map(s => Math.round((conqStackTurns[s][i] / totalTurns) * 100 * 10) / 10)
           : [0, 0, 0, 0, 0];
       })() : undefined,
-      conquerorStackCritDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
-        conqStackCritCount[s][i] > 0 ? Math.round(conqStackCritDmgAccum[s][i] / conqStackCritCount[s][i]) : 0
-      ) : undefined,
+      conquerorStackCritDmg: heroIsConquistador[i] ? (() => {
+        const avgBaseAtk = attackCountTotal[i] > 0 ? baseAtkSumTotal[i] / attackCountTotal[i] : 0;
+        return [0, 1, 2, 3, 4].map(s =>
+          Math.round(avgBaseAtk * (heroCritMult[i] + s * 0.25))
+        );
+      })() : undefined,
       conquerorStackAvgDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
-        conqStackAttackCount[s][i] > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / conqStackAttackCount[s][i]) : 0
+        attackCountTotal[i] > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / attackCountTotal[i]) : 0
       ) : undefined,
       conquerorStackResetRate: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
         conqStackAttackCount[s][i] > 0
           ? Math.round((conqStackResetCount[s][i] / conqStackAttackCount[s][i]) * 100 * 10) / 10
           : 0
       ) : undefined,
+      conquerorBaseCritMult: heroIsConquistador[i] ? heroCritMult[i] : undefined,
       conquerorAvgStack: heroIsConquistador[i] ? (() => {
         const totalTurns = conqStackTurns.reduce((s, arr) => s + arr[i], 0);
         if (totalTurns === 0) return 0;
