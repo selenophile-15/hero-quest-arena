@@ -1484,8 +1484,8 @@ export default function QuestSimulation() {
                     const hero = selectedHeroes[slotIdx];
                     if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
                     
-                    const heroResult = simResult?.heroResults.find(r => r.heroId === hero.id);
-                    const totalSims = simResult?.totalSimulations || 1;
+                    const heroResult = dispSim?.heroResults.find(r => r.heroId === hero.id);
+                    const totalSims = dispSim?.totalSimulations || 1;
                     const scale = totalSims / 20;
                     
                     let faceImg = '/images/quest/face/icon_shop_face_A.webp';
@@ -1498,7 +1498,7 @@ export default function QuestSimulation() {
                       else if (deathCount >= 8 * scale) faceImg = '/images/quest/face/icon_shop_face_B.webp';
                       else if (deathCount >= 3 * scale) faceImg = '/images/quest/face/icon_shop_face_A.webp';
                       else if (deathCount >= 0.01 * scale) faceImg = '/images/quest/face/icon_shop_face_S.webp';
-                      else if (simResult.avgRounds <= 1 && simResult.winRate >= 99.9) faceImg = '/images/quest/face/icon_shop_face_SSS.webp';
+                      else if (dispSim!.avgRounds <= 1 && dispSim!.winRate >= 99.9) faceImg = '/images/quest/face/icon_shop_face_SSS.webp';
                       else faceImg = '/images/quest/face/icon_shop_face_S.webp';
                     }
                     
