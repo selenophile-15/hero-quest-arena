@@ -36,9 +36,10 @@ const CLASS_LINE_SHADOW: Record<string, string> = {
   '주문술사': '0 0 12px rgba(56,189,248,0.3)',
 };
 
+// Aligned with ListSummary palette (same in light/dark)
 const POSITION_BG_COLORS: Record<string, string> = {
   '퓨어 탱커': 'bg-blue-500',
-  '회피 탱커': 'bg-emerald-600',
+  '회피 탱커': 'bg-lime-600',
   '딜탱': 'bg-orange-500',
   '치명 딜러': 'bg-red-500',
   '일반 딜러': 'bg-yellow-500',
