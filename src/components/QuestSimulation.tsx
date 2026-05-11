@@ -1411,7 +1411,8 @@ export default function QuestSimulation() {
                   size="sm"
                   className="gap-1.5 btn-force-white"
                 >
-                  📊 스탯 계산표
+                  <FileText className="w-4 h-4" />
+                  스탯 계산표
                 </Button>
               </div>
             )}
