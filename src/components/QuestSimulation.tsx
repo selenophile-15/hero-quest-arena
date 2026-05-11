@@ -1842,7 +1842,7 @@ export default function QuestSimulation() {
               {/* Equipment Grade Score */}
               <div className="card-fantasy p-4 mb-3">
                 <div className="flex items-center gap-1.5 mb-3">
-                  <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
+                  <Shirt className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
                   <span className="text-sm font-bold text-foreground">장비 등급</span>
                 </div>
                 {(() => {
@@ -2305,7 +2305,7 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 받는 대미지 — 전체(단일+광역) / 단일+광역 합본 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     {(() => {
                       const blank = '';
                       const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
