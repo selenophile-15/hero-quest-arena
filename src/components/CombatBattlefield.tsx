@@ -705,16 +705,25 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               </tr>
             </thead>
             <tbody>
-              {heroStatsData.map((hs, idx) => (
-                <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                  <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-xs" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-red-700' : 'text-red-400'}`}>{formatNumber(hs.dmg)}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-orange-700' : 'text-orange-400'}`}>{hs.dmgPct.toFixed(1)}%</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-yellow-700' : 'text-yellow-400'}`}>{hs.targeted}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-teal-700' : 'text-teal-400'}`}>{hs.dodged}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-blue-700' : 'text-blue-400'}`}>{hs.tankPct.toFixed(1)}%</td>
-                </tr>
-              ))}
+              {heroStatsData.map((hs, idx) => {
+                // Same color tiers as QuestSimulation contribution bars
+                const tierText = (pct: number) =>
+                  pct >= 81 ? (isLight ? 'text-lime-700' : 'text-lime-400')
+                  : pct >= 61 ? (isLight ? 'text-yellow-700' : 'text-yellow-400')
+                  : pct >= 41 ? (isLight ? 'text-orange-700' : 'text-orange-400')
+                  : pct >= 21 ? (isLight ? 'text-red-700' : 'text-red-400')
+                  : (isLight ? 'text-purple-700' : 'text-purple-400');
+                return (
+                  <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                    <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-xs" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-red-700' : 'text-red-400'}`}>{formatNumber(hs.dmg)}</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${tierText(hs.dmgPct)}`}>{hs.dmgPct.toFixed(1)}%</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-yellow-700' : 'text-yellow-400'}`}>{hs.targeted}</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-teal-700' : 'text-teal-400'}`}>{hs.dodged}</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${tierText(hs.tankPct)}`}>{hs.tankPct.toFixed(1)}%</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
