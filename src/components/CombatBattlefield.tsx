@@ -3,6 +3,7 @@ import { CombatLogEntry } from '@/lib/combatSimulation';
 import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Shield, Sparkles } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
 import { useTheme } from '@/hooks/use-theme';
@@ -54,6 +55,65 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const showAllBright = false;
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const logScrollRef = useRef<HTMLDivElement>(null);
+
+  // Category visibility toggles (gear-icon menu)
+  type CategoryKey =
+    | 'attacks' | 'evasion' | 'death' | 'heal' | 'result'
+    | 'classBonus' | 'spiritBonus' | 'leaderBonus' | 'protection' | 'retry' | 'execute' | 'survival' | 'stack' | 'system';
+  const ALL_CATEGORIES: { key: CategoryKey; label: string }[] = [
+    { key: 'attacks', label: '공격 (피해/치명타/광역)' },
+    { key: 'evasion', label: '회피' },
+    { key: 'death', label: '사망' },
+    { key: 'heal', label: '회복/재생' },
+    { key: 'result', label: '전투 결과' },
+    { key: 'classBonus', label: '직업 보너스 (닌자/무희/광전사/사무라이 등)' },
+    { key: 'spiritBonus', label: '영혼 보너스 (상어/공룡)' },
+    { key: 'leaderBonus', label: '챔피언 리더 스킬 (헴마/루도 등)' },
+    { key: 'protection', label: '군주 보호' },
+    { key: 'retry', label: '크로노맨서/페이트위버 재시도' },
+    { key: 'execute', label: '어둠의 기사 처형' },
+    { key: 'survival', label: '치명타 생존' },
+    { key: 'stack', label: '정복자 스택' },
+    { key: 'system', label: '시스템/기타' },
+  ];
+  const [visibleCategories, setVisibleCategories] = useState<Set<CategoryKey>>(
+    () => new Set(ALL_CATEGORIES.map(c => c.key))
+  );
+  const toggleCategory = (k: CategoryKey) => {
+    setVisibleCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(k)) next.delete(k); else next.add(k);
+      return next;
+    });
+  };
+
+  // Classify a log entry into a category for the gear-icon filter
+  const classifyEntry = useCallback((entry: CombatLogEntry): CategoryKey => {
+    if (entry.type === 'hero_attack' || entry.type === 'monster_attack') return 'attacks';
+    if (entry.type === 'result') return 'result';
+    if (entry.type === 'heal') return 'heal';
+    if (entry.type === 'event') {
+      const d = entry.detail || '';
+      if (d.includes('회피')) return 'evasion';
+      if (d.includes('사망')) return 'death';
+      if (d.includes('재생') || d.includes('회복')) return 'heal';
+      if (d.includes('재시도') || d.includes('크로노') || d.includes('페이트')) return 'retry';
+      if (d.includes('처형')) return 'execute';
+      if (d.includes('치명타 생존') || d.includes('생존')) return 'survival';
+      if (d.includes('정복자') || d.includes('스택')) return 'stack';
+      if (d.includes('군주') || d.includes('보호') || d.includes('대신')) return 'protection';
+      if (d.includes('헴마') || d.includes('루도') || d.includes('리더') || d.includes('파티에') || d.includes('지속')) return 'leaderBonus';
+      if (d.includes('상어') || d.includes('공룡') || d.includes('영혼')) return 'spiritBonus';
+      if (d.includes('닌자') || d.includes('센세') || d.includes('무희') || d.includes('곡예') || d.includes('광전사') || d.includes('잘') || d.includes('사무라이') || d.includes('다이묘') || d.includes('직업') || d.includes('첫 턴')) return 'classBonus';
+      return 'system';
+    }
+    return 'system';
+  }, []);
+
+  const isCategoryVisible = useCallback((entry: CombatLogEntry) => {
+    return visibleCategories.has(classifyEntry(entry));
+  }, [visibleCategories, classifyEntry]);
+
 
   // Adaptive colors for light/dark mode
   const C = useMemo(() => ({
@@ -561,7 +621,57 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
         <div ref={logScrollRef} className="overflow-y-auto rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/30 via-background/30 to-secondary/20 flex-1 min-h-0 shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
           {/* Controls inside log box */}
-          <div className="sticky top-0 z-20 flex justify-end gap-1.5 px-2 py-1 bg-secondary/80 backdrop-blur-sm border-b border-primary/20">
+          <div className="sticky top-0 z-20 flex items-center justify-end gap-1.5 px-2 py-1 bg-secondary/80 backdrop-blur-sm border-b border-primary/20">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs gap-1 h-6 px-2"
+                  title="표시 항목 선택"
+                >
+                  <Settings className="w-3 h-3" />
+                  표시 항목
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-72 p-0">
+                <div className="px-3 py-2 border-b border-border/40 flex items-center justify-between">
+                  <span className="text-sm font-bold">로그 표시 항목</span>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      className="text-[10px] text-muted-foreground hover:text-foreground underline"
+                      onClick={() => setVisibleCategories(new Set(ALL_CATEGORIES.map(c => c.key)))}
+                    >전체</button>
+                    <span className="text-[10px] text-muted-foreground">/</span>
+                    <button
+                      type="button"
+                      className="text-[10px] text-muted-foreground hover:text-foreground underline"
+                      onClick={() => setVisibleCategories(new Set())}
+                    >해제</button>
+                  </div>
+                </div>
+                <div className="max-h-72 overflow-y-auto py-1">
+                  {ALL_CATEGORIES.map(c => {
+                    const checked = visibleCategories.has(c.key);
+                    return (
+                      <label
+                        key={c.key}
+                        className="flex items-start gap-2 px-3 py-1.5 hover:bg-secondary/40 cursor-pointer text-xs"
+                      >
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 accent-primary"
+                          checked={checked}
+                          onChange={() => toggleCategory(c.key)}
+                        />
+                        <span className="leading-tight">{c.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button
               variant="outline"
               size="sm"
@@ -576,15 +686,17 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
           {roundGroups.map(group => {
             if (filter && !isRoundRelevant(group)) return null;
+            const visibleEntries = group.entries.filter(({ entry }) => isCategoryVisible(entry));
+            if (visibleEntries.length === 0) return null;
 
             return (
               <div key={group.round} className="border-b border-border/20">
                 {/* Round header - non-collapsible, just a divider */}
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40">
                   <span className="text-sm font-bold text-foreground">라운드 {group.round}</span>
-                  <span className="text-xs text-muted-foreground ml-auto">{group.entries.length}건</span>
+                  <span className="text-xs text-muted-foreground ml-auto">{visibleEntries.length}건</span>
                 </div>
-                {group.entries.map(({ entry, idx }) => {
+                {visibleEntries.map(({ entry, idx }) => {
                   if (filter && !entryMatchesFilter(entry)) return null;
                   return renderLogEntry(entry, idx);
                 })}
