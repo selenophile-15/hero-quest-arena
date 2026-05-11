@@ -2617,7 +2617,9 @@ export default function QuestSimulation() {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {!lordRow ? (
+                                      {zeroBucket ? (
+                                        <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                      ) : !lordRow ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">군주 직업 파티원 없음</td></tr>
                                       ) : lordProtected.length === 0 ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">동료 없음</td></tr>
