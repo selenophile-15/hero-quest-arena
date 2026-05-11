@@ -2971,6 +2971,10 @@ export default function QuestSimulation() {
                           </tr>
                         </thead>
                         <tbody>
+                          {zeroBucket ? (
+                            <EmptyBucketRow tab={mainResultsTab} colSpan={8} />
+                          ) : (
+                          <>
                           {displayResults.map((hr, idx) => (
                             <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                               <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
