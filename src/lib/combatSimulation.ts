@@ -460,23 +460,40 @@ function getAurasongBonuses(champion: Hero | null): AurasongBonuses & { regenPer
 
   const item: any = champion.equipmentSlots?.[1]?.item;
   const bonuses = item?.relicStatBonuses;
-  if (!Array.isArray(bonuses)) return result;
-
-  for (const b of bonuses) {
-    const rawVal = typeof b?.value === 'number' ? b.value : 0;
-    const val = b?.op === '감소' ? -rawVal : rawVal;
-    switch (b?.stat) {
-      case '오라_공격력%': result.atkPct += val / 100; break;
-      case '오라_방어력%': result.defPct += val / 100; break;
-      case '오라_체력%': result.hpPct += val / 100; break;
-      case '오라_치명타확률%': result.critPct += val / 100; break;
-      case '오라_회피%': result.evaPct += val / 100; break;
-      case '오라_치명타데미지%': result.critDmgPct += val / 100; break;
-      case '오라_깡공격력': result.flatAtk += val; break;
-      case '오라_깡방어력': result.flatDef += val; break;
-      case '오라_깡체력': result.flatHp += val; break;
-      case '오라_매턴체력회복': result.regenPerTurn += val; break;
+  if (Array.isArray(bonuses)) {
+    for (const b of bonuses) {
+      const rawVal = typeof b?.value === 'number' ? b.value : 0;
+      const val = b?.op === '감소' ? -rawVal : rawVal;
+      switch (b?.stat) {
+        case '오라_공격력%': result.atkPct += val / 100; break;
+        case '오라_방어력%': result.defPct += val / 100; break;
+        case '오라_체력%': result.hpPct += val / 100; break;
+        case '오라_치명타확률%': result.critPct += val / 100; break;
+        case '오라_회피%': result.evaPct += val / 100; break;
+        case '오라_치명타데미지%': result.critDmgPct += val / 100; break;
+        case '오라_깡공격력': result.flatAtk += val; break;
+        case '오라_깡방어력': result.flatDef += val; break;
+        case '오라_깡체력': result.flatHp += val; break;
+        case '오라_매턴체력회복': result.regenPerTurn += val; break;
+      }
     }
+  }
+
+  // Preset aurasong lookup (for items without relicStatBonuses, like "광휘의 오라")
+  if (item?.name) {
+    try {
+      const presetBonuses = getAurasongBonusStatsSync(item.name);
+      if (presetBonuses && typeof presetBonuses === 'object') {
+        for (const [k, v] of Object.entries(presetBonuses)) {
+          if (typeof v !== 'number') continue;
+          switch (k) {
+            case '오라_매턴체력회복': result.regenPerTurn += v; break;
+            // Other 오라_ bonuses for preset aurasongs are intentionally NOT added here
+            // because they are already applied via partyBuffCalculator/precomputedStats.
+          }
+        }
+      }
+    } catch { /* ignore */ }
   }
 
   return result;
