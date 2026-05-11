@@ -424,23 +424,46 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           {(entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) ? (
             <>
               {damageText && (
-                <span className="font-mono font-bold text-sm ml-4 text-foreground/70">{damageText}</span>
+                <span className="ml-4 inline-flex items-baseline gap-1 shrink-0">
+                  {isCrit && (
+                    <span className="font-body font-bold text-sm" style={{ color: C.yellow }}>치명타!</span>
+                  )}
+                  <span className="font-mono font-bold text-sm text-foreground/80">{damageText.replace(/\s*피해$/, '')}</span>
+                  <span className="font-body font-bold text-sm text-foreground/80">피해</span>
+                </span>
               )}
 
-              {hpText && (
-                <span className="font-mono font-bold text-sm ml-auto text-foreground/70 shrink-0">{hpText}</span>
-              )}
+              {hpText && (() => {
+                const m = hpText.match(/^\((.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)\)$/);
+                if (m) {
+                  const [, who, hpNum, pct] = m;
+                  return (
+                    <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
+                      <span className="font-body">(</span>
+                      <span className="font-body font-bold" style={{ color: getNameColor(who) }}>{who}</span>
+                      <span className="font-body">HP:</span>
+                      <span className="font-mono font-bold">{hpNum}</span>
+                      <span className="font-mono">({pct}%)</span>
+                      <span className="font-body">)</span>
+                    </span>
+                  );
+                }
+                return (
+                  <span className="font-mono font-bold text-sm ml-auto text-foreground/80 shrink-0">{hpText}</span>
+                );
+              })()}
             </>
           ) : entry.type === 'monster_attack' && !entry.target ? (
-            // AOE header line
-            <span className="ml-1 text-sm text-red-400 font-bold">{entry.detail}</span>
+            <span className="ml-1 text-sm font-body font-bold" style={{ color: C.red }}>
+              {entry.detail.replace(/\s*\(.*?\)\s*$/, '')}
+            </span>
           ) : isEvasion ? (
-            <span className="text-teal-400 font-bold text-sm ml-4">회피</span>
+            <span className="font-body font-bold text-sm ml-4" style={{ color: C.teal }}>회피!</span>
           ) : (
-            <span className={`ml-1 text-sm ${
+            <span className={`ml-1 text-sm font-body ${
               isDeath ? 'text-red-400 font-bold' :
               entry.type === 'result' ? (entry.detail.includes('승리') ? 'text-lime-400 font-bold' : 'text-red-400 font-bold') :
-              'text-foreground/60'
+              'text-foreground/70'
             }`}>
               {entry.detail}
             </span>
