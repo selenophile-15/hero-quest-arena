@@ -9,6 +9,7 @@ import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_
 import { getSkillImagePath, getUniqueSkillImagePath } from '@/lib/skillUtils';
 import { getAurasongSkillIconPath } from '@/lib/championEquipUtils';
 import { HERO_CLASS_MAP } from '@/lib/gameData';
+import { getChampionLeaderSkillTier } from '@/lib/championTier';
 import ElementIcon from './ElementIcon';
 
 interface Props {
@@ -462,7 +463,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                             <>
                               {(() => {
                                 const champEng = hero.championName ? CHAMPION_NAME_MAP[hero.championName] : '';
-                                 const tier = hero.cardLevel || (hero.promoted ? 4 : 1);
+                                const tier = getChampionLeaderSkillTier(hero);
                                 const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${tier}.webp` : '';
                                 return leaderIcon ? <img src={leaderIcon} alt="리더" className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                               })()}
@@ -538,7 +539,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                 const champLeaderIcon = isChampion && hero.championName
                   ? (() => {
                       const champEng = CHAMPION_NAME_MAP[hero.championName] || '';
-                      const tier = hero.cardLevel || (hero.promoted ? 4 : 1);
+                      const tier = getChampionLeaderSkillTier(hero);
                       return champEng ? `/images/skills/sk_champion/${champEng}_${tier}.webp` : '';
                     })()
                   : '';
