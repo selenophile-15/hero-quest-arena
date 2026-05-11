@@ -2966,18 +2966,21 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   // Conqueror crit stacks (max 4)
   const conquStacks: number[] = new Array(numHeroes).fill(0);
 
-  // Ninja/Sensei innate tracking
-  const ninjaBaseAtk: number[] = heroAtkVal.slice();
-  const ninjaBaseEva: number[] = heroEva.slice();
+  // Ninja/Sensei innate tracking — bonus is CRIT% + EVA% (tier-aware), NOT ATK.
+  // heroCrit / heroEva from precomputedStats already include this innate bonus.
+  // On hit → subtract delta; for Sensei recovery → re-add delta.
+  const ninjaCritDelta: number[] = new Array(numHeroes).fill(0);
+  const ninjaEvaDelta: number[] = new Array(numHeroes).fill(0);
   const lostInnateRound: number[] = new Array(numHeroes).fill(-99);
-  // Apply initial ninja/sensei bonuses
   for (let i = 0; i < numHeroes; i++) {
     if (heroIsNinjaFlag[i] || heroIsSenseiFlag[i]) {
-      const bonusAtk = heroAtkVal[i] * 0.3;
-      const bonusEva = 0.15;
-      heroAtkVal[i] += bonusAtk;
-      heroEva[i] += bonusEva;
-      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `고유 스킬 적용: ATK +30%, EVA +15%` });
+      const t = heroTier[i];
+      // tier1: crit+20 eva+15 / tier2: crit+30 eva+15 / tier3: crit+40 eva+20 / tier4 (sense): crit+50 eva+25
+      const critB = 0.10 + Math.min(t, 4) * 0.10;
+      const evaB = t >= 4 ? 0.25 : t >= 3 ? 0.20 : 0.15;
+      ninjaCritDelta[i] = critB;
+      ninjaEvaDelta[i] = evaB;
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `고유 스킬 적용 중: 치확 +${(critB * 100).toFixed(0)}%, 회피 +${(evaB * 100).toFixed(0)}%` });
     }
   }
 
@@ -3046,10 +3049,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     for (let i = 0; i < numHeroes; i++) {
       if (!heroIsSenseiFlag[i] || heroHp[i] <= 0) continue;
       if (lostInnateRound[i] > 0 && round >= lostInnateRound[i] + 2) {
-        heroAtkVal[i] = ninjaBaseAtk[i] * 1.3;
-        heroEva[i] = ninjaBaseEva[i] + 0.15;
+        heroCrit[i] += ninjaCritDelta[i];
+        heroEva[i] += ninjaEvaDelta[i];
         lostInnateRound[i] = -99;
-        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `센세이 고유 스킬 회복! ATK/EVA 복구 (2턴 경과)` });
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `센세 고유 스킬 회복! 치확/회피 복구 (2턴 경과)` });
       }
     }
 
@@ -3068,10 +3071,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         }
         // Ninja/Sensei lose innate on hit
         if ((heroIsNinjaFlag[i] || heroIsSenseiFlag[i]) && lostInnateRound[i] < 0) {
-          heroAtkVal[i] = ninjaBaseAtk[i];
-          heroEva[i] = ninjaBaseEva[i];
+          heroCrit[i] -= ninjaCritDelta[i];
+          heroEva[i] -= ninjaEvaDelta[i];
           lostInnateRound[i] = round;
-          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `피격! 고유 스킬 소실 (ATK -30%, EVA -15%)` });
+          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `피격! 고유 스킬 소실 (치확 -${(ninjaCritDelta[i] * 100).toFixed(0)}%, 회피 -${(ninjaEvaDelta[i] * 100).toFixed(0)}%)` });
         }
         // Lord protection (single target only, skip for AOE)
         const negEvaBonus = (heroEva[i] < 0 && isExtreme) ? -0.25 * heroEva[i] : 0;
@@ -3132,10 +3135,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       } else {
         // Ninja/Sensei lose innate on hit
         if ((heroIsNinjaFlag[target] || heroIsSenseiFlag[target]) && lostInnateRound[target] < 0) {
-          heroAtkVal[target] = ninjaBaseAtk[target];
-          heroEva[target] = ninjaBaseEva[target];
+          heroCrit[target] -= ninjaCritDelta[target];
+          heroEva[target] -= ninjaEvaDelta[target];
           lostInnateRound[target] = round;
-          log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `피격! 고유 스킬 소실 (ATK -30%, EVA -15%)` });
+          log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `피격! 고유 스킬 소실 (치확 -${(ninjaCritDelta[target] * 100).toFixed(0)}%, 회피 -${(ninjaEvaDelta[target] * 100).toFixed(0)}%)` });
         }
         const negEvaBonus = (heroEva[target] < 0 && isExtreme) ? -0.25 * heroEva[target] : 0;
         const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
