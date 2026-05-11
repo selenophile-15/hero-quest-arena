@@ -422,11 +422,12 @@ interface AurasongBonuses {
   flatHp: number;
 }
 
-function getAurasongBonuses(champion: Hero | null): AurasongBonuses {
-  const result: AurasongBonuses = {
+function getAurasongBonuses(champion: Hero | null): AurasongBonuses & { regenPerTurn: number } {
+  const result: AurasongBonuses & { regenPerTurn: number } = {
     atkPct: 0, defPct: 0, hpPct: 0,
     critPct: 0, evaPct: 0, critDmgPct: 0,
     flatAtk: 0, flatDef: 0, flatHp: 0,
+    regenPerTurn: 0,
   };
   if (!champion) return result;
 
@@ -447,6 +448,7 @@ function getAurasongBonuses(champion: Hero | null): AurasongBonuses {
       case '오라_깡공격력': result.flatAtk += val; break;
       case '오라_깡방어력': result.flatDef += val; break;
       case '오라_깡체력': result.flatHp += val; break;
+      case '오라_매턴체력회복': result.regenPerTurn += val; break;
     }
   }
 
