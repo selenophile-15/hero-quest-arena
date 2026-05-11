@@ -1367,6 +1367,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     // Per-sim hemma drain absorbed from each ally (dmg + count)
     const simHemmaAbsorbedDmg = new Float64Array(numHeroes);
     const simHemmaAbsorbedCount = new Float64Array(numHeroes);
+    // Per-sim healing accum (per hero) and crit-survival firings
+    const simHealing = new Float64Array(numHeroes);
+    const simCritSurvivals = new Float64Array(numHeroes);
+    // Per-sim hemma atk-bonus gain (only hemma index used)
+    const simHemmaAtkGain = new Float64Array(numHeroes);
     // Per-sim conqueror stack metrics
     const simConqStackTurns = [
       new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
