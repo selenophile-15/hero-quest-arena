@@ -12,6 +12,7 @@ interface Props {
   heroes: Hero[];
   monsterHp: number;
   monsterName: string;
+  monsterImage?: string | null;
   onNewBattle?: () => void;
 }
 
@@ -42,7 +43,7 @@ function hpColor(pct: number): string {
   return '#a855f7';
 }
 
-export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, onNewBattle }: Props) {
+export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, monsterImage, onNewBattle }: Props) {
   const { colorMode } = useTheme();
   const isLight = colorMode === 'light';
 
@@ -93,10 +94,11 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   }, [monsterName]);
 
   const getNameColor = (name: string | undefined): string => {
-    if (!name) return isLight ? '#4b5563' : '#d1d5db';
+    if (!name) return isLight ? '#374151' : '#d1d5db';
     if (name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터')) return C.monster;
-    if (name === '시스템') return isLight ? '#4b5563' : '#d1d5db';
-    return nameColorMap[name] || '#d1d5db';
+    if (name === '시스템') return isLight ? '#374151' : '#d1d5db';
+    const raw = nameColorMap[name] || '#d1d5db';
+    return isLight ? adjustColorForLight(raw) : raw;
   };
 
   const isMonsterName = (name: string | undefined): boolean => {
@@ -346,7 +348,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       >
         <span className="shrink-0 w-5 flex items-center justify-center">{icon}</span>
 
-        <div className="flex-1 min-w-0 flex items-center gap-1 flex-wrap">
+        <div className="flex-1 min-w-0 flex items-center gap-1">
           {/* Actor → Target */}
           {entry.actor && entry.actor !== '시스템' && (
             <span className="font-bold text-sm" style={{ color: getNameColor(entry.actor) }}>{entry.actor}</span>
@@ -362,18 +364,18 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           {(entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) ? (
             <>
               {damageText && (
-                <span className="font-mono font-bold text-sm ml-8" style={{ color: getDamageColor() }}>{damageText}</span>
+                <span className="font-mono font-bold text-sm ml-4 text-foreground/70">{damageText}</span>
               )}
 
               {hpText && (
-                <span className="font-mono font-bold text-sm ml-8" style={{ color: hpColor(getHpPctFromText()) }}>{hpText}</span>
+                <span className="font-mono font-bold text-sm ml-auto text-foreground/70 shrink-0">{hpText}</span>
               )}
             </>
           ) : entry.type === 'monster_attack' && !entry.target ? (
             // AOE header line
             <span className="ml-1 text-sm text-red-400 font-bold">{entry.detail}</span>
           ) : isEvasion ? (
-            <span className="text-teal-400 font-bold text-sm ml-8">회피</span>
+            <span className="text-teal-400 font-bold text-sm ml-4">회피</span>
           ) : (
             <span className={`ml-1 text-sm ${
               isDeath ? 'text-red-400 font-bold' :
@@ -397,14 +399,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           <div className="text-center mb-2">
             <span className="text-xs text-muted-foreground">라운드</span>
             <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
-            {isResult && (
-              <span className={`ml-2 text-sm font-bold ${isWin ? 'text-lime-400' : 'text-red-400'}`}>
-                {isWin ? '🏆 승리!' : '💀 패배!'}
-              </span>
-            )}
           </div>
 
-          <div className="flex items-start gap-3">
+          <div className="flex items-center gap-3">
             {/* Heroes */}
             <div className="flex-1 space-y-2">
               {activeHeroes.map(h => {
@@ -429,7 +426,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-xs font-bold truncate" style={{ color: isLight ? (nameColorMap[h.name] ? adjustColorForLight(nameColorMap[h.name]) : '#1f2937') : getNameColor(h.name) }}>{h.name}</span>
+                        <span className="text-xs font-bold truncate" style={{ color: getNameColor(h.name) }}>{h.name}</span>
                         <span className="text-xs font-bold font-mono" style={{ color: hpColor(hpPct) }}>
                           {Math.round(hp).toLocaleString()}
                         </span>
@@ -463,7 +460,15 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               onClick={() => handleFilterClick(monsterName)}
             >
               <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
-                <div className="text-center"><span className="text-2xl">👹</span></div>
+                <div className="flex justify-center mb-1">
+                  {monsterImage ? (
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-secondary/40 border border-yellow-500/30">
+                      <img src={monsterImage} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <span className="text-2xl">👹</span>
+                  )}
+                </div>
                 <div className="text-center mb-1.5"><span className="text-xs font-bold" style={{ color: C.monster }}>{monsterName}</span></div>
                 <div className="text-center text-xs font-bold font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
                   {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
@@ -517,7 +522,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <BarChart3 className="w-4 h-4 text-primary" />
             <span>전투 통계</span>
           </div>
-          <table className="w-full text-sm">
+          <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border/40">
                 <th className={`text-center py-1.5 px-1 ${isLight ? 'text-slate-700' : 'text-muted-foreground'} font-bold w-[80px]`}>파티원</th>
@@ -531,12 +536,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <tbody>
               {heroStatsData.map((hs, idx) => (
                 <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                  <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-sm" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-red-700' : 'text-red-400'}`}>{formatNumber(hs.dmg)}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-orange-700' : 'text-orange-400'}`}>{hs.dmgPct.toFixed(1)}%</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-yellow-700' : 'text-yellow-400'}`}>{hs.targeted}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-teal-700' : 'text-teal-400'}`}>{hs.dodged}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-sm ${isLight ? 'text-blue-700' : 'text-blue-400'}`}>{hs.tankPct.toFixed(1)}%</td>
+                  <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-xs" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-red-700' : 'text-red-400'}`}>{formatNumber(hs.dmg)}</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-orange-700' : 'text-orange-400'}`}>{hs.dmgPct.toFixed(1)}%</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-yellow-700' : 'text-yellow-400'}`}>{hs.targeted}</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-teal-700' : 'text-teal-400'}`}>{hs.dodged}</td>
+                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-blue-700' : 'text-blue-400'}`}>{hs.tankPct.toFixed(1)}%</td>
                 </tr>
               ))}
             </tbody>
