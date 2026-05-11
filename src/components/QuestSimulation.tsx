@@ -805,22 +805,25 @@ export default function QuestSimulation() {
         {/* Action buttons - right aligned in sub-tab row */}
         {subTab === 'simulation' && currentQuest && selectedHeroes.length > 0 && simResult && (
           <div className="flex items-center gap-1.5 ml-auto mb-1">
-            <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
-              onClick={handleSaveResult}
-              title="새로운 결과로 추가 저장"
-            >
-              <Save className="w-3.5 h-3.5" />
-              다른 항목으로 저장
-            </button>
-            <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
-              onClick={() => setOverwriteDialogOpen(true)}
-              title="기존 저장 결과 중 하나를 덮어쓰기"
-            >
-              <Save className="w-3.5 h-3.5" />
-              덮어쓰기
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
+                  title="결과 저장"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  결과 저장
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="text-xs">
+                <DropdownMenuItem onClick={handleSaveResult} className="text-xs cursor-pointer">
+                  <Save className="w-3.5 h-3.5 mr-2" /> 다른 항목으로 저장
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setOverwriteDialogOpen(true)} className="text-xs cursor-pointer">
+                  <Save className="w-3.5 h-3.5 mr-2" /> 덮어쓰기
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <button
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
               onClick={() => {
