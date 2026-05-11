@@ -2515,7 +2515,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         );
       })() : undefined,
       conquerorStackAvgDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
-        attackCountTotal[i] > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / attackCountTotal[i]) : 0
+        actualSimCount > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / actualSimCount) : 0
       ) : undefined,
       conquerorStackResetRate: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
         conqStackAttackCount[s][i] > 0
