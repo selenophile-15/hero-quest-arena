@@ -2736,7 +2736,7 @@ export default function QuestSimulation() {
                                         {zeroBucket ? (
                                           <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
                                         ) : dinoHeroes.length === 0 ? (
-                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">공룡 영혼 / 다이묘 직업 파티원 없음</td></tr>
+                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">공룡 영혼 / 사무라이(다이묘) 직업 파티원 없음</td></tr>
                                         ) : dinoHeroes.map((hr, idx) => {
                                           const norm = hr.dinosaurNormalDmg;
                                           const crit = hr.dinosaurCritDmg;
