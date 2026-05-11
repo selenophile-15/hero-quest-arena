@@ -2082,11 +2082,11 @@ export default function QuestSimulation() {
                         </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}><GroupHeader label="전체" info={'시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}><GroupHeader label="턴" info={'시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}><GroupHeader label="대미지 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 to-primary/10 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}><GroupHeader label="전체" info={'시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}><GroupHeader label="턴" info={'시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 to-primary/10 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}><GroupHeader label="대미지 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
                             <th className="text-center py-1 px-2 border-l-4 border-border bg-secondary/60">최소</th>
