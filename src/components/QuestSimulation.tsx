@@ -1155,7 +1155,8 @@ export default function QuestSimulation() {
                       const upper = defThresholds[i];
                       const lower = defThresholds[i - 1];
                       if (def >= lower.value) {
-                        const segPct = upper.value > lower.value ? (def - lower.value) / (upper.value - lower.value) : 0;
+                        const range = upper.value - lower.value;
+                        const segPct = range > 0 ? Math.min(1, (def - lower.value) / range) : 0;
                         const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
                         const upperPos = (i / (defThresholds.length - 1)) * 100;
                         return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
@@ -1193,14 +1194,22 @@ export default function QuestSimulation() {
                   const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
 
                     return (
-                    <div className="mt-6 pt-4 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names], threshold value aligned with monster info icons (px-1 = 4px) */}
-                      <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 24px 1fr', paddingLeft: '4px' }}>
+                    <div className="mt-3 pt-3 border-t border-border/30" style={{ marginBottom: '8px' }}>
+                      {/* Column headers — explain what each column represents */}
+                      <div className="grid gap-x-1 mb-1.5" style={{ gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
+                        <div className="text-[11px] font-semibold text-foreground text-right pr-0.5 leading-tight">방어력 기준치</div>
+                        <div />
+                        <div className="text-[10px] font-semibold text-muted-foreground text-left leading-tight">(받는 대미지)</div>
+                        <div />
+                        <div className="text-[11px] font-semibold text-foreground text-left leading-tight ml-1.5">이름 &amp; 방어력 (받는 대미지)</div>
+                      </div>
+                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — spacer halved (24→12) */}
+                      <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
                         {/* Column 1: threshold values (aligned with monster info icons on left) */}
                         <div className="relative">
                           {rows.map(r => (
-                            <div key={`thrv-${r.key}`} className="absolute left-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[11px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                            <div key={`thrv-${r.key}`} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
+                              <span className={`text-[13px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
                             </div>
                           ))}
                         </div>
@@ -1215,7 +1224,7 @@ export default function QuestSimulation() {
                             </div>
                           ))}
                           {heroEntries.map(h => (
-                            <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${h.pinPct}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
+                            <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${Math.min(100, h.pinPct)}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
                               <div className="w-4 h-4 rounded-full border-[2.5px] shadow-[0_0_8px_rgba(255,255,255,0.6)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
                             </div>
                           ))}
@@ -1224,17 +1233,18 @@ export default function QuestSimulation() {
                         <div className="relative pl-1">
                           {rows.map(r => (
                             <div key={`thrp-${r.key}`} className="absolute left-1 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[10px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
+                              <span className={`text-[12px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
                             </div>
                           ))}
                         </div>
-                        {/* Spacer column */}
+                        {/* Spacer column — halved */}
                         <div aria-hidden="true" />
                         {/* Column 5: connectors + hero name labels */}
                         <div className="relative ml-1.5">
                           <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
                             {heroLayout.map(h => {
-                              const yPin = (1 - h.pinPct / 100) * barH;
+                              const clamped = Math.min(100, h.pinPct);
+                              const yPin = (1 - clamped / 100) * barH;
                               const yLabel = (1 - h.labelPct / 100) * barH;
                               const x1 = 0;
                               const x2 = 28;
@@ -1249,8 +1259,8 @@ export default function QuestSimulation() {
                           </svg>
                           {heroLayout.map(h => (
                             <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '32px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[11px] font-semibold truncate max-w-[120px] leading-tight" style={{ color: h.color }}>{h.name}</span>
-                              <span className="text-[10px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
+                              <span className="text-[13px] font-semibold truncate max-w-[140px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                              <span className="text-[12px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
                             </div>
