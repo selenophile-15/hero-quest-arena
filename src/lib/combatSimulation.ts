@@ -1866,6 +1866,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (damage > 0) {
           if (damage < dmgPerHitMin[jj]) dmgPerHitMin[jj] = damage;
           if (damage > dmgPerHitMax[jj]) dmgPerHitMax[jj] = damage;
+          if (damage < simHitMin[jj]) simHitMin[jj] = damage;
+          if (damage > simHitMax[jj]) simHitMax[jj] = damage;
         }
 
         // Conqueror per-stack tracking
