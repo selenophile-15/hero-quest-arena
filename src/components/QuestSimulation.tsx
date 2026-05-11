@@ -626,9 +626,9 @@ export default function QuestSimulation() {
     setConfigOpen(true);
   };
 
-  // Save current simulation result
-  const handleSaveResult = () => {
-    if (!simResult || !currentQuest || !currentRegion) return;
+  // Build a saved simulation summary object from current state
+  const buildSavedSim = (): SavedSimulationSummary | null => {
+    if (!simResult || !currentQuest || !currentRegion) return null;
     const selectedHeroList = allHeroes.filter(h => selectedHeroIds.has(h.id));
     const questData = questDataMap[selectedQuestType];
     const regionName = currentRegion.name;
@@ -645,7 +645,7 @@ export default function QuestSimulation() {
       damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg * 100) : 0,
     }));
 
-    saveSimulationResult({
+    return {
       id: crypto.randomUUID(),
       name: autoName,
       savedAt: Date.now(),
@@ -662,9 +662,24 @@ export default function QuestSimulation() {
       maxRounds: simResult.maxRounds,
       heroSummaries,
       heroSnapshots: selectedHeroList,
-    });
+    };
+  };
 
-    toast({ title: '결과 저장 완료', description: autoName });
+  // Save as a new entry
+  const handleSaveResult = () => {
+    const sim = buildSavedSim();
+    if (!sim) return;
+    saveSimulationResult(sim);
+    toast({ title: '결과 저장 완료', description: sim.name });
+  };
+
+  // Overwrite an existing saved entry
+  const [overwriteDialogOpen, setOverwriteDialogOpen] = useState(false);
+  const handleOverwriteResult = (targetId: string) => {
+    const sim = buildSavedSim();
+    if (!sim) return;
+    overwriteSimulationResult(targetId, sim);
+    toast({ title: '덮어쓰기 완료', description: sim.name });
   };
 
   // Load a saved simulation
