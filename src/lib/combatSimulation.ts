@@ -2323,9 +2323,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const dinoCrit = Math.floor((finalAtk[i] + dinoAdd) * heroCritMult[i] * barrierMod);
     // Damage application rate using actual thresholds
     const dmgAppRate = getDamageApplicationRate(finalDef[i], defThresholds);
-    // Per-turn damage
+    // Per-turn damage: total damage dealt / total attack actions (excludes stunned/dead turns)
     const avgRoundsForHero = totalRoundsPerHero[i] / actualSimCount;
-    const avgDmgPerTurn = avgRoundsForHero > 0 ? (damageDealtAvg[i] / actualSimCount) / avgRoundsForHero : 0;
+    const avgDmgPerTurn = attackCountTotal[i] > 0 ? damageDealtAvg[i] / attackCountTotal[i] : 0;
     // Berserker thresholds — 4 stages (0..3)
     // stage 0: HP >= Hp1 (no penalty), threshold = 100
     // stage 1: HP >= Hp2, threshold = Hp1*100
