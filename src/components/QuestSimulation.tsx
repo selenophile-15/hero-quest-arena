@@ -204,7 +204,26 @@ const QUEST_SUB_TABS = [
 
 export default function QuestSimulation() {
   const { colorMode } = useTheme();
-  const allHeroes = useMemo(() => getHeroes(), []);
+  const [heroesVersion, setHeroesVersion] = useState(0);
+  const allHeroesBase = useMemo(() => getHeroes(), [heroesVersion]);
+  // Fallback snapshots for heroes that were loaded from saved results but no longer exist in user's list
+  const [fallbackHeroes, setFallbackHeroes] = useState<Hero[]>([]);
+  const allHeroes = useMemo(() => {
+    const ids = new Set(allHeroesBase.map(h => h.id));
+    const extras = fallbackHeroes.filter(h => !ids.has(h.id));
+    return [...allHeroesBase, ...extras];
+  }, [allHeroesBase, fallbackHeroes]);
+  useEffect(() => {
+    const refresh = () => setHeroesVersion(v => v + 1);
+    window.addEventListener('heroes-updated', refresh);
+    window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    return () => {
+      window.removeEventListener('heroes-updated', refresh);
+      window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, []);
   const [questDataMap, setQuestDataMap] = useState<Record<string, QuestData>>({});
   const [commonData, setCommonData] = useState<QuestCommon | null>(null);
   const [loading, setLoading] = useState(true);
