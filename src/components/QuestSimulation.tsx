@@ -1409,10 +1409,24 @@ export default function QuestSimulation() {
                       const total = dispSim!.totalSimulations || 0;
                       const wins = dispSim!.winSimCount ?? Math.round(dispSim!.winRate / 100 * total);
                       const losses = dispSim!.loseSimCount ?? (total - wins);
+                      const retried = (!retryOnly && simResult!.retryResult)
+                        ? (simResult!.retryResult.totalSimulations || 0)
+                        : 0;
+                      const retryWins = (!retryOnly && simResult!.retryResult)
+                        ? (simResult!.retryResult.winSimCount || 0)
+                        : 0;
+                      const retryLosses = retried - retryWins;
                       return (
-                        <div className="text-[11px] text-muted-foreground/80 font-mono mt-0.5">
-                          [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
-                        </div>
+                        <>
+                          <div className="text-[11px] text-muted-foreground/80 font-mono mt-0.5">
+                            [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
+                          </div>
+                          {retried > 0 && (
+                            <div className="text-[11px] text-amber-400/90 font-mono mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
+                              [ 재시도 : {formatNumber(retryWins)}판 / {formatNumber(retryLosses)}판 ]
+                            </div>
+                          )}
+                        </>
                       );
                     })()}
                   </>
