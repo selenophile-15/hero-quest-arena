@@ -40,11 +40,10 @@ import { saveCanvasImage } from '@/lib/fileDownload';
 
 // Group header label with optional info tooltip (?) icon, kept centered.
 function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.ReactNode }) {
-  const prefixed = typeof label === 'string' ? `- ${label}` : <>- {label}</>;
-  if (!info) return <>{prefixed}</>;
+  if (!info) return <>{label}</>;
   return (
     <span className="relative inline-flex items-center justify-center w-full">
-      <span className="text-center">{prefixed}</span>
+      <span className="text-center">{label}</span>
       <Tooltip>
         <TooltipTrigger asChild>
           <button type="button" className="absolute right-1 inline-flex items-center justify-center text-muted-foreground hover:text-foreground" aria-label="설명">
