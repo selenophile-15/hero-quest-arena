@@ -2143,11 +2143,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseCritDmg[i] += critDmgFight[i];
             loseDmgMax[i] = Math.max(loseDmgMax[i], damageFight[i]);
             if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
-            if (damageFight[i] > 0 && round > 0) {
-              const pt = damageFight[i] / round;
-              if (pt < loseDmgDealtPerTurnMin[i]) loseDmgDealtPerTurnMin[i] = pt;
-              if (pt > loseDmgDealtPerTurnMax[i]) loseDmgDealtPerTurnMax[i] = pt;
-            }
+            if (simHitMin[i] < 1e18 && simHitMin[i] < loseDmgPerHitMin[i]) loseDmgPerHitMin[i] = simHitMin[i];
+            if (simHitMax[i] > loseDmgPerHitMax[i]) loseDmgPerHitMax[i] = simHitMax[i];
+            loseAttackCount[i] += simAttackCount[i];
             loseRoundsArr[i] += round;
             loseDmgTaken[i] += simDmgTaken[i];
             loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], cappedDmg);
