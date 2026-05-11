@@ -2345,9 +2345,10 @@ export default function QuestSimulation() {
                                       <td className="py-1 px-2 text-center font-mono whitespace-nowrap" style={{
                                         color: dar <= 25 ? 'hsl(var(--muted-foreground))' : dar <= 50 ? '#84cc16' : dar <= 100 ? '#eab308' : '#ef4444'
                                       }}>{dar > 0 ? `${dar}%` : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.normalDamageTaken > 0 ? formatNumber(hr.normalDamageTaken) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.critDamageTakenVal > 0 ? formatNumber(hr.critDamageTakenVal) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hr.aoeDamageTaken > 0 ? formatNumber(hr.aoeDamageTaken) : blank}</td>
+                                      {/* 단일 일반 = 원래 단일 대미지 × 보정%, 단일 치명 = 단일 일반 × 1.5, 광역 일반 = 원래 광역 대미지 × 보정% */}
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAtk > 0 && dar > 0) ? formatNumber(Math.round(monAtk * dar / 100)) : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAtk > 0 && dar > 0) ? formatNumber(Math.round(monAtk * dar / 100 * 1.5)) : blank}</td>
+                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAoe > 0 && dar > 0) ? formatNumber(Math.round(monAoe * dar / 100)) : blank}</td>
                                       {/* 받은 대미지 전체 */}
                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(minTotal)) : blank}</td>
                                       <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(avgTotal)) : blank}</td>
