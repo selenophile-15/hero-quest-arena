@@ -8,6 +8,7 @@ import { getJobImagePath, getChampionImagePath, getJobIllustPath } from '@/lib/n
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt, Hourglass } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -804,22 +805,25 @@ export default function QuestSimulation() {
         {/* Action buttons - right aligned in sub-tab row */}
         {subTab === 'simulation' && currentQuest && selectedHeroes.length > 0 && simResult && (
           <div className="flex items-center gap-1.5 ml-auto mb-1">
-            <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
-              onClick={handleSaveResult}
-              title="새로운 결과로 추가 저장"
-            >
-              <Save className="w-3.5 h-3.5" />
-              다른 항목으로 저장
-            </button>
-            <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
-              onClick={() => setOverwriteDialogOpen(true)}
-              title="기존 저장 결과 중 하나를 덮어쓰기"
-            >
-              <Save className="w-3.5 h-3.5" />
-              덮어쓰기
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
+                  title="결과 저장"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  결과 저장
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="text-xs">
+                <DropdownMenuItem onClick={handleSaveResult} className="text-xs cursor-pointer">
+                  <Save className="w-3.5 h-3.5 mr-2" /> 다른 항목으로 저장
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setOverwriteDialogOpen(true)} className="text-xs cursor-pointer">
+                  <Save className="w-3.5 h-3.5 mr-2" /> 덮어쓰기
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <button
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
               onClick={() => {
@@ -1465,11 +1469,11 @@ export default function QuestSimulation() {
                           const retryLosses = retried - retryWins;
                           return (
                             <>
-                              <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono mt-0.5">
+                              <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono font-black mt-0.5">
                                 [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
                               </div>
                               {retried > 0 && (
-                                <div className="text-[11px] text-amber-500 dark:text-amber-300 font-mono mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
+                                <div className="text-[11px] text-amber-500 dark:text-amber-300 font-mono font-black mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
                                   [ 재시도 : {formatNumber(retryWins)}판 / {formatNumber(retryLosses)}판 ]
                                 </div>
                               )}
@@ -1496,7 +1500,7 @@ export default function QuestSimulation() {
                         <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
                           {gearScore.toFixed(1)}
                         </div>
-                        <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono mt-0.5">
+                        <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono font-black mt-0.5">
                           [ 장비 평균 : {partyAvgGear.toFixed(2)} ]
                         </div>
                       </>
@@ -2816,8 +2820,8 @@ export default function QuestSimulation() {
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
-                                    <col style={{ width: '110px' }} /><col style={{ width: '60px' }} /><col style={{ width: '144px' }} />
-                                    <col style={{ width: '144px' }} /><col style={{ width: '144px' }} /><col style={{ width: '100px' }} /><col style={{ width: '100px' }} />
+                                    <col style={{ width: '110px' }} /><col style={{ width: '60px' }} /><col style={{ width: '130px' }} />
+                                    <col style={{ width: '130px' }} /><col style={{ width: '130px' }} /><col style={{ width: '140px' }} /><col style={{ width: '140px' }} />
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">

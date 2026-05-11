@@ -36,9 +36,10 @@ const CLASS_LINE_SHADOW: Record<string, string> = {
   '주문술사': '0 0 12px rgba(56,189,248,0.3)',
 };
 
+// Aligned with ListSummary palette (same in light/dark)
 const POSITION_BG_COLORS: Record<string, string> = {
   '퓨어 탱커': 'bg-blue-500',
-  '회피 탱커': 'bg-emerald-600',
+  '회피 탱커': 'bg-lime-600',
   '딜탱': 'bg-orange-500',
   '치명 딜러': 'bg-red-500',
   '일반 딜러': 'bg-yellow-500',
@@ -71,7 +72,7 @@ const JOB_FILTER_ORDER = [
   '마법사', '대마법사', '성직자', '비숍', '드루이드', '아크 드루이드', '소서러', '워록', '마법검', '스펠나이트', '풍수사', '아스트라맨서', '크로노맨서', '페이트위버',
 ];
 
-type SortKey = 'heroClass' | 'level' | 'power' | 'atk' | 'def' | 'hp' | 'name' | 'crit' | 'critDmg' | 'evasion' | 'element' | 'position';
+type SortKey = 'heroClass' | 'level' | 'power' | 'atk' | 'def' | 'hp' | 'name' | 'crit' | 'critDmg' | 'evasion' | 'element' | 'position' | 'type';
 type JobImageMode = 'icon' | 'illust' | 'none';
 
 // Equipment quality styles
@@ -172,6 +173,13 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
       }
     } else if (sortKey === 'position') {
       list.sort((a, b) => sortDir === 'asc' ? (a.position || '').localeCompare(b.position || '') : (b.position || '').localeCompare(a.position || ''));
+    } else if (sortKey === 'type') {
+      // champion first when desc
+      list.sort((a, b) => {
+        const av = a.type === 'champion' ? 1 : 0;
+        const bv = b.type === 'champion' ? 1 : 0;
+        return sortDir === 'asc' ? av - bv : bv - av;
+      });
     } else if (sortKey === 'critDmg') {
       // Sort by computed crit damage (atk * critDmg / 100)
       list.sort((a, b) => {
@@ -295,7 +303,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
           <Select value={filterType} onValueChange={setFilterType}>
             <SelectTrigger className="w-[80px] h-7 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">전체</SelectItem>
+              <SelectItem value="all">유형</SelectItem>
               <SelectItem value="hero">영웅</SelectItem>
               <SelectItem value="champion">챔피언</SelectItem>
             </SelectContent>
@@ -343,7 +351,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
             <table className="w-full text-xs min-w-[900px]">
               <thead className="sticky top-0 bg-background z-10">
                 <tr className="border-b border-border text-muted-foreground">
-                  <th className="text-center py-2 px-1.5 whitespace-nowrap">유형</th>
+                  <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => handleSort('type')}>유형{sortIndicator('type')}</th>
                   <th className="text-center py-2 px-1.5 whitespace-nowrap cursor-pointer hover:text-primary select-none" onClick={() => handleSort('heroClass')}>
                     직업{sortIndicator('heroClass')}
                   </th>
@@ -426,8 +434,8 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           </div>
                         ) : (
                           <div className="flex items-center gap-1 justify-center">
-                            {jobIconPath && <img src={jobIconPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                            <span className="text-xs whitespace-nowrap text-muted-foreground">{jobLabel}</span>
+                            {jobIconPath && <img src={jobIconPath} alt="" className="w-4 h-4 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            <span className="text-xs whitespace-nowrap font-bold text-foreground">{jobLabel}</span>
                           </div>
                         )}
                       </td>
@@ -444,7 +452,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       <td className="py-1.5 px-1 text-center">
                         <div className="flex items-center gap-0.5 justify-center">
                           <ElementIcon element={hero.element} size={14} />
-                          <span className={`text-[10px] tabular-nums ${!hero.elementValue ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
+                          <span className={`text-[10px] tabular-nums font-bold ${!hero.elementValue ? 'text-foreground/20' : 'text-foreground'}`}>{hero.elementValue || 0}</span>
                         </div>
                       </td>
                       {/* 스킬 */}
@@ -456,7 +464,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                                 const champEng = hero.championName ? CHAMPION_NAME_MAP[hero.championName] : '';
                                 const tier = hero.cardLevel || 1;
                                 const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${tier}.webp` : '';
-                                return leaderIcon ? <img src={leaderIcon} alt="리더" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                                return leaderIcon ? <img src={leaderIcon} alt="리더" className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
                               })()}
                               {(() => {
                                 const aurasongItem = hero.equipmentSlots?.[1]?.item;
@@ -465,7 +473,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                                 const auraIcon = getAurasongSkillIconPath(aurasongItem.name);
                                 return auraIcon ? (
                                   <div className="relative">
-                                    <img src={auraIcon} alt="오라" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    <img src={auraIcon} alt="오라" className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
                                     {isManual && <ManualOverlay />}
                                   </div>
                                 ) : null;
@@ -474,10 +482,10 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           ) : (
                             <>
                               {hero.heroClass && (
-                                <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
                               )}
                               {hero.skills?.slice(1, 5).map((sk, i) => sk ? (
-                                <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
                               ) : null)}
                             </>
                           )}
@@ -502,7 +510,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       {/* 포지션 */}
                       <td className="py-1.5 px-1 text-center text-[10px] whitespace-nowrap">
                         {hero.position ? (
-                          <span className={`px-1.5 py-0.5 rounded ${POSITION_BG_COLORS[hero.position] || 'bg-secondary'} text-white`}>{hero.position}</span>
+                          <span className={`px-1.5 py-0.5 rounded font-bold ${POSITION_BG_COLORS[hero.position] || 'bg-secondary'} text-white`}>{hero.position}</span>
                         ) : '-'}
                       </td>
                     </tr>
