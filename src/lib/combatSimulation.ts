@@ -3501,6 +3501,35 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       break;
     }
 
+    // ─── Hemma drain (after monster attack, before hero attack) ───
+    if (hemmaIdx >= 0 && heroHp[hemmaIdx] > 0) {
+      let drainTarget = -1;
+      for (let i = 0; i < numHeroes; i++) {
+        if (i === hemmaIdx || heroHp[i] <= 0) continue;
+        if (heroHp[i] > hemmaDrainThreshold * heroMaxHp[i]) {
+          if (drainTarget === -1 || heroHp[i] / heroMaxHp[i] > heroHp[drainTarget] / heroMaxHp[drainTarget]) {
+            drainTarget = i;
+          }
+        }
+      }
+      if (drainTarget >= 0) {
+        const drainAmt = Math.round(hemmaDrainThreshold * heroMaxHp[drainTarget]);
+        heroHp[drainTarget] -= drainAmt;
+        const atkGain = Math.round(heroAtkVal[hemmaIdx] * hemmaMult);
+        hemmaAtkGainAccum += atkGain;
+        log.push({ round, type: 'event', actor: activeHeroes[hemmaIdx].name, detail: `헴마 스킬 발동! ${activeHeroes[drainTarget].name} HP -${formatNum(drainAmt)} → ATK +${formatNum(atkGain)} (누적 +${formatNum(hemmaAtkGainAccum)})` });
+        const selfHeal = (champTier + Math.min(champTier - 3, 0)) * 5;
+        if (selfHeal > 0 && heroHp[hemmaIdx] < heroMaxHp[hemmaIdx]) {
+          const before = heroHp[hemmaIdx];
+          heroHp[hemmaIdx] = Math.min(heroHp[hemmaIdx] + selfHeal, heroMaxHp[hemmaIdx]);
+          const healed = heroHp[hemmaIdx] - before;
+          if (healed > 0) {
+            log.push({ round, type: 'heal', actor: activeHeroes[hemmaIdx].name, detail: `${activeHeroes[hemmaIdx].name} 체력 +${formatNum(healed)} 회복` });
+          }
+        }
+      }
+    }
+
     // ─── Heroes attack ───
     for (let i = 0; i < numHeroes; i++) {
       if (heroHp[i] <= 0) continue;
