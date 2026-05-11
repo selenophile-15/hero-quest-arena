@@ -2986,7 +2986,7 @@ export default function QuestSimulation() {
                                   ) : (<>
                                     {displayResults.map((hr, idx) => (
                                       <tr key={`pol-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}{hr.isTricksterHero ? <span className="ml-1 text-[10px] opacity-70">(사기꾼)</span> : null}</td>
+                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground">{(hr.poloniaStolenAvg ?? 0) > 0 ? `${(hr.poloniaStolenAvg ?? 0).toFixed(2)}개` : blank}</td>
                                         {idx === 0 && poloniaLoot && (
                                           <>
