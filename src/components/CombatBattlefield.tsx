@@ -369,20 +369,25 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     } else if (isSetup) {
       icon = <Settings className="w-4 h-4 text-muted-foreground" />;
     } else if (entry.type === 'monster_attack' && isAoe) {
-      icon = <Flame className="w-4 h-4 text-red-500" />;
+      icon = <Bug className="w-4 h-4 text-red-500" />;
     } else if (entry.type === 'monster_attack' && isCrit) {
-      icon = <Flame className="w-4 h-4 text-yellow-400" />;
+      icon = <Bug className="w-4 h-4 text-yellow-400" />;
+    } else if (entry.type === 'monster_attack' && entry.target) {
+      icon = <Bug className="w-4 h-4 text-foreground/60" />;
     } else if (entry.type === 'monster_attack') {
-      icon = <Flame className="w-4 h-4 text-foreground/60" />;
-    } else if (entry.type === 'hero_attack' && isCrit) {
-      icon = <Zap className="w-4 h-4 text-yellow-400" />;
+      icon = <Bug className="w-4 h-4 text-red-500" />;
     } else if (entry.type === 'hero_attack') {
-      icon = <Zap className="w-4 h-4 text-foreground/60" />;
+      const cl = nameClassLineMap[entry.actor || ''] || '';
+      const color = isCrit ? 'text-yellow-400' : 'text-foreground/60';
+      if (cl === '전사') icon = <Sword className={`w-4 h-4 ${color}`} />;
+      else if (cl === '로그') icon = <BowArrow className={`w-4 h-4 ${color}`} />;
+      else if (cl === '주문술사') icon = <WandSparkles className={`w-4 h-4 ${color}`} />;
+      else icon = <Zap className={`w-4 h-4 ${color}`} />;
     } else if (entry.type === 'heal') {
       icon = (
         <span className="relative inline-flex items-center justify-center w-4 h-4">
-          <Heart className="w-4 h-4 text-emerald-400" />
-          <Plus className="absolute w-2 h-2 text-emerald-400" strokeWidth={3} />
+          <Heart className="w-4 h-4 text-orange-400" />
+          <Plus className="absolute w-2 h-2 text-orange-400" strokeWidth={3} />
         </span>
       );
     } else {
