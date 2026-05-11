@@ -707,14 +707,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     heroEvasion.push(ps ? ps.evasion / 100 : (h.evasion || 0) / 100);
     heroThreat.push(h.threat || 1);
 
-    // PDF formula fields — derive via inversion when not provided
+    // PDF formula fields — read pre-pct constants directly from detailStats.
+    // Inversion is only a legacy fallback for heroes computed before the field existed.
     heroAtkRaw.push(h.atk || 0);
     const cAtk = ps?.commonAtkPct ?? ((h as any).detailStats?.['공통 공격력 계수'] ?? 0) / 100;
     const cDef = ps?.commonDefPct ?? ((h as any).detailStats?.['공통 방어력 계수'] ?? 0) / 100;
     heroCommonAtkPct.push(cAtk);
     heroCommonDefPct.push(cDef);
-    heroAtkConst.push(ps?.atkConstant ?? ((1 + cAtk) > 0 ? (h.atk || 0) / (1 + cAtk) : 0));
-    heroDefConst.push(ps?.defConstant ?? ((1 + cDef) > 0 ? (h.def || 0) / (1 + cDef) : 0));
+    const storedAtkConst = (h as any).detailStats?.['공격력 상수'];
+    const storedDefConst = (h as any).detailStats?.['방어력 상수'];
+    heroAtkConst.push(ps?.atkConstant ?? storedAtkConst ?? ((1 + cAtk) > 0 ? (h.atk || 0) / (1 + cAtk) : 0));
+    heroDefConst.push(ps?.defConstant ?? storedDefConst ?? ((1 + cDef) > 0 ? (h.def || 0) / (1 + cDef) : 0));
     heroPartyAtkMult.push(ps?.partyAtkMult ?? 1);
     heroPartyDefMult.push(ps?.partyDefMult ?? 1);
 
