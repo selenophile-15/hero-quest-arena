@@ -2877,21 +2877,24 @@ export default function QuestSimulation() {
                                           <GroupHeader label="흡수 공격력" info={'헴마 흡수로 증가한 평균 공격 대미지.'} />
                                         </th>
                                         <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
-                                          <GroupHeader label="동료 체력 [깎인 체력]" info={'헴마 스킬로 인해 깎인 동료들의 체력.'} />
+                                          <GroupHeader label="깎인 체력" info={'헴마 흡수로 인해 평균 깎인 동료의 체력. (헴마 본인 행: 표시 안 함)'} />
                                         </th>
                                       </tr>
                                     </thead>
                                     <tbody>
                                       {!hasHemma ? (
                                         <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">헴마 챔피언이 파티에 없음</td></tr>
-                                      ) : displayResults.map((hr, idx) => (
-                                        <tr key={`hem-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}{hr.isHemmaHero ? <span className="ml-1 text-[10px] opacity-70">(헴마)</span> : null}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? `${(hr.hemmaAbsorbedCount ?? 0).toFixed(1)}회` : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? formatNumber(hr.hemmaAbsorbedDmg ?? 0) : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{!hr.isHemmaHero && (hr.hemmaAbsorbedCount ?? 0) > 0 ? formatNumber(hr.hemmaAbsorbedDmg ?? 0) : blank}</td>
-                                        </tr>
-                                      ))}
+                                      ) : (() => {
+                                        const totalCount = displayResults.reduce((s, r) => s + (r.isHemmaHero ? 0 : (r.hemmaAbsorbedCount ?? 0)), 0);
+                                        return displayResults.map((hr, idx) => (
+                                          <tr key={`hem-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}{hr.isHemmaHero ? <span className="ml-1 text-[10px] opacity-70">(헴마)</span> : null}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? `${Math.round(totalCount)}회` : blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? formatNumber(hr.hemmaAtkGainAvg ?? 0) : blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{!hr.isHemmaHero && (hr.hemmaAbsorbedCount ?? 0) > 0 ? formatNumber(hr.hemmaAbsorbedDmg ?? 0) : blank}</td>
+                                          </tr>
+                                        ));
+                                      })()}
                                     </tbody>
                                   </table>
                                 </div>
