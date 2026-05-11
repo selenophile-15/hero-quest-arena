@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Settings } from 'lucide-react';
+import { Settings, Heart } from 'lucide-react';
 import { STAT_ICON_MAP } from '@/types/game';
 import { formatNumber } from '@/lib/format';
 import { CalculatedStats, EquipSlotCalc, SkillBonusSummary, SkillBonusSource, SkillBonuses, RelicEffect, EquipBonusSource } from '@/lib/statCalculator';
@@ -13,7 +13,7 @@ interface StatBreakdownDrawerProps {
 }
 
 type MultStatType = 'atk' | 'def' | 'hp';
-type AddStatType = 'crit' | 'evasion' | 'threat' | 'other';
+type AddStatType = 'crit' | 'evasion' | 'regen' | 'threat' | 'other';
 type StatType = MultStatType | AddStatType;
 
 const MULT_TABS: { key: MultStatType; label: string; icon: string; color: string; headerBg: string; slotHeaderBg: string; slotHeaderText: string }[] = [
