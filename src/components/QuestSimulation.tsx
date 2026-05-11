@@ -28,6 +28,7 @@ function getHeroBarrierContribution(h: Hero, barrierEl: string): number {
 }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
+import { getChampionLeaderSkillTier } from '@/lib/championTier';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 import CombatBattlefield from '@/components/CombatBattlefield';
 import SavedResults from '@/components/SavedResults';
@@ -421,7 +422,7 @@ export default function QuestSimulation() {
   // Rudo element bonus: +50% to total party element values (rounded)
   const champion = selectedHeroes.find(h => h.type === 'champion');
   const isRudo = champion && (champion.championName?.includes('루도') || champion.name?.includes('루도'));
-  const rudoElementMultiplier = isRudo ? 1.5 : 1.0;
+  const rudoElementMultiplier = isRudo && getChampionLeaderSkillTier(champion) >= 3 ? 1.5 : 1.0;
 
   // Compute party-buffed stats whenever party changes
   // Compute party-buffed stats whenever party changes
