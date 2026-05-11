@@ -94,17 +94,17 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     if (entry.type === 'heal') return 'heal';
     if (entry.type === 'event') {
       const d = entry.detail || '';
-      if (d.includes('회피')) return 'evasion';
-      if (d.includes('사망')) return 'death';
       if (d.includes('재생') || d.includes('회복')) return 'heal';
+      if (d.includes('다이묘 확정 회피') || d.includes('회피')) return d.includes('다이묘') ? 'classBonus' : 'evasion';
+      if (d.includes('사망')) return 'death';
       if (d.includes('재시도') || d.includes('크로노') || d.includes('페이트')) return 'retry';
       if (d.includes('처형')) return 'execute';
       if (d.includes('치명타 생존') || d.includes('생존')) return 'survival';
-      if (d.includes('정복자') || d.includes('스택')) return 'stack';
+      if (d.includes('정복자') || d.includes('스택') || d.includes('중첩')) return 'stack';
       if (d.includes('군주') || d.includes('보호') || d.includes('대신')) return 'protection';
-      if (d.includes('헴마') || d.includes('루도') || d.includes('리더') || d.includes('파티에') || d.includes('지속')) return 'leaderBonus';
+      if (d.includes('헴마') || d.includes('루도') || d.includes('폴로니아') || d.includes('훔치') || d.includes('리더')) return 'leaderBonus';
       if (d.includes('상어') || d.includes('공룡') || d.includes('영혼')) return 'spiritBonus';
-      if (d.includes('닌자') || d.includes('센세') || d.includes('무희') || d.includes('곡예') || d.includes('광전사') || d.includes('잘') || d.includes('사무라이') || d.includes('다이묘') || d.includes('직업') || d.includes('첫 턴')) return 'classBonus';
+      if (d.includes('닌자') || d.includes('센세') || d.includes('무희') || d.includes('곡예') || d.includes('광전사') || d.includes('잘') || d.includes('사무라이') || d.includes('다이묘') || d.includes('어둠의 기사') || d.includes('죽음의 기사') || d.includes('첫 턴')) return 'classBonus';
       return 'system';
     }
     return 'system';
