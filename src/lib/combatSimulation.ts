@@ -1747,6 +1747,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   }
                 }
               } else {
+                // Cap received damage to remaining HP (no overkill counted)
+                const overkill = -hp[target];
+                if (overkill > 0) {
+                  simDmgTaken[target] -= overkill;
+                  simSingleDmgTaken[target] -= overkill;
+                }
                 hp[target] = 0;
                 heroesAlive--;
                 updateTarget = true;
