@@ -1272,8 +1272,8 @@ export default function QuestSimulation() {
                             })}
                           </svg>
                           {heroLayout.map(h => (
-                            <div key={`label-${h.id}`} className="absolute flex flex-col whitespace-nowrap" style={{ bottom: `${h.labelPct}%`, left: '32px', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[13px] font-semibold truncate max-w-[140px] leading-tight" style={{ color: h.color }}>{h.name}</span>
+                            <div key={`label-${h.id}`} className="absolute flex flex-col items-end whitespace-nowrap text-right" style={{ bottom: `${h.labelPct}%`, right: '0', transform: 'translateY(50%)', zIndex: 5 }}>
+                              <span className="text-[13px] font-semibold truncate max-w-[110px] leading-tight" style={{ color: h.color }}>{h.name}</span>
                               <span className="text-[12px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
                                 {formatNumber(h.heroDef)} ({h.dmgApplied}%)
                               </span>
