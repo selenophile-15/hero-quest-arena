@@ -12,6 +12,7 @@ interface Props {
   heroes: Hero[];
   monsterHp: number;
   monsterName: string;
+  monsterImage?: string | null;
   onNewBattle?: () => void;
 }
 
