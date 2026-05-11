@@ -1132,11 +1132,13 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
 
         <div className="flex-1 overflow-hidden p-4">
           <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatType)} className="h-full flex flex-col">
-            <TabsList className="w-full grid grid-cols-7 mb-3 flex-shrink-0">
+            <TabsList className="w-full grid grid-cols-8 mb-3 flex-shrink-0">
               {ALL_TABS.map(tab => (
                 <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1 text-xs px-1.5">
                   {tab.key === 'other' ? (
                     <Settings className="w-3.5 h-3.5" />
+                  ) : tab.key === 'regen' ? (
+                    <Heart className="w-3.5 h-3.5 text-emerald-400" fill="currentColor" />
                   ) : (
                     <img src={tab.icon} alt="" className="w-3.5 h-3.5" />
                   )}
