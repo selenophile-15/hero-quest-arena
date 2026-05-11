@@ -2133,18 +2133,26 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseCritDmg[i] += critDmgFight[i];
             loseDmgMax[i] = Math.max(loseDmgMax[i], damageFight[i]);
             if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
+            if (damageFight[i] > 0 && round > 0) {
+              const pt = damageFight[i] / round;
+              if (pt < loseDmgDealtPerTurnMin[i]) loseDmgDealtPerTurnMin[i] = pt;
+              if (pt > loseDmgDealtPerTurnMax[i]) loseDmgDealtPerTurnMax[i] = pt;
+            }
             loseRoundsArr[i] += round;
             loseDmgTaken[i] += simDmgTaken[i];
             loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], cappedDmg);
             loseDmgTakenMax[i] = Math.max(loseDmgTakenMax[i], cappedDmg);
+            if (simDmgTaken[i] > 0) loseTotalDmgTakenHitSims[i]++;
             loseSingleDmgTakenAccum[i] += simSingleDmgTaken[i];
             loseSingleDmgTakenMin[i] = Math.min(loseSingleDmgTakenMin[i], cappedSingle);
             loseSingleDmgTakenMax[i] = Math.max(loseSingleDmgTakenMax[i], cappedSingle);
             loseSingleDmgTakenSimCount[i]++;
+            if (simSingleDmgTaken[i] > 0) loseSingleDmgTakenHitSims[i]++;
             loseAoeDmgTakenAccum[i] += simAoeDmgTaken[i];
             loseAoeDmgTakenMin[i] = Math.min(loseAoeDmgTakenMin[i], cappedAoe);
             loseAoeDmgTakenMax[i] = Math.max(loseAoeDmgTakenMax[i], cappedAoe);
             loseAoeDmgTakenSimCount[i]++;
+            if (simAoeDmgTaken[i] > 0) loseAoeDmgTakenHitSims[i]++;
             loseTimesHit[i] += simTimesHit[i];
             loseSingleHits[i] += singleHitsTaken[i];
             loseTargeted[i] += simTargeted[i];
