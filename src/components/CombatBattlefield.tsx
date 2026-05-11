@@ -4,7 +4,7 @@ import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Shield, Sparkles } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Plus, Trophy, Shield, Sparkles } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -117,11 +117,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
   // Adaptive colors for light/dark mode
   const C = useMemo(() => ({
-    yellow: isLight ? '#a16207' : '#facc15',
+    yellow: '#facc15', // pure yellow for crit (consistent across modes)
     white: isLight ? '#374151' : '#e5e7eb',
     red: isLight ? '#b91c1c' : '#f87171',
     teal: isLight ? '#0f766e' : '#2dd4bf',
     green: isLight ? '#166534' : '#84cc16',
+    heal: isLight ? '#047857' : '#34d399',
     monster: isLight ? '#a16207' : '#facc15',
   }), [isLight]);
 
@@ -252,6 +253,35 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       if (entry.type === 'event' && entry.detail === '회피' && entry.target && i === currentIdx) {
         actionEffects.push({ target: entry.target, value: 'MISS', color: 'text-teal-400', key: i });
       }
+      // Heal entries: extract HP info to keep visualization in sync
+      if (entry.type === 'heal') {
+        const hpMatch = entry.detail.match(/HP: ([\d,]+)/);
+        if (hpMatch && entry.actor && entry.actor in heroHp) {
+          heroHp[entry.actor] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, '')));
+        }
+        const healMatch = entry.detail.match(/체력 ([\d,]+) 회복/);
+        if (healMatch && entry.actor && i === currentIdx) {
+          actionEffects.push({ target: entry.actor, value: `+${healMatch[1]}`, color: 'text-emerald-400', key: i });
+        }
+      }
+      // Hemma drain: parse the drained party member's remaining HP and the drain amount
+      if (entry.type === 'event' && entry.detail.includes('헴마 스킬 발동')) {
+        // Last HP block in the detail belongs to the drain target
+        const hpBlocks = [...entry.detail.matchAll(/(\S+?)\s*HP:\s*([\d,]+)/g)];
+        const last = hpBlocks[hpBlocks.length - 1];
+        if (last) {
+          const targetName = last[1].trim();
+          if (targetName in heroHp) {
+            heroHp[targetName] = Math.max(0, parseInt(last[2].replace(/,/g, '')));
+          }
+          if (i === currentIdx) {
+            const drainMatch = entry.detail.match(/HP -([\d,]+)/);
+            if (drainMatch) {
+              actionEffects.push({ target: targetName, value: `-${drainMatch[1]}`, color: 'text-purple-400', key: i });
+            }
+          }
+        }
+      }
     }
     return { heroHp, heroMaxHp, mobHpCurrent, currentRound, lastAction, actionEffects };
   };
@@ -320,7 +350,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     // Icon selection
     let icon: React.ReactNode;
     if (entry.type === 'result') {
-      icon = <span className="text-base">🏁</span>;
+      icon = entry.detail.includes('승리')
+        ? <Trophy className="w-4 h-4 text-lime-400" />
+        : <Skull className="w-4 h-4 text-red-400" />;
     } else if (isDeath) {
       icon = <Skull className="w-4 h-4 text-red-400" />;
     } else if (isEvasion) {
@@ -338,7 +370,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     } else if (entry.type === 'hero_attack') {
       icon = <Zap className="w-4 h-4 text-foreground/60" />;
     } else if (entry.type === 'heal') {
-      icon = <span className="text-base">💚</span>;
+      icon = (
+        <span className="relative inline-flex items-center justify-center w-4 h-4">
+          <Heart className="w-4 h-4 text-emerald-400" fill="currentColor" />
+          <Plus className="absolute w-2 h-2 text-white" strokeWidth={4} />
+        </span>
+      );
     } else {
       icon = <Settings className="w-4 h-4 text-muted-foreground" />;
     }
@@ -453,7 +490,53 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                 );
               })()}
             </>
-          ) : entry.type === 'monster_attack' && !entry.target ? (
+          ) : entry.type === 'heal' ? (() => {
+            const healMatch = entry.detail.match(/체력 ([\d,]+) 회복/);
+            const hpInfoMatch = entry.detail.match(/\((.+?HP: [\d,\-]+ \(\d+%\))\)/);
+            const m = hpInfoMatch ? hpInfoMatch[1].match(/^(.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)$/) : null;
+            return (
+              <>
+                {healMatch && (
+                  <span className="ml-4 inline-flex items-baseline gap-1 shrink-0">
+                    <span className="font-body font-bold text-sm" style={{ color: C.heal }}>체력</span>
+                    <span className="font-mono font-bold text-sm" style={{ color: C.heal }}>{healMatch[1]}</span>
+                    <span className="font-body font-bold text-sm" style={{ color: C.heal }}>회복</span>
+                  </span>
+                )}
+                {m && (
+                  <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
+                    <span className="font-body">(</span>
+                    <span className="font-body font-bold" style={{ color: getNameColor(m[1]) }}>{m[1]}</span>
+                    <span className="font-body">HP:</span>
+                    <span className="font-mono font-bold">{m[2]}</span>
+                    <span className="font-mono">({m[3]}%)</span>
+                    <span className="font-body">)</span>
+                  </span>
+                )}
+              </>
+            );
+          })() : entry.type === 'event' && entry.detail.includes('헴마 스킬 발동') ? (() => {
+            // Hemma drain — split into prefix + HP block tail
+            const tailMatch = entry.detail.match(/^(.*?)\s*\(([^()]+?HP:\s*[\d,\-]+\s*\(\d+%\))\)\s*$/);
+            const prefix = tailMatch ? tailMatch[1] : entry.detail;
+            const hpBlock = tailMatch ? tailMatch[2] : '';
+            const hpM = hpBlock.match(/^(.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)$/);
+            return (
+              <>
+                <span className="ml-1 text-sm font-body text-foreground/80">{prefix}</span>
+                {hpM && (
+                  <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
+                    <span className="font-body">(</span>
+                    <span className="font-body font-bold" style={{ color: getNameColor(hpM[1]) }}>{hpM[1]}</span>
+                    <span className="font-body">HP:</span>
+                    <span className="font-mono font-bold">{hpM[2]}</span>
+                    <span className="font-mono">({hpM[3]}%)</span>
+                    <span className="font-body">)</span>
+                  </span>
+                )}
+              </>
+            );
+          })() : entry.type === 'monster_attack' && !entry.target ? (
             <span className="ml-1 text-sm font-body font-bold" style={{ color: C.red }}>
               {entry.detail.replace(/\s*\(.*?\)\s*$/, '')}
             </span>
@@ -482,6 +565,11 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           <div className="text-center mb-2">
             <span className="text-xs text-muted-foreground">라운드</span>
             <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
+            {isResult && (
+              <span className={`ml-3 text-sm font-bold ${isWin ? 'text-lime-400' : 'text-red-400'}`}>
+                {isWin ? '🏆 승리!' : '💀 패배'}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -617,16 +705,25 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               </tr>
             </thead>
             <tbody>
-              {heroStatsData.map((hs, idx) => (
-                <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                  <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-xs" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-red-700' : 'text-red-400'}`}>{formatNumber(hs.dmg)}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-orange-700' : 'text-orange-400'}`}>{hs.dmgPct.toFixed(1)}%</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-yellow-700' : 'text-yellow-400'}`}>{hs.targeted}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-teal-700' : 'text-teal-400'}`}>{hs.dodged}</td>
-                  <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-blue-700' : 'text-blue-400'}`}>{hs.tankPct.toFixed(1)}%</td>
-                </tr>
-              ))}
+              {heroStatsData.map((hs, idx) => {
+                // Same color tiers as QuestSimulation contribution bars
+                const tierText = (pct: number) =>
+                  pct >= 81 ? (isLight ? 'text-lime-700' : 'text-lime-400')
+                  : pct >= 61 ? (isLight ? 'text-yellow-700' : 'text-yellow-400')
+                  : pct >= 41 ? (isLight ? 'text-orange-700' : 'text-orange-400')
+                  : pct >= 21 ? (isLight ? 'text-red-700' : 'text-red-400')
+                  : (isLight ? 'text-purple-700' : 'text-purple-400');
+                return (
+                  <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                    <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-xs" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-red-700' : 'text-red-400'}`}>{formatNumber(hs.dmg)}</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${tierText(hs.dmgPct)}`}>{hs.dmgPct.toFixed(1)}%</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-yellow-700' : 'text-yellow-400'}`}>{hs.targeted}</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-teal-700' : 'text-teal-400'}`}>{hs.dodged}</td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${tierText(hs.tankPct)}`}>{hs.tankPct.toFixed(1)}%</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -674,7 +771,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     >해제</button>
                   </div>
                 </div>
-                <div className="max-h-72 overflow-y-auto py-1">
+                <div
+                  className="max-h-72 overflow-y-auto py-1"
+                  onWheel={(e) => { e.stopPropagation(); }}
+                  onWheelCapture={(e) => { e.stopPropagation(); }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
                   {ALL_CATEGORIES.map(c => {
                     const checked = visibleCategories.has(c.key);
                     return (

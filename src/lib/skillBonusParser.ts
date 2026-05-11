@@ -60,6 +60,7 @@ export interface SkillBonusSource {
   critDmg: number;
   evasion: number;
   threat: number;
+  regenPerTurn?: number; // 매 턴 체력 재생
 }
 
 export interface SkillBonusInput {
@@ -146,7 +147,7 @@ export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<Sk
         case '스킬_회피%': src.evasion += val; totals.evasion += val; break;
         case '스킬_위협도': src.threat += val; totals.threat += val; break;
         // Detail stats
-        case '스킬_매턴체력회복': detail.hpRegenPerTurn += val; break;
+        case '스킬_매턴체력회복': detail.hpRegenPerTurn += val; src.regenPerTurn = (src.regenPerTurn || 0) + val; break;
         case '스킬_치명타생존%': detail.survivalChance += val; break;
         case '스킬_휴식시간감소%': detail.restReduction += val; break;
         case '스킬_체력비례스킬_공격력%': detail.berserkerAtkPct += val; break;
@@ -200,7 +201,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
         case '영혼_회피%': src.evasion += adjusted; break;
         case '영혼_위협도': src.threat += adjusted; break;
         // Detail stats from spirits
-        case '영혼_매턴체력회복': case '매턴회복': detail.hpRegenPerTurn += adjusted; break;
+        case '영혼_매턴체력회복': case '매턴회복': detail.hpRegenPerTurn += adjusted; src.regenPerTurn = (src.regenPerTurn || 0) + adjusted; break;
         case '휴식시간감소%': detail.restReduction += adjusted; break;
         case '조건부공격력%': detail.sharkAtkPct += adjusted; break;
         case '영혼_첫라공격력%': detail.dinoAtkPct += adjusted; break;

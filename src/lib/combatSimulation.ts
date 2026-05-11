@@ -3294,6 +3294,15 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     }
   }
 
+  // ─── Add aurasong regenPerTurn to each hero's per-turn regen ───
+  const aurasongSingle = getAurasongBonuses(champion);
+  const aurasongRegenPerTurn = aurasongSingle.regenPerTurn || 0;
+  if (aurasongRegenPerTurn > 0) {
+    for (let i = 0; i < numHeroes; i++) {
+      heroPersonalRegen[i] = (heroPersonalRegen[i] || 0) + aurasongRegenPerTurn;
+    }
+  }
+
   const totalMobHp = Math.round(monster.hp * mobHpMod);
   log.push({ round: 0, type: 'event', actor: '시스템', detail: `전투 시작! ${mobDisplayName} HP: ${formatNum(totalMobHp)}, 파티원 ${numHeroes}명` });
   if (rudoBonusBase > 0) {
@@ -3517,14 +3526,16 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         heroHp[drainTarget] -= drainAmt;
         const atkGain = Math.round(heroAtkVal[hemmaIdx] * hemmaMult);
         hemmaAtkGainAccum += atkGain;
-        log.push({ round, type: 'event', actor: activeHeroes[hemmaIdx].name, detail: `헴마 스킬 발동! ${activeHeroes[drainTarget].name} HP -${formatNum(drainAmt)} → ATK +${formatNum(atkGain)} (누적 +${formatNum(hemmaAtkGainAccum)})` });
+        const dPct = Math.max(0, heroHp[drainTarget] / heroMaxHp[drainTarget] * 100);
+        log.push({ round, type: 'event', actor: activeHeroes[hemmaIdx].name, detail: `헴마 스킬 발동! ${activeHeroes[drainTarget].name} HP -${formatNum(drainAmt)} → ATK +${formatNum(atkGain)} (누적 +${formatNum(hemmaAtkGainAccum)}) (${activeHeroes[drainTarget].name} HP: ${formatNum(Math.max(0, heroHp[drainTarget]))} (${dPct.toFixed(0)}%))` });
         const selfHeal = (champTier + Math.min(champTier - 3, 0)) * 5;
         if (selfHeal > 0 && heroHp[hemmaIdx] < heroMaxHp[hemmaIdx]) {
           const before = heroHp[hemmaIdx];
           heroHp[hemmaIdx] = Math.min(heroHp[hemmaIdx] + selfHeal, heroMaxHp[hemmaIdx]);
           const healed = heroHp[hemmaIdx] - before;
           if (healed > 0) {
-            log.push({ round, type: 'heal', actor: activeHeroes[hemmaIdx].name, detail: `${activeHeroes[hemmaIdx].name} 체력 +${formatNum(healed)} 회복` });
+            const hPct = Math.max(0, heroHp[hemmaIdx] / heroMaxHp[hemmaIdx] * 100);
+            log.push({ round, type: 'heal', actor: activeHeroes[hemmaIdx].name, detail: `체력 ${formatNum(healed)} 회복 (${activeHeroes[hemmaIdx].name} HP: ${formatNum(Math.max(0, heroHp[hemmaIdx]))} (${hPct.toFixed(0)}%))` });
           }
         }
       }
@@ -3636,7 +3647,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         heroHp[i] = Math.min(heroHp[i] + heroPersonalRegen[i], heroMaxHp[i]);
         const healed = heroHp[i] - before;
         if (healed > 0) {
-          log.push({ round, type: 'heal', actor: activeHeroes[i].name, detail: `매 턴 재생: HP +${formatNum(healed)}` });
+          const hPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
+          log.push({ round, type: 'heal', actor: activeHeroes[i].name, detail: `체력 ${formatNum(healed)} 회복 (${activeHeroes[i].name} HP: ${formatNum(Math.max(0, heroHp[i]))} (${hPct.toFixed(0)}%))` });
         }
       }
     }
