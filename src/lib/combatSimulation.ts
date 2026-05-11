@@ -1750,12 +1750,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // Tamas bonus applied to attack
         const tamasAtkMult = (jj === championIdx && isTamas) ? (1 + tamasBonus) : 1;
 
-        // Hero attack calculation
-        const atkMod = 1.0 + 0.2 * heroMundra[jj] + sharkActive * 0.01 * heroShark[jj] 
-          + dinosaurActive * heroDinosaur[jj] * 0.01 
+        // Hero attack calculation (PDF formula)
+        // standalone(t) = atkConstant * (1 + commonAtkPct + condPct(t))
+        // effectiveAtk = standalone(t) * partyAtkMult
+        // Mundra applies only vs bosses.
+        const condPct = (monster.isBoss ? 0.2 * heroMundra[jj] : 0)
+          + sharkActive * 0.01 * heroShark[jj]
+          + dinosaurActive * heroDinosaur[jj] * 0.01
           + 0.1 * (1 + heroBerserkerLevel[jj]) * berserkerStage[jj];
-        
-        const baseHeroDmg = finalAtk[jj] * atkMod * tamasAtkMult + hemmaBonus[jj];
+        const condBonus = heroAtkConst[jj] * condPct * (heroPartyAtkMult[jj] || 1);
+        const baseHeroDmg = (finalAtk[jj] + condBonus) * tamasAtkMult + hemmaBonus[jj];
 
         const totalCritChance = Math.min(1.0,
           (heroCritChance[jj] + ninjaBonus[jj] + rudoBonus) * heroArtCritChanceMod[jj]
