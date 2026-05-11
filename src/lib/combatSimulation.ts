@@ -2447,6 +2447,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       evasionRate: tgt > 0 ? Math.round((ev / tgt) * 100 * 10) / 10 : 0,
       tankingRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
       singleTargetRate: totalSingle > 0 ? Math.round((sHit / totalSingle) * 1000) / 10 : 0,
+      totalHealingAvg: (bucket === 'win' ? winHealingAccum[i] : loseHealingAccum[i]) / bucketCount,
+      critSurvivalApplyRate: Math.round(((bucket === 'win' ? winCritSurvivals[i] : loseCritSurvivals[i]) / bucketCount) * 100 * 10) / 10,
+      critSurvivalCount: (bucket === 'win' ? winCritSurvivals[i] : loseCritSurvivals[i]) / bucketCount,
+      hemmaAbsorbedDmg: Math.round((bucket === 'win' ? winHemmaAbsorbedDmgAccum[i] : loseHemmaAbsorbedDmgAccum[i]) / bucketCount),
+      hemmaAbsorbedCount: Math.round((bucket === 'win' ? winHemmaAbsorbedCountAccum[i] : loseHemmaAbsorbedCountAccum[i]) / bucketCount),
+      hemmaAtkGainAvg: Math.round((bucket === 'win' ? winHemmaAtkGainAccum[i] : loseHemmaAtkGainAccum[i]) / bucketCount),
     };
   };
 
