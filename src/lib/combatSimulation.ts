@@ -1482,13 +1482,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
 
       // ─── Extreme crit bonus from negative evasion ───
+      // ─── Negative-evasion crit bonus (applies in all modes; ramps up to +5% at eva=-20%) ───
       const extremeCritBonus = new Float64Array(numHeroes);
-      if (isExtreme) {
-        for (let i = 0; i < numHeroes; i++) {
-          const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
-          if (totalEva < 0 && !heroArtNoEvasion[i]) {
-            extremeCritBonus[i] = -0.25 * totalEva; // Negative evasion → positive crit bonus
-          }
+      for (let i = 0; i < numHeroes; i++) {
+        const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
+        if (totalEva < 0 && !heroArtNoEvasion[i]) {
+          extremeCritBonus[i] = Math.min(-0.25 * totalEva, 0.05);
         }
       }
 
