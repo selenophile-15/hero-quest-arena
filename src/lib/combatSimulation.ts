@@ -88,6 +88,9 @@ export interface HeroSimResult {
   critDmgDealtAvg: number;     // Average total crit damage
   // Per-turn damage
   avgDamagePerTurn: number;
+  // Per-turn damage min/max (across sims; per-sim = damageFight/round)
+  minDamagePerTurn?: number;
+  maxDamagePerTurn?: number;
   // Incoming damage stats (per hit, not total)
   normalDamageTaken: number;     // Single normal hit damage
   aoeDamageTaken: number;        // Single AoE hit damage
@@ -96,6 +99,10 @@ export interface HeroSimResult {
   totalDamageTakenAvg: number;
   avgDamageTakenPerHit: number;
   avgDamageTakenPerTurn: number; // Average damage taken per turn
+  // Avg-when-hit (only sims where this hero actually took damage of that kind)
+  totalDamageTakenAvgWhenHit?: number;
+  singleDmgTakenAvgWhenHit?: number;
+  aoeDmgTakenAvgWhenHit?: number;
   // Min/Max total damage taken across sims
   minDamageTaken?: number;
   maxDamageTaken?: number;
@@ -209,6 +216,7 @@ export interface HeroSimResult {
   // Conqueror per-stack metrics (index 0..4 = stack count)
   conquerorStackTurnRate?: number[];   // % of attack-turns spent at each stack (0..4)
   conquerorStackCritDmg?: number[];    // avg crit damage dealt at each stack
+  conquerorStackAvgDmg?: number[];     // avg damage dealt at each stack (all attacks)
   conquerorStackResetRate?: number[];  // % of attacks at this stack that ended in reset (non-crit)
   conquerorAvgStack?: number;          // overall avg stack count when attacking
   conquerorAvgCritBonus?: number;      // overall avg crit% bonus from stacks (0..100)
@@ -1184,6 +1192,23 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Per-turn taken min/max across sims
   const dmgTakenPerTurnMin = new Float64Array(numHeroes).fill(1e9);
   const dmgTakenPerTurnMax = new Float64Array(numHeroes);
+  // Per-turn damage DEALT min/max across sims (per-sim = damageFight/round)
+  const dmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
+  const dmgDealtPerTurnMax = new Float64Array(numHeroes);
+  const winDmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
+  const winDmgDealtPerTurnMax = new Float64Array(numHeroes);
+  const loseDmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
+  const loseDmgDealtPerTurnMax = new Float64Array(numHeroes);
+  // Avg-when-hit counters (sims where this hero took damage of that kind)
+  const totalDmgTakenHitSims = new Float64Array(numHeroes);
+  const singleDmgTakenHitSims = new Float64Array(numHeroes);
+  const aoeDmgTakenHitSims = new Float64Array(numHeroes);
+  const winTotalDmgTakenHitSims = new Float64Array(numHeroes);
+  const winSingleDmgTakenHitSims = new Float64Array(numHeroes);
+  const winAoeDmgTakenHitSims = new Float64Array(numHeroes);
+  const loseTotalDmgTakenHitSims = new Float64Array(numHeroes);
+  const loseSingleDmgTakenHitSims = new Float64Array(numHeroes);
+  const loseAoeDmgTakenHitSims = new Float64Array(numHeroes);
   // Single-attack hit type counts (across all sims)
   const singleNormalHitsTotal = new Float64Array(numHeroes);
   const singleCritHitsTotal = new Float64Array(numHeroes);
@@ -1261,6 +1286,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
   const conqStackAttackCount = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
+  const conqStackTotalDmgAccum = [
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
@@ -1446,6 +1475,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
     const simConqStackAttackCount = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
+    const simConqStackTotalDmgAccum = [
       new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
       new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
@@ -1826,6 +1859,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (heroIsConquistador[jj]) {
           simConqStackTurns[preStacks][jj]++;
           simConqStackAttackCount[preStacks][jj]++;
+          simConqStackTotalDmgAccum[preStacks][jj] += damage;
           if (isCrit) {
             simConqStackCritDmgAccum[preStacks][jj] += damage;
             simConqStackCritCount[preStacks][jj]++;
@@ -1948,6 +1982,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (damageFight[i] > 0) {
             damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
           }
+          // Per-turn damage dealt min/max (only when hero dealt damage and rounds > 0)
+          if (damageFight[i] > 0 && round > 0) {
+            const perTurnDealt = damageFight[i] / round;
+            if (perTurnDealt < dmgDealtPerTurnMin[i]) dmgDealtPerTurnMin[i] = perTurnDealt;
+            if (perTurnDealt > dmgDealtPerTurnMax[i]) dmgDealtPerTurnMax[i] = perTurnDealt;
+          }
           totalRoundsPerHero[i] += round;
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
@@ -1971,6 +2011,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const perTurnTaken = round > 0 ? simDmgTaken[i] / round : 0;
           if (perTurnTaken > 0) dmgTakenPerTurnMin[i] = Math.min(dmgTakenPerTurnMin[i], perTurnTaken);
           dmgTakenPerTurnMax[i] = Math.max(dmgTakenPerTurnMax[i], perTurnTaken);
+          // Avg-when-hit: count sims where this hero took damage of that kind
+          if (simDmgTaken[i] > 0) totalDmgTakenHitSims[i]++;
+          if (simSingleDmgTaken[i] > 0) singleDmgTakenHitSims[i]++;
+          if (simAoeDmgTaken[i] > 0) aoeDmgTakenHitSims[i]++;
           lordProtectedSingle[i] += simLordSingleSaved[i];
           lordProtectedAoe[i] += simLordAoeSaved[i];
           lordAbsorbedSingle[i] += simLordAbsorbedSingle[i];
@@ -2033,6 +2077,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             conqStackCritCount[s][i] += simConqStackCritCount[s][i];
             conqStackResetCount[s][i] += simConqStackResetCount[s][i];
             conqStackAttackCount[s][i] += simConqStackAttackCount[s][i];
+            conqStackTotalDmgAccum[s][i] += simConqStackTotalDmgAccum[s][i];
           }
 
           // Berserker per-stage damage is tracked directly on global accumulators
@@ -2053,18 +2098,26 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             winCritDmg[i] += critDmgFight[i];
             winDmgMax[i] = Math.max(winDmgMax[i], damageFight[i]);
             if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
+            if (damageFight[i] > 0 && round > 0) {
+              const pt = damageFight[i] / round;
+              if (pt < winDmgDealtPerTurnMin[i]) winDmgDealtPerTurnMin[i] = pt;
+              if (pt > winDmgDealtPerTurnMax[i]) winDmgDealtPerTurnMax[i] = pt;
+            }
             winRoundsArr[i] += round;
             winDmgTaken[i] += simDmgTaken[i];
             winDmgTakenMin[i] = Math.min(winDmgTakenMin[i], cappedDmg);
             winDmgTakenMax[i] = Math.max(winDmgTakenMax[i], cappedDmg);
+            if (simDmgTaken[i] > 0) winTotalDmgTakenHitSims[i]++;
             winSingleDmgTakenAccum[i] += simSingleDmgTaken[i];
             winSingleDmgTakenMin[i] = Math.min(winSingleDmgTakenMin[i], cappedSingle);
             winSingleDmgTakenMax[i] = Math.max(winSingleDmgTakenMax[i], cappedSingle);
             winSingleDmgTakenSimCount[i]++;
+            if (simSingleDmgTaken[i] > 0) winSingleDmgTakenHitSims[i]++;
             winAoeDmgTakenAccum[i] += simAoeDmgTaken[i];
             winAoeDmgTakenMin[i] = Math.min(winAoeDmgTakenMin[i], cappedAoe);
             winAoeDmgTakenMax[i] = Math.max(winAoeDmgTakenMax[i], cappedAoe);
             winAoeDmgTakenSimCount[i]++;
+            if (simAoeDmgTaken[i] > 0) winAoeDmgTakenHitSims[i]++;
             winTimesHit[i] += simTimesHit[i];
             winSingleHits[i] += singleHitsTaken[i];
             winTargeted[i] += simTargeted[i];
@@ -2080,18 +2133,26 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseCritDmg[i] += critDmgFight[i];
             loseDmgMax[i] = Math.max(loseDmgMax[i], damageFight[i]);
             if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
+            if (damageFight[i] > 0 && round > 0) {
+              const pt = damageFight[i] / round;
+              if (pt < loseDmgDealtPerTurnMin[i]) loseDmgDealtPerTurnMin[i] = pt;
+              if (pt > loseDmgDealtPerTurnMax[i]) loseDmgDealtPerTurnMax[i] = pt;
+            }
             loseRoundsArr[i] += round;
             loseDmgTaken[i] += simDmgTaken[i];
             loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], cappedDmg);
             loseDmgTakenMax[i] = Math.max(loseDmgTakenMax[i], cappedDmg);
+            if (simDmgTaken[i] > 0) loseTotalDmgTakenHitSims[i]++;
             loseSingleDmgTakenAccum[i] += simSingleDmgTaken[i];
             loseSingleDmgTakenMin[i] = Math.min(loseSingleDmgTakenMin[i], cappedSingle);
             loseSingleDmgTakenMax[i] = Math.max(loseSingleDmgTakenMax[i], cappedSingle);
             loseSingleDmgTakenSimCount[i]++;
+            if (simSingleDmgTaken[i] > 0) loseSingleDmgTakenHitSims[i]++;
             loseAoeDmgTakenAccum[i] += simAoeDmgTaken[i];
             loseAoeDmgTakenMin[i] = Math.min(loseAoeDmgTakenMin[i], cappedAoe);
             loseAoeDmgTakenMax[i] = Math.max(loseAoeDmgTakenMax[i], cappedAoe);
             loseAoeDmgTakenSimCount[i]++;
+            if (simAoeDmgTaken[i] > 0) loseAoeDmgTakenHitSims[i]++;
             loseTimesHit[i] += simTimesHit[i];
             loseSingleHits[i] += singleHitsTaken[i];
             loseTargeted[i] += simTargeted[i];
@@ -2307,12 +2368,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       normalDmgDealtAvg: normalDmgDealtAccum[i] / actualSimCount,
       critDmgDealtAvg: critDmgDealtAccum[i] / actualSimCount,
       avgDamagePerTurn: avgDmgPerTurn,
+      minDamagePerTurn: dmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(dmgDealtPerTurnMin[i]),
+      maxDamagePerTurn: Math.round(dmgDealtPerTurnMax[i]),
       normalDamageTaken: normalHit,
       aoeDamageTaken: aoeHit,
       critDamageTakenVal: critHit,
       totalDamageTakenAvg: Math.round(avgTotalDmgTaken),
       avgDamageTakenPerHit: avgTimesHit > 0 ? Math.round(avgTotalDmgTaken / avgTimesHit) : 0,
       avgDamageTakenPerTurn: avgRoundsForHero > 0 ? Math.round(avgTotalDmgTaken / avgRoundsForHero) : 0,
+      totalDamageTakenAvgWhenHit: totalDmgTakenHitSims[i] > 0 ? Math.round(totalDmgTakenAccum[i] / totalDmgTakenHitSims[i]) : 0,
+      singleDmgTakenAvgWhenHit: singleDmgTakenHitSims[i] > 0 ? Math.round(singleDmgTakenAccum[i] / singleDmgTakenHitSims[i]) : 0,
+      aoeDmgTakenAvgWhenHit: aoeDmgTakenHitSims[i] > 0 ? Math.round(aoeDmgTakenAccum[i] / aoeDmgTakenHitSims[i]) : 0,
       sharkNormalDmg: sharkNormal,
       sharkCritDmg: sharkCrit,
       dinosaurNormalDmg: dinoNormal,
@@ -2431,6 +2497,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       conquerorStackCritDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
         conqStackCritCount[s][i] > 0 ? Math.round(conqStackCritDmgAccum[s][i] / conqStackCritCount[s][i]) : 0
       ) : undefined,
+      conquerorStackAvgDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
+        conqStackAttackCount[s][i] > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / conqStackAttackCount[s][i]) : 0
+      ) : undefined,
       conquerorStackResetRate: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
         conqStackAttackCount[s][i] > 0
           ? Math.round((conqStackResetCount[s][i] / conqStackAttackCount[s][i]) * 100 * 10) / 10
@@ -2502,7 +2571,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       normalDmgDealtAvg: dNorm / bucketCount,
       critDmgDealtAvg: dCrit / bucketCount,
       avgDamagePerTurn: avgR > 0 ? (dDealt / bucketCount) / avgR : 0,
+      minDamagePerTurn: bucket === 'win'
+        ? (winDmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(winDmgDealtPerTurnMin[i]))
+        : (loseDmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(loseDmgDealtPerTurnMin[i])),
+      maxDamagePerTurn: bucket === 'win' ? Math.round(winDmgDealtPerTurnMax[i]) : Math.round(loseDmgDealtPerTurnMax[i]),
       totalDamageTakenAvg: Math.round(dTaken / bucketCount),
+      totalDamageTakenAvgWhenHit: (() => {
+        const hits = bucket === 'win' ? winTotalDmgTakenHitSims[i] : loseTotalDmgTakenHitSims[i];
+        return hits > 0 ? Math.round(dTaken / hits) : 0;
+      })(),
       minDamageTaken: bucket === 'win'
         ? (winDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winDmgTakenMin[i]))
         : (loseDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseDmgTakenMin[i])),
@@ -2512,6 +2589,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       singleDmgTakenAvg: bucket === 'win'
         ? Math.round(winSingleDmgTakenAccum[i] / bucketCount)
         : Math.round(loseSingleDmgTakenAccum[i] / bucketCount),
+      singleDmgTakenAvgWhenHit: (() => {
+        const hits = bucket === 'win' ? winSingleDmgTakenHitSims[i] : loseSingleDmgTakenHitSims[i];
+        const accum = bucket === 'win' ? winSingleDmgTakenAccum[i] : loseSingleDmgTakenAccum[i];
+        return hits > 0 ? Math.round(accum / hits) : 0;
+      })(),
       singleDmgTakenMin: bucket === 'win'
         ? (winSingleDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winSingleDmgTakenMin[i]))
         : (loseSingleDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseSingleDmgTakenMin[i])),
@@ -2520,6 +2602,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       aoeDmgTakenAvg: bucket === 'win'
         ? Math.round(winAoeDmgTakenAccum[i] / bucketCount)
         : Math.round(loseAoeDmgTakenAccum[i] / bucketCount),
+      aoeDmgTakenAvgWhenHit: (() => {
+        const hits = bucket === 'win' ? winAoeDmgTakenHitSims[i] : loseAoeDmgTakenHitSims[i];
+        const accum = bucket === 'win' ? winAoeDmgTakenAccum[i] : loseAoeDmgTakenAccum[i];
+        return hits > 0 ? Math.round(accum / hits) : 0;
+      })(),
       aoeDmgTakenMin: bucket === 'win'
         ? (winAoeDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winAoeDmgTakenMin[i]))
         : (loseAoeDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseAoeDmgTakenMin[i])),

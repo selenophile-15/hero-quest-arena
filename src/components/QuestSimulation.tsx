@@ -2151,14 +2151,8 @@ export default function QuestSimulation() {
                         const partyMin = pAgg.dmg?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
                         const partyMax = pAgg.dmg?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
                         const partyAvgPerTurn = pAgg.perTurn?.avg ?? displayResults.reduce((s, hr) => s + (hr.avgDamagePerTurn || 0), 0);
-                        const partyMinPerTurn = pAgg.perTurn?.min ?? displayResults.reduce((s, hr) => {
-                          const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
-                          return s + (hr.minDamageDealt || 0) * ratio;
-                        }, 0);
-                        const partyMaxPerTurn = pAgg.perTurn?.max ?? displayResults.reduce((s, hr) => {
-                          const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
-                          return s + (hr.maxDamageDealt || 0) * ratio;
-                        }, 0);
+                        const partyMinPerTurn = pAgg.perTurn?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamagePerTurn || 0), 0);
+                        const partyMaxPerTurn = pAgg.perTurn?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamagePerTurn || 0), 0);
                         const partyNormal = displayResults.reduce((s, hr) => s + hr.normalDmgDealtAvg, 0);
                         const partyCrit = displayResults.reduce((s, hr) => s + hr.critDmgDealtAvg, 0);
                         return (
@@ -2200,9 +2194,8 @@ export default function QuestSimulation() {
                             const dmgPct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
                             const getContribBar = (p: number) => p >= 81 ? 'bg-lime-500' : p >= 61 ? 'bg-yellow-500' : p >= 41 ? 'bg-orange-500' : p >= 21 ? 'bg-red-500' : 'bg-purple-500';
                             const getContribText = (p: number) => p >= 81 ? 'text-lime-400' : p >= 61 ? 'text-yellow-400' : p >= 41 ? 'text-orange-400' : p >= 21 ? 'text-red-400' : 'text-purple-400';
-                            const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
-                            const minPerTurn = (hr.minDamageDealt || 0) * ratio;
-                            const maxPerTurn = (hr.maxDamageDealt || 0) * ratio;
+                            const minPerTurn = hr.minDamagePerTurn ?? 0;
+                            const maxPerTurn = hr.maxDamagePerTurn ?? 0;
                             return (
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
@@ -2701,7 +2694,7 @@ export default function QuestSimulation() {
                                     </colgroup>
                                     <thead>
                                       <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">군주</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
                                         <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">보호받은 동료</th>
                                         <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
@@ -2749,18 +2742,24 @@ export default function QuestSimulation() {
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
-                                    <col style={{ width: '110px' }} /><col style={{ width: '70px' }} />
-                                    <col /><col /><col />
+                                    <col style={{ width: '110px' }} /><col style={{ width: '60px' }} /><col style={{ width: '80px' }} />
+                                    <col /><col /><col /><col />
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">스택</th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴의 비율.'} />
+                                        <GroupHeader label="추가 치명타 대미지" info={'해당 스택에서 더해지는 치명타 대미지 계수(+25%/스택, 최대 +100%).'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="실제 치명 대미지" info={'해당 스택 상태에서의 평균 치명 대미지.'} />
+                                        <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴의 비율.'} />
+                                      </th>
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                        <GroupHeader label="단계별 치명타 대미지" info={'해당 스택 상태에서의 평균 치명 대미지.'} />
+                                      </th>
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                        <GroupHeader label="평균 대미지" info={'해당 스택에서 친 모든 공격(일반+치명)의 평균 대미지.'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="리셋 비율" info={'해당 스택 상태에서 연속 치명이 끊겨 0으로 초기화된 비율.'} />
@@ -2769,22 +2768,26 @@ export default function QuestSimulation() {
                                   </thead>
                                   <tbody>
                                     {zeroBucket ? (
-                                      <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
+                                      <EmptyBucketRow tab={mainResultsTab} colSpan={7} />
                                     ) : conquerorRows.length === 0 ? (
-                                      <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">정복자 직업 파티원 없음</td></tr>
+                                      <tr><td colSpan={7} className="py-2 px-2 text-center text-muted-foreground/60 italic">정복자 직업 파티원 없음</td></tr>
                                     ) : conquerorRows.map((hr, hi) => {
                                       return [0, 1, 2, 3, 4].map(s => {
                                         const turn = hr.conquerorStackTurnRate?.[s] ?? 0;
                                         const cdmg = hr.conquerorStackCritDmg?.[s] ?? 0;
+                                        const adm = hr.conquerorStackAvgDmg?.[s] ?? 0;
                                         const reset = hr.conquerorStackResetRate?.[s] ?? 0;
+                                        const bonus = s * 25;
                                         return (
                                           <tr key={`conq-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                             {s === 0 && (
                                               <td rowSpan={5} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
                                             )}
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-yellow-400">{fadeZero(`+${bonus}%`, bonus === 0)}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${turn.toFixed(1)}%`, turn === 0)}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{cdmg > 0 ? formatNumber(cdmg) : blank}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{adm > 0 ? formatNumber(adm) : blank}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${reset.toFixed(1)}%`, reset === 0)}</td>
                                           </tr>
                                         );
