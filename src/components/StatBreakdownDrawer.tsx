@@ -25,6 +25,7 @@ const MULT_TABS: { key: MultStatType; label: string; icon: string; color: string
 const ADD_TABS: { key: AddStatType; label: string; icon: string; color: string; headerBg: string }[] = [
   { key: 'crit', label: '치명타', icon: STAT_ICON_MAP.crit, color: 'text-yellow-300', headerBg: 'bg-[#6b5a14]' },
   { key: 'evasion', label: '회피', icon: STAT_ICON_MAP.evasion, color: 'text-cyan-400', headerBg: 'bg-[#175e5e]' },
+  { key: 'regen', label: '매턴 회복', icon: '', color: 'text-emerald-400', headerBg: 'bg-[#0f4d3a]' },
   { key: 'threat', label: '위협도', icon: STAT_ICON_MAP.threat, color: 'text-gray-300', headerBg: 'bg-[#2a2a32]' },
   { key: 'other', label: '기타', icon: '', color: 'text-gray-400', headerBg: 'bg-[#3a3a45]' },
 ];
