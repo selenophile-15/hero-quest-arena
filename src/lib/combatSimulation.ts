@@ -99,6 +99,10 @@ export interface HeroSimResult {
   totalDamageTakenAvg: number;
   avgDamageTakenPerHit: number;
   avgDamageTakenPerTurn: number; // Average damage taken per turn
+  // Avg-when-hit (only sims where this hero actually took damage of that kind)
+  totalDamageTakenAvgWhenHit?: number;
+  singleDmgTakenAvgWhenHit?: number;
+  aoeDmgTakenAvgWhenHit?: number;
   // Min/Max total damage taken across sims
   minDamageTaken?: number;
   maxDamageTaken?: number;
