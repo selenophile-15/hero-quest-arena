@@ -682,6 +682,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const heroLizard: number[] = [];
   const heroArmadillo: number[] = []; // Survive chance (%)
 
+  // PDF damage formula: per-hero standalone-ATK fields
+  const heroAtkRaw: number[] = [];          // pre-party hero ATK (Hero.atk before party buffs)
+  const heroAtkConst: number[] = [];        // atkConstant: (base+seed+equip+flat) before common%
+  const heroDefConst: number[] = [];
+  const heroCommonAtkPct: number[] = [];    // decimal
+  const heroCommonDefPct: number[] = [];
+  const heroPartyAtkMult: number[] = [];    // decimal multiplier from party+booster
+  const heroPartyDefMult: number[] = [];
+
   for (let i = 0; i < numHeroes; i++) {
     const h = activeHeroes[i];
     const ps = precomputedStats?.[i];
