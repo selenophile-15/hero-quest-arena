@@ -3647,7 +3647,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         heroHp[i] = Math.min(heroHp[i] + heroPersonalRegen[i], heroMaxHp[i]);
         const healed = heroHp[i] - before;
         if (healed > 0) {
-          log.push({ round, type: 'heal', actor: activeHeroes[i].name, detail: `매 턴 재생: HP +${formatNum(healed)}` });
+          const hPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
+          log.push({ round, type: 'heal', actor: activeHeroes[i].name, detail: `체력 ${formatNum(healed)} 회복 (${activeHeroes[i].name} HP: ${formatNum(Math.max(0, heroHp[i]))} (${hPct.toFixed(0)}%))` });
         }
       }
     }
