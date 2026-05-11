@@ -2211,10 +2211,13 @@ export default function QuestSimulation() {
                                 {(() => {
                                   const normalPct = hr.avgDamageDealt > 0 ? (hr.normalDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
                                   const critPct = hr.avgDamageDealt > 0 ? (hr.critDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
+                                  const normalWins = hr.normalDmgDealtAvg >= hr.critDmgDealtAvg;
+                                  const normalCls = normalWins ? 'text-red-400' : 'text-muted-foreground';
+                                  const critCls = !normalWins ? 'text-yellow-400' : 'text-muted-foreground';
                                   return (
                                     <>
-                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{formatNumber(Math.round(hr.normalDmgDealtAvg))} ({normalPct.toFixed(1)}%)</td>
-                                       <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.critDmgDealtAvg))} ({critPct.toFixed(1)}%)</td>
+                                       <td className={`py-1 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${normalCls}`}>{formatNumber(Math.round(hr.normalDmgDealtAvg))} ({normalPct.toFixed(1)}%)</td>
+                                       <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${critCls}`}>{formatNumber(Math.round(hr.critDmgDealtAvg))} ({critPct.toFixed(1)}%)</td>
                                     </>
                                   );
                                 })()}
