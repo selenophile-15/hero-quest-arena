@@ -2016,11 +2016,11 @@ export default function QuestSimulation() {
           <div className="card-fantasy p-4">
 
           {/* Mini-boss breakdown (only for random mode, not boss quests) */}
-          {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
+          {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
             <div className="mb-4">
               <div className="text-xs text-muted-foreground mb-2 font-medium">미니보스별 결과</div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
-                {simResult.miniBossResults.map(mbr => {
+                {dispSim!.miniBossResults.map(mbr => {
                   const typeLabel = mbr.type === 'normal' ? '일반' :
                     mbr.type === 'huge' ? '거대한' :
                     mbr.type === 'agile' ? '민첩한' :
@@ -2057,7 +2057,7 @@ export default function QuestSimulation() {
           {/* Per-hero results - full width detailed table */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              {!isBossQuest && simResult.miniBossResults && simResult.miniBossResults.length > 0 && (
+              {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
                 <>
                   <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
                   <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
@@ -2080,22 +2080,22 @@ export default function QuestSimulation() {
             {(() => {
               // Get the hero results based on filter
               // Priority: miniboss filter (if random mode and chosen) > outcome filter
-              let displayResults = simResult.heroResults;
-              if (simResultsFilter !== 'all' && simResult.miniBossResults) {
-                const filtered = simResult.miniBossResults.find(m => m.type === simResultsFilter);
+              let displayResults = dispSim!.heroResults;
+              if (simResultsFilter !== 'all' && dispSim!.miniBossResults) {
+                const filtered = dispSim!.miniBossResults.find(m => m.type === simResultsFilter);
                 if (filtered) {
                   if (mainResultsTab === 'win' && filtered.winHero) displayResults = filtered.winHero;
                   else if (mainResultsTab === 'lose' && filtered.loseHero) displayResults = filtered.loseHero;
                   else displayResults = filtered.heroResults;
                 }
-              } else if (mainResultsTab === 'win' && simResult.winHeroResults) {
-                displayResults = simResult.winHeroResults;
-              } else if (mainResultsTab === 'lose' && simResult.loseHeroResults) {
-                displayResults = simResult.loseHeroResults;
+              } else if (mainResultsTab === 'win' && dispSim!.winHeroResults) {
+                displayResults = dispSim!.winHeroResults;
+              } else if (mainResultsTab === 'lose' && dispSim!.loseHeroResults) {
+                displayResults = dispSim!.loseHeroResults;
               }
               const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
-              const zeroBucket = (mainResultsTab === 'win' && (simResult.winSimCount ?? 0) === 0)
-                || (mainResultsTab === 'lose' && (simResult.loseSimCount ?? 0) === 0);
+              const zeroBucket = (mainResultsTab === 'win' && (dispSim!.winSimCount ?? 0) === 0)
+                || (mainResultsTab === 'lose' && (dispSim!.loseSimCount ?? 0) === 0);
               if (!displayResults || displayResults.length === 0 || noBucket) {
                 return (
                   <div className="text-center text-xs text-muted-foreground py-8">
@@ -2114,10 +2114,10 @@ export default function QuestSimulation() {
                         // Party totals — use per-sim party distribution from engine when available,
                         // bucketed by current results tab. Fallback to summed individual values.
                         const pAgg = mainResultsTab === 'win'
-                          ? { dmg: simResult.winPartyDmgDealt, perTurn: simResult.winPartyDmgPerTurn }
+                          ? { dmg: dispSim!.winPartyDmgDealt, perTurn: dispSim!.winPartyDmgPerTurn }
                           : mainResultsTab === 'lose'
-                          ? { dmg: simResult.losePartyDmgDealt, perTurn: simResult.losePartyDmgPerTurn }
-                          : { dmg: simResult.partyDmgDealt, perTurn: simResult.partyDmgPerTurn };
+                          ? { dmg: dispSim!.losePartyDmgDealt, perTurn: dispSim!.losePartyDmgPerTurn }
+                          : { dmg: dispSim!.partyDmgDealt, perTurn: dispSim!.partyDmgPerTurn };
                         const partyAvg = pAgg.dmg?.avg ?? displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                         const partyMin = pAgg.dmg?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
                         const partyMax = pAgg.dmg?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
