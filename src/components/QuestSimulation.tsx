@@ -2194,9 +2194,8 @@ export default function QuestSimulation() {
                             const dmgPct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
                             const getContribBar = (p: number) => p >= 81 ? 'bg-lime-500' : p >= 61 ? 'bg-yellow-500' : p >= 41 ? 'bg-orange-500' : p >= 21 ? 'bg-red-500' : 'bg-purple-500';
                             const getContribText = (p: number) => p >= 81 ? 'text-lime-400' : p >= 61 ? 'text-yellow-400' : p >= 41 ? 'text-orange-400' : p >= 21 ? 'text-red-400' : 'text-purple-400';
-                            const ratio = hr.avgDamageDealt > 0 ? hr.avgDamagePerTurn / hr.avgDamageDealt : 0;
-                            const minPerTurn = (hr.minDamageDealt || 0) * ratio;
-                            const maxPerTurn = (hr.maxDamageDealt || 0) * ratio;
+                            const minPerTurn = hr.minDamagePerTurn ?? 0;
+                            const maxPerTurn = hr.maxDamagePerTurn ?? 0;
                             return (
                               <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                 <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
