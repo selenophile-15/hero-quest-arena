@@ -2065,19 +2065,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
       }
 
-      // ─── Healing (Lizard, Cleric, Bishop, Lilu) ───
+      // ─── Healing (per-turn regen from spirits/skills + champion party heal + aurasong) ───
+      // Per-hero spirit/skill regen comes from precomputed detailStats['매 턴 체력 재생'],
+      // which aggregates 도마뱀/불사조/우로보로스 등 all spirits + 클레릭/비숍 class skills.
       if (contFight) {
+        const aurasongRegen = aurasong.regenPerTurn || 0;
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
           const hpBefore = hp[i];
-          hp[i] = Math.min(hp[i] + heroLizard[i], finalHp[i]);
-          
-          if (heroIsCleric[i]) {
-            hp[i] = Math.min(hp[i] + Math.min(heroTier[i], 3) * 5 - 5, finalHp[i]);
-          } else if (heroIsBishop[i]) {
-            const bHeal = heroTier[i] >= 3 ? 20 : heroTier[i] >= 2 ? 5 : 0;
-            hp[i] = Math.min(hp[i] + bHeal, finalHp[i]);
-          }
+          const personalRegen = (activeHeroes[i] as any).detailStats?.['매 턴 체력 재생'] || 0;
+          hp[i] = Math.min(hp[i] + personalRegen + aurasongRegen, finalHp[i]);
 
           if (liluHealFlat > 0) {
             hp[i] = Math.min(hp[i] + liluHealFlat * heroArtChampionMod[i], finalHp[i]);
