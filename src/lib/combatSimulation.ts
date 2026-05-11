@@ -3669,6 +3669,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     // ─── Per-turn regen (personal + Lilu leader skill if Lilu alive) ───
     if (mobHpCurrent > 0) {
       const liluAlive = isLiluChamp && championIdx >= 0 && heroHp[championIdx] > 0;
+      if (isLiluChamp && !liluAlive && !liluHealExpiredLogged && liluHealFlat > 0) {
+        log.push({ round, type: 'event', actor: champName, detail: `릴루 리더 스킬 만료: 매 턴 파티 체력 +${formatNum(liluHealFlat)} 종료 (릴루 사망)` });
+        liluHealExpiredLogged = true;
+      }
       const liluContrib = liluAlive ? liluHealFlat : 0;
       for (let i = 0; i < numHeroes; i++) {
         if (heroHp[i] <= 0) continue;
