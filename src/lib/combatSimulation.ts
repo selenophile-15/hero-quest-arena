@@ -1203,7 +1203,6 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const attackCountTotal = new Float64Array(numHeroes);
   const winAttackCount = new Float64Array(numHeroes);
   const loseAttackCount = new Float64Array(numHeroes);
-  const simAttackCount = new Float64Array(numHeroes); // reset per fight
   // Avg-when-hit counters (sims where this hero took damage of that kind)
   const totalDmgTakenHitSims = new Float64Array(numHeroes);
   const singleDmgTakenHitSims = new Float64Array(numHeroes);
