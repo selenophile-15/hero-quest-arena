@@ -2466,6 +2466,8 @@ export default function QuestSimulation() {
                                       </tr>
                                     );
                                   })}
+                                  </>
+                                  )}
                                 </tbody>
                               </table>
                             </div>
