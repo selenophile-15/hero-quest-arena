@@ -117,11 +117,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
   // Adaptive colors for light/dark mode
   const C = useMemo(() => ({
-    yellow: isLight ? '#a16207' : '#facc15',
+    yellow: '#facc15', // pure yellow for crit (consistent across modes)
     white: isLight ? '#374151' : '#e5e7eb',
     red: isLight ? '#b91c1c' : '#f87171',
     teal: isLight ? '#0f766e' : '#2dd4bf',
     green: isLight ? '#166534' : '#84cc16',
+    heal: isLight ? '#047857' : '#34d399',
     monster: isLight ? '#a16207' : '#facc15',
   }), [isLight]);
 
