@@ -9,6 +9,7 @@
  */
 
 import { Hero } from '@/types/game';
+import { getChampionLeaderSkillTier, getCombatSkillTier } from '@/lib/championTier';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -429,12 +430,6 @@ function isChampion(hero: Hero): boolean {
 
 function isMercenary(hero: Hero): boolean {
   return isClass(hero, '용병', 'Mercenary');
-}
-
-function getHeroTier(hero: Hero): number {
-  // Use cardLevel for champions, or infer from promoted status
-  if (hero.cardLevel) return hero.cardLevel;
-  return hero.promoted ? 4 : 1;
 }
 
 interface AurasongBonuses {
