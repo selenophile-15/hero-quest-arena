@@ -147,7 +147,7 @@ export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<Sk
         case '스킬_회피%': src.evasion += val; totals.evasion += val; break;
         case '스킬_위협도': src.threat += val; totals.threat += val; break;
         // Detail stats
-        case '스킬_매턴체력회복': detail.hpRegenPerTurn += val; break;
+        case '스킬_매턴체력회복': detail.hpRegenPerTurn += val; src.regenPerTurn = (src.regenPerTurn || 0) + val; break;
         case '스킬_치명타생존%': detail.survivalChance += val; break;
         case '스킬_휴식시간감소%': detail.restReduction += val; break;
         case '스킬_체력비례스킬_공격력%': detail.berserkerAtkPct += val; break;
