@@ -3426,6 +3426,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
       // Calculate effective crit chance with conqueror stacks
       let effectiveCrit = heroCrit[i];
+      if (rudoBonusBase > 0 && round <= rudoRounds) {
+        effectiveCrit += rudoBonusBase;
+      }
       if (heroIsConquistadorFlag[i] && conquStacks[i] > 0) {
         effectiveCrit += conquStacks[i] * 0.05; // +5% per stack
       }
