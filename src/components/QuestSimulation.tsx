@@ -40,10 +40,11 @@ import { saveCanvasImage } from '@/lib/fileDownload';
 
 // Group header label with optional info tooltip (?) icon, kept centered.
 function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.ReactNode }) {
-  if (!info) return <>{label}</>;
+  const prefixed = typeof label === 'string' ? `- ${label}` : <>- {label}</>;
+  if (!info) return <>{prefixed}</>;
   return (
     <span className="relative inline-flex items-center justify-center w-full">
-      <span className="text-center">{label}</span>
+      <span className="text-center">{prefixed}</span>
       <Tooltip>
         <TooltipTrigger asChild>
           <button type="button" className="absolute right-1 inline-flex items-center justify-center text-muted-foreground hover:text-foreground" aria-label="설명">
@@ -307,6 +308,7 @@ export default function QuestSimulation() {
   const [jobDisplayMode, setJobDisplayMode] = useState<'icon' | 'illust' | 'none'>('icon');
   const [simResultsFilter, setSimResultsFilter] = useState<string>('all');
   const [mainResultsTab, setMainResultsTab] = useState<'all' | 'win' | 'lose'>('all');
+  const [specialInfoOpen, setSpecialInfoOpen] = useState(true);
   const [retryOnly, setRetryOnly] = useState(false);
   const [boosterOpen, setBoosterOpen] = useState(false);
 
@@ -1471,11 +1473,11 @@ export default function QuestSimulation() {
                           const retryLosses = retried - retryWins;
                           return (
                             <>
-                              <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono font-black mt-0.5">
+                              <div className="text-xs text-muted-foreground font-medium mt-0.5">
                                 [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
                               </div>
                               {retried > 0 && (
-                                <div className="text-[11px] text-amber-500 dark:text-amber-300 font-mono font-black mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
+                                <div className="text-xs text-amber-500 dark:text-amber-300 font-medium mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
                                   [ 재시도 : {formatNumber(retryWins)}판 / {formatNumber(retryLosses)}판 ]
                                 </div>
                               )}
@@ -1502,7 +1504,7 @@ export default function QuestSimulation() {
                         <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
                           {gearScore.toFixed(1)}
                         </div>
-                        <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono font-black mt-0.5">
+                        <div className="text-xs text-muted-foreground font-medium mt-0.5">
                           [ 장비 평균 : {partyAvgGear.toFixed(2)} ]
                         </div>
                       </>
@@ -2499,7 +2501,7 @@ export default function QuestSimulation() {
                       // Layout: name | [기본: 단일 raw, 광역 raw, 보정%, 단일 일반, 단일 치명, 광역 일반] | 받은 대미지 (전체) [min,avg,max]
                       const renderTotalTable = () => (
                         <div className="mb-4">
-                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">전체</div>
+                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 전체</div>
                           <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                             <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                               <colgroup>
@@ -2579,7 +2581,7 @@ export default function QuestSimulation() {
                       const renderSplitTable = () => {
                         return (
                           <div className="mb-4">
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">단일 / 광역</div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 단일 / 광역</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
@@ -2675,7 +2677,20 @@ export default function QuestSimulation() {
 
                     return (
                       <div>
-                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
+                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setSpecialInfoOpen(v => !v)}
+                            className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
+                            aria-expanded={specialInfoOpen}
+                          >
+                            <Info className="w-4 h-4 text-foreground" />
+                            <span>특수 정보</span>
+                            <span className={`text-xs text-muted-foreground transition-transform ${specialInfoOpen ? 'rotate-0' : '-rotate-90'}`}>▼</span>
+                          </button>
+                          <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} />
+                        </div>
+                        {specialInfoOpen && (
                         <div className="space-y-6">
 
                           {/* ===== Table A: 상어 / 공룡·다이묘 — 해당 파티원만 ===== */}
@@ -2685,7 +2700,7 @@ export default function QuestSimulation() {
                             return (
                               <div className="space-y-4">
                                 <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">상어 (영혼)</div>
+                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 상어 (영혼)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                     <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                       <colgroup>
@@ -2720,7 +2735,7 @@ export default function QuestSimulation() {
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">공룡 / 사무라이(다이묘) (첫 턴)</div>
+                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 공룡 / 사무라이(다이묘) (첫 턴)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                     <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                       <colgroup>
@@ -2766,7 +2781,7 @@ export default function QuestSimulation() {
                             {/* 군주 */}
                             {showLord && (
                               <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">군주 보호</div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 군주 보호</div>
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                   <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
@@ -2818,7 +2833,7 @@ export default function QuestSimulation() {
 
                             {/* 정복자 — 항상 표시, 정복자 아니면 빈 행 */}
                             <div>
-                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">정복자 (스택 0~4)</div>
+                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 정복자 (스택 0~4)</div>
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
@@ -2881,7 +2896,7 @@ export default function QuestSimulation() {
 
                             {/* 닌자/센세 — 항상 표시, 해당 직업 아니면 빈 행 */}
                             <div>
-                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">닌자 / 센세</div>
+                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 닌자 / 센세</div>
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
@@ -2933,7 +2948,7 @@ export default function QuestSimulation() {
 
                           {/* ===== Table C: 광전사 / 잘 (4 stages) ===== */}
                           <div>
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">광전사 / 잘</div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 광전사 / 잘</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
@@ -3031,7 +3046,7 @@ export default function QuestSimulation() {
 
                           {/* ===== Table D: 폴로니아 ===== */}
                           <div>
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">폴로니아</div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 폴로니아</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
@@ -3096,7 +3111,7 @@ export default function QuestSimulation() {
                             const hasRudo = !!displayResults.find(hr => hr.isRudoInParty);
                             return (
                               <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">루도</div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 루도</div>
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                   <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
@@ -3154,7 +3169,7 @@ export default function QuestSimulation() {
                             const hasHemma = !!displayResults.find(hr => hr.isHemmaHero);
                             return (
                               <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">헴마</div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 헴마</div>
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                   <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
@@ -3199,54 +3214,10 @@ export default function QuestSimulation() {
                           })()}
 
                         </div>
+                        )}
                       </div>
                     );
                   })()}
-
-                  {/* Table 5: 시뮬레이션 스탯 */}
-                  <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-foreground" />시뮬레이션 스탯</div>
-                    <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                        <colgroup>
-                          <col style={{ width: '110px' }} />
-                          <col /><col /><col /><col /><col /><col /><col />
-                        </colgroup>
-                        <thead>
-                          <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide whitespace-nowrap"></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">ATK</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">HP</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">DEF</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">CRIT.C</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">CRIT.D</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">CRIT.A</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">EVA</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {zeroBucket ? (
-                            <EmptyBucketRow tab={mainResultsTab} colSpan={8} />
-                          ) : (
-                          <>
-                          {displayResults.map((hr, idx) => (
-                            <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                              <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                              <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(hr.finalAtk)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-orange-500 dark:text-orange-400 whitespace-nowrap">{formatNumber(hr.finalHp)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{formatNumber(hr.finalDef)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{hr.finalCritChance}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">x{(hr.finalCritDmg / 100).toFixed(1)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(hr.finalCritAttack)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-cyan-500 dark:text-cyan-400 whitespace-nowrap">{hr.finalEvasion}%</td>
-                            </tr>
-                          ))}
-                          </>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
                 </div>
               );
             })()}
