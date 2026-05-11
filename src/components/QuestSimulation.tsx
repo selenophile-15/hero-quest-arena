@@ -2874,7 +2874,9 @@ export default function QuestSimulation() {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {!hasPolonia ? (
+                                  {zeroBucket ? (
+                                    <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                  ) : !hasPolonia ? (
                                     <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">폴로니아 챔피언이 파티에 없음</td></tr>
                                   ) : (<>
                                     {displayResults.map((hr, idx) => (
