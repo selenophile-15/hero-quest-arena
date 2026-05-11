@@ -1483,13 +1483,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (hp[i] > 0) simAliveTurns[i] = round;
       }
 
-      // ─── Extreme crit bonus from negative evasion ───
-      // ─── Negative-evasion crit bonus (applies in all modes; ramps up to +5% at eva=-20%) ───
+      // ─── Negative-evasion crit bonus ───
+      // External script applies this ONLY in Extreme mode (Extreme difficulty / Terror Tower scary zones).
       const extremeCritBonus = new Float64Array(numHeroes);
-      for (let i = 0; i < numHeroes; i++) {
-        const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
-        if (totalEva < 0 && !heroArtNoEvasion[i]) {
-          extremeCritBonus[i] = Math.min(-0.25 * totalEva, 0.05);
+      if (isExtreme) {
+        for (let i = 0; i < numHeroes; i++) {
+          const totalEva = heroEvasion[i] + berserkerStage[i] * 0.1 + ninjaEvasion[i];
+          if (totalEva < 0 && !heroArtNoEvasion[i]) {
+            extremeCritBonus[i] = Math.min(-0.25 * totalEva, 0.05);
+          }
         }
       }
 
