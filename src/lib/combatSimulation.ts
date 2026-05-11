@@ -655,7 +655,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   });
 
   const champName = champion?.championName || champion?.name || '';
-  const champTier = champion ? getHeroTier(champion) : 0;
+  const champTier = champion ? getChampionLeaderSkillTier(champion) : 0;
   const aurasong = getAurasongBonuses(champion);
 
   // ─── Bjorn multiplier (flash quest zones) ───
@@ -704,7 +704,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   for (let i = 0; i < numHeroes; i++) {
     const h = activeHeroes[i];
     const ps = precomputedStats?.[i];
-    const tier = getHeroTier(h);
+    const tier = getCombatSkillTier(h);
     heroTier.push(tier);
 
     // Use precomputed stats (from partyBuffCalculator with champion+aurasong+booster)
@@ -3119,7 +3119,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   for (let i = 0; i < numHeroes; i++) {
     const h = activeHeroes[i];
     const ps = precomputedStats?.[i];
-    const tier = h.cardLevel || (h.promoted ? 4 : 1);
+    const tier = getCombatSkillTier(h);
     heroTier.push(tier);
 
     if (ps) {
