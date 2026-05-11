@@ -771,7 +771,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     >해제</button>
                   </div>
                 </div>
-                <div className="max-h-72 overflow-y-auto py-1">
+                <div
+                  className="max-h-72 overflow-y-auto py-1"
+                  onWheel={(e) => { e.stopPropagation(); }}
+                  onWheelCapture={(e) => { e.stopPropagation(); }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
                   {ALL_CATEGORIES.map(c => {
                     const checked = visibleCategories.has(c.key);
                     return (
