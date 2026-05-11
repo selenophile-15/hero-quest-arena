@@ -13,7 +13,6 @@
  */
 
 import { Hero } from '@/types/game';
-import { getChampionSkillsData } from '@/lib/gameData';
 import { ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import { getChampionLeaderSkillTier } from '@/lib/championTier';
 
@@ -211,7 +210,6 @@ export async function calculatePartyBuffs(input: PartyBuffInput): Promise<{
     else if (line === 'spellcaster') numSpellcasters++;
   });
   
-  await getChampionSkillsData();
   const champTier = getChampionLeaderSkillTier(champion);
   const champName = champion.championName || '';
   const bjornMult = isFlashQuest ? 2.0 : 1.0;
