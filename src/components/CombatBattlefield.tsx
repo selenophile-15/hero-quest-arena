@@ -686,15 +686,17 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
           {roundGroups.map(group => {
             if (filter && !isRoundRelevant(group)) return null;
+            const visibleEntries = group.entries.filter(({ entry }) => isCategoryVisible(entry));
+            if (visibleEntries.length === 0) return null;
 
             return (
               <div key={group.round} className="border-b border-border/20">
                 {/* Round header - non-collapsible, just a divider */}
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40">
                   <span className="text-sm font-bold text-foreground">라운드 {group.round}</span>
-                  <span className="text-xs text-muted-foreground ml-auto">{group.entries.length}건</span>
+                  <span className="text-xs text-muted-foreground ml-auto">{visibleEntries.length}건</span>
                 </div>
-                {group.entries.map(({ entry, idx }) => {
+                {visibleEntries.map(({ entry, idx }) => {
                   if (filter && !entryMatchesFilter(entry)) return null;
                   return renderLogEntry(entry, idx);
                 })}
