@@ -528,7 +528,10 @@ export default function QuestSimulation() {
       setSimRunning(false);
     }, 150);
     return () => { clearTimeout(timer); simScheduledRef.current = false; };
-  }, [selectedHeroes.length, selectedBooster, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, buffedStats]);
+    // NOTE: do NOT add selectedBooster / selectedHeroes here — they already trigger
+    // a buffedStats recompute, and listing them again would cause the simulation
+    // effect to fire twice (once with stale buffedStats, once with fresh).
+  }, [buffedStats, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
