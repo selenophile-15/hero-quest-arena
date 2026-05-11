@@ -3214,54 +3214,11 @@ export default function QuestSimulation() {
                           })()}
 
                         </div>
+                        )}
                       </div>
                     );
                   })()}
-
-                  {/* Table 5: 시뮬레이션 스탯 */}
-                  <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-foreground" />시뮬레이션 스탯</div>
-                    <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                        <colgroup>
-                          <col style={{ width: '110px' }} />
-                          <col /><col /><col /><col /><col /><col /><col />
-                        </colgroup>
-                        <thead>
-                          <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide whitespace-nowrap"></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">ATK</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">HP</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">DEF</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">CRIT.C</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">CRIT.D</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">CRIT.A</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">EVA</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {zeroBucket ? (
-                            <EmptyBucketRow tab={mainResultsTab} colSpan={8} />
-                          ) : (
-                          <>
-                          {displayResults.map((hr, idx) => (
-                            <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                              <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                              <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(hr.finalAtk)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-orange-500 dark:text-orange-400 whitespace-nowrap">{formatNumber(hr.finalHp)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-blue-400 whitespace-nowrap">{formatNumber(hr.finalDef)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{hr.finalCritChance}%</td>
-                              <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">x{(hr.finalCritDmg / 100).toFixed(1)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-yellow-300 whitespace-nowrap">{formatNumber(hr.finalCritAttack)}</td>
-                              <td className="py-1 px-2 text-center font-mono text-cyan-500 dark:text-cyan-400 whitespace-nowrap">{hr.finalEvasion}%</td>
-                            </tr>
-                          ))}
-                          </>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                </div>
                 </div>
               );
             })()}
