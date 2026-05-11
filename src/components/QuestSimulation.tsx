@@ -2530,10 +2530,10 @@ export default function QuestSimulation() {
                                       </colgroup>
                                       <thead>
                                         <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">일반</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">치명</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">평균</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">일반</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">치명</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">평균</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -2565,10 +2565,10 @@ export default function QuestSimulation() {
                                       </colgroup>
                                       <thead>
                                         <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">일반</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">치명</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">전체 딜 비중</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">일반</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">치명</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">전체 딜 비중</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -2611,12 +2611,12 @@ export default function QuestSimulation() {
                                     </colgroup>
                                     <thead>
                                       <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">군주</th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">보호받은 동료</th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">군주</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">보호받은 동료</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
                                         </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
                                           <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. 항상 던전 몬스터 원본 대미지 이상으로 받음. (실제 받은 값 / 던전 원본 대미지).'} />
                                         </th>
                                       </tr>
@@ -2664,15 +2664,15 @@ export default function QuestSimulation() {
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">스택</th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">스택</th>
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴의 비율.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
                                         <GroupHeader label="실제 치명 대미지" info={'해당 스택 상태에서의 평균 치명 대미지.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="리셋 비율" info={'해당 스택 상태에서 연속 치명이 끊겨 0으로 초기화된 비율.'} />
                                       </th>
                                     </tr>
@@ -2715,17 +2715,17 @@ export default function QuestSimulation() {
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
                                         <GroupHeader label="보너스 소실" info={'고유 치확/회피 보너스가 사라진 평균 횟수.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="보너스 재생성" info={'센세 한정 — 보너스가 다시 생성된 평균 횟수.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
                                         <GroupHeader label="보너스 ON 평균 대미지" info={'고유 보너스가 활성 상태일 때의 평균 대미지(전체 평균 중 비중%).'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="보너스 OFF 평균 대미지" info={'고유 보너스가 비활성 상태일 때의 평균 대미지(전체 평균 중 비중%).'} />
                                       </th>
                                     </tr>
@@ -2866,14 +2866,14 @@ export default function QuestSimulation() {
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
                                       <GroupHeader label="훔친 수" info={'시뮬레이션 1회당 해당 파티원이 훔친 평균 아이템 수.'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                       <GroupHeader label="훔칠 확률" info={'시뮬레이션에 적용된 훔칠 확률 (폴로니아 리더 스킬 + 사기꾼 1명당 +2%).'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
                                       <GroupHeader label="훔치기 한도" info={'시뮬레이션에 적용된 한도 (기본 20 + 사기꾼 1명당 +2).'} />
                                     </th>
                                   </tr>
@@ -2931,14 +2931,14 @@ export default function QuestSimulation() {
                                     </colgroup>
                                     <thead>
                                       <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
                                           <GroupHeader label="흡수 턴" info={'헴마 흡수가 적용된 평균 턴 수.'} />
                                         </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="흡수 공격력" info={'헴마 흡수로 증가한 평균 공격 대미지.'} />
                                         </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
                                           <GroupHeader label="깎인 체력" info={'헴마 흡수로 인해 평균 깎인 동료의 체력. (헴마 본인 행: 표시 안 함)'} />
                                         </th>
                                       </tr>
@@ -2982,14 +2982,14 @@ export default function QuestSimulation() {
                         </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap"></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">ATK</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">HP</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">DEF</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">CRIT.C</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">CRIT.D</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">CRIT.A</th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/25 via-primary/15 to-primary/5 text-foreground font-bold tracking-wide">EVA</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide whitespace-nowrap"></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">ATK</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">HP</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">DEF</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">CRIT.C</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">CRIT.D</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">CRIT.A</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">EVA</th>
                           </tr>
                         </thead>
                         <tbody>
