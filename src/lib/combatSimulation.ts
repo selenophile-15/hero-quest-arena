@@ -1289,6 +1289,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
+  const conqStackTotalDmgAccum = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
   // Ninja/Sensei innate tracking
   const innateLossAccum = new Float64Array(numHeroes);
   const innateRegenAccum = new Float64Array(numHeroes);
