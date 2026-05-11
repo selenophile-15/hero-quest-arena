@@ -213,8 +213,16 @@ export default function QuestSimulation() {
     const extras = fallbackHeroes.filter(h => !ids.has(h.id));
     return [...allHeroesBase, ...extras];
   }, [allHeroesBase, fallbackHeroes]);
+  // Only bump heroesVersion when the underlying data actually changed (prevents needless sim re-runs on window focus)
+  const lastHeroesHashRef = useRef<string>(JSON.stringify(allHeroesBase));
   useEffect(() => {
-    const refresh = () => setHeroesVersion(v => v + 1);
+    const refresh = () => {
+      const next = JSON.stringify(getHeroes());
+      if (next !== lastHeroesHashRef.current) {
+        lastHeroesHashRef.current = next;
+        setHeroesVersion(v => v + 1);
+      }
+    };
     window.addEventListener('heroes-updated', refresh);
     window.addEventListener('storage', refresh);
     window.addEventListener('focus', refresh);
