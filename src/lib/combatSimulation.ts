@@ -3255,6 +3255,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
   // Daimyo: guaranteed evade on first monster attack (one-time)
   const daimyoGuaranteedEvade: boolean[] = heroIsDaimyoFlag.map(v => v);
+  // Lilu death tracking (to log when her leader heal expires)
+  let liluHealExpiredLogged = false;
 
   // Polonia state
   const isPoloniaChamp = champName.includes('폴로니아') || champName === 'Polonia';
