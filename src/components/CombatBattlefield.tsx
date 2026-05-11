@@ -621,7 +621,57 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
         <div ref={logScrollRef} className="overflow-y-auto rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/30 via-background/30 to-secondary/20 flex-1 min-h-0 shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
           {/* Controls inside log box */}
-          <div className="sticky top-0 z-20 flex justify-end gap-1.5 px-2 py-1 bg-secondary/80 backdrop-blur-sm border-b border-primary/20">
+          <div className="sticky top-0 z-20 flex items-center justify-end gap-1.5 px-2 py-1 bg-secondary/80 backdrop-blur-sm border-b border-primary/20">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs gap-1 h-6 px-2"
+                  title="표시 항목 선택"
+                >
+                  <Settings className="w-3 h-3" />
+                  표시 항목
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-72 p-0">
+                <div className="px-3 py-2 border-b border-border/40 flex items-center justify-between">
+                  <span className="text-sm font-bold">로그 표시 항목</span>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      className="text-[10px] text-muted-foreground hover:text-foreground underline"
+                      onClick={() => setVisibleCategories(new Set(ALL_CATEGORIES.map(c => c.key)))}
+                    >전체</button>
+                    <span className="text-[10px] text-muted-foreground">/</span>
+                    <button
+                      type="button"
+                      className="text-[10px] text-muted-foreground hover:text-foreground underline"
+                      onClick={() => setVisibleCategories(new Set())}
+                    >해제</button>
+                  </div>
+                </div>
+                <div className="max-h-72 overflow-y-auto py-1">
+                  {ALL_CATEGORIES.map(c => {
+                    const checked = visibleCategories.has(c.key);
+                    return (
+                      <label
+                        key={c.key}
+                        className="flex items-start gap-2 px-3 py-1.5 hover:bg-secondary/40 cursor-pointer text-xs"
+                      >
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 accent-primary"
+                          checked={checked}
+                          onChange={() => toggleCategory(c.key)}
+                        />
+                        <span className="leading-tight">{c.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button
               variant="outline"
               size="sm"
