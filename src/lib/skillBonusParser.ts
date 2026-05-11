@@ -60,6 +60,7 @@ export interface SkillBonusSource {
   critDmg: number;
   evasion: number;
   threat: number;
+  regenPerTurn?: number; // 매 턴 체력 재생
 }
 
 export interface SkillBonusInput {
