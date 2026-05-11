@@ -418,9 +418,19 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       title={isOtherChampion ? '파티에 챔피언은 1명만 가능' : undefined}>
                       {/* 유형 */}
                       <td className="py-1.5 px-1.5 text-center">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold text-white ${hero.type === 'champion' ? 'bg-purple-600' : 'bg-sky-600'}`}>
-                          {hero.type === 'champion' ? '챔피언' : '영웅'}
-                        </span>
+                        {hero.type === 'champion' ? (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold text-white bg-purple-600">
+                            챔피언
+                          </span>
+                        ) : (
+                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold text-white ${
+                            hero.classLine === '전사' ? 'bg-red-600' :
+                            hero.classLine === '로그' ? 'bg-lime-700' :
+                            'bg-sky-600'
+                          }`}>
+                            영웅
+                          </span>
+                        )}
                       </td>
                       {/* 직업: hero=job icon+name, champion=champion icon+name */}
                       <td className="py-1.5 px-1 text-center">
