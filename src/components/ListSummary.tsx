@@ -351,7 +351,7 @@ function MatrixGrid({ allHeroes, ownedIds, plannedIds, onAdd }: {
         </Button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-lg border border-border/70 shadow-[inset_0_0_0_1px_hsla(var(--primary)/0.08)]">
         <table className="w-full text-xs border-collapse table-fixed">
           <thead>
             <tr className="border-b-2 border-border">
@@ -427,14 +427,42 @@ function DistBar({ label, labelNode, total, owned, planned, maxCount, color }: {
 }) {
   const ownedPct = (owned / maxCount) * 100;
   const plannedPct = (planned / maxCount) * 100;
+  const ownedSheen = 'linear-gradient(180deg, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.05) 45%, rgba(0,0,0,0.18) 100%)';
   return (
     <div className="flex items-center gap-2">
       <div className="w-20 text-right flex items-center justify-end gap-1">
         {labelNode || <span className="text-sm font-medium text-foreground">{label}</span>}
       </div>
-      <div className="flex-1 h-5 bg-secondary/20 rounded overflow-hidden flex">
-        {owned > 0 && <div className="h-full transition-all" style={{ width: `${ownedPct}%`, backgroundColor: color }} />}
-        {planned > 0 && <div className="h-full transition-all" style={{ width: `${plannedPct}%`, backgroundColor: color, opacity: 0.4 }} />}
+      <div
+        className="flex-1 h-5 rounded-full overflow-hidden flex border border-border/50"
+        style={{
+          background: 'linear-gradient(180deg, hsla(0,0%,0%,0.18), hsla(0,0%,100%,0.04))',
+          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.05)',
+        }}
+      >
+        {owned > 0 && (
+          <div
+            className="h-full transition-all"
+            style={{
+              width: `${ownedPct}%`,
+              backgroundColor: color,
+              backgroundImage: ownedSheen,
+              boxShadow: `0 0 10px ${color}66, inset 0 0 0 1px rgba(255,255,255,0.18)`,
+            }}
+          />
+        )}
+        {planned > 0 && (
+          <div
+            className="h-full transition-all"
+            style={{
+              width: `${plannedPct}%`,
+              backgroundColor: 'transparent',
+              backgroundImage: `repeating-linear-gradient(45deg, ${color}cc 0 6px, ${color}55 6px 12px)`,
+              boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.1)`,
+              opacity: 0.75,
+            }}
+          />
+        )}
       </div>
       <span className="text-sm font-bold text-foreground tabular-nums w-6 text-right">{total}</span>
       <span className="text-sm font-bold text-muted-foreground tabular-nums w-16 text-right -ml-1">
@@ -682,7 +710,7 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
 
   return (
     <div className="space-y-4">
-      <div ref={summaryRef} data-summary-screenshot className="space-y-4">
+      <div ref={summaryRef} data-summary-screenshot data-hero-list-glow className="space-y-4">
       <MatrixGrid
         allHeroes={heroes}
         ownedIds={ownedSet}
