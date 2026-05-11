@@ -1028,12 +1028,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   } // end else (no precomputed stats)
 
   // ─── Damage taken calculation (using actual defense thresholds) ───
+  // Mundra spirit: when fighting a boss, adds +20% per stack to BOTH ATK and DEF
+  // (matches the detail-stats label '문드라 - 보스 상대 공격력/방어력 증가%').
+  // DEF bonus is constant per-hero, so we fold it into finalDef once here.
   const damageTaken: number[] = [];
   const critDamageTaken: number[] = [];
   const defThresholds: DefThresholds = monster.def;
 
   for (let i = 0; i < numHeroes; i++) {
-    const dmg = calcDamageTakenWithThresholds(finalDef[i], mobDamage, defThresholds);
+    let effDef = finalDef[i];
+    if (monster.isBoss && heroMundra[i] > 0) {
+      // Add atkConstant-equivalent for DEF: defConstant * 0.2 * mundra * partyDefMult
+      const defCondAdd = heroDefConst[i] * 0.2 * heroMundra[i] * (heroPartyDefMult[i] || 1);
+      effDef = finalDef[i] + defCondAdd;
+    }
+    const dmg = calcDamageTakenWithThresholds(effDef, mobDamage, defThresholds);
     damageTaken.push(dmg);
     critDamageTaken.push(calcCritDamageTaken(dmg, mobDamage));
   }
