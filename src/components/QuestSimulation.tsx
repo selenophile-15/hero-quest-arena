@@ -2743,7 +2743,7 @@ export default function QuestSimulation() {
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
                                     <col style={{ width: '110px' }} /><col style={{ width: '60px' }} /><col style={{ width: '120px' }} />
-                                    <col style={{ width: '110px' }} /><col /><col /><col />
+                                    <col style={{ width: '120px' }} /><col style={{ width: '120px' }} /><col /><col />
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
@@ -2753,7 +2753,7 @@ export default function QuestSimulation() {
                                         <GroupHeader label="치댐 증가량" info={'해당 스택에서 더해지는 치명타 대미지 계수(+25%/스택, 최대 +100%).'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap">
-                                        <GroupHeader label="최종 치명타 대미지" info={'기본 치명타 대미지 계수에 스택 보너스를 더한 최종 치명타 대미지 계수.'} />
+                                        <GroupHeader label="최종 치댐" info={'기본 치명타 대미지 계수에 스택 보너스를 더한 최종 치명타 대미지 계수.'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴의 비율.'} />
@@ -2762,7 +2762,7 @@ export default function QuestSimulation() {
                                         <GroupHeader label="단계별 치명타 대미지" info={'평균 공격력 × (기본 치명타 대미지 계수 + 스택 보너스). 해당 스택에서 치명타가 터졌을 때 들어가는 대미지의 이론값.'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="평균 대미지" info={'해당 스택에서 친 모든 공격(일반+치명) 대미지 합산 ÷ 전체 공격 횟수. 공격 비율이 높을수록 값이 커집니다.'} />
+                                        <GroupHeader label="평균 대미지" info={'한 판에서 해당 스택 상태가 평균적으로 기여한 누적 대미지. (모든 판의 해당 스택 대미지 합산 ÷ 전체 판 수). 공격 비율과 한방 세기를 모두 반영합니다.'} />
                                       </th>
                                     </tr>
                                   </thead>
