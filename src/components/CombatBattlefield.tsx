@@ -56,6 +56,65 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const logScrollRef = useRef<HTMLDivElement>(null);
 
+  // Category visibility toggles (gear-icon menu)
+  type CategoryKey =
+    | 'attacks' | 'evasion' | 'death' | 'heal' | 'result'
+    | 'classBonus' | 'spiritBonus' | 'leaderBonus' | 'protection' | 'retry' | 'execute' | 'survival' | 'stack' | 'system';
+  const ALL_CATEGORIES: { key: CategoryKey; label: string }[] = [
+    { key: 'attacks', label: '공격 (피해/치명타/광역)' },
+    { key: 'evasion', label: '회피' },
+    { key: 'death', label: '사망' },
+    { key: 'heal', label: '회복/재생' },
+    { key: 'result', label: '전투 결과' },
+    { key: 'classBonus', label: '직업 보너스 (닌자/무희/광전사/사무라이 등)' },
+    { key: 'spiritBonus', label: '영혼 보너스 (상어/공룡)' },
+    { key: 'leaderBonus', label: '챔피언 리더 스킬 (헴마/루도 등)' },
+    { key: 'protection', label: '군주 보호' },
+    { key: 'retry', label: '크로노맨서/페이트위버 재시도' },
+    { key: 'execute', label: '어둠의 기사 처형' },
+    { key: 'survival', label: '치명타 생존' },
+    { key: 'stack', label: '정복자 스택' },
+    { key: 'system', label: '시스템/기타' },
+  ];
+  const [visibleCategories, setVisibleCategories] = useState<Set<CategoryKey>>(
+    () => new Set(ALL_CATEGORIES.map(c => c.key))
+  );
+  const toggleCategory = (k: CategoryKey) => {
+    setVisibleCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(k)) next.delete(k); else next.add(k);
+      return next;
+    });
+  };
+
+  // Classify a log entry into a category for the gear-icon filter
+  const classifyEntry = useCallback((entry: CombatLogEntry): CategoryKey => {
+    if (entry.type === 'hero_attack' || entry.type === 'monster_attack') return 'attacks';
+    if (entry.type === 'result') return 'result';
+    if (entry.type === 'heal') return 'heal';
+    if (entry.type === 'event') {
+      const d = entry.detail || '';
+      if (d.includes('회피')) return 'evasion';
+      if (d.includes('사망')) return 'death';
+      if (d.includes('재생') || d.includes('회복')) return 'heal';
+      if (d.includes('재시도') || d.includes('크로노') || d.includes('페이트')) return 'retry';
+      if (d.includes('처형')) return 'execute';
+      if (d.includes('치명타 생존') || d.includes('생존')) return 'survival';
+      if (d.includes('정복자') || d.includes('스택')) return 'stack';
+      if (d.includes('군주') || d.includes('보호') || d.includes('대신')) return 'protection';
+      if (d.includes('헴마') || d.includes('루도') || d.includes('리더') || d.includes('파티에') || d.includes('지속')) return 'leaderBonus';
+      if (d.includes('상어') || d.includes('공룡') || d.includes('영혼')) return 'spiritBonus';
+      if (d.includes('닌자') || d.includes('센세') || d.includes('무희') || d.includes('곡예') || d.includes('광전사') || d.includes('잘') || d.includes('사무라이') || d.includes('다이묘') || d.includes('직업') || d.includes('첫 턴')) return 'classBonus';
+      return 'system';
+    }
+    return 'system';
+  }, []);
+
+  const isCategoryVisible = useCallback((entry: CombatLogEntry) => {
+    return visibleCategories.has(classifyEntry(entry));
+  }, [visibleCategories, classifyEntry]);
+
+
   // Adaptive colors for light/dark mode
   const C = useMemo(() => ({
     yellow: isLight ? '#a16207' : '#facc15',
