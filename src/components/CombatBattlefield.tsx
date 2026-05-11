@@ -715,8 +715,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             return (
               <div key={group.round} className="border-b border-border/20">
                 {/* Round header - non-collapsible, just a divider */}
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40">
-                  <span className="text-sm font-bold text-foreground">라운드 {group.round}</span>
+                <div className={`flex items-center gap-2 px-3 py-1.5 border-b ${isLight ? 'bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20' : 'bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-primary/30'}`}>
+                  <span className={`text-sm font-bold ${isLight ? 'text-primary' : 'text-foreground'}`}>라운드 {group.round}</span>
                   <span className="text-xs text-muted-foreground ml-auto">{visibleEntries.length}건</span>
                 </div>
                 {visibleEntries.map(({ entry, idx }) => {
