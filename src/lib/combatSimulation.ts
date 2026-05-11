@@ -2571,7 +2571,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       normalDmgDealtAvg: dNorm / bucketCount,
       critDmgDealtAvg: dCrit / bucketCount,
       avgDamagePerTurn: avgR > 0 ? (dDealt / bucketCount) / avgR : 0,
+      minDamagePerTurn: bucket === 'win'
+        ? (winDmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(winDmgDealtPerTurnMin[i]))
+        : (loseDmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(loseDmgDealtPerTurnMin[i])),
+      maxDamagePerTurn: bucket === 'win' ? Math.round(winDmgDealtPerTurnMax[i]) : Math.round(loseDmgDealtPerTurnMax[i]),
       totalDamageTakenAvg: Math.round(dTaken / bucketCount),
+      totalDamageTakenAvgWhenHit: (() => {
+        const hits = bucket === 'win' ? winTotalDmgTakenHitSims[i] : loseTotalDmgTakenHitSims[i];
+        return hits > 0 ? Math.round(dTaken / hits) : 0;
+      })(),
       minDamageTaken: bucket === 'win'
         ? (winDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winDmgTakenMin[i]))
         : (loseDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseDmgTakenMin[i])),
@@ -2581,6 +2589,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       singleDmgTakenAvg: bucket === 'win'
         ? Math.round(winSingleDmgTakenAccum[i] / bucketCount)
         : Math.round(loseSingleDmgTakenAccum[i] / bucketCount),
+      singleDmgTakenAvgWhenHit: (() => {
+        const hits = bucket === 'win' ? winSingleDmgTakenHitSims[i] : loseSingleDmgTakenHitSims[i];
+        const accum = bucket === 'win' ? winSingleDmgTakenAccum[i] : loseSingleDmgTakenAccum[i];
+        return hits > 0 ? Math.round(accum / hits) : 0;
+      })(),
       singleDmgTakenMin: bucket === 'win'
         ? (winSingleDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winSingleDmgTakenMin[i]))
         : (loseSingleDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseSingleDmgTakenMin[i])),
@@ -2589,6 +2602,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       aoeDmgTakenAvg: bucket === 'win'
         ? Math.round(winAoeDmgTakenAccum[i] / bucketCount)
         : Math.round(loseAoeDmgTakenAccum[i] / bucketCount),
+      aoeDmgTakenAvgWhenHit: (() => {
+        const hits = bucket === 'win' ? winAoeDmgTakenHitSims[i] : loseAoeDmgTakenHitSims[i];
+        const accum = bucket === 'win' ? winAoeDmgTakenAccum[i] : loseAoeDmgTakenAccum[i];
+        return hits > 0 ? Math.round(accum / hits) : 0;
+      })(),
       aoeDmgTakenMin: bucket === 'win'
         ? (winAoeDmgTakenMin[i] >= 1e9 ? 0 : Math.round(winAoeDmgTakenMin[i]))
         : (loseAoeDmgTakenMin[i] >= 1e9 ? 0 : Math.round(loseAoeDmgTakenMin[i])),
