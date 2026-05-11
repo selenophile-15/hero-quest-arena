@@ -88,6 +88,9 @@ export interface HeroSimResult {
   critDmgDealtAvg: number;     // Average total crit damage
   // Per-turn damage
   avgDamagePerTurn: number;
+  // Per-turn damage min/max (across sims; per-sim = damageFight/round)
+  minDamagePerTurn?: number;
+  maxDamagePerTurn?: number;
   // Incoming damage stats (per hit, not total)
   normalDamageTaken: number;     // Single normal hit damage
   aoeDamageTaken: number;        // Single AoE hit damage
