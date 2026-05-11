@@ -2753,7 +2753,7 @@ export default function QuestSimulation() {
                                         <GroupHeader label="치댐 증가량" info={'해당 스택에서 더해지는 치명타 대미지 계수(+25%/스택, 최대 +100%).'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap">
-                                        <GroupHeader label="최종 치명타 대미지" info={'기본 치명타 대미지 계수에 스택 보너스를 더한 최종 치명타 대미지 계수.'} />
+                                        <GroupHeader label="최종 치댐" info={'기본 치명타 대미지 계수에 스택 보너스를 더한 최종 치명타 대미지 계수.'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴의 비율.'} />
