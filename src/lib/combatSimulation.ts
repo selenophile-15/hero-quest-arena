@@ -1503,7 +1503,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             simTimesHit[i]++;
 
             if (hp[i] <= 0) {
-              const survived = handleFatalBlow(i);
+              const survived = handleFatalBlow(i, dmg);
               if (!survived) {
                 // Lord save check (lords cannot protect lords)
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
@@ -1520,7 +1520,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   simLordSavedAoeDmg[i] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (hp[lordHero] <= 0) {
-                    if (!handleFatalBlow(lordHero)) {
+                    if (!handleFatalBlow(lordHero, lordDmg)) {
                       hp[lordHero] = 0;
                       heroesAlive--;
                       updateTarget = true;
@@ -1581,7 +1581,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           else simSingleNormalHits[target]++;
 
           if (hp[target] <= 0) {
-            const survived = handleFatalBlow(target);
+            const survived = handleFatalBlow(target, dmg);
             if (!survived) {
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
@@ -1599,7 +1599,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 simLordSavedSingleDmg[target] += lordDmg;
                 hp[lordHero] -= lordDmg;
                 if (hp[lordHero] <= 0) {
-                  if (!handleFatalBlow(lordHero)) {
+                  if (!handleFatalBlow(lordHero, lordDmg)) {
                     hp[lordHero] = 0;
                     heroesAlive--;
                     updateTarget = true;
