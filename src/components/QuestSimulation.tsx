@@ -3269,6 +3269,7 @@ export default function QuestSimulation() {
               heroes={selectedHeroes}
               monsterHp={currentQuest?.hp || 0}
               monsterName={locationName}
+              monsterImage={centerImage}
               onNewBattle={() => {
                 if (!currentQuest || !currentRegion) return;
                 const isTerrorTower2 = selectedQuestType === 'tot' && currentRegion.name === '공포';
