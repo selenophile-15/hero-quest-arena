@@ -3030,22 +3030,23 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmgBase, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
         heroHp[i] -= dmg;
-        // Fatal blow survival check (armadillo spirit, cleric, bishop)
+        // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
         if (heroHp[i] <= 0) {
           let survived = false;
           if (heroIsClericFlag[i] || heroIsBishopFlag[i]) {
-            heroHp[i] = 1;
+            heroHp[i] += dmg;
             survived = true;
-            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! HP 1로 생존` });
+            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
             // Disable further survival for this hero
             heroIsClericFlag[i] = false;
             heroIsBishopFlag[i] = false;
           } else if (heroArmadilloVal[i] > 0) {
             const armadilloChance = heroArmadilloVal[i] / 100;
             if (Math.random() < armadilloChance) {
-              heroHp[i] = 1;
+              heroHp[i] += dmg;
               survived = true;
-              log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `아르마딜로 치명타 생존 발동! HP 1로 생존` });
+              log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `아르마딜로 치명타 생존 발동! 대미지 무시` });
+              heroArmadilloVal[i] = 0;
             }
           }
         }
@@ -3092,21 +3093,22 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const normalDmg = calcDamageTaken(heroDefVal[target], mobDamage, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, mobDamage) : normalDmg;
         heroHp[target] -= dmg;
-        // Fatal blow survival check (cleric/bishop, armadillo)
+        // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
         if (heroHp[target] <= 0) {
           let survived = false;
           if (heroIsClericFlag[target] || heroIsBishopFlag[target]) {
-            heroHp[target] = 1;
+            heroHp[target] += dmg;
             survived = true;
-            log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${heroIsClericFlag[target] ? '클레릭' : '비숍'} 치명타 생존 발동! HP 1로 생존` });
+            log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${heroIsClericFlag[target] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
             heroIsClericFlag[target] = false;
             heroIsBishopFlag[target] = false;
           } else if (heroArmadilloVal[target] > 0) {
             const armadilloChance = heroArmadilloVal[target] / 100;
             if (Math.random() < armadilloChance) {
-              heroHp[target] = 1;
+              heroHp[target] += dmg;
               survived = true;
-              log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `아르마딜로 치명타 생존 발동! HP 1로 생존` });
+              log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `아르마딜로 치명타 생존 발동! 대미지 무시` });
+              heroArmadilloVal[target] = 0;
             }
           }
         }
