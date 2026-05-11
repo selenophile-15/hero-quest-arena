@@ -1469,11 +1469,11 @@ export default function QuestSimulation() {
                           const retryLosses = retried - retryWins;
                           return (
                             <>
-                              <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono mt-0.5">
+                              <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono font-black mt-0.5">
                                 [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
                               </div>
                               {retried > 0 && (
-                                <div className="text-[11px] text-amber-500 dark:text-amber-300 font-mono mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
+                                <div className="text-[11px] text-amber-500 dark:text-amber-300 font-mono font-black mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
                                   [ 재시도 : {formatNumber(retryWins)}판 / {formatNumber(retryLosses)}판 ]
                                 </div>
                               )}
