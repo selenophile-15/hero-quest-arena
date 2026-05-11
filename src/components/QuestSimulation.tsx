@@ -2987,6 +2987,8 @@ export default function QuestSimulation() {
                               <td className="py-1 px-2 text-center font-mono text-cyan-500 dark:text-cyan-400 whitespace-nowrap">{hr.finalEvasion}%</td>
                             </tr>
                           ))}
+                          </>
+                          )}
                         </tbody>
                       </table>
                     </div>
