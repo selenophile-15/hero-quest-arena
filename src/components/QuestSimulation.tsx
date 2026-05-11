@@ -2165,7 +2165,7 @@ export default function QuestSimulation() {
                               <GroupHeader label="치명타 생존" info={'· 확률: 치명타 생존 발동 확률 (스탯 기준).\n· 발동 비율: 전체 시뮬레이션 중 치명타 생존이 한 번이라도 발동된 판의 비율.'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>
-                              <GroupHeader label="회복" info={'· 턴: 평균 턴당 회복량.\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
+                              <GroupHeader label="회복" info={'· 턴: 매턴 실제 체력 재생 수치 (도마뱀 영혼 + 클레릭/비숍 회복 + 릴루 등 챔피언 회복 합산).\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
                             </th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
