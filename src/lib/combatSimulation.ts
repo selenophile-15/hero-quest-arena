@@ -1859,6 +1859,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         damageFight[jj] += damage;
         if (isCrit) critDmgFight[jj] += damage;
         else normalDmgFight[jj] += damage;
+        // Per-hit (per-attack-action) tracking for min/max
+        simAttackCount[jj]++;
+        if (damage > 0) {
+          if (damage < dmgPerHitMin[jj]) dmgPerHitMin[jj] = damage;
+          if (damage > dmgPerHitMax[jj]) dmgPerHitMax[jj] = damage;
+        }
 
         // Conqueror per-stack tracking
         if (heroIsConquistador[jj]) {
