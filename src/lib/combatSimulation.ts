@@ -3077,13 +3077,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   if (activeHeroes.length === 0) return [{ round: 0, type: 'result', actor: '시스템', detail: '활성 영웅 없음' }];
 
   const numHeroes = activeHeroes.length;
-  const champion = activeHeroes.find(h => h.type === 'champion') || null;
+  const championIdx = activeHeroes.findIndex(h => h.type === 'champion');
+  const champion = championIdx >= 0 ? activeHeroes[championIdx] : null;
   const champName = champion?.championName || champion?.name || '';
   const champTier = champion ? getChampionLeaderSkillTier(champion) : 0;
   const rudoBonusBase = champName.includes('루도') || champName === 'Rudo'
     ? (champTier === 1 ? 0.3 : champTier === 2 ? 0.4 : champTier >= 3 ? 0.5 : 0)
     : 0;
   const rudoRounds = rudoBonusBase > 0 ? (champTier <= 2 ? 2 : champTier === 3 ? 3 : 4) : 0;
+  // Lilu leader skill: flat per-turn party heal (only while Lilu is alive)
+  const isLiluChamp = champName.includes('릴루') || champName === 'Lilu';
+  const liluHealFlat = isLiluChamp
+    ? (champTier === 1 ? 3 : champTier === 2 ? 5 : champTier === 3 ? 10 : champTier >= 4 ? 20 : 0)
+    : 0;
   const isExtreme = monster.isExtreme || isTerrorTower;
 
   // Mini boss modifiers
