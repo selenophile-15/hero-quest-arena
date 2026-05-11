@@ -2440,6 +2440,10 @@ export default function QuestSimulation() {
                                   </tr>
                                 </thead>
                                 <tbody>
+                                  {zeroBucket ? (
+                                    <EmptyBucketRow tab={mainResultsTab} colSpan={8} />
+                                  ) : (
+                                  <>
                                   {displayResults.map((hr, idx) => {
                                     const sMin = hr.singleDmgTakenMin ?? 0;
                                     const sAvg = hr.singleDmgTakenAvg ?? 0;
