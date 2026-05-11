@@ -216,6 +216,7 @@ export interface HeroSimResult {
   // Conqueror per-stack metrics (index 0..4 = stack count)
   conquerorStackTurnRate?: number[];   // % of attack-turns spent at each stack (0..4)
   conquerorStackCritDmg?: number[];    // avg crit damage dealt at each stack
+  conquerorStackAvgDmg?: number[];     // avg damage dealt at each stack (all attacks)
   conquerorStackResetRate?: number[];  // % of attacks at this stack that ended in reset (non-crit)
   conquerorAvgStack?: number;          // overall avg stack count when attacking
   conquerorAvgCritBonus?: number;      // overall avg crit% bonus from stacks (0..100)
