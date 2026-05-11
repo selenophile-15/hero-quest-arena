@@ -2499,7 +2499,7 @@ export default function QuestSimulation() {
                       // Layout: name | [기본: 단일 raw, 광역 raw, 보정%, 단일 일반, 단일 치명, 광역 일반] | 받은 대미지 (전체) [min,avg,max]
                       const renderTotalTable = () => (
                         <div className="mb-4">
-                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">전체</div>
+                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 전체</div>
                           <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                             <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                               <colgroup>
@@ -2579,7 +2579,7 @@ export default function QuestSimulation() {
                       const renderSplitTable = () => {
                         return (
                           <div className="mb-4">
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">단일 / 광역</div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 단일 / 광역</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
@@ -2685,7 +2685,7 @@ export default function QuestSimulation() {
                             return (
                               <div className="space-y-4">
                                 <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">상어 (영혼)</div>
+                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 상어 (영혼)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                     <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                       <colgroup>
@@ -2720,7 +2720,7 @@ export default function QuestSimulation() {
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">공룡 / 사무라이(다이묘) (첫 턴)</div>
+                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 공룡 / 사무라이(다이묘) (첫 턴)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                     <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                       <colgroup>
@@ -2766,7 +2766,7 @@ export default function QuestSimulation() {
                             {/* 군주 */}
                             {showLord && (
                               <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">군주 보호</div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 군주 보호</div>
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                   <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
@@ -2818,7 +2818,7 @@ export default function QuestSimulation() {
 
                             {/* 정복자 — 항상 표시, 정복자 아니면 빈 행 */}
                             <div>
-                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">정복자 (스택 0~4)</div>
+                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 정복자 (스택 0~4)</div>
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
@@ -2881,7 +2881,7 @@ export default function QuestSimulation() {
 
                             {/* 닌자/센세 — 항상 표시, 해당 직업 아니면 빈 행 */}
                             <div>
-                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">닌자 / 센세</div>
+                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 닌자 / 센세</div>
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                 <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
@@ -2933,7 +2933,7 @@ export default function QuestSimulation() {
 
                           {/* ===== Table C: 광전사 / 잘 (4 stages) ===== */}
                           <div>
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">광전사 / 잘</div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 광전사 / 잘</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
@@ -3031,7 +3031,7 @@ export default function QuestSimulation() {
 
                           {/* ===== Table D: 폴로니아 ===== */}
                           <div>
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">폴로니아</div>
+                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 폴로니아</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
@@ -3096,7 +3096,7 @@ export default function QuestSimulation() {
                             const hasRudo = !!displayResults.find(hr => hr.isRudoInParty);
                             return (
                               <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">루도</div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 루도</div>
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                   <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
@@ -3154,7 +3154,7 @@ export default function QuestSimulation() {
                             const hasHemma = !!displayResults.find(hr => hr.isHemmaHero);
                             return (
                               <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">헴마</div>
+                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 헴마</div>
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                   <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
