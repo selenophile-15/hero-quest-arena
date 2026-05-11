@@ -72,7 +72,7 @@ const JOB_FILTER_ORDER = [
   '마법사', '대마법사', '성직자', '비숍', '드루이드', '아크 드루이드', '소서러', '워록', '마법검', '스펠나이트', '풍수사', '아스트라맨서', '크로노맨서', '페이트위버',
 ];
 
-type SortKey = 'heroClass' | 'level' | 'power' | 'atk' | 'def' | 'hp' | 'name' | 'crit' | 'critDmg' | 'evasion' | 'element' | 'position';
+type SortKey = 'heroClass' | 'level' | 'power' | 'atk' | 'def' | 'hp' | 'name' | 'crit' | 'critDmg' | 'evasion' | 'element' | 'position' | 'type';
 type JobImageMode = 'icon' | 'illust' | 'none';
 
 // Equipment quality styles
