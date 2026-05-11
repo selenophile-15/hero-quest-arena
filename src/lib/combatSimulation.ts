@@ -3424,27 +3424,26 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
         const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmgBase, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
-        heroHp[i] -= dmg;
-        // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
-        if (heroHp[i] <= 0) {
-          let survived = false;
-          if (heroIsClericFlag[i] || heroIsBishopFlag[i]) {
-            heroHp[i] += dmg;
-            survived = true;
-            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
-            // Disable further survival for this hero
-            heroIsClericFlag[i] = false;
-            heroIsBishopFlag[i] = false;
-          } else if (heroArmadilloVal[i] > 0) {
-            const armadilloChance = heroArmadilloVal[i] / 100;
-            if (Math.random() < armadilloChance) {
-              heroHp[i] += dmg;
-              survived = true;
-              log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `아르마딜로 치명타 생존 발동! 대미지 무시` });
-              heroArmadilloVal[i] = 0;
-            }
-          }
-        }
+         heroHp[i] -= dmg;
+         // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
+         // Strict: each hero can trigger survival at most once per combat
+         if (heroHp[i] <= 0 && !heroSurvivalUsed[i]) {
+           if (heroIsClericFlag[i] || heroIsBishopFlag[i]) {
+             heroHp[i] += dmg;
+             heroSurvivalUsed[i] = true;
+             log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
+             heroIsClericFlag[i] = false;
+             heroIsBishopFlag[i] = false;
+           } else if (heroArmadilloVal[i] > 0) {
+             const armadilloChance = heroArmadilloVal[i] / 100;
+             if (Math.random() < armadilloChance) {
+               heroHp[i] += dmg;
+               heroSurvivalUsed[i] = true;
+               log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `치명타 생존 발동! 대미지 무시` });
+               heroArmadilloVal[i] = 0;
+             }
+           }
+         }
         const hpPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
         log.push({ round, type: 'monster_attack', actor: mobDisplayName, target: activeHeroes[i].name, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${activeHeroes[i].name} HP: ${formatNum(Math.max(0, heroHp[i]))} (${hpPct.toFixed(0)}%))` });
         if (heroHp[i] <= 0) { heroesAlive--; log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `사망!` }); }
