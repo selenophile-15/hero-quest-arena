@@ -1789,7 +1789,7 @@ export default function QuestSimulation() {
                 <Crown className="w-5 h-5 text-primary" />
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
                 {currentQuest && simResult && selectedHeroes.length > 0 && (
-                  <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} />
+                  <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} />
                 )}
               </div>
 
@@ -2107,7 +2107,7 @@ export default function QuestSimulation() {
                 <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />가하는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />가하는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
                     <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
@@ -2243,7 +2243,7 @@ export default function QuestSimulation() {
                     const hpKey = mainResultsTab === 'win' ? 'win' : mainResultsTab === 'lose' ? 'lose' : 'all';
                     return (
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2"><span className="flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</span><ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2"><span className="flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</span><ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
                     <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                       <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                         <colgroup>
@@ -2371,7 +2371,7 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 받는 대미지 — 전체(단일+광역) / 단일+광역 합본 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
                     {(() => {
                       const blank = '';
                       const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
@@ -2573,7 +2573,7 @@ export default function QuestSimulation() {
 
                     return (
                       <div>
-                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Flame className="w-4 h-4 text-foreground" />특수 정보<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
                         <div className="space-y-6">
 
                           {/* ===== Table A: 상어 / 공룡·다이묘 — 해당 파티원만 ===== */}
