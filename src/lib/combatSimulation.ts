@@ -47,6 +47,16 @@ export interface PrecomputedHeroStats {
   crit: number;      // % (e.g., 87)
   critDmg: number;   // % (e.g., 700)
   evasion: number;    // % (e.g., 62)
+  // PDF damage formula fields — used to apply conditional bonuses (shark/dino/mundra/berserker)
+  // as additive entries to the common ATK% sum rather than as an outer multiplier.
+  // standalone(t) = atkConstant * (1 + commonAtkPct + condPct(t))
+  // effective(t)  = standalone(t) * partyAtkMult  (+ flat additions baked in)
+  atkConstant?: number;    // pre-common% constant (base + seed + equip + flat)
+  defConstant?: number;
+  commonAtkPct?: number;   // decimal, e.g. 1.85 means +185%
+  commonDefPct?: number;
+  partyAtkMult?: number;   // decimal, party-level multiplier (champion+aurasong+booster+lone wolf)
+  partyDefMult?: number;
 }
 
 export interface SimulationConfig {
