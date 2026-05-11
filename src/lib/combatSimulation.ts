@@ -3533,6 +3533,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
 
       const effectiveAtk = heroAtkVal[i] + dinoBonus + sharkBonus;
+      // Samurai/Daimyo: guaranteed crit + barrier bypass on round 1
+      const samuraiFirstTurn = round === 1 && (heroIsSamuraiFlag[i] || heroIsDaimyoFlag[i]);
       // Dancer/Acrobat guaranteed crit on next attack after evasion
       let usedDancerCrit = false;
       let isCrit = Math.random() < Math.min(effectiveCrit, 1.0);
@@ -3540,14 +3542,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         isCrit = true;
         usedDancerCrit = true;
       }
+      if (samuraiFirstTurn) {
+        isCrit = true;
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsDaimyoFlag[i] ? '다이묘' : '사무라이'} 첫 턴 확정 치명타!` });
+      }
       if (dancerGuaranteedCrit[i]) {
         dancerGuaranteedCrit[i] = false;
-        if (usedDancerCrit) {
+        if (usedDancerCrit && !samuraiFirstTurn) {
           log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `회피 후 확정 치명타 발동!` });
         }
       }
       const hemmaBonusAtk = (i === hemmaIdx) ? hemmaAtkGainAccum : 0;
-      const dmg = Math.floor((effectiveAtk + hemmaBonusAtk) * (isCrit ? heroCritMult[i] : 1) * barrierMod);
+      const effectiveBarrier = samuraiFirstTurn ? 1.0 : barrierMod;
+      const dmg = Math.floor((effectiveAtk + hemmaBonusAtk) * (isCrit ? heroCritMult[i] : 1) * effectiveBarrier);
       mobHpCurrent -= dmg;
       heroDmgDealt[i] += dmg;
 
@@ -3564,8 +3571,33 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
       const mobPct = Math.max(0, mobHpCurrent / totalMobHp * 100);
       log.push({ round, type: 'hero_attack', actor: activeHeroes[i].name, target: mobDisplayName, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${mobDisplayName} HP: ${formatNum(Math.max(0, mobHpCurrent))} (${mobPct.toFixed(0)}%))` });
+
+      // Dark Knight / Death Knight execute at <10% HP
+      if (heroIsDarkKnightFlag[i] && mobHpCurrent > 0 && mobHpCurrent < totalMobHp * 0.1) {
+        const execBonus = mobHpCurrent;
+        heroDmgDealt[i] += execBonus;
+        mobHpCurrent = 0;
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${activeHeroes[i].heroClass} 처형! 남은 HP ${formatNum(execBonus)} 즉결 처치` });
+      }
+
+      // Polonia loot attempt
+      if (isPoloniaChamp && poloniaStolen < poloniaLootCap && Math.random() < poloniaLootChance) {
+        poloniaStolen++;
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `폴로니아 훔치기 성공! 아이템 누적 ${poloniaStolen}/${poloniaLootCap}` });
+      }
+
       if (mobHpCurrent <= 0) break;
     }
+
+    // ─── Dinosaur bonus expires after round 1 ───
+    if (round === 1) {
+      for (let i = 0; i < numHeroes; i++) {
+        if (heroDinoVal[i] > 0 && heroHp[i] > 0) {
+          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `공룡 영혼 보너스 종료 (ATK -${heroDinoVal[i]})` });
+        }
+      }
+    }
+
 
     // ─── Hemma drain (champion-level, end of round) ───
     if (hemmaIdx >= 0 && heroHp[hemmaIdx] > 0) {
