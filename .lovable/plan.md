@@ -1,118 +1,49 @@
-## 변경 계획 — 퀘스트 시뮬레이션 상세 정보 개선 (5개 항목)
+## 목표
+공격력(필요시 방어력)의 조건부 보너스(상어/공룡/문드라/광전사)와 헴마 누적 보너스를 PDF 공식대로 **단독 ATK 단계의 commonPct에 합산해서 곱하는** 방식으로 재배열한다. 현재는 `finalAtk × (1 + 조건부%)`로 이중 곱이 일어나서 결과가 살짝 부풀려져 있다.
 
-### 1. 치명타 생존 로직 개정
+## 변경 파일
 
-**현재 동작 (잘못된 부분):**
-- 치명타 생존 발동 시 HP를 1로 만듦 (`hp[idx] = 1`)
-- 회피와 별개로 처리되는지 명확하지 않음
+### 1) `src/lib/statCalculator.ts`
+`CalculatedStats`에 두 필드 추가:
+- `atkConstant: number` = `baseAtk + seedAtk + equipAtk + bonusSummary.flatAtk` (퍼센트 곱 전 상수)
+- `commonAtkPct: number` = `bonusSummary.pctAtk` (소수가 아니라 그대로, 단위 %)
+- (방어력도 같이) `defConstant`, `commonDefPct`
 
-**바꿀 동작:**
-- 회피 판정 먼저 → 회피 성공 시 치명타 생존은 발동하지 않음 (이미 그렇게 동작 중인지 확인 후 보정)
-- 회피 실패 + 치사 대미지일 때만 치명타 생존 발동
-- 발동 성공 시 HP를 1로 만들지 않고, **해당 데미지 자체를 무시** (HP 변화 없음)
-- 판당 1회 (`surviveChance[idx] = 0` 처리 유지)
-- 군주의 보호: 별개로 동작 — 치명타 생존이 없거나, 이미 소진했거나, 발동 실패한 경우 모두에 대해 동료 보호 가능 (현재 로직 확인 후 보정)
+`totalAtk` 계산은 그대로 두되 이 두 값을 추가로 노출.
 
-**구현 위치:**
-- `src/lib/combatSimulation.ts`
-  - `handleFatalBlow`: HP를 1로 설정하는 대신 외부에서 데미지를 0으로 만드는 시그널 반환. 호출부에서 데미지 적용 자체를 스킵하도록 변경
-  - 회피 분기 → 치명타 생존 분기 → 군주의 보호 분기 순서로 정리
-  - 로그 문구: `HP 1로 생존` → `치명타 생존! 대미지 무시`
+### 2) `src/lib/partyBuffCalculator.ts`
+`PrecomputedHeroStats` 비슷한 구조에 추가 필드를 같이 산출해 넘긴다:
+- `atkConstant`, `commonAtkPct`, `partyAtkMult` (= `(1 + champAtk*mod + aurasong.atk)*mercMult + booster + loneWolf`)
+- `aurasongFlatAtk`
+- (방어력 동일 세트)
 
-**통계 반영:**
-- `critSurvivalApplyRate` 등 발동 비율 통계는 전체/성공/실패 버킷별로 분리되어야 함 (5번 항목과 연관). 현재 전역 카운터로만 잡혀 있다면 성공/실패 버킷에도 누적하도록 추가.
+기존 `atk`/`def`/`hp` 등 다른 필드는 유지 (다른 곳에서 표시용으로 쓰는 경우 대비).
 
-### 2. 회복 통계 — 실제 매턴 체력 재생 합산
+### 3) `src/lib/combatSimulation.ts`
+- `PrecomputedHeroStats` 인터페이스에 위 7개 필드 추가 (옵셔널로 두고 없으면 기존 방식 폴백).
+- L805 부근 precomputed 경로에서 `atkConstant`, `commonAtkPct`, `partyAtkMult`, `aurasongFlatAtk` 추출.
+- L1714 `atkMod` 제거하고 매 턴 다음과 같이:
+  ```
+  condPct = sharkActive*0.01*heroShark[jj]
+          + dinosaurActive*0.01*heroDinosaur[jj]
+          + (monster.isBoss ? 0.2 : 0) * heroMundra[jj]  // 단위 보정 필요
+          + 0.1*(1+heroBerserkerLevel[jj])*berserkerStage[jj]
+  standaloneAtk = atkConstant[jj] * (1 + commonAtkPct[jj]/100 + condPct)
+  effectiveAtk = standaloneAtk * partyAtkMult[jj] + aurasongFlatAtk[jj]
+  baseHeroDmg = effectiveAtk * tamasAtkMult + hemmaBonus[jj]
+  ```
+- **헴마 누적**: 매 턴 시작 시 헴마 본인의 그 턴 `standaloneAtk_hemma * hemmaMult`를 `hemmaBonus[hemmaWho]`에 누적(흡수 이벤트 발생 시점에).
+- **방어력**: precomputed 경로에서 `finalDef[i]`를 매 턴 보스 여부에 따라 `defConstant*(1+commonDefPct + 0.2*mundra_def_if_boss) * partyDefMult + aurasongFlatDef`로 동적 계산. AoE 단일 모두에 적용되어야 하므로 라운드 진입 시 `damageTaken[i]`/`critDamageTaken[i]`를 보스이고 문드라 있는 영웅만 재계산.
+  - 비용 줄이려면 보스전이고 mundra>0인 영웅만 별도 분기.
 
-**현재:** "턴당 평균" = 총 회복량 ÷ 라운드 수 형태로 추정 표시
+### 4) 폴백 경로(L840-997 비-precomputed 경로)
+`finalAtk` 식에 conditional shark/dino/mundra/berserker가 들어가 있지 않으므로 그대로 두되, 시뮬 본문의 새 `condPct` 적용 식이 폴백에도 작동하도록 `atkConstant`/`commonAtkPct`/`partyAtkMult` 계산을 폴백에도 채워준다.
 
-**바꿀 동작:**
-- 각 라운드 회복 페이즈에서 발생한 모든 회복 합계를 실제로 누적
-- 표시값 = 실제 누적 회복 ÷ 라운드 수 (이미 `totalHealing[i]`로 누적 중이므로, 표시 라벨/계산식만 "실제 매턴 회복 합산"으로 명확화)
-- 챔피언/오라의 노래로 인한 매턴 체력 재생도 회복 페이즈에서 합산되도록 확인 (`liluHealFlat`, 챔피언 회복 효과 포함)
+### 5) 검증
+- 조건부 보너스가 전부 0(상어·공룡·문드라·광전사 없음)인 영웅: `effectiveAtk == finalAtk` (수치 회귀 없음) 확인.
+- 상어만 활성된 단순 케이스: 외부 스크립트 식 `base × (1 + commonPct + sharkPct) × partyMult`와 정확히 일치.
+- 헴마 단독 시뮬에서 흡수 누적치가 그 턴 standalone ATK 기준으로 늘어나는지 콘솔 로그로 1회 확인.
 
-**구현 위치:** `src/lib/combatSimulation.ts` 회복 페이즈 (라인 2066-2085 부근), `QuestSimulation.tsx` 회복 표시 컬럼
-
-### 3. 탭 라벨 변경
-
-- 대분류 탭: "퀘스트 시뮬레이션" 유지
-- 소분류 탭(상세 내 sub-tab): "퀘스트 시뮬레이션" → "시뮬레이션"
-
-**구현 위치:** `src/components/QuestSimulation.tsx` 의 sub-tab 라벨
-
-### 4. 파티원 데이터 실시간 동기화
-
-**현재 문제:**
-- 리스트 관리에서 영웅/챔피언을 새로 추가해도 퀘스트 시뮬레이션의 파티원 선택 다이얼로그/결과 화면에 즉시 반영되지 않음
-- "리스트에 영웅/챔피언을 추가해주세요" 안내가 새로고침 전까지 사라지지 않음
-
-**바꿀 동작:**
-- `HeroSelectDialog`(파티원 선택 다이얼로그)와 `QuestSimulation` 본문 모두, 현재 시점의 `getHeroes()` 결과를 매 렌더 또는 다이얼로그 오픈 시 새로 읽도록 변경
-- LocalStorage 변경 이벤트(`storage` 이벤트 + 기존 프로젝트의 focus 동기화 패턴)에 구독하여 자동 리렌더
-- 결과(저장된 시뮬레이션) 로드 시: 각 파티원 ID를 현재 리스트와 대조
-  - 리스트에 존재하면 → 현재 리스트의 최신 데이터 사용
-  - 없으면 → 결과 저장 시점의 파티원 스냅샷 그대로 사용
-- 저장 데이터에 파티원 전체 스냅샷이 이미 들어있는지 확인 (`SavedSimulationSummary.heroSummaries`는 요약만이라 부족할 수 있음 → 필요 시 `heroSnapshots: Hero[]` 추가)
-
-**구현 위치:**
-- `src/components/QuestSimulation.tsx` — 파티 구성/결과 로드 시 hero ID로 lookup
-- `src/components/HeroSelectDialog.tsx` — 매 오픈 시 fresh heroes 사용
-- `src/lib/savedSimulations.ts` — `heroSnapshots` 필드 추가 (옵셔널, 기존 데이터 호환)
-- `SavedResults.tsx` — 저장 시 스냅샷 포함
-
-**용량 관리:** 스냅샷은 결과당 최대 5명 정도라 큰 부담은 아니지만, 필요한 핵심 필드만 저장(현재 `Hero` 그대로) — 별도 압축은 하지 않음.
-
-### 5. "주요 결과" 전체/성공/실패 드롭다운 변경
-
-- 현재: 셀렉트 드롭다운 형태
-- 바꿀 것: "상세 정보" 섹션에서 사용 중인 토글/세그먼트 컨트롤 형태와 동일한 UI로 통일
-
-**구현 위치:** `src/components/QuestSimulation.tsx` 주요 결과 섹션 헤더 부근의 Select → 기존 상세 정보 토글 컴포넌트 재사용
-
----
-
-### 기술적 구현 상세
-
-**치명타 생존 — handleFatalBlow 리팩토링 예시**
-```ts
-// 반환: 'survived' | 'absorbed_by_guard' | 'died'
-function handleFatalBlow(idx: number, incomingDmg: number): {
-  survived: boolean;
-  ignoreDamage: boolean;
-} {
-  if (Math.random() < surviveChance[idx]) {
-    surviveChance[idx] = 0;
-    critSurvivals[idx]++;
-    return { survived: true, ignoreDamage: true }; // 데미지 자체를 무시
-  }
-  return { survived: false, ignoreDamage: false };
-}
-// 호출부:
-// 1) 회피 판정 → 회피 성공 시 데미지 0, 치명타 생존 호출 안 함
-// 2) 회피 실패 + (hp - dmg <= 0) → handleFatalBlow → ignoreDamage면 dmg = 0
-// 3) 그래도 죽을 경우 → 군주의 보호 판정 (현재 로직 유지)
-```
-
-**파티원 동기화 패턴**
-```ts
-const [heroesVersion, setHeroesVersion] = useState(0);
-useEffect(() => {
-  const refresh = () => setHeroesVersion(v => v + 1);
-  window.addEventListener('storage', refresh);
-  window.addEventListener('focus', refresh);
-  window.addEventListener('heroes-updated', refresh); // 커스텀 이벤트
-  return () => { /* cleanup */ };
-}, []);
-const heroes = useMemo(() => getHeroes(), [heroesVersion]);
-```
-리스트 관리(추가/수정/삭제) 코드에서도 `window.dispatchEvent(new Event('heroes-updated'))` 발행.
-
-### 파일 수정 예정
-- `src/lib/combatSimulation.ts` — 치명타 생존 데미지 무시 처리, 회복 누적 확인, 전체/성공/실패 버킷별 생존 통계
-- `src/components/QuestSimulation.tsx` — 소분류 탭 라벨, 파티원 실시간 lookup, 주요 결과 전체/성공/실패 UI 변경, 회복 라벨
-- `src/components/HeroSelectDialog.tsx` — fresh heroes 사용
-- `src/components/SavedResults.tsx` — 저장 시 hero 스냅샷 포함, 로드 시 ID 매칭
-- `src/lib/savedSimulations.ts` — 타입에 `heroSnapshots?` 추가
-- `src/components/HeroList.tsx` / `HeroForm.tsx` / `ChampionForm.tsx` — heroes 변경 시 커스텀 이벤트 발행 (기존 storage 동기화 패턴 활용)
-
-이 계획대로 진행할까요? 특히 4번 — 저장된 결과의 파티원이 현재 리스트에 있을 때는 "최신 데이터"로 갱신해서 보여주는 게 맞는지(저장 당시 상태가 아니라) 확인 부탁드려요.
+## 미확인 / 사용자 확인 부탁
+- 첨부 PDF가 세션에 더이상 없어. **HP에 조건부 보너스가 있었는지** 다시 알려주거나 PDF 재첨부 부탁.
+- 위 식에서 문드라가 보스일 때만 `+20%×수치` 인지 코드 라벨로 추정한 것 — 맞는지 확인.
