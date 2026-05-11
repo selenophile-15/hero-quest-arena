@@ -3042,6 +3042,13 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   if (activeHeroes.length === 0) return [{ round: 0, type: 'result', actor: '시스템', detail: '활성 영웅 없음' }];
 
   const numHeroes = activeHeroes.length;
+  const champion = activeHeroes.find(h => h.type === 'champion') || null;
+  const champName = champion?.championName || champion?.name || '';
+  const champTier = champion ? getChampionLeaderSkillTier(champion) : 0;
+  const rudoBonusBase = champName.includes('루도') || champName === 'Rudo'
+    ? (champTier === 1 ? 0.3 : champTier === 2 ? 0.4 : champTier >= 3 ? 0.5 : 0)
+    : 0;
+  const rudoRounds = rudoBonusBase > 0 ? (champTier <= 2 ? 2 : champTier === 3 ? 3 : 4) : 0;
   const isExtreme = monster.isExtreme || isTerrorTower;
 
   // Mini boss modifiers
@@ -3078,6 +3085,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         totalEl += h.equipmentElements?.[monster.barrierElement!] || 0;
       }
     });
+    if ((champName.includes('루도') || champName === 'Rudo') && champTier >= 3) totalEl = Math.round(totalEl * 1.5);
     if (totalEl < monster.barrier.hp) {
       barrierMod = 0.2;
       log.push({ round: 0, type: 'event', actor: '시스템', detail: `원소 배리어 미돌파! 대미지 ${barrierMod * 100}%로 제한`, values: { heroSum: totalEl, required: monster.barrier.hp } });
@@ -3239,6 +3247,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
   const totalMobHp = Math.round(monster.hp * mobHpMod);
   log.push({ round: 0, type: 'event', actor: '시스템', detail: `전투 시작! ${mobDisplayName} HP: ${formatNum(totalMobHp)}, 파티원 ${numHeroes}명` });
+  if (rudoBonusBase > 0) {
+    log.push({ round: 0, type: 'event', actor: champName, detail: `루도 리더 스킬: 치확 +${Math.round(rudoBonusBase * 100)}% (${rudoRounds}라운드)` });
+  }
 
   let mobHpCurrent = totalMobHp;
   let heroesAlive = numHeroes;
