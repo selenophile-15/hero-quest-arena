@@ -19,7 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Plus, Wrench, LayoutGrid, List, RefreshCw } from 'lucide-react';
+import { Plus, Wrench, LayoutGrid, List, RefreshCw, FileText } from 'lucide-react';
 import type { EquipmentItem } from '@/lib/equipmentUtils';
 
 interface ChampionFormProps {
@@ -1229,7 +1229,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
           {hero ? '챔피언 수정' : '새 챔피언 추가'}
         </h2>
         <div className="flex gap-2">
-          <Button type="button" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!champCalcResult} className="btn-force-white">📊 스탯 계산표</Button>
+          <Button type="button" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!champCalcResult} className="btn-force-white gap-1.5">
+            <FileText className="w-4 h-4" />
+            스탯 계산표
+          </Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
           <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
         </div>
