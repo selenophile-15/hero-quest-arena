@@ -354,7 +354,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         ? <Trophy className="w-4 h-4 text-lime-400" />
         : <Skull className="w-4 h-4 text-red-400" />;
     } else if (isDeath) {
-      icon = <Skull className="w-4 h-4 text-red-400" />;
+      icon = <UserX className="w-4 h-4 text-red-400" />;
     } else if (isEvasion) {
       icon = <Wind className="w-4 h-4 text-teal-400" />;
     } else if (isSetup) {
@@ -372,8 +372,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     } else if (entry.type === 'heal') {
       icon = (
         <span className="relative inline-flex items-center justify-center w-4 h-4">
-          <Heart className="w-4 h-4 text-emerald-400" fill="currentColor" />
-          <Plus className="absolute w-2 h-2 text-white" strokeWidth={4} />
+          <Heart className="w-4 h-4 text-emerald-400" />
+          <Plus className="absolute w-2 h-2 text-emerald-400" strokeWidth={3} />
         </span>
       );
     } else {
