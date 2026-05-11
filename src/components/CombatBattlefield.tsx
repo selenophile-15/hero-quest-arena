@@ -122,7 +122,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     red: isLight ? '#b91c1c' : '#f87171',
     teal: isLight ? '#0f766e' : '#2dd4bf',
     green: isLight ? '#166534' : '#84cc16',
-    heal: isLight ? '#047857' : '#34d399',
+    heal: isLight ? '#c2410c' : '#fb923c', // orange
     monster: isLight ? '#a16207' : '#facc15',
   }), [isLight]);
 
