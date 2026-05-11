@@ -1204,7 +1204,7 @@ export default function QuestSimulation() {
                   const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
 
                     return (
-                    <div className="mt-3 pt-3 border-t border-border/30" style={{ marginBottom: '8px' }}>
+                    <div className="mt-3 pt-6 border-t border-border/30" style={{ marginBottom: '8px' }}>
                       {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — spacer halved (24→12) */}
                       <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
                         {/* Column 1: threshold values (aligned with monster info icons on left) */}
@@ -1332,6 +1332,16 @@ export default function QuestSimulation() {
                     }`}>
                       {simResult.winRate.toFixed(1)}%
                     </div>
+                    {(() => {
+                      const total = simResult.totalSimulations || 0;
+                      const wins = simResult.winSimCount ?? Math.round(simResult.winRate / 100 * total);
+                      const losses = simResult.loseSimCount ?? (total - wins);
+                      return (
+                        <div className="text-[11px] text-muted-foreground/80 font-mono mt-0.5">
+                          [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
+                        </div>
+                      );
+                    })()}
                   </>
                 ) : (
                   <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
