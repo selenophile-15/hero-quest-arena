@@ -2335,7 +2335,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       roundLimitAliveRate: actualSimCount > 0 ? Math.round((roundLimitAliveCount[i] / actualSimCount) * 100 * 10) / 10 : 0,
       // Hemma drain absorbed (avg per sim)
       hemmaAbsorbedDmg: actualSimCount > 0 ? Math.round(hemmaAbsorbedDmgAccum[i] / actualSimCount) : 0,
-      hemmaAbsorbedCount: actualSimCount > 0 ? Math.round((hemmaAbsorbedCountAccum[i] / actualSimCount) * 10) / 10 : 0,
+      hemmaAbsorbedCount: actualSimCount > 0 ? Math.round(hemmaAbsorbedCountAccum[i] / actualSimCount) : 0,
+      hemmaAtkGainAvg: actualSimCount > 0 ? Math.round(hemmaAtkGainAccum[i] / actualSimCount) : 0,
       // Lord saved damage (when this hero was protected)
       lordSavedSingleAvgDmg: actualSimCount > 0 ? Math.round(lordSavedSingleDmgAccum[i] / actualSimCount) : 0,
       lordSavedAoeAvgDmg: actualSimCount > 0 ? Math.round(lordSavedAoeDmgAccum[i] / actualSimCount) : 0,
