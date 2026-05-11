@@ -2235,13 +2235,18 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const normalHit = damageTaken[i];
     const aoeHit = Math.ceil(normalHit * (monster.aoe / monster.atk));
     const critHit = critDamageTaken[i];
-    const sharkBonus = heroShark[i] * 0.01;
-    const sharkNormal = Math.floor(finalAtk[i] * (1 + sharkBonus) * barrierMod);
-    const sharkCrit = Math.floor(finalAtk[i] * (1 + sharkBonus) * heroCritMult[i] * barrierMod);
+    // Shark / Dinosaur display damage — PDF-additive form:
+    //   atk_with_cond = finalAtk + atkConstant * condPct * partyAtkMult
+    // This avoids the double-multiplication that `finalAtk * (1 + condPct)` would cause
+    // when commonAtkPct ≠ 0. Mundra is already folded into finalAtk for boss fights.
+    const partyMultI = heroPartyAtkMult[i] || 1;
+    const sharkAdd = heroAtkConst[i] * (heroShark[i] * 0.01) * partyMultI;
+    const sharkNormal = Math.floor((finalAtk[i] + sharkAdd) * barrierMod);
+    const sharkCrit = Math.floor((finalAtk[i] + sharkAdd) * heroCritMult[i] * barrierMod);
     // Dinosaur first turn damage
-    const dinoBonus = heroDinosaur[i] * 0.01;
-    const dinoNormal = Math.floor(finalAtk[i] * (1 + dinoBonus) * barrierMod);
-    const dinoCrit = Math.floor(finalAtk[i] * (1 + dinoBonus) * heroCritMult[i] * barrierMod);
+    const dinoAdd = heroAtkConst[i] * (heroDinosaur[i] * 0.01) * partyMultI;
+    const dinoNormal = Math.floor((finalAtk[i] + dinoAdd) * barrierMod);
+    const dinoCrit = Math.floor((finalAtk[i] + dinoAdd) * heroCritMult[i] * barrierMod);
     // Damage application rate using actual thresholds
     const dmgAppRate = getDamageApplicationRate(finalDef[i], defThresholds);
     // Per-turn damage
