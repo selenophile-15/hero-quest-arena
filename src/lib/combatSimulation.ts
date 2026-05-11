@@ -2004,6 +2004,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
           // Aggregate per-hit attack count
           attackCountTotal[i] += simAttackCount[i];
+          baseAtkSumTotal[i] += simBaseAtkSum[i];
           totalRoundsPerHero[i] += round;
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
