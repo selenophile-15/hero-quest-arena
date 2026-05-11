@@ -2112,6 +2112,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         hp[idx] += dmg;
         surviveChance[idx] = 0;
         critSurvivals[idx]++;
+        simCritSurvivals[idx]++;
         return true;
       }
       return false;
