@@ -2728,7 +2728,7 @@ export default function QuestSimulation() {
                                       <GroupHeader label="공격력" info={'단계별 공격력% 증가, 일반/치명/평균 대미지 및 단계별 가한 대미지 비중.'} />
                                     </th>
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
-                                      <GroupHeader label="회피" info={'단계별 회피% 증가, 최종 회피, 실제 회피 발동률.'} />
+                                      <GroupHeader label="회피" info={'단계별 회피% 증가, 최종 회피, 실제 회피율.'} />
                                     </th>
                                   </tr>
                                   <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
@@ -2741,7 +2741,7 @@ export default function QuestSimulation() {
                                     <th className="text-center py-1 px-2">대미지 비중</th>
                                     <th className="text-center py-1 px-2 border-l-4 border-border">회피%</th>
                                     <th className="text-center py-1 px-2">최종 회피</th>
-                                    <th className="text-center py-1 px-2">발동률</th>
+                                    <th className="text-center py-1 px-2">실제 회피율</th>
                                   </tr>
                                 </thead>
                                 <tbody>
