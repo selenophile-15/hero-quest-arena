@@ -3446,8 +3446,14 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         }
       }
 
-      if (Math.random() < Math.max(0, heroEva[target])) {
-        log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[target].name, detail: `회피` });
+      const isDaimyoGuardT = daimyoGuaranteedEvade[target];
+      if (isDaimyoGuardT || Math.random() < Math.max(0, heroEva[target])) {
+        if (isDaimyoGuardT) {
+          daimyoGuaranteedEvade[target] = false;
+          log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `다이묘 확정 회피 발동!` });
+        } else {
+          log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[target].name, detail: `회피` });
+        }
         if (heroIsDancerFlag[target] && !dancerGuaranteedCrit[target]) {
           dancerGuaranteedCrit[target] = true;
           log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${isClass(activeHeroes[target], '곡예가', 'Acrobat') ? '곡예가' : '무희'} 고유 스킬: 다음 공격 확정 치명타!` });
