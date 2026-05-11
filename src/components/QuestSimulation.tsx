@@ -2021,7 +2021,9 @@ export default function QuestSimulation() {
                 displayResults = simResult.loseHeroResults;
               }
               const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
-              if (!displayResults || displayResults.length === 0 || noBucket) {
+              const zeroBucket = (mainResultsTab === 'win' && (simResult.winSimCount ?? 0) === 0)
+                || (mainResultsTab === 'lose' && (simResult.loseSimCount ?? 0) === 0);
+              if (!displayResults || displayResults.length === 0 || noBucket || zeroBucket) {
                 return (
                   <div className="text-center text-xs text-muted-foreground py-8">
                     {mainResultsTab === 'win' ? '성공한 판 없음' : mainResultsTab === 'lose' ? '실패한 판 없음' : '데이터 없음'}
@@ -2032,7 +2034,7 @@ export default function QuestSimulation() {
                 <div className="space-y-8">
                   {/* Table 1: 대미지 + 딜링 비중 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />가하는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     <div className="overflow-x-auto">
                       {(() => {
                         const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
@@ -2069,10 +2071,10 @@ export default function QuestSimulation() {
                         <thead>
                           <tr className="border-b-2 border-border/60">
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><GroupHeader label="가하는 대미지 (전체)" info={'시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><GroupHeader label="가하는 대미지 (턴)" info={'시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><GroupHeader label="전체" info={'시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><GroupHeader label="턴" info={'시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="딜링 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="대미지 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
                             <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
@@ -2262,8 +2264,8 @@ export default function QuestSimulation() {
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${(hr.singleTargetRate ?? 0).toFixed(1)}%`, (hr.singleTargetRate ?? 0) === 0)}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${hr.evasionRate.toFixed(1)}%`, hr.evasionRate === 0)}</td>
                                 {/* 치명타 생존 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{fadeZero(`${csChance.toFixed(1)}%`, csChance === 0)}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${Math.round(csApply)}%`, csApply === 0)}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{fadeZero(`${Math.round(csChance)}%`, csChance === 0)}</td>
+                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${csApply.toFixed(1)}%`, csApply === 0)}</td>
                                 {/* 회복 */}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{healT > 0 ? formatNumber(Math.round(healT)) : blank}</td>
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{heal > 0 ? formatNumber(Math.round(heal)) : blank}</td>
@@ -2726,7 +2728,7 @@ export default function QuestSimulation() {
                                       <GroupHeader label="공격력" info={'단계별 공격력% 증가, 일반/치명/평균 대미지 및 단계별 가한 대미지 비중.'} />
                                     </th>
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
-                                      <GroupHeader label="회피" info={'단계별 회피% 증가, 최종 회피, 실제 회피 발동률.'} />
+                                      <GroupHeader label="회피" info={'단계별 회피% 증가, 최종 회피, 실제 회피율.'} />
                                     </th>
                                   </tr>
                                   <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
@@ -2739,7 +2741,7 @@ export default function QuestSimulation() {
                                     <th className="text-center py-1 px-2">대미지 비중</th>
                                     <th className="text-center py-1 px-2 border-l-4 border-border">회피%</th>
                                     <th className="text-center py-1 px-2">최종 회피</th>
-                                    <th className="text-center py-1 px-2">발동률</th>
+                                    <th className="text-center py-1 px-2">실제 회피율</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -2786,7 +2788,7 @@ export default function QuestSimulation() {
                                               ) : blank}
                                             </td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border">+{evaBonus}%</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{finalEva.toFixed(1)}%</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{Math.round(finalEva)}%</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
                                           </tr>
                                         );
