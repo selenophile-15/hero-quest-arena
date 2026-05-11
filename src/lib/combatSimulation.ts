@@ -1867,6 +1867,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         else normalDmgFight[jj] += damage;
         // Per-hit (per-attack-action) tracking for min/max
         simAttackCount[jj]++;
+        simBaseAtkSum[jj] += baseHeroDmg;
         if (damage > 0) {
           if (damage < dmgPerHitMin[jj]) dmgPerHitMin[jj] = damage;
           if (damage > dmgPerHitMax[jj]) dmgPerHitMax[jj] = damage;
