@@ -3469,8 +3469,21 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
 
       const effectiveAtk = heroAtkVal[i] + dinoBonus + sharkBonus;
-      const isCrit = Math.random() < Math.min(effectiveCrit, 1.0);
-      const dmg = Math.floor(effectiveAtk * (isCrit ? heroCritMult[i] : 1) * barrierMod);
+      // Dancer/Acrobat guaranteed crit on next attack after evasion
+      let usedDancerCrit = false;
+      let isCrit = Math.random() < Math.min(effectiveCrit, 1.0);
+      if (!isCrit && dancerGuaranteedCrit[i]) {
+        isCrit = true;
+        usedDancerCrit = true;
+      }
+      if (dancerGuaranteedCrit[i]) {
+        dancerGuaranteedCrit[i] = false;
+        if (usedDancerCrit) {
+          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `회피 후 확정 치명타 발동!` });
+        }
+      }
+      const hemmaBonusAtk = (i === hemmaIdx) ? hemmaAtkGainAccum : 0;
+      const dmg = Math.floor((effectiveAtk + hemmaBonusAtk) * (isCrit ? heroCritMult[i] : 1) * barrierMod);
       mobHpCurrent -= dmg;
       heroDmgDealt[i] += dmg;
 
