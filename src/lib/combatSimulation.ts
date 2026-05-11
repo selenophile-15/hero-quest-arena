@@ -1192,13 +1192,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Per-turn taken min/max across sims
   const dmgTakenPerTurnMin = new Float64Array(numHeroes).fill(1e9);
   const dmgTakenPerTurnMax = new Float64Array(numHeroes);
-  // Per-turn damage DEALT min/max across sims (per-sim = damageFight/round)
-  const dmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
-  const dmgDealtPerTurnMax = new Float64Array(numHeroes);
-  const winDmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
-  const winDmgDealtPerTurnMax = new Float64Array(numHeroes);
-  const loseDmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
-  const loseDmgDealtPerTurnMax = new Float64Array(numHeroes);
+  // Per-hit damage DEALT min/max across all attack logs (one entry per attack action)
+  const dmgPerHitMin = new Float64Array(numHeroes).fill(1e18);
+  const dmgPerHitMax = new Float64Array(numHeroes);
+  const winDmgPerHitMin = new Float64Array(numHeroes).fill(1e18);
+  const winDmgPerHitMax = new Float64Array(numHeroes);
+  const loseDmgPerHitMin = new Float64Array(numHeroes).fill(1e18);
+  const loseDmgPerHitMax = new Float64Array(numHeroes);
+  // Per-hero attack-action count (overall + per-fight for win/lose bucketing)
+  const attackCountTotal = new Float64Array(numHeroes);
+  const winAttackCount = new Float64Array(numHeroes);
+  const loseAttackCount = new Float64Array(numHeroes);
   // Avg-when-hit counters (sims where this hero took damage of that kind)
   const totalDmgTakenHitSims = new Float64Array(numHeroes);
   const singleDmgTakenHitSims = new Float64Array(numHeroes);
@@ -1403,6 +1407,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const damageFight = new Float64Array(numHeroes);
     const normalDmgFight = new Float64Array(numHeroes);
     const critDmgFight = new Float64Array(numHeroes);
+    const simAttackCount = new Float64Array(numHeroes);
+    const simHitMin = new Float64Array(numHeroes).fill(1e18);
+    const simHitMax = new Float64Array(numHeroes);
     const surviveChance = new Float64Array(numHeroes);
     const berserkerStage = new Int32Array(numHeroes);
     const guaranteedCrit = new Uint8Array(numHeroes);
@@ -1854,6 +1861,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         damageFight[jj] += damage;
         if (isCrit) critDmgFight[jj] += damage;
         else normalDmgFight[jj] += damage;
+        // Per-hit (per-attack-action) tracking for min/max
+        simAttackCount[jj]++;
+        if (damage > 0) {
+          if (damage < dmgPerHitMin[jj]) dmgPerHitMin[jj] = damage;
+          if (damage > dmgPerHitMax[jj]) dmgPerHitMax[jj] = damage;
+          if (damage < simHitMin[jj]) simHitMin[jj] = damage;
+          if (damage > simHitMax[jj]) simHitMax[jj] = damage;
+        }
 
         // Conqueror per-stack tracking
         if (heroIsConquistador[jj]) {
@@ -1982,12 +1997,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (damageFight[i] > 0) {
             damageDealtMin[i] = Math.min(damageDealtMin[i], damageFight[i]);
           }
-          // Per-turn damage dealt min/max (only when hero dealt damage and rounds > 0)
-          if (damageFight[i] > 0 && round > 0) {
-            const perTurnDealt = damageFight[i] / round;
-            if (perTurnDealt < dmgDealtPerTurnMin[i]) dmgDealtPerTurnMin[i] = perTurnDealt;
-            if (perTurnDealt > dmgDealtPerTurnMax[i]) dmgDealtPerTurnMax[i] = perTurnDealt;
-          }
+          // Aggregate per-hit attack count
+          attackCountTotal[i] += simAttackCount[i];
           totalRoundsPerHero[i] += round;
           totalDmgTakenAccum[i] += simDmgTaken[i];
           totalTimesHitAccum[i] += simTimesHit[i];
@@ -2098,11 +2109,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             winCritDmg[i] += critDmgFight[i];
             winDmgMax[i] = Math.max(winDmgMax[i], damageFight[i]);
             if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
-            if (damageFight[i] > 0 && round > 0) {
-              const pt = damageFight[i] / round;
-              if (pt < winDmgDealtPerTurnMin[i]) winDmgDealtPerTurnMin[i] = pt;
-              if (pt > winDmgDealtPerTurnMax[i]) winDmgDealtPerTurnMax[i] = pt;
-            }
+            // Per-hit min/max bucketed to win
+            if (simHitMin[i] < 1e18 && simHitMin[i] < winDmgPerHitMin[i]) winDmgPerHitMin[i] = simHitMin[i];
+            if (simHitMax[i] > winDmgPerHitMax[i]) winDmgPerHitMax[i] = simHitMax[i];
+            winAttackCount[i] += simAttackCount[i];
             winRoundsArr[i] += round;
             winDmgTaken[i] += simDmgTaken[i];
             winDmgTakenMin[i] = Math.min(winDmgTakenMin[i], cappedDmg);
@@ -2133,11 +2143,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             loseCritDmg[i] += critDmgFight[i];
             loseDmgMax[i] = Math.max(loseDmgMax[i], damageFight[i]);
             if (damageFight[i] > 0) loseDmgMin[i] = Math.min(loseDmgMin[i], damageFight[i]);
-            if (damageFight[i] > 0 && round > 0) {
-              const pt = damageFight[i] / round;
-              if (pt < loseDmgDealtPerTurnMin[i]) loseDmgDealtPerTurnMin[i] = pt;
-              if (pt > loseDmgDealtPerTurnMax[i]) loseDmgDealtPerTurnMax[i] = pt;
-            }
+            if (simHitMin[i] < 1e18 && simHitMin[i] < loseDmgPerHitMin[i]) loseDmgPerHitMin[i] = simHitMin[i];
+            if (simHitMax[i] > loseDmgPerHitMax[i]) loseDmgPerHitMax[i] = simHitMax[i];
+            loseAttackCount[i] += simAttackCount[i];
             loseRoundsArr[i] += round;
             loseDmgTaken[i] += simDmgTaken[i];
             loseDmgTakenMin[i] = Math.min(loseDmgTakenMin[i], cappedDmg);
@@ -2315,9 +2323,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const dinoCrit = Math.floor((finalAtk[i] + dinoAdd) * heroCritMult[i] * barrierMod);
     // Damage application rate using actual thresholds
     const dmgAppRate = getDamageApplicationRate(finalDef[i], defThresholds);
-    // Per-turn damage
+    // Per-turn damage: total damage dealt / total attack actions (excludes stunned/dead turns)
     const avgRoundsForHero = totalRoundsPerHero[i] / actualSimCount;
-    const avgDmgPerTurn = avgRoundsForHero > 0 ? (damageDealtAvg[i] / actualSimCount) / avgRoundsForHero : 0;
+    const avgDmgPerTurn = attackCountTotal[i] > 0 ? damageDealtAvg[i] / attackCountTotal[i] : 0;
     // Berserker thresholds — 4 stages (0..3)
     // stage 0: HP >= Hp1 (no penalty), threshold = 100
     // stage 1: HP >= Hp2, threshold = Hp1*100
@@ -2368,8 +2376,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       normalDmgDealtAvg: normalDmgDealtAccum[i] / actualSimCount,
       critDmgDealtAvg: critDmgDealtAccum[i] / actualSimCount,
       avgDamagePerTurn: avgDmgPerTurn,
-      minDamagePerTurn: dmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(dmgDealtPerTurnMin[i]),
-      maxDamagePerTurn: Math.round(dmgDealtPerTurnMax[i]),
+      minDamagePerTurn: dmgPerHitMin[i] >= 1e18 ? 0 : Math.round(dmgPerHitMin[i]),
+      maxDamagePerTurn: Math.round(dmgPerHitMax[i]),
       normalDamageTaken: normalHit,
       aoeDamageTaken: aoeHit,
       critDamageTakenVal: critHit,
@@ -2570,11 +2578,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       minDamageDealt: dMin >= 1e9 ? 0 : dMin,
       normalDmgDealtAvg: dNorm / bucketCount,
       critDmgDealtAvg: dCrit / bucketCount,
-      avgDamagePerTurn: avgR > 0 ? (dDealt / bucketCount) / avgR : 0,
+      avgDamagePerTurn: (() => {
+        const ac = bucket === 'win' ? winAttackCount[i] : loseAttackCount[i];
+        return ac > 0 ? dDealt / ac : 0;
+      })(),
       minDamagePerTurn: bucket === 'win'
-        ? (winDmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(winDmgDealtPerTurnMin[i]))
-        : (loseDmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(loseDmgDealtPerTurnMin[i])),
-      maxDamagePerTurn: bucket === 'win' ? Math.round(winDmgDealtPerTurnMax[i]) : Math.round(loseDmgDealtPerTurnMax[i]),
+        ? (winDmgPerHitMin[i] >= 1e18 ? 0 : Math.round(winDmgPerHitMin[i]))
+        : (loseDmgPerHitMin[i] >= 1e18 ? 0 : Math.round(loseDmgPerHitMin[i])),
+      maxDamagePerTurn: bucket === 'win' ? Math.round(winDmgPerHitMax[i]) : Math.round(loseDmgPerHitMax[i]),
       totalDamageTakenAvg: Math.round(dTaken / bucketCount),
       totalDamageTakenAvgWhenHit: (() => {
         const hits = bucket === 'win' ? winTotalDmgTakenHitSims[i] : loseTotalDmgTakenHitSims[i];
