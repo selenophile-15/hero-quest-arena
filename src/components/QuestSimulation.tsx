@@ -1695,6 +1695,21 @@ export default function QuestSimulation() {
                                 ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
                                 : (hero as any)[stat.key] || 0;
                             }
+
+                            // Retry-booster (+20% atk/def) display override
+                            if (retryBoosterActive && bs && (stat.key === 'atk' || stat.key === 'def')) {
+                              const isAtk = stat.key === 'atk';
+                              const cPct = ((hero.detailStats?.[isAtk ? '공통 공격력 계수' : '공통 방어력 계수'] ?? 0)) / 100;
+                              const baseStat = isAtk ? (hero.atk || 0) : (hero.def || 0);
+                              const constant = hero.detailStats?.[isAtk ? '공격력 상수' : '방어력 상수']
+                                ?? ((1 + cPct) > 0 ? baseStat / (1 + cPct) : baseStat);
+                              const auraFlat = isAtk ? (buffSummary?.flatAtk || 0) : (buffSummary?.flatDef || 0);
+                              const bsVal = isAtk ? bs.atk : bs.def;
+                              const partyMult = baseStat > 0 ? (bsVal - auraFlat) / baseStat : 1;
+                              const boosted = Math.round(constant * (1 + cPct + RETRY_BOOSTER_EXTRA) * partyMult + auraFlat);
+                              delta += (boosted - val);
+                              val = boosted;
+                            }
                             
                             // Evasion special handling
                             let displayColor = stat.color;
