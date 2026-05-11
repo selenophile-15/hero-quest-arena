@@ -43,7 +43,7 @@ function hpColor(pct: number): string {
   return '#a855f7';
 }
 
-export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, onNewBattle }: Props) {
+export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, monsterImage, onNewBattle }: Props) {
   const { colorMode } = useTheme();
   const isLight = colorMode === 'light';
 
