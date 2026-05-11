@@ -649,7 +649,7 @@ export default function QuestSimulation() {
     { key: 'r0' as const, label: '0%', color: '#ef4444', textClass: 'text-red-400', value: currentQuest?.def.r0 || 0 },
     { key: 'r50' as const, label: '50%', color: '#eab308', textClass: 'text-yellow-400', value: currentQuest?.def.r50 || 0 },
     { key: 'r70' as const, label: '70%', color: '#84cc16', textClass: 'text-lime-400', value: currentQuest?.def.r70 || 0 },
-    { key: 'r75' as const, label: '75%', color: '#ffffff', textClass: 'text-white', value: currentQuest?.def.r75 || 0 },
+    { key: 'r75' as const, label: '75%', color: '#22d3ee', textClass: 'text-cyan-300', value: currentQuest?.def.r75 || 0 },
   ];
 
   // Calculate damage reduction % for a given defense value using threshold interpolation
@@ -961,7 +961,12 @@ export default function QuestSimulation() {
 
             {currentQuest ? (
               <div className="space-y-2">
-                {/* Line 1: Location */}
+                {/* Line 1: Region (parent) + Location */}
+                {currentRegion && currentRegion.name && currentRegion.name !== locationName && (
+                  <div className="text-center">
+                    <span className="text-xs text-muted-foreground font-medium">{currentRegion.name}</span>
+                  </div>
+                )}
                 <div className="text-center">
                   <span className="text-sm text-foreground font-medium">{locationName}</span>
                 </div>
@@ -1095,7 +1100,6 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-lime-400' : 'text-foreground'}`}>
                           {formatNumber(displayHp)}
-                          {isHpMod && <span className="text-[10px] text-muted-foreground ml-1">(×{hpMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
@@ -1105,7 +1109,6 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
                           {formatNumber(displayAtk)}
-                          {isAtkMod && <span className="text-[10px] text-muted-foreground ml-1">(×{atkMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
@@ -1115,7 +1118,6 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAoeMod ? 'text-yellow-400' : 'text-foreground'}`}>
                           {displayAoeChance}%
-                          {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(×{aoeMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
@@ -1125,7 +1127,6 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
                           {formatNumber(displayAoe)}
-                          {isAtkMod && <span className="text-[10px] text-muted-foreground ml-1">(×{atkMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
@@ -1144,12 +1145,13 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${mobEva > 0 ? 'text-teal-400' : 'text-foreground'}`}>{mobEva}%</span>
                       </div>
-                      {/* Always show defense bar label when monster is selected */}
+                      {/* Defense reference label row (with right-aligned helper) */}
                       <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-1.5">
                           <Shield className="w-3.5 h-3.5 text-blue-400" />
                           <span className="text-xs text-foreground">방어력 기준치</span>
                         </div>
+                        <span className="text-xs text-muted-foreground">[ 기준 (받는 대미지%) ]</span>
                       </div>
                     </div>
                   );
@@ -1203,14 +1205,6 @@ export default function QuestSimulation() {
 
                     return (
                     <div className="mt-3 pt-3 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      {/* Column headers — explain what each column represents */}
-                      <div className="grid gap-x-1 mb-1.5" style={{ gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
-                        <div className="text-[11px] font-semibold text-foreground text-right pr-0.5 leading-tight">방어력 기준치</div>
-                        <div />
-                        <div className="text-[10px] font-semibold text-muted-foreground text-left leading-tight">(받는 대미지)</div>
-                        <div />
-                        <div className="text-[11px] font-semibold text-foreground text-left leading-tight ml-1.5">이름 &amp; 방어력 (받는 대미지)</div>
-                      </div>
                       {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — spacer halved (24→12) */}
                       <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
                         {/* Column 1: threshold values (aligned with monster info icons on left) */}
