@@ -2426,22 +2426,22 @@ export default function QuestSimulation() {
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={4}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={4}>
                                       <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 치명타 확률 = 몬스터 기본 치명타 확률에서 파티원 회피를 차감한 값(최소 5%).'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
                                       <GroupHeader label="광역" info={'광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음.'} />
                                     </th>
                                   </tr>
-                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
-                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40">최소</th>
-                                    <th className="text-center py-1 px-2">평균</th>
-                                    <th className="text-center py-1 px-2">최대</th>
-                                    <th className="text-center py-1 px-2">치명타 확률</th>
-                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40">최소</th>
-                                    <th className="text-center py-1 px-2">평균</th>
-                                    <th className="text-center py-1 px-2">최대</th>
+                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">최소</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/70">최대</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/70">치명타 확률</th>
+                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">최소</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
+                                    <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
                                   </tr>
                                 </thead>
                                 <tbody>
