@@ -510,7 +510,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       {/* 포지션 */}
                       <td className="py-1.5 px-1 text-center text-[10px] whitespace-nowrap">
                         {hero.position ? (
-                          <span className={`px-1.5 py-0.5 rounded ${POSITION_BG_COLORS[hero.position] || 'bg-secondary'} text-white`}>{hero.position}</span>
+                          <span className={`px-1.5 py-0.5 rounded font-bold ${POSITION_BG_COLORS[hero.position] || 'bg-secondary'} text-white`}>{hero.position}</span>
                         ) : '-'}
                       </td>
                     </tr>
