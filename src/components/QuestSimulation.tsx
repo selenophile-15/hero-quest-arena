@@ -1095,7 +1095,6 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-lime-400' : 'text-foreground'}`}>
                           {formatNumber(displayHp)}
-                          {isHpMod && <span className="text-[10px] text-muted-foreground ml-1">(×{hpMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
@@ -1105,7 +1104,6 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
                           {formatNumber(displayAtk)}
-                          {isAtkMod && <span className="text-[10px] text-muted-foreground ml-1">(×{atkMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
@@ -1115,7 +1113,6 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAoeMod ? 'text-yellow-400' : 'text-foreground'}`}>
                           {displayAoeChance}%
-                          {isAoeMod && <span className="text-[10px] text-muted-foreground ml-1">(×{aoeMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
@@ -1125,7 +1122,6 @@ export default function QuestSimulation() {
                         </div>
                         <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
                           {formatNumber(displayAoe)}
-                          {isAtkMod && <span className="text-[10px] text-muted-foreground ml-1">(×{atkMod})</span>}
                         </span>
                       </div>
                       <div className="flex items-center justify-between px-1">
