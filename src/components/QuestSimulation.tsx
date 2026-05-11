@@ -2042,7 +2042,7 @@ export default function QuestSimulation() {
             <ListChecks className="w-5 h-5 text-primary" />
             <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
           </div>
-          <div className="card-fantasy p-4">
+          <div className="card-fantasy p-4" data-detail-info>
 
           {/* Mini-boss breakdown (only for random mode, not boss quests) */}
           {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
