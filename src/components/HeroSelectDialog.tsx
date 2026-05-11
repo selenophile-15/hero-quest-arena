@@ -47,7 +47,7 @@ const POSITION_BG_COLORS: Record<string, string> = {
   '회피 딜러': 'bg-cyan-500',
   '좀비': 'bg-purple-500',
   '첫 턴 극딜': 'bg-pink-500',
-  '기타': 'bg-secondary',
+  '기타': 'bg-gray-600',
 };
 
 const CLASS_LINE_ORDER: Record<string, number> = { '전사': 0, '로그': 1, '주문술사': 2 };
