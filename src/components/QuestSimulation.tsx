@@ -2565,7 +2565,7 @@ export default function QuestSimulation() {
                     const showLord = true;
 
                     // ── Table D: 폴로니아 도둑질 ──
-                    const poloniaLoot = simResult.poloniaLoot;
+                    const poloniaLoot = dispSim!.poloniaLoot;
                     const hasPolonia = !!poloniaLoot?.hasPolonia;
 
                     const monAtk = currentQuest?.atk || 0;
