@@ -424,23 +424,46 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           {(entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) ? (
             <>
               {damageText && (
-                <span className="font-mono font-bold text-sm ml-4 text-foreground/70">{damageText}</span>
+                <span className="ml-4 inline-flex items-baseline gap-1 shrink-0">
+                  {isCrit && (
+                    <span className="font-body font-bold text-sm" style={{ color: C.yellow }}>치명타!</span>
+                  )}
+                  <span className="font-mono font-bold text-sm text-foreground/80">{damageText.replace(/\s*피해$/, '')}</span>
+                  <span className="font-body font-bold text-sm text-foreground/80">피해</span>
+                </span>
               )}
 
-              {hpText && (
-                <span className="font-mono font-bold text-sm ml-auto text-foreground/70 shrink-0">{hpText}</span>
-              )}
+              {hpText && (() => {
+                const m = hpText.match(/^\((.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)\)$/);
+                if (m) {
+                  const [, who, hpNum, pct] = m;
+                  return (
+                    <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
+                      <span className="font-body">(</span>
+                      <span className="font-body font-bold" style={{ color: getNameColor(who) }}>{who}</span>
+                      <span className="font-body">HP:</span>
+                      <span className="font-mono font-bold">{hpNum}</span>
+                      <span className="font-mono">({pct}%)</span>
+                      <span className="font-body">)</span>
+                    </span>
+                  );
+                }
+                return (
+                  <span className="font-mono font-bold text-sm ml-auto text-foreground/80 shrink-0">{hpText}</span>
+                );
+              })()}
             </>
           ) : entry.type === 'monster_attack' && !entry.target ? (
-            // AOE header line
-            <span className="ml-1 text-sm text-red-400 font-bold">{entry.detail}</span>
+            <span className="ml-1 text-sm font-body font-bold" style={{ color: C.red }}>
+              {entry.detail.replace(/\s*\(.*?\)\s*$/, '')}
+            </span>
           ) : isEvasion ? (
-            <span className="text-teal-400 font-bold text-sm ml-4">회피</span>
+            <span className="font-body font-bold text-sm ml-4" style={{ color: C.teal }}>회피!</span>
           ) : (
-            <span className={`ml-1 text-sm ${
+            <span className={`ml-1 text-sm font-body ${
               isDeath ? 'text-red-400 font-bold' :
               entry.type === 'result' ? (entry.detail.includes('승리') ? 'text-lime-400 font-bold' : 'text-red-400 font-bold') :
-              'text-foreground/60'
+              'text-foreground/70'
             }`}>
               {entry.detail}
             </span>
@@ -584,7 +607,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           </div>
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-border/40">
+              <tr className={`border-b-2 border-primary/30 ${isLight ? 'bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10' : 'bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20'}`}>
                 <th className={`text-center py-1.5 px-1 ${isLight ? 'text-slate-700' : 'text-muted-foreground'} font-bold w-[80px]`}>파티원</th>
                 <th className={`text-center py-1.5 px-1 ${isLight ? 'text-red-700' : 'text-red-400'} font-bold`}>입힌 대미지</th>
                 <th className={`text-center py-1.5 px-1 ${isLight ? 'text-orange-700' : 'text-orange-400'} font-bold`}>대미지 비율</th>
@@ -692,8 +715,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             return (
               <div key={group.round} className="border-b border-border/20">
                 {/* Round header - non-collapsible, just a divider */}
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40">
-                  <span className="text-sm font-bold text-foreground">라운드 {group.round}</span>
+                <div className={`flex items-center gap-2 px-3 py-1.5 border-b ${isLight ? 'bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20' : 'bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-primary/30'}`}>
+                  <span className={`text-sm font-bold ${isLight ? 'text-primary' : 'text-foreground'}`}>라운드 {group.round}</span>
                   <span className="text-xs text-muted-foreground ml-auto">{visibleEntries.length}건</span>
                 </div>
                 {visibleEntries.map(({ entry, idx }) => {

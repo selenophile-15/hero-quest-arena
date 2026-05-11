@@ -3550,6 +3550,11 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
     }
 
+    // ─── Rudo bonus expires ───
+    if (rudoBonusBase > 0 && round === rudoRounds) {
+      log.push({ round, type: 'event', actor: champName, detail: `루도 리더 스킬 만료: 파티 치확 보너스 +${Math.round(rudoBonusBase * 100)}% 종료` });
+    }
+
     if (mobHpCurrent <= 0) {
       log.push({ round, type: 'result', actor: '시스템', detail: `승리! (${round}라운드)` });
       break;
