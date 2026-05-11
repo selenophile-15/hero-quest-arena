@@ -682,7 +682,7 @@ const ListSummary = forwardRef<ListSummaryHandle, ListSummaryProps>(function Lis
 
   return (
     <div className="space-y-4">
-      <div ref={summaryRef} data-summary-screenshot className="space-y-4">
+      <div ref={summaryRef} data-summary-screenshot data-hero-list-glow className="space-y-4">
       <MatrixGrid
         allHeroes={heroes}
         ownedIds={ownedSet}
