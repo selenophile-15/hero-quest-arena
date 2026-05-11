@@ -31,7 +31,8 @@ import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 import CombatBattlefield from '@/components/CombatBattlefield';
 import SavedResults from '@/components/SavedResults';
 import CompareAnalysis from '@/components/CompareAnalysis';
-import { saveSimulationResult, SavedSimulationSummary } from '@/lib/savedSimulations';
+import { saveSimulationResult, overwriteSimulationResult, SavedSimulationSummary } from '@/lib/savedSimulations';
+import OverwriteSimulationDialog from './OverwriteSimulationDialog';
 import { toast } from '@/hooks/use-toast';
 import { saveCanvasImage } from '@/lib/fileDownload';
 
