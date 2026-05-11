@@ -2072,7 +2072,7 @@ export default function QuestSimulation() {
                         const partyNormal = displayResults.reduce((s, hr) => s + hr.normalDmgDealtAvg, 0);
                         const partyCrit = displayResults.reduce((s, hr) => s + hr.critDmgDealtAvg, 0);
                         return (
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                         <colgroup>
                           <col style={{ width: '110px' }} />
                           <col style={{ width: '90px' }} /><col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
@@ -2184,7 +2184,7 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2"><span className="flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</span><ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                         <colgroup>
                           <col style={{ width: '110px' }} />
                           {/* 기본: 생존률 */}
@@ -2338,7 +2338,7 @@ export default function QuestSimulation() {
                         <div className="mb-4">
                           <div className="text-xs font-semibold text-foreground mb-1 ml-1">전체</div>
                           <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                            <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                            <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                               <colgroup>
                                 <col style={{ width: '110px' }} />
                                 {/* 기본: 단일 raw, 광역 raw, 보정, 단일 일반, 단일 치명, 광역 일반 */}
@@ -2418,7 +2418,7 @@ export default function QuestSimulation() {
                           <div className="mb-4">
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">단일 / 광역</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
                                   <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} /><col style={{ width: '80px' }} />
@@ -2524,7 +2524,7 @@ export default function QuestSimulation() {
                                 <div>
                                   <div className="text-xs font-semibold text-foreground mb-1 ml-1">상어 (영혼)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                       <colgroup>
                                         <col style={{ width: '110px' }} /><col /><col /><col />
                                       </colgroup>
@@ -2559,7 +2559,7 @@ export default function QuestSimulation() {
                                 <div>
                                   <div className="text-xs font-semibold text-foreground mb-1 ml-1">공룡 / 다이묘 (첫 턴)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                       <colgroup>
                                         <col style={{ width: '110px' }} /><col /><col /><col />
                                       </colgroup>
@@ -2605,7 +2605,7 @@ export default function QuestSimulation() {
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">군주 보호</div>
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
                                       <col style={{ width: '110px' }} /><col style={{ width: '110px' }} /><col /><col />
                                     </colgroup>
@@ -2657,7 +2657,7 @@ export default function QuestSimulation() {
                             <div>
                               <div className="text-xs font-semibold text-foreground mb-1 ml-1">정복자 (스택 0~4)</div>
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
                                     <col style={{ width: '110px' }} /><col style={{ width: '70px' }} />
                                     <col /><col /><col />
@@ -2709,7 +2709,7 @@ export default function QuestSimulation() {
                             <div>
                               <div className="text-xs font-semibold text-foreground mb-1 ml-1">닌자 / 센세</div>
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                   <colgroup>
                                     <col style={{ width: '110px' }} /><col /><col /><col /><col />
                                   </colgroup>
@@ -2761,7 +2761,7 @@ export default function QuestSimulation() {
                           <div>
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">광전사 / 잘</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} /><col style={{ width: '60px' }} />
                                   <col /><col />
@@ -2859,7 +2859,7 @@ export default function QuestSimulation() {
                           <div>
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">폴로니아</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
                                   <col /><col /><col />
@@ -2924,7 +2924,7 @@ export default function QuestSimulation() {
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">헴마</div>
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
                                       <col style={{ width: '110px' }} />
                                       <col /><col /><col />
@@ -2975,7 +2975,7 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-foreground" />시뮬레이션 스탯</div>
                     <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 table-fixed">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                         <colgroup>
                           <col style={{ width: '110px' }} />
                           <col /><col /><col /><col /><col /><col /><col />
