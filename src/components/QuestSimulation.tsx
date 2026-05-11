@@ -1410,65 +1410,106 @@ export default function QuestSimulation() {
                 </Button>
               </div>
             )}
-            {/* Win Rate - prominent display, always visible when quest selected */}
-            {currentQuest && selectedHeroes.length > 0 && (
-              <div className="mb-3 py-3 px-4 rounded-xl text-center relative overflow-hidden" style={{
+            {currentQuest && selectedHeroes.length > 0 && (() => {
+              const winRate = simResult ? (dispSim!.winRate ?? 0) : 0;
+              const winColor =
+                !simResult ? 'text-muted-foreground/30' :
+                winRate >= 90 ? 'text-lime-600 dark:text-lime-300 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
+                winRate >= 70 ? 'text-lime-600 dark:text-lime-300' :
+                winRate >= 50 ? 'text-yellow-600 dark:text-yellow-300 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
+                winRate >= 30 ? 'text-orange-600 dark:text-orange-300' :
+                'text-red-600 dark:text-red-300 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]';
+              // Compute party gear average for efficiency score
+              const qualityScore: Record<string, number> = {
+                'common': 1, 'uncommon': 1.25, 'flawless': 1.5, 'epic': 2, 'legendary': 3,
+                '일반': 1, '고급': 1.25, '최고급': 1.5, '에픽': 2, '전설': 3,
+              };
+              let gearSum = 0, gearCount = 0;
+              selectedHeroes.forEach(h => {
+                const slots = h.equipmentSlots || [];
+                let tot = 0, eq = 0;
+                slots.forEach(s => { if (s.item) { eq++; tot += qualityScore[s.quality] || 1; } });
+                if (eq > 0) { gearSum += tot / eq; gearCount++; }
+              });
+              const partyAvgGear = gearCount > 0 ? gearSum / gearCount : 0;
+              const gearScore = simResult && partyAvgGear > 0 ? winRate / partyAvgGear : 0;
+              return (
+              <div className="mb-3 rounded-xl relative overflow-hidden" style={{
                 background: !simResult 
                   ? 'linear-gradient(135deg, hsla(0,0%,50%,0.08) 0%, hsla(0,0%,50%,0.02) 100%)'
-                  : dispSim!.winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
-                  : dispSim!.winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
+                  : winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
+                  : winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
                   : 'linear-gradient(135deg, hsla(0,80%,50%,0.12) 0%, hsla(0,80%,50%,0.04) 100%)',
-                border: `1px solid ${!simResult ? 'hsla(0,0%,50%,0.15)' : dispSim!.winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : dispSim!.winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
-                boxShadow: simResult ? (dispSim!.winRate >= 90 ? '0 0 20px hsla(82,80%,45%,0.1), inset 0 0 30px hsla(82,80%,45%,0.05)' : dispSim!.winRate >= 50 ? '0 0 20px hsla(48,80%,50%,0.1), inset 0 0 30px hsla(48,80%,50%,0.05)' : '0 0 20px hsla(0,80%,50%,0.1)') : 'none',
+                border: `1px solid ${!simResult ? 'hsla(0,0%,50%,0.15)' : winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
+                boxShadow: simResult ? (winRate >= 90 ? '0 0 20px hsla(82,80%,45%,0.1), inset 0 0 30px hsla(82,80%,45%,0.05)' : winRate >= 50 ? '0 0 20px hsla(48,80%,50%,0.1), inset 0 0 30px hsla(48,80%,50%,0.05)' : '0 0 20px hsla(0,80%,50%,0.1)') : 'none',
               }}>
-                <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
-                {simResult ? (
-                  <>
-                    <div className={`text-3xl font-black font-mono tracking-tight ${
-                      dispSim!.winRate >= 90 ? 'text-lime-400 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
-                      dispSim!.winRate >= 70 ? 'text-lime-400' :
-                      dispSim!.winRate >= 50 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
-                      dispSim!.winRate >= 30 ? 'text-orange-400' : 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]'
-                    }`}>
-                      {dispSim!.winRate.toFixed(1)}%
-                    </div>
-                    {(() => {
-                      const total = dispSim!.totalSimulations || 0;
-                      const wins = dispSim!.winSimCount ?? Math.round(dispSim!.winRate / 100 * total);
-                      const losses = dispSim!.loseSimCount ?? (total - wins);
-                      const retried = (!retryOnly && simResult!.retryResult)
-                        ? (simResult!.retryResult.totalSimulations || 0)
-                        : 0;
-                      const retryWins = (!retryOnly && simResult!.retryResult)
-                        ? (simResult!.retryResult.winSimCount || 0)
-                        : 0;
-                      const retryLosses = retried - retryWins;
-                      return (
-                        <>
-                          <div className="text-[11px] text-muted-foreground/80 font-mono mt-0.5">
-                            [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
-                          </div>
-                          {retried > 0 && (
-                            <div className="text-[11px] text-amber-400/90 font-mono mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
-                              [ 재시도 : {formatNumber(retryWins)}판 / {formatNumber(retryLosses)}판 ]
-                            </div>
-                          )}
-                        </>
-                      );
-                    })()}
-                  </>
-                ) : (
-                  <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
-                    -
+                <div className="grid grid-cols-2 divide-x divide-border/30">
+                  {/* LEFT: win rate */}
+                  <div className="py-3 px-4 text-center">
+                    <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
+                    {simResult ? (
+                      <>
+                        <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
+                          {winRate.toFixed(1)}%
+                        </div>
+                        {(() => {
+                          const total = dispSim!.totalSimulations || 0;
+                          const wins = dispSim!.winSimCount ?? Math.round(winRate / 100 * total);
+                          const losses = dispSim!.loseSimCount ?? (total - wins);
+                          const retried = (!retryOnly && simResult!.retryResult)
+                            ? (simResult!.retryResult.totalSimulations || 0)
+                            : 0;
+                          const retryWins = (!retryOnly && simResult!.retryResult)
+                            ? (simResult!.retryResult.winSimCount || 0)
+                            : 0;
+                          const retryLosses = retried - retryWins;
+                          return (
+                            <>
+                              <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono mt-0.5">
+                                [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
+                              </div>
+                              {retried > 0 && (
+                                <div className="text-[11px] text-amber-500 dark:text-amber-300 font-mono mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
+                                  [ 재시도 : {formatNumber(retryWins)}판 / {formatNumber(retryLosses)}판 ]
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </>
+                    ) : (
+                      <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
+                        -
+                      </div>
+                    )}
+                    {simRunning && (
+                      <div className="flex items-center justify-center gap-2 mt-1 text-xs text-muted-foreground">
+                        <Loader2 className="w-3 h-3 animate-spin" /> 계산 중...
+                      </div>
+                    )}
                   </div>
-                )}
-                {simRunning && (
-                  <div className="flex items-center justify-center gap-2 mt-1 text-xs text-muted-foreground">
-                    <Loader2 className="w-3 h-3 animate-spin" /> 계산 중...
+                  {/* RIGHT: gear-relative score */}
+                  <div className="py-3 px-4 text-center">
+                    <div className="text-xs text-muted-foreground mb-1 font-medium">장비 대비 승률</div>
+                    {simResult && gearScore > 0 ? (
+                      <>
+                        <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
+                          {gearScore.toFixed(1)}
+                        </div>
+                        <div className="text-[11px] text-foreground/70 dark:text-foreground/85 font-mono mt-0.5">
+                          [ 장비 평균 : {partyAvgGear.toFixed(2)} ]
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
+                        -
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
-            )}
+              );
+            })()}
             <table className="w-full text-xs table-fixed">
               <colgroup>
                 <col style={{ width: '72px' }} />
