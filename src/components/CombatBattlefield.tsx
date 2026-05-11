@@ -567,7 +567,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
             {isResult && (
               <span className={`ml-3 text-sm font-bold ${isWin ? 'text-lime-400' : 'text-red-400'}`}>
-                {isWin ? '🏆 승리!' : '💀 패배'}
+                {isWin ? '승리!' : '패배'}
               </span>
             )}
           </div>
