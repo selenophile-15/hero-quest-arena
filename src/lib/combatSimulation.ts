@@ -2098,18 +2098,26 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             winCritDmg[i] += critDmgFight[i];
             winDmgMax[i] = Math.max(winDmgMax[i], damageFight[i]);
             if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
+            if (damageFight[i] > 0 && round > 0) {
+              const pt = damageFight[i] / round;
+              if (pt < winDmgDealtPerTurnMin[i]) winDmgDealtPerTurnMin[i] = pt;
+              if (pt > winDmgDealtPerTurnMax[i]) winDmgDealtPerTurnMax[i] = pt;
+            }
             winRoundsArr[i] += round;
             winDmgTaken[i] += simDmgTaken[i];
             winDmgTakenMin[i] = Math.min(winDmgTakenMin[i], cappedDmg);
             winDmgTakenMax[i] = Math.max(winDmgTakenMax[i], cappedDmg);
+            if (simDmgTaken[i] > 0) winTotalDmgTakenHitSims[i]++;
             winSingleDmgTakenAccum[i] += simSingleDmgTaken[i];
             winSingleDmgTakenMin[i] = Math.min(winSingleDmgTakenMin[i], cappedSingle);
             winSingleDmgTakenMax[i] = Math.max(winSingleDmgTakenMax[i], cappedSingle);
             winSingleDmgTakenSimCount[i]++;
+            if (simSingleDmgTaken[i] > 0) winSingleDmgTakenHitSims[i]++;
             winAoeDmgTakenAccum[i] += simAoeDmgTaken[i];
             winAoeDmgTakenMin[i] = Math.min(winAoeDmgTakenMin[i], cappedAoe);
             winAoeDmgTakenMax[i] = Math.max(winAoeDmgTakenMax[i], cappedAoe);
             winAoeDmgTakenSimCount[i]++;
+            if (simAoeDmgTaken[i] > 0) winAoeDmgTakenHitSims[i]++;
             winTimesHit[i] += simTimesHit[i];
             winSingleHits[i] += singleHitsTaken[i];
             winTargeted[i] += simTargeted[i];
