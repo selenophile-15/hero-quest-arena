@@ -607,7 +607,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           </div>
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-border/40">
+              <tr className={`border-b-2 border-primary/30 ${isLight ? 'bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10' : 'bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20'}`}>
                 <th className={`text-center py-1.5 px-1 ${isLight ? 'text-slate-700' : 'text-muted-foreground'} font-bold w-[80px]`}>파티원</th>
                 <th className={`text-center py-1.5 px-1 ${isLight ? 'text-red-700' : 'text-red-400'} font-bold`}>입힌 대미지</th>
                 <th className={`text-center py-1.5 px-1 ${isLight ? 'text-orange-700' : 'text-orange-400'} font-bold`}>대미지 비율</th>
