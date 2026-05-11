@@ -2035,7 +2035,7 @@ export default function QuestSimulation() {
               const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
               const zeroBucket = (mainResultsTab === 'win' && (simResult.winSimCount ?? 0) === 0)
                 || (mainResultsTab === 'lose' && (simResult.loseSimCount ?? 0) === 0);
-              if (!displayResults || displayResults.length === 0 || noBucket || zeroBucket) {
+              if (!displayResults || displayResults.length === 0 || noBucket) {
                 return (
                   <div className="text-center text-xs text-muted-foreground py-8">
                     {mainResultsTab === 'win' ? '성공한 판 없음' : mainResultsTab === 'lose' ? '실패한 판 없음' : '데이터 없음'}
