@@ -1098,8 +1098,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       totalBarrierDmg += elVal;
     });
 
-    // Rudo barrier bonus: 50% more barrier damage (all tiers)
-    if (champName.includes('루도') || champName === 'Rudo') {
+    // Rudo barrier bonus starts at tier 3.
+    if ((champName.includes('루도') || champName === 'Rudo') && champTier >= 3) {
       totalBarrierDmg = Math.round(totalBarrierDmg * 1.5);
     }
 
@@ -1125,8 +1125,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let rudoRounds = 0;
   if (champName.includes('루도') || champName === 'Rudo') {
     if (champTier === 1) { rudoBonusBase = 0.3; rudoRounds = 2; }
-    else if (champTier === 2) { rudoBonusBase = 0.4; rudoRounds = 3; }
-    else if (champTier === 3) { rudoBonusBase = 0.4; rudoRounds = 3; }
+    else if (champTier === 2) { rudoBonusBase = 0.4; rudoRounds = 2; }
+    else if (champTier === 3) { rudoBonusBase = 0.5; rudoRounds = 3; }
     else if (champTier === 4) { rudoBonusBase = 0.5; rudoRounds = 4; }
     // Mercenary bonus
     if (heroIsMercenary[championIdx]) {
