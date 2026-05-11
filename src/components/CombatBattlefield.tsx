@@ -141,6 +141,15 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     return map;
   }, [activeHeroes]);
 
+  // Build name→classLine map for hero attack icons
+  const nameClassLineMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    activeHeroes.forEach(h => {
+      map[h.name] = h.classLine || '';
+    });
+    return map;
+  }, [activeHeroes]);
+
   // Extract the base monster name (without mini-boss prefix) for matching
   const baseMonsterName = useMemo(() => {
     const prefixes = ['거대한', '민첩한', '흉포한', '부유한', '전설적인'];
