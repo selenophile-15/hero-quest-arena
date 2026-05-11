@@ -2072,7 +2072,7 @@ export default function QuestSimulation() {
                         const partyNormal = displayResults.reduce((s, hr) => s + hr.normalDmgDealtAvg, 0);
                         const partyCrit = displayResults.reduce((s, hr) => s + hr.critDmgDealtAvg, 0);
                         return (
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                         <colgroup>
                           <col style={{ width: '110px' }} />
                           <col style={{ width: '90px' }} /><col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
@@ -2082,13 +2082,13 @@ export default function QuestSimulation() {
                         </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><GroupHeader label="전체" info={'시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}><GroupHeader label="턴" info={'시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}><GroupHeader label="대미지 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}><GroupHeader label="전체" info={'시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}><GroupHeader label="턴" info={'시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}><GroupHeader label="대미지 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
                           </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
+                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
                             <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                             <th className="text-center py-1 px-2">평균</th>
                             <th className="text-center py-1 px-2">최대</th>
@@ -2183,7 +2183,7 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2"><span className="flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</span><ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                         <colgroup>
                           <col style={{ width: '110px' }} />
                           {/* 기본: 생존률 */}
@@ -2201,27 +2201,27 @@ export default function QuestSimulation() {
                         </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={1}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={1}>
                               <GroupHeader label="기본" info={'생존률 — 전체 시뮬레이션 중 끝까지 생존한 비율(%).'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={4}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={4}>
                               <GroupHeader label="생존 턴" info={'각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한에 도달했음에도 살아있어 종료된 시뮬레이션의 비율.'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}>
                               <GroupHeader label="남은 체력" info={'시뮬레이션 종료 시 남은 HP의 분포 (최소 / 평균 / 최대).\n선택된 필터(전체/성공/실패)에 해당하는 판만 반영.'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}>
                               <GroupHeader label="타겟팅" info={'· 위협도: 위협도 기반 단일 공격 피격 확률.\n· 실제: 실제 단일 공격을 받은 비율 (= 탱킹 기여도). 마지막 1인이 남는 시점까지의 단일공격 가능 턴이 분모.\n· 회피: 단일+광역 공격 중 회피한 비율.'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}>
                               <GroupHeader label="치명타 생존" info={'· 확률: 치명타 생존 발동 확률 (스탯 기준).\n· 발동 비율: 전체 시뮬레이션 중 치명타 생존이 한 번이라도 발동된 판의 비율.'} />
                             </th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={2}>
                               <GroupHeader label="회복" info={'· 턴: 매턴 실제 체력 재생 수치 (영혼/스킬 매턴체력회복(도마뱀·불사조·우로보로스·클레릭·비숍 등) + 오라의 노래 매턴회복 + 챔피언 회복(릴루 등) 합산).\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
                             </th>
                           </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
+                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
                             <th className="text-center py-1 px-2 border-l-4 border-border">생존률</th>
                             <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                             <th className="text-center py-1 px-2">평균</th>
@@ -2333,7 +2333,7 @@ export default function QuestSimulation() {
                         <div className="mb-4">
                           <div className="text-xs font-semibold text-foreground mb-1 ml-1">전체</div>
                           <div className="overflow-x-auto">
-                            <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                            <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                               <colgroup>
                                 <col style={{ width: '110px' }} />
                                 {/* 기본: 단일 raw, 광역 raw, 보정, 단일 일반, 단일 치명, 광역 일반 */}
@@ -2344,15 +2344,15 @@ export default function QuestSimulation() {
                               </colgroup>
                               <thead>
                                 <tr className="border-b-2 border-border/60">
-                                  <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                                  <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={6}>
+                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
+                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={6}>
                                     <GroupHeader label="기본" info={'· 단일: 몬스터의 단일 공격력(원본).\n· 광역: 몬스터의 광역 공격력(원본).\n· 보정: 방어력으로 인한 대미지 적용률(%).\n· 단일 일반/치명: 단일 공격에서 일반/치명 평균 받은 대미지.\n· 광역 일반: 광역 공격에서 평균 받은 대미지(광역은 치명 없음).'} />
                                   </th>
-                                  <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}>
                                     <GroupHeader label="받은 대미지 (전체)" info={'각 시뮬레이션에서 단일 / 광역 공격을 모두 합산한 총 받은 대미지 분포(최소 / 평균 / 최대). 단순 단일+광역 합이 아니라 매턴 실제로 발생한 대미지를 반영함. 헴마 자해 대미지 포함.'} />
                                   </th>
                                 </tr>
-                                <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
+                                <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
                                   <th className="text-center py-1 px-2 border-l-4 border-border">단일</th>
                                   <th className="text-center py-1 px-2">광역</th>
                                   <th className="text-center py-1 px-2">보정</th>
@@ -2413,7 +2413,7 @@ export default function QuestSimulation() {
                           <div className="mb-4">
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">단일 / 광역</div>
                             <div className="overflow-x-auto">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
                                   <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} /><col style={{ width: '80px' }} />
@@ -2421,15 +2421,15 @@ export default function QuestSimulation() {
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={4}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={4}>
                                       <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 치명타 확률 = 몬스터 기본 치명타 확률에서 파티원 회피를 차감한 값(최소 5%).'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}>
                                       <GroupHeader label="광역" info={'광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음.'} />
                                     </th>
                                   </tr>
-                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
+                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
@@ -2519,16 +2519,16 @@ export default function QuestSimulation() {
                                 <div>
                                   <div className="text-xs font-semibold text-foreground mb-1 ml-1">상어 (영혼)</div>
                                   <div className="overflow-x-auto">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                       <colgroup>
                                         <col style={{ width: '110px' }} /><col /><col /><col />
                                       </colgroup>
                                       <thead>
                                         <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">일반</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">치명</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">평균</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">일반</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">치명</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">평균</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -2554,16 +2554,16 @@ export default function QuestSimulation() {
                                 <div>
                                   <div className="text-xs font-semibold text-foreground mb-1 ml-1">공룡 / 다이묘 (첫 턴)</div>
                                   <div className="overflow-x-auto">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                       <colgroup>
                                         <col style={{ width: '110px' }} /><col /><col /><col />
                                       </colgroup>
                                       <thead>
                                         <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">일반</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">치명</th>
-                                          <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">전체 딜 비중</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">일반</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">치명</th>
+                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">전체 딜 비중</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -2600,18 +2600,18 @@ export default function QuestSimulation() {
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">군주 보호</div>
                                 <div className="overflow-x-auto">
-                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                     <colgroup>
                                       <col style={{ width: '110px' }} /><col style={{ width: '110px' }} /><col /><col />
                                     </colgroup>
                                     <thead>
                                       <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">군주</th>
-                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">보호받은 동료</th>
-                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">군주</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">보호받은 동료</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
                                         </th>
-                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. 항상 던전 몬스터 원본 대미지 이상으로 받음. (실제 받은 값 / 던전 원본 대미지).'} />
                                         </th>
                                       </tr>
@@ -2652,22 +2652,22 @@ export default function QuestSimulation() {
                             <div>
                               <div className="text-xs font-semibold text-foreground mb-1 ml-1">정복자 (스택 0~4)</div>
                               <div className="overflow-x-auto">
-                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                   <colgroup>
                                     <col style={{ width: '110px' }} /><col style={{ width: '70px' }} />
                                     <col /><col /><col />
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">스택</th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">스택</th>
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴의 비율.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="실제 치명 대미지" info={'해당 스택 상태에서의 평균 치명 대미지.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="리셋 비율" info={'해당 스택 상태에서 연속 치명이 끊겨 0으로 초기화된 비율.'} />
                                       </th>
                                     </tr>
@@ -2704,23 +2704,23 @@ export default function QuestSimulation() {
                             <div>
                               <div className="text-xs font-semibold text-foreground mb-1 ml-1">닌자 / 센세</div>
                               <div className="overflow-x-auto">
-                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                   <colgroup>
                                     <col style={{ width: '110px' }} /><col /><col /><col /><col />
                                   </colgroup>
                                   <thead>
                                     <tr className="border-b-2 border-border/60">
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="보너스 소실" info={'고유 치확/회피 보너스가 사라진 평균 횟수.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="보너스 재생성" info={'센세 한정 — 보너스가 다시 생성된 평균 횟수.'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="보너스 ON 평균 대미지" info={'고유 보너스가 활성 상태일 때의 평균 대미지(전체 평균 중 비중%).'} />
                                       </th>
-                                      <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                         <GroupHeader label="보너스 OFF 평균 대미지" info={'고유 보너스가 비활성 상태일 때의 평균 대미지(전체 평균 중 비중%).'} />
                                       </th>
                                     </tr>
@@ -2756,7 +2756,7 @@ export default function QuestSimulation() {
                           <div>
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">광전사 / 잘</div>
                             <div className="overflow-x-auto">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} /><col style={{ width: '60px' }} />
                                   <col /><col />
@@ -2765,19 +2765,19 @@ export default function QuestSimulation() {
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" rowSpan={2}>파티원</th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" rowSpan={2}>단계</th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold" colSpan={2}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide" rowSpan={2}>파티원</th>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide" rowSpan={2}>단계</th>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide" colSpan={2}>
                                       <GroupHeader label="기본" info={'각 단계의 기준 체력과 발동 비율(단계별 합산 100%).'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={5}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={5}>
                                       <GroupHeader label="공격력" info={'단계별 공격력% 증가, 일반/치명/평균 대미지 및 단계별 가한 대미지 비중.'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-4 border-border" colSpan={3}>
                                       <GroupHeader label="회피" info={'단계별 회피% 증가, 최종 회피, 실제 회피율.'} />
                                     </th>
                                   </tr>
-                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
+                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
                                     <th className="text-center py-1 px-2">기준 체력</th>
                                     <th className="text-center py-1 px-2">발동 비율</th>
                                     <th className="text-center py-1 px-2 border-l-4 border-border">공격력%</th>
@@ -2854,21 +2854,21 @@ export default function QuestSimulation() {
                           <div>
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">폴로니아</div>
                             <div className="overflow-x-auto">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
                                   <col /><col /><col />
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                       <GroupHeader label="훔친 수" info={'시뮬레이션 1회당 해당 파티원이 훔친 평균 아이템 수.'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                       <GroupHeader label="훔칠 확률" info={'시뮬레이션에 적용된 훔칠 확률 (폴로니아 리더 스킬 + 사기꾼 1명당 +2%).'} />
                                     </th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                       <GroupHeader label="훔치기 한도" info={'시뮬레이션에 적용된 한도 (기본 20 + 사기꾼 1명당 +2).'} />
                                     </th>
                                   </tr>
@@ -2919,21 +2919,21 @@ export default function QuestSimulation() {
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">헴마</div>
                                 <div className="overflow-x-auto">
-                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                                     <colgroup>
                                       <col style={{ width: '110px' }} />
                                       <col /><col /><col />
                                     </colgroup>
                                     <thead>
                                       <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">파티원</th>
-                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">파티원</th>
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="흡수 턴" info={'헴마 흡수가 적용된 평균 턴 수.'} />
                                         </th>
-                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="흡수 공격력" info={'헴마 흡수로 증가한 평균 공격 대미지.'} />
                                         </th>
-                                        <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">
+                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">
                                           <GroupHeader label="깎인 체력" info={'헴마 흡수로 인해 평균 깎인 동료의 체력. (헴마 본인 행: 표시 안 함)'} />
                                         </th>
                                       </tr>
@@ -2970,21 +2970,21 @@ export default function QuestSimulation() {
                   <div>
                     <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Info className="w-4 h-4 text-foreground" />시뮬레이션 스탯</div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
+                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border border-border/40 rounded-md shadow-[0_2px_10px_-2px_hsl(var(--primary)/0.15)] table-fixed">
                         <colgroup>
                           <col style={{ width: '110px' }} />
                           <col /><col /><col /><col /><col /><col /><col />
                         </colgroup>
                         <thead>
                           <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap"></th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">ATK</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">HP</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">DEF</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">CRIT.C</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">CRIT.D</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">CRIT.A</th>
-                            <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold">EVA</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap"></th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">ATK</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">HP</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">DEF</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">CRIT.C</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">CRIT.D</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">CRIT.A</th>
+                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide">EVA</th>
                           </tr>
                         </thead>
                         <tbody>
