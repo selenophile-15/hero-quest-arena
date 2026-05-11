@@ -2195,11 +2195,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const avgTotalDmgTaken = totalDmgTakenAccum[i] / actualSimCount;
     const avgTimesHit = totalTimesHitAccum[i] / actualSimCount;
 
-    // Monster crit chance against this hero (accounts for negative evasion)
+    // Monster crit chance against this hero (accounts for negative evasion, capped at +5%)
     const heroFinalEva = heroArtNoEvasion[i] ? 0 : heroEvasion[i];
     let monsterCritBase = baseMobCritChance * mobCritChanceMod;
-    if (isExtreme && heroFinalEva < 0 && !heroArtNoEvasion[i]) {
-      monsterCritBase += -0.25 * heroFinalEva;
+    if (heroFinalEva < 0 && !heroArtNoEvasion[i]) {
+      monsterCritBase += Math.min(-0.25 * heroFinalEva, 0.05);
     }
     const monsterCritChance = Math.round(Math.min(monsterCritBase, 1) * 100 * 10) / 10;
 
