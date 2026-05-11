@@ -493,8 +493,12 @@ export default function QuestSimulation() {
         const hero = selectedHeroes[i];
         const cAtk = (hero.detailStats?.['공통 공격력 계수'] ?? 0) / 100;
         const cDef = (hero.detailStats?.['공통 방어력 계수'] ?? 0) / 100;
-        const atkConstant = (1 + cAtk) > 0 ? (hero.atk || 0) / (1 + cAtk) : (hero.atk || 0);
-        const defConstant = (1 + cDef) > 0 ? (hero.def || 0) / (1 + cDef) : (hero.def || 0);
+        // Use stored pre-pct constants directly (no inversion).
+        // Fallback to division only for legacy heroes without the field.
+        const atkConstant = hero.detailStats?.['공격력 상수']
+          ?? ((1 + cAtk) > 0 ? (hero.atk || 0) / (1 + cAtk) : (hero.atk || 0));
+        const defConstant = hero.detailStats?.['방어력 상수']
+          ?? ((1 + cDef) > 0 ? (hero.def || 0) / (1 + cDef) : (hero.def || 0));
         const partyAtkMult = (hero.atk || 0) > 0 ? (bs.atk - auraFlatAtk) / hero.atk : 1;
         const partyDefMult = (hero.def || 0) > 0 ? (bs.def - auraFlatDef) / hero.def : 1;
         return {
