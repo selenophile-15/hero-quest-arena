@@ -857,10 +857,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       ? (0.05 + 0.05 * champTier) * bjornMult
       : (0.1 * champTier - 0.1) * bjornMult;
   } else if (champName.includes('도노반') || champName === 'Donovan') {
-    if (champTier === 1) champAtkBonus = 0.05 * numSpellcasters;
-    else if (champTier === 2) champAtkBonus = 0.08 * numSpellcasters;
-    else if (champTier === 3) champAtkBonus = 0.10 * numSpellcasters;
-    else if (champTier === 4) champAtkBonus = 0.14 * numSpellcasters;
+    // Donovan himself counts as a spellcaster
+    const donovanCountedAsSpell = champion ? getClassLine(champion) === 'spellcaster' : false;
+    const effSpellcasters = donovanCountedAsSpell ? numSpellcasters : numSpellcasters + 1;
+    if (champTier === 1) champAtkBonus = 0.05 * effSpellcasters;
+    else if (champTier === 2) champAtkBonus = 0.08 * effSpellcasters;
+    else if (champTier === 3) champAtkBonus = 0.10 * effSpellcasters;
+    else if (champTier === 4) champAtkBonus = 0.14 * effSpellcasters;
     champHpBonus = (0.04 + 0.01 * champTier + 0.02 * Math.max(champTier - 3, 0)) * numFighters;
     for (let i = 0; i < numHeroes; i++) {
       const mult = heroIsMercenary[i] ? 1.25 * heroArtChampionMod[i] : heroArtChampionMod[i];
