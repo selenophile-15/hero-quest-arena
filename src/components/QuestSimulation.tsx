@@ -2151,7 +2151,7 @@ export default function QuestSimulation() {
                             <td className="py-1.5 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(partyAvg))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyMax))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(Math.round(partyMinPerTurn))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-red-300 whitespace-nowrap">{formatNumber(Math.round(partyAvgPerTurn))}</td>
+                            <td className="py-1.5 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(partyAvgPerTurn))}</td>
                             <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyMaxPerTurn))}</td>
                             {(() => {
                               const partyTotal = partyNormal + partyCrit;
