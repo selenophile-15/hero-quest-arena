@@ -4,7 +4,7 @@ import { Hero } from '@/types/game';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Plus, Trophy, Shield, Sparkles } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Plus, Trophy, Shield, Sparkles, UserX } from 'lucide-react';
 import { formatNumber } from '@/lib/format';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -354,7 +354,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         ? <Trophy className="w-4 h-4 text-lime-400" />
         : <Skull className="w-4 h-4 text-red-400" />;
     } else if (isDeath) {
-      icon = <Skull className="w-4 h-4 text-red-400" />;
+      icon = <UserX className="w-4 h-4 text-red-400" />;
     } else if (isEvasion) {
       icon = <Wind className="w-4 h-4 text-teal-400" />;
     } else if (isSetup) {
@@ -372,8 +372,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     } else if (entry.type === 'heal') {
       icon = (
         <span className="relative inline-flex items-center justify-center w-4 h-4">
-          <Heart className="w-4 h-4 text-emerald-400" fill="currentColor" />
-          <Plus className="absolute w-2 h-2 text-white" strokeWidth={4} />
+          <Heart className="w-4 h-4 text-emerald-400" />
+          <Plus className="absolute w-2 h-2 text-emerald-400" strokeWidth={3} />
         </span>
       );
     } else {
@@ -567,7 +567,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
             {isResult && (
               <span className={`ml-3 text-sm font-bold ${isWin ? 'text-lime-400' : 'text-red-400'}`}>
-                {isWin ? '🏆 승리!' : '💀 패배'}
+                {isWin ? '승리!' : '패배'}
               </span>
             )}
           </div>

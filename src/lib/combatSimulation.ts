@@ -10,6 +10,7 @@
 
 import { Hero } from '@/types/game';
 import { getChampionLeaderSkillTier, getCombatSkillTier } from '@/lib/championTier';
+import { getAurasongBonusStatsSync } from '@/lib/championEquipUtils';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -460,23 +461,40 @@ function getAurasongBonuses(champion: Hero | null): AurasongBonuses & { regenPer
 
   const item: any = champion.equipmentSlots?.[1]?.item;
   const bonuses = item?.relicStatBonuses;
-  if (!Array.isArray(bonuses)) return result;
-
-  for (const b of bonuses) {
-    const rawVal = typeof b?.value === 'number' ? b.value : 0;
-    const val = b?.op === '감소' ? -rawVal : rawVal;
-    switch (b?.stat) {
-      case '오라_공격력%': result.atkPct += val / 100; break;
-      case '오라_방어력%': result.defPct += val / 100; break;
-      case '오라_체력%': result.hpPct += val / 100; break;
-      case '오라_치명타확률%': result.critPct += val / 100; break;
-      case '오라_회피%': result.evaPct += val / 100; break;
-      case '오라_치명타데미지%': result.critDmgPct += val / 100; break;
-      case '오라_깡공격력': result.flatAtk += val; break;
-      case '오라_깡방어력': result.flatDef += val; break;
-      case '오라_깡체력': result.flatHp += val; break;
-      case '오라_매턴체력회복': result.regenPerTurn += val; break;
+  if (Array.isArray(bonuses)) {
+    for (const b of bonuses) {
+      const rawVal = typeof b?.value === 'number' ? b.value : 0;
+      const val = b?.op === '감소' ? -rawVal : rawVal;
+      switch (b?.stat) {
+        case '오라_공격력%': result.atkPct += val / 100; break;
+        case '오라_방어력%': result.defPct += val / 100; break;
+        case '오라_체력%': result.hpPct += val / 100; break;
+        case '오라_치명타확률%': result.critPct += val / 100; break;
+        case '오라_회피%': result.evaPct += val / 100; break;
+        case '오라_치명타데미지%': result.critDmgPct += val / 100; break;
+        case '오라_깡공격력': result.flatAtk += val; break;
+        case '오라_깡방어력': result.flatDef += val; break;
+        case '오라_깡체력': result.flatHp += val; break;
+        case '오라_매턴체력회복': result.regenPerTurn += val; break;
+      }
     }
+  }
+
+  // Preset aurasong lookup (for items without relicStatBonuses, like "광휘의 오라")
+  if (item?.name) {
+    try {
+      const presetBonuses = getAurasongBonusStatsSync(item.name);
+      if (presetBonuses && typeof presetBonuses === 'object') {
+        for (const [k, v] of Object.entries(presetBonuses)) {
+          if (typeof v !== 'number') continue;
+          switch (k) {
+            case '오라_매턴체력회복': result.regenPerTurn += v; break;
+            // Other 오라_ bonuses for preset aurasongs are intentionally NOT added here
+            // because they are already applied via partyBuffCalculator/precomputedStats.
+          }
+        }
+      }
+    } catch { /* ignore */ }
   }
 
   return result;
@@ -3217,6 +3235,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroIsClericFlag.push(isClass(h, '성직자', '클레릭', 'Cleric'));
     heroIsBishopFlag.push(isClass(h, '비숍', '주교', 'Bishop'));
   }
+  const heroSurvivalUsed: boolean[] = new Array(numHeroes).fill(false);
 
   // Berserker HP thresholds
   const berserkThresholds = heroTier.map(t => t === 4 ? [0.8, 0.55, 0.3] : [0.75, 0.5, 0.25]);
@@ -3406,27 +3425,26 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
         const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmgBase, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
-        heroHp[i] -= dmg;
-        // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
-        if (heroHp[i] <= 0) {
-          let survived = false;
-          if (heroIsClericFlag[i] || heroIsBishopFlag[i]) {
-            heroHp[i] += dmg;
-            survived = true;
-            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
-            // Disable further survival for this hero
-            heroIsClericFlag[i] = false;
-            heroIsBishopFlag[i] = false;
-          } else if (heroArmadilloVal[i] > 0) {
-            const armadilloChance = heroArmadilloVal[i] / 100;
-            if (Math.random() < armadilloChance) {
-              heroHp[i] += dmg;
-              survived = true;
-              log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `아르마딜로 치명타 생존 발동! 대미지 무시` });
-              heroArmadilloVal[i] = 0;
-            }
-          }
-        }
+         heroHp[i] -= dmg;
+         // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
+         // Strict: each hero can trigger survival at most once per combat
+         if (heroHp[i] <= 0 && !heroSurvivalUsed[i]) {
+           if (heroIsClericFlag[i] || heroIsBishopFlag[i]) {
+             heroHp[i] += dmg;
+             heroSurvivalUsed[i] = true;
+             log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
+             heroIsClericFlag[i] = false;
+             heroIsBishopFlag[i] = false;
+           } else if (heroArmadilloVal[i] > 0) {
+             const armadilloChance = heroArmadilloVal[i] / 100;
+             if (Math.random() < armadilloChance) {
+               heroHp[i] += dmg;
+               heroSurvivalUsed[i] = true;
+               log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `치명타 생존 발동! 대미지 무시` });
+               heroArmadilloVal[i] = 0;
+             }
+           }
+         }
         const hpPct = Math.max(0, heroHp[i] / heroMaxHp[i] * 100);
         log.push({ round, type: 'monster_attack', actor: mobDisplayName, target: activeHeroes[i].name, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${activeHeroes[i].name} HP: ${formatNum(Math.max(0, heroHp[i]))} (${hpPct.toFixed(0)}%))` });
         if (heroHp[i] <= 0) { heroesAlive--; log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `사망!` }); }
@@ -3480,12 +3498,11 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const normalDmg = calcDamageTaken(heroDefVal[target], mobDamage, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, mobDamage) : normalDmg;
         heroHp[target] -= dmg;
-        // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
-        if (heroHp[target] <= 0) {
-          let survived = false;
+        // Fatal blow survival check — strict: at most once per hero per combat
+        if (heroHp[target] <= 0 && !heroSurvivalUsed[target]) {
           if (heroIsClericFlag[target] || heroIsBishopFlag[target]) {
             heroHp[target] += dmg;
-            survived = true;
+            heroSurvivalUsed[target] = true;
             log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${heroIsClericFlag[target] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
             heroIsClericFlag[target] = false;
             heroIsBishopFlag[target] = false;
@@ -3493,8 +3510,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
             const armadilloChance = heroArmadilloVal[target] / 100;
             if (Math.random() < armadilloChance) {
               heroHp[target] += dmg;
-              survived = true;
-              log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `아르마딜로 치명타 생존 발동! 대미지 무시` });
+              heroSurvivalUsed[target] = true;
+              log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `치명타 생존 발동! 대미지 무시` });
               heroArmadilloVal[target] = 0;
             }
           }
