@@ -1,3 +1,5 @@
+import type { Hero } from '@/types/game';
+
 export interface SavedSimulationSummary {
   id: string;
   name: string;
@@ -25,6 +27,8 @@ export interface SavedSimulationSummary {
     avgDamageDealt: number;
     damageShare: number;
   }[];
+  // Hero snapshots — used only when a hero no longer exists in the user's list
+  heroSnapshots?: Hero[];
 }
 
 const STORAGE_KEY = 'quest-sim-saved-results';

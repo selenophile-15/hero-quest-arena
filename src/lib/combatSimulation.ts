@@ -1503,7 +1503,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             simTimesHit[i]++;
 
             if (hp[i] <= 0) {
-              const survived = handleFatalBlow(i);
+              const survived = handleFatalBlow(i, dmg);
               if (!survived) {
                 // Lord save check (lords cannot protect lords)
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
@@ -1520,7 +1520,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   simLordSavedAoeDmg[i] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (hp[lordHero] <= 0) {
-                    if (!handleFatalBlow(lordHero)) {
+                    if (!handleFatalBlow(lordHero, lordDmg)) {
                       hp[lordHero] = 0;
                       heroesAlive--;
                       updateTarget = true;
@@ -1581,7 +1581,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           else simSingleNormalHits[target]++;
 
           if (hp[target] <= 0) {
-            const survived = handleFatalBlow(target);
+            const survived = handleFatalBlow(target, dmg);
             if (!survived) {
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
@@ -1599,7 +1599,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 simLordSavedSingleDmg[target] += lordDmg;
                 hp[lordHero] -= lordDmg;
                 if (hp[lordHero] <= 0) {
-                  if (!handleFatalBlow(lordHero)) {
+                  if (!handleFatalBlow(lordHero, lordDmg)) {
                     hp[lordHero] = 0;
                     heroesAlive--;
                     updateTarget = true;
@@ -2090,9 +2090,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
     } // end while
 
-    function handleFatalBlow(idx: number): boolean {
+    function handleFatalBlow(idx: number, dmg: number = 0): boolean {
       if (Math.random() < surviveChance[idx]) {
-        hp[idx] = 1;
+        // Crit survival = ignore this damage entirely (HP unchanged, not set to 1)
+        hp[idx] += dmg;
         surviveChance[idx] = 0;
         critSurvivals[idx]++;
         return true;
@@ -2227,7 +2228,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         : undefined,
       chronomancerRetrySuccessRate: retryWinRate,
       totalHealingAvg: totalHealing[i] / actualSimCount,
-      healPerTurn: avgRoundsForHero > 0 ? (totalHealing[i] / actualSimCount) / avgRoundsForHero : 0,
+      healPerTurn: (() => {
+        // 실제 매턴 체력 재생 수치 = 도마뱀(리저드) + 클레릭/비숍 회복 + 릴루 회복
+        let v = heroLizard[i] || 0;
+        if (heroIsCleric[i]) v += Math.max(0, Math.min(heroTier[i], 3) * 5 - 5);
+        else if (heroIsBishop[i]) v += heroTier[i] >= 3 ? 20 : heroTier[i] >= 2 ? 5 : 0;
+        if (liluHealFlat > 0) v += liluHealFlat * heroArtChampionMod[i];
+        return v;
+      })(),
       lordProtectionAvg: lordProtections[i] / actualSimCount,
       lordProtectionSimRate: Math.round((lordProtectedSims[i] / actualSimCount) * 100 * 10) / 10,
       lordProtectedSingleAvg: lordProtectedSingle[i] / actualSimCount,
@@ -3029,22 +3037,23 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmgBase, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
         heroHp[i] -= dmg;
-        // Fatal blow survival check (armadillo spirit, cleric, bishop)
+        // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
         if (heroHp[i] <= 0) {
           let survived = false;
           if (heroIsClericFlag[i] || heroIsBishopFlag[i]) {
-            heroHp[i] = 1;
+            heroHp[i] += dmg;
             survived = true;
-            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! HP 1로 생존` });
+            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsClericFlag[i] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
             // Disable further survival for this hero
             heroIsClericFlag[i] = false;
             heroIsBishopFlag[i] = false;
           } else if (heroArmadilloVal[i] > 0) {
             const armadilloChance = heroArmadilloVal[i] / 100;
             if (Math.random() < armadilloChance) {
-              heroHp[i] = 1;
+              heroHp[i] += dmg;
               survived = true;
-              log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `아르마딜로 치명타 생존 발동! HP 1로 생존` });
+              log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `아르마딜로 치명타 생존 발동! 대미지 무시` });
+              heroArmadilloVal[i] = 0;
             }
           }
         }
@@ -3091,21 +3100,22 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         const normalDmg = calcDamageTaken(heroDefVal[target], mobDamage, mobCap);
         const dmg = isCrit ? calcCritDamageTaken(normalDmg, mobDamage) : normalDmg;
         heroHp[target] -= dmg;
-        // Fatal blow survival check (cleric/bishop, armadillo)
+        // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
         if (heroHp[target] <= 0) {
           let survived = false;
           if (heroIsClericFlag[target] || heroIsBishopFlag[target]) {
-            heroHp[target] = 1;
+            heroHp[target] += dmg;
             survived = true;
-            log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${heroIsClericFlag[target] ? '클레릭' : '비숍'} 치명타 생존 발동! HP 1로 생존` });
+            log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${heroIsClericFlag[target] ? '클레릭' : '비숍'} 치명타 생존 발동! 대미지 무시` });
             heroIsClericFlag[target] = false;
             heroIsBishopFlag[target] = false;
           } else if (heroArmadilloVal[target] > 0) {
             const armadilloChance = heroArmadilloVal[target] / 100;
             if (Math.random() < armadilloChance) {
-              heroHp[target] = 1;
+              heroHp[target] += dmg;
               survived = true;
-              log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `아르마딜로 치명타 생존 발동! HP 1로 생존` });
+              log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `아르마딜로 치명타 생존 발동! 대미지 무시` });
+              heroArmadilloVal[target] = 0;
             }
           }
         }

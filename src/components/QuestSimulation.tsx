@@ -197,14 +197,33 @@ const DEFAULT_TIME_SETTINGS: TimeSettingItem[] = [
 type QuestSubTab = 'simulation' | 'saved' | 'compare';
 
 const QUEST_SUB_TABS = [
-  { id: 'simulation' as const, label: '퀘스트 시뮬레이션', icon: Swords },
+  { id: 'simulation' as const, label: '시뮬레이션', icon: Swords },
   { id: 'saved' as const, label: '내 결과', icon: ListChecks },
   { id: 'compare' as const, label: '비교 분석실', icon: GitCompare },
 ];
 
 export default function QuestSimulation() {
   const { colorMode } = useTheme();
-  const allHeroes = useMemo(() => getHeroes(), []);
+  const [heroesVersion, setHeroesVersion] = useState(0);
+  const allHeroesBase = useMemo(() => getHeroes(), [heroesVersion]);
+  // Fallback snapshots for heroes that were loaded from saved results but no longer exist in user's list
+  const [fallbackHeroes, setFallbackHeroes] = useState<Hero[]>([]);
+  const allHeroes = useMemo(() => {
+    const ids = new Set(allHeroesBase.map(h => h.id));
+    const extras = fallbackHeroes.filter(h => !ids.has(h.id));
+    return [...allHeroesBase, ...extras];
+  }, [allHeroesBase, fallbackHeroes]);
+  useEffect(() => {
+    const refresh = () => setHeroesVersion(v => v + 1);
+    window.addEventListener('heroes-updated', refresh);
+    window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    return () => {
+      window.removeEventListener('heroes-updated', refresh);
+      window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, []);
   const [questDataMap, setQuestDataMap] = useState<Record<string, QuestData>>({});
   const [commonData, setCommonData] = useState<QuestCommon | null>(null);
   const [loading, setLoading] = useState(true);
@@ -549,6 +568,7 @@ export default function QuestSimulation() {
       minRounds: simResult.minRounds,
       maxRounds: simResult.maxRounds,
       heroSummaries,
+      heroSnapshots: selectedHeroList,
     });
 
     toast({ title: '결과 저장 완료', description: autoName });
@@ -560,6 +580,15 @@ export default function QuestSimulation() {
     setSelectedRegionIdx(sim.regionIdx);
     setSelectedSubAreaIdx(sim.subAreaIdx);
     setSelectedQuestIdx(sim.questIdx);
+    // For each saved hero id: prefer current list (latest data); fall back to snapshot if missing
+    const currentIds = new Set(allHeroesBase.map(h => h.id));
+    const missingSnapshots = (sim.heroSnapshots || []).filter(s => !currentIds.has(s.id));
+    if (missingSnapshots.length > 0) {
+      setFallbackHeroes(prev => {
+        const ids = new Set(prev.map(h => h.id));
+        return [...prev, ...missingSnapshots.filter(s => !ids.has(s.id))];
+      });
+    }
     setSelectedHeroIds(new Set(sim.heroIds));
     setSelectedBooster(sim.booster as any);
     setSelectedMiniBoss(sim.miniBoss as MiniBossType);
@@ -1654,16 +1683,7 @@ export default function QuestSimulation() {
                 <Crown className="w-5 h-5 text-primary" />
                 <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
                 {currentQuest && simResult && selectedHeroes.length > 0 && (
-                  <Select value={mainResultsTab} onValueChange={(v) => setMainResultsTab(v as 'all' | 'win' | 'lose')}>
-                    <SelectTrigger className="h-8 w-24 text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm ml-auto">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
-                      <SelectItem value="win">성공</SelectItem>
-                      <SelectItem value="lose">실패</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} />
                 )}
               </div>
 
@@ -2145,7 +2165,7 @@ export default function QuestSimulation() {
                               <GroupHeader label="치명타 생존" info={'· 확률: 치명타 생존 발동 확률 (스탯 기준).\n· 발동 비율: 전체 시뮬레이션 중 치명타 생존이 한 번이라도 발동된 판의 비율.'} />
                             </th>
                             <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={2}>
-                              <GroupHeader label="회복" info={'· 턴: 평균 턴당 회복량.\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
+                              <GroupHeader label="회복" info={'· 턴: 매턴 실제 체력 재생 수치 (도마뱀 영혼 + 클레릭/비숍 회복 + 릴루 등 챔피언 회복 합산).\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
                             </th>
                           </tr>
                           <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-primary/5">
