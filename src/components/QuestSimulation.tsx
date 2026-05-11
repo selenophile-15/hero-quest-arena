@@ -2349,24 +2349,24 @@ export default function QuestSimulation() {
                               </colgroup>
                               <thead>
                                 <tr className="border-b-2 border-border/60">
-                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
-                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={6}>
+                                   <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
+                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={6}>
                                     <GroupHeader label="기본" info={'· 단일: 몬스터의 단일 공격력(원본).\n· 광역: 몬스터의 광역 공격력(원본).\n· 보정: 방어력으로 인한 대미지 적용률(%).\n· 단일 일반/치명: 단일 공격에서 일반/치명 평균 받은 대미지.\n· 광역 일반: 광역 공격에서 평균 받은 대미지(광역은 치명 없음).'} />
                                   </th>
-                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/20 to-primary/5 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
+                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
                                     <GroupHeader label="받은 대미지 (전체)" info={'각 시뮬레이션에서 단일 / 광역 공격을 모두 합산한 총 받은 대미지 분포(최소 / 평균 / 최대). 단순 단일+광역 합이 아니라 매턴 실제로 발생한 대미지를 반영함. 헴마 자해 대미지 포함.'} />
                                   </th>
                                 </tr>
-                                <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold bg-secondary/40">
-                                  <th className="text-center py-1 px-2 border-l-2 border-primary/40">단일</th>
-                                  <th className="text-center py-1 px-2">광역</th>
-                                  <th className="text-center py-1 px-2">보정</th>
-                                  <th className="text-center py-1 px-2">단일 일반</th>
-                                  <th className="text-center py-1 px-2">단일 치명</th>
-                                  <th className="text-center py-1 px-2">광역 일반</th>
-                                  <th className="text-center py-1 px-2 border-l-2 border-primary/40">최소</th>
-                                  <th className="text-center py-1 px-2">평균</th>
-                                  <th className="text-center py-1 px-2">최대</th>
+                                <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                                  <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">단일</th>
+                                  <th className="text-center py-1 px-2 bg-secondary/70">광역</th>
+                                  <th className="text-center py-1 px-2 bg-secondary/70">보정</th>
+                                  <th className="text-center py-1 px-2 bg-secondary/70">단일 일반</th>
+                                  <th className="text-center py-1 px-2 bg-secondary/70">단일 치명</th>
+                                  <th className="text-center py-1 px-2 bg-secondary/70">광역 일반</th>
+                                  <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">최소</th>
+                                  <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
+                                  <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
                                 </tr>
                               </thead>
                               <tbody>
