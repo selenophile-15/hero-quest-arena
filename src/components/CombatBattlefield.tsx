@@ -482,6 +482,11 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           <div className="text-center mb-2">
             <span className="text-xs text-muted-foreground">라운드</span>
             <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
+            {isResult && (
+              <span className={`ml-3 text-sm font-bold ${isWin ? 'text-lime-400' : 'text-red-400'}`}>
+                {isWin ? '🏆 승리!' : '💀 패배'}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
