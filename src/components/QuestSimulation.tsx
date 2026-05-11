@@ -1218,7 +1218,7 @@ export default function QuestSimulation() {
                     return (
                     <div className="mt-3 pt-6 border-t border-border/30" style={{ marginBottom: '8px' }}>
                       {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — centered */}
-                      <div className="relative grid gap-x-1 mx-auto" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px', paddingRight: '4px', maxWidth: '340px' }}>
+                      <div className="relative grid gap-x-1 mx-auto w-fit" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 140px' }}>
                         {/* Column 1: threshold values (aligned with monster info icons on left) */}
                         <div className="relative">
                           {rows.map(r => (
