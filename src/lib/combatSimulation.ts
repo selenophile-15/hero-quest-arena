@@ -2578,11 +2578,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       minDamageDealt: dMin >= 1e9 ? 0 : dMin,
       normalDmgDealtAvg: dNorm / bucketCount,
       critDmgDealtAvg: dCrit / bucketCount,
-      avgDamagePerTurn: avgR > 0 ? (dDealt / bucketCount) / avgR : 0,
+      avgDamagePerTurn: (() => {
+        const ac = bucket === 'win' ? winAttackCount[i] : loseAttackCount[i];
+        return ac > 0 ? dDealt / ac : 0;
+      })(),
       minDamagePerTurn: bucket === 'win'
-        ? (winDmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(winDmgDealtPerTurnMin[i]))
-        : (loseDmgDealtPerTurnMin[i] >= 1e9 ? 0 : Math.round(loseDmgDealtPerTurnMin[i])),
-      maxDamagePerTurn: bucket === 'win' ? Math.round(winDmgDealtPerTurnMax[i]) : Math.round(loseDmgDealtPerTurnMax[i]),
+        ? (winDmgPerHitMin[i] >= 1e18 ? 0 : Math.round(winDmgPerHitMin[i]))
+        : (loseDmgPerHitMin[i] >= 1e18 ? 0 : Math.round(loseDmgPerHitMin[i])),
+      maxDamagePerTurn: bucket === 'win' ? Math.round(winDmgPerHitMax[i]) : Math.round(loseDmgPerHitMax[i]),
       totalDamageTakenAvg: Math.round(dTaken / bucketCount),
       totalDamageTakenAvgWhenHit: (() => {
         const hits = bucket === 'win' ? winTotalDmgTakenHitSims[i] : loseTotalDmgTakenHitSims[i];
