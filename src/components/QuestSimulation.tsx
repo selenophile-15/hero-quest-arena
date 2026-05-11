@@ -2371,14 +2371,14 @@ export default function QuestSimulation() {
                               <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/30 [&_th]:border [&_th]:border-border/30 border-2 border-border/60 table-fixed">
                                 <colgroup>
                                   <col style={{ width: '110px' }} />
-                                  <col style={{ width: '95px' }} /><col style={{ width: '105px' }} /><col style={{ width: '95px' }} />
-                                  <col style={{ width: '95px' }} /><col style={{ width: '105px' }} /><col style={{ width: '95px' }} />
+                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} /><col style={{ width: '80px' }} />
+                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} />
                                 </colgroup>
                                 <thead>
                                   <tr className="border-b-2 border-border/60">
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold whitespace-nowrap" rowSpan={2}></th>
-                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
-                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 시뮬레이션마다의 합산 분포(맞지 않은 판은 0).'} />
+                                    <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={4}>
+                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 치명타 확률 = 몬스터 기본 치명타 확률에서 파티원 회피를 차감한 값(최소 5%).'} />
                                     </th>
                                     <th className="text-center py-1.5 px-2 bg-primary/10 text-foreground font-bold border-l-4 border-border" colSpan={3}>
                                       <GroupHeader label="광역" info={'광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음.'} />
@@ -2388,6 +2388,7 @@ export default function QuestSimulation() {
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
+                                    <th className="text-center py-1 px-2">치명타 확률</th>
                                     <th className="text-center py-1 px-2 border-l-4 border-border">최소</th>
                                     <th className="text-center py-1 px-2">평균</th>
                                     <th className="text-center py-1 px-2">최대</th>
@@ -2401,12 +2402,17 @@ export default function QuestSimulation() {
                                     const aMin = hr.aoeDmgTakenMin ?? 0;
                                     const aAvg = hr.aoeDmgTakenAvg ?? 0;
                                     const aMax = hr.aoeDmgTakenMax ?? 0;
+                                    // 치명타 확률 = max(5, monsterCrit - evasion). 회피가 몬스터 치확보다 +20% 이상이면 최소 5%로 고정.
+                                    const monCrit = hr.monsterCritChance ?? 0;
+                                    const eva = hr.finalEvasion ?? 0;
+                                    const critProb = Math.max(5, Math.round((monCrit - eva) * 10) / 10);
                                     return (
                                       <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
                                         <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(sMin)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(sAvg)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(sMax)}</td>
+                                        <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{critProb}%</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-4 border-border whitespace-nowrap">{formatNumber(aMin)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-orange-400 whitespace-nowrap">{formatNumber(aAvg)}</td>
                                         <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(aMax)}</td>
