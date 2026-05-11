@@ -340,9 +340,6 @@ export interface SimulationResult {
   losePartyDmgPerTurn?: PartyAggregate;
   losePartyDmgTaken?: PartyAggregate;
   losePartyDmgTakenPerTurn?: PartyAggregate;
-  losePartyDmgPerTurn?: PartyAggregate;
-  losePartyDmgTaken?: PartyAggregate;
-  losePartyDmgTakenPerTurn?: PartyAggregate;
   // Polonia loot summary
   poloniaLoot?: PoloniaLootInfo;
   // Populated only when SimulationConfig.recordEvents === true
