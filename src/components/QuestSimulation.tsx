@@ -2240,6 +2240,10 @@ export default function QuestSimulation() {
                           </tr>
                         </thead>
                         <tbody>
+                          {zeroBucket ? (
+                            <EmptyBucketRow tab={mainResultsTab} colSpan={16} />
+                          ) : (
+                          <>
                           {displayResults.map((hr, idx) => {
                             const blank = '';
                             const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
