@@ -2021,7 +2021,9 @@ export default function QuestSimulation() {
                 displayResults = simResult.loseHeroResults;
               }
               const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
-              if (!displayResults || displayResults.length === 0 || noBucket) {
+              const zeroBucket = (mainResultsTab === 'win' && (simResult.winSimCount ?? 0) === 0)
+                || (mainResultsTab === 'lose' && (simResult.loseSimCount ?? 0) === 0);
+              if (!displayResults || displayResults.length === 0 || noBucket || zeroBucket) {
                 return (
                   <div className="text-center text-xs text-muted-foreground py-8">
                     {mainResultsTab === 'win' ? '성공한 판 없음' : mainResultsTab === 'lose' ? '실패한 판 없음' : '데이터 없음'}
