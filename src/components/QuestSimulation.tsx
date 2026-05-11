@@ -1841,15 +1841,15 @@ export default function QuestSimulation() {
                   );
                   return (
                     <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="bg-secondary/30 rounded p-2">
+                      <div className="turn-stat-box rounded p-2">
                         <div className="text-[10px] text-muted-foreground">최소</div>
                         <div className="text-lg font-bold font-mono text-foreground">{rounds.min}</div>
                       </div>
-                      <div className="bg-secondary/30 rounded p-2">
+                      <div className="turn-stat-box rounded p-2">
                         <div className="text-[10px] text-muted-foreground">평균</div>
                         <div className="text-lg font-bold font-mono text-primary">{Math.round(rounds.avg)}</div>
                       </div>
-                      <div className="bg-secondary/30 rounded p-2">
+                      <div className="turn-stat-box rounded p-2">
                         <div className="text-[10px] text-muted-foreground">최대</div>
                         <div className="text-lg font-bold font-mono text-foreground">{rounds.max}</div>
                       </div>
