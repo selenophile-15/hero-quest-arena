@@ -1293,6 +1293,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const loseHpRemain = new Float64Array(numHeroes);
   const loseTargeted = new Float64Array(numHeroes);
   const loseEvaded = new Float64Array(numHeroes);
+  const loseHealingAccum = new Float64Array(numHeroes);
+  const loseCritSurvivals = new Float64Array(numHeroes);
+  const loseHemmaAbsorbedDmgAccum = new Float64Array(numHeroes);
+  const loseHemmaAbsorbedCountAccum = new Float64Array(numHeroes);
+  // Hemma attack-bonus gain accumulator (per hero, only hemma index is non-zero)
+  const hemmaAtkGainAccum = new Float64Array(numHeroes);
+  const winHemmaAtkGainAccum = new Float64Array(numHeroes);
+  const loseHemmaAtkGainAccum = new Float64Array(numHeroes);
   // Per-fight targeted/evaded snapshots
   const fightTargetedTmp = new Float64Array(numHeroes);
   const fightEvadedTmp = new Float64Array(numHeroes);
