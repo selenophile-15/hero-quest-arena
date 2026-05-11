@@ -215,11 +215,12 @@ export interface HeroSimResult {
   lordSavedAoeAvgDmg?: number;     // avg aoe dmg absorbed by lord saving this hero per sim
   // Conqueror per-stack metrics (index 0..4 = stack count)
   conquerorStackTurnRate?: number[];   // % of attack-turns spent at each stack (0..4)
-  conquerorStackCritDmg?: number[];    // avg crit damage dealt at each stack
-  conquerorStackAvgDmg?: number[];     // avg damage dealt at each stack (all attacks)
-  conquerorStackResetRate?: number[];  // % of attacks at this stack that ended in reset (non-crit)
+  conquerorStackCritDmg?: number[];    // theoretical crit damage at each stack (avgBaseAtk × (critMult + s*0.25))
+  conquerorStackAvgDmg?: number[];     // sum of damage at stack s ÷ total attack count
+  conquerorStackResetRate?: number[];  // (deprecated) % of attacks at this stack that ended in reset
   conquerorAvgStack?: number;          // overall avg stack count when attacking
   conquerorAvgCritBonus?: number;      // overall avg crit% bonus from stacks (0..100)
+  conquerorBaseCritMult?: number;      // base crit-damage multiplier (e.g. 4.0 for 400%)
   // Ninja/Sensei innate bonus tracking
   innateLossCount?: number;     // avg # of times innate bonus was lost (per sim)
   innateRegenCount?: number;    // avg # of times sensei regenerated bonus (per sim)
