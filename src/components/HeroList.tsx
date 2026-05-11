@@ -1619,7 +1619,7 @@ export default function HeroList() {
           <div className="card-fantasy p-3 mb-3 mt-3 transition-colors hover:border-primary/40">
             <div className="flex flex-wrap gap-3">
               {activeColumns.map(col => (
-                <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer">
+                <label key={col.key} className="flex items-center gap-1.5 text-sm cursor-pointer p-1.5 rounded border border-transparent hover:border-primary/30 hover:bg-secondary/10 transition-all">
                   <Checkbox checked={visibleCols.has(col.key)} onCheckedChange={() => toggleCol(col.key)} />
                   {col.label}
                 </label>
@@ -1702,7 +1702,7 @@ export default function HeroList() {
                     <Fragment key={hero.id}>
                       <tr
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
-                        className={`border-b border-border/50 transition-colors cursor-pointer select-none table-zebra-row ${
+                        className={`border-b border-border/50 transition-colors cursor-pointer select-none table-zebra-row hover:bg-secondary/20 hover:border-primary/20 ${
                           isExpanded ? 'row-expanded' : ''
                         }`}
                         style={{ height: '52px' }}
