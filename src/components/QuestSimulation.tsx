@@ -2164,6 +2164,8 @@ export default function QuestSimulation() {
                             <td className="py-1.5 px-2 border-l-4 border-border" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
                             <td className="py-1.5 px-2" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
                           </tr>
+                          </>
+                          )}
                         </tbody>
                       </table>
                         );
