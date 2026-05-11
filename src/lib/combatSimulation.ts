@@ -1478,6 +1478,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
       new Float64Array(numHeroes), new Float64Array(numHeroes),
     ];
+    const simConqStackTotalDmgAccum = [
+      new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+      new Float64Array(numHeroes), new Float64Array(numHeroes),
+    ];
     // Per-sim innate (ninja/sensei) tracking
     const simInnateLossCount = new Float64Array(numHeroes);
     const simInnateRegenCount = new Float64Array(numHeroes);
