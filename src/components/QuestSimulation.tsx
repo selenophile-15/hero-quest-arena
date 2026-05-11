@@ -63,15 +63,13 @@ function ResultTabsToggle({ value, onChange }: { value: 'all' | 'win' | 'lose'; 
     { v: 'lose', label: '실패' },
   ];
   return (
-    <div className="inline-flex items-center rounded-md border border-primary/40 bg-primary/5 overflow-hidden h-7 ml-auto">
+    <div className="result-tabs-premium ml-auto">
       {opts.map(o => (
         <button
           key={o.v}
           type="button"
           onClick={() => onChange(o.v)}
-          className={`px-2 text-[11px] font-bold leading-none h-full transition-colors ${
-            value === o.v ? 'bg-primary/20 text-foreground' : 'text-muted-foreground hover:bg-primary/10'
-          }`}
+          data-active={value === o.v}
         >
           {o.label}
         </button>
