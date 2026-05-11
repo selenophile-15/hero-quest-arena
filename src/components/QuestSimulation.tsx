@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -1217,8 +1217,8 @@ export default function QuestSimulation() {
 
                     return (
                     <div className="mt-3 pt-6 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — spacer halved (24→12) */}
-                      <div className="relative grid gap-x-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px' }}>
+                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — centered */}
+                      <div className="relative grid gap-x-1 mx-auto" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 12px 1fr', paddingLeft: '4px', paddingRight: '4px', maxWidth: '340px' }}>
                         {/* Column 1: threshold values (aligned with monster info icons on left) */}
                         <div className="relative">
                           {rows.map(r => (
@@ -1842,7 +1842,7 @@ export default function QuestSimulation() {
               {/* Equipment Grade Score */}
               <div className="card-fantasy p-4 mb-3">
                 <div className="flex items-center gap-1.5 mb-3">
-                  <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
+                  <Shirt className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
                   <span className="text-sm font-bold text-foreground">장비 등급</span>
                 </div>
                 {(() => {
@@ -2305,7 +2305,7 @@ export default function QuestSimulation() {
 
                   {/* Table 3: 받는 대미지 — 전체(단일+광역) / 단일+광역 합본 */}
                   <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
+                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} /></div>
                     {(() => {
                       const blank = '';
                       const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
