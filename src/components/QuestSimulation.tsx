@@ -28,6 +28,7 @@ function getHeroBarrierContribution(h: Hero, barrierEl: string): number {
 }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
+import { getChampionLeaderSkillTier } from '@/lib/championTier';
 import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 import CombatBattlefield from '@/components/CombatBattlefield';
 import SavedResults from '@/components/SavedResults';
@@ -421,7 +422,7 @@ export default function QuestSimulation() {
   // Rudo element bonus: +50% to total party element values (rounded)
   const champion = selectedHeroes.find(h => h.type === 'champion');
   const isRudo = champion && (champion.championName?.includes('루도') || champion.name?.includes('루도'));
-  const rudoElementMultiplier = isRudo ? 1.5 : 1.0;
+  const rudoElementMultiplier = isRudo && getChampionLeaderSkillTier(champion) >= 3 ? 1.5 : 1.0;
 
   // Compute party-buffed stats whenever party changes
   // Compute party-buffed stats whenever party changes
@@ -3098,11 +3099,11 @@ export default function QuestSimulation() {
                                 <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
                                   <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
                                     <colgroup>
-                                      <col style={{ width: '20%' }} />
-                                      <col style={{ width: '16%' }} />
-                                      <col style={{ width: '16%' }} />
-                                      <col style={{ width: '24%' }} />
-                                      <col style={{ width: '24%' }} />
+                                      <col style={{ width: '110px' }} />
+                                      <col style={{ width: '18%' }} />
+                                      <col style={{ width: '18%' }} />
+                                      <col style={{ width: '32%' }} />
+                                      <col style={{ width: '32%' }} />
                                     </colgroup>
                                     <thead>
                                       <tr className="border-b-2 border-border/60">

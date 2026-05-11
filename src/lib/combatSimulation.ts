@@ -9,6 +9,7 @@
  */
 
 import { Hero } from '@/types/game';
+import { getChampionLeaderSkillTier, getCombatSkillTier } from '@/lib/championTier';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -431,12 +432,6 @@ function isMercenary(hero: Hero): boolean {
   return isClass(hero, '용병', 'Mercenary');
 }
 
-function getHeroTier(hero: Hero): number {
-  // Use cardLevel for champions, or infer from promoted status
-  if (hero.cardLevel) return hero.cardLevel;
-  return hero.promoted ? 4 : 1;
-}
-
 interface AurasongBonuses {
   atkPct: number;
   defPct: number;
@@ -660,7 +655,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   });
 
   const champName = champion?.championName || champion?.name || '';
-  const champTier = champion ? getHeroTier(champion) : 0;
+  const champTier = champion ? getChampionLeaderSkillTier(champion) : 0;
   const aurasong = getAurasongBonuses(champion);
 
   // ─── Bjorn multiplier (flash quest zones) ───
@@ -709,7 +704,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   for (let i = 0; i < numHeroes; i++) {
     const h = activeHeroes[i];
     const ps = precomputedStats?.[i];
-    const tier = getHeroTier(h);
+    const tier = getCombatSkillTier(h);
     heroTier.push(tier);
 
     // Use precomputed stats (from partyBuffCalculator with champion+aurasong+booster)
@@ -1103,8 +1098,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       totalBarrierDmg += elVal;
     });
 
-    // Rudo barrier bonus: 50% more barrier damage (all tiers)
-    if (champName.includes('루도') || champName === 'Rudo') {
+    // Rudo barrier bonus starts at tier 3.
+    if ((champName.includes('루도') || champName === 'Rudo') && champTier >= 3) {
       totalBarrierDmg = Math.round(totalBarrierDmg * 1.5);
     }
 
@@ -1130,8 +1125,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let rudoRounds = 0;
   if (champName.includes('루도') || champName === 'Rudo') {
     if (champTier === 1) { rudoBonusBase = 0.3; rudoRounds = 2; }
-    else if (champTier === 2) { rudoBonusBase = 0.4; rudoRounds = 3; }
-    else if (champTier === 3) { rudoBonusBase = 0.4; rudoRounds = 3; }
+    else if (champTier === 2) { rudoBonusBase = 0.4; rudoRounds = 2; }
+    else if (champTier === 3) { rudoBonusBase = 0.5; rudoRounds = 3; }
     else if (champTier === 4) { rudoBonusBase = 0.5; rudoRounds = 4; }
     // Mercenary bonus
     if (heroIsMercenary[championIdx]) {
@@ -3047,6 +3042,13 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   if (activeHeroes.length === 0) return [{ round: 0, type: 'result', actor: '시스템', detail: '활성 영웅 없음' }];
 
   const numHeroes = activeHeroes.length;
+  const champion = activeHeroes.find(h => h.type === 'champion') || null;
+  const champName = champion?.championName || champion?.name || '';
+  const champTier = champion ? getChampionLeaderSkillTier(champion) : 0;
+  const rudoBonusBase = champName.includes('루도') || champName === 'Rudo'
+    ? (champTier === 1 ? 0.3 : champTier === 2 ? 0.4 : champTier >= 3 ? 0.5 : 0)
+    : 0;
+  const rudoRounds = rudoBonusBase > 0 ? (champTier <= 2 ? 2 : champTier === 3 ? 3 : 4) : 0;
   const isExtreme = monster.isExtreme || isTerrorTower;
 
   // Mini boss modifiers
@@ -3083,6 +3085,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         totalEl += h.equipmentElements?.[monster.barrierElement!] || 0;
       }
     });
+    if ((champName.includes('루도') || champName === 'Rudo') && champTier >= 3) totalEl = Math.round(totalEl * 1.5);
     if (totalEl < monster.barrier.hp) {
       barrierMod = 0.2;
       log.push({ round: 0, type: 'event', actor: '시스템', detail: `원소 배리어 미돌파! 대미지 ${barrierMod * 100}%로 제한`, values: { heroSum: totalEl, required: monster.barrier.hp } });
@@ -3124,7 +3127,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   for (let i = 0; i < numHeroes; i++) {
     const h = activeHeroes[i];
     const ps = precomputedStats?.[i];
-    const tier = h.cardLevel || (h.promoted ? 4 : 1);
+    const tier = getCombatSkillTier(h);
     heroTier.push(tier);
 
     if (ps) {
@@ -3244,6 +3247,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
   const totalMobHp = Math.round(monster.hp * mobHpMod);
   log.push({ round: 0, type: 'event', actor: '시스템', detail: `전투 시작! ${mobDisplayName} HP: ${formatNum(totalMobHp)}, 파티원 ${numHeroes}명` });
+  if (rudoBonusBase > 0) {
+    log.push({ round: 0, type: 'event', actor: champName, detail: `루도 리더 스킬: 치확 +${Math.round(rudoBonusBase * 100)}% (${rudoRounds}라운드)` });
+  }
 
   let mobHpCurrent = totalMobHp;
   let heroesAlive = numHeroes;
@@ -3420,6 +3426,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
       // Calculate effective crit chance with conqueror stacks
       let effectiveCrit = heroCrit[i];
+      if (rudoBonusBase > 0 && round <= rudoRounds) {
+        effectiveCrit += rudoBonusBase;
+      }
       if (heroIsConquistadorFlag[i] && conquStacks[i] > 0) {
         effectiveCrit += conquStacks[i] * 0.05; // +5% per stack
       }

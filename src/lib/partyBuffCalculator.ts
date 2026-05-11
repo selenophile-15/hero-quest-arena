@@ -13,8 +13,8 @@
  */
 
 import { Hero } from '@/types/game';
-import { getChampionSkillsData } from '@/lib/gameData';
 import { ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
+import { getChampionLeaderSkillTier } from '@/lib/championTier';
 
 // ─── Types ───
 
@@ -89,16 +89,6 @@ function isMercenary(hero: Hero): boolean {
 
 function hasLoneWolfCowl(hero: Hero): boolean {
   return hero.equipmentSlots?.some(s => s.item?.name === '외로운 늑대 두건' || s.item?.name === '고독한 늑대 두건') || false;
-}
-
-function getChampionTier(champion: Hero, champSkillsData: Record<string, any>): number {
-  const csd = champSkillsData[champion.championName || ''];
-  if (!csd) return 1;
-  for (let t = 4; t >= 1; t--) {
-    const td = csd[`${t}티어`];
-    if (td && (champion.rank || 1) >= (td['챔피언_랭크'] || 0)) return t;
-  }
-  return 1;
 }
 
 // ─── Aurasong bonus extraction ───
@@ -220,8 +210,7 @@ export async function calculatePartyBuffs(input: PartyBuffInput): Promise<{
     else if (line === 'spellcaster') numSpellcasters++;
   });
   
-  const champSkillsData = await getChampionSkillsData();
-  const champTier = getChampionTier(champion, champSkillsData);
+  const champTier = getChampionLeaderSkillTier(champion);
   const champName = champion.championName || '';
   const bjornMult = isFlashQuest ? 2.0 : 1.0;
   
