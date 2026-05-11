@@ -3350,6 +3350,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `매 턴 체력 재생 +${formatNum(heroPersonalRegen[i])}` });
     }
   }
+  if (liluHealFlat > 0 && championIdx >= 0) {
+    log.push({ round: 0, type: 'event', actor: champName, detail: `릴루 리더 스킬: 매 턴 파티 체력 +${formatNum(liluHealFlat)} (릴루 생존 시)` });
+  }
 
   let mobHpCurrent = totalMobHp;
   let heroesAlive = numHeroes;
