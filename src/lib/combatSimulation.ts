@@ -1776,11 +1776,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         const tamasAtkMult = (jj === championIdx && isTamas) ? (1 + tamasBonus) : 1;
 
         // Hero attack calculation (PDF formula)
-        // standalone(t) = atkConstant * (1 + commonAtkPct + condPct(t))
-        // effectiveAtk = standalone(t) * partyAtkMult
-        // Mundra applies only vs bosses.
-        const condPct = (monster.isBoss ? 0.2 * heroMundra[jj] : 0)
-          + sharkActive * 0.01 * heroShark[jj]
+        // Mundra is pre-folded into finalAtk for boss fights. condPct here only includes
+        // turn-conditional bonuses (Shark<50%HP, Dinosaur round 1, Berserker stage).
+        const condPct = sharkActive * 0.01 * heroShark[jj]
           + dinosaurActive * heroDinosaur[jj] * 0.01
           + 0.1 * (1 + heroBerserkerLevel[jj]) * berserkerStage[jj];
         const condBonus = heroAtkConst[jj] * condPct * (heroPartyAtkMult[jj] || 1);
