@@ -2211,12 +2211,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let retrySimulations: number | undefined;
   let retryResultFull: SimulationResult | undefined;
 
-  // Fateweaver/Chronomancer retry: re-run simulation with added Normal booster
-  if (fateweaverPresent && rawWinRate < 100 && !config._isRetry && !config._disableRetry) {
+  // Fateweaver/Chronomancer retry: re-simulate ONLY the actually-failed plays
+  // with the +20%/+20% retry booster stacked. Same miniBoss config is inherited via spread.
+  const failedCount = actualSimCount - timesQuestWon;
+  if (fateweaverPresent && rawWinRate < 100 && failedCount > 0 && !config._isRetry && !config._disableRetry) {
     const retryResult = runCombatSimulation({
       ...config,
       booster: getRetryBooster(booster),
-      simulationCount: Math.min(actualSimCount, 25000),
+      simulationCount: failedCount,
       _isRetry: true,
     });
 
