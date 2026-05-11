@@ -3,6 +3,12 @@ import { Hero, SimulationResult } from '@/types/game';
 const HEROES_KEY = 'quest-sim-heroes';
 const SIMULATIONS_KEY = 'quest-sim-results';
 
+function emitHeroesUpdated() {
+  try {
+    window.dispatchEvent(new Event('heroes-updated'));
+  } catch {}
+}
+
 export function getHeroes(): Hero[] {
   const data = localStorage.getItem(HEROES_KEY);
   return data ? JSON.parse(data) : [];
@@ -10,6 +16,7 @@ export function getHeroes(): Hero[] {
 
 export function saveHeroes(heroes: Hero[]) {
   localStorage.setItem(HEROES_KEY, JSON.stringify(heroes));
+  emitHeroesUpdated();
 }
 
 export function addHero(hero: Hero) {

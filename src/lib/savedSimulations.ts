@@ -1,3 +1,5 @@
+import type { Hero } from '@/types/game';
+
 export interface SavedSimulationSummary {
   id: string;
   name: string;
