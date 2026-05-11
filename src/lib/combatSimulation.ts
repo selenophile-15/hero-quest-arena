@@ -3135,11 +3135,13 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   const heroIsSamuraiFlag: boolean[] = [];
   const heroIsDaimyoFlag: boolean[] = [];
   const heroIsDancerFlag: boolean[] = [];
+  const heroIsDarkKnightFlag: boolean[] = [];
   const heroSharkVal: number[] = [];
   const heroDinoVal: number[] = [];
   const heroArmadilloVal: number[] = [];
   const heroIsClericFlag: boolean[] = [];
   const heroIsBishopFlag: boolean[] = [];
+  const heroPersonalRegen: number[] = [];
   const heroTier: number[] = [];
 
   for (let i = 0; i < numHeroes; i++) {
@@ -3187,6 +3189,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroIsSamuraiFlag.push(isClass(h, '사무라이', 'Samurai'));
     heroIsDaimyoFlag.push(isClass(h, '다이묘', 'Daimyo'));
     heroIsDancerFlag.push(isClass(h, '무희', '곡예가', 'Dancer', 'Acrobat'));
+    heroIsDarkKnightFlag.push(isClass(h, '어둠의 기사', '죽음의 기사', 'Dark Knight', 'Death Knight'));
+    heroPersonalRegen.push((h as any).detailStats?.['매 턴 체력 재생'] || 0);
 
     // Spirits
     const spirits = (h.equipmentSlots || []).map(s => s.spirit).filter(Boolean);
@@ -3223,6 +3227,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
   // Dancer/Acrobat: guaranteed crit on next attack after evasion
   const dancerGuaranteedCrit: boolean[] = new Array(numHeroes).fill(false);
+
+  // Daimyo: guaranteed evade on first monster attack (one-time)
+  const daimyoGuaranteedEvade: boolean[] = heroIsDaimyoFlag.map(v => v);
+
+  // Polonia state
+  const isPoloniaChamp = champName.includes('폴로니아') || champName === 'Polonia';
+  const poloniaBaseChance = isPoloniaChamp
+    ? (champTier === 1 ? 0.30 : champTier === 2 ? 0.35 : champTier === 3 ? 0.40 : 0.50)
+    : 0;
+  const numTricksters = activeHeroes.filter(h => h.heroClass === '사기꾼' || h.heroClass === 'Trickster').length;
+  const poloniaLootChance = isPoloniaChamp ? poloniaBaseChance + numTricksters * 0.02 : 0;
+  const poloniaLootCap = isPoloniaChamp ? 20 + numTricksters * 2 : 0;
+  let poloniaStolen = 0;
 
   // Hemma tracking (only relevant if champion is Hemma)
   const isHemmaChamp = champName.includes('헴마') || champName === 'Hemma';
@@ -3282,6 +3299,23 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   if (rudoBonusBase > 0) {
     log.push({ round: 0, type: 'event', actor: champName, detail: `루도 리더 스킬: 치확 +${Math.round(rudoBonusBase * 100)}% (${rudoRounds}라운드)` });
   }
+  if (isPoloniaChamp) {
+    log.push({ round: 0, type: 'event', actor: champName, detail: `폴로니아 리더 스킬: 매 공격 ${(poloniaLootChance * 100).toFixed(1)}% 확률로 아이템 훔치기 (최대 ${poloniaLootCap}개)` });
+  }
+  for (let i = 0; i < numHeroes; i++) {
+    if (heroIsSamuraiFlag[i] || heroIsDaimyoFlag[i]) {
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsDaimyoFlag[i] ? '다이묘' : '사무라이'} 고유 스킬: 첫 턴 확정 치명타 + 배리어 무시` });
+    }
+    if (heroIsDaimyoFlag[i]) {
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `다이묘 고유 스킬: 첫 피격 확정 회피` });
+    }
+    if (heroIsDarkKnightFlag[i]) {
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `${activeHeroes[i].heroClass} 고유 스킬: 적 HP 10% 미만 시 처형` });
+    }
+    if (heroPersonalRegen[i] > 0) {
+      log.push({ round: 0, type: 'event', actor: activeHeroes[i].name, detail: `매 턴 체력 재생 +${formatNum(heroPersonalRegen[i])}` });
+    }
+  }
 
   let mobHpCurrent = totalMobHp;
   let heroesAlive = numHeroes;
@@ -3336,8 +3370,15 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       log.push({ round, type: 'monster_attack', actor: mobDisplayName, detail: `광역 공격! (기본 ${formatNum(aoeDmgBase)} 피해)` });
       for (let i = 0; i < numHeroes; i++) {
         if (heroHp[i] <= 0) continue;
-        if (Math.random() < Math.max(0, heroEva[i])) {
-          log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[i].name, detail: `회피` });
+        // Daimyo guaranteed evade (first hit only)
+        const isDaimyoGuard = daimyoGuaranteedEvade[i];
+        if (isDaimyoGuard || Math.random() < Math.max(0, heroEva[i])) {
+          if (isDaimyoGuard) {
+            daimyoGuaranteedEvade[i] = false;
+            log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `다이묘 확정 회피 발동!` });
+          } else {
+            log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[i].name, detail: `회피` });
+          }
           if (heroIsDancerFlag[i] && !dancerGuaranteedCrit[i]) {
             dancerGuaranteedCrit[i] = true;
             log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsDancerFlag[i] && isClass(activeHeroes[i], '곡예가', 'Acrobat') ? '곡예가' : '무희'} 고유 스킬: 다음 공격 확정 치명타!` });
@@ -3405,8 +3446,14 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         }
       }
 
-      if (Math.random() < Math.max(0, heroEva[target])) {
-        log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[target].name, detail: `회피` });
+      const isDaimyoGuardT = daimyoGuaranteedEvade[target];
+      if (isDaimyoGuardT || Math.random() < Math.max(0, heroEva[target])) {
+        if (isDaimyoGuardT) {
+          daimyoGuaranteedEvade[target] = false;
+          log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `다이묘 확정 회피 발동!` });
+        } else {
+          log.push({ round, type: 'event', actor: mobDisplayName, target: activeHeroes[target].name, detail: `회피` });
+        }
         if (heroIsDancerFlag[target] && !dancerGuaranteedCrit[target]) {
           dancerGuaranteedCrit[target] = true;
           log.push({ round, type: 'event', actor: activeHeroes[target].name, detail: `${isClass(activeHeroes[target], '곡예가', 'Acrobat') ? '곡예가' : '무희'} 고유 스킬: 다음 공격 확정 치명타!` });
@@ -3486,6 +3533,8 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       }
 
       const effectiveAtk = heroAtkVal[i] + dinoBonus + sharkBonus;
+      // Samurai/Daimyo: guaranteed crit + barrier bypass on round 1
+      const samuraiFirstTurn = round === 1 && (heroIsSamuraiFlag[i] || heroIsDaimyoFlag[i]);
       // Dancer/Acrobat guaranteed crit on next attack after evasion
       let usedDancerCrit = false;
       let isCrit = Math.random() < Math.min(effectiveCrit, 1.0);
@@ -3493,14 +3542,19 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         isCrit = true;
         usedDancerCrit = true;
       }
+      if (samuraiFirstTurn) {
+        isCrit = true;
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${heroIsDaimyoFlag[i] ? '다이묘' : '사무라이'} 첫 턴 확정 치명타!` });
+      }
       if (dancerGuaranteedCrit[i]) {
         dancerGuaranteedCrit[i] = false;
-        if (usedDancerCrit) {
+        if (usedDancerCrit && !samuraiFirstTurn) {
           log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `회피 후 확정 치명타 발동!` });
         }
       }
       const hemmaBonusAtk = (i === hemmaIdx) ? hemmaAtkGainAccum : 0;
-      const dmg = Math.floor((effectiveAtk + hemmaBonusAtk) * (isCrit ? heroCritMult[i] : 1) * barrierMod);
+      const effectiveBarrier = samuraiFirstTurn ? 1.0 : barrierMod;
+      const dmg = Math.floor((effectiveAtk + hemmaBonusAtk) * (isCrit ? heroCritMult[i] : 1) * effectiveBarrier);
       mobHpCurrent -= dmg;
       heroDmgDealt[i] += dmg;
 
@@ -3517,7 +3571,45 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
       const mobPct = Math.max(0, mobHpCurrent / totalMobHp * 100);
       log.push({ round, type: 'hero_attack', actor: activeHeroes[i].name, target: mobDisplayName, detail: `${isCrit ? '치명타 ' : ''}${formatNum(dmg)} 피해 (${mobDisplayName} HP: ${formatNum(Math.max(0, mobHpCurrent))} (${mobPct.toFixed(0)}%))` });
+
+      // Dark Knight / Death Knight execute at <10% HP
+      if (heroIsDarkKnightFlag[i] && mobHpCurrent > 0 && mobHpCurrent < totalMobHp * 0.1) {
+        const execBonus = mobHpCurrent;
+        heroDmgDealt[i] += execBonus;
+        mobHpCurrent = 0;
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `${activeHeroes[i].heroClass} 처형! 남은 HP ${formatNum(execBonus)} 즉결 처치` });
+      }
+
+      // Polonia loot attempt
+      if (isPoloniaChamp && poloniaStolen < poloniaLootCap && Math.random() < poloniaLootChance) {
+        poloniaStolen++;
+        log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `폴로니아 훔치기 성공! 아이템 누적 ${poloniaStolen}/${poloniaLootCap}` });
+      }
+
       if (mobHpCurrent <= 0) break;
+    }
+
+    // ─── Dinosaur bonus expires after round 1 ───
+    if (round === 1) {
+      for (let i = 0; i < numHeroes; i++) {
+        if (heroDinoVal[i] > 0 && heroHp[i] > 0) {
+          log.push({ round, type: 'event', actor: activeHeroes[i].name, detail: `공룡 영혼 보너스 종료 (ATK -${heroDinoVal[i]})` });
+        }
+      }
+    }
+
+    // ─── Per-turn regen (after Hemma so Hemma's drain happens first) ───
+    if (mobHpCurrent > 0) {
+      for (let i = 0; i < numHeroes; i++) {
+        if (heroHp[i] <= 0 || heroPersonalRegen[i] <= 0) continue;
+        if (heroHp[i] >= heroMaxHp[i]) continue;
+        const before = heroHp[i];
+        heroHp[i] = Math.min(heroHp[i] + heroPersonalRegen[i], heroMaxHp[i]);
+        const healed = heroHp[i] - before;
+        if (healed > 0) {
+          log.push({ round, type: 'heal', actor: activeHeroes[i].name, detail: `매 턴 재생: HP +${formatNum(healed)}` });
+        }
+      }
     }
 
     // ─── Hemma drain (champion-level, end of round) ───
