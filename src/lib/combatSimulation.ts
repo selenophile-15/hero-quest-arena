@@ -2807,6 +2807,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       maxPerSim: Math.round(poloniaMaxPerSim),
       capHitRate: actualSimCount > 0 ? Math.round((poloniaCapHits / actualSimCount) * 100 * 10) / 10 : 0,
     } : undefined,
+    eventLog: recordEvents ? eventLog : undefined,
   };
 }
 
