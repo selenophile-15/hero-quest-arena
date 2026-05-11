@@ -3052,7 +3052,7 @@ export default function QuestSimulation() {
                                         const totalCount = displayResults.reduce((s, r) => s + (r.isHemmaHero ? 0 : (r.hemmaAbsorbedCount ?? 0)), 0);
                                         return displayResults.map((hr, idx) => (
                                           <tr key={`hem-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}{hr.isHemmaHero ? <span className="ml-1 text-[10px] opacity-70">(헴마)</span> : null}</td>
+                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? `${Math.round(totalCount)}회` : blank}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? formatNumber(hr.hemmaAtkGainAvg ?? 0) : blank}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{!hr.isHemmaHero && (hr.hemmaAbsorbedCount ?? 0) > 0 ? formatNumber(hr.hemmaAbsorbedDmg ?? 0) : blank}</td>
