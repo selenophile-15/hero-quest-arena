@@ -191,6 +191,8 @@ export interface HeroSimResult {
   // Hemma drain absorbed from this ally (avg dmg per sim, only non-hemma allies)
   hemmaAbsorbedDmg?: number;
   hemmaAbsorbedCount?: number; // avg drain count from this ally per sim
+  // Hemma attack-bonus gain (per sim) — set only on hemma hero row
+  hemmaAtkGainAvg?: number;
   // Lord absorbed damage breakdown — when THIS hero was the protected ally
   lordSavedSingleAvgDmg?: number;  // avg single dmg absorbed by lord saving this hero per sim
   lordSavedAoeAvgDmg?: number;     // avg aoe dmg absorbed by lord saving this hero per sim
