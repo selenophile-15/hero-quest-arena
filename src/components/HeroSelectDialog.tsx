@@ -538,7 +538,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                 const champLeaderIcon = isChampion && hero.championName
                   ? (() => {
                       const champEng = CHAMPION_NAME_MAP[hero.championName] || '';
-                      const tier = hero.cardLevel || 1;
+                      const tier = hero.cardLevel || (hero.promoted ? 4 : 1);
                       return champEng ? `/images/skills/sk_champion/${champEng}_${tier}.webp` : '';
                     })()
                   : '';
