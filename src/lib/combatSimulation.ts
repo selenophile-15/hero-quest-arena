@@ -2109,11 +2109,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             winCritDmg[i] += critDmgFight[i];
             winDmgMax[i] = Math.max(winDmgMax[i], damageFight[i]);
             if (damageFight[i] > 0) winDmgMin[i] = Math.min(winDmgMin[i], damageFight[i]);
-            if (damageFight[i] > 0 && round > 0) {
-              const pt = damageFight[i] / round;
-              if (pt < winDmgDealtPerTurnMin[i]) winDmgDealtPerTurnMin[i] = pt;
-              if (pt > winDmgDealtPerTurnMax[i]) winDmgDealtPerTurnMax[i] = pt;
-            }
+            // Per-hit min/max bucketed to win
+            if (simHitMin[i] < 1e18 && simHitMin[i] < winDmgPerHitMin[i]) winDmgPerHitMin[i] = simHitMin[i];
+            if (simHitMax[i] > winDmgPerHitMax[i]) winDmgPerHitMax[i] = simHitMax[i];
+            winAttackCount[i] += simAttackCount[i];
             winRoundsArr[i] += round;
             winDmgTaken[i] += simDmgTaken[i];
             winDmgTakenMin[i] = Math.min(winDmgTakenMin[i], cappedDmg);
