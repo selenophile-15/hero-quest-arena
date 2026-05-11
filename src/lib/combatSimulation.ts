@@ -1472,6 +1472,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     const simCritSurvivals = new Float64Array(numHeroes);
     // Per-sim hemma atk-bonus gain (only hemma index used)
     const simHemmaAtkGain = new Float64Array(numHeroes);
+    const simRudoBonusDmg = new Float64Array(numHeroes);
     // Per-sim conqueror stack metrics
     const simConqStackTurns = [
       new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
