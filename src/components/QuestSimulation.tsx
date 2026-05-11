@@ -80,6 +80,18 @@ function ResultTabsToggle({ value, onChange }: { value: 'all' | 'win' | 'lose'; 
   );
 }
 
+// Empty-state row shown when the selected outcome bucket (win/lose) has zero results.
+function EmptyBucketRow({ tab, colSpan }: { tab: 'all' | 'win' | 'lose'; colSpan: number }) {
+  const msg = tab === 'win' ? '성공한 판이 없습니다' : tab === 'lose' ? '실패한 판이 없습니다' : '데이터 없음';
+  return (
+    <tr>
+      <td colSpan={colSpan} className="py-4 px-2 text-center text-muted-foreground text-sm italic">
+        {msg}
+      </td>
+    </tr>
+  );
+}
+
 interface QuestTime {
   base: number;
   additional: number;
