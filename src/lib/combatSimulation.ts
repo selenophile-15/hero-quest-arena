@@ -1192,6 +1192,23 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Per-turn taken min/max across sims
   const dmgTakenPerTurnMin = new Float64Array(numHeroes).fill(1e9);
   const dmgTakenPerTurnMax = new Float64Array(numHeroes);
+  // Per-turn damage DEALT min/max across sims (per-sim = damageFight/round)
+  const dmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
+  const dmgDealtPerTurnMax = new Float64Array(numHeroes);
+  const winDmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
+  const winDmgDealtPerTurnMax = new Float64Array(numHeroes);
+  const loseDmgDealtPerTurnMin = new Float64Array(numHeroes).fill(1e9);
+  const loseDmgDealtPerTurnMax = new Float64Array(numHeroes);
+  // Avg-when-hit counters (sims where this hero took damage of that kind)
+  const totalDmgTakenHitSims = new Float64Array(numHeroes);
+  const singleDmgTakenHitSims = new Float64Array(numHeroes);
+  const aoeDmgTakenHitSims = new Float64Array(numHeroes);
+  const winTotalDmgTakenHitSims = new Float64Array(numHeroes);
+  const winSingleDmgTakenHitSims = new Float64Array(numHeroes);
+  const winAoeDmgTakenHitSims = new Float64Array(numHeroes);
+  const loseTotalDmgTakenHitSims = new Float64Array(numHeroes);
+  const loseSingleDmgTakenHitSims = new Float64Array(numHeroes);
+  const loseAoeDmgTakenHitSims = new Float64Array(numHeroes);
   // Single-attack hit type counts (across all sims)
   const singleNormalHitsTotal = new Float64Array(numHeroes);
   const singleCritHitsTotal = new Float64Array(numHeroes);
