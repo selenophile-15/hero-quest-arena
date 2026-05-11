@@ -307,6 +307,16 @@ export default function QuestSimulation() {
   const [retryOnly, setRetryOnly] = useState(false);
   const [boosterOpen, setBoosterOpen] = useState(false);
 
+  // Reset retry-only filter whenever the underlying simulation no longer has retry data.
+  useEffect(() => { if (!simResult?.retryResult) setRetryOnly(false); }, [simResult]);
+
+  // Display source: when retry-only is active and retry data exists, swap the entire result.
+  const hasRetry = !!simResult?.retryResult;
+  const dispSim = (retryOnly && simResult?.retryResult) ? simResult.retryResult : simResult;
+  const retryBoosterActive = retryOnly && hasRetry;
+  // Extra +20% atk/def from the implicit retry booster (stacked on top of partyAtkMult/partyDefMult)
+  const RETRY_BOOSTER_EXTRA = 0.2;
+
   // Load quest data
   useEffect(() => {
     const loadData = async () => {
