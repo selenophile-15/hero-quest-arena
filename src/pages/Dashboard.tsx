@@ -154,7 +154,7 @@ export default function Dashboard() {
             href="https://www.buymeacoffee.com/libry8039s"
             target="_blank"
             rel="noopener noreferrer"
-            title="Buy me a subscription"
+            title="Buy me a coffee"
             className="flex items-center gap-1.5 px-3 py-1 rounded-md text-lg font-semibold border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
             style={{ fontFamily: "'Cookie', cursive" }}
           >
