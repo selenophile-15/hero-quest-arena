@@ -2365,6 +2365,10 @@ export default function QuestSimulation() {
                                 </tr>
                               </thead>
                               <tbody>
+                                {zeroBucket ? (
+                                  <EmptyBucketRow tab={mainResultsTab} colSpan={10} />
+                                ) : (
+                                <>
                                 {displayResults.map((hr, idx) => {
                                   const dar = hr.damageApplicationRate || 0;
                                   const minTotal = hr.minDamageTaken ?? 0;
