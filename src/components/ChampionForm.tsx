@@ -406,6 +406,48 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
     });
   };
 
+  const buildChampionHeroData = (useNewId: boolean): Hero => ({
+    id: useNewId ? crypto.randomUUID() : (hero?.id || crypto.randomUUID()),
+    name: name.trim(),
+    classLine: '',
+    heroClass: '',
+    type: 'champion',
+    promoted,
+    level: Number(level) || 1,
+    rank: Number(rank) || 1,
+    championName,
+    cardLevel,
+    power: Number(power) || 0,
+    hp: champCalcResult?.finalHp ?? hp,
+    atk: champCalcResult?.finalAtk ?? atk,
+    def: champCalcResult?.finalDef ?? def,
+    crit: champCalcResult?.totalCrit ?? crit,
+    critDmg: champCalcResult?.totalCritDmg ?? critDmg,
+    evasion: champCalcResult?.totalEvasion ?? evasion,
+    threat: champCalcResult?.totalThreat ?? threat,
+    element,
+    elementValue: totalEquipElement || elementValue,
+    skills: [],
+    label,
+    position,
+    seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
+    equipmentElements: equipElements,
+    elementManual,
+    equipmentSlots,
+    createdAt: useNewId ? new Date().toISOString() : (hero?.createdAt || new Date().toISOString()),
+  });
+
+  const handleSaveAs = () => {
+    if (!name.trim()) {
+      setNameError(true);
+      nameInputRef.current?.focus();
+      return;
+    }
+    setNameError(false);
+    const data = buildChampionHeroData(!saveAsKeepsId);
+    (onSaveAs ?? onSave)(data);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
