@@ -639,14 +639,20 @@ export default function QuestSimulation() {
     const autoName = `${questData?.questType || ''} ${regionName}${diffLabel}`;
 
     const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-    const heroSummaries = simResult.heroResults.map(hr => ({
-      heroId: hr.heroId,
-      heroName: hr.heroName,
-      heroClass: selectedHeroList.find(h => h.id === hr.heroId)?.heroClass || '',
-      survivalRate: hr.survivalRate,
-      avgDamageDealt: hr.avgDamageDealt,
-      damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg * 100) : 0,
-    }));
+    const heroSummaries = simResult.heroResults.map(hr => {
+      const heroObj = selectedHeroList.find(h => h.id === hr.heroId);
+      const powerBelowMin = !!(currentQuest && heroObj && heroObj.power > 0 && heroObj.power < currentQuest.minPower);
+      return {
+        heroId: hr.heroId,
+        heroName: hr.heroName,
+        heroClass: heroObj?.heroClass || '',
+        survivalRate: hr.survivalRate,
+        avgDamageDealt: hr.avgDamageDealt,
+        damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg * 100) : 0,
+        tankingShare: hr.tankingRate ?? 0,
+        powerBelowMin,
+      };
+    });
 
     return {
       id: crypto.randomUUID(),
