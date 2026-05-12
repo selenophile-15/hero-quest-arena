@@ -7,6 +7,7 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (targetId: string) => void;
+  defaultSelectedId?: string | null;
 }
 
 function formatDate(ts: number) {
