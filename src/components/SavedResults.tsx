@@ -737,7 +737,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     {(sim.barrierInfos?.length || sim.boosterImage) ? <span className="text-muted-foreground/40">·</span> : null}
                     <span className="font-bold text-foreground/90">
                       평균 <span className="font-mono font-bold text-foreground">{Math.round(sim.avgRounds)}</span>턴
-                      <span className="text-foreground/60 font-normal"> ({sim.minRounds}~{sim.maxRounds}R)</span>
+                      <span className="text-foreground/60 font-normal"> ({sim.minRounds}~{sim.maxRounds})</span>
                     </span>
                     <span className="text-muted-foreground/40">·</span>
                     {sim.successCount !== undefined && (
