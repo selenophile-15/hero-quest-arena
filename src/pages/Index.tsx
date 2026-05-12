@@ -197,29 +197,24 @@ const Index = () => {
               ⚔ 셀레노필 제작 ⚔
             </span>
 
-            {/* Game logo image — wrapper reserves space to prevent layout shift */}
-            <div
-              className="mx-auto"
+            {/* Game logo image */}
+            <img
+              src={titleLogo}
+              alt="샵타이탄 퀘스트 시뮬레이터"
+              className="mx-auto select-none"
+              width={1584}
+              height={672}
+              loading="eager"
+              decoding="sync"
+              {...({ fetchpriority: 'high' } as any)}
               style={{
-                width: 'min(520px, 85vw)',
+                maxWidth: 'min(520px, 85vw)',
+                height: 'auto',
                 aspectRatio: '1584 / 672',
+                filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
+                animation: 'glowPulse 4s ease-in-out infinite',
               }}
-            >
-              <img
-                src={titleLogo}
-                alt="샵타이탄 퀘스트 시뮬레이터"
-                className="w-full h-full select-none"
-                width={1584}
-                height={672}
-                loading="eager"
-                decoding="sync"
-                {...({ fetchpriority: 'high' } as any)}
-                style={{
-                  filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
-                  animation: 'glowPulse 4s ease-in-out infinite',
-                }}
-              />
-            </div>
+            />
 
             {/* Subtitle tagline */}
             <p className="mt-3 text-[14px] tracking-[0.15em]" style={{
