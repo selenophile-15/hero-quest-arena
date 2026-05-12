@@ -441,7 +441,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         }`}>{sim.miniBossLabel}</span>
                       </>)}
                     </div>
-                    <span className="ml-auto text-[13px] text-foreground/90 font-semibold">{dateStr}</span>
+                    <span className="ml-auto flex items-baseline gap-3">
+                      <span className="text-[13px] text-foreground/90 font-semibold">{dateLabel}</span>
+                      <span className="text-[13px] text-foreground/90 font-semibold font-mono">{timeLabel}</span>
+                    </span>
                   </div>
 
                   {/* Middle row: 3 groups with equal gap via justify-between */}
