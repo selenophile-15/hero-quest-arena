@@ -327,6 +327,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     if (!Number.isNaN(minWinNum)) {
       list = list.filter(s => s.winRate >= minWinNum);
     }
+    const minGearNum = parseFloat(filterMinGearRatio);
+    if (!Number.isNaN(minGearNum)) {
+      list = list.filter(s => {
+        const r = (s.avgGearScore && s.avgGearScore > 0) ? (s.winRate / s.avgGearScore) : 0;
+        return r >= minGearNum;
+      });
+    }
     if (sortDir !== null) {
       const mul = sortDir === 'desc' ? -1 : 1;
       list.sort((a, b) => {
