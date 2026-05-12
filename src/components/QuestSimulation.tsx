@@ -1556,7 +1556,7 @@ export default function QuestSimulation() {
                           const retryLosses = retried - retryWins;
                           return (
                             <>
-                              <div className="text-xs text-muted-foreground font-medium mt-0.5">
+                              <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
                                 [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
                               </div>
                               {retried > 0 && (
