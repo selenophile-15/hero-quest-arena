@@ -762,10 +762,12 @@ export default function QuestSimulation() {
 
   // Overwrite an existing saved entry
   const [overwriteDialogOpen, setOverwriteDialogOpen] = useState(false);
+  const [loadedSimId, setLoadedSimId] = useState<string | null>(null);
   const handleOverwriteResult = (targetId: string) => {
     const sim = buildSavedSim();
     if (!sim) return;
     overwriteSimulationResult(targetId, sim);
+    setLoadedSimId(targetId);
     const t = toast({ title: '덮어쓰기 완료', description: sim.name });
     setTimeout(() => t.dismiss(), 1000);
   };
