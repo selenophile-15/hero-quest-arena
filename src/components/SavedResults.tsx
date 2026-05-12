@@ -427,7 +427,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1">
-            <span className="text-xs text-foreground/80 dark:text-foreground/90">승률 ≥</span>
+            <span className="text-xs text-foreground">승률 ≥</span>
             <Input
               value={filterMinWin}
               onChange={e => setFilterMinWin(e.target.value.replace(/[^0-9.]/g, ''))}
@@ -435,12 +435,12 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               inputMode="decimal"
               className="h-8 w-[70px] text-xs"
             />
-            <span className="text-xs text-foreground/80 dark:text-foreground/90">%</span>
+            <span className="text-xs text-foreground">%</span>
           </div>
 
           {/* Sort cluster */}
           <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/40">
-            <span className="text-xs text-foreground/80 dark:text-foreground/90 mr-0.5">정렬</span>
+            <span className="text-xs text-foreground mr-0.5">정렬</span>
             {([
               { key: 'savedAt' as SortKey, label: '저장일' },
               { key: 'winRate' as SortKey, label: '승률' },
@@ -450,10 +450,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               <button
                 key={s.key}
                 onClick={() => cycleSort(s.key)}
-                className={`flex items-center gap-1 h-8 px-2 rounded text-xs border transition-colors ${
+                className={`flex items-center gap-1 h-8 px-2 rounded-md text-xs border transition-colors ${
                   sortKey === s.key && sortDir !== null
                     ? 'bg-primary/15 border-primary/40 text-primary'
-                    : 'border-border/40 text-foreground/80 dark:text-foreground/90 hover:text-foreground hover:bg-secondary/40'
+                    : 'border-input text-foreground hover:bg-secondary/40'
                 }`}
               >
                 {s.label}
