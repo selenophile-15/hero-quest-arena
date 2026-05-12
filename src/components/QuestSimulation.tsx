@@ -707,6 +707,7 @@ export default function QuestSimulation() {
       subAreaImage,
       boosterImage,
       miniBossLabel,
+      isBoss,
       barrierInfos,
       successCount,
       failCount,
