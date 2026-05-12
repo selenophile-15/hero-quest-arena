@@ -451,7 +451,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   {/* Middle row */}
                   <div className="flex-1 flex items-center px-3 py-3">
                     {/* a: region image + sub-area image */}
-                    <div className="flex items-center gap-2 shrink-0 mr-3">
+                    <div className="flex items-center gap-2 shrink-0 mr-16">
                       {sim.regionImage && (
                         <img src={sim.regionImage} alt="" className="w-20 h-20 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       )}
@@ -461,8 +461,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     </div>
 
                     {/* b: heroes grid */}
-                    <div className="grid grid-cols-5 gap-8 shrink-0">
-                      {sim.heroSummaries.map(hs => {
+                    <div className="grid grid-cols-5 gap-9 shrink-0">
+                      {Array.from({ length: 5 }).map((_, heroSlotIndex) => {
+                        const hs = sim.heroSummaries[heroSlotIndex];
+                        if (!hs) return <div key={`empty-${heroSlotIndex}`} className="w-[150px]" />;
                         const hero = allHeroes.find(h => h.id === hs.heroId) ||
                           sim.heroSnapshots?.find(h => h.id === hs.heroId);
                         const img = hero?.type === 'champion'
@@ -470,16 +472,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                           : hero?.heroClass ? getJobImagePath(hero.heroClass) : null;
                         const faceImg = getFaceImg(hs.survivalRate, hs.powerBelowMin, sim.avgRounds, sim.winRate);
                         const tankShare = hs.tankingShare ?? 0;
-                        // Per-hero element values for the dungeon's barrier elements
-                        const heroElements = (sim.barrierInfos || [])
-                          .map(b => ({
-                            el: b.element,
-                            iconPath: b.iconPath,
-                            val: (hero?.equipmentElements?.[b.element] as number | undefined) || 0,
-                          }))
-                          .filter(e => e.val > 0);
+                        const mainBarrier = sim.barrierInfos?.[0];
+                        const heroElementValue = mainBarrier
+                          ? ((hero?.equipmentElements?.[mainBarrier.element] as number | undefined) || 0)
+                          : 0;
+                        const heroElementIcon = mainBarrier ? ELEMENT_ICON_MAP[mainBarrier.element] : undefined;
                         return (
-                          <div key={hs.heroId} className="flex flex-col gap-1 w-[140px]">
+                          <div key={hs.heroId} className="flex flex-col gap-1 w-[150px]">
                             {/* Row 1: avatar + name (left-aligned at x=0) */}
                             <div className="flex items-center gap-1.5 min-w-0">
                               <div className="w-9 h-9 rounded-full border border-primary/30 overflow-hidden bg-secondary/50 shrink-0">
@@ -495,21 +494,17 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                   ({hs.survivalRate.toFixed(0)}%)
                                 </span>
                               </div>
-                              {heroElements.length > 0 && (
-                                <div className="flex items-center gap-1">
-                                  {heroElements.map(e => (
-                                    <div key={e.el} className="flex items-center gap-0.5">
-                                      {e.iconPath && <img src={e.iconPath} alt={e.el} className="w-4 h-4" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
-                                      <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.val)}</span>
-                                    </div>
-                                  ))}
+                              {mainBarrier && (
+                                <div className="flex items-center gap-0.5 shrink-0">
+                                  {heroElementIcon && <img src={heroElementIcon} alt={mainBarrier.element} className="w-6 h-6" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
+                                  <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(heroElementValue)}</span>
                                 </div>
                               )}
                             </div>
                             {/* Dmg bar (label fixed, bar fixed-width, number after) */}
                             <div className="flex items-center gap-1 text-[11px]">
                               <span className="text-foreground/80 w-4 shrink-0">딜</span>
-                              <div className="w-16 h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0">
+                              <div className="w-[96px] h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono shrink-0 ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
@@ -517,7 +512,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                             {/* Tank bar */}
                             <div className="flex items-center gap-1 text-[11px]">
                               <span className="text-foreground/80 w-4 shrink-0">탱</span>
-                              <div className="w-16 h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0">
+                              <div className="w-[96px] h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono shrink-0 ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
