@@ -2758,7 +2758,12 @@ export default function QuestSimulation() {
                     const lordProtected = lordRow ? displayResults.filter(hr => !hr.isLordHero) : [];
                     const conquerorRows = displayResults.filter(hr => hr.isConquerorHero);
                     const ninjaSenseiRows = displayResults.filter(hr => hr.isNinjaHero || hr.isSenseiHero);
-                    const showLord = true;
+                    const showLord = !!lordRow;
+                    const showConqueror = conquerorRows.length > 0;
+                    const showNinjaSensei = ninjaSenseiRows.length > 0;
+                    const showBerserker = displayResults.some(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
+                    const hasHemma = displayResults.some(hr => hr.isHemmaHero);
+                    const hasRudo = displayResults.some(hr => hr.isRudoInParty);
 
                     // ── Table D: 폴로니아 도둑질 ──
                     const poloniaLoot = dispSim!.poloniaLoot;
@@ -2789,8 +2794,10 @@ export default function QuestSimulation() {
                           {(() => {
                             const sharkHeroes = displayResults.filter(hr => hr.hasSharkSpirit);
                             const dinoHeroes = displayResults.filter(hr => hr.hasDinosaurSpirit || hr.isSamuraiOrDaimyo);
+                            if (sharkHeroes.length === 0 && dinoHeroes.length === 0) return null;
                             return (
                               <div className="space-y-4">
+                                {sharkHeroes.length > 0 && (
                                 <div>
                                   <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 상어 (영혼)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
@@ -2809,8 +2816,6 @@ export default function QuestSimulation() {
                                       <tbody>
                                         {zeroBucket ? (
                                           <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                        ) : sharkHeroes.length === 0 ? (
-                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">상어 영혼 보유 파티원 없음</td></tr>
                                         ) : sharkHeroes.map((hr, idx) => {
                                           const avg = Math.round((hr.sharkNormalDmg + hr.sharkCritDmg) / 2);
                                           return (
@@ -2826,6 +2831,8 @@ export default function QuestSimulation() {
                                     </table>
                                   </div>
                                 </div>
+                                )}
+                                {dinoHeroes.length > 0 && (
                                 <div>
                                   <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 공룡 / 사무라이(다이묘) (첫 턴)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
@@ -2844,8 +2851,6 @@ export default function QuestSimulation() {
                                       <tbody>
                                         {zeroBucket ? (
                                           <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                        ) : dinoHeroes.length === 0 ? (
-                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">공룡 영혼 / 사무라이(다이묘) 직업 파티원 없음</td></tr>
                                         ) : dinoHeroes.map((hr, idx) => {
                                           const norm = hr.dinosaurNormalDmg;
                                           const crit = hr.dinosaurCritDmg;
@@ -2864,11 +2869,13 @@ export default function QuestSimulation() {
                                     </table>
                                   </div>
                                 </div>
+                                )}
                               </div>
                             );
                           })()}
 
-                          {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 군주는 군주가 있을 때만 ===== */}
+                          {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 해당 파티원이 있을 때만 ===== */}
+                          {(showLord || showConqueror || showNinjaSensei) && (
                           <div className="space-y-4">
                             {/* 군주 */}
                             {showLord && (
@@ -2923,7 +2930,8 @@ export default function QuestSimulation() {
                               </div>
                             )}
 
-                            {/* 정복자 — 항상 표시, 정복자 아니면 빈 행 */}
+                            {/* 정복자 */}
+                            {showConqueror && (
                             <div>
                               <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 정복자 (스택 0~4)</div>
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
@@ -2985,8 +2993,10 @@ export default function QuestSimulation() {
                                 </table>
                               </div>
                             </div>
+                            )}
 
-                            {/* 닌자/센세 — 항상 표시, 해당 직업 아니면 빈 행 */}
+                            {/* 닌자/센세 */}
+                            {showNinjaSensei && (
                             <div>
                               <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 닌자 / 센세</div>
                               <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
@@ -3036,9 +3046,12 @@ export default function QuestSimulation() {
                                 </table>
                               </div>
                             </div>
+                            )}
                           </div>
+                          )}
 
                           {/* ===== Table C: 광전사 / 잘 (4 stages) ===== */}
+                          {showBerserker && (
                           <div>
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 광전사 / 잘</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
@@ -3134,9 +3147,11 @@ export default function QuestSimulation() {
                               </table>
                             </div>
                           </div>
+                          )}
 
 
                           {/* ===== Table D: 폴로니아 ===== */}
+                          {hasPolonia && (
                           <div>
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 폴로니아</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
@@ -3197,10 +3212,10 @@ export default function QuestSimulation() {
                               </table>
                             </div>
                           </div>
+                          )}
 
                           {/* ===== Table D2: 루도 ===== */}
-                          {(() => {
-                            const hasRudo = !!displayResults.find(hr => hr.isRudoInParty);
+                          {hasRudo && (() => {
                             return (
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 루도</div>
@@ -3257,8 +3272,7 @@ export default function QuestSimulation() {
                           })()}
 
                           {/* ===== Table E: 헴마 (별도 분리) ===== */}
-                          {(() => {
-                            const hasHemma = !!displayResults.find(hr => hr.isHemmaHero);
+                          {hasHemma && (() => {
                             return (
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 헴마</div>
