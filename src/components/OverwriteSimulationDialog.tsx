@@ -22,16 +22,17 @@ const getWinRateColor = (rate: number) =>
   rate >= 50 ? 'text-yellow-400' :
   rate >= 30 ? 'text-orange-400' : 'text-red-400';
 
-export default function OverwriteSimulationDialog({ open, onOpenChange, onConfirm }: Props) {
+export default function OverwriteSimulationDialog({ open, onOpenChange, onConfirm, defaultSelectedId }: Props) {
   const [items, setItems] = useState<SavedSimulationSummary[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
-      setItems(getSavedSimulations());
-      setSelectedId(null);
+      const list = getSavedSimulations();
+      setItems(list);
+      setSelectedId(defaultSelectedId && list.some(s => s.id === defaultSelectedId) ? defaultSelectedId : null);
     }
-  }, [open]);
+  }, [open, defaultSelectedId]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
