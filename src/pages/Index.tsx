@@ -309,14 +309,11 @@ const Index = () => {
                   key={rowIdx}
                   className="w-full grid"
                   style={{
-                    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                    gridTemplateColumns: `repeat(${rowNames.length}, minmax(0, 1fr))`,
                     columnGap: '1rem',
                     justifyItems: 'center',
                   }}
                 >
-                  {/* Empty leading slot for centering when row has fewer than 3 */}
-                  {rowNames.length === 1 && <div />}
-                  {rowNames.length === 2 && <div style={{ visibility: 'hidden' }}>·</div>}
                   {rowNames.map((name) => (
                     <div
                       key={name}
@@ -335,7 +332,6 @@ const Index = () => {
                       {name}
                     </div>
                   ))}
-                  {rowNames.length === 1 && <div />}
                 </div>
               );
             })}
