@@ -1223,10 +1223,15 @@ a.bg-accent *,
   font-weight: 700;
   line-height: 1.4;
 }
+.saved-chip-quest-type {
+  padding: 1px 7px;
+  font-size: 12px;
+  line-height: 1.35;
+}
 .saved-chip-barrier {
   border-color: hsl(var(--border));
   background: hsl(var(--secondary) / 0.5);
-  font-family: ui-monospace, monospace;
+  font-weight: 600;
 }
 .result-tabs-premium {
   position: relative;
