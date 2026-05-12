@@ -357,19 +357,19 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   )}
                 </div>
 
-                {/* Center area (header + body) */}
+                {/* Center area (header + body + footer) */}
                 <div className="flex-1 min-w-0 flex flex-col">
-                  {/* Premium header strip */}
-                  <div className="saved-result-header px-3 py-2 flex items-center gap-3 flex-wrap">
-                    {/* Quest type box */}
+                  {/* Premium header strip: type, breadcrumbs, date */}
+                  <div className="saved-result-header px-3 py-2 flex items-center gap-4 flex-wrap">
                     <span className="saved-chip text-primary">{questTypeLabel}</span>
-                    {/* Region › Sub-area › Difficulty › Boss with larger gaps, no slashes */}
-                    <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[13px] font-bold text-foreground">{sim.regionName || '-'}</span>
-                      {sim.subAreaName && (
+                      {sim.subAreaName && <>
+                        <span className="text-muted-foreground/50 text-[13px]">&gt;</span>
                         <span className="text-[13px] font-bold text-foreground">{sim.subAreaName}</span>
-                      )}
-                      {sim.difficulty && (
+                      </>}
+                      {sim.difficulty && <>
+                        <span className="text-muted-foreground/50 text-[13px]">&gt;</span>
                         <span className={`text-[13px] font-bold ${
                           sim.difficulty === '쉬움' ? 'text-lime-400' :
                           sim.difficulty === '보통' ? 'text-blue-400' :
@@ -377,144 +377,145 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                           sim.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.5)]' :
                           'text-foreground'
                         }`}>{sim.difficulty}</span>
-                      )}
-                      {sim.isBoss ? (
+                      </>}
+                      {sim.isBoss ? (<>
+                        <span className="text-muted-foreground/50 text-[13px]">&gt;</span>
                         <span className="text-[13px] font-bold text-amber-400">보스</span>
-                      ) : sim.miniBossLabel && (
+                      </>) : sim.miniBossLabel && (<>
+                        <span className="text-muted-foreground/50 text-[13px]">&gt;</span>
                         <span className={`text-[13px] font-bold ${
                           sim.miniBoss === 'huge' ? 'text-lime-400' :
                           sim.miniBoss === 'dire' ? 'text-red-400' :
                           sim.miniBoss === 'legendary' ? 'text-purple-400' : 'text-foreground'
                         }`}>{sim.miniBossLabel}</span>
-                      )}
+                      </>)}
                     </div>
+                    <span className="ml-auto text-[13px] text-foreground/90 font-semibold">{dateStr}</span>
                   </div>
 
-                  {/* Body */}
-                  <div className="flex-1 flex flex-col gap-3 p-3">
-                    {/* Party row: sub-area image (no region overlay) + booster + heroes */}
-                    <div className="flex items-start gap-6">
+                  {/* Middle row: 3 groups a/b/c with equal gap */}
+                  <div className="flex-1 flex items-center gap-6 p-3">
+                    {/* a: region image + sub-area image + booster overlay */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {sim.regionImage && (
+                        <img src={sim.regionImage} alt="" className="w-20 h-20 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                      )}
                       <div className="relative w-20 h-20 shrink-0">
-                        {(sim.subAreaImage || sim.regionImage) ? (
-                          <img src={sim.subAreaImage || sim.regionImage} alt="" className="w-full h-full object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        ) : null}
+                        {sim.subAreaImage && (
+                          <img src={sim.subAreaImage} alt="" className="w-full h-full object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        )}
                         {sim.boosterImage && (
                           <img src={sim.boosterImage} alt="booster" className="absolute -bottom-1 -right-1 w-10 h-10 object-contain drop-shadow" onError={e => { e.currentTarget.style.display = 'none'; }} />
                         )}
                       </div>
-
-                      {/* Hero grid: equal cells */}
-                      <div className="grid grid-cols-5 gap-2 flex-1 min-w-0">
-                        {sim.heroSummaries.map(hs => {
-                          const hero = allHeroes.find(h => h.id === hs.heroId) ||
-                            sim.heroSnapshots?.find(h => h.id === hs.heroId);
-                          const img = hero?.type === 'champion'
-                            ? getChampionImagePath(hero.championName || hero.name)
-                            : hero?.heroClass ? getJobImagePath(hero.heroClass) : null;
-                          const faceImg = getFaceImg(hs.survivalRate, hs.powerBelowMin);
-                          const tankShare = hs.tankingShare ?? 0;
-                          return (
-                            <div key={hs.heroId} className="flex flex-col items-stretch gap-1 min-w-0">
-                              <div className="flex items-center gap-1.5 min-w-0">
-                                <div className="relative w-10 h-10 shrink-0">
-                                  <div className="w-10 h-10 rounded-full border border-primary/30 overflow-hidden bg-secondary/50">
-                                    {img && <img src={img} alt="" className="w-full h-full object-cover" />}
-                                  </div>
-                                  <img src={faceImg} alt="" className="absolute -bottom-1 -right-1 w-4 h-4" />
-                                </div>
-                                <div className="text-[13px] font-bold text-foreground truncate min-w-0">{hs.heroName}</div>
-                              </div>
-                              {/* Dmg bar */}
-                              <div className="flex items-center gap-1 text-[11px]">
-                                <span className="text-muted-foreground w-4 shrink-0">딜</span>
-                                <div className="flex-1 h-1.5 bg-secondary/50 rounded-full overflow-hidden">
-                                  <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
-                                </div>
-                                <span className={`font-bold font-mono w-8 text-right ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
-                              </div>
-                              {/* Tank bar */}
-                              <div className="flex items-center gap-1 text-[11px]">
-                                <span className="text-muted-foreground w-4 shrink-0">탱</span>
-                                <div className="flex-1 h-1.5 bg-secondary/50 rounded-full overflow-hidden">
-                                  <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
-                                </div>
-                                <span className={`font-bold font-mono w-8 text-right ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
                     </div>
 
-                    {/* Summary row: barrier (left) + avg / success / fail / retry */}
-                    <div className="flex items-center gap-3 text-[13px] flex-wrap">
-                      {sim.barrierInfos && sim.barrierInfos.length > 0 && (
+                    {/* b: heroes grid */}
+                    <div className="grid grid-cols-5 gap-2 flex-1 min-w-0">
+                      {sim.heroSummaries.map(hs => {
+                        const hero = allHeroes.find(h => h.id === hs.heroId) ||
+                          sim.heroSnapshots?.find(h => h.id === hs.heroId);
+                        const img = hero?.type === 'champion'
+                          ? getChampionImagePath(hero.championName || hero.name)
+                          : hero?.heroClass ? getJobImagePath(hero.heroClass) : null;
+                        const faceImg = getFaceImg(hs.survivalRate, hs.powerBelowMin);
+                        const tankShare = hs.tankingShare ?? 0;
+                        return (
+                          <div key={hs.heroId} className="flex flex-col items-stretch gap-1 min-w-0">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <div className="relative w-10 h-10 shrink-0">
+                                <div className="w-10 h-10 rounded-full border border-primary/30 overflow-hidden bg-secondary/50">
+                                  {img && <img src={img} alt="" className="w-full h-full object-cover" />}
+                                </div>
+                                <img src={faceImg} alt="" className="absolute -bottom-1.5 -right-1.5 w-[1.3rem] h-[1.3rem]" />
+                              </div>
+                              <div className="text-[13px] font-bold text-foreground truncate min-w-0">{hs.heroName}</div>
+                            </div>
+                            {/* Dmg bar */}
+                            <div className="flex items-center gap-1 text-[11px]">
+                              <span className="text-muted-foreground w-4 shrink-0">딜</span>
+                              <div className="flex-1 h-1.5 bg-secondary/50 rounded-full overflow-hidden min-w-[20px]">
+                                <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
+                              </div>
+                              <span className={`font-bold font-mono shrink-0 ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
+                            </div>
+                            {/* Tank bar */}
+                            <div className="flex items-center gap-1 text-[11px]">
+                              <span className="text-muted-foreground w-4 shrink-0">탱</span>
+                              <div className="flex-1 h-1.5 bg-secondary/50 rounded-full overflow-hidden min-w-[20px]">
+                                <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
+                              </div>
+                              <span className={`font-bold font-mono shrink-0 ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* c: win rate + gear ratio */}
+                    <div className="flex items-center gap-4 shrink-0 pr-2">
+                      <div className="text-center">
+                        <div className="text-[10px] text-muted-foreground">승률</div>
+                        <div className={`text-2xl font-bold font-mono ${getWinRateColor(sim.winRate)}`}>
+                          {sim.winRate.toFixed(1)}%
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-[10px] text-muted-foreground">장비 대비</div>
+                        <div className={`text-2xl font-bold font-mono ${gearRatio !== null ? getWinRateColor(gearRatio) : 'text-muted-foreground/50'}`}>
+                          {gearRatio !== null ? gearRatio.toFixed(1) : '-'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer: avg + barrier + success/fail/retry */}
+                  <div className="border-t border-border/30 px-3 py-2 flex items-center gap-3 text-[13px] flex-wrap">
+                    {sim.barrierInfos && sim.barrierInfos.length > 0 && (
+                      <>
                         <div className="flex items-center gap-1.5">
                           {sim.barrierInfos.map((b, i) => {
                             const isMet = b.partySum >= b.required;
                             return (
-                              <span key={i} className={`saved-chip saved-chip-barrier ${isMet ? 'text-lime-500 dark:text-lime-400' : 'text-red-500 dark:text-red-400'}`}>
+                              <span key={i} className={`saved-chip saved-chip-barrier font-bold ${isMet ? 'text-lime-500 dark:text-lime-400' : 'text-red-500 dark:text-red-400'}`}>
                                 {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                                 {formatNumber(b.partySum)} / {formatNumber(b.required)}
                               </span>
                             );
                           })}
-                          <span className="text-muted-foreground/40">·</span>
                         </div>
-                      )}
+                        <span className="text-muted-foreground/40">·</span>
+                      </>
+                    )}
+                    <span className="text-muted-foreground">
+                      평균 <span className="font-mono font-bold text-foreground">{Math.round(sim.avgRounds)}</span>턴
+                      <span className="text-muted-foreground/70"> ({sim.minRounds}~{sim.maxRounds}R)</span>
+                    </span>
+                    <span className="text-muted-foreground/40">·</span>
+                    {sim.successCount !== undefined && (
                       <span className="text-muted-foreground">
-                        평균 <span className="font-mono font-bold text-foreground">{Math.round(sim.avgRounds)}</span>턴
-                        <span className="text-muted-foreground/70"> ({sim.minRounds}~{sim.maxRounds}R)</span>
+                        성공 <span className="font-mono font-bold text-lime-500 dark:text-lime-400">{formatNumber(sim.successCount)}</span>판
                       </span>
-                      <span className="text-muted-foreground/40">·</span>
-                      {sim.successCount !== undefined && (
-                        <span className="text-muted-foreground">
-                          성공 <span className="font-mono font-bold text-lime-500 dark:text-lime-400">{formatNumber(sim.successCount)}</span>판
-                        </span>
-                      )}
-                      {sim.failCount !== undefined && (
-                        <span className="text-muted-foreground">
-                          실패 <span className="font-mono font-bold text-red-500 dark:text-red-400">{formatNumber(sim.failCount)}</span>판
-                        </span>
-                      )}
-                      {sim.retryCount !== undefined && sim.retryCount > 0 && (
-                        <span className="text-muted-foreground">
-                          재시도 <span className="font-mono font-bold text-amber-500 dark:text-amber-300">{formatNumber(sim.retryCount)}</span>판
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: win rate + gear ratio (date above divider, win rate centered vertically) */}
-                <div className="flex flex-col shrink-0 border-l border-border/30">
-                  {/* Date band (above divider, on header strip) */}
-                  <div className="saved-result-header px-4 py-2 text-right">
-                    <span className="text-[12px] text-foreground/85 font-semibold">{dateStr}</span>
-                  </div>
-                  {/* Win rate + gear-vs-win, vertically centered */}
-                  <div className="flex-1 flex items-center justify-center px-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-[10px] text-muted-foreground">승률</div>
-                      <div className={`text-2xl font-bold font-mono ${getWinRateColor(sim.winRate)}`}>
-                        {sim.winRate.toFixed(1)}%
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-[10px] text-muted-foreground">장비 대비</div>
-                      <div className={`text-2xl font-bold font-mono ${gearRatio !== null ? getWinRateColor(gearRatio) : 'text-muted-foreground/50'}`}>
-                        {gearRatio !== null ? gearRatio.toFixed(1) : '-'}
-                      </div>
-                    </div>
+                    )}
+                    {sim.failCount !== undefined && (
+                      <span className="text-muted-foreground">
+                        실패 <span className="font-mono font-bold text-red-500 dark:text-red-400">{formatNumber(sim.failCount)}</span>판
+                      </span>
+                    )}
+                    {sim.retryCount !== undefined && sim.retryCount > 0 && (
+                      <span className="text-muted-foreground">
+                        재시도 <span className="font-mono font-bold text-amber-500 dark:text-amber-300">{formatNumber(sim.retryCount)}</span>판
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* Far right: action buttons */}
-                <div className="flex flex-col gap-1 items-center justify-center px-2 bg-muted/30 border-l border-border/30">
+                <div className="flex flex-col gap-1.5 items-center justify-center px-2 bg-muted/30 border-l border-border/30">
                   <Button
-                    variant="ghost"
+                    variant="default"
                     size="icon"
-                    className="saved-play-btn w-8 h-8 border border-destructive/60 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="saved-play-btn w-8 h-8 bg-primary text-white border-0 hover:bg-primary/90 [&_svg]:text-white"
                     onClick={(e) => { e.stopPropagation(); onLoadSimulation(sim); }}
                     title="불러오기"
                   >
