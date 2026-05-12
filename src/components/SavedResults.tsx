@@ -126,15 +126,9 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     });
   };
 
-  const handleExport = useCallback(async () => {
+  const handleExport = useCallback(() => {
     if (saved.length === 0) return;
-    const data = JSON.stringify(saved, null, 2);
-    const blob = new Blob([data], { type: 'text/plain' });
-    await saveBlobFile(
-      blob,
-      `quest_sim_results_${new Date().toISOString().slice(0, 10)}.txt`,
-      '자동 저장이 안 되면 공유 또는 다른 앱으로 열기를 사용해 주세요.',
-    );
+    setSaveDialogOpen(true);
   }, [saved]);
 
   const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,15 +141,43 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
         if (!Array.isArray(parsed)) throw new Error('Invalid format');
         const valid = parsed.every((s: any) => s.id && s.name && Array.isArray(s.heroSummaries));
         if (!valid) throw new Error('Invalid results data');
-        const existing = getSavedSimulations();
-        const existingIds = new Set(existing.map(s => s.id));
-        const merged = [...parsed.filter((s: any) => !existingIds.has(s.id)), ...existing];
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-        refresh();
+        setImportPreview(parsed as SavedSimulationSummary[]);
+        setImportMode('merge');
       } catch { alert('파일 형식이 올바르지 않습니다.'); }
     };
     reader.readAsText(file);
     e.target.value = '';
+  }, []);
+
+  const handleImportConfirm = useCallback(() => {
+    if (!importPreview) return;
+    if (importMode === 'replace') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(importPreview));
+    } else {
+      const existing = getSavedSimulations();
+      const existingIds = new Set(existing.map(s => s.id));
+      const merged = [...importPreview.filter(s => !existingIds.has(s.id)), ...existing];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    }
+    setImportPreview(null);
+    refresh();
+  }, [importPreview, importMode]);
+
+  const handleExtractCopy = useCallback(async (sim: SavedSimulationSummary) => {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(sim, null, 2));
+      toast({ title: '복사 완료', description: '클립보드에 결과 코드가 복사되었습니다.' });
+    } catch {
+      toast({ title: '복사 실패', description: '클립보드 접근이 거부되었습니다.', variant: 'destructive' });
+    }
+    setExtractTarget(null);
+  }, []);
+
+  const handleExtractFile = useCallback(async (sim: SavedSimulationSummary) => {
+    const blob = new Blob([JSON.stringify([sim], null, 2)], { type: 'text/plain' });
+    const safe = (sim.regionName || 'result').replace(/[^\w가-힣]/g, '_');
+    await saveBlobFile(blob, `quest_sim_${safe}_${new Date().toISOString().slice(0, 10)}.txt`);
+    setExtractTarget(null);
   }, []);
 
   // Unique filter options
