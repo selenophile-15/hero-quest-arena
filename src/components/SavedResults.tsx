@@ -562,27 +562,27 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     {sim.boosterImage && (
                       <span className="flex items-center gap-1.5">
                         <img src={sim.boosterImage} alt="booster" className="w-5 h-5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        <span className="text-foreground/85">{sim.boosterLabel || '부스터'}</span>
+                        <span className="font-bold text-foreground/90">{sim.boosterLabel || '부스터'}</span>
                       </span>
                     )}
                     {(sim.barrierInfos?.length || sim.boosterImage) ? <span className="text-muted-foreground/40">·</span> : null}
-                    <span className="text-foreground/85">
+                    <span className="font-bold text-foreground/90">
                       평균 <span className="font-mono font-bold text-foreground">{Math.round(sim.avgRounds)}</span>턴
-                      <span className="text-foreground/60"> ({sim.minRounds}~{sim.maxRounds}R)</span>
+                      <span className="text-foreground/60 font-normal"> ({sim.minRounds}~{sim.maxRounds}R)</span>
                     </span>
                     <span className="text-muted-foreground/40">·</span>
                     {sim.successCount !== undefined && (
-                      <span className="text-foreground/85">
+                      <span className="font-bold text-foreground/90">
                         성공 <span className="font-mono font-bold text-lime-500 dark:text-lime-400">{formatNumber(sim.successCount)}</span>판
                       </span>
                     )}
                     {sim.failCount !== undefined && (
-                      <span className="text-foreground/85">
+                      <span className="font-bold text-foreground/90">
                         실패 <span className="font-mono font-bold text-red-500 dark:text-red-400">{formatNumber(sim.failCount)}</span>판
                       </span>
                     )}
                     {sim.retryCount !== undefined && sim.retryCount > 0 && (
-                      <span className="text-foreground/85">
+                      <span className="font-bold text-foreground/90">
                         재시도 <span className="font-mono font-bold text-amber-500 dark:text-amber-300">{formatNumber(sim.retryCount)}</span>판
                       </span>
                     )}
