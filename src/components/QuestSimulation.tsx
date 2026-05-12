@@ -1512,6 +1512,16 @@ export default function QuestSimulation() {
                   <FileText className="w-4 h-4" />
                   스탯 계산표
                 </Button>
+                <Button
+                  onClick={() => setSavePartyOpen(true)}
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 ml-auto"
+                  title="현재 파티원들을 내 영웅/챔피언 리스트에 저장"
+                >
+                  <Upload className="w-4 h-4" />
+                  리스트에 저장
+                </Button>
               </div>
             )}
             {currentQuest && selectedHeroes.length > 0 && (() => {
