@@ -667,6 +667,7 @@ export default function QuestSimulation() {
       miniBoss: selectedMiniBoss,
       winRate: simResult.winRate,
       avgRounds: simResult.avgRounds,
+      avgRoundsFinal: simResult.avgRounds,
       minRounds: simResult.minRounds,
       maxRounds: simResult.maxRounds,
       heroSummaries,
