@@ -419,15 +419,15 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       {/* 유형 */}
                       <td className="py-1.5 px-1.5 text-center">
                         {hero.type === 'champion' ? (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold text-white bg-purple-600">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-600" style={{ color: '#fff' }}>
                             챔피언
                           </span>
                         ) : (
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold text-white ${
+                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
                             hero.classLine === '전사' ? 'bg-red-600' :
                             hero.classLine === '로그' ? 'bg-lime-700' :
                             'bg-sky-600'
-                          }`}>
+                          }`} style={{ color: '#fff' }}>
                             영웅
                           </span>
                         )}
