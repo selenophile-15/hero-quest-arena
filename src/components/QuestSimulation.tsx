@@ -645,7 +645,9 @@ export default function QuestSimulation() {
       return {
         heroId: hr.heroId,
         heroName: hr.heroName,
-        heroClass: heroObj?.heroClass || '',
+        heroClass: heroObj?.type === 'champion'
+          ? (heroObj.championName || heroObj.name || '')
+          : (heroObj?.heroClass || ''),
         survivalRate: hr.survivalRate,
         avgDamageDealt: hr.avgDamageDealt,
         damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg * 100) : 0,

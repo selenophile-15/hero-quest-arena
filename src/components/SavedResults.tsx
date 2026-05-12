@@ -4,7 +4,7 @@ import {
   deleteSavedSimulation,
   SavedSimulationSummary,
 } from '@/lib/savedSimulations';
-import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, X, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy } from 'lucide-react';
+import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -86,6 +86,17 @@ const JOB_ORDER_MAP = new Map(JOB_ORDER.map((n, i) => [n, i]));
 const CHAMPION_ORDER: string[] = ['아르곤','릴루','시아','야미','루도','폴로니아','도노반','헴마','애쉴리','비외른','맬러디','라인홀드','타마스'];
 const CHAMPION_SET = new Set(CHAMPION_ORDER);
 const CHAMPION_ORDER_MAP = new Map(CHAMPION_ORDER.map((n, i) => [n, i]));
+
+// Job → class-line color map for filter dropdown
+const JOB_LINE_OF: Record<string, '전사' | '로그' | '주문술사'> = {};
+JOB_ORDER.slice(0, 14).forEach(j => { JOB_LINE_OF[j] = '전사'; });
+JOB_ORDER.slice(14, 28).forEach(j => { JOB_LINE_OF[j] = '로그'; });
+JOB_ORDER.slice(28).forEach(j => { JOB_LINE_OF[j] = '주문술사'; });
+const JOB_LINE_COLOR: Record<string, string> = {
+  '전사': 'text-red-600 dark:text-red-400',
+  '로그': 'text-lime-600 dark:text-lime-400',
+  '주문술사': 'text-blue-600 dark:text-blue-400',
+};
 
 const QUEST_FILES: Array<{ key: string; file: string }> = [
   { key: 'normal', file: '/data/quest/normal_quest.json' },
@@ -220,9 +231,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const handleExtractCopy = useCallback(async (sim: SavedSimulationSummary) => {
     try {
       await navigator.clipboard.writeText(JSON.stringify(sim, null, 2));
-      toast({ title: '복사 완료', description: '클립보드에 결과 코드가 복사되었습니다.' });
+      const t = toast({ title: '복사 완료', description: '클립보드에 결과 코드가 복사되었습니다.' });
+      setTimeout(() => t.dismiss(), 1000);
     } catch {
-      toast({ title: '복사 실패', description: '클립보드 접근이 거부되었습니다.', variant: 'destructive' });
+      const t = toast({ title: '복사 실패', description: '클립보드 접근이 거부되었습니다.', variant: 'destructive' });
+      setTimeout(() => t.dismiss(), 1000);
     }
     setExtractTarget(null);
   }, []);
@@ -231,6 +244,8 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     const blob = new Blob([JSON.stringify([sim], null, 2)], { type: 'text/plain' });
     const safe = (sim.regionName || 'result').replace(/[^\w가-힣]/g, '_');
     await saveBlobFile(blob, `quest_sim_${safe}_${new Date().toISOString().slice(0, 10)}.txt`);
+    const t = toast({ title: '파일 저장 완료' });
+    setTimeout(() => t.dismiss(), 1000);
     setExtractTarget(null);
   }, []);
 
@@ -262,20 +277,33 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       return ai !== bi ? ai - bi : a.localeCompare(b);
     });
   }, [saved, filterRegion, subAreaOrderMap]);
+  // Resolve each hero summary into { isChampion, label } using snapshot/list lookup
+  const resolveHs = useCallback((s: SavedSimulationSummary, hs: SavedSimulationSummary['heroSummaries'][number]) => {
+    if (hs.heroClass && CHAMPION_SET.has(hs.heroClass)) return { isChampion: true, label: hs.heroClass };
+    const snap = (s.heroSnapshots || []).find(h => h.id === hs.heroId) || allHeroes.find(h => h.id === hs.heroId);
+    if (snap?.type === 'champion') {
+      const lbl = snap.championName || snap.name;
+      if (CHAMPION_SET.has(lbl)) return { isChampion: true, label: lbl };
+    }
+    return hs.heroClass ? { isChampion: false, label: hs.heroClass } : null;
+  }, [allHeroes]);
+
   const jobOpts = useMemo(() => {
     const set = new Set<string>();
     saved.forEach(s => s.heroSummaries.forEach(hs => {
-      if (hs.heroClass && !CHAMPION_SET.has(hs.heroClass)) set.add(hs.heroClass);
+      const r = resolveHs(s, hs);
+      if (r && !r.isChampion) set.add(r.label);
     }));
     return Array.from(set).sort((a, b) => (JOB_ORDER_MAP.get(a) ?? 9999) - (JOB_ORDER_MAP.get(b) ?? 9999));
-  }, [saved]);
+  }, [saved, resolveHs]);
   const championOpts = useMemo(() => {
     const set = new Set<string>();
     saved.forEach(s => s.heroSummaries.forEach(hs => {
-      if (hs.heroClass && CHAMPION_SET.has(hs.heroClass)) set.add(hs.heroClass);
+      const r = resolveHs(s, hs);
+      if (r && r.isChampion) set.add(r.label);
     }));
     return Array.from(set).sort((a, b) => (CHAMPION_ORDER_MAP.get(a) ?? 9999) - (CHAMPION_ORDER_MAP.get(b) ?? 9999));
-  }, [saved]);
+  }, [saved, resolveHs]);
 
   // Apply filter + sort
   const visible = useMemo(() => {
@@ -284,10 +312,16 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     if (filterRegion !== '__all__') list = list.filter(s => s.regionName === filterRegion);
     if (filterSubArea !== '__all__') list = list.filter(s => s.subAreaName === filterSubArea);
     if (filterJob !== '__all__') {
-      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterJob));
+      list = list.filter(s => s.heroSummaries.some(hs => {
+        const r = resolveHs(s, hs);
+        return r && !r.isChampion && r.label === filterJob;
+      }));
     }
     if (filterChampion !== '__all__') {
-      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterChampion));
+      list = list.filter(s => s.heroSummaries.some(hs => {
+        const r = resolveHs(s, hs);
+        return r && r.isChampion && r.label === filterChampion;
+      }));
     }
     const minWinNum = parseFloat(filterMinWin);
     if (!Number.isNaN(minWinNum)) {
@@ -312,7 +346,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       });
     }
     return list;
-  }, [saved, filterQuestType, filterRegion, filterSubArea, filterJob, filterChampion, filterMinWin, sortKey, sortDir]);
+  }, [saved, filterQuestType, filterRegion, filterSubArea, filterJob, filterChampion, filterMinWin, sortKey, sortDir, resolveHs]);
 
   const toggleAll = () => {
     if (selectedIds.size === visible.length) setSelectedIds(new Set());
@@ -378,7 +412,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
             <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="직업" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="__all__">전체 직업</SelectItem>
-              {jobOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              {jobOpts.map(r => (
+                <SelectItem key={r} value={r}>
+                  <span className={JOB_LINE_COLOR[JOB_LINE_OF[r]] || ''}>{r}</span>
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={filterChampion} onValueChange={setFilterChampion}>
@@ -426,28 +464,32 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
         </div>
 
         <div className="flex items-center gap-1.5">
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleExport}>
-            <Download className="w-3.5 h-3.5" /> 저장하기
+          <Button variant="outline" size="icon" className="w-8 h-8" onClick={handleExport} title="저장하기">
+            <Download className="w-3.5 h-3.5" />
           </Button>
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-            <Upload className="w-3.5 h-3.5" /> 불러오기
+          <Button variant="outline" size="icon" className="w-8 h-8" onClick={() => fileInputRef.current?.click()} title="불러오기">
+            <Upload className="w-3.5 h-3.5" />
           </Button>
           <input ref={fileInputRef} type="file" accept=".txt,.json" className="hidden" onChange={handleImportFile} />
           {!editMode ? (
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setEditMode(true)}>
-              <Pencil className="w-3.5 h-3.5" /> 편집
+            <Button variant="outline" size="icon" className="w-8 h-8" onClick={() => setEditMode(true)} title="편집">
+              <Pencil className="w-3.5 h-3.5" />
             </Button>
           ) : (
             <>
-              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={toggleAll}>
-                {selectedIds.size === visible.length ? '전체 해제' : '전체 선택'}
-              </Button>
+              <button
+                onClick={toggleAll}
+                className="w-8 h-8 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                title={selectedIds.size === visible.length ? '전체 해제' : '전체 선택'}
+              >
+                <CheckSquare className={`w-4 h-4 ${selectedIds.size === visible.length ? 'text-primary' : 'text-muted-foreground'}`} />
+              </button>
               <Button variant="destructive" size="sm" className="gap-1.5 text-xs"
                 disabled={selectedIds.size === 0} onClick={() => setBulkDeleteOpen(true)}>
                 <Trash2 className="w-3.5 h-3.5" /> 삭제 ({selectedIds.size})
               </Button>
-              <Button variant="ghost" size="sm" className="gap-1 text-xs" onClick={() => { setEditMode(false); setSelectedIds(new Set()); }}>
-                <X className="w-3.5 h-3.5" /> 완료
+              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={() => { setEditMode(false); setSelectedIds(new Set()); }}>
+                취소
               </Button>
             </>
           )}
@@ -691,7 +733,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     variant="ghost"
                     size="icon"
                     className="w-8 h-8 text-muted-foreground hover:text-white hover:bg-destructive [&:hover_svg]:text-white"
-                    onClick={(e) => { e.stopPropagation(); setDeleteTarget(sim); }}
+                    onClick={(e) => { e.stopPropagation(); if (editMode) toggleSelect(sim.id); else setDeleteTarget(sim); }}
                     title="삭제"
                   >
                     <Trash2 className="w-4 h-4" />
