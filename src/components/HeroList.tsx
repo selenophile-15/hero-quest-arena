@@ -9,7 +9,7 @@ import { getJobImagePath, getJobIllustPath, getChampionImagePath, CHAMPION_NAME_
 import { getSkillImagePath, getUniqueSkillImagePath, setSkillGradeCache } from '@/lib/skillUtils';
 import { getAurasongSkillIconPath, getLeaderSkillTierName, getAurasongSkillEffect, ensureAurasongDataLoaded } from '@/lib/championEquipUtils';
 import { saveCanvasImage } from '@/lib/fileDownload';
-import { preloadImages } from '@/lib/imagePreloader';
+import { preloadImages, preloadImage } from '@/lib/imagePreloader';
 import HeroForm from './HeroForm';
 import ChampionForm from './ChampionForm';
 import ListSummary, { ListSummaryHandle } from './ListSummary';
@@ -174,6 +174,27 @@ function createScreenshotOverlay() {
   document.body.appendChild(overlay);
   return overlay;
 }
+
+type StableImageProps = React.ImgHTMLAttributes<HTMLImageElement>;
+
+const StableImage = ({ src, onError, ...props }: StableImageProps) => {
+  useEffect(() => {
+    if (src) preloadImage(src);
+  }, [src]);
+
+  if (!src) return null;
+
+  return (
+    <img
+      {...props}
+      src={src}
+      loading="eager"
+      decoding="sync"
+      fetchPriority="high"
+      onError={onError}
+    />
+  );
+};
 
 export default function HeroList() {
   const { colorMode } = useTheme();
