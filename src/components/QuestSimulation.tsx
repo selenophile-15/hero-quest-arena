@@ -2114,11 +2114,14 @@ export default function QuestSimulation() {
                     </div>
                   );
                 })()}
-                {dispSim!.roundLimitRate > 0 && (
-                  <div className="mt-2 text-center text-[10px] text-red-400">
-                    ⚠ 라운드 제한 도달: {dispSim!.roundLimitRate.toFixed(1)}%
-                  </div>
-                )}
+                {dispSim!.roundLimitRate > 0 && (() => {
+                  const limitCount = Math.round((dispSim!.roundLimitRate / 100) * (dispSim!.totalSimulations || 0));
+                  return (
+                    <div className="mt-2 text-center text-[10px] text-red-400">
+                      ⚠ 라운드 제한 도달: {dispSim!.roundLimitRate.toFixed(1)}% ({limitCount}판)
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Damage Contribution */}
