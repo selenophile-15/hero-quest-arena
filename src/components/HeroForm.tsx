@@ -591,7 +591,7 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
     if (!heroClass) return;
     setNameError(false);
     const heroData: Hero = {
-      id: crypto.randomUUID(),
+      id: saveAsKeepsId ? (hero?.id || crypto.randomUUID()) : crypto.randomUUID(),
       name: name.trim(),
       classLine: classLine as HeroClassLine,
       heroClass,
@@ -611,9 +611,9 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
       elementManual,
       equipmentSlots,
       detailStats,
-      createdAt: new Date().toISOString(),
+      createdAt: saveAsKeepsId ? (hero?.createdAt || new Date().toISOString()) : new Date().toISOString(),
     };
-    onSave(heroData);
+    (onSaveAs ?? onSave)(heroData);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
