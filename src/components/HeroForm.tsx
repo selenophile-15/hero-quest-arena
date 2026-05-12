@@ -664,9 +664,9 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
           {hero && (
-            <Button type="button" variant="outline" size="sm" onClick={handleSaveAs}>다른 이름으로 저장</Button>
+            <Button type="button" variant="outline" size="sm" onClick={handleSaveAs}>{saveAsLabel ?? '다른 이름으로 저장'}</Button>
           )}
-          <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
+          <Button type="button" size="sm" onClick={handleSubmit}>{saveLabel ?? '저장'}</Button>
         </div>
       </div>
 
