@@ -505,18 +505,18 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                 </div>
                               )}
                             </div>
-                            {/* Dmg bar (fixed bar width, number left-aligned in fixed slot) */}
-                            <div className="flex items-center gap-1.5 text-[12px]">
-                              <span className="text-foreground/80 w-4 shrink-0">딜</span>
-                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 w-[64px]">
+                            {/* Dmg bar (bar fills column; number left-aligned in fixed slot) */}
+                            <div className="flex items-center gap-1.5 text-[13px]">
+                              <span className="font-bold text-foreground/85 w-4 shrink-0">딜</span>
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden flex-1 min-w-0">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
                             </div>
                             {/* Tank bar */}
-                            <div className="flex items-center gap-1.5 text-[12px]">
-                              <span className="text-foreground/80 w-4 shrink-0">탱</span>
-                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 w-[64px]">
+                            <div className="flex items-center gap-1.5 text-[13px]">
+                              <span className="font-bold text-foreground/85 w-4 shrink-0">탱</span>
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden flex-1 min-w-0">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
