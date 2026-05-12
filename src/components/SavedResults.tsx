@@ -432,7 +432,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                       </>}
                       {sim.isBoss ? (<>
                         <span className="text-muted-foreground/50 text-[13px]">&gt;</span>
-                        <span className="text-[13px] font-bold text-amber-400">보스</span>
+                        <span className="text-[13px] font-bold text-foreground">보스</span>
                       </>) : sim.miniBossLabel && (<>
                         <span className="text-muted-foreground/50 text-[13px]">&gt;</span>
                         <span className={`text-[13px] font-bold ${
@@ -444,7 +444,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     </div>
                     <span className="ml-auto flex items-baseline gap-3">
                       <span className="text-[13px] text-foreground/90 font-semibold">{dateLabel}</span>
-                      <span className="text-[13px] text-foreground/90 font-semibold font-mono">{timeLabel}</span>
+                      <span className="text-[13px] text-foreground/90 font-semibold">{timeLabel}</span>
                     </span>
                   </div>
 
