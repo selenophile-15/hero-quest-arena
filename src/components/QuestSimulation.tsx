@@ -2758,7 +2758,12 @@ export default function QuestSimulation() {
                     const lordProtected = lordRow ? displayResults.filter(hr => !hr.isLordHero) : [];
                     const conquerorRows = displayResults.filter(hr => hr.isConquerorHero);
                     const ninjaSenseiRows = displayResults.filter(hr => hr.isNinjaHero || hr.isSenseiHero);
-                    const showLord = true;
+                    const showLord = !!lordRow;
+                    const showConqueror = conquerorRows.length > 0;
+                    const showNinjaSensei = ninjaSenseiRows.length > 0;
+                    const showBerserker = displayResults.some(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
+                    const hasHemma = displayResults.some(hr => hr.isHemmaHero);
+                    const hasRudo = displayResults.some(hr => hr.isRudoInParty);
 
                     // ── Table D: 폴로니아 도둑질 ──
                     const poloniaLoot = dispSim!.poloniaLoot;
