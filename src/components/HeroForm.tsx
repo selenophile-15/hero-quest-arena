@@ -168,7 +168,7 @@ function hasRangedWeapon(slots: Array<{ item: any | null }>): boolean {
   });
 }
 
-export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
+export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabel, onSaveAs, saveAsKeepsId }: HeroFormProps) {
   const { colorMode } = useTheme();
   const getTypeImgPath = (typeFile: string) => getTypeImgPathUtil(typeFile, colorMode);
   const getInitialPromotion = (): boolean => {
