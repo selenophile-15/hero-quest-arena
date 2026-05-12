@@ -138,25 +138,44 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     e.target.value = '';
   }, []);
 
-  // Unique regions / sub-areas
-  const regionOpts = useMemo(() => Array.from(new Set(saved.map(s => s.regionName).filter(Boolean) as string[])).sort(), [saved]);
+  // Unique filter options
+  const questTypeOpts = useMemo(() => {
+    const seen = new Map<string, string>();
+    saved.forEach(s => {
+      const key = s.questTypeKey;
+      const label = s.questTypeLabel || QUEST_TYPE_LABELS[s.questTypeKey] || s.questTypeKey;
+      if (!seen.has(key)) seen.set(key, label);
+    });
+    return Array.from(seen.entries());
+  }, [saved]);
+  const regionOpts = useMemo(() => {
+    const base = filterQuestType === '__all__' ? saved : saved.filter(s => s.questTypeKey === filterQuestType);
+    return Array.from(new Set(base.map(s => s.regionName).filter(Boolean) as string[])).sort();
+  }, [saved, filterQuestType]);
   const subAreaOpts = useMemo(() => {
     const base = filterRegion === '__all__' ? saved : saved.filter(s => s.regionName === filterRegion);
     return Array.from(new Set(base.map(s => s.subAreaName).filter(Boolean) as string[])).sort();
   }, [saved, filterRegion]);
+  const heroOpts = useMemo(() => {
+    const set = new Set<string>();
+    saved.forEach(s => s.heroSummaries.forEach(hs => {
+      if (hs.heroClass) set.add(hs.heroClass);
+    }));
+    return Array.from(set).sort();
+  }, [saved]);
 
   // Apply filter + sort
   const visible = useMemo(() => {
     let list = [...saved];
+    if (filterQuestType !== '__all__') list = list.filter(s => s.questTypeKey === filterQuestType);
     if (filterRegion !== '__all__') list = list.filter(s => s.regionName === filterRegion);
     if (filterSubArea !== '__all__') list = list.filter(s => s.subAreaName === filterSubArea);
-    if (filterHero.trim()) {
-      const q = filterHero.trim().toLowerCase();
-      list = list.filter(s => s.heroSummaries.some(hs => hs.heroName.toLowerCase().includes(q) || (hs.heroClass || '').toLowerCase().includes(q)));
+    if (filterHero !== '__all__') {
+      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterHero));
     }
-    if (filterMinWin !== '__all__') {
-      const min = Number(filterMinWin);
-      list = list.filter(s => s.winRate >= min);
+    const minWinNum = parseFloat(filterMinWin);
+    if (!Number.isNaN(minWinNum)) {
+      list = list.filter(s => s.winRate >= minWinNum);
     }
     if (sortDir !== null) {
       const mul = sortDir === 'desc' ? -1 : 1;
@@ -177,7 +196,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       });
     }
     return list;
-  }, [saved, filterRegion, filterSubArea, filterHero, filterMinWin, sortKey, sortDir]);
+  }, [saved, filterQuestType, filterRegion, filterSubArea, filterHero, filterMinWin, sortKey, sortDir]);
 
   const toggleAll = () => {
     if (selectedIds.size === visible.length) setSelectedIds(new Set());
