@@ -520,13 +520,9 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               onClick={() => { if (editMode) toggleSelect(sim.id); else setDetailSim(sim); }}
             >
               <div className="flex items-stretch min-h-[170px]">
-                {/* Left: number / checkbox */}
+                {/* Left: slot number (always visible) */}
                 <div className="flex items-center justify-center w-10 shrink-0 bg-primary border-r border-border/30">
-                  {editMode ? (
-                    <Checkbox checked={selected} onCheckedChange={() => toggleSelect(sim.id)} onClick={(e) => e.stopPropagation()} />
-                  ) : (
-                    <span className="text-sm font-bold font-mono !text-white" style={{ color: '#fff' }}>{simIndex + 1}</span>
-                  )}
+                  <span className="text-sm font-bold font-mono !text-white" style={{ color: '#fff' }}>{simIndex + 1}</span>
                 </div>
 
                 {/* Center area (header + body + footer) */}
