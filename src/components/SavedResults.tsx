@@ -464,28 +464,32 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
         </div>
 
         <div className="flex items-center gap-1.5">
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleExport}>
-            <Download className="w-3.5 h-3.5" /> 저장하기
+          <Button variant="outline" size="icon" className="w-8 h-8" onClick={handleExport} title="저장하기">
+            <Download className="w-3.5 h-3.5" />
           </Button>
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => fileInputRef.current?.click()}>
-            <Upload className="w-3.5 h-3.5" /> 불러오기
+          <Button variant="outline" size="icon" className="w-8 h-8" onClick={() => fileInputRef.current?.click()} title="불러오기">
+            <Upload className="w-3.5 h-3.5" />
           </Button>
           <input ref={fileInputRef} type="file" accept=".txt,.json" className="hidden" onChange={handleImportFile} />
           {!editMode ? (
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setEditMode(true)}>
-              <Pencil className="w-3.5 h-3.5" /> 편집
+            <Button variant="outline" size="icon" className="w-8 h-8" onClick={() => setEditMode(true)} title="편집">
+              <Pencil className="w-3.5 h-3.5" />
             </Button>
           ) : (
             <>
-              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={toggleAll}>
-                {selectedIds.size === visible.length ? '전체 해제' : '전체 선택'}
-              </Button>
+              <button
+                onClick={toggleAll}
+                className="w-8 h-8 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                title={selectedIds.size === visible.length ? '전체 해제' : '전체 선택'}
+              >
+                <CheckSquare className={`w-4 h-4 ${selectedIds.size === visible.length ? 'text-primary' : 'text-muted-foreground'}`} />
+              </button>
               <Button variant="destructive" size="sm" className="gap-1.5 text-xs"
                 disabled={selectedIds.size === 0} onClick={() => setBulkDeleteOpen(true)}>
                 <Trash2 className="w-3.5 h-3.5" /> 삭제 ({selectedIds.size})
               </Button>
-              <Button variant="ghost" size="sm" className="gap-1 text-xs" onClick={() => { setEditMode(false); setSelectedIds(new Set()); }}>
-                <X className="w-3.5 h-3.5" /> 완료
+              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={() => { setEditMode(false); setSelectedIds(new Set()); }}>
+                취소
               </Button>
             </>
           )}
