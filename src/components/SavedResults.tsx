@@ -64,12 +64,12 @@ const QUEST_TYPE_LABELS: Record<string, string> = {
   tot: '공포의 탑',
 };
 
-// Quest-type colored chip style (text/border)
+// Quest-type colored chip style (text/border) — identical in light & dark modes
 const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
-  normal: 'text-red-600 dark:text-red-300 border-current bg-red-400/25 dark:bg-red-300/20',
-  flash:  'text-lime-700 dark:text-lime-300 border-current bg-lime-400/25 dark:bg-lime-300/20',
-  lcog:   'text-yellow-700 dark:text-yellow-300 border-current bg-yellow-400/25 dark:bg-yellow-300/20',
-  tot:    'text-purple-600 dark:text-purple-300 border-current bg-purple-400/25 dark:bg-purple-300/20',
+  normal: 'text-red-600 border-red-600 bg-red-500/15',
+  flash:  'text-lime-700 border-lime-700 bg-lime-500/15',
+  lcog:   'text-yellow-700 border-yellow-700 bg-yellow-500/15',
+  tot:    'text-purple-600 border-purple-600 bg-purple-500/15',
 };
 
 interface Props {
