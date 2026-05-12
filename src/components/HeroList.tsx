@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, Fragment, useRef, useCallback, type ImgHTMLAttributes } from 'react';
 import { Hero, HERO_STAT_COLUMNS, CHAMPION_STAT_COLUMNS, STAT_ICON_MAP, ELEMENT_ICON_MAP } from '@/types/game';
 import { useTheme } from '@/hooks/use-theme';
 import { getTypeImagePath } from '@/lib/typeImageUtils';
@@ -175,7 +175,7 @@ function createScreenshotOverlay() {
   return overlay;
 }
 
-type StableImageProps = React.ImgHTMLAttributes<HTMLImageElement>;
+type StableImageProps = ImgHTMLAttributes<HTMLImageElement>;
 
 const StableImage = ({ src, onError, ...props }: StableImageProps) => {
   useEffect(() => {
