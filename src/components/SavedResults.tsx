@@ -401,11 +401,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
             >
               <div className="flex items-stretch min-h-[170px]">
                 {/* Left: number / checkbox */}
-                <div className="flex items-center justify-center w-10 shrink-0 bg-muted/30 border-r border-border/30">
+                <div className="flex items-center justify-center w-10 shrink-0 bg-primary border-r border-border/30">
                   {editMode ? (
                     <Checkbox checked={selected} onCheckedChange={() => toggleSelect(sim.id)} onClick={(e) => e.stopPropagation()} />
                   ) : (
-                    <span className="text-sm font-bold font-mono text-muted-foreground">{simIndex + 1}</span>
+                    <span className="text-sm font-bold font-mono text-white">{simIndex + 1}</span>
                   )}
                 </div>
 
