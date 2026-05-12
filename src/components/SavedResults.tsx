@@ -733,7 +733,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     variant="ghost"
                     size="icon"
                     className="w-8 h-8 text-muted-foreground hover:text-white hover:bg-destructive [&:hover_svg]:text-white"
-                    onClick={(e) => { e.stopPropagation(); setDeleteTarget(sim); }}
+                    onClick={(e) => { e.stopPropagation(); if (editMode) toggleSelect(sim.id); else setDeleteTarget(sim); }}
                     title="삭제"
                   >
                     <Trash2 className="w-4 h-4" />
