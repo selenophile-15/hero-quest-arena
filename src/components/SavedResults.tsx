@@ -132,6 +132,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const [filterJob, setFilterJob] = useState<string>('__all__');
   const [filterChampion, setFilterChampion] = useState<string>('__all__');
   const [filterMinWin, setFilterMinWin] = useState<string>('');
+  const [filterMinGearRatio, setFilterMinGearRatio] = useState<string>('');
 
   // Sort
   const [sortKey, setSortKey] = useState<SortKey>('savedAt');
@@ -326,6 +327,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     if (!Number.isNaN(minWinNum)) {
       list = list.filter(s => s.winRate >= minWinNum);
     }
+    const minGearNum = parseFloat(filterMinGearRatio);
+    if (!Number.isNaN(minGearNum)) {
+      list = list.filter(s => {
+        const r = (s.avgGearScore && s.avgGearScore > 0) ? (s.winRate / s.avgGearScore) : 0;
+        return r >= minGearNum;
+      });
+    }
     if (sortDir !== null) {
       const mul = sortDir === 'desc' ? -1 : 1;
       list.sort((a, b) => {
@@ -345,7 +353,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       });
     }
     return list;
-  }, [saved, filterQuestType, filterRegion, filterSubArea, filterJob, filterChampion, filterMinWin, sortKey, sortDir, resolveHs]);
+  }, [saved, filterQuestType, filterRegion, filterSubArea, filterJob, filterChampion, filterMinWin, filterMinGearRatio, sortKey, sortDir, resolveHs]);
 
   const toggleAll = () => {
     if (selectedIds.size === visible.length) setSelectedIds(new Set());
@@ -418,84 +426,94 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
 
   return (
     <div className="saved-results-root space-y-3">
-      {/* Toolbar: Filter / Sort + actions */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          <Filter className="w-3.5 h-3.5 text-muted-foreground" />
-          <Select value={filterQuestType} onValueChange={(v) => { setFilterQuestType(v); setFilterRegion('__all__'); setFilterSubArea('__all__'); }}>
-            <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue placeholder="유형" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">전체 유형</SelectItem>
-              {questTypeOpts.map(([k, label]) => <SelectItem key={k} value={k}>{label}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={filterRegion} onValueChange={(v) => { setFilterRegion(v); setFilterSubArea('__all__'); }}>
-            <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue placeholder="지역" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">전체 지역</SelectItem>
-              {regionOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={filterSubArea} onValueChange={setFilterSubArea}>
-            <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue placeholder="세부지역" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">전체 세부지역</SelectItem>
-              {subAreaOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={filterJob} onValueChange={setFilterJob}>
-            <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="직업" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">전체 직업</SelectItem>
-              {jobOpts.map(r => (
-                <SelectItem key={r} value={r}>
-                  <span className={JOB_LINE_COLOR[JOB_LINE_OF[r]] || ''}>{r}</span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={filterChampion} onValueChange={setFilterChampion}>
-            <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="챔피언" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">전체 챔피언</SelectItem>
-              {championOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-foreground">승률 ≥</span>
-            <Input
-              value={filterMinWin}
-              onChange={e => setFilterMinWin(e.target.value.replace(/[^0-9.]/g, ''))}
-              placeholder="0"
-              inputMode="decimal"
-              className="h-8 w-[70px] text-xs"
-            />
-            <span className="text-xs text-foreground">%</span>
-          </div>
-
-          {/* Sort cluster */}
-          <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/40">
-            <span className="text-xs text-foreground mr-0.5">정렬</span>
-            {([
-              { key: 'savedAt' as SortKey, label: '저장일' },
-              { key: 'winRate' as SortKey, label: '승률' },
-              { key: 'avgRounds' as SortKey, label: '턴수' },
-              { key: 'gearVsWin' as SortKey, label: '장비 대비' },
-            ]).map(s => (
-              <button
-                key={s.key}
-                onClick={() => cycleSort(s.key)}
-                className={`flex items-center gap-1 h-8 px-2 rounded-md text-xs border transition-colors ${
-                  sortKey === s.key && sortDir !== null
-                    ? 'bg-primary/15 border-primary/40 text-primary'
-                    : 'border-input text-foreground hover:bg-secondary/40'
-                }`}
-              >
-                {s.label}
-                {sortIcon(s.key)}
-              </button>
+      {/* Toolbar Row 1: Filters */}
+      <div className="flex items-center flex-wrap gap-2">
+        <Filter className="w-3.5 h-3.5 text-muted-foreground" />
+        <Select value={filterQuestType} onValueChange={(v) => { setFilterQuestType(v); setFilterRegion('__all__'); setFilterSubArea('__all__'); }}>
+          <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue placeholder="유형" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">전체 유형</SelectItem>
+            {questTypeOpts.map(([k, label]) => <SelectItem key={k} value={k}>{label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filterRegion} onValueChange={(v) => { setFilterRegion(v); setFilterSubArea('__all__'); }}>
+          <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue placeholder="지역" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">전체 지역</SelectItem>
+            {regionOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filterSubArea} onValueChange={setFilterSubArea}>
+          <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue placeholder="세부지역" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">전체 세부지역</SelectItem>
+            {subAreaOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filterJob} onValueChange={setFilterJob}>
+          <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="직업" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">전체 직업</SelectItem>
+            {jobOpts.map(r => (
+              <SelectItem key={r} value={r}>
+                <span className={JOB_LINE_COLOR[JOB_LINE_OF[r]] || ''}>{r}</span>
+              </SelectItem>
             ))}
-          </div>
+          </SelectContent>
+        </Select>
+        <Select value={filterChampion} onValueChange={setFilterChampion}>
+          <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="챔피언" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">전체 챔피언</SelectItem>
+            {championOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <div className="flex items-center gap-1">
+          <span className="text-xs text-foreground">승률 ≥</span>
+          <Input
+            value={filterMinWin}
+            onChange={e => setFilterMinWin(e.target.value.replace(/[^0-9.]/g, ''))}
+            placeholder="0"
+            inputMode="decimal"
+            className="h-8 w-[70px] text-xs"
+          />
+          <span className="text-xs text-foreground">%</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="text-xs text-foreground">장비 대비 ≥</span>
+          <Input
+            value={filterMinGearRatio}
+            onChange={e => setFilterMinGearRatio(e.target.value.replace(/[^0-9.]/g, ''))}
+            placeholder="0"
+            inputMode="decimal"
+            className="h-8 w-[70px] text-xs"
+          />
+        </div>
+      </div>
+
+      {/* Toolbar Row 2: Sort + actions */}
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center gap-1 flex-wrap">
+          <span className="text-xs text-foreground mr-0.5">정렬</span>
+          {([
+            { key: 'savedAt' as SortKey, label: '저장일' },
+            { key: 'winRate' as SortKey, label: '승률' },
+            { key: 'avgRounds' as SortKey, label: '턴수' },
+            { key: 'gearVsWin' as SortKey, label: '장비 대비' },
+          ]).map(s => (
+            <button
+              key={s.key}
+              onClick={() => cycleSort(s.key)}
+              className={`flex items-center gap-1 h-8 px-2 rounded-md text-xs border transition-colors ${
+                sortKey === s.key && sortDir !== null
+                  ? 'bg-primary/15 border-primary/40 text-primary'
+                  : 'border-input text-foreground hover:bg-secondary/40'
+              }`}
+            >
+              {s.label}
+              {sortIcon(s.key)}
+            </button>
+          ))}
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -519,11 +537,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               >
                 <CheckSquare className={`w-4 h-4 ${selectedIds.size === visible.length ? 'text-primary' : 'text-muted-foreground'}`} />
               </button>
-              <Button variant="destructive" size="sm" className="gap-1.5 text-xs"
+              <Button variant="destructive" size="sm" className="h-8 gap-1.5 text-xs"
                 disabled={selectedIds.size === 0} onClick={() => setBulkDeleteOpen(true)}>
                 <Trash2 className="w-3.5 h-3.5" /> 삭제 ({selectedIds.size})
               </Button>
-              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={() => { setEditMode(false); setSelectedIds(new Set()); }}>
+              <Button variant="outline" size="sm" className="h-8 gap-1 text-xs" onClick={() => { setEditMode(false); setSelectedIds(new Set()); }}>
                 취소
               </Button>
             </>
