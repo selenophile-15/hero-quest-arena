@@ -132,6 +132,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const [filterJob, setFilterJob] = useState<string>('__all__');
   const [filterChampion, setFilterChampion] = useState<string>('__all__');
   const [filterMinWin, setFilterMinWin] = useState<string>('');
+  const [filterMinGearRatio, setFilterMinGearRatio] = useState<string>('');
 
   // Sort
   const [sortKey, setSortKey] = useState<SortKey>('savedAt');
