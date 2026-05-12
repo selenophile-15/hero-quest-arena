@@ -1672,32 +1672,25 @@ export default function HeroList() {
                               if (selectedForDelete.size === filtered.length) setSelectedForDelete(new Set());
                               else setSelectedForDelete(new Set(filtered.map(h => h.id)));
                             }}
-                            className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                            className="w-9 h-9 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
                             title={selectedForDelete.size === filtered.length && filtered.length > 0 ? '전체 해제' : '전체 선택'}
                           >
-                            <CheckSquare className={`w-3.5 h-3.5 ${selectedForDelete.size === filtered.length && filtered.length > 0 ? 'text-primary' : 'text-muted-foreground'}`} />
+                            <CheckSquare className={`w-4 h-4 ${selectedForDelete.size === filtered.length && filtered.length > 0 ? 'text-primary' : 'text-muted-foreground'}`} />
                           </button>
                           <button
                             onClick={() => selectedForDelete.size > 0 && setBulkDeleteConfirm(true)}
                             disabled={selectedForDelete.size === 0}
-                            className="h-7 px-2 inline-flex items-center gap-1 rounded bg-destructive text-white text-xs disabled:opacity-50 hover:bg-destructive/90 transition-colors"
+                            className="h-9 px-3 inline-flex items-center gap-1 rounded bg-destructive text-white text-sm disabled:opacity-50 hover:bg-destructive/90 transition-colors"
                             title="선택 삭제"
                           >
-                            <Trash2 className="w-3.5 h-3.5" /> ({selectedForDelete.size})
+                            <Trash2 className="w-4 h-4" /> ({selectedForDelete.size})
                           </button>
                           <button
                             onClick={() => { setManageMode(false); setSelectedForDelete(new Set()); }}
-                            className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                            className="w-9 h-9 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
                             title="취소"
                           >
-                            <X className="w-3.5 h-3.5 text-muted-foreground" />
-                          </button>
-                          <button
-                            onClick={() => setResetConfirm(true)}
-                            className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
-                            title="리스트 초기화"
-                          >
-                            <RefreshCw className="w-3 h-3 text-muted-foreground" />
+                            <X className="w-4 h-4 text-muted-foreground" />
                           </button>
                         </>
                       )}
