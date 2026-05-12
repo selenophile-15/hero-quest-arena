@@ -34,6 +34,10 @@ interface HeroFormProps {
   onSaveAs?: (hero: Hero) => void;
   /** If true, save-as button keeps the original hero id (used by temp-edit mode). */
   saveAsKeepsId?: boolean;
+  /** Override the sticky header title. */
+  titleOverride?: string;
+  /** Confirm with a warning before triggering save-as (e.g. list overwrite). */
+  confirmSaveAs?: { title: string; description: string };
 }
 
 const JOB_PAIRS: Record<string, [string, string][]> = {
