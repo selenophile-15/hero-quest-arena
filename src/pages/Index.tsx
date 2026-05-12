@@ -361,6 +361,13 @@ const Index = () => {
             filter: 'drop-shadow(0 0 30px rgba(140,100,255,0.25)) drop-shadow(0 8px 24px rgba(0,0,0,0.5))',
           }}
         >
+          {/* Decorative butterflies that rest on the frame and occasionally fly */}
+          <Butterfly size={26} pathClass="bf1" style={{ top: '14%', left: '18%' }} />
+          <Butterfly size={22} pathClass="bf2" flip style={{ top: '12%', right: '20%' }} />
+          <Butterfly size={28} pathClass="bf3" style={{ bottom: '18%', left: '14%' }} />
+          <Butterfly size={24} pathClass="bf4" flip style={{ bottom: '20%', right: '16%' }} />
+          <Butterfly size={20} pathClass="bf5" style={{ top: '46%', left: '8%' }} />
+
           {/* Title overlay: replace "후원자 명단" with "후원자" - aligned with the leaf flourishes */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
