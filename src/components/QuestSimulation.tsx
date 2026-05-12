@@ -1523,6 +1523,13 @@ export default function QuestSimulation() {
               });
               const partyAvgGear = gearCount > 0 ? gearSum / gearCount : 0;
               const gearScore = simResult && partyAvgGear > 0 ? winRate / partyAvgGear : 0;
+              const gearColor =
+                !simResult || gearScore <= 0 ? 'sim-result-number--muted' :
+                gearScore >= 81 ? 'sim-result-number--success' :
+                gearScore >= 61 ? 'sim-result-number--good' :
+                gearScore >= 41 ? 'sim-result-number--warning' :
+                gearScore >= 21 ? 'sim-result-number--orange' :
+                'sim-result-number--danger';
               return (
               <div className="mb-3 rounded-xl relative overflow-hidden" style={{
                 background: !simResult 
