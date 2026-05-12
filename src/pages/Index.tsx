@@ -264,14 +264,13 @@ const Index = () => {
             filter: 'drop-shadow(0 0 30px rgba(140,100,255,0.25)) drop-shadow(0 8px 24px rgba(0,0,0,0.5))',
           }}
         >
-          {/* Title overlay: replace "후원자 명단" with "후원자" */}
+          {/* Title overlay: replace "후원자 명단" with "후원자" - aligned with the leaf flourishes */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
             style={{
-              top: '19%',
+              top: '21%',
               width: '38%',
               height: '8%',
-              
             }}
           >
             <span
@@ -292,74 +291,54 @@ const Index = () => {
             </span>
           </div>
 
-          {/* Sponsor names area - vertically centered in the frame interior */}
+          {/* Sponsor names area - fills from top, max 3 per row, fixed slot spacing */}
           <div
-            className="absolute inset-x-0 flex flex-col items-center justify-center gap-4"
+            className="absolute inset-x-0 flex flex-col items-start"
             style={{
-              top: '38%',
-              bottom: '22%',
-              paddingLeft: '12%',
-              paddingRight: '12%',
+              top: '36%',
+              bottom: '20%',
+              paddingLeft: '14%',
+              paddingRight: '14%',
+              gap: '0.9rem',
             }}
           >
-            {SPONSORS.map((name) => (
-              <div
-                key={name}
-                className="flex items-center justify-center gap-4"
-              >
-                {/* Left butterfly */}
-                <svg width="22" height="18" viewBox="0 0 64 52" style={{ filter: 'drop-shadow(0 0 6px rgba(180,150,255,0.55))' }} aria-hidden="true">
-                  <defs>
-                    <linearGradient id={`bfGradL-${name}`} x1="0" x2="1" y1="0" y2="1">
-                      <stop offset="0%" stopColor="#e6d4ff" />
-                      <stop offset="60%" stopColor="#a98cff" />
-                      <stop offset="100%" stopColor="#6b5cff" />
-                    </linearGradient>
-                  </defs>
-                  <g fill={`url(#bfGradL-${name})`} stroke="#d8c8ff" strokeWidth="0.6" opacity="0.95">
-                    <path d="M32 26 C24 8, 6 6, 4 18 C2 30, 14 36, 32 28 Z" />
-                    <path d="M32 26 C40 8, 58 6, 60 18 C62 30, 50 36, 32 28 Z" />
-                    <path d="M32 28 C24 38, 8 44, 8 36 C8 30, 20 30, 32 30 Z" />
-                    <path d="M32 28 C40 38, 56 44, 56 36 C56 30, 44 30, 32 30 Z" />
-                    <ellipse cx="32" cy="28" rx="1.6" ry="8" fill="#3a2a6a" />
-                  </g>
-                </svg>
-
+            {Array.from({ length: Math.ceil(SPONSORS.length / 3) }).map((_, rowIdx) => {
+              const rowNames = SPONSORS.slice(rowIdx * 3, rowIdx * 3 + 3);
+              return (
                 <div
-                  className="font-display"
+                  key={rowIdx}
+                  className="w-full grid"
                   style={{
-                    fontSize: '1.1rem',
-                    letterSpacing: '0.18em',
-                    fontWeight: 600,
-                    background: 'linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 45%, #ffd97a 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    textShadow: '0 0 12px rgba(180,150,255,0.35)',
-                    filter: 'drop-shadow(0 0 6px rgba(200,170,255,0.4))',
+                    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                    columnGap: '1rem',
+                    justifyItems: 'center',
                   }}
                 >
-                  {name}
+                  {/* Empty leading slot for centering when row has fewer than 3 */}
+                  {rowNames.length === 1 && <div />}
+                  {rowNames.length === 2 && <div style={{ visibility: 'hidden' }}>·</div>}
+                  {rowNames.map((name) => (
+                    <div
+                      key={name}
+                      className="font-display"
+                      style={{
+                        fontSize: '1.05rem',
+                        letterSpacing: '0.18em',
+                        fontWeight: 600,
+                        background: 'linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 45%, #ffd97a 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textShadow: '0 0 14px rgba(200,170,255,0.55), 0 0 28px rgba(160,130,255,0.35)',
+                        filter: 'drop-shadow(0 0 8px rgba(200,170,255,0.5))',
+                      }}
+                    >
+                      {name}
+                    </div>
+                  ))}
+                  {rowNames.length === 1 && <div />}
                 </div>
-
-                {/* Right butterfly (mirrored) */}
-                <svg width="22" height="18" viewBox="0 0 64 52" style={{ filter: 'drop-shadow(0 0 6px rgba(180,150,255,0.55))', transform: 'scaleX(-1)' }} aria-hidden="true">
-                  <defs>
-                    <linearGradient id={`bfGradR-${name}`} x1="0" x2="1" y1="0" y2="1">
-                      <stop offset="0%" stopColor="#e6d4ff" />
-                      <stop offset="60%" stopColor="#a98cff" />
-                      <stop offset="100%" stopColor="#6b5cff" />
-                    </linearGradient>
-                  </defs>
-                  <g fill={`url(#bfGradR-${name})`} stroke="#d8c8ff" strokeWidth="0.6" opacity="0.95">
-                    <path d="M32 26 C24 8, 6 6, 4 18 C2 30, 14 36, 32 28 Z" />
-                    <path d="M32 26 C40 8, 58 6, 60 18 C62 30, 50 36, 32 28 Z" />
-                    <path d="M32 28 C24 38, 8 44, 8 36 C8 30, 20 30, 32 30 Z" />
-                    <path d="M32 28 C40 38, 56 44, 56 36 C56 30, 44 30, 32 30 Z" />
-                    <ellipse cx="32" cy="28" rx="1.6" ry="8" fill="#3a2a6a" />
-                  </g>
-                </svg>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
