@@ -156,7 +156,7 @@ const Index = () => {
       {/* Background image - single, scrolls with page */}
       <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
         <div className="relative w-full" style={{ height: '200vh' }}>
-          <img src={landingBg} alt="" className="w-full h-full object-cover" width={1920} height={1280} />
+          <img src={landingBg} alt="" className="w-full h-full object-cover" width={1920} height={1280} loading="eager" decoding="sync" {...({ fetchpriority: 'high' } as any)} />
           {/* Dark overlay on top portion for title readability */}
           <div className="absolute top-0 left-0 right-0 h-[50%]" style={{
             background: 'linear-gradient(180deg, rgba(5,8,20,0.85) 0%, rgba(10,15,30,0.6) 40%, transparent 100%)'
