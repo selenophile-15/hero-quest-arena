@@ -26,6 +26,10 @@ interface ChampionFormProps {
   hero?: Hero;
   onSave: (hero: Hero) => void;
   onCancel: () => void;
+  saveLabel?: string;
+  saveAsLabel?: string;
+  onSaveAs?: (hero: Hero) => void;
+  saveAsKeepsId?: boolean;
 }
 
 const ELEMENT_ORDER = [
