@@ -342,7 +342,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       });
     }
     return list;
-  }, [saved, filterQuestType, filterRegion, filterSubArea, filterJob, filterChampion, filterMinWin, sortKey, sortDir]);
+  }, [saved, filterQuestType, filterRegion, filterSubArea, filterJob, filterChampion, filterMinWin, sortKey, sortDir, resolveHs]);
 
   const toggleAll = () => {
     if (selectedIds.size === visible.length) setSelectedIds(new Set());
