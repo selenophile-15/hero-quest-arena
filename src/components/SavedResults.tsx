@@ -5,7 +5,7 @@ import {
   SavedSimulationSummary,
   setSavedSimulations,
 } from '@/lib/savedSimulations';
-import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy, CheckSquare } from 'lucide-react';
+import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy, CheckSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 // Checkbox removed: selection state now shown on trash button
 import { Input } from '@/components/ui/input';
@@ -541,8 +541,8 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                 disabled={selectedIds.size === 0} onClick={() => setBulkDeleteOpen(true)}>
                 <Trash2 className="w-3.5 h-3.5" /> 삭제 ({selectedIds.size})
               </Button>
-              <Button variant="outline" size="sm" className="h-8 gap-1 text-xs" onClick={() => { setEditMode(false); setSelectedIds(new Set()); }}>
-                취소
+              <Button variant="outline" size="icon" className="w-8 h-8" onClick={() => { setEditMode(false); setSelectedIds(new Set()); }} title="취소">
+                <X className="w-3.5 h-3.5" />
               </Button>
             </>
           )}

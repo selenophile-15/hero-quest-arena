@@ -5,6 +5,7 @@ import { useDesktopModeState } from '@/hooks/use-desktop-mode';
 import HeroList from '@/components/HeroList';
 import QuestSimulation from '@/components/QuestSimulation';
 import Ranking from '@/components/Ranking';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import { List, Swords, Trophy, Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme, ThemeMode } from '@/hooks/use-theme';
 import {
@@ -176,6 +177,7 @@ export default function Dashboard() {
           <Ranking />
         </div>
       </main>
+      <ScrollToTopButton />
     </div>
   );
 }
