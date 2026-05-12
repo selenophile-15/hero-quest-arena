@@ -2874,7 +2874,8 @@ export default function QuestSimulation() {
                             );
                           })()}
 
-                          {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 군주는 군주가 있을 때만 ===== */}
+                          {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 해당 파티원이 있을 때만 ===== */}
+                          {(showLord || showConqueror || showNinjaSensei) && (
                           <div className="space-y-4">
                             {/* 군주 */}
                             {showLord && (
