@@ -379,7 +379,14 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       <div className="space-y-3">
         {visible.map((sim, simIndex) => {
           const date = new Date(sim.savedAt);
-          const dateStr = `${date.getFullYear()}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getDate().toString().padStart(2,'0')} ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+          const yy = (date.getFullYear() % 100).toString().padStart(2, '0');
+          const MM = (date.getMonth() + 1).toString().padStart(2, '0');
+          const DD = date.getDate().toString().padStart(2, '0');
+          const HH = date.getHours().toString().padStart(2, '0');
+          const mm = date.getMinutes().toString().padStart(2, '0');
+          const dow = ['일','월','화','수','목','금','토'][date.getDay()];
+          const dateLabel = `${yy}.${MM}.${DD}.(${dow})`;
+          const timeLabel = `${HH}:${mm}`;
           const questTypeLabel = sim.questTypeLabel || QUEST_TYPE_LABELS[sim.questTypeKey] || sim.questTypeKey;
           const selected = selectedIds.has(sim.id);
 
