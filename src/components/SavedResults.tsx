@@ -5,7 +5,7 @@ import {
   SavedSimulationSummary,
   setSavedSimulations,
 } from '@/lib/savedSimulations';
-import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy, CheckSquare } from 'lucide-react';
+import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy, CheckSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 // Checkbox removed: selection state now shown on trash button
 import { Input } from '@/components/ui/input';
