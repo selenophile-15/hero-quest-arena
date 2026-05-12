@@ -57,6 +57,18 @@ export interface SavedSimulationSummary {
 }
 
 const STORAGE_KEY = 'quest-sim-saved-results';
+export const SAVED_SIMULATIONS_UPDATED_EVENT = 'quest-sim-saved-results-updated';
+
+function notifySavedSimulationsUpdated() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(SAVED_SIMULATIONS_UPDATED_EVENT));
+  }
+}
+
+export function setSavedSimulations(list: SavedSimulationSummary[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  notifySavedSimulationsUpdated();
+}
 
 export function getSavedSimulations(): SavedSimulationSummary[] {
   const data = localStorage.getItem(STORAGE_KEY);
@@ -66,7 +78,7 @@ export function getSavedSimulations(): SavedSimulationSummary[] {
 export function saveSimulationResult(sim: SavedSimulationSummary) {
   const list = getSavedSimulations();
   list.unshift(sim);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  setSavedSimulations(list);
 }
 
 export function overwriteSimulationResult(targetId: string, sim: SavedSimulationSummary) {
@@ -74,14 +86,15 @@ export function overwriteSimulationResult(targetId: string, sim: SavedSimulation
   const idx = list.findIndex(s => s.id === targetId);
   if (idx === -1) return;
   list[idx] = { ...sim, id: targetId };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  setSavedSimulations(list);
 }
 
 export function deleteSavedSimulation(id: string) {
   const list = getSavedSimulations().filter(s => s.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  setSavedSimulations(list);
 }
 
 export function deleteAllSavedSimulations() {
   localStorage.removeItem(STORAGE_KEY);
+  notifySavedSimulationsUpdated();
 }
