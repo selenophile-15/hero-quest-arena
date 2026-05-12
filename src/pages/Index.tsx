@@ -11,6 +11,48 @@ import sponsorFrame from "@/assets/sponsor-frame.png";
 
 const SPONSORS = ["Dogpyo", "거지왕"];
 
+const Butterfly = ({
+  size = 28,
+  pathClass,
+  flip = false,
+  style,
+}: { size?: number; pathClass: string; flip?: boolean; style?: React.CSSProperties }) => {
+  const id = pathClass;
+  return (
+    <div
+      className={`absolute pointer-events-none ${pathClass}`}
+      style={{ width: size, height: size * 0.82, ...style }}
+    >
+      <svg
+        viewBox="0 0 64 52"
+        width="100%"
+        height="100%"
+        className="bf-wings"
+        style={{
+          filter: 'drop-shadow(0 0 6px rgba(180,150,255,0.65)) drop-shadow(0 0 12px rgba(120,150,255,0.35))',
+          transform: flip ? 'scaleX(-1)' : undefined,
+        }}
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id={`bfg-${id}`} x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#f0e4ff" />
+            <stop offset="45%" stopColor="#b39dff" />
+            <stop offset="100%" stopColor="#5a6fff" />
+          </linearGradient>
+        </defs>
+        <g fill={`url(#bfg-${id})`} stroke="#e0d4ff" strokeWidth="0.5" opacity="0.95">
+          <path d="M32 26 C24 8, 6 6, 4 18 C2 30, 14 36, 32 28 Z" />
+          <path d="M32 26 C40 8, 58 6, 60 18 C62 30, 50 36, 32 28 Z" />
+          <path d="M32 28 C24 38, 8 44, 8 36 C8 30, 20 30, 32 30 Z" />
+          <path d="M32 28 C40 38, 56 44, 56 36 C56 30, 44 30, 32 30 Z" />
+          <ellipse cx="32" cy="28" rx="1.3" ry="8" fill="#2a1f5c" />
+        </g>
+      </svg>
+    </div>
+  );
+};
+
 const Index = () => {
   const navigate = useNavigate();
   const { desktopMode, setDesktopMode } = useDesktopModeState();
