@@ -219,6 +219,8 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
 
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [championRawData, setChampionRawData] = useState<any>(null);
+  const [compareMode, setCompareMode] = useState(false);
+  const [baselineStats, setBaselineStats] = useState<Record<string, number> | null>(null);
 
   const formRef = useRef<HTMLDivElement>(null);
 
