@@ -382,7 +382,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="saved-results-root space-y-3">
       {/* Toolbar: Filter / Sort + actions */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
