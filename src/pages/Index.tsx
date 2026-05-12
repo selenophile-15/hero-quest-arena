@@ -264,14 +264,35 @@ const Index = () => {
             filter: 'drop-shadow(0 0 30px rgba(140,100,255,0.25)) drop-shadow(0 8px 24px rgba(0,0,0,0.5))',
           }}
         >
-          {/* Sponsor names area (below the "후원자 명단" title in the frame) */}
+          {/* Title overlay (covers any text in the frame image) */}
+          <div
+            className="absolute inset-x-0 flex justify-center"
+            style={{ top: '11%' }}
+          >
+            <span
+              className="font-display"
+              style={{
+                fontSize: '1.4rem',
+                letterSpacing: '0.25em',
+                fontWeight: 600,
+                background: 'linear-gradient(180deg, #ffffff 0%, #d8c5ff 60%, #a78bfa 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 0 8px rgba(180,150,255,0.6))',
+              }}
+            >
+              후원자 명단
+            </span>
+          </div>
+
+          {/* Sponsor names area */}
           <div
             className="absolute inset-x-0 flex flex-col items-center justify-center gap-3"
             style={{
-              top: '32%',
-              bottom: '12%',
-              paddingLeft: '12%',
-              paddingRight: '12%',
+              top: '38%',
+              bottom: '15%',
+              paddingLeft: '14%',
+              paddingRight: '14%',
             }}
           >
             {SPONSORS.map((name) => (
@@ -285,8 +306,7 @@ const Index = () => {
                   background: 'linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 45%, #ffd97a 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  textShadow: '0 0 12px rgba(180,150,255,0.35)',
-                  filter: 'drop-shadow(0 0 6px rgba(200,170,255,0.4))',
+                  filter: 'drop-shadow(0 0 6px rgba(200,170,255,0.5))',
                 }}
               >
                 {name}
