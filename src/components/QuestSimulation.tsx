@@ -1581,13 +1581,13 @@ export default function QuestSimulation() {
                   </div>
                   {/* RIGHT: gear-relative score */}
                   <div className="py-3 px-4 text-center">
-                    <div className="text-xs text-muted-foreground mb-1 font-medium">장비 대비 승률</div>
+                    <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">장비 대비 승률</div>
                     {simResult && gearScore > 0 ? (
                       <>
                         <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
                           {gearScore.toFixed(1)}
                         </div>
-                        <div className="text-xs text-muted-foreground font-medium mt-0.5">
+                        <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
                           [ 장비 평균 : {partyAvgGear.toFixed(2)} ]
                         </div>
                       </>
