@@ -23,15 +23,17 @@ import SaveSimsDialog from '@/components/SaveSimsDialog';
 
 const STORAGE_KEY = 'quest-sim-saved-results';
 
-const getFaceImg = (survivalRate: number, powerBelowMin?: boolean): string => {
+// Mirrors QuestSimulation face logic (death-count based, derived from survival %)
+const getFaceImg = (survivalRate: number, powerBelowMin?: boolean, avgRounds?: number, winRate?: number): string => {
   if (powerBelowMin) return '/images/quest/face/icon_shop_face_D.webp';
-  if (survivalRate <= 0) return '/images/quest/face/icon_shop_face_D.webp';
-  if (survivalRate < 40) return '/images/quest/face/icon_shop_face_D.webp';
-  if (survivalRate < 60) return '/images/quest/face/icon_shop_face_C.webp';
-  if (survivalRate < 75) return '/images/quest/face/icon_shop_face_B.webp';
-  if (survivalRate < 90) return '/images/quest/face/icon_shop_face_A.webp';
-  if (survivalRate < 100) return '/images/quest/face/icon_shop_face_S.webp';
-  return '/images/quest/face/icon_shop_face_SSS.webp';
+  const deathPct = 100 - survivalRate;
+  if (deathPct >= 100) return '/images/quest/face/icon_shop_face_D.webp';
+  if (deathPct >= 60)  return '/images/quest/face/icon_shop_face_C.webp';
+  if (deathPct >= 40)  return '/images/quest/face/icon_shop_face_B.webp';
+  if (deathPct >= 15)  return '/images/quest/face/icon_shop_face_A.webp';
+  if (deathPct >= 0.01) return '/images/quest/face/icon_shop_face_S.webp';
+  if ((avgRounds ?? 99) <= 1 && (winRate ?? 0) >= 99.9) return '/images/quest/face/icon_shop_face_SSS.webp';
+  return '/images/quest/face/icon_shop_face_S.webp';
 };
 
 // Olive-lime palette matching QuestSimulation
@@ -377,7 +379,14 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       <div className="space-y-3">
         {visible.map((sim, simIndex) => {
           const date = new Date(sim.savedAt);
-          const dateStr = `${date.getFullYear()}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getDate().toString().padStart(2,'0')} ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+          const yy = (date.getFullYear() % 100).toString().padStart(2, '0');
+          const MM = (date.getMonth() + 1).toString().padStart(2, '0');
+          const DD = date.getDate().toString().padStart(2, '0');
+          const HH = date.getHours().toString().padStart(2, '0');
+          const mm = date.getMinutes().toString().padStart(2, '0');
+          const dow = ['일','월','화','수','목','금','토'][date.getDay()];
+          const dateLabel = `${yy}.${MM}.${DD}.(${dow})`;
+          const timeLabel = `${HH}:${mm}`;
           const questTypeLabel = sim.questTypeLabel || QUEST_TYPE_LABELS[sim.questTypeKey] || sim.questTypeKey;
           const selected = selectedIds.has(sim.id);
 
@@ -432,13 +441,16 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         }`}>{sim.miniBossLabel}</span>
                       </>)}
                     </div>
-                    <span className="ml-auto text-[13px] text-foreground/90 font-semibold">{dateStr}</span>
+                    <span className="ml-auto flex items-baseline gap-3">
+                      <span className="text-[13px] text-foreground/90 font-semibold">{dateLabel}</span>
+                      <span className="text-[13px] text-foreground/90 font-semibold font-mono">{timeLabel}</span>
+                    </span>
                   </div>
 
-                  {/* Middle row: 3 groups with equal gap via justify-between */}
-                  <div className="flex-1 flex items-center justify-between gap-6 px-3 py-3">
+                  {/* Middle row */}
+                  <div className="flex-1 flex items-center px-3 py-3">
                     {/* a: region image + sub-area image */}
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 mr-3">
                       {sim.regionImage && (
                         <img src={sim.regionImage} alt="" className="w-20 h-20 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       )}
@@ -448,35 +460,55 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     </div>
 
                     {/* b: heroes grid */}
-                    <div className="grid grid-cols-5 gap-5 shrink-0">
+                    <div className="grid grid-cols-5 gap-8 shrink-0">
                       {sim.heroSummaries.map(hs => {
                         const hero = allHeroes.find(h => h.id === hs.heroId) ||
                           sim.heroSnapshots?.find(h => h.id === hs.heroId);
                         const img = hero?.type === 'champion'
                           ? getChampionImagePath(hero.championName || hero.name)
                           : hero?.heroClass ? getJobImagePath(hero.heroClass) : null;
-                        const faceImg = getFaceImg(hs.survivalRate, hs.powerBelowMin);
+                        const faceImg = getFaceImg(hs.survivalRate, hs.powerBelowMin, sim.avgRounds, sim.winRate);
                         const tankShare = hs.tankingShare ?? 0;
+                        // Per-hero element values for the dungeon's barrier elements
+                        const heroElements = (sim.barrierInfos || [])
+                          .map(b => ({
+                            el: b.element,
+                            iconPath: b.iconPath,
+                            val: (hero?.equipmentElements?.[b.element] as number | undefined) || 0,
+                          }))
+                          .filter(e => e.val > 0);
                         return (
-                          <div key={hs.heroId} className="flex flex-col gap-1 w-[130px]">
-                            {/* Row 1: avatar + name */}
+                          <div key={hs.heroId} className="flex flex-col gap-1 w-[140px]">
+                            {/* Row 1: avatar + name (left-aligned at x=0) */}
                             <div className="flex items-center gap-1.5 min-w-0">
                               <div className="w-9 h-9 rounded-full border border-primary/30 overflow-hidden bg-secondary/50 shrink-0">
                                 {img && <img src={img} alt="" className="w-full h-full object-cover" />}
                               </div>
                               <div className="text-[14px] font-bold text-foreground truncate min-w-0">{hs.heroName}</div>
                             </div>
-                            {/* Row 2: face + (survival %) */}
-                            <div className="flex items-center gap-1 pl-1">
-                              <img src={faceImg} alt="" className="w-6 h-6" />
-                              <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>
-                                ({hs.survivalRate.toFixed(0)}%)
-                              </span>
+                            {/* Row 2: face + (survival %)   |   per-hero elements (right) */}
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-1">
+                                <img src={faceImg} alt="" className="w-6 h-6" />
+                                <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>
+                                  ({hs.survivalRate.toFixed(0)}%)
+                                </span>
+                              </div>
+                              {heroElements.length > 0 && (
+                                <div className="flex items-center gap-1">
+                                  {heroElements.map(e => (
+                                    <div key={e.el} className="flex items-center gap-0.5">
+                                      {e.iconPath && <img src={e.iconPath} alt={e.el} className="w-4 h-4" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
+                                      <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.val)}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-                            {/* Dmg bar */}
+                            {/* Dmg bar (label fixed, bar fixed-width, number after) */}
                             <div className="flex items-center gap-1 text-[11px]">
                               <span className="text-foreground/80 w-4 shrink-0">딜</span>
-                              <div className="flex-1 h-1.5 bg-secondary/50 rounded-full overflow-hidden min-w-[20px]">
+                              <div className="w-16 h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono shrink-0 ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
@@ -484,7 +516,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                             {/* Tank bar */}
                             <div className="flex items-center gap-1 text-[11px]">
                               <span className="text-foreground/80 w-4 shrink-0">탱</span>
-                              <div className="flex-1 h-1.5 bg-secondary/50 rounded-full overflow-hidden min-w-[20px]">
+                              <div className="w-16 h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono shrink-0 ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
@@ -495,7 +527,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     </div>
 
                     {/* c: win rate + gear ratio */}
-                    <div className="flex items-center gap-4 shrink-0">
+                    <div className="ml-auto mr-6 flex items-center gap-10 shrink-0">
                       <div className="text-center">
                         <div className="text-[10px] text-muted-foreground">승률</div>
                         <div className={`text-2xl font-bold font-mono ${getWinRateColor(sim.winRate)}`}>
@@ -514,24 +546,22 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   {/* Footer: barriers + booster + avg + success/fail/retry */}
                   <div className="border-t border-border/30 px-3 py-2 flex items-center gap-3 text-[13px] flex-wrap">
                     {sim.barrierInfos && sim.barrierInfos.length > 0 && (
-                      <>
-                        <div className="flex items-center gap-1.5">
-                          {sim.barrierInfos.map((b, i) => {
-                            const isMet = b.partySum >= b.required;
-                            return (
-                              <span key={i} className={`saved-chip saved-chip-barrier font-mono font-bold ${isMet ? 'text-lime-600 dark:text-lime-400' : 'text-red-600 dark:text-red-400'}`}>
-                                {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                                {formatNumber(b.partySum)} / {formatNumber(b.required)}
-                              </span>
-                            );
-                          })}
-                        </div>
-                      </>
+                      <div className="flex items-center gap-1.5">
+                        {sim.barrierInfos.map((b, i) => {
+                          const isMet = b.partySum >= b.required;
+                          return (
+                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'text-lime-700 dark:text-lime-400' : 'text-red-700 dark:text-red-400'}`}>
+                              {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                              {formatNumber(b.partySum)} / {formatNumber(b.required)}
+                            </span>
+                          );
+                        })}
+                      </div>
                     )}
                     {sim.boosterImage && (
                       <span className="flex items-center gap-1.5">
                         <img src={sim.boosterImage} alt="booster" className="w-5 h-5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        <span className="font-mono font-bold text-foreground/90">{sim.boosterLabel || '부스터'}</span>
+                        <span className="text-foreground/85">{sim.boosterLabel || '부스터'}</span>
                       </span>
                     )}
                     {(sim.barrierInfos?.length || sim.boosterImage) ? <span className="text-muted-foreground/40">·</span> : null}

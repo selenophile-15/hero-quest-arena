@@ -1219,10 +1219,8 @@ a.bg-accent *,
   gap: 0.25rem;
   padding: 2px 8px;
   border-radius: 6px;
-  border: 1px solid hsl(var(--primary) / 0.4);
-  background: hsl(var(--primary) / 0.08);
+  border: 1px solid transparent;
   font-weight: 700;
-  font-size: 12px;
   line-height: 1.4;
 }
 .saved-chip-barrier {
