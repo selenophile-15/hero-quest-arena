@@ -146,6 +146,59 @@ const Index = () => {
           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
           animation: btnShine 3s ease-in-out infinite;
         }
+
+        /* Butterfly wing flap (subtle while resting) */
+        @keyframes wingFlapIdle {
+          0%, 100% { transform: scaleX(1); }
+          50% { transform: scaleX(0.78); }
+        }
+        /* Wing flap (faster while flying) */
+        @keyframes wingFlapFly {
+          0%, 100% { transform: scaleX(0.55); }
+          50% { transform: scaleX(1); }
+        }
+        .bf-wings { transform-origin: 50% 50%; animation: wingFlapIdle 2.4s ease-in-out infinite; }
+        .bf-flying .bf-wings { animation: wingFlapFly 0.18s ease-in-out infinite; }
+
+        /* Each butterfly has its own flight path keyframes */
+        @keyframes flyPath1 {
+          0%, 65%, 100% { transform: translate(0,0) rotate(0deg); }
+          70% { transform: translate(-30px,-25px) rotate(-12deg); }
+          78% { transform: translate(-60px,-10px) rotate(8deg); }
+          86% { transform: translate(-40px,15px) rotate(-6deg); }
+          94% { transform: translate(-15px,5px) rotate(3deg); }
+        }
+        @keyframes flyPath2 {
+          0%, 60%, 100% { transform: translate(0,0) rotate(0deg); }
+          66% { transform: translate(40px,-20px) rotate(15deg); }
+          74% { transform: translate(70px,5px) rotate(-10deg); }
+          82% { transform: translate(50px,30px) rotate(8deg); }
+          92% { transform: translate(20px,12px) rotate(-4deg); }
+        }
+        @keyframes flyPath3 {
+          0%, 70%, 100% { transform: translate(0,0) rotate(0deg); }
+          76% { transform: translate(-25px,30px) rotate(10deg); }
+          84% { transform: translate(20px,45px) rotate(-12deg); }
+          92% { transform: translate(35px,15px) rotate(6deg); }
+        }
+        @keyframes flyPath4 {
+          0%, 55%, 100% { transform: translate(0,0) rotate(0deg); }
+          62% { transform: translate(35px,-30px) rotate(-14deg); }
+          72% { transform: translate(-10px,-50px) rotate(10deg); }
+          82% { transform: translate(-30px,-20px) rotate(-6deg); }
+          92% { transform: translate(-12px,5px) rotate(3deg); }
+        }
+        @keyframes flyPath5 {
+          0%, 75%, 100% { transform: translate(0,0) rotate(0deg); }
+          80% { transform: translate(-40px,-15px) rotate(-10deg); }
+          88% { transform: translate(-65px,10px) rotate(8deg); }
+          95% { transform: translate(-30px,20px) rotate(-4deg); }
+        }
+        .bf1 { animation: flyPath1 14s ease-in-out infinite; }
+        .bf2 { animation: flyPath2 17s ease-in-out infinite 3s; }
+        .bf3 { animation: flyPath3 12s ease-in-out infinite 6s; }
+        .bf4 { animation: flyPath4 19s ease-in-out infinite 1.5s; }
+        .bf5 { animation: flyPath5 15s ease-in-out infinite 8s; }
       `}</style>
 
       {/* Background image - single, scrolls with page */}
