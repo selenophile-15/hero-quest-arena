@@ -246,18 +246,35 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   }, [saved]);
   const regionOpts = useMemo(() => {
     const base = filterQuestType === '__all__' ? saved : saved.filter(s => s.questTypeKey === filterQuestType);
-    return Array.from(new Set(base.map(s => s.regionName).filter(Boolean) as string[])).sort();
-  }, [saved, filterQuestType]);
+    const list = Array.from(new Set(base.map(s => s.regionName).filter(Boolean) as string[]));
+    return list.sort((a, b) => {
+      const ai = regionOrderMap.get(a) ?? 9999;
+      const bi = regionOrderMap.get(b) ?? 9999;
+      return ai !== bi ? ai - bi : a.localeCompare(b);
+    });
+  }, [saved, filterQuestType, regionOrderMap]);
   const subAreaOpts = useMemo(() => {
     const base = filterRegion === '__all__' ? saved : saved.filter(s => s.regionName === filterRegion);
-    return Array.from(new Set(base.map(s => s.subAreaName).filter(Boolean) as string[])).sort();
-  }, [saved, filterRegion]);
-  const heroOpts = useMemo(() => {
+    const list = Array.from(new Set(base.map(s => s.subAreaName).filter(Boolean) as string[]));
+    return list.sort((a, b) => {
+      const ai = subAreaOrderMap.get(a) ?? 9999;
+      const bi = subAreaOrderMap.get(b) ?? 9999;
+      return ai !== bi ? ai - bi : a.localeCompare(b);
+    });
+  }, [saved, filterRegion, subAreaOrderMap]);
+  const jobOpts = useMemo(() => {
     const set = new Set<string>();
     saved.forEach(s => s.heroSummaries.forEach(hs => {
-      if (hs.heroClass) set.add(hs.heroClass);
+      if (hs.heroClass && !CHAMPION_SET.has(hs.heroClass)) set.add(hs.heroClass);
     }));
-    return Array.from(set).sort();
+    return Array.from(set).sort((a, b) => (JOB_ORDER_MAP.get(a) ?? 9999) - (JOB_ORDER_MAP.get(b) ?? 9999));
+  }, [saved]);
+  const championOpts = useMemo(() => {
+    const set = new Set<string>();
+    saved.forEach(s => s.heroSummaries.forEach(hs => {
+      if (hs.heroClass && CHAMPION_SET.has(hs.heroClass)) set.add(hs.heroClass);
+    }));
+    return Array.from(set).sort((a, b) => (CHAMPION_ORDER_MAP.get(a) ?? 9999) - (CHAMPION_ORDER_MAP.get(b) ?? 9999));
   }, [saved]);
 
   // Apply filter + sort
@@ -266,8 +283,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     if (filterQuestType !== '__all__') list = list.filter(s => s.questTypeKey === filterQuestType);
     if (filterRegion !== '__all__') list = list.filter(s => s.regionName === filterRegion);
     if (filterSubArea !== '__all__') list = list.filter(s => s.subAreaName === filterSubArea);
-    if (filterHero !== '__all__') {
-      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterHero));
+    if (filterJob !== '__all__') {
+      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterJob));
+    }
+    if (filterChampion !== '__all__') {
+      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterChampion));
     }
     const minWinNum = parseFloat(filterMinWin);
     if (!Number.isNaN(minWinNum)) {
@@ -292,7 +312,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       });
     }
     return list;
-  }, [saved, filterQuestType, filterRegion, filterSubArea, filterHero, filterMinWin, sortKey, sortDir]);
+  }, [saved, filterQuestType, filterRegion, filterSubArea, filterJob, filterChampion, filterMinWin, sortKey, sortDir]);
 
   const toggleAll = () => {
     if (selectedIds.size === visible.length) setSelectedIds(new Set());
