@@ -66,11 +66,33 @@ const QUEST_TYPE_LABELS: Record<string, string> = {
 
 // Quest-type colored chip style (text/border) — identical in light & dark modes
 const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
-  normal: 'text-red-600 border-red-600 bg-red-100',
-  flash:  'text-lime-700 border-lime-700 bg-lime-100',
-  lcog:   'text-yellow-700 border-yellow-700 bg-yellow-100',
-  tot:    'text-purple-600 border-purple-600 bg-purple-100',
+  normal: 'text-red-700 border-red-800 bg-red-100',
+  flash:  'text-lime-800 border-lime-900 bg-lime-100',
+  lcog:   'text-yellow-800 border-yellow-900 bg-yellow-100',
+  tot:    'text-purple-700 border-purple-800 bg-purple-100',
 };
+
+// Job order (계열별, by promotion pairs) — used for filter dropdown ordering
+const JOB_ORDER: string[] = [
+  // 전사
+  '병사','용병','야만전사','족장','기사','군주','레인저','관리인','사무라이','다이묘','광전사','잘','어둠의 기사','죽음의 기사',
+  // 로그
+  '도둑','사기꾼','수도승','그랜드 마스터','머스킷병','정복자','방랑자','길잡이','닌자','센세','무희','곡예가','경보병','근위병',
+  // 주문술사
+  '마법사','대마법사','성직자','비숍','드루이드','아크 드루이드','소서러','워록','마법검','스펠나이트','풍수사','아스트라맨서','크로노맨서','페이트위버',
+];
+const JOB_ORDER_MAP = new Map(JOB_ORDER.map((n, i) => [n, i]));
+
+const CHAMPION_ORDER: string[] = ['아르곤','릴루','시아','야미','루도','폴로니아','도노반','헴마','애쉴리','비외른','맬러디','라인홀드','타마스'];
+const CHAMPION_SET = new Set(CHAMPION_ORDER);
+const CHAMPION_ORDER_MAP = new Map(CHAMPION_ORDER.map((n, i) => [n, i]));
+
+const QUEST_FILES: Array<{ key: string; file: string }> = [
+  { key: 'normal', file: '/data/quest/normal_quest.json' },
+  { key: 'flash',  file: '/data/quest/flash_quest.json' },
+  { key: 'lcog',   file: '/data/quest/lcog_quest.json' },
+  { key: 'tot',    file: '/data/quest/tot_quest.json' },
+];
 
 interface Props {
   onLoadSimulation: (sim: SavedSimulationSummary) => void;
