@@ -1625,3 +1625,23 @@ a.bg-accent *,
     0 1px 1px hsl(0 0% 100% / 0.39),
     0 0 9px hsl(var(--sim-result-color) / 0.17);
 }
+
+/* Row flash: left→right shimmer for newly saved/overwritten hero list rows */
+@keyframes row-flash-sweep {
+  0%   { background-position: -150% 0; }
+  100% { background-position: 250% 0; }
+}
+.row-flash {
+  position: relative;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--primary) / 0.0) 20%,
+    hsl(var(--primary) / 0.45) 50%,
+    hsl(var(--primary) / 0.0) 80%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: row-flash-sweep 1.4s ease-out 1;
+}
