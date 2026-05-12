@@ -237,6 +237,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           <Filter className="w-3.5 h-3.5 text-muted-foreground" />
+          <Select value={filterQuestType} onValueChange={(v) => { setFilterQuestType(v); setFilterRegion('__all__'); setFilterSubArea('__all__'); }}>
+            <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue placeholder="유형" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">전체 유형</SelectItem>
+              {questTypeOpts.map(([k, label]) => <SelectItem key={k} value={k}>{label}</SelectItem>)}
+            </SelectContent>
+          </Select>
           <Select value={filterRegion} onValueChange={(v) => { setFilterRegion(v); setFilterSubArea('__all__'); }}>
             <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue placeholder="지역" /></SelectTrigger>
             <SelectContent>
@@ -251,22 +258,24 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               {subAreaOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Input
-            value={filterHero}
-            onChange={e => setFilterHero(e.target.value)}
-            placeholder="직업/챔피언"
-            className="h-8 w-[120px] text-xs"
-          />
-          <Select value={filterMinWin} onValueChange={setFilterMinWin}>
-            <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="최소 승률" /></SelectTrigger>
+          <Select value={filterHero} onValueChange={setFilterHero}>
+            <SelectTrigger className="h-8 w-[130px] text-xs"><SelectValue placeholder="직업/챔피언" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">전체 승률</SelectItem>
-              <SelectItem value="90">90% 이상</SelectItem>
-              <SelectItem value="70">70% 이상</SelectItem>
-              <SelectItem value="50">50% 이상</SelectItem>
-              <SelectItem value="30">30% 이상</SelectItem>
+              <SelectItem value="__all__">전체 직업/챔피언</SelectItem>
+              {heroOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
             </SelectContent>
           </Select>
+          <div className="flex items-center gap-1">
+            <span className="text-[11px] text-muted-foreground">승률 ≥</span>
+            <Input
+              value={filterMinWin}
+              onChange={e => setFilterMinWin(e.target.value.replace(/[^0-9.]/g, ''))}
+              placeholder="0"
+              inputMode="decimal"
+              className="h-8 w-[70px] text-xs"
+            />
+            <span className="text-[11px] text-muted-foreground">%</span>
+          </div>
 
           {/* Sort cluster */}
           <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/40">
