@@ -706,6 +706,7 @@ export default function QuestSimulation() {
       regionImage: currentRegion.areaImage || '',
       subAreaImage,
       boosterImage,
+      boosterLabel: selectedBooster !== 'none' ? (boosterKeysMap[selectedBooster] || '') : '',
       miniBossLabel,
       isBoss,
       barrierInfos,

@@ -33,6 +33,7 @@ export interface SavedSimulationSummary {
   regionImage?: string;
   subAreaImage?: string;
   boosterImage?: string;
+  boosterLabel?: string;
   miniBossLabel?: string;
   isBoss?: boolean;
   barrierInfos?: SavedSimBarrierInfo[];
