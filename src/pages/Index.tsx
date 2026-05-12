@@ -7,9 +7,9 @@ import { useDesktopModeState } from "@/hooks/use-desktop-mode";
 
 import landingBg from "@/assets/landing-bg.jpg";
 import titleLogo from "@/assets/title-logo.png";
-import featureList from "@/assets/feature-list.jpg";
-import featureQuest from "@/assets/feature-quest.jpg";
-import featureRanking from "@/assets/feature-ranking.jpg";
+import sponsorFrame from "@/assets/sponsor-frame.png";
+
+const SPONSORS = ["Dogpyo", "거지왕"];
 
 const Index = () => {
   const navigate = useNavigate();
