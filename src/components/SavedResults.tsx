@@ -786,8 +786,8 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       </div>
 
       <div className="text-center text-[10px] text-muted-foreground/50 pt-2">
-        ℹ️ 카드를 누르면 파티 상세를 볼 수 있습니다. 불러오기 시 저장된 파티/세팅으로 다시 시뮬레이션을 실행합니다.<br/>
-        결과는 매번 약간 달라질 수 있습니다.
+        ℹ️ 카드를 누르면 파티 상세를 볼 수 있습니다. 파일 불러오기는 저장된 결과를 카드로 바로 추가합니다.<br/>
+        우측 재생 버튼은 저장된 파티/세팅을 시뮬레이션 화면에 적용합니다.
       </div>
 
       {/* Delete confirm dialogs */}
