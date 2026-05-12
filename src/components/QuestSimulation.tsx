@@ -33,7 +33,7 @@ import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 import CombatBattlefield from '@/components/CombatBattlefield';
 import SavedResults from '@/components/SavedResults';
 import CompareAnalysis from '@/components/CompareAnalysis';
-import { saveSimulationResult, overwriteSimulationResult, SavedSimulationSummary } from '@/lib/savedSimulations';
+import { saveSimulationResult, overwriteSimulationResult, SavedSimulationSummary, SavedSimBarrierInfo } from '@/lib/savedSimulations';
 import OverwriteSimulationDialog from './OverwriteSimulationDialog';
 import { toast } from '@/hooks/use-toast';
 import { saveCanvasImage } from '@/lib/fileDownload';
@@ -654,6 +654,35 @@ export default function QuestSimulation() {
       };
     });
 
+    // Display snapshots
+    const subAreaSnap = selectedSubArea?.name || '';
+    const subAreaImage = selectedSubArea?.image || '';
+    const boosterKeysMap: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
+    const boosterImage = (selectedBooster !== 'none' && commonData?.boosters?.[boosterKeysMap[selectedBooster]]?.image) || '';
+    const miniBossLabelsMap: Record<string, string> = { huge: '거대', dire: '강력', legendary: '전설의' };
+    const miniBossLabel = selectedMiniBoss !== 'none' ? miniBossLabelsMap[selectedMiniBoss] || '' : '';
+    const barrierInfos: SavedSimBarrierInfo[] = (barrierElements || []).map(el => ({
+      element: el,
+      iconPath: commonData?.elementalBarriers?.[el]?.image || '',
+      partySum: getPartyElementSum(el),
+      required: currentQuest.barrier?.hp || 0,
+    }));
+    // Quality score for avg gear
+    const qScore: Record<string, number> = {
+      common: 1, uncommon: 1.25, flawless: 1.5, epic: 2, legendary: 3,
+      '일반': 1, '고급': 1.25, '최고급': 1.5, '에픽': 2, '전설': 3,
+    };
+    const gearAvgs = selectedHeroList.map(h => {
+      let t = 0, e = 0;
+      (h.equipmentSlots || []).forEach(s => { if (s.item) { e++; t += qScore[s.quality] || 1; } });
+      return e > 0 ? t / e : 0;
+    });
+    const avgGearScore = gearAvgs.length > 0 ? gearAvgs.reduce((a, b) => a + b, 0) / gearAvgs.length : 0;
+    const total = simResult.totalSimulations || 0;
+    const successCount = simResult.winSimCount ?? Math.round(simResult.winRate / 100 * total);
+    const failCount = simResult.loseSimCount ?? (total - successCount);
+    const retryCount = simResult.retryResult?.totalSimulations || 0;
+
     return {
       id: crypto.randomUUID(),
       name: autoName,
@@ -669,6 +698,19 @@ export default function QuestSimulation() {
       avgRounds: simResult.avgRounds,
       minRounds: simResult.minRounds,
       maxRounds: simResult.maxRounds,
+      questTypeLabel: questData?.questType || '',
+      regionName,
+      subAreaName: subAreaSnap,
+      difficulty: currentQuest.difficulty !== '없음' ? currentQuest.difficulty : '',
+      regionImage: currentRegion.areaImage || '',
+      subAreaImage,
+      boosterImage,
+      miniBossLabel,
+      barrierInfos,
+      successCount,
+      failCount,
+      retryCount,
+      avgGearScore,
       heroSummaries,
       heroSnapshots: selectedHeroList,
     };
@@ -792,6 +834,7 @@ export default function QuestSimulation() {
         {QUEST_SUB_TABS.map(tab => {
           const Icon = tab.icon;
           const isActive = subTab === tab.id;
+          const savedCount = tab.id === 'saved' ? (typeof window !== 'undefined' ? (JSON.parse(localStorage.getItem('quest-sim-saved-results') || '[]').length) : 0) : 0;
           return (
               <button
                 key={tab.id}
@@ -806,6 +849,9 @@ export default function QuestSimulation() {
               >
                 <Icon className={`w-4 h-4 transition-transform ${isActive ? 'scale-110' : ''}`} />
                 {tab.label}
+                {tab.id === 'saved' && savedCount > 0 && (
+                  <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full ${isActive ? 'bg-primary/15 text-primary' : 'bg-secondary text-muted-foreground'}`}>{savedCount}</span>
+                )}
               </button>
           );
         })}

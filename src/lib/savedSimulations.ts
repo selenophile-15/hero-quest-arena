@@ -1,5 +1,12 @@
 import type { Hero } from '@/types/game';
 
+export interface SavedSimBarrierInfo {
+  element: string;
+  iconPath: string;
+  partySum: number;
+  required: number;
+}
+
 export interface SavedSimulationSummary {
   id: string;
   name: string;
@@ -18,6 +25,20 @@ export interface SavedSimulationSummary {
   avgRounds: number;
   minRounds: number;
   maxRounds: number;
+  // Display snapshots (captured at save time)
+  questTypeLabel?: string;
+  regionName?: string;
+  subAreaName?: string;
+  difficulty?: string;
+  regionImage?: string;
+  subAreaImage?: string;
+  boosterImage?: string;
+  miniBossLabel?: string;
+  barrierInfos?: SavedSimBarrierInfo[];
+  successCount?: number;
+  failCount?: number;
+  retryCount?: number;
+  avgGearScore?: number;
   // Per-hero
   heroSummaries: {
     heroId: string;
@@ -50,7 +71,6 @@ export function overwriteSimulationResult(targetId: string, sim: SavedSimulation
   const list = getSavedSimulations();
   const idx = list.findIndex(s => s.id === targetId);
   if (idx === -1) return;
-  // Keep target id, update everything else (including savedAt)
   list[idx] = { ...sim, id: targetId };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 }

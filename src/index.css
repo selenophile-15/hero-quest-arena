@@ -1174,7 +1174,25 @@ a.bg-accent *,
   border-color: hsl(var(--primary) / 0.55);
 }
 
-/* Premium All/Win/Lose result tabs toggle */
+/* Saved results: monster-info-style premium card (default = glow, hover = stronger) */
+.saved-result-card {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--primary) / 0.35);
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.2), 0 4px 16px rgba(0,0,0,0.15);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.saved-result-card:hover {
+  box-shadow: 0 0 28px hsl(var(--primary) / 0.32), 0 6px 22px rgba(0,0,0,0.22);
+  border-color: hsl(var(--primary) / 0.55);
+}
+:root[data-color-mode="light"] .saved-result-card {
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.15), 0 2px 8px rgba(0,0,0,0.08);
+}
+:root[data-color-mode="light"] .saved-result-card:hover {
+  box-shadow: 0 6px 28px hsl(var(--primary) / 0.25), 0 3px 14px rgba(0,0,0,0.14);
+  border-color: hsl(var(--primary) / 0.55);
+}
 .result-tabs-premium {
   position: relative;
   display: inline-flex;
