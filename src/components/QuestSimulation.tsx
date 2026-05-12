@@ -873,6 +873,50 @@ export default function QuestSimulation() {
   const questTimeSettings = timeSettings.filter(s => s.category === 'quest');
   const restTimeSettings = timeSettings.filter(s => s.category === 'rest');
 
+  // Temp-edit full-page view (replaces simulation UI while editing a party member)
+  if (tempEditingHero) {
+    const onTempSave = (updated: Hero) => {
+      setTempOverrides(prev => ({ ...prev, [updated.id]: updated }));
+      setTempEditingHero(null);
+    };
+    const onListOverwrite = (updated: Hero) => {
+      storageUpdateHero(updated);
+      window.dispatchEvent(new Event('heroes-updated'));
+      setTempOverrides(prev => {
+        const next = { ...prev };
+        delete next[updated.id];
+        return next;
+      });
+      setTempEditingHero(null);
+      toast({ title: '리스트에 반영됨', description: `${updated.name}의 수정 사항이 내 ${tempEditingHero.type === 'champion' ? '챔피언' : '영웅'} 리스트에 저장되었습니다.` });
+    };
+    return (
+      <div className="animate-fade-in">
+        {tempEditingHero.type === 'champion' ? (
+          <ChampionForm
+            hero={tempEditingHero}
+            saveLabel="임시 저장"
+            saveAsLabel="리스트 덮어쓰기"
+            saveAsKeepsId
+            onSave={onTempSave}
+            onSaveAs={onListOverwrite}
+            onCancel={() => setTempEditingHero(null)}
+          />
+        ) : (
+          <HeroForm
+            hero={tempEditingHero}
+            saveLabel="임시 저장"
+            saveAsLabel="리스트 덮어쓰기"
+            saveAsKeepsId
+            onSave={onTempSave}
+            onSaveAs={onListOverwrite}
+            onCancel={() => setTempEditingHero(null)}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-in">
       {/* Sub-tabs - bookmark style */}
@@ -3484,65 +3528,6 @@ export default function QuestSimulation() {
         }}
       />
 
-      {/* Temp-edit overlay (gear button on a party member) */}
-      {tempEditingHero && (
-        <Dialog open={!!tempEditingHero} onOpenChange={(o) => { if (!o) setTempEditingHero(null); }}>
-          <DialogContent
-            className="max-w-[min(1280px,95vw)] max-h-[90vh] overflow-y-auto p-6"
-            hideCloseButton
-          >
-            {tempEditingHero.type === 'champion' ? (
-              <ChampionForm
-                hero={tempEditingHero}
-                saveLabel="임시 저장"
-                saveAsLabel="리스트 덮어쓰기"
-                saveAsKeepsId
-                onSave={(updated) => {
-                  // Temp save: party-only override
-                  setTempOverrides(prev => ({ ...prev, [updated.id]: updated }));
-                  setTempEditingHero(null);
-                }}
-                onSaveAs={(updated) => {
-                  // Persist to list AND keep party in-sync (override cleared since storage now has it)
-                  storageUpdateHero(updated);
-                  window.dispatchEvent(new Event('heroes-updated'));
-                  setTempOverrides(prev => {
-                    const next = { ...prev };
-                    delete next[updated.id];
-                    return next;
-                  });
-                  setTempEditingHero(null);
-                  toast({ title: '리스트에 반영됨', description: `${updated.name}의 수정 사항이 내 챔피언 리스트에 저장되었습니다.` });
-                }}
-                onCancel={() => setTempEditingHero(null)}
-              />
-            ) : (
-              <HeroForm
-                hero={tempEditingHero}
-                saveLabel="임시 저장"
-                saveAsLabel="리스트 덮어쓰기"
-                saveAsKeepsId
-                onSave={(updated) => {
-                  setTempOverrides(prev => ({ ...prev, [updated.id]: updated }));
-                  setTempEditingHero(null);
-                }}
-                onSaveAs={(updated) => {
-                  storageUpdateHero(updated);
-                  window.dispatchEvent(new Event('heroes-updated'));
-                  setTempOverrides(prev => {
-                    const next = { ...prev };
-                    delete next[updated.id];
-                    return next;
-                  });
-                  setTempEditingHero(null);
-                  toast({ title: '리스트에 반영됨', description: `${updated.name}의 수정 사항이 내 영웅 리스트에 저장되었습니다.` });
-                }}
-                onCancel={() => setTempEditingHero(null)}
-              />
-            )}
-          </DialogContent>
-        </Dialog>
-      )}
     </>
       )}
       </div> {/* end simulation tab */}
