@@ -221,6 +221,9 @@ export default function HeroList() {
   const [albumFilterElement, setAlbumFilterElement] = useState<string>('all');
   const [albumFilterJob, setAlbumFilterJob] = useState<string>('all');
 
+  // Highlight rows after save-to-list (left→right flash)
+  const [highlightIds, setHighlightIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     getCommonSkills().then(data => {
       setCommonSkillsData(data);
@@ -229,6 +232,40 @@ export default function HeroList() {
     getUniqueSkills().then(setUniqueSkillsData);
     getChampionSkillsData().then(setChampionSkillsData);
     ensureAurasongDataLoaded();
+  }, []);
+
+  // Sync with storage when heroes are added/updated elsewhere
+  useEffect(() => {
+    const refresh = () => setHeroes(getHeroes());
+    window.addEventListener('heroes-updated', refresh);
+    window.addEventListener('focus', refresh);
+    return () => {
+      window.removeEventListener('heroes-updated', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, []);
+
+  // Handle navigation from save-to-list toast
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { ids?: string[]; listTab?: 'hero' | 'champion' } | undefined;
+      if (!detail?.ids?.length) return;
+      // Refresh heroes first (in case event raced)
+      setHeroes(getHeroes());
+      if (detail.listTab) setListTab(detail.listTab);
+      const ids = new Set(detail.ids);
+      setHighlightIds(ids);
+      // Scroll first matched row into view
+      setTimeout(() => {
+        const firstId = detail.ids![0];
+        const el = document.querySelector(`[data-hero-row-id="${firstId}"]`) as HTMLElement | null;
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 80);
+      // Clear after animation
+      setTimeout(() => setHighlightIds(new Set()), 1800);
+    };
+    window.addEventListener('goto-hero-list-highlight', handler);
+    return () => window.removeEventListener('goto-hero-list-highlight', handler);
   }, []);
 
   // Scroll to expanded row
