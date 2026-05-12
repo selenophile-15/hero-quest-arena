@@ -3051,6 +3051,7 @@ export default function QuestSimulation() {
                           )}
 
                           {/* ===== Table C: 광전사 / 잘 (4 stages) ===== */}
+                          {showBerserker && (
                           <div>
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 광전사 / 잘</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
