@@ -546,7 +546,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         {sim.barrierInfos.map((b, i) => {
                           const isMet = b.partySum >= b.required;
                           return (
-                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'text-lime-700 dark:text-lime-400' : 'text-red-700 dark:text-red-400'}`}>
+                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] font-semibold ${isMet ? 'text-lime-700 dark:text-lime-400' : 'text-red-700 dark:text-red-400'}`}>
                               {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                               {formatNumber(b.partySum)} / {formatNumber(b.required)}
                             </span>
@@ -554,6 +554,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         })}
                       </div>
                     )}
+                    {(sim.barrierInfos?.length && sim.boosterImage) ? <span className="text-muted-foreground/40">·</span> : null}
                     {sim.boosterImage && (
                       <span className="flex items-center gap-1.5">
                         <img src={sim.boosterImage} alt="booster" className="w-5 h-5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
