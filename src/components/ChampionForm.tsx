@@ -1280,7 +1280,10 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
             스탯 계산표
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
-          <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
+          {hero && onSaveAs && (
+            <Button type="button" variant="outline" size="sm" onClick={handleSaveAs}>{saveAsLabel ?? '다른 이름으로 저장'}</Button>
+          )}
+          <Button type="button" size="sm" onClick={handleSubmit}>{saveLabel ?? '저장'}</Button>
         </div>
       </div>
 
