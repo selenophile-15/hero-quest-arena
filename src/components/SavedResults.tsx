@@ -472,11 +472,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                           : hero?.heroClass ? getJobImagePath(hero.heroClass) : null;
                         const faceImg = getFaceImg(hs.survivalRate, hs.powerBelowMin, sim.avgRounds, sim.winRate);
                         const tankShare = hs.tankingShare ?? 0;
-                        const mainBarrier = sim.barrierInfos?.[0];
-                        const heroElementValue = mainBarrier
-                          ? ((hero?.equipmentElements?.[mainBarrier.element] as number | undefined) || 0)
-                          : 0;
-                        const heroElementIcon = mainBarrier ? ELEMENT_ICON_MAP[mainBarrier.element] : undefined;
+                        const heroElements = (sim.barrierInfos || []).map(b => ({
+                          element: b.element,
+                          iconPath: ELEMENT_ICON_MAP[b.element],
+                          value: (hero?.equipmentElements?.[b.element] as number | undefined) || 0,
+                        }));
                         return (
                           <div key={hs.heroId} className="flex flex-col gap-1 min-w-0">
                             {/* Row 1: avatar + name (left-aligned at x=0) */}
@@ -494,10 +494,14 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                   ({hs.survivalRate.toFixed(0)}%)
                                 </span>
                               </div>
-                              {mainBarrier && (
-                                <div className="flex items-center gap-0.5 shrink-0">
-                                  {heroElementIcon && <img src={heroElementIcon} alt={mainBarrier.element} className="w-6 h-6" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
-                                  <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(heroElementValue)}</span>
+                              {heroElements.length > 0 && (
+                                <div className="flex items-center gap-1 shrink-0">
+                                  {heroElements.map(e => (
+                                    <span key={e.element} className="flex items-center gap-0.5">
+                                      {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-6 h-6" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
+                                      <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.value)}</span>
+                                    </span>
+                                  ))}
                                 </div>
                               )}
                             </div>
