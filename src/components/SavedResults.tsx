@@ -374,15 +374,22 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               {subAreaOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={filterHero} onValueChange={setFilterHero}>
-            <SelectTrigger className="h-8 w-[130px] text-xs"><SelectValue placeholder="직업/챔피언" /></SelectTrigger>
+          <Select value={filterJob} onValueChange={setFilterJob}>
+            <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="직업" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">전체 직업/챔피언</SelectItem>
-              {heroOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              <SelectItem value="__all__">전체 직업</SelectItem>
+              {jobOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={filterChampion} onValueChange={setFilterChampion}>
+            <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="챔피언" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">전체 챔피언</SelectItem>
+              {championOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1">
-            <span className="text-[11px] text-muted-foreground">승률 ≥</span>
+            <span className="text-xs text-foreground/80 dark:text-foreground/90">승률 ≥</span>
             <Input
               value={filterMinWin}
               onChange={e => setFilterMinWin(e.target.value.replace(/[^0-9.]/g, ''))}
@@ -390,12 +397,12 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               inputMode="decimal"
               className="h-8 w-[70px] text-xs"
             />
-            <span className="text-[11px] text-muted-foreground">%</span>
+            <span className="text-xs text-foreground/80 dark:text-foreground/90">%</span>
           </div>
 
           {/* Sort cluster */}
           <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/40">
-            <span className="text-[10px] text-muted-foreground mr-0.5">정렬</span>
+            <span className="text-xs text-foreground/80 dark:text-foreground/90 mr-0.5">정렬</span>
             {([
               { key: 'savedAt' as SortKey, label: '저장일' },
               { key: 'winRate' as SortKey, label: '승률' },
@@ -405,10 +412,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               <button
                 key={s.key}
                 onClick={() => cycleSort(s.key)}
-                className={`flex items-center gap-0.5 h-7 px-1.5 rounded text-[11px] border transition-colors ${
+                className={`flex items-center gap-1 h-8 px-2 rounded text-xs border transition-colors ${
                   sortKey === s.key && sortDir !== null
                     ? 'bg-primary/15 border-primary/40 text-primary'
-                    : 'border-border/40 text-muted-foreground hover:text-foreground hover:bg-secondary/40'
+                    : 'border-border/40 text-foreground/80 dark:text-foreground/90 hover:text-foreground hover:bg-secondary/40'
                 }`}
               >
                 {s.label}
