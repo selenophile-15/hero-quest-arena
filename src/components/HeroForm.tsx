@@ -586,15 +586,11 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
     onSave(heroData);
   };
 
-  const handleSaveAs = () => {
-    if (!name.trim()) {
-      setNameError(true);
-      nameInputRef.current?.focus();
-      return;
-    }
-    if (!heroClass) return;
-    setNameError(false);
-    const heroData: Hero = {
+  const [saveAsConfirmOpen, setSaveAsConfirmOpen] = useState(false);
+
+  const buildSaveAsData = (): Hero | null => {
+    if (!heroClass) return null;
+    return {
       id: saveAsKeepsId ? (hero?.id || crypto.randomUUID()) : crypto.randomUUID(),
       name: name.trim(),
       classLine: classLine as HeroClassLine,
@@ -617,7 +613,27 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
       detailStats,
       createdAt: saveAsKeepsId ? (hero?.createdAt || new Date().toISOString()) : new Date().toISOString(),
     };
+  };
+
+  const performSaveAs = () => {
+    const heroData = buildSaveAsData();
+    if (!heroData) return;
     (onSaveAs ?? onSave)(heroData);
+  };
+
+  const handleSaveAs = () => {
+    if (!name.trim()) {
+      setNameError(true);
+      nameInputRef.current?.focus();
+      return;
+    }
+    if (!heroClass) return;
+    setNameError(false);
+    if (confirmSaveAs) {
+      setSaveAsConfirmOpen(true);
+      return;
+    }
+    performSaveAs();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
