@@ -196,6 +196,9 @@ const Index = () => {
               className="mx-auto select-none"
               width={1584}
               height={672}
+              loading="eager"
+              decoding="async"
+              {...({ fetchpriority: 'high' } as any)}
               style={{
                 maxWidth: 'min(520px, 85vw)',
                 height: 'auto',
