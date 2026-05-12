@@ -15,6 +15,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
 import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
+import HeroForm from '@/components/HeroForm';
+import ChampionForm from '@/components/ChampionForm';
+import SavePartyToListDialog from '@/components/SavePartyToListDialog';
+import { updateHero as storageUpdateHero } from '@/lib/storage';
 
 // 마법검/스펠나이트: all elements at 50% effectiveness for barriers
 const SPELLKNIGHT_CLASSES = ['마법검', '스펠나이트'];
