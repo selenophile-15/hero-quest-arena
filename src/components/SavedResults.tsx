@@ -66,10 +66,10 @@ const QUEST_TYPE_LABELS: Record<string, string> = {
 
 // Quest-type colored chip style (text/border) — identical in light & dark modes
 const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
-  normal: 'text-red-600 border-red-600 bg-red-500/15',
-  flash:  'text-lime-700 border-lime-700 bg-lime-500/15',
-  lcog:   'text-yellow-700 border-yellow-700 bg-yellow-500/15',
-  tot:    'text-purple-600 border-purple-600 bg-purple-500/15',
+  normal: 'text-red-600 border-red-600 bg-red-100',
+  flash:  'text-lime-700 border-lime-700 bg-lime-100',
+  lcog:   'text-yellow-700 border-yellow-700 bg-yellow-100',
+  tot:    'text-purple-600 border-purple-600 bg-purple-100',
 };
 
 interface Props {
