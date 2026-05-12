@@ -273,20 +273,33 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       return ai !== bi ? ai - bi : a.localeCompare(b);
     });
   }, [saved, filterRegion, subAreaOrderMap]);
+  // Resolve each hero summary into { isChampion, label } using snapshot/list lookup
+  const resolveHs = useCallback((s: SavedSimulationSummary, hs: SavedSimulationSummary['heroSummaries'][number]) => {
+    if (hs.heroClass && CHAMPION_SET.has(hs.heroClass)) return { isChampion: true, label: hs.heroClass };
+    const snap = (s.heroSnapshots || []).find(h => h.id === hs.heroId) || allHeroes.find(h => h.id === hs.heroId);
+    if (snap?.type === 'champion') {
+      const lbl = snap.championName || snap.name;
+      if (CHAMPION_SET.has(lbl)) return { isChampion: true, label: lbl };
+    }
+    return hs.heroClass ? { isChampion: false, label: hs.heroClass } : null;
+  }, [allHeroes]);
+
   const jobOpts = useMemo(() => {
     const set = new Set<string>();
     saved.forEach(s => s.heroSummaries.forEach(hs => {
-      if (hs.heroClass && !CHAMPION_SET.has(hs.heroClass)) set.add(hs.heroClass);
+      const r = resolveHs(s, hs);
+      if (r && !r.isChampion) set.add(r.label);
     }));
     return Array.from(set).sort((a, b) => (JOB_ORDER_MAP.get(a) ?? 9999) - (JOB_ORDER_MAP.get(b) ?? 9999));
-  }, [saved]);
+  }, [saved, resolveHs]);
   const championOpts = useMemo(() => {
     const set = new Set<string>();
     saved.forEach(s => s.heroSummaries.forEach(hs => {
-      if (hs.heroClass && CHAMPION_SET.has(hs.heroClass)) set.add(hs.heroClass);
+      const r = resolveHs(s, hs);
+      if (r && r.isChampion) set.add(r.label);
     }));
     return Array.from(set).sort((a, b) => (CHAMPION_ORDER_MAP.get(a) ?? 9999) - (CHAMPION_ORDER_MAP.get(b) ?? 9999));
-  }, [saved]);
+  }, [saved, resolveHs]);
 
   // Apply filter + sort
   const visible = useMemo(() => {
