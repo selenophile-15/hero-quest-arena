@@ -3212,10 +3212,10 @@ export default function QuestSimulation() {
                               </table>
                             </div>
                           </div>
+                          )}
 
                           {/* ===== Table D2: 루도 ===== */}
-                          {(() => {
-                            const hasRudo = !!displayResults.find(hr => hr.isRudoInParty);
+                          {hasRudo && (() => {
                             return (
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 루도</div>
