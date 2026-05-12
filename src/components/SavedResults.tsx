@@ -346,7 +346,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
 
         <div className="flex items-center gap-1.5">
           <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleExport}>
-            <Download className="w-3.5 h-3.5" /> 추출
+            <Download className="w-3.5 h-3.5" /> 저장하기
           </Button>
           <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => fileInputRef.current?.click()}>
             <Upload className="w-3.5 h-3.5" /> 불러오기
