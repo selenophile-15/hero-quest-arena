@@ -308,10 +308,16 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     if (filterRegion !== '__all__') list = list.filter(s => s.regionName === filterRegion);
     if (filterSubArea !== '__all__') list = list.filter(s => s.subAreaName === filterSubArea);
     if (filterJob !== '__all__') {
-      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterJob));
+      list = list.filter(s => s.heroSummaries.some(hs => {
+        const r = resolveHs(s, hs);
+        return r && !r.isChampion && r.label === filterJob;
+      }));
     }
     if (filterChampion !== '__all__') {
-      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterChampion));
+      list = list.filter(s => s.heroSummaries.some(hs => {
+        const r = resolveHs(s, hs);
+        return r && r.isChampion && r.label === filterChampion;
+      }));
     }
     const minWinNum = parseFloat(filterMinWin);
     if (!Number.isNaN(minWinNum)) {
