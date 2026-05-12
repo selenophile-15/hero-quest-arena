@@ -603,7 +603,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="w-8 h-8 text-muted-foreground hover:text-white hover:bg-secondary/60 [&:hover_svg]:text-white"
+                    className="w-8 h-8 text-muted-foreground hover:!bg-primary hover:!text-white [&:hover_svg]:!text-white"
                     onClick={(e) => { e.stopPropagation(); setExtractTarget(sim); }}
                     title="추출"
                   >
