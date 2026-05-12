@@ -193,7 +193,6 @@ export default function HeroList() {
   const setListTab = (t: ListTab) => {
     _setListTab(prev => {
       if (prev !== t) {
-        // Selection & manage mode are per-tab; reset on tab switch.
         setSelectedForDelete(new Set());
         setManageMode(false);
       }
