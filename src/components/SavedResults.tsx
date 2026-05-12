@@ -71,10 +71,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Filters
+  const [filterQuestType, setFilterQuestType] = useState<string>('__all__');
   const [filterRegion, setFilterRegion] = useState<string>('__all__');
   const [filterSubArea, setFilterSubArea] = useState<string>('__all__');
-  const [filterHero, setFilterHero] = useState<string>('');
-  const [filterMinWin, setFilterMinWin] = useState<string>('__all__');
+  const [filterHero, setFilterHero] = useState<string>('__all__');
+  const [filterMinWin, setFilterMinWin] = useState<string>('');
 
   // Sort
   const [sortKey, setSortKey] = useState<SortKey>('savedAt');
