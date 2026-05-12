@@ -486,40 +486,40 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                               </div>
                               <div className="text-[14px] font-bold text-foreground truncate min-w-0">{hs.heroName}</div>
                             </div>
-                            {/* Row 2: face + (survival %)   |   per-hero elements (right) */}
+                            {/* Row 2: face + survival   |   per-hero elements (right) */}
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-1">
                                 <img src={faceImg} alt="" className="w-6 h-6" />
-                                <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>
-                                  ({hs.survivalRate.toFixed(0)}%)
+                                <span className={`text-[12px] font-mono font-bold tabular-nums ${getSurvivalColor(hs.survivalRate)}`}>
+                                  {hs.survivalRate.toFixed(0)}%
                                 </span>
                               </div>
                               {heroElements.length > 0 && (
                                 <div className="flex items-center gap-1 shrink-0">
-                                  {heroElements.map(e => (
+                                  {heroElements.filter(e => e.value > 0).map(e => (
                                     <span key={e.element} className="flex items-center gap-0.5">
                                       {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-6 h-6" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
-                                      <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.value)}</span>
+                                      <span className={`text-[12px] font-mono font-bold tabular-nums ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.value)}</span>
                                     </span>
                                   ))}
                                 </div>
                               )}
                             </div>
-                            {/* Dmg bar (label fixed, bar fixed-width, number after) */}
-                            <div className="flex items-center gap-1 text-[11px]">
+                            {/* Dmg bar (fixed bar width, number left-aligned in fixed slot) */}
+                            <div className="flex items-center gap-1.5 text-[12px]">
                               <span className="text-foreground/80 w-4 shrink-0">딜</span>
-                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 flex-1 min-w-[56px]">
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 w-[64px]">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
-                              <span className={`font-bold font-mono shrink-0 ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
+                              <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
                             </div>
                             {/* Tank bar */}
-                            <div className="flex items-center gap-1 text-[11px]">
+                            <div className="flex items-center gap-1.5 text-[12px]">
                               <span className="text-foreground/80 w-4 shrink-0">탱</span>
-                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 flex-1 min-w-[56px]">
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 w-[64px]">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
-                              <span className={`font-bold font-mono shrink-0 ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
+                              <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
                             </div>
                           </div>
                         );
