@@ -1505,11 +1505,11 @@ export default function QuestSimulation() {
               const winRate = simResult ? (dispSim!.winRate ?? 0) : 0;
               const winColor =
                 !simResult ? 'text-muted-foreground/30' :
-                winRate >= 90 ? 'text-lime-700 dark:text-lime-200 drop-shadow-[0_0_8px_rgba(132,204,22,0.5)]' :
-                winRate >= 70 ? 'text-lime-700 dark:text-lime-200' :
-                winRate >= 50 ? 'text-yellow-700 dark:text-yellow-200 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]' :
+                winRate >= 90 ? 'text-lime-700 dark:text-lime-300' :
+                winRate >= 70 ? 'text-lime-700 dark:text-lime-300' :
+                winRate >= 50 ? 'text-yellow-700 dark:text-yellow-200' :
                 winRate >= 30 ? 'text-orange-700 dark:text-orange-200' :
-                'text-red-700 dark:text-red-200 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]';
+                'text-red-700 dark:text-red-300';
               // Compute party gear average for efficiency score
               const qualityScore: Record<string, number> = {
                 'common': 1, 'uncommon': 1.25, 'flawless': 1.5, 'epic': 2, 'legendary': 3,
