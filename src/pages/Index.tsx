@@ -44,7 +44,7 @@ const Index = () => {
     // Create rising particles (fire/mana embers)
     const pEl = particlesRef.current;
     if (pEl && pEl.childElementCount === 0) {
-      const colors = ['#c8930a','#e8b830','#d4a020','#f0d060','#a06818','#ff6b35','#ff8c42'];
+      const colors = ['#b39dff','#8a7dff','#6b8aff','#a8c8ff','#e8e0ff','#d4d8ff','#c0b8ff','#ffffff'];
       for (let i = 0; i < 40; i++) {
         const d = document.createElement('div');
         const size = 1.5 + Math.random() * 3;
