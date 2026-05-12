@@ -1505,11 +1505,11 @@ export default function QuestSimulation() {
               const winRate = simResult ? (dispSim!.winRate ?? 0) : 0;
               const winColor =
                 !simResult ? 'text-muted-foreground/30' :
-                winRate >= 90 ? 'text-lime-600 dark:text-lime-300 drop-shadow-[0_0_8px_rgba(132,204,22,0.4)]' :
-                winRate >= 70 ? 'text-lime-600 dark:text-lime-300' :
-                winRate >= 50 ? 'text-yellow-600 dark:text-yellow-300 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]' :
-                winRate >= 30 ? 'text-orange-600 dark:text-orange-300' :
-                'text-red-600 dark:text-red-300 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]';
+                winRate >= 90 ? 'text-lime-700 dark:text-lime-200 drop-shadow-[0_0_8px_rgba(132,204,22,0.5)]' :
+                winRate >= 70 ? 'text-lime-700 dark:text-lime-200' :
+                winRate >= 50 ? 'text-yellow-700 dark:text-yellow-200 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]' :
+                winRate >= 30 ? 'text-orange-700 dark:text-orange-200' :
+                'text-red-700 dark:text-red-200 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]';
               // Compute party gear average for efficiency score
               const qualityScore: Record<string, number> = {
                 'common': 1, 'uncommon': 1.25, 'flawless': 1.5, 'epic': 2, 'legendary': 3,
@@ -1537,7 +1537,7 @@ export default function QuestSimulation() {
                 <div className="grid grid-cols-2 divide-x divide-border/30">
                   {/* LEFT: win rate */}
                   <div className="py-3 px-4 text-center">
-                    <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
+                    <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">승률</div>
                     {simResult ? (
                       <>
                         <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
@@ -1556,7 +1556,7 @@ export default function QuestSimulation() {
                           const retryLosses = retried - retryWins;
                           return (
                             <>
-                              <div className="text-xs text-muted-foreground font-medium mt-0.5">
+                              <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
                                 [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
                               </div>
                               {retried > 0 && (
@@ -1581,13 +1581,13 @@ export default function QuestSimulation() {
                   </div>
                   {/* RIGHT: gear-relative score */}
                   <div className="py-3 px-4 text-center">
-                    <div className="text-xs text-muted-foreground mb-1 font-medium">장비 대비 승률</div>
+                    <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">장비 대비 승률</div>
                     {simResult && gearScore > 0 ? (
                       <>
                         <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
                           {gearScore.toFixed(1)}
                         </div>
-                        <div className="text-xs text-muted-foreground font-medium mt-0.5">
+                        <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
                           [ 장비 평균 : {partyAvgGear.toFixed(2)} ]
                         </div>
                       </>
@@ -1908,12 +1908,15 @@ export default function QuestSimulation() {
                               if (val < 0) displayColor = 'text-purple-400';
                             }
 
-                            // Crit chance: cap display at 100%, show raw in parentheses
+                            // Crit chance: cap display at 100%, show raw in parentheses for Ninja/Sensei only
                             let critCapNote = '';
                             let rawCritVal = 0;
                             if (stat.key === 'crit' && val > 100) {
                               rawCritVal = val;
-                              critCapNote = `(실제: ${rawCritVal}%)`;
+                              const isNinjaSensei = hero.heroClass === '닌자' || hero.heroClass === '센세' || hero.heroClass === 'Ninja' || hero.heroClass === 'Sensei';
+                              if (isNinjaSensei) {
+                                critCapNote = `(실제: ${rawCritVal}%)`;
+                              }
                               val = 100;
                             }
 
