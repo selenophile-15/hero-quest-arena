@@ -890,14 +890,20 @@ export default function QuestSimulation() {
       setTempEditingHero(null);
       toast({ title: '리스트에 반영됨', description: `${updated.name}의 수정 사항이 내 ${tempEditingHero.type === 'champion' ? '챔피언' : '영웅'} 리스트에 저장되었습니다.` });
     };
+    const confirmSaveAs = {
+      title: '리스트에 정말 덮어쓸까요?',
+      description: '이 작업은 되돌릴 수 없습니다. 내 리스트의 해당 영웅/챔피언이 현재 임시 수정 상태로 완전히 교체됩니다.',
+    };
     return (
       <div className="animate-fade-in">
         {tempEditingHero.type === 'champion' ? (
           <ChampionForm
             hero={tempEditingHero}
+            titleOverride="챔피언 임시 수정"
             saveLabel="임시 저장"
             saveAsLabel="리스트 덮어쓰기"
             saveAsKeepsId
+            confirmSaveAs={confirmSaveAs}
             onSave={onTempSave}
             onSaveAs={onListOverwrite}
             onCancel={() => setTempEditingHero(null)}
@@ -905,9 +911,11 @@ export default function QuestSimulation() {
         ) : (
           <HeroForm
             hero={tempEditingHero}
+            titleOverride="영웅 임시 수정"
             saveLabel="임시 저장"
             saveAsLabel="리스트 덮어쓰기"
             saveAsKeepsId
+            confirmSaveAs={confirmSaveAs}
             onSave={onTempSave}
             onSaveAs={onListOverwrite}
             onCancel={() => setTempEditingHero(null)}
