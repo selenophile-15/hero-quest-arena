@@ -668,7 +668,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                   {heroElements.filter(e => e.value > 0).map(e => (
                                     <span key={e.element} className="flex items-center gap-0.5">
                                       {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-[22px] h-[22px]" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
-                                      <span className={`text-[13px] font-mono font-bold tabular-nums ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.value)}</span>
+                                      <span className={`text-[13px] font-mono font-bold tabular-nums text-black dark:text-white`}>{formatNumber(e.value)}</span>
                                     </span>
                                   ))}
                                 </div>
@@ -737,7 +737,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     {(sim.barrierInfos?.length || sim.boosterImage) ? <span className="text-muted-foreground/40">·</span> : null}
                     <span className="font-bold text-foreground/90">
                       평균 <span className="font-mono font-bold text-foreground">{Math.round(sim.avgRounds)}</span>턴
-                      <span className="text-foreground/60 font-normal"> ({sim.minRounds}~{sim.maxRounds}R)</span>
+                      <span className="text-foreground/60 font-normal"> ({sim.minRounds}~{sim.maxRounds})</span>
                     </span>
                     <span className="text-muted-foreground/40">·</span>
                     {sim.successCount !== undefined && (
