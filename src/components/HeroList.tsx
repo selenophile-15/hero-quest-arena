@@ -1748,10 +1748,11 @@ export default function HeroList() {
                   return (
                     <Fragment key={hero.id}>
                       <tr
+                        data-hero-row-id={hero.id}
                         onClick={() => setExpandedId(expandedId === hero.id ? null : hero.id)}
                         className={`border-b border-border/50 transition-colors cursor-pointer select-none table-zebra-row ${
                           isExpanded ? 'row-expanded' : ''
-                        }`}
+                        } ${highlightIds.has(hero.id) ? 'row-flash' : ''}`}
                         style={{ height: '52px' }}
                       >
                       {activeCols.map(col => {
