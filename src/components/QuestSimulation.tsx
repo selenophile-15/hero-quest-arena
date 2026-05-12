@@ -3147,9 +3147,11 @@ export default function QuestSimulation() {
                               </table>
                             </div>
                           </div>
+                          )}
 
 
                           {/* ===== Table D: 폴로니아 ===== */}
+                          {hasPolonia && (
                           <div>
                             <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 폴로니아</div>
                             <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
