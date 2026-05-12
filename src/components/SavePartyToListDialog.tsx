@@ -3,7 +3,7 @@ import { Hero } from '@/types/game';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { addHero, updateHero, getHeroes } from '@/lib/storage';
+import { getHeroes, saveHeroes } from '@/lib/storage';
 import { toast as sonnerToast } from 'sonner';
 import { X } from 'lucide-react';
 
@@ -18,6 +18,23 @@ interface Props {
 
 type RowMode = 'add' | 'overwrite';
 
+/**
+ * Returns a new unique name based on `baseName`, appending " (n)" if the name
+ * already exists in `existingNames`. Mirrors HeroList's handleCopyHero logic.
+ */
+function buildUniqueName(rawName: string, existingNames: string[]): string {
+  const baseName = rawName.replace(/\s*\(\d+\)$/, '');
+  if (!existingNames.includes(rawName)) return rawName;
+  const numbers = existingNames
+    .filter(n => n === baseName || n.startsWith(baseName + ' ('))
+    .map(n => {
+      const m = n.match(/\((\d+)\)$/);
+      return m ? parseInt(m[1], 10) : 0;
+    });
+  const nextNum = Math.max(0, ...numbers) + 1;
+  return `${baseName} (${nextNum})`;
+}
+
 export default function SavePartyToListDialog({ open, onOpenChange, members, onPersisted }: Props) {
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [mode, setMode] = useState<Record<string, RowMode>>({});
@@ -26,7 +43,6 @@ export default function SavePartyToListDialog({ open, onOpenChange, members, onP
 
   useEffect(() => {
     if (!open) return;
-    // Initialize all unchecked; default mode = overwrite if existing, else add.
     const initMode: Record<string, RowMode> = {};
     members.forEach(m => {
       initMode[m.id] = existingIds.has(m.id) ? 'overwrite' : 'add';
@@ -49,7 +65,8 @@ export default function SavePartyToListDialog({ open, onOpenChange, members, onP
   };
 
   const handleConfirm = () => {
-    // Persisted ID = id present in the list after operation (new id for adds, original id for overwrites)
+    // Work on a single mutable snapshot to ensure atomic save + correct uniqueness.
+    const list = getHeroes();
     const persistedIds: string[] = [];
     const persistedTypes = new Set<'hero' | 'champion'>();
     let addCount = 0, overCount = 0;
@@ -57,15 +74,18 @@ export default function SavePartyToListDialog({ open, onOpenChange, members, onP
     members.forEach(m => {
       if (!selected[m.id]) return;
       const rowMode = mode[m.id] || 'add';
-      if (rowMode === 'overwrite' && existingIds.has(m.id)) {
-        updateHero(m);
+      if (rowMode === 'overwrite' && list.some(h => h.id === m.id)) {
+        const idx = list.findIndex(h => h.id === m.id);
+        list[idx] = m;
         overCount++;
         persistedIds.push(m.id);
         persistedTypes.add(m.type === 'champion' ? 'champion' : 'hero');
       } else {
         const newId = crypto.randomUUID();
-        const newHero: Hero = { ...m, id: newId, createdAt: new Date().toISOString() };
-        addHero(newHero);
+        const existingNames = list.map(h => h.name);
+        const uniqueName = buildUniqueName(m.name, existingNames);
+        const newHero: Hero = { ...m, id: newId, name: uniqueName, createdAt: new Date().toISOString() };
+        list.push(newHero);
         addCount++;
         persistedIds.push(newId);
         persistedTypes.add(m.type === 'champion' ? 'champion' : 'hero');
@@ -73,13 +93,11 @@ export default function SavePartyToListDialog({ open, onOpenChange, members, onP
     });
 
     if (addCount + overCount > 0) {
-      window.dispatchEvent(new Event('heroes-updated'));
+      saveHeroes(list); // emits heroes-updated
       onPersisted?.(persistedIds);
 
-      // Decide which list tab to navigate to (prefer hero if both)
       const targetTab: 'hero' | 'champion' = persistedTypes.has('hero') ? 'hero' : 'champion';
 
-      // Custom sonner toast: 3s, click body to navigate, X to dismiss
       sonnerToast.custom((id) => (
         <div
           onClick={() => {

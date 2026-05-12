@@ -189,7 +189,16 @@ export default function HeroList() {
     return all;
   });
   const [viewMode, setViewMode] = useState<ViewMode>('table');
-  const [listTab, setListTab] = useState<ListTab>('hero');
+  const [listTab, _setListTab] = useState<ListTab>('hero');
+  const setListTab = (t: ListTab) => {
+    _setListTab(prev => {
+      if (prev !== t) {
+        setSelectedForDelete(new Set());
+        setManageMode(false);
+      }
+      return t;
+    });
+  };
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Hero | null>(null);
   const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
@@ -1717,7 +1726,7 @@ export default function HeroList() {
                           <button
                             onClick={() => selectedForDelete.size > 0 && setBulkDeleteConfirm(true)}
                             disabled={selectedForDelete.size === 0}
-                            className="h-9 px-3 inline-flex items-center gap-1 rounded bg-destructive text-white text-sm disabled:opacity-50 hover:bg-destructive/90 transition-colors"
+                            className="btn-force-white h-9 px-3 inline-flex items-center gap-1 rounded bg-destructive text-white text-sm disabled:opacity-50 hover:bg-destructive/90 transition-colors"
                             title="선택 삭제"
                           >
                             <Trash2 className="w-4 h-4" /> ({selectedForDelete.size})
@@ -1783,7 +1792,7 @@ export default function HeroList() {
                                   onClick={() => toggleSelectForDelete(hero.id)}
                                   className={`p-1.5 rounded transition-colors ${
                                     isSelectedForDel
-                                      ? '!bg-destructive !text-white [&_svg]:!text-white'
+                                      ? 'btn-force-white !bg-destructive !text-white [&_svg]:!text-white'
                                       : 'text-muted-foreground hover:bg-primary/20 hover:text-primary'
                                   }`}
                                 >

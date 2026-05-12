@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Hero, HeroClassLine, HERO_CLASS_LINES, STAT_ICON_MAP, POSITIONS, ELEMENT_ICON_MAP } from '@/types/game';
 import { SPIRIT_NAME_MAP } from '@/lib/nameMap';
 import { useTheme } from '@/hooks/use-theme';
@@ -34,6 +35,10 @@ interface HeroFormProps {
   onSaveAs?: (hero: Hero) => void;
   /** If true, save-as button keeps the original hero id (used by temp-edit mode). */
   saveAsKeepsId?: boolean;
+  /** Override the sticky header title. */
+  titleOverride?: string;
+  /** Confirm with a warning before triggering save-as (e.g. list overwrite). */
+  confirmSaveAs?: { title: string; description: string };
 }
 
 const JOB_PAIRS: Record<string, [string, string][]> = {
@@ -168,7 +173,7 @@ function hasRangedWeapon(slots: Array<{ item: any | null }>): boolean {
   });
 }
 
-export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabel, onSaveAs, saveAsKeepsId }: HeroFormProps) {
+export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabel, onSaveAs, saveAsKeepsId, titleOverride, confirmSaveAs }: HeroFormProps) {
   const { colorMode } = useTheme();
   const getTypeImgPath = (typeFile: string) => getTypeImgPathUtil(typeFile, colorMode);
   const getInitialPromotion = (): boolean => {
@@ -582,15 +587,11 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
     onSave(heroData);
   };
 
-  const handleSaveAs = () => {
-    if (!name.trim()) {
-      setNameError(true);
-      nameInputRef.current?.focus();
-      return;
-    }
-    if (!heroClass) return;
-    setNameError(false);
-    const heroData: Hero = {
+  const [saveAsConfirmOpen, setSaveAsConfirmOpen] = useState(false);
+
+  const buildSaveAsData = (): Hero | null => {
+    if (!heroClass) return null;
+    return {
       id: saveAsKeepsId ? (hero?.id || crypto.randomUUID()) : crypto.randomUUID(),
       name: name.trim(),
       classLine: classLine as HeroClassLine,
@@ -613,7 +614,27 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
       detailStats,
       createdAt: saveAsKeepsId ? (hero?.createdAt || new Date().toISOString()) : new Date().toISOString(),
     };
+  };
+
+  const performSaveAs = () => {
+    const heroData = buildSaveAsData();
+    if (!heroData) return;
     (onSaveAs ?? onSave)(heroData);
+  };
+
+  const handleSaveAs = () => {
+    if (!name.trim()) {
+      setNameError(true);
+      nameInputRef.current?.focus();
+      return;
+    }
+    if (!heroClass) return;
+    setNameError(false);
+    if (confirmSaveAs) {
+      setSaveAsConfirmOpen(true);
+      return;
+    }
+    performSaveAs();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -655,7 +676,7 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
       {/* Sticky top bar with title + save/cancel */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
         <h2 className="text-xl text-primary tracking-wide font-bold">
-          {hero ? '영웅 수정' : '새 영웅 추가'}
+          {titleOverride ?? (hero ? '영웅 수정' : '새 영웅 추가')}
         </h2>
          <div className="flex gap-2 items-center">
           <Button type="button" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!calcStats} className="btn-force-white gap-1.5">
@@ -1283,6 +1304,21 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
         onOpenChange={setBreakdownOpen}
         calcStats={calcStats}
       />
+
+      {confirmSaveAs && (
+        <AlertDialog open={saveAsConfirmOpen} onOpenChange={setSaveAsConfirmOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{confirmSaveAs.title}</AlertDialogTitle>
+              <AlertDialogDescription>{confirmSaveAs.description}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>취소</AlertDialogCancel>
+              <AlertDialogAction onClick={performSaveAs} className="bg-destructive text-white btn-force-white hover:bg-destructive/90">덮어쓰기</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 }
