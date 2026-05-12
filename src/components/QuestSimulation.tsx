@@ -802,6 +802,7 @@ export default function QuestSimulation() {
     setSelectedHeroIds(new Set(sim.heroIds));
     setSelectedBooster(sim.booster as any);
     setSelectedMiniBoss(sim.miniBoss as MiniBossType);
+    setLoadedSimId(sim.id);
     setSubTab('simulation');
   };
 
