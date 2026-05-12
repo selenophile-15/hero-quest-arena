@@ -221,25 +221,27 @@ const Index = () => {
           <Button
             size="lg"
             onClick={() => navigate("/dashboard")}
-            className="btn-shine text-base px-12 py-7 font-display tracking-wider relative group
+            className="btn-shine text-base px-14 py-7 font-display tracking-wider relative group
               transition-all duration-300 ease-out
-              hover:scale-105 hover:shadow-[0_0_30px_rgba(140,170,255,0.3),0_0_60px_rgba(200,147,10,0.2)]
+              hover:scale-105 hover:shadow-[0_0_36px_rgba(180,150,255,0.5),0_0_72px_rgba(140,100,255,0.25)]
               active:scale-95"
             style={{
-              background: 'linear-gradient(135deg, hsl(225 40% 30%), hsl(230 35% 25%))',
-              boxShadow: '0 0 20px rgba(140,170,255,0.15), 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(180,200,255,0.2)',
-              border: '1px solid rgba(140,170,255,0.2)',
+              background: 'linear-gradient(135deg, #1a1438 0%, #2a1f5c 50%, #3a2870 100%)',
+              boxShadow: '0 0 24px rgba(180,150,255,0.25), 0 6px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(220,200,255,0.3), inset 0 -1px 0 rgba(120,80,200,0.4)',
+              border: '1px solid rgba(200,170,255,0.35)',
             }}
           >
-            <Swords className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12" style={{ color: '#c8d8ff' }} />
             <span style={{
               fontFamily: "'Noto Sans KR', sans-serif",
               fontWeight: 700,
-              letterSpacing: '0.15em',
+              letterSpacing: '0.32em',
+              paddingLeft: '0.32em',
               fontSize: '1.1rem',
-              background: 'linear-gradient(180deg, #e8efff, #ffd97a)',
+              background: 'linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 55%, #a98cff 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
+              textShadow: '0 0 12px rgba(200,170,255,0.4)',
+              filter: 'drop-shadow(0 0 6px rgba(180,150,255,0.5))',
             }}>모험 시작</span>
           </Button>
 
