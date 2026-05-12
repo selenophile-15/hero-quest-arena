@@ -529,13 +529,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     {/* c: win rate + gear ratio */}
                     <div className="mr-3 flex items-center gap-9 shrink-0">
                       <div className="text-center">
-                        <div className="text-[10px] text-muted-foreground">승률</div>
+                        <div className="text-[11px] text-muted-foreground dark:text-foreground/80">승률</div>
                         <div className={`text-2xl font-bold font-mono ${getWinRateColor(sim.winRate)}`}>
                           {sim.winRate.toFixed(1)}%
                         </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-[10px] text-muted-foreground">장비 대비</div>
+                        <div className="text-[11px] text-muted-foreground dark:text-foreground/80">장비 대비</div>
                         <div className={`text-2xl font-bold font-mono ${gearRatio !== null ? getWinRateColor(gearRatio) : 'text-muted-foreground/50'}`}>
                           {gearRatio !== null ? gearRatio.toFixed(1) : '-'}
                         </div>
