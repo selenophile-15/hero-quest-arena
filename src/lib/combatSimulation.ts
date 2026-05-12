@@ -2596,10 +2596,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         );
       })() : undefined,
       conquerorStackAvgDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s => {
-        // Divide accumulated damage by # of sims in which the hero actually attacked at this stack.
-        // Stacks that were never reached return 0 (no participating sims).
-        const sims = conqStackSimsWithStack[s][i];
-        return sims > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / sims) : 0;
+        // Divide accumulated damage by # of attacks made at this stack (per-attack average).
+        // Higher attack-ratio stacks naturally reflect their weighting elsewhere; this is the
+        // mean damage of a single hit while at that stack. Stacks never attacked from return 0.
+        const atks = conqStackAttackCount[s][i];
+        return atks > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / atks) : 0;
       }) : undefined,
       conquerorStackResetRate: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
         conqStackAttackCount[s][i] > 0

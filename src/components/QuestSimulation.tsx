@@ -3047,7 +3047,7 @@ export default function QuestSimulation() {
                                         <GroupHeader label="중첩별 치명타 대미지" info={'평균 공격력 × (기본 치명타 대미지 계수 + 스택 보너스). 해당 스택에서 치명타가 터졌을 때 들어가는 대미지의 이론값.'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="평균 대미지" info={'해당 스택 상태로 한 번이라도 공격한 판에 한해 평균낸 누적 대미지(해당 스택 누적 대미지 ÷ 그 스택에 도달한 판 수). 도달한 적이 없는 스택은 빈 값.'} />
+                                        <GroupHeader label="평균 대미지" info={'해당 스택 상태로 때린 공격 1회의 평균 대미지 (해당 스택 누적 대미지 ÷ 해당 스택 공격 횟수). 그 스택에서 한 번도 공격하지 않았다면 빈 값.'} />
                                       </th>
                                     </tr>
                                   </thead>
@@ -3072,7 +3072,7 @@ export default function QuestSimulation() {
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}</td>
                                             <td className="py-1 px-2 text-center font-mono text-yellow-400">{fadeZero(`+${bonus}%`, bonus === 0)}</td>
                                             <td className="py-1 px-2 text-center font-mono text-yellow-400">{baseCritPct > 0 ? `${finalCritPct}%` : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${turn.toFixed(1)}%`, turn === 0)}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{turn === 0 && adm > 0 ? <span className="opacity-70">{'<0.1%'}</span> : fadeZero(`${turn.toFixed(1)}%`, turn === 0)}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{cdmg > 0 ? formatNumber(cdmg) : blank}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{adm > 0 ? formatNumber(adm) : blank}</td>
                                           </tr>
