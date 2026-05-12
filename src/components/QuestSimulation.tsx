@@ -1504,12 +1504,11 @@ export default function QuestSimulation() {
             {currentQuest && selectedHeroes.length > 0 && (() => {
               const winRate = simResult ? (dispSim!.winRate ?? 0) : 0;
               const winColor =
-                !simResult ? 'text-muted-foreground/30' :
-                winRate >= 90 ? 'text-lime-700 dark:text-[#bef264] drop-shadow-[0_0_10px_rgba(190,242,100,0.6)]' :
-                winRate >= 70 ? 'text-lime-700 dark:text-[#bef264] drop-shadow-[0_0_8px_rgba(190,242,100,0.4)]' :
-                winRate >= 50 ? 'text-yellow-700 dark:text-[#fde047] drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]' :
-                winRate >= 30 ? 'text-orange-700 dark:text-[#fdba74] drop-shadow-[0_0_8px_rgba(253,186,116,0.4)]' :
-                'text-red-700 dark:text-[#fca5a5] drop-shadow-[0_0_10px_rgba(252,165,165,0.6)]';
+                !simResult ? 'sim-result-number--muted' :
+                winRate >= 70 ? 'sim-result-number--success' :
+                winRate >= 50 ? 'sim-result-number--warning' :
+                winRate >= 30 ? 'sim-result-number--orange' :
+                'sim-result-number--danger';
               // Compute party gear average for efficiency score
               const qualityScore: Record<string, number> = {
                 'common': 1, 'uncommon': 1.25, 'flawless': 1.5, 'epic': 2, 'legendary': 3,
@@ -1540,7 +1539,7 @@ export default function QuestSimulation() {
                     <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">승률</div>
                     {simResult ? (
                       <>
-                        <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
+                        <div className={`sim-result-number text-3xl font-black font-mono tracking-tight ${winColor}`}>
                           {winRate.toFixed(1)}%
                         </div>
                         {(() => {
@@ -1584,7 +1583,7 @@ export default function QuestSimulation() {
                     <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">장비 대비 승률</div>
                     {simResult && gearScore > 0 ? (
                       <>
-                        <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
+                        <div className={`sim-result-number text-3xl font-black font-mono tracking-tight ${winColor}`}>
                           {gearScore.toFixed(1)}
                         </div>
                         <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
