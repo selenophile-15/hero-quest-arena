@@ -332,6 +332,13 @@ export default function QuestSimulation() {
   const [retryOnly, setRetryOnly] = useState(false);
   const [boosterOpen, setBoosterOpen] = useState(false);
 
+  // Temporary per-party hero overrides (apply only to current sim; not persisted)
+  const [tempOverrides, setTempOverrides] = useState<Record<string, Hero>>({});
+  // Hero currently being edited via the gear (temp-edit) button
+  const [tempEditingHero, setTempEditingHero] = useState<Hero | null>(null);
+  // Save-current-party-to-list dialog
+  const [savePartyOpen, setSavePartyOpen] = useState(false);
+
   // Reset retry-only filter whenever the underlying simulation no longer has retry data.
   useEffect(() => { if (!simResult?.retryResult) setRetryOnly(false); }, [simResult]);
 
