@@ -33,7 +33,7 @@ import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
 import CombatBattlefield from '@/components/CombatBattlefield';
 import SavedResults from '@/components/SavedResults';
 import CompareAnalysis from '@/components/CompareAnalysis';
-import { saveSimulationResult, overwriteSimulationResult, SavedSimulationSummary, SavedSimBarrierInfo } from '@/lib/savedSimulations';
+import { saveSimulationResult, overwriteSimulationResult, getSavedSimulations, SAVED_SIMULATIONS_UPDATED_EVENT, SavedSimulationSummary, SavedSimBarrierInfo } from '@/lib/savedSimulations';
 import OverwriteSimulationDialog from './OverwriteSimulationDialog';
 import { toast } from '@/hooks/use-toast';
 import { saveCanvasImage } from '@/lib/fileDownload';
@@ -274,6 +274,23 @@ export default function QuestSimulation() {
   const [commonData, setCommonData] = useState<QuestCommon | null>(null);
   const [loading, setLoading] = useState(true);
   const [subTab, setSubTab] = useState<QuestSubTab>('simulation');
+  const [savedResultsVersion, setSavedResultsVersion] = useState(0);
+  const [savedResultsCount, setSavedResultsCount] = useState(() => getSavedSimulations().length);
+
+  useEffect(() => {
+    const refreshSavedResultsCount = () => {
+      setSavedResultsCount(getSavedSimulations().length);
+      setSavedResultsVersion(v => v + 1);
+    };
+    window.addEventListener(SAVED_SIMULATIONS_UPDATED_EVENT, refreshSavedResultsCount);
+    window.addEventListener('storage', refreshSavedResultsCount);
+    window.addEventListener('focus', refreshSavedResultsCount);
+    return () => {
+      window.removeEventListener(SAVED_SIMULATIONS_UPDATED_EVENT, refreshSavedResultsCount);
+      window.removeEventListener('storage', refreshSavedResultsCount);
+      window.removeEventListener('focus', refreshSavedResultsCount);
+    };
+  }, []);
 
   // Selection state
   const [selectedQuestType, setSelectedQuestType] = useState<string>('');
