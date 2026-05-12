@@ -6,7 +6,7 @@ import {
 } from '@/lib/savedSimulations';
 import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+// Checkbox removed: selection state now shown on trash button
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
