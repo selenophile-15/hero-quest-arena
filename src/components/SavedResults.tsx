@@ -13,6 +13,7 @@ import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { getHeroes } from '@/lib/storage';
 import { saveBlobFile } from '@/lib/fileDownload';
 import { formatNumber } from '@/lib/format';
+import { ELEMENT_ICON_MAP } from '@/types/game';
 import { toast } from '@/hooks/use-toast';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -65,10 +66,10 @@ const QUEST_TYPE_LABELS: Record<string, string> = {
 
 // Quest-type colored chip style (text/border)
 const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
-  normal: 'border-red-500/50 bg-red-500/10 text-red-500 dark:text-red-300',
-  flash: 'border-lime-500/50 bg-lime-500/10 text-lime-600 dark:text-lime-300',
-  lcog: 'border-yellow-600/60 bg-yellow-600/10 text-yellow-700 dark:text-yellow-300',
-  tot: 'border-purple-500/50 bg-purple-500/10 text-purple-500 dark:text-purple-300',
+  normal: 'border-red-500 bg-red-500/10 text-red-500 dark:text-red-300 dark:border-red-300',
+  flash: 'border-lime-600 bg-lime-500/10 text-lime-600 dark:text-lime-300 dark:border-lime-300',
+  lcog: 'border-yellow-700 bg-yellow-600/10 text-yellow-700 dark:text-yellow-300 dark:border-yellow-300',
+  tot: 'border-purple-500 bg-purple-500/10 text-purple-500 dark:text-purple-300 dark:border-purple-300',
 };
 
 interface Props {
