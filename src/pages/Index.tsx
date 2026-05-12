@@ -11,6 +11,48 @@ import sponsorFrame from "@/assets/sponsor-frame.png";
 
 const SPONSORS = ["Dogpyo", "거지왕"];
 
+const Butterfly = ({
+  size = 28,
+  pathClass,
+  flip = false,
+  style,
+}: { size?: number; pathClass: string; flip?: boolean; style?: React.CSSProperties }) => {
+  const id = pathClass;
+  return (
+    <div
+      className={`absolute pointer-events-none ${pathClass}`}
+      style={{ width: size, height: size * 0.82, ...style }}
+    >
+      <svg
+        viewBox="0 0 64 52"
+        width="100%"
+        height="100%"
+        className="bf-wings"
+        style={{
+          filter: 'drop-shadow(0 0 6px rgba(180,150,255,0.65)) drop-shadow(0 0 12px rgba(120,150,255,0.35))',
+          transform: flip ? 'scaleX(-1)' : undefined,
+        }}
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id={`bfg-${id}`} x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#f0e4ff" />
+            <stop offset="45%" stopColor="#b39dff" />
+            <stop offset="100%" stopColor="#5a6fff" />
+          </linearGradient>
+        </defs>
+        <g fill={`url(#bfg-${id})`} stroke="#e0d4ff" strokeWidth="0.5" opacity="0.95">
+          <path d="M32 26 C24 8, 6 6, 4 18 C2 30, 14 36, 32 28 Z" />
+          <path d="M32 26 C40 8, 58 6, 60 18 C62 30, 50 36, 32 28 Z" />
+          <path d="M32 28 C24 38, 8 44, 8 36 C8 30, 20 30, 32 30 Z" />
+          <path d="M32 28 C40 38, 56 44, 56 36 C56 30, 44 30, 32 30 Z" />
+          <ellipse cx="32" cy="28" rx="1.3" ry="8" fill="#2a1f5c" />
+        </g>
+      </svg>
+    </div>
+  );
+};
+
 const Index = () => {
   const navigate = useNavigate();
   const { desktopMode, setDesktopMode } = useDesktopModeState();
@@ -146,6 +188,59 @@ const Index = () => {
           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
           animation: btnShine 3s ease-in-out infinite;
         }
+
+        /* Butterfly wing flap (subtle while resting) */
+        @keyframes wingFlapIdle {
+          0%, 100% { transform: scaleX(1); }
+          50% { transform: scaleX(0.78); }
+        }
+        /* Wing flap (faster while flying) */
+        @keyframes wingFlapFly {
+          0%, 100% { transform: scaleX(0.55); }
+          50% { transform: scaleX(1); }
+        }
+        .bf-wings { transform-origin: 50% 50%; animation: wingFlapIdle 2.4s ease-in-out infinite; }
+        .bf-flying .bf-wings { animation: wingFlapFly 0.18s ease-in-out infinite; }
+
+        /* Each butterfly has its own flight path keyframes */
+        @keyframes flyPath1 {
+          0%, 65%, 100% { transform: translate(0,0) rotate(0deg); }
+          70% { transform: translate(-30px,-25px) rotate(-12deg); }
+          78% { transform: translate(-60px,-10px) rotate(8deg); }
+          86% { transform: translate(-40px,15px) rotate(-6deg); }
+          94% { transform: translate(-15px,5px) rotate(3deg); }
+        }
+        @keyframes flyPath2 {
+          0%, 60%, 100% { transform: translate(0,0) rotate(0deg); }
+          66% { transform: translate(40px,-20px) rotate(15deg); }
+          74% { transform: translate(70px,5px) rotate(-10deg); }
+          82% { transform: translate(50px,30px) rotate(8deg); }
+          92% { transform: translate(20px,12px) rotate(-4deg); }
+        }
+        @keyframes flyPath3 {
+          0%, 70%, 100% { transform: translate(0,0) rotate(0deg); }
+          76% { transform: translate(-25px,30px) rotate(10deg); }
+          84% { transform: translate(20px,45px) rotate(-12deg); }
+          92% { transform: translate(35px,15px) rotate(6deg); }
+        }
+        @keyframes flyPath4 {
+          0%, 55%, 100% { transform: translate(0,0) rotate(0deg); }
+          62% { transform: translate(35px,-30px) rotate(-14deg); }
+          72% { transform: translate(-10px,-50px) rotate(10deg); }
+          82% { transform: translate(-30px,-20px) rotate(-6deg); }
+          92% { transform: translate(-12px,5px) rotate(3deg); }
+        }
+        @keyframes flyPath5 {
+          0%, 75%, 100% { transform: translate(0,0) rotate(0deg); }
+          80% { transform: translate(-40px,-15px) rotate(-10deg); }
+          88% { transform: translate(-65px,10px) rotate(8deg); }
+          95% { transform: translate(-30px,20px) rotate(-4deg); }
+        }
+        .bf1 { animation: flyPath1 14s ease-in-out infinite; }
+        .bf2 { animation: flyPath2 17s ease-in-out infinite 3s; }
+        .bf3 { animation: flyPath3 12s ease-in-out infinite 6s; }
+        .bf4 { animation: flyPath4 19s ease-in-out infinite 1.5s; }
+        .bf5 { animation: flyPath5 15s ease-in-out infinite 8s; }
       `}</style>
 
       {/* Background image - single, scrolls with page */}
@@ -266,6 +361,13 @@ const Index = () => {
             filter: 'drop-shadow(0 0 30px rgba(140,100,255,0.25)) drop-shadow(0 8px 24px rgba(0,0,0,0.5))',
           }}
         >
+          {/* Decorative butterflies that rest on the frame and occasionally fly */}
+          <Butterfly size={26} pathClass="bf1" style={{ top: '14%', left: '18%' }} />
+          <Butterfly size={22} pathClass="bf2" flip style={{ top: '12%', right: '20%' }} />
+          <Butterfly size={28} pathClass="bf3" style={{ bottom: '18%', left: '14%' }} />
+          <Butterfly size={24} pathClass="bf4" flip style={{ bottom: '20%', right: '16%' }} />
+          <Butterfly size={20} pathClass="bf5" style={{ top: '46%', left: '8%' }} />
+
           {/* Title overlay: replace "후원자 명단" with "후원자" - aligned with the leaf flourishes */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
