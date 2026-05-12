@@ -64,12 +64,12 @@ const QUEST_TYPE_LABELS: Record<string, string> = {
   tot: '공포의 탑',
 };
 
-// Quest-type colored chip style (text/border)
+// Quest-type colored chip style (text/border) — identical in light & dark modes
 const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
-  normal: 'text-red-600 dark:text-red-300 border-current bg-red-400/25 dark:bg-red-300/20',
-  flash:  'text-lime-700 dark:text-lime-300 border-current bg-lime-400/25 dark:bg-lime-300/20',
-  lcog:   'text-yellow-700 dark:text-yellow-300 border-current bg-yellow-400/25 dark:bg-yellow-300/20',
-  tot:    'text-purple-600 dark:text-purple-300 border-current bg-purple-400/25 dark:bg-purple-300/20',
+  normal: 'text-red-600 border-red-600 bg-red-500/15',
+  flash:  'text-lime-700 border-lime-700 bg-lime-500/15',
+  lcog:   'text-yellow-700 border-yellow-700 bg-yellow-500/15',
+  tot:    'text-purple-600 border-purple-600 bg-purple-500/15',
 };
 
 interface Props {
@@ -498,28 +498,28 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                 <div className="flex items-center gap-1 shrink-0">
                                   {heroElements.filter(e => e.value > 0).map(e => (
                                     <span key={e.element} className="flex items-center gap-0.5">
-                                      {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-6 h-6" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
-                                      <span className={`text-[12px] font-mono font-bold tabular-nums ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.value)}</span>
+                                      {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-[22px] h-[22px]" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
+                                      <span className={`text-[13px] font-mono font-bold tabular-nums ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.value)}</span>
                                     </span>
                                   ))}
                                 </div>
                               )}
                             </div>
-                            {/* Dmg bar (bar fills column; number left-aligned in fixed slot) */}
-                            <div className="flex items-center gap-1.5 text-[13px]">
+                            {/* Dmg bar (bar fills column; number left-aligned in fixed slot matching "100%" width) */}
+                            <div className="flex items-center gap-1 text-[13px]">
                               <span className="font-bold text-foreground/85 w-4 shrink-0">딜</span>
                               <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden flex-1 min-w-0">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
-                              <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
+                              <span className={`font-bold font-mono tabular-nums shrink-0 w-[2.5rem] text-left ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
                             </div>
                             {/* Tank bar */}
-                            <div className="flex items-center gap-1.5 text-[13px]">
+                            <div className="flex items-center gap-1 text-[13px]">
                               <span className="font-bold text-foreground/85 w-4 shrink-0">탱</span>
                               <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden flex-1 min-w-0">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
-                              <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
+                              <span className={`font-bold font-mono tabular-nums shrink-0 w-[2.5rem] text-left ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
                             </div>
                           </div>
                         );
@@ -529,13 +529,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     {/* c: win rate + gear ratio */}
                     <div className="mr-3 flex items-center gap-9 shrink-0">
                       <div className="text-center">
-                        <div className="text-[10px] text-muted-foreground">승률</div>
+                        <div className="text-[11px] text-muted-foreground dark:text-foreground/80">승률</div>
                         <div className={`text-2xl font-bold font-mono ${getWinRateColor(sim.winRate)}`}>
                           {sim.winRate.toFixed(1)}%
                         </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-[10px] text-muted-foreground">장비 대비</div>
+                        <div className="text-[11px] text-muted-foreground dark:text-foreground/80">장비 대비</div>
                         <div className={`text-2xl font-bold font-mono ${gearRatio !== null ? getWinRateColor(gearRatio) : 'text-muted-foreground/50'}`}>
                           {gearRatio !== null ? gearRatio.toFixed(1) : '-'}
                         </div>
@@ -550,7 +550,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         {sim.barrierInfos.map((b, i) => {
                           const isMet = b.partySum >= b.required;
                           return (
-                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'is-met text-lime-700 dark:text-lime-200' : 'is-unmet text-red-700 dark:text-red-200'}`}>
+                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'is-met text-lime-700 dark:text-lime-100' : 'is-unmet text-red-700 dark:text-red-100'}`}>
                               {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                               {formatNumber(b.partySum)} / {formatNumber(b.required)}
                             </span>
