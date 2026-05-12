@@ -762,10 +762,12 @@ export default function QuestSimulation() {
 
   // Overwrite an existing saved entry
   const [overwriteDialogOpen, setOverwriteDialogOpen] = useState(false);
+  const [loadedSimId, setLoadedSimId] = useState<string | null>(null);
   const handleOverwriteResult = (targetId: string) => {
     const sim = buildSavedSim();
     if (!sim) return;
     overwriteSimulationResult(targetId, sim);
+    setLoadedSimId(targetId);
     const t = toast({ title: '덮어쓰기 완료', description: sim.name });
     setTimeout(() => t.dismiss(), 1000);
   };
@@ -800,6 +802,7 @@ export default function QuestSimulation() {
     setSelectedHeroIds(new Set(sim.heroIds));
     setSelectedBooster(sim.booster as any);
     setSelectedMiniBoss(sim.miniBoss as MiniBossType);
+    setLoadedSimId(sim.id);
     setSubTab('simulation');
   };
 
@@ -2114,11 +2117,14 @@ export default function QuestSimulation() {
                     </div>
                   );
                 })()}
-                {dispSim!.roundLimitRate > 0 && (
-                  <div className="mt-2 text-center text-[10px] text-red-400">
-                    ⚠ 라운드 제한 도달: {dispSim!.roundLimitRate.toFixed(1)}%
-                  </div>
-                )}
+                {dispSim!.roundLimitRate > 0 && (() => {
+                  const limitCount = Math.round((dispSim!.roundLimitRate / 100) * (dispSim!.totalSimulations || 0));
+                  return (
+                    <div className="mt-2 text-center text-[10px] text-red-400">
+                      ⚠ 라운드 제한 도달: {dispSim!.roundLimitRate.toFixed(1)}% ({limitCount}판)
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Damage Contribution */}
@@ -3518,6 +3524,7 @@ export default function QuestSimulation() {
         open={overwriteDialogOpen}
         onOpenChange={setOverwriteDialogOpen}
         onConfirm={handleOverwriteResult}
+        defaultSelectedId={loadedSimId}
       />
 
       {/* Save current party to my list */}
