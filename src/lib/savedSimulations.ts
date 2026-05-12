@@ -29,7 +29,6 @@ export interface SavedSimulationSummary {
     tankingShare?: number;
     powerBelowMin?: boolean;
   }[];
-  avgRoundsFinal?: number; // for SSS detection (avg<=1, winRate>=99.9)
   // Hero snapshots — used only when a hero no longer exists in the user's list
   heroSnapshots?: Hero[];
 }
