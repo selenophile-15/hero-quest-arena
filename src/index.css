@@ -1591,3 +1591,34 @@ a.bg-accent *,
   background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.85));
   border-color: hsl(var(--primary));
 }
+
+/* Quest simulation result numbers: keep the digits bright and above the tinted panel */
+.sim-result-number {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  color: hsl(var(--sim-result-color)) !important;
+  -webkit-text-fill-color: hsl(var(--sim-result-color));
+  text-shadow:
+    0 0 1px hsl(0 0% 100% / 0.95),
+    0 0 7px hsl(var(--sim-result-color) / 0.85),
+    0 0 16px hsl(var(--sim-result-color) / 0.55),
+    0 1px 2px hsl(0 0% 0% / 0.9);
+}
+
+.sim-result-number--success { --sim-result-color: 122 100% 52%; }
+.sim-result-number--warning { --sim-result-color: 52 98% 57%; }
+.sim-result-number--orange { --sim-result-color: 28 100% 64%; }
+.sim-result-number--danger { --sim-result-color: 0 100% 78%; }
+.sim-result-number--muted { --sim-result-color: 0 0% 58%; }
+
+[data-color-mode="light"] .sim-result-number--success { --sim-result-color: 92 88% 30%; }
+[data-color-mode="light"] .sim-result-number--warning { --sim-result-color: 43 92% 36%; }
+[data-color-mode="light"] .sim-result-number--orange { --sim-result-color: 24 90% 42%; }
+[data-color-mode="light"] .sim-result-number--danger { --sim-result-color: 355 74% 42%; }
+[data-color-mode="light"] .sim-result-number {
+  text-shadow:
+    0 0 1px hsl(0 0% 100% / 0.75),
+    0 1px 1px hsl(0 0% 100% / 0.65),
+    0 0 9px hsl(var(--sim-result-color) / 0.28);
+}
