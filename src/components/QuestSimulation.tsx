@@ -1537,7 +1537,7 @@ export default function QuestSimulation() {
                 <div className="grid grid-cols-2 divide-x divide-border/30">
                   {/* LEFT: win rate */}
                   <div className="py-3 px-4 text-center">
-                    <div className="text-xs text-muted-foreground mb-1 font-medium">승률</div>
+                    <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">승률</div>
                     {simResult ? (
                       <>
                         <div className={`text-3xl font-black font-mono tracking-tight ${winColor}`}>
