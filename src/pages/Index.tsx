@@ -204,13 +204,9 @@ const Index = () => {
               className="mx-auto select-none"
               width={1584}
               height={672}
-              loading="eager"
-              decoding="sync"
-              {...({ fetchpriority: 'high' } as any)}
               style={{
                 maxWidth: 'min(520px, 85vw)',
                 height: 'auto',
-                aspectRatio: '1584 / 672',
                 filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
                 animation: 'glowPulse 4s ease-in-out infinite',
               }}
