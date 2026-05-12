@@ -87,15 +87,15 @@ const CHAMPION_ORDER: string[] = ['아르곤','릴루','시아','야미','루도
 const CHAMPION_SET = new Set(CHAMPION_ORDER);
 const CHAMPION_ORDER_MAP = new Map(CHAMPION_ORDER.map((n, i) => [n, i]));
 
-// Job → class-line color map for filter dropdown
+// Job → class-line color map for filter dropdown (10% brighter than before)
 const JOB_LINE_OF: Record<string, '전사' | '로그' | '주문술사'> = {};
 JOB_ORDER.slice(0, 14).forEach(j => { JOB_LINE_OF[j] = '전사'; });
 JOB_ORDER.slice(14, 28).forEach(j => { JOB_LINE_OF[j] = '로그'; });
 JOB_ORDER.slice(28).forEach(j => { JOB_LINE_OF[j] = '주문술사'; });
 const JOB_LINE_COLOR: Record<string, string> = {
-  '전사': 'text-red-600 dark:text-red-400',
-  '로그': 'text-lime-600 dark:text-lime-400',
-  '주문술사': 'text-blue-600 dark:text-blue-400',
+  '전사': 'text-red-500 dark:text-red-300',
+  '로그': 'text-lime-500 dark:text-lime-300',
+  '주문술사': 'text-blue-500 dark:text-blue-300',
 };
 
 const QUEST_FILES: Array<{ key: string; file: string }> = [
