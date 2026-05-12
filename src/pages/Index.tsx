@@ -191,31 +191,38 @@ const Index = () => {
             <div className="absolute -bottom-4 -left-8 text-purple-300/60 text-sm" style={{ animation: 'starSparkle 3.5s ease-in-out infinite 0.5s' }}>✦</div>
             <div className="absolute -bottom-6 -right-14 text-blue-300/50 text-base" style={{ animation: 'starSparkle 5s ease-in-out infinite 2s' }}>✧</div>
 
-            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{
+            <span className="font-display text-[13px] tracking-[0.2em] uppercase block mb-4 bulb-flicker" style={{
               color: 'hsl(260 40% 65%)',
-              animation: 'subtitleReveal 1.5s ease-out forwards',
-              textShadow: '0 0 12px rgba(160,130,255,0.3)',
             }}>
               ⚔ 셀레노필 제작 ⚔
             </span>
 
-            {/* Game logo image */}
-            <img
-              src={titleLogo}
-              alt="샵타이탄 퀘스트 시뮬레이터"
-              className="mx-auto select-none"
-              width={1584}
-              height={672}
+            {/* Game logo image — wrapper reserves space to prevent layout shift */}
+            <div
+              className="mx-auto"
               style={{
-                maxWidth: 'min(520px, 85vw)',
-                height: 'auto',
-                filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
-                animation: 'glowPulse 4s ease-in-out infinite',
+                width: 'min(520px, 85vw)',
+                aspectRatio: '1584 / 672',
               }}
-            />
+            >
+              <img
+                src={titleLogo}
+                alt="샵타이탄 퀘스트 시뮬레이터"
+                className="w-full h-full select-none"
+                width={1584}
+                height={672}
+                loading="eager"
+                decoding="sync"
+                {...({ fetchpriority: 'high' } as any)}
+                style={{
+                  filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
+                  animation: 'glowPulse 4s ease-in-out infinite',
+                }}
+              />
+            </div>
 
             {/* Subtitle tagline */}
-            <p className="mt-3 text-[12px] tracking-[0.15em]" style={{
+            <p className="mt-3 text-[14px] tracking-[0.15em]" style={{
               color: 'hsl(260 30% 60%)',
               textShadow: '0 0 8px rgba(160,130,255,0.2)',
             }}>
@@ -223,10 +230,7 @@ const Index = () => {
             </p>
           </div>
 
-          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
-            영웅과 챔피언을 관리하고, 미리 던전에 보내<br />
-            최적의 전략을 찾아보세요.
-          </p>
+          <div className="mb-8" />
 
           <Button
             size="lg"
