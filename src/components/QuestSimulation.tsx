@@ -3072,7 +3072,7 @@ export default function QuestSimulation() {
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}</td>
                                             <td className="py-1 px-2 text-center font-mono text-yellow-400">{fadeZero(`+${bonus}%`, bonus === 0)}</td>
                                             <td className="py-1 px-2 text-center font-mono text-yellow-400">{baseCritPct > 0 ? `${finalCritPct}%` : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${turn.toFixed(1)}%`, turn === 0)}</td>
+                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{turn === 0 && adm > 0 ? <span className="opacity-70">{'<0.1%'}</span> : fadeZero(`${turn.toFixed(1)}%`, turn === 0)}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{cdmg > 0 ? formatNumber(cdmg) : blank}</td>
                                             <td className="py-1 px-2 text-center font-mono text-muted-foreground">{adm > 0 ? formatNumber(adm) : blank}</td>
                                           </tr>
