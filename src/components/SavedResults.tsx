@@ -728,9 +728,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="w-8 h-8 text-muted-foreground hover:text-white hover:bg-destructive [&:hover_svg]:text-white"
+                    className={`w-8 h-8 transition-colors ${
+                      editMode && selected
+                        ? '!bg-destructive !text-white [&_svg]:!text-white'
+                        : 'text-muted-foreground hover:text-white hover:bg-destructive [&:hover_svg]:text-white'
+                    }`}
                     onClick={(e) => { e.stopPropagation(); if (editMode) toggleSelect(sim.id); else setDeleteTarget(sim); }}
-                    title="삭제"
+                    title={editMode ? (selected ? '선택 해제' : '선택') : '삭제'}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
