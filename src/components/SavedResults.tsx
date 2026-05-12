@@ -3,6 +3,7 @@ import {
   getSavedSimulations,
   deleteSavedSimulation,
   SavedSimulationSummary,
+  setSavedSimulations,
 } from '@/lib/savedSimulations';
 import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -217,12 +218,12 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const handleImportConfirm = useCallback(() => {
     if (!importPreview) return;
     if (importMode === 'replace') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(importPreview));
+      setSavedSimulations(importPreview);
     } else {
       const existing = getSavedSimulations();
       const existingIds = new Set(existing.map(s => s.id));
       const merged = [...importPreview.filter(s => !existingIds.has(s.id)), ...existing];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      setSavedSimulations(merged);
     }
     setImportPreview(null);
     refresh();
