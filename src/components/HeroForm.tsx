@@ -26,6 +26,14 @@ interface HeroFormProps {
   hero?: Hero;
   onSave: (hero: Hero) => void;
   onCancel: () => void;
+  /** Override label for the primary save button (default: '저장') */
+  saveLabel?: string;
+  /** Override label for the secondary save-as button (default: '다른 이름으로 저장') */
+  saveAsLabel?: string;
+  /** If provided, save-as button calls this instead of onSave with a new id. */
+  onSaveAs?: (hero: Hero) => void;
+  /** If true, save-as button keeps the original hero id (used by temp-edit mode). */
+  saveAsKeepsId?: boolean;
 }
 
 const JOB_PAIRS: Record<string, [string, string][]> = {
