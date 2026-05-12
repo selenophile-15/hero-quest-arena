@@ -1726,7 +1726,7 @@ export default function HeroList() {
                           <button
                             onClick={() => selectedForDelete.size > 0 && setBulkDeleteConfirm(true)}
                             disabled={selectedForDelete.size === 0}
-                            className="h-9 px-3 inline-flex items-center gap-1 rounded bg-destructive text-white text-sm disabled:opacity-50 hover:bg-destructive/90 transition-colors"
+                            className="btn-force-white h-9 px-3 inline-flex items-center gap-1 rounded bg-destructive text-white text-sm disabled:opacity-50 hover:bg-destructive/90 transition-colors"
                             title="선택 삭제"
                           >
                             <Trash2 className="w-4 h-4" /> ({selectedForDelete.size})
