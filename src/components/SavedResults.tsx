@@ -4,7 +4,7 @@ import {
   deleteSavedSimulation,
   SavedSimulationSummary,
 } from '@/lib/savedSimulations';
-import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, X, ArrowDown, ArrowUp, ArrowDownUp, Filter } from 'lucide-react';
+import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, X, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -13,11 +13,13 @@ import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
 import { getHeroes } from '@/lib/storage';
 import { saveBlobFile } from '@/lib/fileDownload';
 import { formatNumber } from '@/lib/format';
+import { toast } from '@/hooks/use-toast';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import SavedSimDetailDialog from '@/components/SavedSimDetailDialog';
+import SaveSimsDialog from '@/components/SaveSimsDialog';
 
 const STORAGE_KEY = 'quest-sim-saved-results';
 
