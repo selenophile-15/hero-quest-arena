@@ -177,6 +177,7 @@ export default function Dashboard() {
           <Ranking />
         </div>
       </main>
+      <ScrollToTopButton />
     </div>
   );
 }
