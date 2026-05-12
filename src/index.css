@@ -1230,19 +1230,19 @@ a.bg-accent *,
   border-width: 1px;
 }
 .saved-chip-barrier {
-  border-color: hsl(var(--border));
-  background: hsl(var(--secondary) / 0.7);
+  border-color: hsl(0 0% 70%);
+  background: hsl(0 0% 96%);
   font-weight: 700;
 }
 .saved-chip-barrier.is-met,
 :root[data-color-mode="light"] .saved-chip-barrier.is-met {
-  border-color: hsl(142 70% 40% / 0.6);
-  background: hsl(142 70% 45% / 0.15);
+  border-color: hsl(142 65% 38%);
+  background: hsl(142 75% 92%);
 }
 .saved-chip-barrier.is-unmet,
 :root[data-color-mode="light"] .saved-chip-barrier.is-unmet {
-  border-color: hsl(0 75% 50% / 0.55);
-  background: hsl(0 75% 55% / 0.14);
+  border-color: hsl(0 70% 50%);
+  background: hsl(0 85% 94%);
 }
 .result-tabs-premium {
   position: relative;
