@@ -1231,6 +1231,7 @@ a.bg-accent *,
 .saved-chip-barrier {
   border-color: hsl(var(--border));
   background: hsl(var(--secondary) / 0.5);
+  font-weight: 600;
 }
 .result-tabs-premium {
   position: relative;
