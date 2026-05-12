@@ -1656,33 +1656,50 @@ export default function HeroList() {
                     </th>
                   ))}
                   {!captureMode && (
-                  <th className="px-3 py-3 text-center font-bold min-w-[110px]">
+                  <th className="px-3 py-3 text-center font-bold min-w-[160px]">
                     <div className="flex items-center justify-center gap-1">
-                      <button
-                        onClick={() => {
-                          if (manageMode) {
-                            if (selectedForDelete.size > 0) {
-                              setBulkDeleteConfirm(true);
-                            } else {
-                              setManageMode(false);
-                            }
-                          } else {
-                            setManageMode(true);
-                            setSelectedForDelete(new Set());
-                          }
-                        }}
-                        className={`text-sm font-bold transition-colors ${manageMode ? 'text-primary' : 'text-foreground hover:text-primary'}`}
-                      >
-                        관리
-                      </button>
-                      {manageMode && (
+                      {!manageMode ? (
                         <button
-                          onClick={() => setResetConfirm(true)}
-                          className="w-6 h-6 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
-                          title="리스트 초기화"
+                          onClick={() => { setManageMode(true); setSelectedForDelete(new Set()); }}
+                          className="text-sm font-bold transition-colors text-foreground hover:text-primary"
                         >
-                          <RefreshCw className="w-3 h-3 text-muted-foreground" />
+                          관리
                         </button>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              if (selectedForDelete.size === filtered.length) setSelectedForDelete(new Set());
+                              else setSelectedForDelete(new Set(filtered.map(h => h.id)));
+                            }}
+                            className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                            title={selectedForDelete.size === filtered.length && filtered.length > 0 ? '전체 해제' : '전체 선택'}
+                          >
+                            <CheckSquare className={`w-3.5 h-3.5 ${selectedForDelete.size === filtered.length && filtered.length > 0 ? 'text-primary' : 'text-muted-foreground'}`} />
+                          </button>
+                          <button
+                            onClick={() => selectedForDelete.size > 0 && setBulkDeleteConfirm(true)}
+                            disabled={selectedForDelete.size === 0}
+                            className="h-7 px-2 inline-flex items-center gap-1 rounded bg-destructive text-white text-xs disabled:opacity-50 hover:bg-destructive/90 transition-colors"
+                            title="선택 삭제"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> ({selectedForDelete.size})
+                          </button>
+                          <button
+                            onClick={() => { setManageMode(false); setSelectedForDelete(new Set()); }}
+                            className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                            title="취소"
+                          >
+                            <X className="w-3.5 h-3.5 text-muted-foreground" />
+                          </button>
+                          <button
+                            onClick={() => setResetConfirm(true)}
+                            className="w-7 h-7 flex items-center justify-center rounded border border-border bg-secondary/30 hover:bg-secondary/60 transition-colors"
+                            title="리스트 초기화"
+                          >
+                            <RefreshCw className="w-3 h-3 text-muted-foreground" />
+                          </button>
+                        </>
                       )}
                     </div>
                   </th>
