@@ -1558,13 +1558,13 @@ export default function QuestSimulation() {
                 </Button>
                 <Button
                   onClick={() => setSavePartyOpen(true)}
-                  size="sm"
+                  size="icon"
                   variant="outline"
-                  className="gap-1.5 ml-auto"
+                  className="ml-auto h-8 w-8"
                   title="현재 파티원들을 내 영웅/챔피언 리스트에 저장"
+                  aria-label="리스트에 저장"
                 >
-                  <Upload className="w-4 h-4" />
-                  리스트에 저장
+                  <BookUser className="w-4 h-4" />
                 </Button>
               </div>
             )}
