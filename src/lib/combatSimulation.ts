@@ -2595,9 +2595,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           Math.round(avgBaseAtk * (heroCritMult[i] + s * 0.25))
         );
       })() : undefined,
-      conquerorStackAvgDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
-        actualSimCount > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / actualSimCount) : 0
-      ) : undefined,
+      conquerorStackAvgDmg: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s => {
+        // Divide accumulated damage by # of sims in which the hero actually attacked at this stack.
+        // Stacks that were never reached return 0 (no participating sims).
+        const sims = conqStackSimsWithStack[s][i];
+        return sims > 0 ? Math.round(conqStackTotalDmgAccum[s][i] / sims) : 0;
+      }) : undefined,
       conquerorStackResetRate: heroIsConquistador[i] ? [0, 1, 2, 3, 4].map(s =>
         conqStackAttackCount[s][i] > 0
           ? Math.round((conqStackResetCount[s][i] / conqStackAttackCount[s][i]) * 100 * 10) / 10
