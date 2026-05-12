@@ -412,7 +412,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
             <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="직업" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="__all__">전체 직업</SelectItem>
-              {jobOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              {jobOpts.map(r => (
+                <SelectItem key={r} value={r}>
+                  <span className={JOB_LINE_COLOR[JOB_LINE_OF[r]] || ''}>{r}</span>
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={filterChampion} onValueChange={setFilterChampion}>
