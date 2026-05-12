@@ -505,13 +505,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                 </div>
                               )}
                             </div>
-                            {/* Dmg bar (bar fills column; number left-aligned in fixed slot matching "100%" width) */}
+                            {/* Dmg bar — bar = flex-1 (constant track length), number slot = exact width of "100%" left-aligned, right edge aligns with element row */}
                             <div className="flex items-center gap-1 text-[13px]">
                               <span className="font-bold text-foreground/85 w-4 shrink-0">딜</span>
                               <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden flex-1 min-w-0">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
-                              <span className={`font-bold font-mono tabular-nums shrink-0 w-[2.5rem] text-left ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
+                              <span className={`font-bold font-mono tabular-nums shrink-0 text-left ${getShareTextColor(hs.damageShare)}`} style={{ width: '4ch' }}>{hs.damageShare.toFixed(0)}%</span>
                             </div>
                             {/* Tank bar */}
                             <div className="flex items-center gap-1 text-[13px]">
@@ -519,7 +519,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                               <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden flex-1 min-w-0">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
-                              <span className={`font-bold font-mono tabular-nums shrink-0 w-[2.5rem] text-left ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
+                              <span className={`font-bold font-mono tabular-nums shrink-0 text-left ${getShareTextColor(tankShare)}`} style={{ width: '4ch' }}>{tankShare.toFixed(0)}%</span>
                             </div>
                           </div>
                         );
