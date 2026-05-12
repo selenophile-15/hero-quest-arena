@@ -3046,7 +3046,9 @@ export default function QuestSimulation() {
                                 </table>
                               </div>
                             </div>
+                            )}
                           </div>
+                          )}
 
                           {/* ===== Table C: 광전사 / 잘 (4 stages) ===== */}
                           <div>
