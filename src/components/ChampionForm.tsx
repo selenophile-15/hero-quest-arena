@@ -442,6 +442,13 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
     createdAt: useNewId ? new Date().toISOString() : (hero?.createdAt || new Date().toISOString()),
   });
 
+  const [saveAsConfirmOpen, setSaveAsConfirmOpen] = useState(false);
+
+  const performSaveAs = () => {
+    const data = buildChampionHeroData(!saveAsKeepsId);
+    (onSaveAs ?? onSave)(data);
+  };
+
   const handleSaveAs = () => {
     if (!name.trim()) {
       setNameError(true);
@@ -449,8 +456,11 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
       return;
     }
     setNameError(false);
-    const data = buildChampionHeroData(!saveAsKeepsId);
-    (onSaveAs ?? onSave)(data);
+    if (confirmSaveAs) {
+      setSaveAsConfirmOpen(true);
+      return;
+    }
+    performSaveAs();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
