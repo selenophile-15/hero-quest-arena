@@ -30,6 +30,10 @@ interface ChampionFormProps {
   saveAsLabel?: string;
   onSaveAs?: (hero: Hero) => void;
   saveAsKeepsId?: boolean;
+  /** Override the sticky header title. */
+  titleOverride?: string;
+  /** Confirm with a warning before triggering save-as (e.g. list overwrite). */
+  confirmSaveAs?: { title: string; description: string };
 }
 
 const ELEMENT_ORDER = [
