@@ -3047,7 +3047,7 @@ export default function QuestSimulation() {
                                         <GroupHeader label="중첩별 치명타 대미지" info={'평균 공격력 × (기본 치명타 대미지 계수 + 스택 보너스). 해당 스택에서 치명타가 터졌을 때 들어가는 대미지의 이론값.'} />
                                       </th>
                                       <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="평균 대미지" info={'해당 스택 상태로 때린 공격 1회의 평균 대미지 (해당 스택 누적 대미지 ÷ 해당 스택 공격 횟수). 그 스택에서 한 번도 공격하지 않았다면 빈 값.'} />
+                                        <GroupHeader label="평균 대미지" info={'해당 스택에서 한 판 동안 누적된 대미지의 평균 (해당 스택 누적 대미지 ÷ 그 스택으로 한 번이라도 공격한 판 수). 공격 비율이 높은 스택일수록 평균 대미지도 높게 나타남. 한 번도 공격하지 않았다면 빈 값.'} />
                                       </th>
                                     </tr>
                                   </thead>
