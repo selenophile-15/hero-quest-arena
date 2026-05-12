@@ -3272,8 +3272,7 @@ export default function QuestSimulation() {
                           })()}
 
                           {/* ===== Table E: 헴마 (별도 분리) ===== */}
-                          {(() => {
-                            const hasHemma = !!displayResults.find(hr => hr.isHemmaHero);
+                          {hasHemma && (() => {
                             return (
                               <div>
                                 <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 헴마</div>
