@@ -5,11 +5,11 @@ import { Monitor, Swords, Shield, Trophy } from "lucide-react";
 import { useMobileGestures } from "@/hooks/use-mobile-gestures";
 import { useDesktopModeState } from "@/hooks/use-desktop-mode";
 
-import landingBg from "@/assets/landing-bg.jpg";
-import titleLogo from "@/assets/title-logo.png";
-import featureList from "@/assets/feature-list.jpg";
-import featureQuest from "@/assets/feature-quest.jpg";
-import featureRanking from "@/assets/feature-ranking.jpg";
+import landingBg from "@/assets/landing-bg.webp";
+import titleLogo from "@/assets/title-logo.webp";
+import featureList from "@/assets/feature-list.webp";
+import featureQuest from "@/assets/feature-quest.webp";
+import featureRanking from "@/assets/feature-ranking.webp";
 
 const Index = () => {
   const navigate = useNavigate();
