@@ -1576,7 +1576,7 @@ export default function HeroList() {
                </Button>
               <div className="w-px h-5 bg-border mx-1" />
               <Button onClick={handleExport} variant="outline" size="sm" className="gap-1 text-xs h-8 px-2" title="리스트 저장하기">
-                <Save className="w-3.5 h-3.5" />
+                <Download className="w-3.5 h-3.5" />
               </Button>
               <input ref={importInputRef} type="file" accept=".json,.txt" className="sr-only" tabIndex={-1} onChange={handleImportFile} />
               <Button

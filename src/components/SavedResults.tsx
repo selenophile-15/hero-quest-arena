@@ -66,10 +66,10 @@ const QUEST_TYPE_LABELS: Record<string, string> = {
 
 // Quest-type colored chip style (text/border)
 const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
-  normal: 'border-red-500 bg-red-500/10 text-red-500 dark:text-red-300 dark:border-red-300',
-  flash: 'border-lime-600 bg-lime-500/10 text-lime-600 dark:text-lime-300 dark:border-lime-300',
-  lcog: 'border-yellow-700 bg-yellow-600/10 text-yellow-700 dark:text-yellow-300 dark:border-yellow-300',
-  tot: 'border-purple-500 bg-purple-500/10 text-purple-500 dark:text-purple-300 dark:border-purple-300',
+  normal: 'text-red-600 dark:text-red-300 border-current bg-red-400/25 dark:bg-red-300/20',
+  flash:  'text-lime-700 dark:text-lime-300 border-current bg-lime-400/25 dark:bg-lime-300/20',
+  lcog:   'text-yellow-700 dark:text-yellow-300 border-current bg-yellow-400/25 dark:bg-yellow-300/20',
+  tot:    'text-purple-600 dark:text-purple-300 border-current bg-purple-400/25 dark:bg-purple-300/20',
 };
 
 interface Props {
@@ -405,7 +405,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   {editMode ? (
                     <Checkbox checked={selected} onCheckedChange={() => toggleSelect(sim.id)} onClick={(e) => e.stopPropagation()} />
                   ) : (
-                    <span className="text-sm font-bold font-mono text-white">{simIndex + 1}</span>
+                    <span className="text-sm font-bold font-mono !text-white" style={{ color: '#fff' }}>{simIndex + 1}</span>
                   )}
                 </div>
 
@@ -505,18 +505,18 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                 </div>
                               )}
                             </div>
-                            {/* Dmg bar (fixed bar width, number left-aligned in fixed slot) */}
-                            <div className="flex items-center gap-1.5 text-[12px]">
-                              <span className="text-foreground/80 w-4 shrink-0">딜</span>
-                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 w-[64px]">
+                            {/* Dmg bar (bar fills column; number left-aligned in fixed slot) */}
+                            <div className="flex items-center gap-1.5 text-[13px]">
+                              <span className="font-bold text-foreground/85 w-4 shrink-0">딜</span>
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden flex-1 min-w-0">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
                             </div>
                             {/* Tank bar */}
-                            <div className="flex items-center gap-1.5 text-[12px]">
-                              <span className="text-foreground/80 w-4 shrink-0">탱</span>
-                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 w-[64px]">
+                            <div className="flex items-center gap-1.5 text-[13px]">
+                              <span className="font-bold text-foreground/85 w-4 shrink-0">탱</span>
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden flex-1 min-w-0">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
@@ -550,7 +550,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         {sim.barrierInfos.map((b, i) => {
                           const isMet = b.partySum >= b.required;
                           return (
-                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'is-met text-lime-700 dark:text-lime-300' : 'is-unmet text-red-700 dark:text-red-300'}`}>
+                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'is-met text-lime-700 dark:text-lime-200' : 'is-unmet text-red-700 dark:text-red-200'}`}>
                               {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                               {formatNumber(b.partySum)} / {formatNumber(b.required)}
                             </span>
@@ -562,27 +562,27 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     {sim.boosterImage && (
                       <span className="flex items-center gap-1.5">
                         <img src={sim.boosterImage} alt="booster" className="w-5 h-5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                        <span className="text-foreground/85">{sim.boosterLabel || '부스터'}</span>
+                        <span className="font-bold text-foreground/90">{sim.boosterLabel || '부스터'}</span>
                       </span>
                     )}
                     {(sim.barrierInfos?.length || sim.boosterImage) ? <span className="text-muted-foreground/40">·</span> : null}
-                    <span className="text-foreground/85">
+                    <span className="font-bold text-foreground/90">
                       평균 <span className="font-mono font-bold text-foreground">{Math.round(sim.avgRounds)}</span>턴
-                      <span className="text-foreground/60"> ({sim.minRounds}~{sim.maxRounds}R)</span>
+                      <span className="text-foreground/60 font-normal"> ({sim.minRounds}~{sim.maxRounds}R)</span>
                     </span>
                     <span className="text-muted-foreground/40">·</span>
                     {sim.successCount !== undefined && (
-                      <span className="text-foreground/85">
+                      <span className="font-bold text-foreground/90">
                         성공 <span className="font-mono font-bold text-lime-500 dark:text-lime-400">{formatNumber(sim.successCount)}</span>판
                       </span>
                     )}
                     {sim.failCount !== undefined && (
-                      <span className="text-foreground/85">
+                      <span className="font-bold text-foreground/90">
                         실패 <span className="font-mono font-bold text-red-500 dark:text-red-400">{formatNumber(sim.failCount)}</span>판
                       </span>
                     )}
                     {sim.retryCount !== undefined && sim.retryCount > 0 && (
-                      <span className="text-foreground/85">
+                      <span className="font-bold text-foreground/90">
                         재시도 <span className="font-mono font-bold text-amber-500 dark:text-amber-300">{formatNumber(sim.retryCount)}</span>판
                       </span>
                     )}
@@ -601,9 +601,9 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     <Play className="w-4 h-4" />
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
-                    className="w-8 h-8 text-muted-foreground hover:text-foreground"
+                    className="w-8 h-8 text-muted-foreground hover:text-white hover:bg-secondary/60 [&:hover_svg]:text-white"
                     onClick={(e) => { e.stopPropagation(); setExtractTarget(sim); }}
                     title="추출"
                   >
