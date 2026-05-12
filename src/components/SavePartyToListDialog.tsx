@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { addHero, updateHero, getHeroes } from '@/lib/storage';
-import { toast } from '@/hooks/use-toast';
+import { toast as sonnerToast } from 'sonner';
+import { X } from 'lucide-react';
 
 interface Props {
   open: boolean;
@@ -18,23 +19,19 @@ interface Props {
 type RowMode = 'add' | 'overwrite';
 
 export default function SavePartyToListDialog({ open, onOpenChange, members, onPersisted }: Props) {
-  // selected[heroId] = true when row is checked
   const [selected, setSelected] = useState<Record<string, boolean>>({});
-  // mode[heroId] = 'add' | 'overwrite'
   const [mode, setMode] = useState<Record<string, RowMode>>({});
 
-  // Which ids exist in storage (so we know if overwrite is valid)
   const existingIds = useMemo(() => new Set(getHeroes().map(h => h.id)), [open]);
 
   useEffect(() => {
     if (!open) return;
-    const initSel: Record<string, boolean> = {};
+    // Initialize all unchecked; default mode = overwrite if existing, else add.
     const initMode: Record<string, RowMode> = {};
     members.forEach(m => {
-      initSel[m.id] = true;
       initMode[m.id] = existingIds.has(m.id) ? 'overwrite' : 'add';
     });
-    setSelected(initSel);
+    setSelected({});
     setMode(initMode);
   }, [open, members, existingIds]);
 
@@ -52,29 +49,62 @@ export default function SavePartyToListDialog({ open, onOpenChange, members, onP
   };
 
   const handleConfirm = () => {
-    const persisted: string[] = [];
+    // Persisted ID = id present in the list after operation (new id for adds, original id for overwrites)
+    const persistedIds: string[] = [];
+    const persistedTypes = new Set<'hero' | 'champion'>();
     let addCount = 0, overCount = 0;
+
     members.forEach(m => {
       if (!selected[m.id]) return;
       const rowMode = mode[m.id] || 'add';
       if (rowMode === 'overwrite' && existingIds.has(m.id)) {
         updateHero(m);
         overCount++;
-        persisted.push(m.id);
+        persistedIds.push(m.id);
+        persistedTypes.add(m.type === 'champion' ? 'champion' : 'hero');
       } else {
-        // add as new — assign fresh id
-        const newHero: Hero = { ...m, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+        const newId = crypto.randomUUID();
+        const newHero: Hero = { ...m, id: newId, createdAt: new Date().toISOString() };
         addHero(newHero);
         addCount++;
+        persistedIds.push(newId);
+        persistedTypes.add(m.type === 'champion' ? 'champion' : 'hero');
       }
     });
+
     if (addCount + overCount > 0) {
       window.dispatchEvent(new Event('heroes-updated'));
-      toast({
-        title: '리스트에 저장됨',
-        description: `새로 추가 ${addCount}개 · 덮어쓰기 ${overCount}개`,
-      });
-      onPersisted?.(persisted);
+      onPersisted?.(persistedIds);
+
+      // Decide which list tab to navigate to (prefer hero if both)
+      const targetTab: 'hero' | 'champion' = persistedTypes.has('hero') ? 'hero' : 'champion';
+
+      // Custom sonner toast: 3s, click body to navigate, X to dismiss
+      sonnerToast.custom((id) => (
+        <div
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('goto-hero-list-highlight', {
+              detail: { ids: persistedIds, listTab: targetTab },
+            }));
+            sonnerToast.dismiss(id);
+          }}
+          className="flex items-center gap-3 rounded-md border border-border bg-card text-foreground px-4 py-3 shadow-lg cursor-pointer hover:bg-accent/30 transition-colors min-w-[280px]"
+        >
+          <div className="flex-1">
+            <div className="text-sm font-semibold">리스트에 저장됨</div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              새로 추가 {addCount}개 · 덮어쓰기 {overCount}개 · 클릭하여 이동
+            </div>
+          </div>
+          <button
+            onClick={(e) => { e.stopPropagation(); sonnerToast.dismiss(id); }}
+            className="p-1 rounded hover:bg-accent/50 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="닫기"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ), { duration: 3000 });
     }
     onOpenChange(false);
   };

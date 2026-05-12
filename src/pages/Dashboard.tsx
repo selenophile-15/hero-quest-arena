@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMobileGestures } from '@/hooks/use-mobile-gestures';
 import { useDesktopModeState } from '@/hooks/use-desktop-mode';
@@ -45,6 +45,13 @@ export default function Dashboard() {
 
   // Handle gestures (pinch-zoom, double-tap) and CSS zoom for desktop mode
   useMobileGestures(desktopMode);
+
+  // Switch to list tab when toast in QuestSimulation requests navigation
+  useEffect(() => {
+    const handler = () => setActiveTab('list');
+    window.addEventListener('goto-hero-list-highlight', handler);
+    return () => window.removeEventListener('goto-hero-list-highlight', handler);
+  }, []);
 
   return (
     <div className="min-h-screen bg-fantasy-gradient">

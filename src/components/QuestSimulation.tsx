@@ -10,7 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt, Hourglass, FileText, Settings, Upload } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt, Hourglass, FileText, Settings, Upload, BookUser } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
@@ -1558,13 +1558,13 @@ export default function QuestSimulation() {
                 </Button>
                 <Button
                   onClick={() => setSavePartyOpen(true)}
-                  size="sm"
+                  size="icon"
                   variant="outline"
-                  className="gap-1.5 ml-auto"
+                  className="ml-auto h-8 w-8"
                   title="현재 파티원들을 내 영웅/챔피언 리스트에 저장"
+                  aria-label="리스트에 저장"
                 >
-                  <Upload className="w-4 h-4" />
-                  리스트에 저장
+                  <BookUser className="w-4 h-4" />
                 </Button>
               </div>
             )}
