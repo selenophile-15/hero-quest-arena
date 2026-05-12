@@ -129,6 +129,17 @@ const Index = () => {
           0% { left: -100%; }
           100% { left: 200%; }
         }
+        @keyframes bulbFlicker {
+          0%, 18%, 22%, 25%, 53%, 57%, 100% {
+            opacity: 1;
+            text-shadow: 0 0 12px rgba(160,130,255,0.45);
+          }
+          20%, 24%, 55% {
+            opacity: 0.25;
+            text-shadow: none;
+          }
+        }
+        .bulb-flicker { animation: bulbFlicker 4s linear infinite; }
         .btn-shine { position: relative; overflow: hidden; }
         .btn-shine::after {
           content: '';
