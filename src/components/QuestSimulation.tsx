@@ -1908,12 +1908,15 @@ export default function QuestSimulation() {
                               if (val < 0) displayColor = 'text-purple-400';
                             }
 
-                            // Crit chance: cap display at 100%, show raw in parentheses
+                            // Crit chance: cap display at 100%, show raw in parentheses for Ninja/Sensei only
                             let critCapNote = '';
                             let rawCritVal = 0;
                             if (stat.key === 'crit' && val > 100) {
                               rawCritVal = val;
-                              critCapNote = `(실제: ${rawCritVal}%)`;
+                              const isNinjaSensei = hero.heroClass === '닌자' || hero.heroClass === '센세' || hero.heroClass === 'Ninja' || hero.heroClass === 'Sensei';
+                              if (isNinjaSensei) {
+                                critCapNote = `(실제: ${rawCritVal}%)`;
+                              }
                               val = 100;
                             }
 
