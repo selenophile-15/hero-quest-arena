@@ -405,7 +405,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   {editMode ? (
                     <Checkbox checked={selected} onCheckedChange={() => toggleSelect(sim.id)} onClick={(e) => e.stopPropagation()} />
                   ) : (
-                    <span className="text-sm font-bold font-mono text-white">{simIndex + 1}</span>
+                    <span className="text-sm font-bold font-mono !text-white" style={{ color: '#fff' }}>{simIndex + 1}</span>
                   )}
                 </div>
 
