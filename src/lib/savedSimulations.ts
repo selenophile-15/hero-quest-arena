@@ -34,6 +34,7 @@ export interface SavedSimulationSummary {
   subAreaImage?: string;
   boosterImage?: string;
   miniBossLabel?: string;
+  isBoss?: boolean;
   barrierInfos?: SavedSimBarrierInfo[];
   successCount?: number;
   failCount?: number;
