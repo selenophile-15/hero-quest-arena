@@ -1287,7 +1287,7 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
       {/* Sticky top bar with title + save/cancel */}
       <div className="sticky top-14 z-10 bg-card/90 backdrop-blur-sm border-b border-border py-2 -mx-6 px-6 flex items-center justify-between">
         <h2 className="text-xl text-primary tracking-wide font-bold">
-          {hero ? '챔피언 수정' : '새 챔피언 추가'}
+          {titleOverride ?? (hero ? '챔피언 수정' : '새 챔피언 추가')}
         </h2>
         <div className="flex gap-2">
           <Button type="button" size="sm" onClick={() => setBreakdownOpen(true)} disabled={!champCalcResult} className="btn-force-white gap-1.5">
