@@ -1792,7 +1792,7 @@ export default function HeroList() {
                                   onClick={() => toggleSelectForDelete(hero.id)}
                                   className={`p-1.5 rounded transition-colors ${
                                     isSelectedForDel
-                                      ? '!bg-destructive !text-white [&_svg]:!text-white'
+                                      ? 'btn-force-white !bg-destructive !text-white [&_svg]:!text-white'
                                       : 'text-muted-foreground hover:bg-primary/20 hover:text-primary'
                                   }`}
                                 >
