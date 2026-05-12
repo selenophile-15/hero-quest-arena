@@ -82,16 +82,15 @@ const Index = () => {
   return (
     <div className="min-h-[200vh] bg-background relative overflow-hidden">
       <div className="fixed top-4 right-4 z-20">
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={() => setDesktopMode((value) => !value)}
           title={desktopMode ? '모바일 모드로 전환' : '데스크탑 모드로 전환'}
-          className="h-9 gap-2 border-border/70 bg-card/80 px-3 text-xs text-foreground backdrop-blur-sm"
+          className={`flex items-center justify-center w-8 h-8 rounded-md border border-border/70 backdrop-blur-sm transition-colors ${
+            desktopMode ? 'bg-primary text-primary-foreground' : 'bg-card/80 text-foreground hover:bg-card'
+          }`}
         >
           <Monitor className="w-4 h-4" />
-          {desktopMode ? '데스크탑 모드 ON' : '데스크탑 모드'}
-        </Button>
+        </button>
       </div>
 
       <style>{`
