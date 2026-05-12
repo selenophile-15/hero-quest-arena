@@ -2789,8 +2789,10 @@ export default function QuestSimulation() {
                           {(() => {
                             const sharkHeroes = displayResults.filter(hr => hr.hasSharkSpirit);
                             const dinoHeroes = displayResults.filter(hr => hr.hasDinosaurSpirit || hr.isSamuraiOrDaimyo);
+                            if (sharkHeroes.length === 0 && dinoHeroes.length === 0) return null;
                             return (
                               <div className="space-y-4">
+                                {sharkHeroes.length > 0 && (
                                 <div>
                                   <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 상어 (영혼)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
@@ -2809,8 +2811,6 @@ export default function QuestSimulation() {
                                       <tbody>
                                         {zeroBucket ? (
                                           <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                        ) : sharkHeroes.length === 0 ? (
-                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">상어 영혼 보유 파티원 없음</td></tr>
                                         ) : sharkHeroes.map((hr, idx) => {
                                           const avg = Math.round((hr.sharkNormalDmg + hr.sharkCritDmg) / 2);
                                           return (
@@ -2826,6 +2826,8 @@ export default function QuestSimulation() {
                                     </table>
                                   </div>
                                 </div>
+                                )}
+                                {dinoHeroes.length > 0 && (
                                 <div>
                                   <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 공룡 / 사무라이(다이묘) (첫 턴)</div>
                                   <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
@@ -2844,8 +2846,6 @@ export default function QuestSimulation() {
                                       <tbody>
                                         {zeroBucket ? (
                                           <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                        ) : dinoHeroes.length === 0 ? (
-                                          <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">공룡 영혼 / 사무라이(다이묘) 직업 파티원 없음</td></tr>
                                         ) : dinoHeroes.map((hr, idx) => {
                                           const norm = hr.dinosaurNormalDmg;
                                           const crit = hr.dinosaurCritDmg;
@@ -2864,6 +2864,7 @@ export default function QuestSimulation() {
                                     </table>
                                   </div>
                                 </div>
+                                )}
                               </div>
                             );
                           })()}
