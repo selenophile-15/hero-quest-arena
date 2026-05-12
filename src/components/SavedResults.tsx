@@ -231,9 +231,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const handleExtractCopy = useCallback(async (sim: SavedSimulationSummary) => {
     try {
       await navigator.clipboard.writeText(JSON.stringify(sim, null, 2));
-      toast({ title: '복사 완료', description: '클립보드에 결과 코드가 복사되었습니다.' });
+      const t = toast({ title: '복사 완료', description: '클립보드에 결과 코드가 복사되었습니다.' });
+      setTimeout(() => t.dismiss(), 1000);
     } catch {
-      toast({ title: '복사 실패', description: '클립보드 접근이 거부되었습니다.', variant: 'destructive' });
+      const t = toast({ title: '복사 실패', description: '클립보드 접근이 거부되었습니다.', variant: 'destructive' });
+      setTimeout(() => t.dismiss(), 1000);
     }
     setExtractTarget(null);
   }, []);
@@ -242,6 +244,8 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     const blob = new Blob([JSON.stringify([sim], null, 2)], { type: 'text/plain' });
     const safe = (sim.regionName || 'result').replace(/[^\w가-힣]/g, '_');
     await saveBlobFile(blob, `quest_sim_${safe}_${new Date().toISOString().slice(0, 10)}.txt`);
+    const t = toast({ title: '파일 저장 완료' });
+    setTimeout(() => t.dismiss(), 1000);
     setExtractTarget(null);
   }, []);
 
