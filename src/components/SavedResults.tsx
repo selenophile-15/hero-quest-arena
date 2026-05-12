@@ -23,8 +23,6 @@ import {
 import SavedSimDetailDialog from '@/components/SavedSimDetailDialog';
 import SaveSimsDialog from '@/components/SaveSimsDialog';
 
-const STORAGE_KEY = 'quest-sim-saved-results';
-
 // Mirrors QuestSimulation face logic (death-count based, derived from survival %)
 const getFaceImg = (survivalRate: number, powerBelowMin?: boolean, avgRounds?: number, winRate?: number): string => {
   if (powerBelowMin) return '/images/quest/face/icon_shop_face_D.webp';
@@ -366,19 +364,55 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     return sortDir === 'desc' ? <ArrowDown className="w-3 h-3" /> : <ArrowUp className="w-3 h-3" />;
   };
 
+  const importConfirmDialog = (
+    <AlertDialog open={!!importPreview} onOpenChange={(v) => { if (!v) setImportPreview(null); }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>결과 불러오기</AlertDialogTitle>
+          <AlertDialogDescription>
+            {importPreview?.length || 0}개의 저장 결과가 포함된 파일입니다. 시뮬레이션을 다시 실행하지 않고 내 결과 카드로 바로 저장합니다.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <div className="flex flex-col gap-2 py-2">
+          <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border hover:bg-secondary/20">
+            <input type="radio" name="simImportMode" checked={importMode === 'replace'} onChange={() => setImportMode('replace')} />
+            <div>
+              <span className="text-sm font-medium text-foreground">덮어쓰기</span>
+              <p className="text-xs text-muted-foreground">기존 결과를 삭제하고 파일 데이터로 교체합니다</p>
+            </div>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border hover:bg-secondary/20">
+            <input type="radio" name="simImportMode" checked={importMode === 'merge'} onChange={() => setImportMode('merge')} />
+            <div>
+              <span className="text-sm font-medium text-foreground">합치기</span>
+              <p className="text-xs text-muted-foreground">기존 결과에 파일 데이터를 추가합니다</p>
+            </div>
+          </label>
+        </div>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setImportPreview(null)}>취소</AlertDialogCancel>
+          <AlertDialogAction onClick={handleImportConfirm}>적용</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
   if (saved.length === 0) {
     return (
-      <div className="text-center py-20">
-        <AlertTriangle className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
-        <p className="text-muted-foreground text-sm">저장된 결과가 없습니다</p>
-        <p className="text-muted-foreground/60 text-xs mt-1">시뮬레이션 결과에서 "결과 저장" 버튼을 눌러 저장하세요</p>
-        <div className="mt-4 flex justify-center">
-          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => fileInputRef.current?.click()}>
-            <Upload className="w-3.5 h-3.5" /> 불러오기
-          </Button>
-          <input ref={fileInputRef} type="file" accept=".txt,.json" className="hidden" onChange={handleImportFile} />
+      <>
+        <div className="text-center py-20">
+          <AlertTriangle className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+          <p className="text-muted-foreground text-sm">저장된 결과가 없습니다</p>
+          <p className="text-muted-foreground/60 text-xs mt-1">시뮬레이션 결과에서 "결과 저장" 버튼을 눌러 저장하세요</p>
+          <div className="mt-4 flex justify-center">
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => fileInputRef.current?.click()}>
+              <Upload className="w-3.5 h-3.5" /> 불러오기
+            </Button>
+            <input ref={fileInputRef} type="file" accept=".txt,.json" className="hidden" onChange={handleImportFile} />
+          </div>
         </div>
-      </div>
+        {importConfirmDialog}
+      </>
     );
   }
 
