@@ -66,11 +66,33 @@ const QUEST_TYPE_LABELS: Record<string, string> = {
 
 // Quest-type colored chip style (text/border) — identical in light & dark modes
 const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
-  normal: 'text-red-600 border-red-600 bg-red-100',
-  flash:  'text-lime-700 border-lime-700 bg-lime-100',
-  lcog:   'text-yellow-700 border-yellow-700 bg-yellow-100',
-  tot:    'text-purple-600 border-purple-600 bg-purple-100',
+  normal: 'text-red-700 border-red-800 bg-red-100',
+  flash:  'text-lime-800 border-lime-900 bg-lime-100',
+  lcog:   'text-yellow-800 border-yellow-900 bg-yellow-100',
+  tot:    'text-purple-700 border-purple-800 bg-purple-100',
 };
+
+// Job order (계열별, by promotion pairs) — used for filter dropdown ordering
+const JOB_ORDER: string[] = [
+  // 전사
+  '병사','용병','야만전사','족장','기사','군주','레인저','관리인','사무라이','다이묘','광전사','잘','어둠의 기사','죽음의 기사',
+  // 로그
+  '도둑','사기꾼','수도승','그랜드 마스터','머스킷병','정복자','방랑자','길잡이','닌자','센세','무희','곡예가','경보병','근위병',
+  // 주문술사
+  '마법사','대마법사','성직자','비숍','드루이드','아크 드루이드','소서러','워록','마법검','스펠나이트','풍수사','아스트라맨서','크로노맨서','페이트위버',
+];
+const JOB_ORDER_MAP = new Map(JOB_ORDER.map((n, i) => [n, i]));
+
+const CHAMPION_ORDER: string[] = ['아르곤','릴루','시아','야미','루도','폴로니아','도노반','헴마','애쉴리','비외른','맬러디','라인홀드','타마스'];
+const CHAMPION_SET = new Set(CHAMPION_ORDER);
+const CHAMPION_ORDER_MAP = new Map(CHAMPION_ORDER.map((n, i) => [n, i]));
+
+const QUEST_FILES: Array<{ key: string; file: string }> = [
+  { key: 'normal', file: '/data/quest/normal_quest.json' },
+  { key: 'flash',  file: '/data/quest/flash_quest.json' },
+  { key: 'lcog',   file: '/data/quest/lcog_quest.json' },
+  { key: 'tot',    file: '/data/quest/tot_quest.json' },
+];
 
 interface Props {
   onLoadSimulation: (sim: SavedSimulationSummary) => void;
@@ -97,7 +119,8 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const [filterQuestType, setFilterQuestType] = useState<string>('__all__');
   const [filterRegion, setFilterRegion] = useState<string>('__all__');
   const [filterSubArea, setFilterSubArea] = useState<string>('__all__');
-  const [filterHero, setFilterHero] = useState<string>('__all__');
+  const [filterJob, setFilterJob] = useState<string>('__all__');
+  const [filterChampion, setFilterChampion] = useState<string>('__all__');
   const [filterMinWin, setFilterMinWin] = useState<string>('');
 
   // Sort
@@ -105,6 +128,34 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const [sortDir, setSortDir] = useState<SortDir>('desc');
 
   const allHeroes = getHeroes();
+
+  // Region / sub-area order maps from quest data (preserves in-game order)
+  const [regionOrderMap, setRegionOrderMap] = useState<Map<string, number>>(new Map());
+  const [subAreaOrderMap, setSubAreaOrderMap] = useState<Map<string, number>>(new Map());
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const regMap = new Map<string, number>();
+      const subMap = new Map<string, number>();
+      let regIdx = 0;
+      let subIdx = 0;
+      for (const q of QUEST_FILES) {
+        try {
+          const res = await fetch(q.file);
+          const data = await res.json();
+          for (const r of (data.regions || [])) {
+            if (r.name && !regMap.has(r.name)) regMap.set(r.name, regIdx++);
+            for (const s of (r.subAreas || [])) {
+              if (s.name && !subMap.has(s.name)) subMap.set(s.name, subIdx++);
+            }
+          }
+        } catch {}
+      }
+      if (!cancelled) { setRegionOrderMap(regMap); setSubAreaOrderMap(subMap); }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     setSaved(getSavedSimulations());
@@ -195,18 +246,35 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   }, [saved]);
   const regionOpts = useMemo(() => {
     const base = filterQuestType === '__all__' ? saved : saved.filter(s => s.questTypeKey === filterQuestType);
-    return Array.from(new Set(base.map(s => s.regionName).filter(Boolean) as string[])).sort();
-  }, [saved, filterQuestType]);
+    const list = Array.from(new Set(base.map(s => s.regionName).filter(Boolean) as string[]));
+    return list.sort((a, b) => {
+      const ai = regionOrderMap.get(a) ?? 9999;
+      const bi = regionOrderMap.get(b) ?? 9999;
+      return ai !== bi ? ai - bi : a.localeCompare(b);
+    });
+  }, [saved, filterQuestType, regionOrderMap]);
   const subAreaOpts = useMemo(() => {
     const base = filterRegion === '__all__' ? saved : saved.filter(s => s.regionName === filterRegion);
-    return Array.from(new Set(base.map(s => s.subAreaName).filter(Boolean) as string[])).sort();
-  }, [saved, filterRegion]);
-  const heroOpts = useMemo(() => {
+    const list = Array.from(new Set(base.map(s => s.subAreaName).filter(Boolean) as string[]));
+    return list.sort((a, b) => {
+      const ai = subAreaOrderMap.get(a) ?? 9999;
+      const bi = subAreaOrderMap.get(b) ?? 9999;
+      return ai !== bi ? ai - bi : a.localeCompare(b);
+    });
+  }, [saved, filterRegion, subAreaOrderMap]);
+  const jobOpts = useMemo(() => {
     const set = new Set<string>();
     saved.forEach(s => s.heroSummaries.forEach(hs => {
-      if (hs.heroClass) set.add(hs.heroClass);
+      if (hs.heroClass && !CHAMPION_SET.has(hs.heroClass)) set.add(hs.heroClass);
     }));
-    return Array.from(set).sort();
+    return Array.from(set).sort((a, b) => (JOB_ORDER_MAP.get(a) ?? 9999) - (JOB_ORDER_MAP.get(b) ?? 9999));
+  }, [saved]);
+  const championOpts = useMemo(() => {
+    const set = new Set<string>();
+    saved.forEach(s => s.heroSummaries.forEach(hs => {
+      if (hs.heroClass && CHAMPION_SET.has(hs.heroClass)) set.add(hs.heroClass);
+    }));
+    return Array.from(set).sort((a, b) => (CHAMPION_ORDER_MAP.get(a) ?? 9999) - (CHAMPION_ORDER_MAP.get(b) ?? 9999));
   }, [saved]);
 
   // Apply filter + sort
@@ -215,8 +283,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
     if (filterQuestType !== '__all__') list = list.filter(s => s.questTypeKey === filterQuestType);
     if (filterRegion !== '__all__') list = list.filter(s => s.regionName === filterRegion);
     if (filterSubArea !== '__all__') list = list.filter(s => s.subAreaName === filterSubArea);
-    if (filterHero !== '__all__') {
-      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterHero));
+    if (filterJob !== '__all__') {
+      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterJob));
+    }
+    if (filterChampion !== '__all__') {
+      list = list.filter(s => s.heroSummaries.some(hs => hs.heroClass === filterChampion));
     }
     const minWinNum = parseFloat(filterMinWin);
     if (!Number.isNaN(minWinNum)) {
@@ -241,7 +312,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       });
     }
     return list;
-  }, [saved, filterQuestType, filterRegion, filterSubArea, filterHero, filterMinWin, sortKey, sortDir]);
+  }, [saved, filterQuestType, filterRegion, filterSubArea, filterJob, filterChampion, filterMinWin, sortKey, sortDir]);
 
   const toggleAll = () => {
     if (selectedIds.size === visible.length) setSelectedIds(new Set());
@@ -303,15 +374,22 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               {subAreaOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={filterHero} onValueChange={setFilterHero}>
-            <SelectTrigger className="h-8 w-[130px] text-xs"><SelectValue placeholder="직업/챔피언" /></SelectTrigger>
+          <Select value={filterJob} onValueChange={setFilterJob}>
+            <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="직업" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">전체 직업/챔피언</SelectItem>
-              {heroOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              <SelectItem value="__all__">전체 직업</SelectItem>
+              {jobOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={filterChampion} onValueChange={setFilterChampion}>
+            <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue placeholder="챔피언" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">전체 챔피언</SelectItem>
+              {championOpts.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1">
-            <span className="text-[11px] text-muted-foreground">승률 ≥</span>
+            <span className="text-xs text-foreground/80 dark:text-foreground/90">승률 ≥</span>
             <Input
               value={filterMinWin}
               onChange={e => setFilterMinWin(e.target.value.replace(/[^0-9.]/g, ''))}
@@ -319,12 +397,12 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               inputMode="decimal"
               className="h-8 w-[70px] text-xs"
             />
-            <span className="text-[11px] text-muted-foreground">%</span>
+            <span className="text-xs text-foreground/80 dark:text-foreground/90">%</span>
           </div>
 
           {/* Sort cluster */}
           <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/40">
-            <span className="text-[10px] text-muted-foreground mr-0.5">정렬</span>
+            <span className="text-xs text-foreground/80 dark:text-foreground/90 mr-0.5">정렬</span>
             {([
               { key: 'savedAt' as SortKey, label: '저장일' },
               { key: 'winRate' as SortKey, label: '승률' },
@@ -334,10 +412,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               <button
                 key={s.key}
                 onClick={() => cycleSort(s.key)}
-                className={`flex items-center gap-0.5 h-7 px-1.5 rounded text-[11px] border transition-colors ${
+                className={`flex items-center gap-1 h-8 px-2 rounded text-xs border transition-colors ${
                   sortKey === s.key && sortDir !== null
                     ? 'bg-primary/15 border-primary/40 text-primary'
-                    : 'border-border/40 text-muted-foreground hover:text-foreground hover:bg-secondary/40'
+                    : 'border-border/40 text-foreground/80 dark:text-foreground/90 hover:text-foreground hover:bg-secondary/40'
                 }`}
               >
                 {s.label}
