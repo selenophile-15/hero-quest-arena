@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Monitor, Swords, Shield, Trophy } from "lucide-react";
+import { Monitor, Swords } from "lucide-react";
 import { useMobileGestures } from "@/hooks/use-mobile-gestures";
 import { useDesktopModeState } from "@/hooks/use-desktop-mode";
 
