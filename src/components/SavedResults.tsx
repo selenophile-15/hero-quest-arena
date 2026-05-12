@@ -6,7 +6,7 @@ import {
 } from '@/lib/savedSimulations';
 import { Trash2, Play, AlertTriangle, Download, Upload, Pencil, ArrowDown, ArrowUp, ArrowDownUp, Filter, FileDown, Copy, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+// Checkbox removed: selection state now shown on trash button
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
@@ -87,15 +87,15 @@ const CHAMPION_ORDER: string[] = ['아르곤','릴루','시아','야미','루도
 const CHAMPION_SET = new Set(CHAMPION_ORDER);
 const CHAMPION_ORDER_MAP = new Map(CHAMPION_ORDER.map((n, i) => [n, i]));
 
-// Job → class-line color map for filter dropdown
+// Job → class-line color map for filter dropdown (10% brighter than before)
 const JOB_LINE_OF: Record<string, '전사' | '로그' | '주문술사'> = {};
 JOB_ORDER.slice(0, 14).forEach(j => { JOB_LINE_OF[j] = '전사'; });
 JOB_ORDER.slice(14, 28).forEach(j => { JOB_LINE_OF[j] = '로그'; });
 JOB_ORDER.slice(28).forEach(j => { JOB_LINE_OF[j] = '주문술사'; });
 const JOB_LINE_COLOR: Record<string, string> = {
-  '전사': 'text-red-600 dark:text-red-400',
-  '로그': 'text-lime-600 dark:text-lime-400',
-  '주문술사': 'text-blue-600 dark:text-blue-400',
+  '전사': 'text-red-500 dark:text-red-300',
+  '로그': 'text-lime-500 dark:text-lime-300',
+  '주문술사': 'text-blue-500 dark:text-blue-300',
 };
 
 const QUEST_FILES: Array<{ key: string; file: string }> = [
@@ -382,7 +382,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="saved-results-root space-y-3">
       {/* Toolbar: Filter / Sort + actions */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
@@ -427,7 +427,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1">
-            <span className="text-xs text-foreground/80 dark:text-foreground/90">승률 ≥</span>
+            <span className="text-xs text-foreground">승률 ≥</span>
             <Input
               value={filterMinWin}
               onChange={e => setFilterMinWin(e.target.value.replace(/[^0-9.]/g, ''))}
@@ -435,12 +435,12 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               inputMode="decimal"
               className="h-8 w-[70px] text-xs"
             />
-            <span className="text-xs text-foreground/80 dark:text-foreground/90">%</span>
+            <span className="text-xs text-foreground">%</span>
           </div>
 
           {/* Sort cluster */}
           <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/40">
-            <span className="text-xs text-foreground/80 dark:text-foreground/90 mr-0.5">정렬</span>
+            <span className="text-xs text-foreground mr-0.5">정렬</span>
             {([
               { key: 'savedAt' as SortKey, label: '저장일' },
               { key: 'winRate' as SortKey, label: '승률' },
@@ -450,10 +450,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               <button
                 key={s.key}
                 onClick={() => cycleSort(s.key)}
-                className={`flex items-center gap-1 h-8 px-2 rounded text-xs border transition-colors ${
+                className={`flex items-center gap-1 h-8 px-2 rounded-md text-xs border transition-colors ${
                   sortKey === s.key && sortDir !== null
                     ? 'bg-primary/15 border-primary/40 text-primary'
-                    : 'border-border/40 text-foreground/80 dark:text-foreground/90 hover:text-foreground hover:bg-secondary/40'
+                    : 'border-input text-foreground hover:bg-secondary/40'
                 }`}
               >
                 {s.label}
@@ -520,13 +520,9 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
               onClick={() => { if (editMode) toggleSelect(sim.id); else setDetailSim(sim); }}
             >
               <div className="flex items-stretch min-h-[170px]">
-                {/* Left: number / checkbox */}
+                {/* Left: slot number (always visible) */}
                 <div className="flex items-center justify-center w-10 shrink-0 bg-primary border-r border-border/30">
-                  {editMode ? (
-                    <Checkbox checked={selected} onCheckedChange={() => toggleSelect(sim.id)} onClick={(e) => e.stopPropagation()} />
-                  ) : (
-                    <span className="text-sm font-bold font-mono !text-white" style={{ color: '#fff' }}>{simIndex + 1}</span>
-                  )}
+                  <span className="text-sm font-bold font-mono !text-white" style={{ color: '#fff' }}>{simIndex + 1}</span>
                 </div>
 
                 {/* Center area (header + body + footer) */}
@@ -732,9 +728,13 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="w-8 h-8 text-muted-foreground hover:text-white hover:bg-destructive [&:hover_svg]:text-white"
+                    className={`w-8 h-8 transition-colors ${
+                      editMode && selected
+                        ? '!bg-destructive !text-white [&_svg]:!text-white'
+                        : 'text-muted-foreground hover:text-white hover:bg-destructive [&:hover_svg]:text-white'
+                    }`}
                     onClick={(e) => { e.stopPropagation(); if (editMode) toggleSelect(sim.id); else setDeleteTarget(sim); }}
-                    title="삭제"
+                    title={editMode ? (selected ? '선택 해제' : '선택') : '삭제'}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

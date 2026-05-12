@@ -1465,6 +1465,16 @@ a.bg-accent *,
 :root:not([data-color-mode="light"]) [data-detail-info] .text-muted-foreground { color: hsl(0 0% 75%) !important; }
 :root:not([data-color-mode="light"]) [data-detail-info] .text-foreground\/70 { color: hsl(0 0% 88%) !important; }
 
+/* Dark mode: brighten gray/muted text inside Saved Results section (10~20% brighter) */
+:root:not([data-color-mode="light"]) .saved-results-root .text-muted-foreground { color: hsl(0 0% 78%) !important; }
+:root:not([data-color-mode="light"]) .saved-results-root .text-muted-foreground\/60 { color: hsl(0 0% 70%) !important; }
+:root:not([data-color-mode="light"]) .saved-results-root .text-muted-foreground\/50 { color: hsl(0 0% 66%) !important; }
+:root:not([data-color-mode="light"]) .saved-results-root .text-muted-foreground\/40 { color: hsl(0 0% 60%) !important; }
+:root:not([data-color-mode="light"]) .saved-results-root .text-foreground\/60 { color: hsl(0 0% 82%) !important; }
+:root:not([data-color-mode="light"]) .saved-results-root .text-foreground\/80 { color: hsl(0 0% 90%) !important; }
+:root:not([data-color-mode="light"]) .saved-results-root .text-foreground\/85 { color: hsl(0 0% 92%) !important; }
+:root:not([data-color-mode="light"]) .saved-results-root .text-foreground\/90 { color: hsl(0 0% 94%) !important; }
+
 /* 턴 수 stat boxes — slightly darker in light mode, brighter in dark mode */
 .turn-stat-box { background: hsl(var(--secondary) / 0.3); }
 :root[data-color-mode="light"] .turn-stat-box { background: hsl(var(--secondary) / 0.55); }

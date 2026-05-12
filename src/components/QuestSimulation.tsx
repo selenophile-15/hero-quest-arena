@@ -748,12 +748,24 @@ export default function QuestSimulation() {
     setSelectedQuestIdx(sim.questIdx);
     // For each saved hero id: prefer current list (latest data); fall back to snapshot if missing
     const currentIds = new Set(allHeroesBase.map(h => h.id));
-    const missingSnapshots = (sim.heroSnapshots || []).filter(s => !currentIds.has(s.id));
+    const snapshots = sim.heroSnapshots || [];
+    const missingSnapshots = snapshots.filter(s => !currentIds.has(s.id));
     if (missingSnapshots.length > 0) {
       setFallbackHeroes(prev => {
         const ids = new Set(prev.map(h => h.id));
         return [...prev, ...missingSnapshots.filter(s => !ids.has(s.id))];
       });
+    }
+    // Detect unrecoverable hero IDs (no snapshot, not in current list)
+    const snapshotIds = new Set(snapshots.map(s => s.id));
+    const unrecoverable = sim.heroIds.filter(id => !currentIds.has(id) && !snapshotIds.has(id));
+    if (unrecoverable.length > 0) {
+      const t = toast({
+        title: '일부 영웅을 복원할 수 없습니다',
+        description: '오래된 저장 결과에 스냅샷이 없어 일부 영웅이 누락되었습니다. 새로 저장하면 향후에는 복원됩니다.',
+        variant: 'destructive',
+      });
+      setTimeout(() => t.dismiss(), 2500);
     }
     setSelectedHeroIds(new Set(sim.heroIds));
     setSelectedBooster(sim.booster as any);
