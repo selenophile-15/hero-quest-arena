@@ -1384,7 +1384,26 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
 
           {/* Stats Panel */}
           <div className="card-fantasy p-3">
-            <h3 className="text-sm font-semibold text-primary mb-2" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>스탯</h3>
+              <Button type="button" variant={compareMode ? 'default' : 'outline'} size="sm" onClick={() => {
+                if (!compareMode && champCalcResult) {
+                  setBaselineStats({
+                    hp: champCalcResult.finalHp ?? 0,
+                    atk: champCalcResult.finalAtk ?? 0,
+                    def: champCalcResult.finalDef ?? 0,
+                    crit: champCalcResult.totalCrit ?? 0,
+                    critDmg: champCalcResult.totalCritDmg ?? 0,
+                    critAttack: champCalcResult.critAttack ?? 0,
+                    evasion: champCalcResult.totalEvasion ?? 0,
+                    threat: champCalcResult.totalThreat ?? 0,
+                  });
+                }
+                setCompareMode(!compareMode);
+              }} disabled={!champCalcResult} className="text-[10px] h-6 px-2 gap-1">
+                {compareMode ? '🔄 비교 중' : '📈 비교 모드'}
+              </Button>
+            </div>
             <div className="flex items-center justify-center py-2 mb-1">
               <img src={getChampionImagePath(championName)} alt={championName} className="w-12 h-12 object-contain rounded-full"
                 onError={e => { e.currentTarget.style.display = 'none'; }} />
@@ -1403,22 +1422,32 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                 )}
               </div>
               {[
-                { icon: STAT_ICON_MAP.hp, value: champCalcResult?.finalHp ?? hp, suffix: '' },
-                { icon: STAT_ICON_MAP.atk, value: champCalcResult?.finalAtk ?? atk, suffix: '' },
-                { icon: STAT_ICON_MAP.def, value: champCalcResult?.finalDef ?? def, suffix: '' },
-                { icon: STAT_ICON_MAP.crit, value: champCalcResult?.totalCrit ?? crit, suffix: ' %' },
-                { icon: STAT_ICON_MAP.critDmg, value: champCalcResult?.totalCritDmg ?? critDmg, suffix: '', isCritDmg: true },
-                { icon: STAT_ICON_MAP.critAttack, value: champCalcResult?.critAttack ?? critAttack, suffix: '' },
-                { icon: STAT_ICON_MAP.evasion, value: champCalcResult?.totalEvasion ?? evasion, suffix: ' %' },
-                { icon: STAT_ICON_MAP.threat, value: champCalcResult?.totalThreat ?? threat, suffix: '' },
-              ].map((stat, i) => (
-                <div key={i} className="flex items-center gap-2 py-0.5 px-1">
-                  <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm text-foreground ml-auto tabular-nums">
-                    {stat.value ? ((stat as any).isCritDmg ? `x${(Number(stat.value) / 100).toFixed(1)}` : `${formatNumber(stat.value)}${stat.suffix}`) : '-'}
-                  </span>
-                </div>
-              ))}
+                { icon: STAT_ICON_MAP.hp, value: champCalcResult?.finalHp ?? hp, suffix: '', baseKey: 'hp' },
+                { icon: STAT_ICON_MAP.atk, value: champCalcResult?.finalAtk ?? atk, suffix: '', baseKey: 'atk' },
+                { icon: STAT_ICON_MAP.def, value: champCalcResult?.finalDef ?? def, suffix: '', baseKey: 'def' },
+                { icon: STAT_ICON_MAP.crit, value: champCalcResult?.totalCrit ?? crit, suffix: ' %', baseKey: 'crit' },
+                { icon: STAT_ICON_MAP.critDmg, value: champCalcResult?.totalCritDmg ?? critDmg, suffix: '', isCritDmg: true, baseKey: 'critDmg' },
+                { icon: STAT_ICON_MAP.critAttack, value: champCalcResult?.critAttack ?? critAttack, suffix: '', baseKey: 'critAttack' },
+                { icon: STAT_ICON_MAP.evasion, value: champCalcResult?.totalEvasion ?? evasion, suffix: ' %', baseKey: 'evasion' },
+                { icon: STAT_ICON_MAP.threat, value: champCalcResult?.totalThreat ?? threat, suffix: '', baseKey: 'threat' },
+              ].map((stat, i) => {
+                const currentVal = Number(stat.value) || 0;
+                const baseVal = compareMode && baselineStats ? (baselineStats[stat.baseKey] ?? 0) : null;
+                const diff = baseVal !== null ? currentVal - baseVal : null;
+                return (
+                  <div key={i} className="flex items-center gap-2 py-0.5 px-1">
+                    <img src={stat.icon} alt="" className="w-5 h-5 flex-shrink-0" />
+                    <span className="text-sm text-foreground ml-auto tabular-nums">
+                      {stat.value ? ((stat as any).isCritDmg ? `x${(Number(stat.value) / 100).toFixed(1)}` : `${formatNumber(stat.value)}${stat.suffix}`) : '-'}
+                    </span>
+                    {diff !== null && diff !== 0 && (
+                      <span className={`text-[10px] font-semibold tabular-nums ml-1 ${diff > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {diff > 0 ? '▲' : '▼'}{(stat as any).isCritDmg ? (Math.abs(diff) / 100).toFixed(1) : formatNumber(Math.abs(Math.round(diff)))}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
               <div className="flex items-center gap-2 py-0.5 px-1">
                 <ElementIcon element={element || '모든 원소'} size={20} />
                 <span className="text-sm text-foreground ml-auto tabular-nums">{totalEquipElement > 0 ? formatNumber(totalEquipElement) : (elementValue ? formatNumber(elementValue) : '-')}</span>
