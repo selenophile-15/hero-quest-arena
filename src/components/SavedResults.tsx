@@ -401,11 +401,11 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
             >
               <div className="flex items-stretch min-h-[170px]">
                 {/* Left: number / checkbox */}
-                <div className="flex items-center justify-center w-10 shrink-0 bg-muted/30 border-r border-border/30">
+                <div className="flex items-center justify-center w-10 shrink-0 bg-primary border-r border-border/30">
                   {editMode ? (
                     <Checkbox checked={selected} onCheckedChange={() => toggleSelect(sim.id)} onClick={(e) => e.stopPropagation()} />
                   ) : (
-                    <span className="text-sm font-bold font-mono text-muted-foreground">{simIndex + 1}</span>
+                    <span className="text-sm font-bold font-mono text-white">{simIndex + 1}</span>
                   )}
                 </div>
 
@@ -432,7 +432,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                       </>}
                       {sim.isBoss ? (<>
                         <span className="text-muted-foreground/50 text-[13px]">&gt;</span>
-                        <span className="text-[13px] font-bold text-amber-400">보스</span>
+                        <span className="text-[13px] font-bold text-foreground">보스</span>
                       </>) : sim.miniBossLabel && (<>
                         <span className="text-muted-foreground/50 text-[13px]">&gt;</span>
                         <span className={`text-[13px] font-bold ${
@@ -444,7 +444,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     </div>
                     <span className="ml-auto flex items-baseline gap-3">
                       <span className="text-[13px] text-foreground/90 font-semibold">{dateLabel}</span>
-                      <span className="text-[13px] text-foreground/90 font-semibold font-mono">{timeLabel}</span>
+                      <span className="text-[13px] text-foreground/90 font-semibold">{timeLabel}</span>
                     </span>
                   </div>
 
@@ -486,40 +486,40 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                               </div>
                               <div className="text-[14px] font-bold text-foreground truncate min-w-0">{hs.heroName}</div>
                             </div>
-                            {/* Row 2: face + (survival %)   |   per-hero elements (right) */}
+                            {/* Row 2: face + survival   |   per-hero elements (right) */}
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-1">
                                 <img src={faceImg} alt="" className="w-6 h-6" />
-                                <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>
-                                  ({hs.survivalRate.toFixed(0)}%)
+                                <span className={`text-[12px] font-mono font-bold tabular-nums ${getSurvivalColor(hs.survivalRate)}`}>
+                                  {hs.survivalRate.toFixed(0)}%
                                 </span>
                               </div>
                               {heroElements.length > 0 && (
                                 <div className="flex items-center gap-1 shrink-0">
-                                  {heroElements.map(e => (
+                                  {heroElements.filter(e => e.value > 0).map(e => (
                                     <span key={e.element} className="flex items-center gap-0.5">
                                       {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-6 h-6" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
-                                      <span className={`text-[11px] font-mono font-bold ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.value)}</span>
+                                      <span className={`text-[12px] font-mono font-bold tabular-nums ${getSurvivalColor(hs.survivalRate)}`}>{formatNumber(e.value)}</span>
                                     </span>
                                   ))}
                                 </div>
                               )}
                             </div>
-                            {/* Dmg bar (label fixed, bar fixed-width, number after) */}
-                            <div className="flex items-center gap-1 text-[11px]">
+                            {/* Dmg bar (fixed bar width, number left-aligned in fixed slot) */}
+                            <div className="flex items-center gap-1.5 text-[12px]">
                               <span className="text-foreground/80 w-4 shrink-0">딜</span>
-                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 flex-1 min-w-[56px]">
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 w-[64px]">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
-                              <span className={`font-bold font-mono shrink-0 ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
+                              <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
                             </div>
                             {/* Tank bar */}
-                            <div className="flex items-center gap-1 text-[11px]">
+                            <div className="flex items-center gap-1.5 text-[12px]">
                               <span className="text-foreground/80 w-4 shrink-0">탱</span>
-                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 flex-1 min-w-[56px]">
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 w-[64px]">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
-                              <span className={`font-bold font-mono shrink-0 ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
+                              <span className={`font-bold font-mono tabular-nums shrink-0 w-9 text-left ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
                             </div>
                           </div>
                         );
@@ -550,7 +550,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         {sim.barrierInfos.map((b, i) => {
                           const isMet = b.partySum >= b.required;
                           return (
-                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] font-semibold ${isMet ? 'text-lime-700 dark:text-lime-400' : 'text-red-700 dark:text-red-400'}`}>
+                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'is-met text-lime-700 dark:text-lime-300' : 'is-unmet text-red-700 dark:text-red-300'}`}>
                               {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                               {formatNumber(b.partySum)} / {formatNumber(b.required)}
                             </span>

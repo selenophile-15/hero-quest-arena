@@ -1224,14 +1224,31 @@ a.bg-accent *,
   line-height: 1.4;
 }
 .saved-chip-quest-type {
-  padding: 1px 7px;
+  padding: 2px 9px;
   font-size: 12px;
   line-height: 1.35;
+  background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+  box-shadow: 0 1px 0 hsl(var(--primary) / 0.08) inset, 0 2px 8px hsl(var(--primary) / 0.12);
 }
 .saved-chip-barrier {
   border-color: hsl(var(--border));
-  background: hsl(var(--secondary) / 0.5);
-  font-weight: 600;
+  background: linear-gradient(180deg, hsl(var(--secondary) / 0.85) 0%, hsl(var(--secondary) / 0.6) 100%);
+  box-shadow: 0 1px 0 hsl(var(--primary) / 0.06) inset, 0 2px 8px rgba(0,0,0,0.12);
+  font-weight: 700;
+}
+.saved-chip-barrier.is-met {
+  border-color: hsl(142 70% 45% / 0.6);
+  background: linear-gradient(180deg, hsl(142 70% 45% / 0.18) 0%, hsl(142 70% 45% / 0.08) 100%);
+}
+.saved-chip-barrier.is-unmet {
+  border-color: hsl(0 75% 55% / 0.55);
+  background: linear-gradient(180deg, hsl(0 75% 55% / 0.16) 0%, hsl(0 75% 55% / 0.07) 100%);
+}
+:root[data-color-mode="light"] .saved-chip-barrier.is-met {
+  background: linear-gradient(180deg, hsl(142 70% 40% / 0.18) 0%, hsl(142 70% 40% / 0.08) 100%);
+}
+:root[data-color-mode="light"] .saved-chip-barrier.is-unmet {
+  background: linear-gradient(180deg, hsl(0 75% 50% / 0.16) 0%, hsl(0 75% 50% / 0.07) 100%);
 }
 .result-tabs-premium {
   position: relative;
