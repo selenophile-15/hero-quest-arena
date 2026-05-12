@@ -119,7 +119,8 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const [filterQuestType, setFilterQuestType] = useState<string>('__all__');
   const [filterRegion, setFilterRegion] = useState<string>('__all__');
   const [filterSubArea, setFilterSubArea] = useState<string>('__all__');
-  const [filterHero, setFilterHero] = useState<string>('__all__');
+  const [filterJob, setFilterJob] = useState<string>('__all__');
+  const [filterChampion, setFilterChampion] = useState<string>('__all__');
   const [filterMinWin, setFilterMinWin] = useState<string>('');
 
   // Sort
@@ -127,6 +128,34 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const [sortDir, setSortDir] = useState<SortDir>('desc');
 
   const allHeroes = getHeroes();
+
+  // Region / sub-area order maps from quest data (preserves in-game order)
+  const [regionOrderMap, setRegionOrderMap] = useState<Map<string, number>>(new Map());
+  const [subAreaOrderMap, setSubAreaOrderMap] = useState<Map<string, number>>(new Map());
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const regMap = new Map<string, number>();
+      const subMap = new Map<string, number>();
+      let regIdx = 0;
+      let subIdx = 0;
+      for (const q of QUEST_FILES) {
+        try {
+          const res = await fetch(q.file);
+          const data = await res.json();
+          for (const r of (data.regions || [])) {
+            if (r.name && !regMap.has(r.name)) regMap.set(r.name, regIdx++);
+            for (const s of (r.subAreas || [])) {
+              if (s.name && !subMap.has(s.name)) subMap.set(s.name, subIdx++);
+            }
+          }
+        } catch {}
+      }
+      if (!cancelled) { setRegionOrderMap(regMap); setSubAreaOrderMap(subMap); }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     setSaved(getSavedSimulations());
