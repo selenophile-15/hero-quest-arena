@@ -420,7 +420,9 @@ export default function QuestSimulation() {
   }, []);
 
   const selectedHeroes = useMemo(() => {
-    const heroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    const heroes = allHeroes
+      .filter(h => selectedHeroIds.has(h.id))
+      .map(h => tempOverrides[h.id] ? tempOverrides[h.id] : h);
     return heroes.sort((a, b) => {
       // Champions first
       if (a.type === 'champion' && b.type !== 'champion') return -1;
@@ -431,7 +433,7 @@ export default function QuestSimulation() {
       const bOrder = JOB_SORT_MAP[b.heroClass] ?? 999;
       return aOrder - bOrder;
     });
-  }, [allHeroes, selectedHeroIds, JOB_SORT_MAP]);
+  }, [allHeroes, selectedHeroIds, tempOverrides, JOB_SORT_MAP]);
 
   const maxMembers = currentRegion?.maxMembers || 5;
   const isBossQuest = currentQuest?.isBoss || false;
