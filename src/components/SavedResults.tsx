@@ -550,7 +550,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         {sim.barrierInfos.map((b, i) => {
                           const isMet = b.partySum >= b.required;
                           return (
-                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'is-met text-lime-700 dark:text-lime-300' : 'is-unmet text-red-700 dark:text-red-300'}`}>
+                            <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'is-met text-lime-700 dark:text-lime-200' : 'is-unmet text-red-700 dark:text-red-200'}`}>
                               {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
                               {formatNumber(b.partySum)} / {formatNumber(b.required)}
                             </span>
