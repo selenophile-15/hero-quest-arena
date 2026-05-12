@@ -1570,6 +1570,21 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
           championName={championName}
         />
 
+        {confirmSaveAs && (
+          <AlertDialog open={saveAsConfirmOpen} onOpenChange={setSaveAsConfirmOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{confirmSaveAs.title}</AlertDialogTitle>
+                <AlertDialogDescription>{confirmSaveAs.description}</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>취소</AlertDialogCancel>
+                <AlertDialogAction onClick={performSaveAs} className="bg-destructive text-white btn-force-white hover:bg-destructive/90">덮어쓰기</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+
       </div>
     </div>
   );
