@@ -73,11 +73,6 @@ const Index = () => {
     }
   }, []);
 
-  const features = [
-    { num: '01', title: "리스트 관리", desc: "영웅과 챔피언의 스탯을 정밀하게 관리하고 비교하세요", icon: Shield, color: '#3b82f6', img: featureList },
-    { num: '02', title: "퀘스트 시뮬레이션", desc: "던전에 파티를 보내 결과를 미리 확인하세요", icon: Swords, color: '#ef4444', img: featureQuest },
-    { num: '03', title: "랭킹", desc: "다른 플레이어와 시뮬레이션 결과를 비교하세요", icon: Trophy, color: '#eab308', img: featureRanking },
-  ];
 
   return (
     <div className="min-h-[200vh] bg-background relative overflow-hidden">
