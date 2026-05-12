@@ -84,6 +84,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<SavedSimulationSummary | null>(null);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [detailSim, setDetailSim] = useState<SavedSimulationSummary | null>(null);
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [importPreview, setImportPreview] = useState<SavedSimulationSummary[] | null>(null);
+  const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge');
+  const [extractTarget, setExtractTarget] = useState<SavedSimulationSummary | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Filters
