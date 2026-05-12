@@ -23,15 +23,17 @@ import SaveSimsDialog from '@/components/SaveSimsDialog';
 
 const STORAGE_KEY = 'quest-sim-saved-results';
 
-const getFaceImg = (survivalRate: number, powerBelowMin?: boolean): string => {
+// Mirrors QuestSimulation face logic (death-count based, derived from survival %)
+const getFaceImg = (survivalRate: number, powerBelowMin?: boolean, avgRounds?: number, winRate?: number): string => {
   if (powerBelowMin) return '/images/quest/face/icon_shop_face_D.webp';
-  if (survivalRate <= 0) return '/images/quest/face/icon_shop_face_D.webp';
-  if (survivalRate < 40) return '/images/quest/face/icon_shop_face_D.webp';
-  if (survivalRate < 60) return '/images/quest/face/icon_shop_face_C.webp';
-  if (survivalRate < 75) return '/images/quest/face/icon_shop_face_B.webp';
-  if (survivalRate < 90) return '/images/quest/face/icon_shop_face_A.webp';
-  if (survivalRate < 100) return '/images/quest/face/icon_shop_face_S.webp';
-  return '/images/quest/face/icon_shop_face_SSS.webp';
+  const deathPct = 100 - survivalRate;
+  if (deathPct >= 100) return '/images/quest/face/icon_shop_face_D.webp';
+  if (deathPct >= 60)  return '/images/quest/face/icon_shop_face_C.webp';
+  if (deathPct >= 40)  return '/images/quest/face/icon_shop_face_B.webp';
+  if (deathPct >= 15)  return '/images/quest/face/icon_shop_face_A.webp';
+  if (deathPct >= 0.01) return '/images/quest/face/icon_shop_face_S.webp';
+  if ((avgRounds ?? 99) <= 1 && (winRate ?? 0) >= 99.9) return '/images/quest/face/icon_shop_face_SSS.webp';
+  return '/images/quest/face/icon_shop_face_S.webp';
 };
 
 // Olive-lime palette matching QuestSimulation
