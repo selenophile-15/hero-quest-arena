@@ -191,7 +191,7 @@ const StableImage = ({ src, onError, ...props }: StableImageProps) => {
       loading="eager"
       decoding="sync"
       onError={onError}
-      {...({ fetchPriority: 'high' } as Record<string, string>)}
+      {...({ fetchpriority: 'high' } as Record<string, string>)}
     />
   );
 };
