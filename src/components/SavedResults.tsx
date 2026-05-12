@@ -313,7 +313,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
           return (
             <div
               key={sim.id}
-              className={`saved-result-card rounded-lg cursor-pointer ${editMode && selected ? 'ring-2 ring-primary/60' : ''}`}
+              className={`saved-result-card rounded-lg cursor-pointer bg-gradient-to-br from-card via-card to-primary/[0.04] dark:to-primary/[0.07] ${editMode && selected ? 'ring-2 ring-primary/60' : ''}`}
               onClick={() => { if (editMode) toggleSelect(sim.id); else setDetailSim(sim); }}
             >
               <div className="flex items-stretch min-h-[150px]">
@@ -328,25 +328,43 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
 
                 {/* Main */}
                 <div className="flex-1 min-w-0 p-3 flex flex-col gap-2">
-                  {/* Header row: breadcrumb + barrier + date */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[11px] px-1.5 py-0.5 rounded bg-primary/15 text-primary font-medium">{questTypeLabel}</span>
-                    <span className="text-muted-foreground text-[11px]">›</span>
-                    <span className="text-sm font-bold text-foreground">{sim.regionName || '-'}</span>
+                  {/* Header row: breadcrumb + barrier */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[13px] font-bold text-primary">{questTypeLabel}</span>
+                    <span className="text-muted-foreground text-[13px]">/</span>
+                    <span className="text-[13px] font-bold text-foreground">{sim.regionName || '-'}</span>
                     {sim.subAreaName && (
                       <>
-                        <span className="text-muted-foreground text-[11px]">›</span>
-                        <span className="text-sm font-medium text-foreground/90">{sim.subAreaName}</span>
+                        <span className="text-muted-foreground text-[13px]">›</span>
+                        <span className="text-[13px] font-bold text-foreground">{sim.subAreaName}</span>
                       </>
                     )}
                     {sim.difficulty && (
                       <>
-                        <span className="text-muted-foreground text-[11px]">›</span>
-                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-secondary/60 text-foreground font-medium">{sim.difficulty}</span>
+                        <span className="text-muted-foreground text-[13px]">›</span>
+                        <span className={`text-[13px] font-bold ${
+                          sim.difficulty === '쉬움' ? 'text-lime-400' :
+                          sim.difficulty === '보통' ? 'text-blue-400' :
+                          sim.difficulty === '어려움' ? 'text-orange-400' :
+                          sim.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.5)]' :
+                          'text-foreground'
+                        }`}>{sim.difficulty}</span>
                       </>
                     )}
-                    {sim.miniBossLabel && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-fuchsia-500/15 text-fuchsia-500 dark:text-fuchsia-300 font-medium">{sim.miniBossLabel} 미니보스</span>
+                    {sim.isBoss ? (
+                      <>
+                        <span className="text-muted-foreground text-[13px]">›</span>
+                        <span className="text-[13px] font-bold text-amber-400">보스</span>
+                      </>
+                    ) : sim.miniBossLabel && (
+                      <>
+                        <span className="text-muted-foreground text-[13px]">›</span>
+                        <span className={`text-[13px] font-bold ${
+                          sim.miniBoss === 'huge' ? 'text-lime-400' :
+                          sim.miniBoss === 'dire' ? 'text-red-400' :
+                          sim.miniBoss === 'legendary' ? 'text-purple-400' : 'text-foreground'
+                        }`}>{sim.miniBossLabel}</span>
+                      </>
                     )}
 
                     {/* Barriers */}
@@ -355,9 +373,9 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         {sim.barrierInfos.map((b, i) => {
                           const isMet = b.partySum >= b.required;
                           return (
-                            <div key={i} className={`flex items-center gap-1 px-1.5 py-0.5 rounded border ${isMet ? 'border-lime-500/40 bg-lime-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
-                              {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-3.5 h-3.5" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                              <span className={`text-[10px] font-mono font-bold ${isMet ? 'text-lime-500 dark:text-lime-400' : 'text-red-500 dark:text-red-400'}`}>
+                            <div key={i} className="flex items-center gap-1">
+                              {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                              <span className={`text-[13px] font-bold font-mono ${isMet ? 'text-lime-500 dark:text-lime-400' : 'text-red-500 dark:text-red-400'}`}>
                                 {formatNumber(b.partySum)} / {formatNumber(b.required)}
                               </span>
                             </div>
@@ -365,8 +383,6 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                         })}
                       </div>
                     )}
-
-                    <span className="text-[10px] text-muted-foreground ml-auto shrink-0">{dateStr}</span>
                   </div>
 
                   {/* Divider after header */}
@@ -374,18 +390,18 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
 
                   {/* Party row: Region/SubArea image + booster overlay | hero portraits */}
                   <div className="flex items-center gap-3">
-                    {/* Region/SubArea visual */}
+                    {/* Region/SubArea visual (no border/bg) */}
                     <div className="relative w-16 h-16 shrink-0">
-                      <div className="w-16 h-16 rounded-lg border-2 border-primary/40 overflow-hidden bg-secondary/40">
+                      <div className="w-16 h-16 overflow-hidden">
                         {(sim.subAreaImage || sim.regionImage) ? (
-                          <img src={sim.subAreaImage || sim.regionImage} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                          <img src={sim.subAreaImage || sim.regionImage} alt="" className="w-full h-full object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                         ) : null}
                       </div>
                       {sim.regionImage && sim.subAreaImage && sim.regionImage !== sim.subAreaImage && (
-                        <img src={sim.regionImage} alt="" className="absolute -top-1 -left-1 w-6 h-6 rounded-full border border-primary/40 bg-secondary/60 object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        <img src={sim.regionImage} alt="" className="absolute -top-1 -left-1 w-6 h-6 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       )}
                       {sim.boosterImage && (
-                        <img src={sim.boosterImage} alt="booster" className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full border border-yellow-500/60 bg-background/80 object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        <img src={sim.boosterImage} alt="booster" className="absolute -bottom-1 -right-1 w-8 h-8 object-contain drop-shadow" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       )}
                     </div>
 
@@ -410,10 +426,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                             <div className="text-xs leading-tight">
                               <div className="text-foreground font-bold text-[13px]">{hs.heroName}</div>
                               <div className="text-foreground/80 font-medium">
-                                딜 기여도 <span className={`font-bold ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
+                                딜 <span className={`font-bold ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
                               </div>
                               <div className="text-foreground/80 font-medium">
-                                탱 기여도 <span className={`font-bold ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
+                                탱 <span className={`font-bold ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
                               </div>
                             </div>
                           </div>
@@ -422,11 +438,8 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     </div>
                   </div>
 
-                  {/* Divider before summary */}
-                  <div className="border-t border-border/40" />
-
-                  {/* Summary row: avg rounds + success / fail / retry */}
-                  <div className="flex items-center gap-3 text-[11px] flex-wrap">
+                  {/* Summary row: avg rounds + success / fail / retry (no divider above) */}
+                  <div className="flex items-center gap-3 text-[12px] flex-wrap">
                     <span className="text-muted-foreground">
                       평균 <span className="font-mono font-bold text-foreground">{Math.round(sim.avgRounds)}</span>턴
                       <span className="text-muted-foreground/70"> ({sim.minRounds}~{sim.maxRounds}R)</span>
@@ -450,15 +463,18 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   </div>
                 </div>
 
-                {/* Right: win rate + actions */}
-                <div className="flex items-center gap-2 px-3 shrink-0">
-                  <div className="text-right mr-2">
-                    <div className="text-[10px] text-muted-foreground">승률</div>
-                    <div className={`text-2xl font-bold font-mono ${getWinRateColor(sim.winRate)}`}>
-                      {sim.winRate.toFixed(1)}%
+                {/* Right: date + win rate + actions */}
+                <div className="flex items-stretch shrink-0">
+                  <div className="flex flex-col items-end justify-center px-3 gap-1">
+                    <div className="text-[11px] text-foreground/70 font-medium">{dateStr}</div>
+                    <div className="text-right">
+                      <div className="text-[10px] text-muted-foreground">승률</div>
+                      <div className={`text-2xl font-bold font-mono ${getWinRateColor(sim.winRate)}`}>
+                        {sim.winRate.toFixed(1)}%
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 items-center justify-center px-2 bg-muted/30 rounded-r-lg border-l border-border/30">
                     <Button variant="outline" size="icon" className="w-8 h-8 text-primary hover:bg-primary/10"
                       onClick={(e) => { e.stopPropagation(); onLoadSimulation(sim); }} title="불러오기">
                       <Play className="w-4 h-4" />

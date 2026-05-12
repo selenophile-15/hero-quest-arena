@@ -655,11 +655,12 @@ export default function QuestSimulation() {
     });
 
     // Display snapshots
-    const subAreaSnap = selectedSubArea?.name || '';
-    const subAreaImage = selectedSubArea?.image || '';
+    const isBoss = selectedSubAreaIdx === 99;
+    const subAreaSnap = isBoss ? (currentRegion?.boss?.name || '') : (selectedSubArea?.name || '');
+    const subAreaImage = isBoss ? (currentRegion?.boss?.image || '') : (selectedSubArea?.image || '');
     const boosterKeysMap: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
     const boosterImage = (selectedBooster !== 'none' && commonData?.boosters?.[boosterKeysMap[selectedBooster]]?.image) || '';
-    const miniBossLabelsMap: Record<string, string> = { huge: '거대', dire: '강력', legendary: '전설의' };
+    const miniBossLabelsMap: Record<string, string> = { huge: '거대한', dire: '흉포한', legendary: '전설의' };
     const miniBossLabel = selectedMiniBoss !== 'none' ? miniBossLabelsMap[selectedMiniBoss] || '' : '';
     const barrierInfos: SavedSimBarrierInfo[] = (barrierElements || []).map(el => ({
       element: el,
@@ -706,6 +707,7 @@ export default function QuestSimulation() {
       subAreaImage,
       boosterImage,
       miniBossLabel,
+      isBoss,
       barrierInfos,
       successCount,
       failCount,
