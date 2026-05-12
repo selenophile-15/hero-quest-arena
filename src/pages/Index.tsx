@@ -5,8 +5,8 @@ import { Monitor, Swords, Shield, Trophy } from "lucide-react";
 import { useMobileGestures } from "@/hooks/use-mobile-gestures";
 import { useDesktopModeState } from "@/hooks/use-desktop-mode";
 
-import landingBg from "@/assets/landing-bg.jpg";
-import titleLogo from "@/assets/title-logo.png";
+import landingBg from "@/assets/landing-bg-opt.jpg";
+import titleLogo from "@/assets/title-logo.webp";
 import featureList from "@/assets/feature-list.jpg";
 import featureQuest from "@/assets/feature-quest.jpg";
 import featureRanking from "@/assets/feature-ranking.jpg";
@@ -82,16 +82,15 @@ const Index = () => {
   return (
     <div className="min-h-[200vh] bg-background relative overflow-hidden">
       <div className="fixed top-4 right-4 z-20">
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={() => setDesktopMode((value) => !value)}
           title={desktopMode ? '모바일 모드로 전환' : '데스크탑 모드로 전환'}
-          className="h-9 gap-2 border-border/70 bg-card/80 px-3 text-xs text-foreground backdrop-blur-sm"
+          className={`flex items-center justify-center w-8 h-8 rounded-md border border-border/70 backdrop-blur-sm transition-colors ${
+            desktopMode ? 'bg-primary text-primary-foreground' : 'bg-card/80 text-foreground hover:bg-card'
+          }`}
         >
           <Monitor className="w-4 h-4" />
-          {desktopMode ? '데스크탑 모드 ON' : '데스크탑 모드'}
-        </Button>
+        </button>
       </div>
 
       <style>{`
@@ -130,6 +129,17 @@ const Index = () => {
           0% { left: -100%; }
           100% { left: 200%; }
         }
+        @keyframes bulbFlicker {
+          0%, 18%, 22%, 25%, 53%, 57%, 100% {
+            opacity: 1;
+            text-shadow: 0 0 12px rgba(160,130,255,0.45);
+          }
+          20%, 24%, 55% {
+            opacity: 0.25;
+            text-shadow: none;
+          }
+        }
+        .bulb-flicker { animation: bulbFlicker 4s linear infinite; }
         .btn-shine { position: relative; overflow: hidden; }
         .btn-shine::after {
           content: '';
@@ -146,7 +156,7 @@ const Index = () => {
       {/* Background image - single, scrolls with page */}
       <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
         <div className="relative w-full" style={{ height: '200vh' }}>
-          <img src={landingBg} alt="" className="w-full h-full object-cover" width={1920} height={1280} />
+          <img src={landingBg} alt="" className="w-full h-full object-cover" width={1920} height={1280} loading="eager" decoding="sync" {...({ fetchpriority: 'high' } as any)} />
           {/* Dark overlay on top portion for title readability */}
           <div className="absolute top-0 left-0 right-0 h-[50%]" style={{
             background: 'linear-gradient(180deg, rgba(5,8,20,0.85) 0%, rgba(10,15,30,0.6) 40%, transparent 100%)'
@@ -181,31 +191,38 @@ const Index = () => {
             <div className="absolute -bottom-4 -left-8 text-purple-300/60 text-sm" style={{ animation: 'starSparkle 3.5s ease-in-out infinite 0.5s' }}>✦</div>
             <div className="absolute -bottom-6 -right-14 text-blue-300/50 text-base" style={{ animation: 'starSparkle 5s ease-in-out infinite 2s' }}>✧</div>
 
-            <span className="font-display text-[11px] tracking-[0.2em] uppercase block mb-4" style={{
+            <span className="font-display text-[13px] tracking-[0.2em] uppercase block mb-4 bulb-flicker" style={{
               color: 'hsl(260 40% 65%)',
-              animation: 'subtitleReveal 1.5s ease-out forwards',
-              textShadow: '0 0 12px rgba(160,130,255,0.3)',
             }}>
               ⚔ 셀레노필 제작 ⚔
             </span>
 
-            {/* Game logo image */}
-            <img
-              src={titleLogo}
-              alt="샵타이탄 퀘스트 시뮬레이터"
-              className="mx-auto select-none"
-              width={1584}
-              height={672}
+            {/* Game logo image — wrapper reserves space to prevent layout shift */}
+            <div
+              className="mx-auto"
               style={{
-                maxWidth: 'min(520px, 85vw)',
-                height: 'auto',
-                filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
-                animation: 'glowPulse 4s ease-in-out infinite',
+                width: 'min(520px, 85vw)',
+                aspectRatio: '1584 / 672',
               }}
-            />
+            >
+              <img
+                src={titleLogo}
+                alt="샵타이탄 퀘스트 시뮬레이터"
+                className="w-full h-full select-none"
+                width={1584}
+                height={672}
+                loading="eager"
+                decoding="sync"
+                {...({ fetchpriority: 'high' } as any)}
+                style={{
+                  filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
+                  animation: 'glowPulse 4s ease-in-out infinite',
+                }}
+              />
+            </div>
 
             {/* Subtitle tagline */}
-            <p className="mt-3 text-[12px] tracking-[0.15em]" style={{
+            <p className="mt-3 text-[14px] tracking-[0.15em]" style={{
               color: 'hsl(260 30% 60%)',
               textShadow: '0 0 8px rgba(160,130,255,0.2)',
             }}>
@@ -213,10 +230,7 @@ const Index = () => {
             </p>
           </div>
 
-          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
-            영웅과 챔피언을 관리하고, 미리 던전에 보내<br />
-            최적의 전략을 찾아보세요.
-          </p>
+          <div className="mb-8" />
 
           <Button
             size="lg"
