@@ -1332,6 +1332,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
     new Float64Array(numHeroes), new Float64Array(numHeroes),
   ];
+  // # of sims in which this hero made at least one attack at stack s — used as
+  // the per-stack avg-damage denominator so stacks the hero never reached are
+  // not diluted by sims they never participated in.
+  const conqStackSimsWithStack = [
+    new Float64Array(numHeroes), new Float64Array(numHeroes), new Float64Array(numHeroes),
+    new Float64Array(numHeroes), new Float64Array(numHeroes),
+  ];
   // Sum of baseHeroDmg (pre-crit, pre-barrier) per attack, used for theoretical crit reference
   const baseAtkSumTotal = new Float64Array(numHeroes);
   // Ninja/Sensei innate tracking
