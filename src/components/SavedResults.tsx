@@ -48,11 +48,25 @@ const getShareTextColor = (pct: number) =>
   pct >= 41 ? 'text-orange-400' :
   pct >= 21 ? 'text-red-400' : 'text-purple-400';
 
+// Survival color thresholds (matches QuestSimulation 상세 정보)
+const getSurvivalColor = (pct: number) =>
+  pct >= 90 ? 'text-lime-400' :
+  pct >= 50 ? 'text-yellow-400' :
+  'text-red-400';
+
 const QUEST_TYPE_LABELS: Record<string, string> = {
   normal: '일반 퀘스트',
   flash: '깜짝 퀘스트',
   lcog: '왕의 모험',
   tot: '공포의 탑',
+};
+
+// Quest-type colored chip style (text/border)
+const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
+  normal: 'border-red-500/50 bg-red-500/10 text-red-500 dark:text-red-300',
+  flash: 'border-lime-500/50 bg-lime-500/10 text-lime-600 dark:text-lime-300',
+  lcog: 'border-yellow-600/60 bg-yellow-600/10 text-yellow-700 dark:text-yellow-300',
+  tot: 'border-purple-500/50 bg-purple-500/10 text-purple-500 dark:text-purple-300',
 };
 
 interface Props {
