@@ -26,6 +26,10 @@ interface ChampionFormProps {
   hero?: Hero;
   onSave: (hero: Hero) => void;
   onCancel: () => void;
+  saveLabel?: string;
+  saveAsLabel?: string;
+  onSaveAs?: (hero: Hero) => void;
+  saveAsKeepsId?: boolean;
 }
 
 const ELEMENT_ORDER = [
@@ -152,7 +156,7 @@ function getLeaderSkillTier(rank: number, champSkillData: any): number {
   return 1;
 }
 
-export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormProps) {
+export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAsLabel, onSaveAs, saveAsKeepsId }: ChampionFormProps) {
   const { colorMode } = useTheme();
   const [championName, setChampionName] = useState(hero?.championName || CHAMPION_NAMES[0]);
   const [name, setName] = useState(hero?.name || '');
@@ -400,6 +404,48 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
       equipmentSlots,
       createdAt: hero?.createdAt || new Date().toISOString(),
     });
+  };
+
+  const buildChampionHeroData = (useNewId: boolean): Hero => ({
+    id: useNewId ? crypto.randomUUID() : (hero?.id || crypto.randomUUID()),
+    name: name.trim(),
+    classLine: '',
+    heroClass: '',
+    type: 'champion',
+    promoted,
+    level: Number(level) || 1,
+    rank: Number(rank) || 1,
+    championName,
+    cardLevel,
+    power: Number(power) || 0,
+    hp: champCalcResult?.finalHp ?? hp,
+    atk: champCalcResult?.finalAtk ?? atk,
+    def: champCalcResult?.finalDef ?? def,
+    crit: champCalcResult?.totalCrit ?? crit,
+    critDmg: champCalcResult?.totalCritDmg ?? critDmg,
+    evasion: champCalcResult?.totalEvasion ?? evasion,
+    threat: champCalcResult?.totalThreat ?? threat,
+    element,
+    elementValue: totalEquipElement || elementValue,
+    skills: [],
+    label,
+    position,
+    seeds: { hp: seedHp, atk: seedAtk, def: seedDef },
+    equipmentElements: equipElements,
+    elementManual,
+    equipmentSlots,
+    createdAt: useNewId ? new Date().toISOString() : (hero?.createdAt || new Date().toISOString()),
+  });
+
+  const handleSaveAs = () => {
+    if (!name.trim()) {
+      setNameError(true);
+      nameInputRef.current?.focus();
+      return;
+    }
+    setNameError(false);
+    const data = buildChampionHeroData(!saveAsKeepsId);
+    (onSaveAs ?? onSave)(data);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -1234,7 +1280,10 @@ export default function ChampionForm({ hero, onSave, onCancel }: ChampionFormPro
             스탯 계산표
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
-          <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
+          {hero && onSaveAs && (
+            <Button type="button" variant="outline" size="sm" onClick={handleSaveAs}>{saveAsLabel ?? '다른 이름으로 저장'}</Button>
+          )}
+          <Button type="button" size="sm" onClick={handleSubmit}>{saveLabel ?? '저장'}</Button>
         </div>
       </div>
 

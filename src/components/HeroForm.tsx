@@ -26,6 +26,14 @@ interface HeroFormProps {
   hero?: Hero;
   onSave: (hero: Hero) => void;
   onCancel: () => void;
+  /** Override label for the primary save button (default: '저장') */
+  saveLabel?: string;
+  /** Override label for the secondary save-as button (default: '다른 이름으로 저장') */
+  saveAsLabel?: string;
+  /** If provided, save-as button calls this instead of onSave with a new id. */
+  onSaveAs?: (hero: Hero) => void;
+  /** If true, save-as button keeps the original hero id (used by temp-edit mode). */
+  saveAsKeepsId?: boolean;
 }
 
 const JOB_PAIRS: Record<string, [string, string][]> = {
@@ -160,7 +168,7 @@ function hasRangedWeapon(slots: Array<{ item: any | null }>): boolean {
   });
 }
 
-export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
+export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabel, onSaveAs, saveAsKeepsId }: HeroFormProps) {
   const { colorMode } = useTheme();
   const getTypeImgPath = (typeFile: string) => getTypeImgPathUtil(typeFile, colorMode);
   const getInitialPromotion = (): boolean => {
@@ -583,7 +591,7 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
     if (!heroClass) return;
     setNameError(false);
     const heroData: Hero = {
-      id: crypto.randomUUID(),
+      id: saveAsKeepsId ? (hero?.id || crypto.randomUUID()) : crypto.randomUUID(),
       name: name.trim(),
       classLine: classLine as HeroClassLine,
       heroClass,
@@ -603,9 +611,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
       elementManual,
       equipmentSlots,
       detailStats,
-      createdAt: new Date().toISOString(),
+      createdAt: saveAsKeepsId ? (hero?.createdAt || new Date().toISOString()) : new Date().toISOString(),
     };
-    onSave(heroData);
+    (onSaveAs ?? onSave)(heroData);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -656,9 +664,9 @@ export default function HeroForm({ hero, onSave, onCancel }: HeroFormProps) {
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>취소</Button>
           {hero && (
-            <Button type="button" variant="outline" size="sm" onClick={handleSaveAs}>다른 이름으로 저장</Button>
+            <Button type="button" variant="outline" size="sm" onClick={handleSaveAs}>{saveAsLabel ?? '다른 이름으로 저장'}</Button>
           )}
-          <Button type="button" size="sm" onClick={handleSubmit}>저장</Button>
+          <Button type="button" size="sm" onClick={handleSubmit}>{saveLabel ?? '저장'}</Button>
         </div>
       </div>
 

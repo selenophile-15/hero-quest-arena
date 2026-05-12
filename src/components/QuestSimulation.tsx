@@ -10,11 +10,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt, Hourglass, FileText } from 'lucide-react';
+import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt, Hourglass, FileText, Settings, Upload } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import QuestConfigDialog from '@/components/QuestConfigDialog';
 import HeroSelectDialog from '@/components/HeroSelectDialog';
 import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
+import HeroForm from '@/components/HeroForm';
+import ChampionForm from '@/components/ChampionForm';
+import SavePartyToListDialog from '@/components/SavePartyToListDialog';
+import { updateHero as storageUpdateHero } from '@/lib/storage';
 
 // 마법검/스펠나이트: all elements at 50% effectiveness for barriers
 const SPELLKNIGHT_CLASSES = ['마법검', '스펠나이트'];
@@ -328,6 +332,13 @@ export default function QuestSimulation() {
   const [retryOnly, setRetryOnly] = useState(false);
   const [boosterOpen, setBoosterOpen] = useState(false);
 
+  // Temporary per-party hero overrides (apply only to current sim; not persisted)
+  const [tempOverrides, setTempOverrides] = useState<Record<string, Hero>>({});
+  // Hero currently being edited via the gear (temp-edit) button
+  const [tempEditingHero, setTempEditingHero] = useState<Hero | null>(null);
+  // Save-current-party-to-list dialog
+  const [savePartyOpen, setSavePartyOpen] = useState(false);
+
   // Reset retry-only filter whenever the underlying simulation no longer has retry data.
   useEffect(() => { if (!simResult?.retryResult) setRetryOnly(false); }, [simResult]);
 
@@ -409,7 +420,9 @@ export default function QuestSimulation() {
   }, []);
 
   const selectedHeroes = useMemo(() => {
-    const heroes = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    const heroes = allHeroes
+      .filter(h => selectedHeroIds.has(h.id))
+      .map(h => tempOverrides[h.id] ? tempOverrides[h.id] : h);
     return heroes.sort((a, b) => {
       // Champions first
       if (a.type === 'champion' && b.type !== 'champion') return -1;
@@ -420,7 +433,7 @@ export default function QuestSimulation() {
       const bOrder = JOB_SORT_MAP[b.heroClass] ?? 999;
       return aOrder - bOrder;
     });
-  }, [allHeroes, selectedHeroIds, JOB_SORT_MAP]);
+  }, [allHeroes, selectedHeroIds, tempOverrides, JOB_SORT_MAP]);
 
   const maxMembers = currentRegion?.maxMembers || 5;
   const isBossQuest = currentQuest?.isBoss || false;
@@ -1499,6 +1512,16 @@ export default function QuestSimulation() {
                   <FileText className="w-4 h-4" />
                   스탯 계산표
                 </Button>
+                <Button
+                  onClick={() => setSavePartyOpen(true)}
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 ml-auto"
+                  title="현재 파티원들을 내 영웅/챔피언 리스트에 저장"
+                >
+                  <Upload className="w-4 h-4" />
+                  리스트에 저장
+                </Button>
               </div>
             )}
             {currentQuest && selectedHeroes.length > 0 && (() => {
@@ -1741,8 +1764,13 @@ export default function QuestSimulation() {
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
-                              className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
                               title="제거">✕</button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setTempEditingHero(hero); }}
+                              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-zinc-600"
+                              style={{ color: '#fff' }}
+                              title="임시 수정"><Settings className="w-3 h-3" /></button>
                           </div>
                         </td>
                       );
@@ -1769,8 +1797,13 @@ export default function QuestSimulation() {
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
-                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+                              className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
                               title="제거">✕</button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setTempEditingHero(hero); }}
+                              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 hover:bg-zinc-600"
+                              style={{ color: '#fff' }}
+                              title="임시 수정"><Settings className="w-3.5 h-3.5" /></button>
                           </div>
                         </td>
                       );
@@ -1799,8 +1832,13 @@ export default function QuestSimulation() {
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
-                            className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+                            className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
                             title="제거">✕</button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setTempEditingHero(hero); }}
+                            className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 hover:bg-zinc-600"
+                            style={{ color: '#fff' }}
+                            title="임시 수정"><Settings className="w-3.5 h-3.5" /></button>
                         </div>
                       </td>
                     );
@@ -3429,6 +3467,82 @@ export default function QuestSimulation() {
         onOpenChange={setOverwriteDialogOpen}
         onConfirm={handleOverwriteResult}
       />
+
+      {/* Save current party to my list */}
+      <SavePartyToListDialog
+        open={savePartyOpen}
+        onOpenChange={setSavePartyOpen}
+        members={selectedHeroes}
+        onPersisted={(ids) => {
+          // After persisting to storage, drop temp overrides for those heroes
+          // (the storage value is now the canonical one).
+          setTempOverrides(prev => {
+            const next = { ...prev };
+            ids.forEach(id => { delete next[id]; });
+            return next;
+          });
+        }}
+      />
+
+      {/* Temp-edit overlay (gear button on a party member) */}
+      {tempEditingHero && (
+        <Dialog open={!!tempEditingHero} onOpenChange={(o) => { if (!o) setTempEditingHero(null); }}>
+          <DialogContent
+            className="max-w-[min(1280px,95vw)] max-h-[90vh] overflow-y-auto p-6"
+            hideCloseButton
+          >
+            {tempEditingHero.type === 'champion' ? (
+              <ChampionForm
+                hero={tempEditingHero}
+                saveLabel="임시 저장"
+                saveAsLabel="리스트 덮어쓰기"
+                saveAsKeepsId
+                onSave={(updated) => {
+                  // Temp save: party-only override
+                  setTempOverrides(prev => ({ ...prev, [updated.id]: updated }));
+                  setTempEditingHero(null);
+                }}
+                onSaveAs={(updated) => {
+                  // Persist to list AND keep party in-sync (override cleared since storage now has it)
+                  storageUpdateHero(updated);
+                  window.dispatchEvent(new Event('heroes-updated'));
+                  setTempOverrides(prev => {
+                    const next = { ...prev };
+                    delete next[updated.id];
+                    return next;
+                  });
+                  setTempEditingHero(null);
+                  toast({ title: '리스트에 반영됨', description: `${updated.name}의 수정 사항이 내 챔피언 리스트에 저장되었습니다.` });
+                }}
+                onCancel={() => setTempEditingHero(null)}
+              />
+            ) : (
+              <HeroForm
+                hero={tempEditingHero}
+                saveLabel="임시 저장"
+                saveAsLabel="리스트 덮어쓰기"
+                saveAsKeepsId
+                onSave={(updated) => {
+                  setTempOverrides(prev => ({ ...prev, [updated.id]: updated }));
+                  setTempEditingHero(null);
+                }}
+                onSaveAs={(updated) => {
+                  storageUpdateHero(updated);
+                  window.dispatchEvent(new Event('heroes-updated'));
+                  setTempOverrides(prev => {
+                    const next = { ...prev };
+                    delete next[updated.id];
+                    return next;
+                  });
+                  setTempEditingHero(null);
+                  toast({ title: '리스트에 반영됨', description: `${updated.name}의 수정 사항이 내 영웅 리스트에 저장되었습니다.` });
+                }}
+                onCancel={() => setTempEditingHero(null)}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
     </>
       )}
       </div> {/* end simulation tab */}
