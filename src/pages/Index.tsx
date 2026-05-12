@@ -271,7 +271,7 @@ const Index = () => {
               top: '19%',
               width: '38%',
               height: '8%',
-              background: 'radial-gradient(ellipse at center, rgba(12,16,38,0.95) 0%, rgba(12,16,38,0.85) 55%, rgba(12,16,38,0) 100%)',
+              
             }}
           >
             <span
