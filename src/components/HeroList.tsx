@@ -189,7 +189,17 @@ export default function HeroList() {
     return all;
   });
   const [viewMode, setViewMode] = useState<ViewMode>('table');
-  const [listTab, setListTab] = useState<ListTab>('hero');
+  const [listTab, _setListTab] = useState<ListTab>('hero');
+  const setListTab = (t: ListTab) => {
+    _setListTab(prev => {
+      if (prev !== t) {
+        // Selection & manage mode are per-tab; reset on tab switch.
+        setSelectedForDelete(new Set());
+        setManageMode(false);
+      }
+      return t;
+    });
+  };
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Hero | null>(null);
   const [commonSkillsData, setCommonSkillsData] = useState<Record<string, any>>({});
