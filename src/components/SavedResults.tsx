@@ -413,7 +413,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                 <div className="flex-1 min-w-0 flex flex-col">
                   {/* Premium header strip: type, breadcrumbs, date */}
                   <div className="saved-result-header px-3 py-2 flex items-center gap-4 flex-wrap">
-                    <span className={`saved-chip ${QUEST_TYPE_CHIP_STYLE[sim.questTypeKey] || 'text-primary'}`}>{questTypeLabel}</span>
+                    <span className={`saved-chip saved-chip-quest-type ${QUEST_TYPE_CHIP_STYLE[sim.questTypeKey] || 'text-primary border-primary'}`}>{questTypeLabel}</span>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[13px] font-bold text-foreground">{sim.regionName || '-'}</span>
                       {sim.subAreaName && <>
@@ -449,9 +449,9 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                   </div>
 
                   {/* Middle row */}
-                  <div className="flex-1 flex items-center px-3 py-3">
+                  <div className="flex-1 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-8 px-3 py-3">
                     {/* a: region image + sub-area image */}
-                    <div className="flex items-center gap-2 shrink-0 mr-16">
+                    <div className="flex items-center gap-2 shrink-0 mr-8">
                       {sim.regionImage && (
                         <img src={sim.regionImage} alt="" className="w-20 h-20 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
                       )}
@@ -461,10 +461,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     </div>
 
                     {/* b: heroes grid */}
-                    <div className="grid grid-cols-5 gap-9 shrink-0">
+                    <div className="grid grid-cols-5 gap-5 min-w-0">
                       {Array.from({ length: 5 }).map((_, heroSlotIndex) => {
                         const hs = sim.heroSummaries[heroSlotIndex];
-                        if (!hs) return <div key={`empty-${heroSlotIndex}`} className="w-[150px]" />;
+                        if (!hs) return <div key={`empty-${heroSlotIndex}`} className="min-w-0" />;
                         const hero = allHeroes.find(h => h.id === hs.heroId) ||
                           sim.heroSnapshots?.find(h => h.id === hs.heroId);
                         const img = hero?.type === 'champion'
@@ -478,7 +478,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                           : 0;
                         const heroElementIcon = mainBarrier ? ELEMENT_ICON_MAP[mainBarrier.element] : undefined;
                         return (
-                          <div key={hs.heroId} className="flex flex-col gap-1 w-[150px]">
+                          <div key={hs.heroId} className="flex flex-col gap-1 min-w-0">
                             {/* Row 1: avatar + name (left-aligned at x=0) */}
                             <div className="flex items-center gap-1.5 min-w-0">
                               <div className="w-9 h-9 rounded-full border border-primary/30 overflow-hidden bg-secondary/50 shrink-0">
@@ -504,7 +504,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                             {/* Dmg bar (label fixed, bar fixed-width, number after) */}
                             <div className="flex items-center gap-1 text-[11px]">
                               <span className="text-foreground/80 w-4 shrink-0">딜</span>
-                              <div className="w-[96px] h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0">
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 flex-1 min-w-[56px]">
                                 <div className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full" style={{ width: `${Math.min(100, hs.damageShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono shrink-0 ${getShareTextColor(hs.damageShare)}`}>{hs.damageShare.toFixed(0)}%</span>
@@ -512,7 +512,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                             {/* Tank bar */}
                             <div className="flex items-center gap-1 text-[11px]">
                               <span className="text-foreground/80 w-4 shrink-0">탱</span>
-                              <div className="w-[96px] h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0">
+                              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden shrink-0 flex-1 min-w-[56px]">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${Math.min(100, tankShare)}%` }} />
                               </div>
                               <span className={`font-bold font-mono shrink-0 ${getShareTextColor(tankShare)}`}>{tankShare.toFixed(0)}%</span>
@@ -523,7 +523,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     </div>
 
                     {/* c: win rate + gear ratio */}
-                    <div className="ml-auto mr-6 flex items-center gap-10 shrink-0">
+                    <div className="mr-3 flex items-center gap-9 shrink-0">
                       <div className="text-center">
                         <div className="text-[10px] text-muted-foreground">승률</div>
                         <div className={`text-2xl font-bold font-mono ${getWinRateColor(sim.winRate)}`}>
