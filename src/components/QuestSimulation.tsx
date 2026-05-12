@@ -1754,8 +1754,13 @@ export default function QuestSimulation() {
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
-                              className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
                               title="제거">✕</button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setTempEditingHero(hero); }}
+                              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-zinc-600"
+                              style={{ color: '#fff' }}
+                              title="임시 수정"><Settings className="w-3 h-3" /></button>
                           </div>
                         </td>
                       );
