@@ -868,7 +868,7 @@ export default function QuestSimulation() {
         {QUEST_SUB_TABS.map(tab => {
           const Icon = tab.icon;
           const isActive = subTab === tab.id;
-          const savedCount = tab.id === 'saved' ? (typeof window !== 'undefined' ? (JSON.parse(localStorage.getItem('quest-sim-saved-results') || '[]').length) : 0) : 0;
+          const savedCount = tab.id === 'saved' ? savedResultsCount : 0;
           const label = tab.id === 'saved' ? `${tab.label} (${savedCount})` : tab.label;
           return (
               <button
@@ -1004,7 +1004,7 @@ export default function QuestSimulation() {
 
       {/* Tab: Saved Results */}
       <div style={{ display: subTab === 'saved' ? 'block' : 'none' }}>
-        <SavedResults onLoadSimulation={handleLoadSimulation} refreshKey={subTab === 'saved' ? Date.now() : 0} />
+        <SavedResults onLoadSimulation={handleLoadSimulation} refreshKey={savedResultsVersion} />
       </div>
 
       {/* Tab: Compare */}
