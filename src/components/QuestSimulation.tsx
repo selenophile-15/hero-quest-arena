@@ -837,6 +837,7 @@ export default function QuestSimulation() {
           const Icon = tab.icon;
           const isActive = subTab === tab.id;
           const savedCount = tab.id === 'saved' ? (typeof window !== 'undefined' ? (JSON.parse(localStorage.getItem('quest-sim-saved-results') || '[]').length) : 0) : 0;
+          const label = tab.id === 'saved' ? `${tab.label} (${savedCount})` : tab.label;
           return (
               <button
                 key={tab.id}
@@ -850,10 +851,7 @@ export default function QuestSimulation() {
                 style={isActive ? { boxShadow: '0 -2px 8px hsl(var(--primary) / 0.15)' } : {}}
               >
                 <Icon className={`w-4 h-4 transition-transform ${isActive ? 'scale-110' : ''}`} />
-                {tab.label}
-                {tab.id === 'saved' && savedCount > 0 && (
-                  <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full ${isActive ? 'bg-primary/15 text-primary' : 'bg-secondary text-muted-foreground'}`}>{savedCount}</span>
-                )}
+                {label}
               </button>
           );
         })}

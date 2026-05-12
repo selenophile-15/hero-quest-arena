@@ -1193,6 +1193,43 @@ a.bg-accent *,
   box-shadow: 0 6px 28px hsl(var(--primary) / 0.25), 0 3px 14px rgba(0,0,0,0.14);
   border-color: hsl(var(--primary) / 0.55);
 }
+/* Premium header strip above the divider */
+.saved-result-header {
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.10) 0%, hsl(var(--primary) / 0.04) 70%, transparent 100%);
+  border-bottom: 1px solid hsl(var(--border) / 0.6);
+}
+:root[data-color-mode="light"] .saved-result-header {
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.05) 70%, transparent 100%);
+}
+/* Play button jiggle on hover */
+@keyframes saved-play-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-10deg); }
+  40% { transform: rotate(8deg); }
+  60% { transform: rotate(-6deg); }
+  80% { transform: rotate(4deg); }
+}
+.saved-play-btn:hover {
+  animation: saved-play-wiggle 0.45s ease-in-out;
+}
+/* Inline boxed chip (quest type / barrier) */
+.saved-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid hsl(var(--primary) / 0.4);
+  background: hsl(var(--primary) / 0.08);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.saved-chip-barrier {
+  border-color: hsl(var(--border));
+  background: hsl(var(--secondary) / 0.5);
+  font-family: ui-monospace, monospace;
+}
 .result-tabs-premium {
   position: relative;
   display: inline-flex;
