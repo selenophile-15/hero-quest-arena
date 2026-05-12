@@ -3524,6 +3524,7 @@ export default function QuestSimulation() {
         open={overwriteDialogOpen}
         onOpenChange={setOverwriteDialogOpen}
         onConfirm={handleOverwriteResult}
+        defaultSelectedId={loadedSimId}
       />
 
       {/* Save current party to my list */}
