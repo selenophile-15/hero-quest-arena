@@ -832,36 +832,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
       <SaveSimsDialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen} sims={saved} />
 
       {/* Import confirmation: replace / merge */}
-      <AlertDialog open={!!importPreview} onOpenChange={(v) => { if (!v) setImportPreview(null); }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>결과 불러오기</AlertDialogTitle>
-            <AlertDialogDescription>
-              {importPreview?.length || 0}개의 저장 결과가 포함된 파일입니다.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="flex flex-col gap-2 py-2">
-            <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border hover:bg-secondary/20">
-              <input type="radio" name="simImportMode" checked={importMode === 'replace'} onChange={() => setImportMode('replace')} />
-              <div>
-                <span className="text-sm font-medium text-foreground">덮어쓰기</span>
-                <p className="text-xs text-muted-foreground">기존 결과를 삭제하고 파일 데이터로 교체합니다</p>
-              </div>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border hover:bg-secondary/20">
-              <input type="radio" name="simImportMode" checked={importMode === 'merge'} onChange={() => setImportMode('merge')} />
-              <div>
-                <span className="text-sm font-medium text-foreground">합치기</span>
-                <p className="text-xs text-muted-foreground">기존 결과에 파일 데이터를 추가합니다</p>
-              </div>
-            </label>
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setImportPreview(null)}>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={handleImportConfirm}>적용</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {importConfirmDialog}
 
       {/* Per-card extract */}
       <AlertDialog open={!!extractTarget} onOpenChange={(o) => !o && setExtractTarget(null)}>
