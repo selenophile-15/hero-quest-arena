@@ -66,10 +66,10 @@ const QUEST_TYPE_LABELS: Record<string, string> = {
 
 // Quest-type colored chip style (text/border)
 const QUEST_TYPE_CHIP_STYLE: Record<string, string> = {
-  normal: 'border-red-500 bg-red-500/10 text-red-500 dark:text-red-300 dark:border-red-300',
-  flash: 'border-lime-600 bg-lime-500/10 text-lime-600 dark:text-lime-300 dark:border-lime-300',
-  lcog: 'border-yellow-700 bg-yellow-600/10 text-yellow-700 dark:text-yellow-300 dark:border-yellow-300',
-  tot: 'border-purple-500 bg-purple-500/10 text-purple-500 dark:text-purple-300 dark:border-purple-300',
+  normal: 'text-red-600 dark:text-red-300 border-current bg-red-400/25 dark:bg-red-300/20',
+  flash:  'text-lime-700 dark:text-lime-300 border-current bg-lime-400/25 dark:bg-lime-300/20',
+  lcog:   'text-yellow-700 dark:text-yellow-300 border-current bg-yellow-400/25 dark:bg-yellow-300/20',
+  tot:    'text-purple-600 dark:text-purple-300 border-current bg-purple-400/25 dark:bg-purple-300/20',
 };
 
 interface Props {
