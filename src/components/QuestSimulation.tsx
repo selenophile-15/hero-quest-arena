@@ -2625,7 +2625,7 @@ export default function QuestSimulation() {
                                 {/* 기본: 생존률 */}
                                 <td className={`py-1 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${
                                   hr.survivalRate >= 90 ? 'text-lime-400' : hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
-                                }`}>{hr.survivalRate.toFixed(1)}%</td>
+                                }`}>{(hr.survivalRate >= 100 ? 100 : Math.floor(hr.survivalRate * 10) / 10).toFixed(1)}%</td>
                                 {/* 턴 */}
                                 <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{aAvg > 0 ? formatNumber(aMin) : blank}</td>
                                 <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{aAvg > 0 ? aAvg.toFixed(1) : blank}</td>
