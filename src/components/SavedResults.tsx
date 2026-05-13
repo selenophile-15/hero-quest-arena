@@ -660,7 +660,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                               <div className="flex items-center gap-1">
                                 <img src={faceImg} alt="" className="w-6 h-6" />
                                 <span className={`text-[12px] font-mono font-bold tabular-nums ${getSurvivalColor(hs.survivalRate)}`}>
-                                  {hs.survivalRate.toFixed(0)}%
+                                  {hs.survivalRate >= 100 ? '100' : Math.floor(hs.survivalRate)}%
                                 </span>
                               </div>
                               {heroElements.length > 0 && (
