@@ -3586,7 +3586,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         hemmaAtkGainAccum += atkGain;
         const dPct = Math.max(0, heroHp[drainTarget] / heroMaxHp[drainTarget] * 100);
         log.push({ round, type: 'event', actor: activeHeroes[hemmaIdx].name, detail: `헴마 스킬 발동! ${activeHeroes[drainTarget].name} HP -${formatNum(drainAmt)} → ATK +${formatNum(atkGain)} (누적 +${formatNum(hemmaAtkGainAccum)}) (${activeHeroes[drainTarget].name} HP: ${formatNum(Math.max(0, heroHp[drainTarget]))} (${dPct.toFixed(0)}%))` });
-        const selfHeal = (champTier + Math.min(champTier - 3, 0)) * 5;
+        const selfHeal = champTier === 1 ? 5 : champTier === 2 ? 10 : champTier === 3 ? 15 : 25;
         if (selfHeal > 0 && heroHp[hemmaIdx] < heroMaxHp[hemmaIdx]) {
           const before = heroHp[hemmaIdx];
           heroHp[hemmaIdx] = Math.min(heroHp[hemmaIdx] + selfHeal, heroMaxHp[hemmaIdx]);
