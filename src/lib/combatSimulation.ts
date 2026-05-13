@@ -1178,6 +1178,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     else if (champTier === 4) liluHealFlat = 20;
   }
 
+  // ─── Hemma self heal amount (per drain) ───
+  // T1=5, T2=10, T3=15, T4=25
+  let hemmaSelfHealFlat = 0;
+  if (champName.includes('헴마') || champName === 'Hemma') {
+    if (champTier === 1) hemmaSelfHealFlat = 5;
+    else if (champTier === 2) hemmaSelfHealFlat = 10;
+    else if (champTier === 3) hemmaSelfHealFlat = 15;
+    else if (champTier === 4) hemmaSelfHealFlat = 25;
+  }
+
   // ─── Simulation ──────────────────────────────────────────────────────────
 
   let timesQuestWon = 0;
@@ -1845,7 +1855,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             hemmaBonus[hemmaWho] += gain;
             simHemmaAtkGain[hemmaWho] += gain;
           }
-          hp[hemmaWho] = Math.min(hp[hemmaWho] + (champTier + Math.min(champTier - 3, 0)) * 5, finalHp[hemmaWho]);
+          if (hemmaSelfHealFlat > 0) {
+            const hemmaHpBefore = hp[hemmaWho];
+            hp[hemmaWho] = Math.min(hp[hemmaWho] + hemmaSelfHealFlat, finalHp[hemmaWho]);
+            const hemmaHealed = hp[hemmaWho] - hemmaHpBefore;
+            totalHealing[hemmaWho] += hemmaHealed;
+            simHealing[hemmaWho] += hemmaHealed;
+          }
         }
       }
 
@@ -2502,6 +2518,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         const personal = (activeHeroes[i] as any).detailStats?.['매 턴 체력 재생'] || 0;
         let v = personal + (aurasong.regenPerTurn || 0);
         if (liluHealFlat > 0) v += liluHealFlat * heroArtChampionMod[i];
+        if (hemmaSelfHealFlat > 0 && i === hemmaWho) v += hemmaSelfHealFlat;
         return v;
       })(),
       lordProtectionAvg: lordProtections[i] / actualSimCount,
@@ -3569,7 +3586,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         hemmaAtkGainAccum += atkGain;
         const dPct = Math.max(0, heroHp[drainTarget] / heroMaxHp[drainTarget] * 100);
         log.push({ round, type: 'event', actor: activeHeroes[hemmaIdx].name, detail: `헴마 스킬 발동! ${activeHeroes[drainTarget].name} HP -${formatNum(drainAmt)} → ATK +${formatNum(atkGain)} (누적 +${formatNum(hemmaAtkGainAccum)}) (${activeHeroes[drainTarget].name} HP: ${formatNum(Math.max(0, heroHp[drainTarget]))} (${dPct.toFixed(0)}%))` });
-        const selfHeal = (champTier + Math.min(champTier - 3, 0)) * 5;
+        const selfHeal = champTier === 1 ? 5 : champTier === 2 ? 10 : champTier === 3 ? 15 : 25;
         if (selfHeal > 0 && heroHp[hemmaIdx] < heroMaxHp[hemmaIdx]) {
           const before = heroHp[hemmaIdx];
           heroHp[hemmaIdx] = Math.min(heroHp[hemmaIdx] + selfHeal, heroMaxHp[hemmaIdx]);
