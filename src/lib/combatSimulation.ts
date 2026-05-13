@@ -2518,6 +2518,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         const personal = (activeHeroes[i] as any).detailStats?.['매 턴 체력 재생'] || 0;
         let v = personal + (aurasong.regenPerTurn || 0);
         if (liluHealFlat > 0) v += liluHealFlat * heroArtChampionMod[i];
+        if (hemmaSelfHealFlat > 0 && i === hemmaWho) v += hemmaSelfHealFlat;
         return v;
       })(),
       lordProtectionAvg: lordProtections[i] / actualSimCount,
