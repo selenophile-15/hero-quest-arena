@@ -1855,7 +1855,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             hemmaBonus[hemmaWho] += gain;
             simHemmaAtkGain[hemmaWho] += gain;
           }
-          hp[hemmaWho] = Math.min(hp[hemmaWho] + (champTier + Math.min(champTier - 3, 0)) * 5, finalHp[hemmaWho]);
+          if (hemmaSelfHealFlat > 0) {
+            const hemmaHpBefore = hp[hemmaWho];
+            hp[hemmaWho] = Math.min(hp[hemmaWho] + hemmaSelfHealFlat, finalHp[hemmaWho]);
+            const hemmaHealed = hp[hemmaWho] - hemmaHpBefore;
+            totalHealing[hemmaWho] += hemmaHealed;
+            simHealing[hemmaWho] += hemmaHealed;
+          }
         }
       }
 
