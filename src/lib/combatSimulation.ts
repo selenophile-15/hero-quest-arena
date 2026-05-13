@@ -1178,6 +1178,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     else if (champTier === 4) liluHealFlat = 20;
   }
 
+  // ─── Hemma self heal amount (per drain) ───
+  // T1=5, T2=10, T3=15, T4=25
+  let hemmaSelfHealFlat = 0;
+  if (champName.includes('헴마') || champName === 'Hemma') {
+    if (champTier === 1) hemmaSelfHealFlat = 5;
+    else if (champTier === 2) hemmaSelfHealFlat = 10;
+    else if (champTier === 3) hemmaSelfHealFlat = 15;
+    else if (champTier === 4) hemmaSelfHealFlat = 25;
+  }
+
   // ─── Simulation ──────────────────────────────────────────────────────────
 
   let timesQuestWon = 0;
