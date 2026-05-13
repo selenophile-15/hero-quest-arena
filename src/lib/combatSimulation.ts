@@ -2550,13 +2550,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       singleCritHitShare: (singleNormalHitsTotal[i] + singleCritHitsTotal[i]) > 0
         ? Math.round((singleCritHitsTotal[i] / (singleNormalHitsTotal[i] + singleCritHitsTotal[i])) * 100 * 10) / 10
         : 0,
-      winHpRemainMin: timesQuestWon > 0 && winHpRemainMin[i] < 1e9 ? (winHpRemainMin[i] > 0 ? Math.max(1, Math.round(winHpRemainMin[i])) : 0) : 0,
+      winHpRemainMin: timesQuestWon > 0 && winHpRemainMin[i] < 1e9 ? Math.round(winHpRemainMin[i]) : 0,
       winHpRemainAvg: timesQuestWon > 0 ? Math.round(winHpRemain[i] / timesQuestWon) : 0,
       winHpRemainMax: timesQuestWon > 0 ? Math.round(winHpRemainMax[i]) : 0,
-      loseHpRemainMin: loseCount > 0 && loseHpRemainMin[i] < 1e9 ? (loseHpRemainMin[i] > 0 ? Math.max(1, Math.round(loseHpRemainMin[i])) : 0) : 0,
+      loseHpRemainMin: loseCount > 0 && loseHpRemainMin[i] < 1e9 ? Math.round(loseHpRemainMin[i]) : 0,
       loseHpRemainAvg: loseCount > 0 ? Math.round(loseHpRemain[i] / loseCount) : 0,
       loseHpRemainMax: loseCount > 0 ? Math.round(loseHpRemainMax[i]) : 0,
-      overallHpRemainMin: overallHpRemainMin[i] < 1e9 ? (overallHpRemainMin[i] > 0 ? Math.max(1, Math.round(overallHpRemainMin[i])) : 0) : 0,
+      overallHpRemainMin: overallHpRemainMin[i] < 1e9 ? Math.round(overallHpRemainMin[i]) : 0,
       overallHpRemainMax: Math.round(overallHpRemainMax[i]),
       overallHpRemainAvg: overallHpRemainCount[i] > 0 ? Math.round(overallHpRemainSum[i] / overallHpRemainCount[i]) : 0,
       berserkerStageEvaRate: heroBerserkerLevel[i] > 0 ? [0, 1, 2, 3].map(s =>
