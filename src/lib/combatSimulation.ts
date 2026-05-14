@@ -3095,6 +3095,7 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
     roundLimitRate: normalResult.roundLimitRate,
     totalSimulations: totalSims,
     miniBossResults,
+    retryResult: retryResultFull,
   };
 }
 
