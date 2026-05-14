@@ -3052,9 +3052,28 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   const loseMins = miniBossResults.map(m => m.loseMinRounds).filter((v): v is number => v != null && v > 0);
   const loseMaxs = miniBossResults.map(m => m.loseMaxRounds).filter((v): v is number => v != null);
 
+  // ─── Fateweaver/Chronomancer retry on aggregated random-miniboss runs ───
+  let finalWinRate = combinedWinRate;
+  let retryResultFull: SimulationResult | undefined;
+  const fateweaverPresent = activeHeroes.some(h =>
+    isClass(h, '크로노맨서', '페이트위버', '운명직공', 'Chronomancer', 'Fateweaver')
+  );
+  const failedCount = totalSims - totalWins;
+  if (fateweaverPresent && failedCount > 0 && !config._isRetry && !config._disableRetry) {
+    const retryResult = runCombatSimulation({
+      ...config,
+      booster: getRetryBooster(config.booster),
+      simulationCount: failedCount,
+      _isRetry: true,
+    });
+    retryResultFull = retryResult;
+    const retryWinRate = retryResult.rawWinRate;
+    finalWinRate = combinedWinRate + (100 - combinedWinRate) * (retryWinRate / 100);
+  }
+
   return {
-    winRate: Math.round(combinedWinRate * 100) / 100,
-    rawWinRate: Math.round(combinedWinRate * 100) / 100,
+    winRate: Math.round(finalWinRate * 100) / 100,
+    rawWinRate: Math.round(finalWinRate * 100) / 100,
     avgRounds: Math.round(combinedAvgRounds * 100) / 100,
     minRounds: allMins.length > 0 ? Math.min(...allMins) : 0,
     maxRounds: allMaxs.length > 0 ? Math.max(...allMaxs) : 0,
