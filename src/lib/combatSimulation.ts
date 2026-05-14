@@ -602,7 +602,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // pushEv() is a no-op unless recordEvents=true, so this addition does not affect any
   // existing call site (which leaves recordEvents undefined).
   const recordEvents = config.recordEvents === true;
-  const simCount = recordEvents ? 1 : (config.simulationCount || 50000);
+  const simCount = recordEvents ? 1 : (config.simulationCount ?? 50000);
   const eventLog: CombatLogEntry[] = [];
   const pushEv = recordEvents
     ? (entry: CombatLogEntry) => { eventLog.push(entry); }
