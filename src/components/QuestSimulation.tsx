@@ -1629,8 +1629,8 @@ export default function QuestSimulation() {
                         </div>
                         {(() => {
                           const total = dispSim!.totalSimulations || 0;
-                          const wins = dispSim!.winSimCount ?? Math.round(winRate / 100 * total);
-                          const losses = dispSim!.loseSimCount ?? (total - wins);
+                          const firstWins = dispSim!.winSimCount ?? Math.round(winRate / 100 * total);
+                          const firstLosses = dispSim!.loseSimCount ?? (total - firstWins);
                           const retried = (!retryOnly && simResult!.retryResult)
                             ? (simResult!.retryResult.totalSimulations || 0)
                             : 0;
@@ -1638,14 +1638,23 @@ export default function QuestSimulation() {
                             ? (simResult!.retryResult.winSimCount || 0)
                             : 0;
                           const retryLosses = retried - retryWins;
+                          // Combined totals (first try + successful retries)
+                          const wins = firstWins + retryWins;
+                          const losses = firstLosses - retryWins;
+                          // Detect Fateweaver/Chronomancer in party (even when no failures occurred)
+                          const fateweaverInParty = !retryOnly && (simResult!.heroResults || []).some(
+                            (h: any) => h && h.chronomancerRetries !== undefined
+                          );
                           return (
                             <>
                               <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
                                 [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
                               </div>
-                              {retried > 0 && (
+                              {fateweaverInParty && (
                                 <div className="text-xs text-amber-500 dark:text-amber-300 font-medium mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
-                                  [ 재시도 : {formatNumber(retryWins)}판 / {formatNumber(retryLosses)}판 ]
+                                  {retried > 0
+                                    ? `[ 재시도 : ${formatNumber(retryWins)}판 / ${formatNumber(retryLosses)}판 ]`
+                                    : `[ 재시도 없음 ]`}
                                 </div>
                               )}
                             </>
