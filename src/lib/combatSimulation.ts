@@ -2909,6 +2909,31 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   let totalSims = normalSimCount;
 
   for (const mbType of MINI_BOSS_TYPES) {
+    if (perTypeSimCount <= 0) {
+      // Skip empty buckets — pushing a zero-count placeholder so indices stay aligned isn't needed
+      // because aggregateBucket iterates over miniBossResults and respects (winN || 0) / (loseN || 0).
+      miniBossResults.push({
+        type: mbType,
+        encounters: 0,
+        wins: 0,
+        winRate: 0,
+        avgRounds: 0,
+        heroResults: normalResult.heroResults,
+        winHero: undefined,
+        loseHero: undefined,
+        winN: 0,
+        loseN: 0,
+        winRoundsSum: 0,
+        loseRoundsSum: 0,
+        minRounds: undefined,
+        maxRounds: undefined,
+        winMinRounds: undefined,
+        winMaxRounds: undefined,
+        loseMinRounds: undefined,
+        loseMaxRounds: undefined,
+      });
+      continue;
+    }
     const mbResult = runCombatSimulation({
       ...config,
       miniBoss: mbType,
