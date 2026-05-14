@@ -2867,10 +2867,11 @@ function runRandomMiniBossSimulation(config: SimulationConfig, activeHeroes: Her
   const MINI_BOSS_TYPES: MiniBossType[] = ['huge', 'agile', 'dire', 'wealthy', 'legendary'];
   const MINI_BOSS_TYPE_CHANCE = 0.2; // 20% each
 
-  // Run simulations for 'none' and each mini-boss type with weighted counts
-  const normalSimCount = Math.round(simCount * (1 - MINI_BOSS_SPAWN_CHANCE));
-  const miniBossSimCountTotal = simCount - normalSimCount;
-  const perTypeSimCount = Math.round(miniBossSimCountTotal * MINI_BOSS_TYPE_CHANCE);
+  // Run simulations for 'none' and each mini-boss type with weighted counts.
+  // Ensure no sims are lost to rounding: normalSimCount absorbs any remainder so
+  // normalSimCount + 5 * perTypeSimCount === simCount exactly.
+  const perTypeSimCount = Math.round(simCount * MINI_BOSS_SPAWN_CHANCE * MINI_BOSS_TYPE_CHANCE);
+  const normalSimCount = Math.max(0, simCount - perTypeSimCount * 5);
 
   // Run normal simulation
   const normalResult = runCombatSimulation({
