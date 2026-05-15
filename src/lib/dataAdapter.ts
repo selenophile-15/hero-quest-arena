@@ -40,6 +40,12 @@ export const SPIRIT_EN_TO_KO: Record<string, string> = {
   Ancestor: '조상',
 };
 
+export const WEAPON_TYPE_EN_TO_KO: Record<string, string> = {
+  Sword: '검', Mace: '철퇴', Dagger: '단검', Spear: '창', Axe: '도끼',
+  Bow: '활', Crossbow: '크로스보우', Gun: '총', Staff: '지팡이',
+  Wand: '마법봉', Instrument: '악기', Catalyst: '촉매',
+};
+
 // ─── Affinity translation ────────────────────────────────────────────────
 
 function toKoElement(v: string): string {
@@ -47,6 +53,9 @@ function toKoElement(v: string): string {
 }
 function toKoSpirit(v: string): string {
   return SPIRIT_EN_TO_KO[v] ?? v;
+}
+function toKoWeaponType(v: string): string {
+  return WEAPON_TYPE_EN_TO_KO[v] ?? v;
 }
 function mapArr(arr: any, fn: (s: string) => string): any {
   if (!Array.isArray(arr)) return arr;
