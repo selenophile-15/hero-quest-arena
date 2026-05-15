@@ -76,6 +76,7 @@ export function normalizeEquipItem(raw: any): { korName: string; item: any } | n
   if (item['고유원소종류']) item['고유원소종류'] = mapArr(item['고유원소종류'], toKoElement);
   if (item['영혼친밀감']) item['영혼친밀감'] = mapArr(item['영혼친밀감'], toKoSpirit);
   if (item['고유영혼']) item['고유영혼'] = mapArr(item['고유영혼'], toKoSpirit);
+  if (item['판정타입']) item['판정타입'] = mapArr(item['판정타입'], toKoWeaponType);
 
   // Preserve English handles for future i18n
   item.engName = (Object.keys(item).find((k) => k === 'name_en') ? item.name_en : null) || null;
