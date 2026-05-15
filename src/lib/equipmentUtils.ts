@@ -1,4 +1,5 @@
 // Equipment utility: type mappings, image path resolution, data loading
+import { fetchEquipFileNormalized } from './dataAdapter';
 
 // SID Korean type name → file type name + category
 export const EQUIP_TYPE_MAP: Record<string, { file: string; category: string }> = {
