@@ -153,8 +153,7 @@ export async function loadFamiliars(): Promise<EquipmentItem[]> {
 export async function loadAurasongs(): Promise<EquipmentItem[]> {
   if (aurasongCache) return aurasongCache;
   try {
-    const resp = await fetch('/data/equipment/champion/aurasong.json');
-    const data = await resp.json();
+    const data = await fetchEquipFileNormalized('/data/equipment/champion/aurasong.json');
     aurasongRawCache = data;
     const items: EquipmentItem[] = [];
     for (const [tierKey, tierItems] of Object.entries(data)) {
@@ -170,17 +169,20 @@ export async function loadAurasongs(): Promise<EquipmentItem[]> {
         if (itemData['장비_회피%']) stats.push({ key: '장비_회피%', value: itemData['장비_회피%'] });
         items.push({
           name: korName,
-          engName: AURASONG_NAME_MAP[korName] || '',
+          engName: itemData.engName || AURASONG_NAME_MAP[korName] || '',
+          imageKey: itemData.image_key || '',
           type: 'aurasong',
           typeKor: '오라의 노래',
           category: 'champion',
           tier,
-          imagePath: getAurasongImagePath(korName),
+          imagePath: itemData['이미지_경로'] || getAurasongImagePath(korName),
           stats,
           quality: 'common',
           relic: false,
           relicEffect: null,
-          airshipPower: 0,
+          airshipPower: itemData['장비_에어쉽파워'] || 0,
+          airshipPowerBonus: itemData['장비_에어쉽파워보너스'] ?? undefined,
+          heavenlyMul: typeof itemData['천상'] === 'number' ? itemData['천상'] : undefined,
           elementAffinity: itemData['원소친밀감'] || null,
           spiritAffinity: itemData['영혼친밀감'] || null,
           uniqueElement: itemData['고유원소종류'] || null,
