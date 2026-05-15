@@ -1,51 +1,50 @@
-### 1. 시뮬레이션 결과 확장 (`src/lib/combatSimulation.ts`)
+# 데이터 구조 영어화 대응 계획
 
-- `SimulationResult` 인터페이스에 `retryResult?: SimulationResult` 필드 추가
-- Fateweaver/Chronomancer 재시도 경로(L2213~)에서 이미 호출하는 재귀 `runCombatSimulation(...)` 결과 전체를 반환 객체에 그대로 실어 보냄 (현재는 winRate만 꺼내 씀)
-- 재시도 시뮬레이션은 이미 `getRetryBooster(booster)`(원본 부스터 + 일반 부스터 +20%/+20%)로 돌고 있어서, 그 안에서 계산된 winRounds/loseRounds, winHeroResults/loseHeroResults, party aggregates, miniBossResults 등 모든 버킷 통계가 그대로 재시도 전용 데이터로 활용 가능
+## 목표
+- 업로드된 새 `equipment/` 구조(영어 키 + `name_ko` + `image_key` + `이미지_경로` 직접 포함, 친밀감/원소/영혼 영문화, `장비_에어쉽파워보너스`·`천상` 등 추가 필드)를 적용
+- 기존 컴포넌트/시뮬레이션 로직은 한국어 키 기반으로 동작하므로 **로더 단계에서 한국어 키 기반 구조로 정규화**해 다운스트림 코드 수정 최소화
+- 향후 i18n(영/한 전환)을 위한 영문 식별자(`engName`, `image_key`)는 EquipmentItem에 함께 보존
 
-### 2. 토글 UI (`src/components/QuestSimulation.tsx`)
+## 구현 범위
 
-- 전역 state 추가: `retryOnly: boolean` (시뮬 재실행 시 자동 false 초기화)
-- 노출 조건: `simResult.retryResult` 가 있을 때만 활성화 (페이트위버/크로노맨서가 있고 첫 시도가 100%가 아닌 경우)
-- `ResultTabsToggle` 시그니처 확장: `retryOnly`, `onToggleRetryOnly`, `hasRetry` 추가
-  - "전체 / 성공 / 실패" 버튼 그룹 왼쪽에 모래시계(Hourglass) 아이콘 버튼 배치
-  - HeroList 편집모드 휴지통과 동일 스타일: 비활성 = `bg-muted text-muted-foreground`, 활성 = `bg-primary text-primary-foreground` (또는 amber 계열) + 부드러운 글로우
-  - 모든 ResultTabsToggle 인스턴스가 같은 state를 공유하므로 한 곳에서 누르면 모든 섹션 동기화
-- `hasRetry === false` 인 경우 모래시계 버튼 자체를 숨김 → 기존 UI 그대로 유지
+### 1) 새 파일 교체
+업로드된 `equipment_new/*` 전체를 `public/data/equipment/`에 덮어쓴다.
 
-### 3. 표시 데이터 스왑
+### 2) 어댑터 레이어 추가
+새 파일: `src/lib/dataAdapter.ts`
+- `ELEMENT_EN_TO_KO`, `SPIRIT_EN_TO_KO` 매핑(불/물/공기/대지/빛/어둠/골드, 늑대/양/독수리 등) 보유
+- `normalizeEquipFile(rawJson)` → 기존 형태(`{ "n티어": { 한국어이름: { ... } } }`)로 변환
+  - 각 아이템: 한국어명 = `name_ko`로 키 재배치
+  - 친밀감/고유원소/고유영혼 배열을 영문→한글 변환
+  - `engName`, `image_key`, `이미지_경로` 등 신규 필드는 그대로 유지(추가만 됨)
+- `normalizeElementEnchant(rawJson)`, `normalizeSpiritEnchant(rawJson)` → 내부 키를 한국어로 재매핑
+- 모든 변환 결과는 메모이즈
 
-- 컴포넌트 최상단 가까이에서 파생값 정의:
-  ```
-  const activeSimResult = retryOnly && simResult?.retryResult ? simResult.retryResult : simResult;
-  ```
-- 주요 결과/상세 정보에서 사용하는 `simResult.winRounds`, `simResult.winHeroResults`, `simResult.partyDmgDealt`, `simResult.miniBossResults`, `simResult.winPartyDmgTaken` 등 모든 버킷 관련 접근을 `activeSimResult.`로 치환
-- 전체 승률 / 평균 라운드 표시도 retryOnly 모드에서는 `activeSimResult.rawWinRate`(재시도 단판 기준)와 그 라운드 통계를 사용
-- 합산 winRate (1차+재시도)는 retryOnly === false 일 때만 표시
+### 3) 로더 통합
+- `src/lib/equipmentUtils.ts`
+  - `loadEquipmentByTypes`: 응답을 `normalizeEquipFile`로 통과
+  - `loadDualWieldData`: 동일
+  - `getEquipImagePath`/`EquipmentItem.imagePath`: 아이템 자체 `이미지_경로`를 우선 사용, 없으면 기존 name_map 폴백
+  - `EquipmentItem`에 `engName`, `imageKey`, `airshipPowerBonus`, `heavenly`(천상 계수) 필드 추가
+- `src/lib/championEquipUtils.ts`(familiar/aurasong) 동일 패턴 적용(필요 시)
+- `src/lib/skillBonusParser.ts`, `src/lib/partyBuffCalculator.ts`(spirit/aurasong fetch) 정규화 호출 추가
+- `src/components/EnchantPickerDialog.tsx` 직접 fetch 부분도 정규화 호출
 
-### 4. 파티 구성 / 스탯 계산표에 부스터 반영
+### 4) 신규 필드 활용
+- `천상`(per-item 1 또는 1.25): 이미 `equipStatCalculator`에서 `item['천상']`로 읽고 있으므로 동작함 — 정규화에서 키만 보존하면 OK
+- `장비_에어쉽파워보너스`: `EquipmentItem.airshipPowerBonus`로 노출. 현재 시뮬레이션이 사용하지 않으므로 표시·후속 작업용으로 보존만 함
 
-- retryOnly + Fateweaver/Chronomancer 존재 시: 표시되는 ATK/DEF는 일반 부스터 1개 분량 + 기존 부스터 가 적용된 값이어야 함
-- 파티 구성 표(L492~518 영역) 렌더링 시:
-  - 기존 `buffedStats` 의 `atkConstant`, `commonAtkPct`, `partyAtkMult` 이 이미 있음
-  - retryOnly 모드면 보너스 가산식만 추가:
-    ```
-    extra = 0.2  // 일반 부스터 한 개 분량
-    displayAtk = round(atkConstant * (1 + commonAtkPct + extra) * partyAtkMult)
-    displayDef = round(defConstant * (1 + commonDefPct + extra) * partyDefMult)
-    ```
-  - HP/CRIT 등 비대상 스탯은 그대로
-- 스탯 계산표 (StatBreakdownDrawer)는 별도 prop `retryBoosterActive?: boolean` 받아서 `통합 보너스 요약` 의 `총 공통 %` 줄과 최종 ATK/DEF 줄에 `+20%(재시도 부스터)` 항목을 명시적으로 추가하여 보여줌. 토글이 꺼져 있을 때는 기존과 동일
+### 5) 검증
+- 기존 저장된 영웅(한국어 장비명)이 정상 매칭되는지 확인
+- 친밀감 표기·고유 원소 적용·영혼 효과·이미지 표시·천상 1.25 적용 케이스 확인
+- 합성·시뮬레이션 결과가 변경 전과 동일한지 빠른 비교
 
-### 5. 검증
+## 비-목표
+- UI 텍스트 영어화는 이번 작업 범위 아님(데이터 구조만 대응)
+- `장비_에어쉽파워보너스`의 실제 게임 효과 적용은 별도 작업(보존만)
 
-- 빌드 후 페이트위버 포함 파티/미포함 파티 각각에서:
-  - 미포함: 모래시계 버튼 숨김 확인
-  - 포함: 토글 ON → 모든 ResultTabsToggle UI 동기화, 주요결과/상세정보가 재시도 전용 통계로 갱신, 파티 구성 ATK/DEF가 +20% 반영된 값으로 표시
-- 콘솔/네트워크 에러 없는지 확인
+---
 
-### 비고
-
-- 재시도 시뮬레이션은 같은 미니보스 여부/유형으로 진행되도록 이미 동일 `config`(miniBoss 포함)를 전달하므로 추가 변경 불필요
-- 저장된 결과(`SavedSimulationSummary`)에는 retryOnly 상태를 따로 보관하지 않음 — 화면 필터에만 영향
+질문(짧게):
+1. `장비_에어쉽파워보너스`의 정확한 의미/적용 방식이 정해져 있다면 알려줘. 정해져 있지 않으면 이번엔 보존만 하고 추후 작업할게.
+2. 어댑터 방식(다운스트림 영향 최소)으로 가도 괜찮지? 아니면 코어 로직까지 영어 키 기반으로 점진 마이그레이션을 원해?
