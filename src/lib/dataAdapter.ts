@@ -67,7 +67,7 @@ export const SPIRIT_EN_TO_KO: Record<string, string> = {
   Christmas: "크리스마스",
   Xolotl: "졸로틀",
   Mundra: "문드라",
-  Master: "명인",
+  Titan: "명인",
   Ancestor: "조상",
 };
 
