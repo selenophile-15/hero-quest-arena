@@ -156,8 +156,7 @@ export async function loadEquipmentByTypes(
   if (uncachedTypes.length > 0) {
     const fetchPromises = uncachedTypes.map(async ({ typeKor, file, category }) => {
       try {
-        const resp = await fetch(`/data/equipment/${category}/${file}.json`);
-        const data = await resp.json();
+        const data = await fetchEquipFileNormalized(`/data/equipment/${category}/${file}.json`);
         const items: EquipmentItem[] = [];
 
         for (const [tierKey, tierItems] of Object.entries(data)) {
@@ -166,8 +165,10 @@ export async function loadEquipmentByTypes(
           const tier = parseInt(tierMatch[1], 10);
 
           for (const [korName, itemData] of Object.entries(tierItems as Record<string, any>)) {
-            const engName = nameMap[file]?.[korName] || '';
-            const imagePath = engName ? `/images/equipment/${category}/${file}/${engName}.webp` : '';
+            const engName = itemData.engName || nameMap[file]?.[korName] || '';
+            const imageKey = itemData.image_key || itemData.imageKey || '';
+            const imagePath = itemData['이미지_경로']
+              || (engName ? `/images/equipment/${category}/${file}/${engName}.webp` : '');
 
             const stats: { key: string; value: number }[] = [];
             if (itemData['장비_공격력']) stats.push({ key: '장비_공격력', value: itemData['장비_공격력'] });
@@ -179,6 +180,7 @@ export async function loadEquipmentByTypes(
             items.push({
               name: korName,
               engName,
+              imageKey,
               type: file,
               typeKor,
               category,
@@ -189,6 +191,8 @@ export async function loadEquipmentByTypes(
               relic: itemData['유물'] != null && itemData['유물'] !== false,
               relicEffect: typeof itemData['유물'] === 'object' && itemData['유물']?.['효과'] ? itemData['유물']['효과'] : null,
               airshipPower: itemData['장비_에어쉽파워'] || 0,
+              airshipPowerBonus: itemData['장비_에어쉽파워보너스'] ?? undefined,
+              heavenlyMul: typeof itemData['천상'] === 'number' ? itemData['천상'] : undefined,
               elementAffinity: itemData['원소친밀감'] || null,
               spiritAffinity: itemData['영혼친밀감'] || null,
               uniqueElement: itemData['고유원소종류'] || null,
