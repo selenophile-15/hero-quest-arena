@@ -99,8 +99,8 @@ let spiritDataCache: Record<string, any> | null = null;
 async function loadSpiritData(): Promise<Record<string, any>> {
   if (spiritDataCache) return spiritDataCache;
   try {
-    const resp = await fetch('/data/equipment/enchantment/spirit.json');
-    spiritDataCache = await resp.json();
+    const { fetchSpiritEnchantNormalized } = await import('@/lib/dataAdapter');
+    spiritDataCache = await fetchSpiritEnchantNormalized();
     return spiritDataCache!;
   } catch {
     return {};
