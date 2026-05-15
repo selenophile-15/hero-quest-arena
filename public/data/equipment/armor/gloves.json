@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "가죽 장갑": {
-      "이미지_경로": null,
+    "Leather Gloves": {
+      "id": "gl1_1",
+      "name_ko": "가죽 장갑",
+      "image_key": "leather_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/leather_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 7,
@@ -9,30 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 8,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "2티어": {
-    "팔 보호구": {
-      "이미지_경로": null,
+    "Bracers": {
+      "id": "gl2_1",
+      "name_ko": "팔 보호구",
+      "image_key": "bracers",
+      "이미지_경로": "/images/equipment/armor/gloves/bracers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 14,
@@ -40,30 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 17,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "3티어": {
-    "도둑의 장갑": {
-      "이미지_경로": null,
+    "Thief's Gloves": {
+      "id": "gl3_1",
+      "name_ko": "도둑의 장갑",
+      "image_key": "thief's_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/thief's_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 22,
@@ -71,19 +68,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 26,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "빠른 장갑": {
-      "이미지_경로": null,
+
+    "Swift Mitts": {
+      "id": "gl3_2",
+      "name_ko": "빠른 장갑",
+      "image_key": "swift_mitts",
+      "이미지_경로": "/images/equipment/armor/gloves/swift_mitts.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 48,
@@ -91,19 +92,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 58,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["공기"],
+      "고유원소종류": ["Air"],
       "고유원소티어": 4,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "기운 가죽 팔 보호구": {
-      "이미지_경로": null,
+
+    "Patchleather Bracers": {
+      "id": "gl3_3",
+      "name_ko": "기운 가죽 팔 보호구",
+      "image_key": "patchleather_bracers",
+      "이미지_경로": "/images/equipment/armor/gloves/patchleather_bracers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 37,
@@ -111,30 +116,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 67,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "4티어": {
-    "징 박힌 장갑": {
-      "이미지_경로": null,
+    "Studded Gloves": {
+      "id": "gl4_1",
+      "name_ko": "징 박힌 장갑",
+      "image_key": "studded_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/studded_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 42,
@@ -142,19 +144,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 50,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "제왕의 팔찌": {
-      "이미지_경로": null,
+
+    "Regal Bangles": {
+      "id": "gl4_2",
+      "name_ko": "제왕의 팔찌",
+      "image_key": "regal_bangles",
+      "이미지_경로": "/images/equipment/armor/gloves/regal_bangles.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 54,
@@ -162,30 +168,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 80,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "5티어": {
-    "엘프의 완갑": {
-      "이미지_경로": null,
+    "Elven Vambraces": {
+      "id": "gl5_1",
+      "name_ko": "엘프의 완갑",
+      "image_key": "elven_vambraces",
+      "이미지_경로": "/images/equipment/armor/gloves/elven_vambraces.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 66,
@@ -193,19 +196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 79,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "오스타라 장갑": {
-      "이미지_경로": null,
+
+    "Ostara Gloves": {
+      "id": "gl5_2",
+      "name_ko": "오스타라 장갑",
+      "image_key": "ostara_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/ostara_gloves.webp",
 
       "장비_공격력": 18,
       "장비_방어력": 72,
@@ -213,19 +220,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 101,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["토끼"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "시아의 장갑": {
-      "이미지_경로": null,
+
+    "Sia's Gloves": {
+      "id": "gl5_3",
+      "name_ko": "시아의 장갑",
+      "image_key": "sia's_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/sia's_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 78,
@@ -233,30 +244,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 140,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "6티어": {
-    "야만전사의 발톱": {
-      "이미지_경로": null,
+    "Savage Claws": {
+      "id": "gl6_1",
+      "name_ko": "야만전사의 발톱",
+      "image_key": "savage_claws",
+      "이미지_경로": "/images/equipment/armor/gloves/savage_claws.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 84,
@@ -264,19 +272,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 101,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["도마뱀"],
+      "영혼친밀감": ["Lizard"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "별빛 손가락": {
-      "이미지_경로": null,
+
+    "Starlight Fingers": {
+      "id": "gl6_2",
+      "name_ko": "별빛 손가락",
+      "image_key": "starlight_fingers",
+      "이미지_경로": "/images/equipment/armor/gloves/starlight_fingers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 90,
@@ -284,19 +296,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 138,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛", "어둠"],
+      "원소친밀감": ["Light", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "검은 와이엄 클로": {
-      "이미지_경로": null,
+
+    "Black Wyrm Claws": {
+      "id": "gl6_3",
+      "name_ko": "검은 와이엄 클로",
+      "image_key": "black_wyrm_claws",
+      "이미지_경로": "/images/equipment/armor/gloves/black_wyrm_claws.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 135,
@@ -304,30 +320,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 162,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["어둠"],
+      "고유원소종류": ["Dark"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "7티어": {
-    "닌자 장갑": {
-      "이미지_경로": null,
+    "Ninja Gloves": {
+      "id": "gl7_1",
+      "name_ko": "닌자 장갑",
+      "image_key": "ninja_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/ninja_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 110,
@@ -335,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 132,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "고양이 도둑 발톱": {
-      "이미지_경로": null,
+
+    "Cat Burglar Claws": {
+      "id": "gl7_2",
+      "name_ko": "고양이 도둑 발톱",
+      "image_key": "cat_burglar_claws",
+      "이미지_경로": "/images/equipment/armor/gloves/cat_burglar_claws.webp",
 
       "장비_공격력": 29,
       "장비_방어력": 115,
@@ -355,19 +372,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 161,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["고양이"],
+      "영혼친밀감": ["Cat"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "고디타 반장갑": {
-      "이미지_경로": null,
+
+    "Gothita Glovelettes": {
+      "id": "gl7_3",
+      "name_ko": "고디타 반장갑",
+      "image_key": "gothita_glovelettes",
+      "이미지_경로": "/images/equipment/armor/gloves/gothita_glovelettes.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 115,
@@ -375,30 +396,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 173,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "8티어": {
-    "윈드러너 장갑": {
-      "이미지_경로": null,
+    "Windrunner Gloves": {
+      "id": "gl8_1",
+      "name_ko": "윈드러너 장갑",
+      "image_key": "windrunner_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/windrunner_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 140,
@@ -406,19 +424,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 168,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "사쿠라 커프스": {
-      "이미지_경로": null,
+
+    "Sakura Cuffs": {
+      "id": "gl8_2",
+      "name_ko": "사쿠라 커프스",
+      "image_key": "sakura_cuffs",
+      "이미지_경로": "/images/equipment/armor/gloves/sakura_cuffs.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 145,
@@ -426,19 +448,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 219,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "교묘한 손재주": {
-      "이미지_경로": null,
+
+    "Hands of Sleight": {
+      "id": "gl8_3",
+      "name_ko": "교묘한 손재주",
+      "image_key": "hands_of_sleight",
+      "이미지_경로": "/images/equipment/armor/gloves/hands_of_sleight.webp",
 
       "장비_공격력": 39,
       "장비_방어력": 155,
@@ -446,30 +472,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 217,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["토끼"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "9티어": {
-    "드레이크스킨 장갑": {
-      "이미지_경로": null,
+    "Drakeskin Gloves": {
+      "id": "gl9_1",
+      "name_ko": "드레이크스킨 장갑",
+      "image_key": "drakeskin_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/drakeskin_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 160,
@@ -477,19 +500,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 192,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "산악인 장갑": {
-      "이미지_경로": null,
+
+    "Mountain Man Mitts": {
+      "id": "gl9_2",
+      "name_ko": "산악인 장갑",
+      "image_key": "mountain_man_mitts",
+      "이미지_경로": "/images/equipment/armor/gloves/mountain_man_mitts.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 170,
@@ -497,19 +524,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 306,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "갑판장의 장갑": {
-      "이미지_경로": null,
+
+    "Boatswain's Glove": {
+      "id": "gl9_3",
+      "name_ko": "갑판장의 장갑",
+      "image_key": "boatswain's_glove",
+      "이미지_경로": "/images/equipment/armor/gloves/boatswain's_glove.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 170,
@@ -517,19 +548,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 259,
+      "장비_에어쉽파워보너스": 1.25,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "늑대인간 발톱": {
-      "이미지_경로": null,
+
+    "Werewolf Claws": {
+      "id": "gl9_4",
+      "name_ko": "늑대인간 발톱",
+      "image_key": "werewolf_claws",
+      "이미지_경로": "/images/equipment/armor/gloves/werewolf_claws.webp",
 
       "장비_공격력": 44,
       "장비_방어력": 175,
@@ -537,30 +572,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 245,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
-      "영혼친밀감": ["늑대"],
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": ["Wolf"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "10티어": {
-    "해적 장갑": {
-      "이미지_경로": null,
+    "Corsair Gloves": {
+      "id": "gl10_1",
+      "name_ko": "해적 장갑",
+      "image_key": "corsair_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/corsair_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 185,
@@ -568,19 +600,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 222,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "행운의 장갑": {
-      "이미지_경로": null,
+
+    "Fortunate Gloves": {
+      "id": "gl10_2",
+      "name_ko": "행운의 장갑",
+      "image_key": "fortunate_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/fortunate_gloves.webp",
 
       "장비_공격력": 48,
       "장비_방어력": 190,
@@ -588,19 +624,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 266,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "야미의 장갑": {
-      "이미지_경로": null,
+
+    "Yami's Gloves": {
+      "id": "gl10_3",
+      "name_ko": "야미의 장갑",
+      "image_key": "yami's_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/yami's_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 190,
@@ -608,19 +648,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 342,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "호화로운 손아귀": {
-      "이미지_경로": null,
+
+    "Opulent Grasp": {
+      "id": "gl10_4",
+      "name_ko": "호화로운 손아귀",
+      "image_key": "opulent_grasp",
+      "이미지_경로": "/images/equipment/armor/gloves/opulent_grasp.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 190,
@@ -628,30 +672,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 228,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "11티어": {
-    "에버더스크 장갑": {
-      "이미지_경로": null,
+    "Everdusk Gloves": {
+      "id": "gl11_1",
+      "name_ko": "에버더스크 장갑",
+      "image_key": "everdusk_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/everdusk_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 240,
@@ -659,19 +700,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 288,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "랩터 날개": {
-      "이미지_경로": null,
+
+    "Raptor Wings": {
+      "id": "gl11_2",
+      "name_ko": "랩터 날개",
+      "image_key": "raptor_wings",
+      "이미지_경로": "/images/equipment/armor/gloves/raptor_wings.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 240,
@@ -679,19 +724,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 432,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
-      "영혼친밀감": ["그리핀"],
+      "원소친밀감": ["Air"],
+      "영혼친밀감": ["Griffin"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "나이트윙 완갑": {
-      "이미지_경로": null,
+
+    "Nightwing Vambraces": {
+      "id": "gl11_3",
+      "name_ko": "나이트윙 완갑",
+      "image_key": "nightwing_vambraces",
+      "이미지_경로": "/images/equipment/armor/gloves/nightwing_vambraces.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 245,
@@ -699,30 +748,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 369,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기", "어둠"],
+      "원소친밀감": ["Air", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "12티어": {
-    "새벽 도둑의 손길": {
-      "이미지_경로": null,
+    "Dawn Thief's Touch": {
+      "id": "gl12_1",
+      "name_ko": "새벽 도둑의 손길",
+      "image_key": "dawn_thief's_touch",
+      "이미지_경로": "/images/equipment/armor/gloves/dawn_thief's_touch.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 300,
@@ -730,19 +776,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 360,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "사기꾼의 손가락": {
-      "이미지_경로": null,
+
+    "Swindler's Fingers": {
+      "id": "gl12_2",
+      "name_ko": "사기꾼의 손가락",
+      "image_key": "swindler's_fingers",
+      "이미지_경로": "/images/equipment/armor/gloves/swindler's_fingers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 409,
@@ -750,19 +800,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 491,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["공기"],
+      "고유원소종류": ["Air"],
       "고유원소티어": 12,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "리듬의 반장갑": {
-      "이미지_경로": null,
+
+    "Gloves of Rhythm": {
+      "id": "gl12_3",
+      "name_ko": "리듬의 반장갑",
+      "image_key": "gloves_of_rhythm",
+      "이미지_경로": "/images/equipment/armor/gloves/gloves_of_rhythm.webp",
 
       "장비_공격력": 75,
       "장비_방어력": 300,
@@ -770,50 +824,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 420,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "간츠 다르타냥": {
-      "이미지_경로": null,
+
+    "Gants d'Artagnan": {
+      "id": "gl12_4",
+      "name_ko": "간츠 다르타냥",
+      "image_key": "gants_d'artagnan",
+      "이미지_경로": "/images/equipment/armor/gloves/gants_d'artagnan.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 310,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
-      "장비_회피%": 7,
+      "장비_회피%": 7.000000000000001,
       "장비_에어쉽파워": 632,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "13티어": {
-    "와일드헌트 장갑": {
-      "이미지_경로": null,
+    "Wildhunt Gloves": {
+      "id": "gl13_1",
+      "name_ko": "와일드헌트 장갑",
+      "image_key": "wildhunt_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/wildhunt_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 380,
@@ -821,19 +876,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 456,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
-      "영혼친밀감": ["키메라"],
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Chimera"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "캠핑족 나침반": {
-      "이미지_경로": null,
+
+    "Camper's Compass": {
+      "id": "gl13_2",
+      "name_ko": "캠핑족 나침반",
+      "image_key": "camper's_compass",
+      "이미지_경로": "/images/equipment/armor/gloves/camper's_compass.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 418,
@@ -841,50 +900,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 622,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "순수 하트 장갑": {
-      "이미지_경로": null,
+
+    "Pure Heart Gloves": {
+      "id": "gl13_3",
+      "name_ko": "순수 하트 장갑",
+      "image_key": "pure_heart_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/pure_heart_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 418,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
-      "장비_회피%": 7,
+      "장비_회피%": 7.000000000000001,
       "장비_에어쉽파워": 853,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "14티어": {
-    "예언자의 손": {
-      "이미지_경로": null,
+    "Soothsayer's Hands": {
+      "id": "gl14_1",
+      "name_ko": "예언자의 손",
+      "image_key": "soothsayer's_hands",
+      "이미지_경로": "/images/equipment/armor/gloves/soothsayer's_hands.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 475,
@@ -892,19 +952,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 570,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "라크로스 장갑": {
-      "이미지_경로": null,
+
+    "Lacrosse Gloves": {
+      "id": "gl14_2",
+      "name_ko": "라크로스 장갑",
+      "image_key": "lacrosse_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/lacrosse_gloves.webp",
 
       "장비_공격력": 119,
       "장비_방어력": 475,
@@ -912,19 +976,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 665,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "플래티넘 장갑": {
-      "이미지_경로": null,
+
+    "Platinum Gloves": {
+      "id": "gl14_3",
+      "name_ko": "플래티넘 장갑",
+      "image_key": "platinum_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/platinum_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 475,
@@ -932,19 +1000,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 570,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "얼음불 위버": {
-      "이미지_경로": null,
+
+    "Frostfire Weavers": {
+      "id": "gl14_4",
+      "name_ko": "얼음불 위버",
+      "image_key": "frostfire_weavers",
+      "이미지_경로": "/images/equipment/armor/gloves/frostfire_weavers.webp",
 
       "장비_공격력": 123,
       "장비_방어력": 490,
@@ -952,19 +1024,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 686,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불", "물"],
+      "원소친밀감": ["Fire", "Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "배신자의 손": {
-      "이미지_경로": null,
+
+    "Betrayer's Hands": {
+      "id": "gl14_5",
+      "name_ko": "배신자의 손",
+      "image_key": "betrayer's_hands",
+      "이미지_경로": "/images/equipment/armor/gloves/betrayer's_hands.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 490,
@@ -972,30 +1048,27 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 882,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["우로보로스"],
+      "영혼친밀감": ["Ouroboros"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "15티어": {
-    "번데기 장갑": {
-      "이미지_경로": null,
+    "Chrysalid Gloves": {
+      "id": "gl15_1",
+      "name_ko": "번데기 장갑",
+      "image_key": "chrysalid_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/chrysalid_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 550,
@@ -1003,19 +1076,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 660,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기", "대지"],
+      "원소친밀감": ["Air", "Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "명인 제독 장갑": {
-      "이미지_경로": null,
+
+    "Titan Admiral Gloves": {
+      "id": "gl15_2",
+      "name_ko": "명인 제독 장갑",
+      "image_key": "titan_admiral_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/titan_admiral_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 550,
@@ -1023,19 +1100,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 830,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["명인"],
+      "원소친밀감": ["Light", "Water"],
+      "영혼친밀감": ["Titan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "핼러위치 장갑": {
-      "이미지_경로": null,
+
+    "Hallowitch Gloves": {
+      "id": "gl15_3",
+      "name_ko": "핼러위치 장갑",
+      "image_key": "hallowitch_gloves",
+      "이미지_경로": "/images/equipment/armor/gloves/hallowitch_gloves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 550,
@@ -1043,14 +1124,15 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 990,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

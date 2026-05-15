@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "박하잎 약초": {
-      "이미지_경로": null,
+    "Mintyleaf Herb": {
+      "id": "hb1_1",
+      "name_ko": "박하잎 약초",
+      "image_key": "mintyleaf_herb",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/mintyleaf_herb.webp",
 
       "장비_공격력": 8,
       "장비_방어력": 0,
@@ -9,28 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 16,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "달콤한 풀": {
-      "이미지_경로": null,
+    "Sweet Grass": {
+      "id": "hb2_1",
+      "name_ko": "달콤한 풀",
+      "image_key": "sweet_grass",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/sweet_grass.webp",
 
       "장비_공격력": 13,
       "장비_방어력": 0,
@@ -38,28 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 25,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "달의 가루": {
-      "이미지_경로": null,
+    "Moon Powder": {
+      "id": "hb3_1",
+      "name_ko": "달의 가루",
+      "image_key": "moon_powder",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/moon_powder.webp",
 
       "장비_공격력": 21,
       "장비_방어력": 0,
@@ -67,19 +68,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 42,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "마법의 겨우살이": {
-      "이미지_경로": null,
+
+
+    "Magical Mistletoe": {
+      "id": "hb3_2",
+      "name_ko": "마법의 겨우살이",
+      "image_key": "magical_mistletoe",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/magical_mistletoe.webp",
 
       "장비_공격력": 36,
       "장비_방어력": 0,
@@ -87,28 +92,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 59,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["크리스마스"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "치유의 연고": {
-      "이미지_경로": null,
+    "Healing Salve": {
+      "id": "hb4_1",
+      "name_ko": "치유의 연고",
+      "image_key": "healing_salve",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/healing_salve.webp",
 
       "장비_공격력": 31,
       "장비_방어력": 0,
@@ -116,19 +120,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 65,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "풍성한 귀리": {
-      "이미지_경로": null,
+
+
+    "Venerable Oats": {
+      "id": "hb4_2",
+      "name_ko": "풍성한 귀리",
+      "image_key": "venerable_oats",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/venerable_oats.webp",
 
       "장비_공격력": 51,
       "장비_방어력": 0,
@@ -136,19 +144,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 81,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "마늘 다발": {
-      "이미지_경로": null,
+
+
+    "Garlic String": {
+      "id": "hb4_3",
+      "name_ko": "마늘 다발",
+      "image_key": "garlic_string",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/garlic_string.webp",
 
       "장비_공격력": 56,
       "장비_방어력": 0,
@@ -156,28 +168,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 125,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "은빛 엉겅퀴": {
-      "이미지_경로": null,
+    "Silver Thistle": {
+      "id": "hb5_1",
+      "name_ko": "은빛 엉겅퀴",
+      "image_key": "silver_thistle",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/silver_thistle.webp",
 
       "장비_공격력": 41,
       "장비_방어력": 0,
@@ -185,19 +196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 83,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "짭짤한 수확": {
-      "이미지_경로": null,
+
+
+    "Bountiful Harvest": {
+      "id": "hb5_2",
+      "name_ko": "짭짤한 수확",
+      "image_key": "bountiful_harvest",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/bountiful_harvest.webp",
 
       "장비_공격력": 66,
       "장비_방어력": 0,
@@ -205,19 +220,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 108,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "단단한 옥수수 번들": {
-      "이미지_경로": null,
+
+
+    "Flint Corn Bundle": {
+      "id": "hb5_3",
+      "name_ko": "단단한 옥수수 번들",
+      "image_key": "flint_corn_bundle",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/flint_corn_bundle.webp",
 
       "장비_공격력": 48,
       "장비_방어력": 0,
@@ -225,28 +244,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 143,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "피의 덩굴": {
-      "이미지_경로": null,
+    "Bloodvine": {
+      "id": "hb6_1",
+      "name_ko": "피의 덩굴",
+      "image_key": "bloodvine",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/bloodvine.webp",
 
       "장비_공격력": 53,
       "장비_방어력": 0,
@@ -254,19 +272,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 107,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "향기로운 꽃다발": {
-      "이미지_경로": null,
+
+
+    "Fragrant Bouquet": {
+      "id": "hb6_2",
+      "name_ko": "향기로운 꽃다발",
+      "image_key": "fragrant_bouquet",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/fragrant_bouquet.webp",
 
       "장비_공격력": 83,
       "장비_방어력": 0,
@@ -274,19 +296,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 136,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "미니 선인장": {
-      "이미지_경로": null,
+
+
+    "Lil' Cactus": {
+      "id": "hb6_3",
+      "name_ko": "미니 선인장",
+      "image_key": "lil'_cactus",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/lil'_cactus.webp",
 
       "장비_공격력": 55,
       "장비_방어력": 0,
@@ -294,28 +320,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 149,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "만드라고뿌리": {
-      "이미지_경로": null,
+    "Mandragoroot": {
+      "id": "hb7_1",
+      "name_ko": "만드라고뿌리",
+      "image_key": "mandragoroot",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/mandragoroot.webp",
 
       "장비_공격력": 63,
       "장비_방어력": 0,
@@ -323,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 130,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "시들지 않는 장미": {
-      "이미지_경로": null,
+
+    "Unwilting Rose": {
+      "id": "hb7_2",
+      "name_ko": "시들지 않는 장미",
+      "image_key": "unwilting_rose",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/unwilting_rose.webp",
 
       "장비_공격력": 70,
       "장비_방어력": 0,
@@ -343,19 +372,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 191,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "꽃피는 자연림": {
-      "이미지_경로": null,
+
+    "Blooming Wildwood": {
+      "id": "hb7_3",
+      "name_ko": "꽃피는 자연림",
+      "image_key": "blooming_wildwood",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/blooming_wildwood.webp",
 
       "장비_공격력": 75,
       "장비_방어력": 0,
@@ -363,28 +396,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 200,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "늑대의 골칫거리": {
-      "이미지_경로": null,
+    "Wolf's Bane": {
+      "id": "hb8_1",
+      "name_ko": "늑대의 골칫거리",
+      "image_key": "wolf's_bane",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/wolf's_bane.webp",
 
       "장비_공격력": 80,
       "장비_방어력": 0,
@@ -392,19 +424,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 164,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "안개꼭대기 꽃": {
-      "이미지_경로": null,
+
+    "Mistpeak Bloom": {
+      "id": "hb8_2",
+      "name_ko": "안개꼭대기 꽃",
+      "image_key": "mistpeak_bloom",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/mistpeak_bloom.webp",
 
       "장비_공격력": 140,
       "장비_방어력": 0,
@@ -412,19 +448,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 277,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "핀 제르브": {
-      "이미지_경로": null,
+
+    "Fines Herbes": {
+      "id": "hb8_3",
+      "name_ko": "핀 제르브",
+      "image_key": "fines_herbes",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/fines_herbes.webp",
 
       "장비_공격력": 83,
       "장비_방어력": 0,
@@ -432,19 +472,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 221,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "신더레이크 촘퍼": {
-      "이미지_경로": null,
+
+    "Cinderlake Chompers": {
+      "id": "hb8_4",
+      "name_ko": "신더레이크 촘퍼",
+      "image_key": "cinderlake_chompers",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/cinderlake_chompers.webp",
 
       "장비_공격력": 124,
       "장비_방어력": 0,
@@ -452,28 +496,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 204,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "위그드라실 가지": {
-      "이미지_경로": null,
+    "Yggdrasil Branch": {
+      "id": "hb9_1",
+      "name_ko": "위그드라실 가지",
+      "image_key": "yggdrasil_branch",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/yggdrasil_branch.webp",
 
       "장비_공격력": 93,
       "장비_방어력": 0,
@@ -481,19 +524,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 189,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "짱행운 클로버": {
-      "이미지_경로": null,
+    "Luckiest Clover": {
+      "id": "hb9_2",
+      "name_ko": "짱행운 클로버",
+      "image_key": "luckiest_clover",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/luckiest_clover.webp",
 
       "장비_공격력": 143,
       "장비_방어력": 0,
@@ -501,19 +548,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 234,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛", "골드"],
+      "원소친밀감": ["Light", "Gold"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "고급 치료법": {
-      "이미지_경로": null,
+
+    "Luxurious Panacea": {
+      "id": "hb9_3",
+      "name_ko": "고급 치료법",
+      "image_key": "luxurious_panacea",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/luxurious_panacea.webp",
 
       "장비_공격력": 100,
       "장비_방어력": 0,
@@ -521,28 +572,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 205,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["졸로틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Xolotl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "용혈 연고": {
-      "이미지_경로": null,
+    "Wyrmblood Ointment": {
+      "id": "hb10_1",
+      "name_ko": "용혈 연고",
+      "image_key": "wyrmblood_ointment",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/wyrmblood_ointment.webp",
 
       "장비_공격력": 110,
       "장비_방어력": 0,
@@ -550,19 +600,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 223,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "야생 참나무 정원": {
-      "이미지_경로": null,
+
+    "Wild Oak Rose": {
+      "id": "hb10_2",
+      "name_ko": "야생 참나무 정원",
+      "image_key": "wild_oak_rose",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/wild_oak_rose.webp",
 
       "장비_공격력": 173,
       "장비_방어력": 0,
@@ -570,19 +624,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 283,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "다다국화": {
-      "이미지_경로": null,
+
+    "Chrysanthemultitude": {
+      "id": "hb10_3",
+      "name_ko": "다다국화",
+      "image_key": "chrysanthemultitude",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/chrysanthemultitude.webp",
 
       "장비_공격력": 115,
       "장비_방어력": 0,
@@ -590,28 +648,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 307,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
-      "영혼친밀감": ["말"],
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Horse"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "악마초": {
-      "이미지_경로": null,
+    "Florae Daemonica": {
+      "id": "hb11_1",
+      "name_ko": "악마초",
+      "image_key": "florae_daemonica",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/florae_daemonica.webp",
 
       "장비_공격력": 135,
       "장비_방어력": 0,
@@ -619,19 +676,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 278,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "브릭스파이어 뿌리": {
-      "이미지_경로": null,
+    "Bleakspire Roots": {
+      "id": "hb11_2",
+      "name_ko": "브릭스파이어 뿌리",
+      "image_key": "bleakspire_roots",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/bleakspire_roots.webp",
 
       "장비_공격력": 207,
       "장비_방어력": 0,
@@ -639,19 +700,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 411,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["대지"],
+      "고유원소종류": ["Earth"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "셀처 서프라이즈": {
-      "이미지_경로": null,
+    "Seltzer Surprise": {
+      "id": "hb11_3",
+      "name_ko": "셀처 서프라이즈",
+      "image_key": "seltzer_surprise",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/seltzer_surprise.webp",
 
       "장비_공격력": 135,
       "장비_방어력": 0,
@@ -659,19 +724,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 363,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "슈퍼 스낵 팩": {
-      "이미지_경로": null,
+    "Super Snack Pack": {
+      "id": "hb11_4",
+      "name_ko": "슈퍼 스낵 팩",
+      "image_key": "super_snack_pack",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/super_snack_pack.webp",
 
       "장비_공격력": 210,
       "장비_방어력": 0,
@@ -679,28 +748,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 343,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "현자의 돌": {
-      "이미지_경로": null,
+    "Philosopher's Stone": {
+      "id": "hb12_1",
+      "name_ko": "현자의 돌",
+      "image_key": "philosopher's_stone",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/philosopher's_stone.webp",
 
       "장비_공격력": 173,
       "장비_방어력": 0,
@@ -708,19 +776,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 353,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "사쿠라 차": {
-      "이미지_경로": null,
+    "Sakura Infusion": {
+      "id": "hb12_2",
+      "name_ko": "사쿠라 차",
+      "image_key": "sakura_infusion",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/sakura_infusion.webp",
 
       "장비_공격력": 173,
       "장비_방어력": 0,
@@ -728,19 +800,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 458,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 즙": {
-      "이미지_경로": null,
+    "Opulent Decoction": {
+      "id": "hb12_3",
+      "name_ko": "호화로운 즙",
+      "image_key": "opulent_decoction",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/opulent_decoction.webp",
 
       "장비_공격력": 173,
       "장비_방어력": 0,
@@ -748,19 +824,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 353,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "프리미엄 브랜드 잼": {
-      "이미지_경로": null,
+    "Premium Brand Jam": {
+      "id": "hb12_4",
+      "name_ko": "프리미엄 브랜드 잼",
+      "image_key": "premium_brand_jam",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/premium_brand_jam.webp",
 
       "장비_공격력": 266,
       "장비_방어력": 0,
@@ -768,28 +848,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 433,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "보이드블롬 뿌리": {
-      "이미지_경로": null,
+    "Voidbloom Roots": {
+      "id": "hb13_1",
+      "name_ko": "보이드블롬 뿌리",
+      "image_key": "voidbloom_roots",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/voidbloom_roots.webp",
 
       "장비_공격력": 218,
       "장비_방어력": 0,
@@ -797,19 +876,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 449,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "슬라이드 윤활제": {
-      "이미지_경로": null,
+    "Slide Grease": {
+      "id": "hb13_2",
+      "name_ko": "슬라이드 윤활제",
+      "image_key": "slide_grease",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/slide_grease.webp",
 
       "장비_공격력": 218,
       "장비_방어력": 0,
@@ -817,19 +900,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 584,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "샌드맨의 주머니": {
-      "이미지_경로": null,
+    "Sandman's Pouch": {
+      "id": "hb13_3",
+      "name_ko": "샌드맨의 주머니",
+      "image_key": "sandman's_pouch",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/sandman's_pouch.webp",
 
       "장비_공격력": 338,
       "장비_방어력": 0,
@@ -837,19 +924,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 555,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "크리스털 이슬": {
-      "이미지_경로": null,
+    "Crystal Dew": {
+      "id": "hb13_4",
+      "name_ko": "크리스털 이슬",
+      "image_key": "crystal_dew",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/crystal_dew.webp",
 
       "장비_공격력": 225,
       "장비_방어력": 0,
@@ -857,28 +948,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 605,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "영원 분재": {
-      "이미지_경로": null,
+    "Eternal Bonsai": {
+      "id": "hb14_1",
+      "name_ko": "영원 분재",
+      "image_key": "eternal_bonsai",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/eternal_bonsai.webp",
 
       "장비_공격력": 273,
       "장비_방어력": 0,
@@ -886,19 +976,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 558,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 이끼": {
-      "이미지_경로": null,
+    "Platinum Moss": {
+      "id": "hb14_2",
+      "name_ko": "플래티넘 이끼",
+      "image_key": "platinum_moss",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/platinum_moss.webp",
 
       "장비_공격력": 273,
       "장비_방어력": 0,
@@ -906,19 +1000,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 558,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "호화로운 장미": {
-      "이미지_경로": null,
+
+    "Sumptuous Roses": {
+      "id": "hb14_3",
+      "name_ko": "호화로운 장미",
+      "image_key": "sumptuous_roses",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/sumptuous_roses.webp",
 
       "장비_공격력": 273,
       "장비_방어력": 0,
@@ -926,19 +1024,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 728,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "외로운 화분": {
-      "이미지_경로": null,
+
+    "Lone Flowerpot": {
+      "id": "hb14_4",
+      "name_ko": "외로운 화분",
+      "image_key": "lone_flowerpot",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/lone_flowerpot.webp",
 
       "장비_공격력": 420,
       "장비_방어력": 0,
@@ -946,28 +1048,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 686,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "두 운명의 나뭇가지": {
-      "이미지_경로": null,
+    "Twig of Two Fates": {
+      "id": "hb15_1",
+      "name_ko": "두 운명의 나뭇가지",
+      "image_key": "twig_of_two_fates",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/twig_of_two_fates.webp",
 
       "장비_공격력": 315,
       "장비_방어력": 0,
@@ -975,19 +1076,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 647,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "사이의 꽃": {
-      "이미지_경로": null,
+
+
+    "Blooms Between": {
+      "id": "hb15_2",
+      "name_ko": "사이의 꽃",
+      "image_key": "blooms_between",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/blooms_between.webp",
 
       "장비_공격력": 473,
       "장비_방어력": 0,
@@ -995,19 +1100,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 773,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛", "어둠"],
+      "원소친밀감": ["Light", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "마그마 켈프": {
-      "이미지_경로": null,
+
+    "Magmatic Kelp": {
+      "id": "hb15_3",
+      "name_ko": "마그마 켈프",
+      "image_key": "magmatic_kelp",
+      "이미지_경로": "/images/equipment/accessory/herbal_medicine/magmatic_kelp.webp",
 
       "장비_공격력": 315,
       "장비_방어력": 0,
@@ -1015,14 +1124,15 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 842,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

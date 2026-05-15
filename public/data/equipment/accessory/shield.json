@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "나무 방패": {
-      "이미지_경로": null,
+    "Wooden Shield": {
+      "id": "sh1_1",
+      "name_ko": "나무 방패",
+      "image_key": "wooden_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/wooden_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 12,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 14,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "중형 버클러": {
-      "이미지_경로": null,
+    "Heavy Buckler": {
+      "id": "sh2_1",
+      "name_ko": "중형 버클러",
+      "image_key": "heavy_buckler",
+      "이미지_경로": "/images/equipment/accessory/shield/heavy_buckler.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 28,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 34,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "`": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "떡갈나무 방패": {
-      "이미지_경로": null,
+    "Oaken Shield": {
+      "id": "sh3_1",
+      "name_ko": "떡갈나무 방패",
+      "image_key": "oaken_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/oaken_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 40,
@@ -69,29 +68,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 48,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "강철 방패": {
-      "이미지_경로": null,
+    "Iron Shield": {
+      "id": "sh4_1",
+      "name_ko": "강철 방패",
+      "image_key": "iron_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/iron_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 62,
@@ -99,19 +96,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 74,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "황금빛 방패": {
-      "이미지_경로": null,
+    "Aurum Ward": {
+      "id": "sh4_2",
+      "name_ko": "황금빛 방패",
+      "image_key": "aurum_ward",
+      "이미지_경로": "/images/equipment/accessory/shield/aurum_ward.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 84,
@@ -119,29 +120,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 101,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 4,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "눈물 방패": {
-      "이미지_경로": null,
+    "Teardrop Shield": {
+      "id": "sh5_1",
+      "name_ko": "눈물 방패",
+      "image_key": "teardrop_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/teardrop_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 84,
@@ -149,19 +148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 101,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "황제의 뼛조각": {
-      "이미지_경로": null,
+    "Imperial Scutum": {
+      "id": "sh5_2",
+      "name_ko": "황제의 뼛조각",
+      "image_key": "imperial_scutum",
+      "이미지_경로": "/images/equipment/accessory/shield/imperial_scutum.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 92,
@@ -169,19 +172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 140,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "챔피언 비질": {
-      "이미지_경로": null,
+    "Champion Vigil": {
+      "id": "sh5_3",
+      "name_ko": "챔피언 비질",
+      "image_key": "champion_vigil",
+      "이미지_경로": "/images/equipment/accessory/shield/champion_vigil.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 100,
@@ -189,19 +196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 150,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "올 그로그우드": {
-      "이미지_경로": null,
+    "Ol' Grogwood": {
+      "id": "sh5_4",
+      "name_ko": "올 그로그우드",
+      "image_key": "ol'_grogwood",
+      "이미지_경로": "/images/equipment/accessory/shield/ol'_grogwood.webp",
 
       "장비_공격력": 25,
       "장비_방어력": 100,
@@ -209,29 +220,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 140,
+      "장비_에어쉽파워보너스": 1.25,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "미스릴 아스피스": {
-      "이미지_경로": null,
+    "Mythril Aspis": {
+      "id": "sh6_1",
+      "name_ko": "미스릴 아스피스",
+      "image_key": "mythril_aspis",
+      "이미지_경로": "/images/equipment/accessory/shield/mythril_aspis.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 105,
@@ -239,19 +248,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 126,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "약탈자 버클러": {
-      "이미지_경로": null,
+    "Raider Buckler": {
+      "id": "sh6_2",
+      "name_ko": "약탈자 버클러",
+      "image_key": "raider_buckler",
+      "이미지_경로": "/images/equipment/accessory/shield/raider_buckler.webp",
 
       "장비_공격력": 29,
       "장비_방어력": 115,
@@ -259,19 +272,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 161,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "가이아의 보호": {
-      "이미지_경로": null,
+    "Gaia Aegis": {
+      "id": "sh6_3",
+      "name_ko": "가이아의 보호",
+      "image_key": "gaia_aegis",
+      "이미지_경로": "/images/equipment/accessory/shield/gaia_aegis.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 125,
@@ -279,29 +296,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 190,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "웜가드": {
-      "이미지_경로": null,
+    "Wyrmguard": {
+      "id": "sh7_1",
+      "name_ko": "웜가드",
+      "image_key": "wyrmguard",
+      "이미지_경로": "/images/equipment/accessory/shield/wyrmguard.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 140,
@@ -309,19 +324,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 168,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "선봉대 버클러": {
-      "이미지_경로": null,
+    "Vanguard Buckler": {
+      "id": "sh7_2",
+      "name_ko": "선봉대 버클러",
+      "image_key": "vanguard_buckler",
+      "이미지_경로": "/images/equipment/accessory/shield/vanguard_buckler.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 160,
@@ -329,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 288,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "네크의 방패": {
-      "이미지_경로": null,
+    "Neku Shield": {
+      "id": "sh7_3",
+      "name_ko": "네크의 방패",
+      "image_key": "neku_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/neku_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 160,
@@ -349,29 +372,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 242,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "고대의 토템": {
-      "이미지_경로": null,
+    "Ancestor Totem": {
+      "id": "sh8_1",
+      "name_ko": "고대의 토템",
+      "image_key": "ancestor_totem",
+      "이미지_경로": "/images/equipment/accessory/shield/ancestor_totem.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 180,
@@ -379,19 +400,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 216,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "멧돼지 원형 방패": {
-      "이미지_경로": null,
+    "Goreboar Targe": {
+      "id": "sh8_2",
+      "name_ko": "멧돼지 원형 방패",
+      "image_key": "goreboar_targe",
+      "이미지_경로": "/images/equipment/accessory/shield/goreboar_targe.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 190,
@@ -399,19 +424,23 @@
       "장비_치명타확률%": 7,
       "장비_회피%": 0,
       "장비_에어쉽파워": 388,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "페인트 붇은 팔레트": {
-      "이미지_경로": null,
+    "Painted Palette": {
+      "id": "sh8_3",
+      "name_ko": "페인트 붇은 팔레트",
+      "image_key": "painted_palette",
+      "이미지_경로": "/images/equipment/accessory/shield/painted_palette.webp",
 
       "장비_공격력": 48,
       "장비_방어력": 190,
@@ -419,29 +448,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 266,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "천사의 방패": {
-      "이미지_경로": null,
+    "Angelic Pavise": {
+      "id": "sh9_1",
+      "name_ko": "천사의 방패",
+      "image_key": "angelic_pavise",
+      "이미지_경로": "/images/equipment/accessory/shield/angelic_pavise.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 205,
@@ -449,19 +476,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 246,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "프로메테온": {
-      "이미지_경로": null,
+    "Prometheon": {
+      "id": "sh9_2",
+      "name_ko": "프로메테온",
+      "image_key": "prometheon",
+      "이미지_경로": "/images/equipment/accessory/shield/prometheon.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 263,
@@ -469,19 +500,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 316,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["불"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "밀레투스 방패": {
-      "이미지_경로": null,
+    "Milesian Shield": {
+      "id": "sh9_3",
+      "name_ko": "밀레투스 방패",
+      "image_key": "milesian_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/milesian_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 215,
@@ -489,19 +524,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 328,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "버니버니 버클러": {
-      "이미지_경로": null,
+    "Bunbun Buckler": {
+      "id": "sh9_4",
+      "name_ko": "버니버니 버클러",
+      "image_key": "bunbun_buckler",
+      "이미지_경로": "/images/equipment/accessory/shield/bunbun_buckler.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 215,
@@ -509,19 +548,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 387,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["토끼"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "고급 방패": {
-      "이미지_경로": null,
+    "Luxurious Aegis": {
+      "id": "sh9_5",
+      "name_ko": "고급 방패",
+      "image_key": "luxurious_aegis",
+      "이미지_경로": "/images/equipment/accessory/shield/luxurious_aegis.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 225,
@@ -529,29 +572,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 270,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["졸로틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Xolotl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "골드메인 가드": {
-      "이미지_경로": null,
+    "Goldmane Guard": {
+      "id": "sh10_1",
+      "name_ko": "골드메인 가드",
+      "image_key": "goldmane_guard",
+      "이미지_경로": "/images/equipment/accessory/shield/goldmane_guard.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 235,
@@ -559,19 +600,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 282,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["사자"],
+      "영혼친밀감": ["Lion"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "웜가드 황제": {
-      "이미지_경로": null,
+    "Emperor Wyrmguard": {
+      "id": "sh10_2",
+      "name_ko": "웜가드 황제",
+      "image_key": "emperor_wyrmguard",
+      "이미지_경로": "/images/equipment/accessory/shield/emperor_wyrmguard.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 245,
@@ -579,19 +624,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 369,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "트리케라톱스 원형 방패": {
-      "이미지_경로": null,
+    "Tricera Targe": {
+      "id": "sh10_3",
+      "name_ko": "트리케라톱스 원형 방패",
+      "image_key": "tricera_targe",
+      "이미지_경로": "/images/equipment/accessory/shield/tricera_targe.webp",
 
       "장비_공격력": 61,
       "장비_방어력": 245,
@@ -599,29 +648,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 343,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "수염 난 화신": {
-      "이미지_경로": null,
+    "Bearded Paragon": {
+      "id": "sh11_1",
+      "name_ko": "수염 난 화신",
+      "image_key": "bearded_paragon",
+      "이미지_경로": "/images/equipment/accessory/shield/bearded_paragon.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 305,
@@ -629,19 +676,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 366,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "벌집 방호자": {
-      "이미지_경로": null,
+    "Honeycomb Defender": {
+      "id": "sh11_2",
+      "name_ko": "벌집 방호자",
+      "image_key": "honeycomb_defender",
+      "이미지_경로": "/images/equipment/accessory/shield/honeycomb_defender.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 305,
@@ -649,19 +700,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 461,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "공기"],
+      "원소친밀감": ["Earth", "Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "크리스털 원형 방패": {
-      "이미지_경로": null,
+    "Crystalice Targe": {
+      "id": "sh11_3",
+      "name_ko": "크리스털 원형 방패",
+      "image_key": "crystalice_targe",
+      "이미지_경로": "/images/equipment/accessory/shield/crystalice_targe.webp",
 
       "장비_공격력": 80,
       "장비_방어력": 320,
@@ -669,29 +724,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 448,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "심연의 공예품": {
-      "이미지_경로": null,
+    "Abyssal Artifact": {
+      "id": "sh12_1",
+      "name_ko": "심연의 공예품",
+      "image_key": "abyssal_artifact",
+      "이미지_경로": "/images/equipment/accessory/shield/abyssal_artifact.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 385,
@@ -699,19 +752,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 462,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "어둠"],
+      "원소친밀감": ["Water", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "명인 방패": {
-      "이미지_경로": null,
+    "Titan Shield": {
+      "id": "sh12_2",
+      "name_ko": "명인 방패",
+      "image_key": "titan_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/titan_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 385,
@@ -719,19 +776,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 582,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["명인"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Titan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 버클러": {
-      "이미지_경로": null,
+    "Opulent Buckler": {
+      "id": "sh12_3",
+      "name_ko": "호화로운 버클러",
+      "image_key": "opulent_buckler",
+      "이미지_경로": "/images/equipment/accessory/shield/opulent_buckler.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 385,
@@ -739,19 +800,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 462,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "새벽의 보루": {
-      "이미지_경로": null,
+    "Bastion of Dawn": {
+      "id": "sh12_4",
+      "name_ko": "새벽의 보루",
+      "image_key": "bastion_of_dawn",
+      "이미지_경로": "/images/equipment/accessory/shield/bastion_of_dawn.webp",
 
       "장비_공격력": 100,
       "장비_방어력": 400,
@@ -759,19 +824,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 560,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "엘롱고 방패": {
-      "이미지_경로": null,
+    "Elongo Shield": {
+      "id": "sh12_5",
+      "name_ko": "엘롱고 방패",
+      "image_key": "elongo_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/elongo_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 400,
@@ -779,29 +848,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 625,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "클로로 방패": {
-      "이미지_경로": null,
+    "Chloroshield": {
+      "id": "sh13_1",
+      "name_ko": "클로로 방패",
+      "image_key": "chloroshield",
+      "이미지_경로": "/images/equipment/accessory/shield/chloroshield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 495,
@@ -809,19 +876,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 594,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "래디컬 웨이브라이더": {
-      "이미지_경로": null,
+    "Radical Waverider": {
+      "id": "sh13_2",
+      "name_ko": "래디컬 웨이브라이더",
+      "image_key": "radical_waverider",
+      "이미지_경로": "/images/equipment/accessory/shield/radical_waverider.webp",
 
       "장비_공격력": 124,
       "장비_방어력": 495,
@@ -829,19 +900,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 693,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "문드라의 보호": {
-      "이미지_경로": null,
+    "Mundra's Aegis": {
+      "id": "sh13_3",
+      "name_ko": "문드라의 보호",
+      "image_key": "mundra's_aegis",
+      "이미지_경로": "/images/equipment/accessory/shield/mundra's_aegis.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 559,
@@ -849,19 +924,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 936,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
-      "고유영혼": ["문드라"],
-
-      "유물": null
+      "고유영혼": ["Mundra"],
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "CM-73 방패": {
-      "이미지_경로": null,
+    "CM-73 Shield": {
+      "id": "sh13_4",
+      "name_ko": "CM-73 방패",
+      "image_key": "cm-73_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/cm-73_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 510,
@@ -869,19 +948,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 802,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "드래곤 신성 보석": {
-      "이미지_경로": null,
+    "Dragon Sacred Gem": {
+      "id": "sh13_5",
+      "name_ko": "드래곤 신성 보석",
+      "image_key": "dragon_sacred_gem",
+      "이미지_경로": "/images/equipment/accessory/shield/dragon_sacred_gem.webp",
 
       "장비_공격력": 131,
       "장비_방어력": 525,
@@ -889,29 +972,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 735,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["바하무트"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Bahamut"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "지옥의 관문": {
-      "이미지_경로": null,
+    "Hell's Gate": {
+      "id": "sh14_1",
+      "name_ko": "지옥의 관문",
+      "image_key": "hell's_gate",
+      "이미지_경로": "/images/equipment/accessory/shield/hell's_gate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 615,
@@ -919,19 +1000,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 738,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "졸림눌 요새": {
-      "이미지_경로": null,
+    "Xolimnul's Fortress": {
+      "id": "sh14_2",
+      "name_ko": "졸림눌 요새",
+      "image_key": "xolimnul's_fortress",
+      "이미지_경로": "/images/equipment/accessory/shield/xolimnul's_fortress.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 778,
@@ -939,19 +1024,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 934,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["어둠"],
+      "고유원소종류": ["Dark"],
       "고유원소티어": 14,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "저주받은 왕의 방패": {
-      "이미지_경로": null,
+    "Cursed King's Aegis": {
+      "id": "sh14_3",
+      "name_ko": "저주받은 왕의 방패",
+      "image_key": "cursed_king's_aegis",
+      "이미지_경로": "/images/equipment/accessory/shield/cursed_king's_aegis.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 615,
@@ -959,19 +1048,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 963,
+      "장비_에어쉽파워보너스": 1.25,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "피자 방패": {
-      "이미지_경로": null,
+    "Pizza Pavise": {
+      "id": "sh14_4",
+      "name_ko": "피자 방패",
+      "image_key": "pizza_pavise",
+      "이미지_경로": "/images/equipment/accessory/shield/pizza_pavise.webp",
 
       "장비_공격력": 159,
       "장비_방어력": 635,
@@ -979,19 +1072,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 889,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "아르곤의 방패": {
-      "이미지_경로": null,
+    "Argon's Shield": {
+      "id": "sh14_5",
+      "name_ko": "아르곤의 방패",
+      "image_key": "argon's_shield",
+      "이미지_경로": "/images/equipment/accessory/shield/argon's_shield.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 635,
@@ -999,29 +1096,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 997,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "세라핌의 시선": {
-      "이미지_경로": null,
+    "Seraphim Gaze": {
+      "id": "sh15_1",
+      "name_ko": "세라핌의 시선",
+      "image_key": "seraphim_gaze",
+      "이미지_경로": "/images/equipment/accessory/shield/seraphim_gaze.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 710,
@@ -1029,19 +1124,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 852,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 방패": {
-      "이미지_경로": null,
+    "Platinum Ward": {
+      "id": "sh15_2",
+      "name_ko": "플래티넘 방패",
+      "image_key": "platinum_ward",
+      "이미지_경로": "/images/equipment/accessory/shield/platinum_ward.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 710,
@@ -1049,19 +1148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 852,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "수집가의 조각": {
-      "이미지_경로": null,
+    "Collector's Piece": {
+      "id": "sh15_3",
+      "name_ko": "수집가의 조각",
+      "image_key": "collector's_piece",
+      "이미지_경로": "/images/equipment/accessory/shield/collector's_piece.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 710,
@@ -1069,14 +1172,39 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 1278,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Cardboard Guard": {
+      "id": "sh15_4",
+      "name_ko": "골판지 가드",
+      "image_key": "cardboard_guard",
+      "이미지_경로": "/images/equipment/accessory/shield/cardboard_guard.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 710,
+      "장비_체력": 52,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1112,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

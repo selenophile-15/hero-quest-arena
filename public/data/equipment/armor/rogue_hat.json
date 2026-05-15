@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "가죽 모자": {
-      "이미지_경로": null,
+    "Leather Cap": {
+      "id": "rh1_1",
+      "name_ko": "가죽 모자",
+      "image_key": "leather_cap",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/leather_cap.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 8,
@@ -9,19 +12,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 10,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "캐노피 모자": {
-      "이미지_경로": null,
+    "Canopy Cap": {
+      "id": "rh1_2",
+      "name_ko": "캐노피 모자",
+      "image_key": "canopy_cap",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/canopy_cap.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 32,
@@ -29,29 +36,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 38,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["대지"],
+      "고유원소종류": ["Earth"],
       "고유원소티어": 4,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "챙이 넓은 모자": {
-      "이미지_경로": null,
+    "Brimmed Hat": {
+      "id": "rh2_1",
+      "name_ko": "챙이 넓은 모자",
+      "image_key": "brimmed_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/brimmed_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 16,
@@ -59,29 +64,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 19,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "깃털 모자": {
-      "이미지_경로": null,
+    "Feathered Hat": {
+      "id": "rh3_1",
+      "name_ko": "깃털 모자",
+      "image_key": "feathered_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/feathered_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 32,
@@ -89,29 +92,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 38,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "삼각모": {
-      "이미지_경로": null,
+    "Tricorn": {
+      "id": "rh4_1",
+      "name_ko": "삼각모",
+      "image_key": "tricorn",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/tricorn.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 44,
@@ -119,29 +120,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 53,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "실크 후드": {
-      "이미지_경로": null,
+    "Silk Hood": {
+      "id": "rh5_1",
+      "name_ko": "실크 후드",
+      "image_key": "silk_hood",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/silk_hood.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 72,
@@ -149,19 +148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 86,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "산타의 엘프 모자": {
-      "이미지_경로": null,
+    "Santa's Elf Hat": {
+      "id": "rh5_2",
+      "name_ko": "산타의 엘프 모자",
+      "image_key": "santa's_elf_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/santa's_elf_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 80,
@@ -169,19 +172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 121,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["크리스마스"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "파라오의 네메스 두건": {
-      "이미지_경로": null,
+    "Pharaoh's Nemes": {
+      "id": "rh5_3",
+      "name_ko": "파라오의 네메스 두건",
+      "image_key": "pharaoh's_nemes",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/pharaoh's_nemes.webp",
 
       "장비_공격력": 20,
       "장비_방어력": 80,
@@ -189,29 +196,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 112,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "해적 모자": {
-      "이미지_경로": null,
+    "Pirate Hat": {
+      "id": "rh6_1",
+      "name_ko": "해적 모자",
+      "image_key": "pirate_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/pirate_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 100,
@@ -219,19 +224,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 120,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "사랑스런 모자": {
-      "이미지_경로": null,
+    "Lovely Hat": {
+      "id": "rh6_2",
+      "name_ko": "사랑스런 모자",
+      "image_key": "lovely_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/lovely_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 110,
@@ -239,19 +248,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 167,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "킨츠기 부리": {
-      "이미지_경로": null,
+    "Kintsugi Beak": {
+      "id": "rh6_3",
+      "name_ko": "킨츠기 부리",
+      "image_key": "kintsugi_beak",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/kintsugi_beak.webp",
 
       "장비_공격력": 28,
       "장비_방어력": 110,
@@ -259,29 +272,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 154,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "밤의 두건": {
-      "이미지_경로": null,
+    "Night Cowl": {
+      "id": "rh7_1",
+      "name_ko": "밤의 두건",
+      "image_key": "night_cowl",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/night_cowl.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 135,
@@ -289,19 +300,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 162,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "유목민 베일": {
-      "이미지_경로": null,
+    "Nomad Veil": {
+      "id": "rh7_2",
+      "name_ko": "유목민 베일",
+      "image_key": "nomad_veil",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/nomad_veil.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 177,
@@ -309,19 +324,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 212,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["공기"],
+      "고유원소종류": ["Air"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "수확의 후드": {
-      "이미지_경로": null,
+    "Harvester's Hood": {
+      "id": "rh7_3",
+      "name_ko": "수확의 후드",
+      "image_key": "harvester's_hood",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/harvester's_hood.webp",
 
       "장비_공격력": 38,
       "장비_방어력": 150,
@@ -329,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 210,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "어둠"],
+      "원소친밀감": ["Earth", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "광대의 모자": {
-      "이미지_경로": null,
+    "Jester's Hat": {
+      "id": "rh7_4",
+      "name_ko": "광대의 모자",
+      "image_key": "jester's_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/jester's_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 160,
@@ -349,29 +372,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 288,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "윈드러너 모자": {
-      "이미지_경로": null,
+    "Windrunner Hat": {
+      "id": "rh8_1",
+      "name_ko": "윈드러너 모자",
+      "image_key": "windrunner_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/windrunner_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 170,
@@ -379,19 +400,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 204,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "푸른 영혼 가면": {
-      "이미지_경로": null,
+    "Blue Spirit Mask": {
+      "id": "rh8_2",
+      "name_ko": "푸른 영혼 가면",
+      "image_key": "blue_spirit_mask",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/blue_spirit_mask.webp",
 
       "장비_공격력": 44,
       "장비_방어력": 175,
@@ -399,19 +424,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 245,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "머스킷병 모자": {
-      "이미지_경로": null,
+    "Musketeer Hat": {
+      "id": "rh8_3",
+      "name_ko": "머스킷병 모자",
+      "image_key": "musketeer_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/musketeer_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 175,
@@ -419,19 +448,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 285,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "명인 제독 모자": {
-      "이미지_경로": null,
+    "Titan Admiral Hat": {
+      "id": "rh8_4",
+      "name_ko": "명인 제독 모자",
+      "image_key": "titan_admiral_hat",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/titan_admiral_hat.webp",
 
       "장비_공격력": 46,
       "장비_방어력": 185,
@@ -439,29 +472,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 259,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "빛"],
-      "영혼친밀감": ["명인"],
+      "원소친밀감": ["Water", "Light"],
+      "영혼친밀감": ["Titan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "드레이크 가면": {
-      "이미지_경로": null,
+    "Drakeskin Mask": {
+      "id": "rh9_1",
+      "name_ko": "드레이크 가면",
+      "image_key": "drakeskin_mask",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/drakeskin_mask.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 205,
@@ -469,19 +500,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 246,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "스톰 드래곤 마스크": {
-      "이미지_경로": null,
+    "Storm Dragon Mask": {
+      "id": "rh9_2",
+      "name_ko": "스톰 드래곤 마스크",
+      "image_key": "storm_dragon_mask",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/storm_dragon_mask.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 263,
@@ -489,19 +524,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 316,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["공기"],
+      "고유원소종류": ["Air"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "위대한 티롤리안": {
-      "이미지_경로": null,
+    "Grand Tyrolean": {
+      "id": "rh9_3",
+      "name_ko": "위대한 티롤리안",
+      "image_key": "grand_tyrolean",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/grand_tyrolean.webp",
 
       "장비_공격력": 54,
       "장비_방어력": 215,
@@ -509,19 +548,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 301,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "외로운 늑대 두건": {
-      "이미지_경로": null,
+    "Lone Wolf Cowl": {
+      "id": "rh9_4",
+      "name_ko": "외로운 늑대 두건",
+      "image_key": "lone_wolf_cowl",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/lone_wolf_cowl.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 230,
@@ -529,31 +572,29 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 371,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["늑대"],
+      "영혼친밀감": ["Wolf"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
       "유물": {
-	    "효과": "+공격력 40%, +방어력 40% \n장착한 영웅이 챔피언에게 받는 효과를 무효화합니다."
-	  }
+        "효과": "+공격력 40%, +방어력 40% \n장착한 영웅이 챔피언에게 받는 효과를 무효화합니다."
+      },
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "해적 삼각모": {
-      "이미지_경로": null,
+    "Corsair Tricorn": {
+      "id": "rh10_1",
+      "name_ko": "해적 삼각모",
+      "image_key": "corsair_tricorn",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/corsair_tricorn.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 225,
@@ -561,19 +602,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 270,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "공화국 두건": {
-      "이미지_경로": null,
+    "Republic Coiffe": {
+      "id": "rh10_2",
+      "name_ko": "공화국 두건",
+      "image_key": "republic_coiffe",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/republic_coiffe.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 235,
@@ -581,29 +626,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 357,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Cardboard Kabuto": {
+      "id": "rh10_3",
+      "name_ko": "골판지 카부토",
+      "image_key": "cardboard_kabuto",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/cardboard_kabuto.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 235,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 5,
+      "장비_에어쉽파워": 423,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "에버더스크 두건": {
-      "이미지_경로": null,
+    "Everdusk Cowl": {
+      "id": "rh11_1",
+      "name_ko": "에버더스크 두건",
+      "image_key": "everdusk_cowl",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/everdusk_cowl.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 290,
@@ -611,19 +678,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 348,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "심연의 후드": {
-      "이미지_경로": null,
+    "Abyssal Hood": {
+      "id": "rh11_2",
+      "name_ko": "심연의 후드",
+      "image_key": "abyssal_hood",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/abyssal_hood.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 338,
@@ -631,19 +702,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 406,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["어둠"],
+      "고유원소종류": ["Dark"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "로그 솜브레로": {
-      "이미지_경로": null,
+    "Rogue Sombrero": {
+      "id": "rh11_3",
+      "name_ko": "로그 솜브레로",
+      "image_key": "rogue_sombrero",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/rogue_sombrero.webp",
 
       "장비_공격력": 73,
       "장비_방어력": 290,
@@ -651,19 +726,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 406,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "고양이 도둑 모자": {
-      "이미지_경로": null,
+    "Cat Burglar Hood": {
+      "id": "rh11_4",
+      "name_ko": "고양이 도둑 모자",
+      "image_key": "cat_burglar_hood",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/cat_burglar_hood.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 300,
@@ -671,19 +750,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 455,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["고양이"],
+      "영혼친밀감": ["Cat"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 경투구": {
-      "이미지_경로": null,
+    "Opulent Sallet": {
+      "id": "rh11_5",
+      "name_ko": "호화로운 경투구",
+      "image_key": "opulent_sallet",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/opulent_sallet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 300,
@@ -691,29 +774,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 360,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "새벽 도둑 두건": {
-      "이미지_경로": null,
+    "Dawn Thief Cowl": {
+      "id": "rh12_1",
+      "name_ko": "새벽 도둑 두건",
+      "image_key": "dawn_thief_cowl",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/dawn_thief_cowl.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 365,
@@ -721,19 +802,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 438,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "버니버니 가장무도회": {
-      "이미지_경로": null,
+    "Bunbun Masquerade": {
+      "id": "rh12_2",
+      "name_ko": "버니버니 가장무도회",
+      "image_key": "bunbun_masquerade",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/bunbun_masquerade.webp",
 
       "장비_공격력": 91,
       "장비_방어력": 365,
@@ -741,19 +826,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 511,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["토끼"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "드래곤시커 고글": {
-      "이미지_경로": null,
+    "Dragonseeker Goggles": {
+      "id": "rh12_3",
+      "name_ko": "드래곤시커 고글",
+      "image_key": "dragonseeker_goggles",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/dragonseeker_goggles.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 380,
@@ -761,19 +850,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 576,
+      "장비_에어쉽파워보너스": 1.2,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "여우혼 가면": {
-      "이미지_경로": null,
+    "Kitsune Spirit Mask": {
+      "id": "rh12_4",
+      "name_ko": "여우혼 가면",
+      "image_key": "kitsune_spirit_mask",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/kitsune_spirit_mask.webp",
 
       "장비_공격력": 95,
       "장비_방어력": 380,
@@ -781,29 +874,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 532,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["카벙클"],
+      "영혼친밀감": ["Carbuncle"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "와일드헌트 해골": {
-      "이미지_경로": null,
+    "Wildhunt Skull": {
+      "id": "rh13_1",
+      "name_ko": "와일드헌트 해골",
+      "image_key": "wildhunt_skull",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/wildhunt_skull.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 465,
@@ -811,19 +902,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 558,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
-      "영혼친밀감": ["키메라"],
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Chimera"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "모자가 달린 이누이트 고글": {
-      "이미지_경로": null,
+    "Hooded Iggaak": {
+      "id": "rh13_2",
+      "name_ko": "모자가 달린 이누이트 고글",
+      "image_key": "hooded_iggaak",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/hooded_iggaak.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 465,
@@ -831,19 +926,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 703,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
-      "영혼친밀감": ["바다코끼리"],
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Walrus"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "멧돼지 후드": {
-      "이미지_경로": null,
+    "Wereboar's Hood": {
+      "id": "rh13_3",
+      "name_ko": "멧돼지 후드",
+      "image_key": "wereboar's_hood",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/wereboar's_hood.webp",
 
       "장비_공격력": 137,
       "장비_방어력": 480,
@@ -851,19 +950,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 686,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 베레모": {
-      "이미지_경로": null,
+    "Platinum Beret": {
+      "id": "rh13_4",
+      "name_ko": "플래티넘 베레모",
+      "image_key": "platinum_beret",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/platinum_beret.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 480,
@@ -871,19 +974,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 576,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "위험물질 마스크": {
-      "이미지_경로": null,
+    "Hazmat Mask": {
+      "id": "rh13_5",
+      "name_ko": "위험물질 마스크",
+      "image_key": "hazmat_mask",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/hazmat_mask.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 495,
@@ -891,29 +998,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 749,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "예언자의 눈": {
-      "이미지_경로": null,
+    "Soothsayer's Sight": {
+      "id": "rh14_1",
+      "name_ko": "예언자의 눈",
+      "image_key": "soothsayer's_sight",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/soothsayer's_sight.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 580,
@@ -921,19 +1026,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 696,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "감싸인 귓속말": {
-      "이미지_경로": null,
+    "Wrapped Whispers": {
+      "id": "rh14_2",
+      "name_ko": "감싸인 귓속말",
+      "image_key": "wrapped_whispers",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/wrapped_whispers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 743,
@@ -941,19 +1050,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 892,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["공기"],
+      "고유원소종류": ["Air"],
       "고유원소티어": 14,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "라크로스 투구": {
-      "이미지_경로": null,
+    "Lacrosse Helm": {
+      "id": "rh14_3",
+      "name_ko": "라크로스 투구",
+      "image_key": "lacrosse_helm",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/lacrosse_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 580,
@@ -961,19 +1074,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 876,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "섬뜩한 두건": {
-      "이미지_경로": null,
+    "Ghastly Cowl": {
+      "id": "rh14_4",
+      "name_ko": "섬뜩한 두건",
+      "image_key": "ghastly_cowl",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/ghastly_cowl.webp",
 
       "장비_공격력": 166,
       "장비_방어력": 580,
@@ -981,29 +1098,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 829,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불", "어둠"],
+      "원소친밀감": ["Fire", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "번데기 가면": {
-      "이미지_경로": null,
+    "Chrysalid Mask": {
+      "id": "rh15_1",
+      "name_ko": "번데기 가면",
+      "image_key": "chrysalid_mask",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/chrysalid_mask.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 670,
@@ -1011,19 +1126,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 804,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기", "대지"],
+      "원소친밀감": ["Air", "Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "천사의 얼굴": {
-      "이미지_경로": null,
+    "Cherubim Visage": {
+      "id": "rh15_2",
+      "name_ko": "천사의 얼굴",
+      "image_key": "cherubim_visage",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/cherubim_visage.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 833,
@@ -1031,19 +1150,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1000,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 14,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "수색자의 고글": {
-      "이미지_경로": null,
+    "Scavenger's Goggles": {
+      "id": "rh15_3",
+      "name_ko": "수색자의 고글",
+      "image_key": "scavenger's_goggles",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/scavenger's_goggles.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 670,
@@ -1051,19 +1174,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 1206,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "왕자님 터번": {
-      "이미지_경로": null,
+    "Princely Turban": {
+      "id": "rh15_4",
+      "name_ko": "왕자님 터번",
+      "image_key": "princely_turban",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/princely_turban.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 670,
@@ -1071,19 +1198,23 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1206,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "엑토고글": {
-      "이미지_경로": null,
+    "Ecto-Goggles": {
+      "id": "rh15_5",
+      "name_ko": "엑토고글",
+      "image_key": "ecto-goggles",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/ecto-goggles.webp",
 
       "장비_공격력": 191,
       "장비_방어력": 670,
@@ -1091,21 +1222,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 957,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
 
 
-    "페이스체인저의 가면": {
-      "이미지_경로": null,
+    "Facechanger's Mask": {
+      "id": "rh15_6",
+      "name_ko": "페이스체인저의 가면",
+      "image_key": "facechanger's_mask",
+      "이미지_경로": "/images/equipment/armor/rogue_hat/facechanger's_mask.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 690,
@@ -1113,14 +1246,15 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1043,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["기린"],
+      "영혼친밀감": ["Kirin"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

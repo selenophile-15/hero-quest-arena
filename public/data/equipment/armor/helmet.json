@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "견고한 투구": {
-      "이미지_경로": null,
+    "Sturdy Cap": {
+      "id": "hm1_1",
+      "name_ko": "견고한 투구",
+      "image_key": "sturdy_cap",
+      "이미지_경로": "/images/equipment/armor/helmet/sturdy_cap.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 8,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 10,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "전사의 헬멧": {
-      "이미지_경로": null,
+    "Warrior Helmet": {
+      "id": "hm2_1",
+      "name_ko": "전사의 헬멧",
+      "image_key": "warrior_helmet",
+      "이미지_경로": "/images/equipment/armor/helmet/warrior_helmet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 23,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 28,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "뿔 투구": {
-      "이미지_경로": null,
+    "Horned Helm": {
+      "id": "hm3_1",
+      "name_ko": "뿔 투구",
+      "image_key": "horned_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/horned_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 42,
@@ -69,29 +68,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 50,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "약탈자의 투구": {
-      "이미지_경로": null,
+    "Raider Helm": {
+      "id": "hm4_1",
+      "name_ko": "약탈자의 투구",
+      "image_key": "raider_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/raider_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 56,
@@ -99,29 +96,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 67,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "기사의 투구": {
-      "이미지_경로": null,
+    "Knight Heaume": {
+      "id": "hm5_1",
+      "name_ko": "기사의 투구",
+      "image_key": "knight_heaume",
+      "이미지_경로": "/images/equipment/armor/helmet/knight_heaume.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 88,
@@ -129,19 +124,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 106,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "심해의 투구": {
-      "이미지_경로": null,
+
+    "Brinewater Helm": {
+      "id": "hm5_2",
+      "name_ko": "심해의 투구",
+      "image_key": "brinewater_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/brinewater_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 133,
@@ -149,19 +148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 160,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "독수리 투구": {
-      "이미지_경로": null,
+
+    "Eagle Helm": {
+      "id": "hm5_3",
+      "name_ko": "독수리 투구",
+      "image_key": "eagle_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/eagle_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 96,
@@ -169,19 +172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 145,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
-      "영혼친밀감": ["독수리"],
+      "원소친밀감": ["Air"],
+      "영혼친밀감": ["Eagle"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "렉스 촘퍼": {
-      "이미지_경로": null,
+
+    "Rex Chomper": {
+      "id": "hm5_4",
+      "name_ko": "렉스 촘퍼",
+      "image_key": "rex_chomper",
+      "이미지_경로": "/images/equipment/armor/helmet/rex_chomper.webp",
 
       "장비_공격력": 26,
       "장비_방어력": 105,
@@ -189,29 +196,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 147,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "성전사 투구": {
-      "이미지_경로": null,
+    "Paladin Helm": {
+      "id": "hm6_1",
+      "name_ko": "성전사 투구",
+      "image_key": "paladin_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/paladin_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 120,
@@ -219,19 +224,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 144,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "코디액 머리보호대": {
-      "이미지_경로": null,
+
+    "Kodiak Helmet": {
+      "id": "hm6_2",
+      "name_ko": "코디액 머리보호대",
+      "image_key": "kodiak_helmet",
+      "이미지_경로": "/images/equipment/armor/helmet/kodiak_helmet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 130,
@@ -239,19 +248,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 196,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["곰"],
+      "영혼친밀감": ["Bear"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "불의 제국 투구": {
-      "이미지_경로": null,
+
+    "Fire Nation Helm": {
+      "id": "hm6_3",
+      "name_ko": "불의 제국 투구",
+      "image_key": "fire_nation_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/fire_nation_helm.webp",
 
       "장비_공격력": 35,
       "장비_방어력": 140,
@@ -259,19 +272,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 196,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "독재자의 왕관": {
-      "이미지_경로": null,
+
+    "Crown of Tyranny": {
+      "id": "hm6_4",
+      "name_ko": "독재자의 왕관",
+      "image_key": "crown_of_tyranny",
+      "이미지_경로": "/images/equipment/armor/helmet/crown_of_tyranny.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 140,
@@ -279,29 +296,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 213,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "사무라이 카부토": {
-      "이미지_경로": null,
+    "Samurai Kabuto": {
+      "id": "hm7_1",
+      "name_ko": "사무라이 카부토",
+      "image_key": "samurai_kabuto",
+      "이미지_경로": "/images/equipment/armor/helmet/samurai_kabuto.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 160,
@@ -309,19 +324,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 192,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "검투사의 투구": {
-      "이미지_경로": null,
+
+    "Gladiator Helm": {
+      "id": "hm7_2",
+      "name_ko": "검투사의 투구",
+      "image_key": "gladiator_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/gladiator_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 170,
@@ -329,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 259,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "모래성 보호자": {
-      "이미지_경로": null,
+
+    "Sandcastle Protector": {
+      "id": "hm7_3",
+      "name_ko": "모래성 보호자",
+      "image_key": "sandcastle_protector",
+      "이미지_경로": "/images/equipment/armor/helmet/sandcastle_protector.webp",
 
       "장비_공격력": 43,
       "장비_방어력": 170,
@@ -349,19 +372,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 238,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "명인의 투구": {
-      "이미지_경로": null,
+
+    "Titan Helm": {
+      "id": "hm7_4",
+      "name_ko": "명인의 투구",
+      "image_key": "titan_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/titan_helm.webp",
 
       "장비_공격력": 34,
       "장비_방어력": 180,
@@ -369,29 +396,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 243,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["명인"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Titan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "장군 투구": {
-      "이미지_경로": null,
+    "General Heaume": {
+      "id": "hm8_1",
+      "name_ko": "장군 투구",
+      "image_key": "general_heaume",
+      "이미지_경로": "/images/equipment/armor/helmet/general_heaume.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 190,
@@ -399,19 +424,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 228,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "구원자 머리보호대": {
-      "이미지_경로": null,
+
+    "Crusader Helmet": {
+      "id": "hm8_2",
+      "name_ko": "구원자 머리보호대",
+      "image_key": "crusader_helmet",
+      "이미지_경로": "/images/equipment/armor/helmet/crusader_helmet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 237,
@@ -419,19 +448,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 284,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "전쟁 마스터의 머리보호대": {
-      "이미지_경로": null,
+
+    "Warlord Helmet": {
+      "id": "hm8_3",
+      "name_ko": "전쟁 마스터의 머리보호대",
+      "image_key": "warlord_helmet",
+      "이미지_경로": "/images/equipment/armor/helmet/warlord_helmet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 210,
@@ -439,19 +472,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 317,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "드래곤 머리": {
-      "이미지_경로": null,
+
+    "Dragon Skull": {
+      "id": "hm8_4",
+      "name_ko": "드래곤 머리",
+      "image_key": "dragon_skull",
+      "이미지_경로": "/images/equipment/armor/helmet/dragon_skull.webp",
 
       "장비_공격력": 34,
       "장비_방어력": 210,
@@ -459,29 +496,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 279,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "광전사 헬멧": {
-      "이미지_경로": null,
+    "Berserker Helmet": {
+      "id": "hm9_1",
+      "name_ko": "광전사 헬멧",
+      "image_key": "berserker_helmet",
+      "이미지_경로": "/images/equipment/armor/helmet/berserker_helmet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 220,
@@ -489,19 +524,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 264,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "100인 대장의 머리보호대": {
-      "이미지_경로": null,
+
+    "Fimbulwinter Dome": {
+      "id": "hm9_2",
+      "name_ko": "100인 대장의 머리보호대",
+      "image_key": "fimbulwinter_dome",
+      "이미지_경로": "/images/equipment/armor/helmet/fimbulwinter_dome.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 230,
@@ -509,19 +548,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 346,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "핌불베트르 돔": {
-      "이미지_경로": null,
+
+    "Centurion Helmet": {
+      "id": "hm9_3",
+      "name_ko": "핌불베트르 돔",
+      "image_key": "centurion_helmet",
+      "이미지_경로": "/images/equipment/armor/helmet/centurion_helmet.webp",
 
       "장비_공격력": 58,
       "장비_방어력": 230,
@@ -529,29 +572,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 322,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "저거너트 화로": {
-      "이미지_경로": null,
+    "Juggernaut Furnace": {
+      "id": "hm10_1",
+      "name_ko": "저거너트 화로",
+      "image_key": "juggernaut_furnace",
+      "이미지_경로": "/images/equipment/armor/helmet/juggernaut_furnace.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 250,
@@ -559,19 +600,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 300,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "칠면조 군주 투구": {
-      "이미지_경로": null,
+
+    "Gobble Lord Helm": {
+      "id": "hm10_2",
+      "name_ko": "칠면조 군주 투구",
+      "image_key": "gobble_lord_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/gobble_lord_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 260,
@@ -579,19 +624,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 392,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "호화로운 투구": {
-      "이미지_경로": null,
+
+    "Opulent Heaume": {
+      "id": "hm10_3",
+      "name_ko": "호화로운 투구",
+      "image_key": "opulent_heaume",
+      "이미지_경로": "/images/equipment/armor/helmet/opulent_heaume.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 260,
@@ -599,29 +648,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 312,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "셀레스틸 투구": {
-      "이미지_경로": null,
+    "Celesteel Heaume": {
+      "id": "hm11_1",
+      "name_ko": "셀레스틸 투구",
+      "image_key": "celesteel_heaume",
+      "이미지_경로": "/images/equipment/armor/helmet/celesteel_heaume.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 325,
@@ -629,19 +676,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 390,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "강아지 헬멧": {
-      "이미지_경로": null,
+
+    "Canid Helmet": {
+      "id": "hm11_2",
+      "name_ko": "강아지 헬멧",
+      "image_key": "canid_helmet",
+      "이미지_경로": "/images/equipment/armor/helmet/canid_helmet.webp",
 
       "장비_공격력": 81,
       "장비_방어력": 325,
@@ -649,19 +700,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 455,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["늑대"],
+      "영혼친밀감": ["Wolf"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "큐피드의 투구": {
-      "이미지_경로": null,
+
+    "Cupid's Heaume": {
+      "id": "hm11_3",
+      "name_ko": "큐피드의 투구",
+      "image_key": "cupid's_heaume",
+      "이미지_경로": "/images/equipment/armor/helmet/cupid's_heaume.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 340,
@@ -669,29 +724,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 513,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Xenotype Visage": {
+      "id": "hm11_4",
+      "name_ko": "제노타입 면갑",
+      "image_key": "xenotype_visage",
+      "이미지_경로": "/images/equipment/armor/helmet/xenotype_visage.webp",
+
+      "장비_공격력": 85,
+      "장비_방어력": 340,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 476,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "버밀리온 수비대 투구": {
-      "이미지_경로": null,
+    "Vermilion Guard Helm": {
+      "id": "hm12_1",
+      "name_ko": "버밀리온 수비대 투구",
+      "image_key": "vermilion_guard_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/vermilion_guard_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 410,
@@ -699,19 +776,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 492,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
-      "영혼친밀감": ["불사조"],
+      "원소친밀감": ["Fire"],
+      "영혼친밀감": ["Phoenix"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "오닉스 킹 투구": {
-      "이미지_경로": null,
+
+    "Onyx King Helm": {
+      "id": "hm12_2",
+      "name_ko": "오닉스 킹 투구",
+      "image_key": "onyx_king_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/onyx_king_helm.webp",
 
       "장비_공격력": 103,
       "장비_방어력": 410,
@@ -719,19 +800,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 574,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "가시 남작 투구": {
-      "이미지_경로": null,
+
+    "Thorn Baron Helm": {
+      "id": "hm12_3",
+      "name_ko": "가시 남작 투구",
+      "image_key": "thorn_baron_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/thorn_baron_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 425,
@@ -739,29 +824,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 645,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "어둠"],
+      "원소친밀감": ["Earth", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "베일파이어의 시선": {
-      "이미지_경로": null,
+    "Balefire Gaze": {
+      "id": "hm13_1",
+      "name_ko": "베일파이어의 시선",
+      "image_key": "balefire_gaze",
+      "이미지_경로": "/images/equipment/armor/helmet/balefire_gaze.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 525,
@@ -769,19 +852,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 630,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "타이쇼군 카부토": {
-      "이미지_경로": null,
+    "Taishōgun Kabuto": {
+      "id": "hm13_2",
+      "name_ko": "타이쇼군 카부토",
+      "image_key": "taishogun_kabuto",
+      "이미지_경로": "/images/equipment/armor/helmet/taishogun_kabuto.webp",
 
       "장비_공격력": 131,
       "장비_방어력": 525,
@@ -789,19 +876,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 735,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "CM-73 고글": {
-      "이미지_경로": null,
+
+    "CM-73 Visor": {
+      "id": "hm13_3",
+      "name_ko": "CM-73 고글",
+      "image_key": "cm-73_visor",
+      "이미지_경로": "/images/equipment/armor/helmet/cm-73_visor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 540,
@@ -809,19 +900,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 818,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "플래티넘 투구": {
-      "이미지_경로": null,
+
+    "Platinum Helm": {
+      "id": "hm13_4",
+      "name_ko": "플래티넘 투구",
+      "image_key": "platinum_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/platinum_helm.webp",
 
       "장비_공격력": 131,
       "장비_방어력": 525,
@@ -829,19 +924,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 735,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "생명체의 키틴": {
-      "이미지_경로": null,
+
+    "Creature's Chitin": {
+      "id": "hm13_5",
+      "name_ko": "생명체의 키틴",
+      "image_key": "creature's_chitin",
+      "이미지_경로": "/images/equipment/armor/helmet/creature's_chitin.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 560,
@@ -849,29 +948,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 847,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "코발트 사령관": {
-      "이미지_경로": null,
+    "Cobalt Commander": {
+      "id": "hm14_1",
+      "name_ko": "코발트 사령관",
+      "image_key": "cobalt_commander",
+      "이미지_경로": "/images/equipment/armor/helmet/cobalt_commander.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 650,
@@ -879,19 +976,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 780,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "신격화의 투구": {
-      "이미지_경로": null,
+
+    "Heaume of Apotheosis": {
+      "id": "hm14_2",
+      "name_ko": "신격화의 투구",
+      "image_key": "heaume_of_apotheosis",
+      "이미지_경로": "/images/equipment/armor/helmet/heaume_of_apotheosis.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 813,
@@ -899,19 +1000,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 976,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 14,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "문드라의 해골": {
-      "이미지_경로": null,
+
+    "Mundra's Skull": {
+      "id": "hm14_3",
+      "name_ko": "문드라의 해골",
+      "image_key": "mundra's_skull",
+      "이미지_경로": "/images/equipment/armor/helmet/mundra's_skull.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 699,
@@ -919,19 +1024,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1119,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
-      "고유영혼": ["문드라"],
-
-      "유물": null
+      "고유영혼": ["Mundra"],
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "헤라클레스의 뿔": {
-      "이미지_경로": null,
+
+    "Hercules Horn": {
+      "id": "hm14_4",
+      "name_ko": "헤라클레스의 뿔",
+      "image_key": "hercules_horn",
+      "이미지_경로": "/images/equipment/armor/helmet/hercules_horn.webp",
 
       "장비_공격력": 163,
       "장비_방어력": 650,
@@ -939,19 +1048,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 910,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "아르곤의 투구": {
-      "이미지_경로": null,
+
+    "Argon's Helm": {
+      "id": "hm14_5",
+      "name_ko": "아르곤의 투구",
+      "image_key": "argon's_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/argon's_helm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 670,
@@ -959,29 +1072,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1014,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "베히모스 해골": {
-      "이미지_경로": null,
+    "Behemoth Skull": {
+      "id": "hm15_1",
+      "name_ko": "베히모스 해골",
+      "image_key": "behemoth_skull",
+      "이미지_경로": "/images/equipment/armor/helmet/behemoth_skull.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 755,
@@ -989,19 +1100,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 906,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["베히모스"],
+      "영혼친밀감": ["Behemoth"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "테디베어 머리": {
-      "이미지_경로": null,
+
+    "Teddy Bear Head": {
+      "id": "hm15_2",
+      "name_ko": "테디베어 머리",
+      "image_key": "teddy_bear_head",
+      "이미지_경로": "/images/equipment/armor/helmet/teddy_bear_head.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 755,
@@ -1009,19 +1124,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1141,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["곰"],
+      "영혼친밀감": ["Bear"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "저주받은 왕의 투구": {
-      "이미지_경로": null,
+
+    "Cursed King's Helm": {
+      "id": "hm15_3",
+      "name_ko": "저주받은 왕의 투구",
+      "image_key": "cursed_king's_helm",
+      "이미지_경로": "/images/equipment/armor/helmet/cursed_king's_helm.webp",
 
       "장비_공격력": 189,
       "장비_방어력": 755,
@@ -1029,19 +1148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1057,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "BIT.러너 고글": {
-      "이미지_경로": null,
+
+    "BIT.Runner Visor": {
+      "id": "hm15_4",
+      "name_ko": "BIT.러너 고글",
+      "image_key": "bit.runner_visor",
+      "이미지_경로": "/images/equipment/armor/helmet/bit.runner_visor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 755,
@@ -1049,14 +1172,39 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1359,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Stone Jaguar Head": {
+      "id": "hm15_5",
+      "name_ko": "돌 재규어 머리",
+      "image_key": "stone_jaguar_head",
+      "이미지_경로": "/images/equipment/armor/helmet/stone_jaguar_head.webp",
+
+      "장비_공격력": 189,
+      "장비_방어력": 755,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1057,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Tiger"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

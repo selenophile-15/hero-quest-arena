@@ -1,215 +1,682 @@
 {
   "1티어": {
-    "가벼운 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/light_crossbow.png",
-      "장비_공격력": 24, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 19,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Light Crossbow": {
+      "id": "cb1_1",
+      "name_ko": "가벼운 석궁",
+      "image_key": "light_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/light_crossbow.webp",
+
+      "장비_공격력": 24,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 19,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
+
+
+
+
   "2티어": {
-    "한손 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/hand_crossbow.png",
-      "장비_공격력": 46, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 37,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Hand Crossbow": {
+      "id": "cb2_1",
+      "name_ko": "한손 석궁",
+      "image_key": "hand_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/hand_crossbow.webp",
+
+      "장비_공격력": 46,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 37,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
+
+
+
+
   "3티어": {
-    "아버리스트": {
-      "이미지_경로": "images/equipment/weapon/crossbow/arbalest.png",
-      "장비_공격력": 84, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 67,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Arbalest": {
+      "id": "cb3_1",
+      "name_ko": "아버리스트",
+      "image_key": "arbalest",
+      "이미지_경로": "/images/equipment/weapon/crossbow/arbalest.webp",
+
+      "장비_공격력": 84,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 67,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
+
+
+
+
   "4티어": {
-    "무거운 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/heavy_crossbow.png",
-      "장비_공격력": 128, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 102,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Heavy Crossbow": {
+      "id": "cb4_1",
+      "name_ko": "무거운 석궁",
+      "image_key": "heavy_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/heavy_crossbow.webp",
+
+      "장비_공격력": 128,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 102,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     },
-    "꼬꼬 활": {
-      "이미지_경로": "images/equipment/weapon/crossbow/cluckthrower.png",
-      "장비_공격력": 160, "장비_방어력": 0, "장비_체력": 5,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 153,
-      "원소친밀감": ["공기"], "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Cluckthrower": {
+      "id": "cb4_2",
+      "name_ko": "꼬꼬 활",
+      "image_key": "cluckthrower",
+      "이미지_경로": "/images/equipment/weapon/crossbow/cluckthrower.webp",
+
+      "장비_공격력": 160,
+      "장비_방어력": 0,
+      "장비_체력": 5,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 153,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Air"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
+
+
+
+
   "5티어": {
-    "사냥꾼의 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/hunter's_crossbow.png",
-      "장비_공격력": 176, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 141,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Hunter's Crossbow": {
+      "id": "cb5_1",
+      "name_ko": "사냥꾼의 석궁",
+      "image_key": "hunter's_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/hunter's_crossbow.webp",
+
+      "장비_공격력": 176,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 141,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
+
+
+
+
   "6티어": {
-    "스콜피오": {
-      "이미지_경로": "images/equipment/weapon/crossbow/scorpio.png",
-      "장비_공격력": 240, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 192,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Scorpio": {
+      "id": "cb6_1",
+      "name_ko": "스콜피오",
+      "image_key": "scorpio",
+      "이미지_경로": "/images/equipment/weapon/crossbow/scorpio.webp",
+
+      "장비_공격력": 240,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 192,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     },
-    "원시 기술 새총": {
-      "이미지_경로": "images/equipment/weapon/crossbow/primitech_slingshot.png",
-      "장비_공격력": 280, "장비_방어력": 70, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 308,
-      "원소친밀감": ["대지"], "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Primitech Slingshot": {
+      "id": "cb6_2",
+      "name_ko": "원시 기술 새총",
+      "image_key": "primitech_slingshot",
+      "이미지_경로": "/images/equipment/weapon/crossbow/primitech_slingshot.webp",
+
+      "장비_공격력": 280,
+      "장비_방어력": 70,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 308,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
+
+
+
+
   "7티어": {
-    "이중 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/double_crossbow.png",
-      "장비_공격력": 320, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 256,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Double Crossbow": {
+      "id": "cb7_1",
+      "name_ko": "이중 석궁",
+      "image_key": "double_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/double_crossbow.webp",
+
+      "장비_공격력": 320,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 256,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
+
+
+
+
   "8티어": {
-    "추-코-누": {
-      "이미지_경로": "images/equipment/weapon/crossbow/chu-ko-nu.png",
-      "장비_공격력": 380, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 304,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Chu-Ko-Nu": {
+      "id": "cb8_1",
+      "name_ko": "추-코-누",
+      "image_key": "chu-ko-nu",
+      "이미지_경로": "/images/equipment/weapon/crossbow/chu-ko-nu.webp",
+
+      "장비_공격력": 380,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 304,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     },
-    "드라-코-누": {
-      "이미지_경로": "images/equipment/weapon/crossbow/dra-ko-nu.png",
-      "장비_공격력": 400, "장비_방어력": 0, "장비_체력": 12,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 380,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Dra-Ko-Nu": {
+      "id": "cb8_2",
+      "name_ko": "드라-코-누",
+      "image_key": "dra-ko-nu",
+      "이미지_경로": "/images/equipment/weapon/crossbow/dra-ko-nu.webp",
+
+      "장비_공격력": 400,
+      "장비_방어력": 0,
+      "장비_체력": 12,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 380,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
+
+
+
+
   "9티어": {
-    "삼중 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/triple_crossbow.png",
-      "장비_공격력": 460, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 368,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Triple Crossbow": {
+      "id": "cb9_1",
+      "name_ko": "삼중 석궁",
+      "image_key": "triple_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/triple_crossbow.webp",
+
+      "장비_공격력": 460,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 368,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
+
+
+
+
   "10티어": {
-    "슈퍼 연발 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/super_repeater.png",
-      "장비_공격력": 500, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 400,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Super Repeater": {
+      "id": "cb10_1",
+      "name_ko": "슈퍼 연발 석궁",
+      "image_key": "super_repeater",
+      "이미지_경로": "/images/equipment/weapon/crossbow/super_repeater.webp",
+
+      "장비_공격력": 500,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 400,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     },
-    "나이트윙 캐스터": {
-      "이미지_경로": "images/equipment/weapon/crossbow/nightwing_caster.png",
-      "장비_공격력": 500, "장비_방어력": 125, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 550,
-      "원소친밀감": ["공기", "어둠"], "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Nightwing Caster": {
+      "id": "cb10_2",
+      "name_ko": "나이트윙 캐스터",
+      "image_key": "nightwing_caster",
+      "이미지_경로": "/images/equipment/weapon/crossbow/nightwing_caster.webp",
+
+      "장비_공격력": 500,
+      "장비_방어력": 125,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 550,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Air", "Dark"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
+
+
+
+
   "11티어": {
-    "레비아단": {
-      "이미지_경로": "images/equipment/weapon/crossbow/leviathan.png",
-      "장비_공격력": 650, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 520,
-      "원소친밀감": ["물"], "영혼친밀감": ["레비아탄"],
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Leviathan": {
+      "id": "cb11_1",
+      "name_ko": "레비아단",
+      "image_key": "leviathan",
+      "이미지_경로": "/images/equipment/weapon/crossbow/leviathan.webp",
+
+      "장비_공격력": 650,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 520,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Leviathan"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     },
-    "호화로운 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/opulent_crossbow.png",
-      "장비_공격력": 650, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 520,
-      "원소친밀감": ["골드"], "영혼친밀감": ["케찰코아틀"],
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Opulent Crossbow": {
+      "id": "cb11_2",
+      "name_ko": "호화로운 석궁",
+      "image_key": "opulent_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/opulent_crossbow.webp",
+
+      "장비_공격력": 650,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 520,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     },
-    "명인 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/titan_crossbow.png",
-      "장비_공격력": 680, "장비_방어력": 0, "장비_체력": 21,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 649,
-      "원소친밀감": null, "영혼친밀감": ["명인"],
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Titan Crossbow": {
+      "id": "cb11_3",
+      "name_ko": "명인 석궁",
+      "image_key": "titan_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/titan_crossbow.webp",
+
+      "장비_공격력": 680,
+      "장비_방어력": 0,
+      "장비_체력": 21,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 649,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": ["Titan"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
+
+
+
+
   "12티어": {
-    "갓슬레이어 아버리스트": {
-      "이미지_경로": "images/equipment/weapon/crossbow/godslayer_arbalest.png",
-      "장비_공격력": 820, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 656,
-      "원소친밀감": ["빛"], "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Godslayer Arbalest": {
+      "id": "cb12_1",
+      "name_ko": "갓슬레이어 아버리스트",
+      "image_key": "godslayer_arbalest",
+      "이미지_경로": "/images/equipment/weapon/crossbow/godslayer_arbalest.webp",
+
+      "장비_공격력": 820,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 656,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Light"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     },
-    "바로스의 예비품": {
-      "이미지_경로": "images/equipment/weapon/crossbow/baross'_backup.png",
-      "장비_공격력": 820, "장비_방어력": 205, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 902,
-      "원소친밀감": ["물", "공기"], "영혼친밀감": ["상어"],
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Baross' Backup": {
+      "id": "cb12_2",
+      "name_ko": "바로스의 예비품",
+      "image_key": "baross'_backup",
+      "이미지_경로": "/images/equipment/weapon/crossbow/baross'_backup.webp",
+
+      "장비_공격력": 820,
+      "장비_방어력": 205,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 902,
+      "장비_에어쉽파워보너스": 1.2,
+
+      "원소친밀감": ["Water", "Air"],
+      "영혼친밀감": ["Shark"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
+
+
+
+
   "13티어": {
-    "프리마로사": {
-      "이미지_경로": "images/equipment/weapon/crossbow/primarosa.png",
-      "장비_공격력": 1050, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 840,
-      "원소친밀감": ["대지"], "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Primarosa": {
+      "id": "cb13_1",
+      "name_ko": "프리마로사",
+      "image_key": "primarosa",
+      "이미지_경로": "/images/equipment/weapon/crossbow/primarosa.webp",
+
+      "장비_공격력": 1050,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 840,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     },
-    "잠의 신 솜누스 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/somnus_boltcaster.png",
-      "장비_공격력": 1080, "장비_방어력": 0, "장비_체력": 34,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 1034,
-      "원소친밀감": ["공기", "어둠"], "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Somnus Boltcaster": {
+      "id": "cb13_2",
+      "name_ko": "잠의 신 솜누스 석궁",
+      "image_key": "somnus_boltcaster",
+      "이미지_경로": "/images/equipment/weapon/crossbow/somnus_boltcaster.webp",
+
+      "장비_공격력": 1080,
+      "장비_방어력": 0,
+      "장비_체력": 34,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1034,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Air", "Dark"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
+
+
+
+
   "14티어": {
-    "관찰자": {
-      "이미지_경로": "images/equipment/weapon/crossbow/the_watcher.png",
-      "장비_공격력": 1300, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 1040,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "The Watcher": {
+      "id": "cb14_1",
+      "name_ko": "관찰자",
+      "image_key": "the_watcher",
+      "이미지_경로": "/images/equipment/weapon/crossbow/the_watcher.webp",
+
+      "장비_공격력": 1300,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1040,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     },
-    "철석같은 갈퀴": {
-      "이미지_경로": "images/equipment/weapon/crossbow/ironclad_grapple.png",
-      "장비_공격력": 1300, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 5,
+
+
+    "Ironclad Grapple": {
+      "id": "cb14_2",
+      "name_ko": "철석같은 갈퀴",
+      "image_key": "ironclad_grapple",
+      "이미지_경로": "/images/equipment/weapon/crossbow/ironclad_grapple.webp",
+
+      "장비_공격력": 1300,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 5,
       "장비_에어쉽파워": 1560,
-      "원소친밀감": null, "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
+
+
+
+
   "15티어": {
-    "일곱 번째 불가사의": {
-      "이미지_경로": "images/equipment/weapon/crossbow/seventh_wonder.png",
-      "장비_공격력": 1510, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 1208,
-      "원소친밀감": ["모든 원소"], "영혼친밀감": null,
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+    "Seventh Wonder": {
+      "id": "cb15_1",
+      "name_ko": "일곱 번째 불가사의",
+      "image_key": "seventh_wonder",
+      "이미지_경로": "/images/equipment/weapon/crossbow/seventh_wonder.webp",
+
+      "장비_공격력": 1510,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1208,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["All"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     },
-    "공룡 사냥꾼": {
-      "이미지_경로": "images/equipment/weapon/crossbow/dinosaur_hunter.png",
-      "장비_공격력": 1510, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 5, "장비_회피%": 0, "장비_에어쉽파워": 1812,
-      "원소친밀감": null, "영혼친밀감": ["공룡"],
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Dinosaur Hunter": {
+      "id": "cb15_2",
+      "name_ko": "공룡 사냥꾼",
+      "image_key": "dinosaur_hunter",
+      "이미지_경로": "/images/equipment/weapon/crossbow/dinosaur_hunter.webp",
+
+      "장비_공격력": 1510,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1812,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": ["Dinosaur"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     },
-    "플래티넘 석궁": {
-      "이미지_경로": "images/equipment/weapon/crossbow/platinum_crossbow.png",
-      "장비_공격력": 1510, "장비_방어력": 0, "장비_체력": 0,
-      "장비_치명타확률%": 0, "장비_회피%": 0, "장비_에어쉽파워": 1208,
-      "원소친밀감": ["골드"], "영혼친밀감": ["조상"],
-      "고유원소종류": null, "고유원소티어": null, "고유영혼": null, "유물": null
+
+
+    "Platinum Crossbow": {
+      "id": "cb15_3",
+      "name_ko": "플래티넘 석궁",
+      "image_key": "platinum_crossbow",
+      "이미지_경로": "/images/equipment/weapon/crossbow/platinum_crossbow.webp",
+
+      "장비_공격력": 1510,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1208,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   }
 }

@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "기운 모자": {
-      "이미지_경로": null,
+    "Stitched Cone": {
+      "id": "mh1_1",
+      "name_ko": "기운 모자",
+      "image_key": "stitched_cone",
+      "이미지_경로": "/images/equipment/armor/magician_hat/stitched_cone.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 7,
@@ -9,30 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 8,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "2티어": {
-    "검은색 두건": {
-      "이미지_경로": null,
+    "Black Cowl": {
+      "id": "mh2_1",
+      "name_ko": "검은색 두건",
+      "image_key": "black_cowl",
+      "이미지_경로": "/images/equipment/armor/magician_hat/black_cowl.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 15,
@@ -40,30 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 18,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "3티어": {
-    "드루이드 월계관": {
-      "이미지_경로": null,
+    "Druid Laurels": {
+      "id": "mh3_1",
+      "name_ko": "드루이드 월계관",
+      "image_key": "druid_laurels",
+      "이미지_경로": "/images/equipment/armor/magician_hat/druid_laurels.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 29,
@@ -71,19 +68,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 35,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "수습생 티아라": {
-      "이미지_경로": null,
+    "Apprentice Tiara": {
+      "id": "mh3_2",
+      "name_ko": "수습생 티아라",
+      "image_key": "apprentice_tiara",
+      "이미지_경로": "/images/equipment/armor/magician_hat/apprentice_tiara.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 34,
@@ -91,30 +92,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 51,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "4티어": {
-    "청동 서클렛": {
-      "이미지_경로": null,
+    "Bronze Circlet": {
+      "id": "mh4_1",
+      "name_ko": "청동 서클렛",
+      "image_key": "bronze_circlet",
+      "이미지_경로": "/images/equipment/armor/magician_hat/bronze_circlet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 39,
@@ -122,30 +120,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 47,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "5티어": {
-    "마법사 모자": {
-      "이미지_경로": null,
+    "Wizard Hat": {
+      "id": "mh5_1",
+      "name_ko": "마법사 모자",
+      "image_key": "wizard_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/wizard_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 64,
@@ -153,19 +148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 77,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "4방향 바람의 모자": {
-      "이미지_경로": null,
+    "Hat of the Four Winds": {
+      "id": "mh5_2",
+      "name_ko": "4방향 바람의 모자",
+      "image_key": "hat_of_the_four_winds",
+      "이미지_경로": "/images/equipment/armor/magician_hat/hat_of_the_four_winds.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 107,
@@ -173,19 +172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 128,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["공기"],
+      "고유원소종류": ["Air"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "오스타라 모자": {
-      "이미지_경로": null,
+    "Ostara Hat": {
+      "id": "mh5_3",
+      "name_ko": "오스타라 모자",
+      "image_key": "ostara_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/ostara_hat.webp",
 
       "장비_공격력": 19,
       "장비_방어력": 76,
@@ -193,30 +196,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 106,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["토끼"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "6티어": {
-    "마녀의 모자": {
-      "이미지_경로": null,
+    "Witch Hat": {
+      "id": "mh6_1",
+      "name_ko": "마녀의 모자",
+      "image_key": "witch_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/witch_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 90,
@@ -224,19 +224,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 108,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "방수 릴리캡": {
-      "이미지_경로": null,
+    "Waterproof Lilycap": {
+      "id": "mh6_2",
+      "name_ko": "방수 릴리캡",
+      "image_key": "waterproof_lilycap",
+      "이미지_경로": "/images/equipment/armor/magician_hat/waterproof_lilycap.webp",
 
       "장비_공격력": 25,
       "장비_방어력": 98,
@@ -244,19 +248,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 138,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "대지"],
+      "원소친밀감": ["Earth", "Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "부엉이 두건": {
-      "이미지_경로": null,
+    "Owl Cowl": {
+      "id": "mh6_3",
+      "name_ko": "부엉이 두건",
+      "image_key": "owl_cowl",
+      "이미지_경로": "/images/equipment/armor/magician_hat/owl_cowl.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 105,
@@ -264,30 +272,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 161,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["부엉이"],
+      "영혼친밀감": ["Owl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "7티어": {
-    "책략가의 모자": {
-      "이미지_경로": null,
+    "Tactician Hat": {
+      "id": "mh7_1",
+      "name_ko": "책략가의 모자",
+      "image_key": "tactician_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/tactician_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 120,
@@ -295,19 +300,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 144,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "소환사 모자": {
-      "이미지_경로": null,
+    "Summoner Hat": {
+      "id": "mh7_2",
+      "name_ko": "소환사 모자",
+      "image_key": "summoner_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/summoner_hat.webp",
 
       "장비_공격력": 31,
       "장비_방어력": 125,
@@ -315,19 +324,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 175,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["카벙클"],
+      "영혼친밀감": ["Carbuncle"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "아이보리 퀸 왕관": {
-      "이미지_경로": null,
+    "Ivory Queen Crown": {
+      "id": "mh7_3",
+      "name_ko": "아이보리 퀸 왕관",
+      "image_key": "ivory_queen_crown",
+      "이미지_경로": "/images/equipment/armor/magician_hat/ivory_queen_crown.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 125,
@@ -335,30 +348,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 190,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "8티어": {
-    "주술사 모자": {
-      "이미지_경로": null,
+    "Shaman Hat": {
+      "id": "mh8_1",
+      "name_ko": "주술사 모자",
+      "image_key": "shaman_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/shaman_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 150,
@@ -366,19 +376,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 180,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "고급 머리장식": {
-      "이미지_경로": null,
+    "Luxurious Headdress": {
+      "id": "mh8_2",
+      "name_ko": "고급 머리장식",
+      "image_key": "luxurious_headdress",
+      "이미지_경로": "/images/equipment/armor/magician_hat/luxurious_headdress.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 170,
@@ -386,19 +400,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 204,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["졸로틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Xolotl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "안녕유산소 반다나": {
-      "이미지_경로": null,
+    "Hi-Cardio Bandana": {
+      "id": "mh8_3",
+      "name_ko": "안녕유산소 반다나",
+      "image_key": "hi-cardio_bandana",
+      "이미지_경로": "/images/equipment/armor/magician_hat/hi-cardio_bandana.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 165,
@@ -406,30 +424,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 248,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "9티어": {
-    "아스트랄 모자": {
-      "이미지_경로": null,
+    "Astral Hat": {
+      "id": "mh9_1",
+      "name_ko": "아스트랄 모자",
+      "image_key": "astral_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/astral_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 180,
@@ -437,19 +452,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 216,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "레이븐 가면": {
-      "이미지_경로": null,
+    "Raven Mask": {
+      "id": "mh9_2",
+      "name_ko": "레이븐 가면",
+      "image_key": "raven_mask",
+      "이미지_경로": "/images/equipment/armor/magician_hat/raven_mask.webp",
 
       "장비_공격력": 48,
       "장비_방어력": 190,
@@ -457,19 +476,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 266,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["독수리"],
+      "영혼친밀감": ["Eagle"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "스펠워드 모자": {
-      "이미지_경로": null,
+    "Spellward Hat": {
+      "id": "mh9_3",
+      "name_ko": "스펠워드 모자",
+      "image_key": "spellward_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/spellward_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 190,
@@ -477,30 +500,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 288,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "10티어": {
-    "오팔 머리관": {
-      "이미지_경로": null,
+    "Opal Diadem": {
+      "id": "mh10_1",
+      "name_ko": "오팔 머리관",
+      "image_key": "opal_diadem",
+      "이미지_경로": "/images/equipment/armor/magician_hat/opal_diadem.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 195,
@@ -508,19 +528,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 234,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "밤의 왕관": {
-      "이미지_경로": null,
+    "Night Crown": {
+      "id": "mh10_2",
+      "name_ko": "밤의 왕관",
+      "image_key": "night_crown",
+      "이미지_경로": "/images/equipment/armor/magician_hat/night_crown.webp",
 
       "장비_공격력": 49,
       "장비_방어력": 195,
@@ -528,19 +552,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 273,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "뱀 고문": {
-      "이미지_경로": null,
+    "Snake Counselor": {
+      "id": "mh10_3",
+      "name_ko": "뱀 고문",
+      "image_key": "snake_counselor",
+      "이미지_경로": "/images/equipment/armor/magician_hat/snake_counselor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 205,
@@ -548,30 +576,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 311,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["독사"],
+      "영혼친밀감": ["Viper"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "11티어": {
-    "정령 베일": {
-      "이미지_경로": null,
+    "Djinn Veil": {
+      "id": "mh11_1",
+      "name_ko": "정령 베일",
+      "image_key": "djinn_veil",
+      "이미지_경로": "/images/equipment/armor/magician_hat/djinn_veil.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 255,
@@ -579,19 +604,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 306,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "우아한 실크해트": {
-      "이미지_경로": null,
+    "Elegant Top Hat": {
+      "id": "mh11_2",
+      "name_ko": "우아한 실크해트",
+      "image_key": "elegant_top_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/elegant_top_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 255,
@@ -599,19 +628,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 386,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "얼음 여왕의 여름 모자": {
-      "이미지_경로": null,
+    "Ice Queen's Summer Hat": {
+      "id": "mh11_3",
+      "name_ko": "얼음 여왕의 여름 모자",
+      "image_key": "ice_queen's_summer_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/ice_queen's_summer_hat.webp",
 
       "장비_공격력": 66,
       "장비_방어력": 265,
@@ -619,30 +652,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 371,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "12티어": {
-    "총주교 모자": {
-      "이미지_경로": null,
+    "Exarch Mitre": {
+      "id": "mh12_1",
+      "name_ko": "총주교 모자",
+      "image_key": "exarch_mitre",
+      "이미지_경로": "/images/equipment/armor/magician_hat/exarch_mitre.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 320,
@@ -650,19 +680,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 384,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "사쿠라 모자": {
-      "이미지_경로": null,
+    "Sakura Eboshi": {
+      "id": "mh12_2",
+      "name_ko": "사쿠라 모자",
+      "image_key": "sakura_eboshi",
+      "이미지_경로": "/images/equipment/armor/magician_hat/sakura_eboshi.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 320,
@@ -670,19 +704,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 484,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "공기"],
+      "원소친밀감": ["Earth", "Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 모자": {
-      "이미지_경로": null,
+    "Opulent Headdress": {
+      "id": "mh12_3",
+      "name_ko": "호화로운 모자",
+      "image_key": "opulent_headdress",
+      "이미지_경로": "/images/equipment/armor/magician_hat/opulent_headdress.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 320,
@@ -690,19 +728,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 384,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "불사조 문장": {
-      "이미지_경로": null,
+    "Phoenix Crest": {
+      "id": "mh12_4",
+      "name_ko": "불사조 문장",
+      "image_key": "phoenix_crest",
+      "이미지_경로": "/images/equipment/armor/magician_hat/phoenix_crest.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 429,
@@ -710,19 +752,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 515,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["불사조"],
-      "고유원소종류": ["불"],
+      "영혼친밀감": ["Phoenix"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 12,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "여자 황제 머리핀": {
-      "이미지_경로": null,
+    "Empress Hairpins": {
+      "id": "mh12_5",
+      "name_ko": "여자 황제 머리핀",
+      "image_key": "empress_hairpins",
+      "이미지_경로": "/images/equipment/armor/magician_hat/empress_hairpins.webp",
 
       "장비_공격력": 96,
       "장비_방어력": 363,
@@ -730,30 +776,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 512,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "13티어": {
-    "보이드민스터 모자": {
-      "이미지_경로": null,
+    "Voidminster Hat": {
+      "id": "mh13_1",
+      "name_ko": "보이드민스터 모자",
+      "image_key": "voidminster_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/voidminster_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 410,
@@ -761,19 +804,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 492,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "엘리시움 후광": {
-      "이미지_경로": null,
+    "Elysium Halo": {
+      "id": "mh13_2",
+      "name_ko": "엘리시움 후광",
+      "image_key": "elysium_halo",
+      "이미지_경로": "/images/equipment/armor/magician_hat/elysium_halo.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 509,
@@ -781,19 +828,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 611,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 12,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "파도의 티아라": {
-      "이미지_경로": null,
+    "Tiara of Tides": {
+      "id": "mh13_3",
+      "name_ko": "파도의 티아라",
+      "image_key": "tiara_of_tides",
+      "이미지_경로": "/images/equipment/armor/magician_hat/tiara_of_tides.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 410,
@@ -801,19 +852,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 622,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "조그만 실크해트": {
-      "이미지_경로": null,
+    "Teeny Top Hat": {
+      "id": "mh13_4",
+      "name_ko": "조그만 실크해트",
+      "image_key": "teeny_top_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/teeny_top_hat.webp",
 
       "장비_공격력": 103,
       "장비_방어력": 410,
@@ -821,19 +876,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 574,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "마법사의 모자": {
-      "이미지_경로": null,
+    "Magician's Hat": {
+      "id": "mh13_5",
+      "name_ko": "마법사의 모자",
+      "image_key": "magician's_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/magician's_hat.webp",
 
       "장비_공격력": 106,
       "장비_방어력": 425,
@@ -841,30 +900,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 595,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["토끼"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "14티어": {
-    "아치 드루이드의 권한": {
-      "이미지_경로": null,
+    "Archdruid's Authority": {
+      "id": "mh14_1",
+      "name_ko": "아치 드루이드의 권한",
+      "image_key": "archdruid's_authority",
+      "이미지_경로": "/images/equipment/armor/magician_hat/archdruid's_authority.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 510,
@@ -872,19 +928,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 612,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 겨울 모자": {
-      "이미지_경로": null,
+    "Platinum Winter Hat": {
+      "id": "mh14_2",
+      "name_ko": "플래티넘 겨울 모자",
+      "image_key": "platinum_winter_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/platinum_winter_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 510,
@@ -892,19 +952,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 612,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "아귀의 베일": {
-      "이미지_경로": null,
+    "Angler's Veil": {
+      "id": "mh14_3",
+      "name_ko": "아귀의 베일",
+      "image_key": "angler's_veil",
+      "이미지_경로": "/images/equipment/armor/magician_hat/angler's_veil.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 510,
@@ -912,19 +976,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 772,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "얼음불 촉매": {
-      "이미지_경로": null,
+    "Frostfire Catalyst": {
+      "id": "mh14_4",
+      "name_ko": "얼음불 촉매",
+      "image_key": "frostfire_catalyst",
+      "이미지_경로": "/images/equipment/armor/magician_hat/frostfire_catalyst.webp",
 
       "장비_공격력": 131,
       "장비_방어력": 525,
@@ -932,19 +1000,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 735,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불", "물"],
+      "원소친밀감": ["Fire", "Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "릴루의 비밀 모자": {
-      "이미지_경로": null,
+    "Lilu's Secret Hat": {
+      "id": "mh14_5",
+      "name_ko": "릴루의 비밀 모자",
+      "image_key": "lilu's_secret_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/lilu's_secret_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 525,
@@ -952,30 +1024,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 795,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
-      "영혼친밀감": null,
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Owl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "15티어": {
-    "심해 카사": {
-      "이미지_경로": null,
+    "Deepsea Kasa": {
+      "id": "mh15_1",
+      "name_ko": "심해 카사",
+      "image_key": "deepsea_kasa",
+      "이미지_경로": "/images/equipment/armor/magician_hat/deepsea_kasa.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 590,
@@ -983,19 +1052,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 708,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "화쇄암 왕관": {
-      "이미지_경로": null,
+    "Pyroclastic Crown": {
+      "id": "mh15_2",
+      "name_ko": "화쇄암 왕관",
+      "image_key": "pyroclastic_crown",
+      "이미지_경로": "/images/equipment/armor/magician_hat/pyroclastic_crown.webp",
 
       "장비_공격력": 296,
       "장비_방어력": 753,
@@ -1003,19 +1076,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1140,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["불"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 14,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "핼러위치 모자": {
-      "이미지_경로": null,
+    "Hallowitch Hat": {
+      "id": "mh15_3",
+      "name_ko": "핼러위치 모자",
+      "image_key": "hallowitch_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/hallowitch_hat.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 590,
@@ -1023,19 +1100,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 893,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "불사조 두건": {
-      "이미지_경로": null,
+    "Phoenix Cowl": {
+      "id": "mh15_4",
+      "name_ko": "불사조 두건",
+      "image_key": "phoenix_cowl",
+      "이미지_경로": "/images/equipment/armor/magician_hat/phoenix_cowl.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 590,
@@ -1043,14 +1124,39 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1062,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불", "공기"],
-      "영혼친밀감": ["불사조"],
+      "원소친밀감": ["Fire", "Air"],
+      "영혼친밀감": ["Phoenix"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Dark Wizard Hat": {
+      "id": "mh15_5",
+      "name_ko": "흑마법사 모자",
+      "image_key": "dark_wizard_hat",
+      "이미지_경로": "/images/equipment/armor/magician_hat/dark_wizard_hat.webp",
+
+      "장비_공격력": 148,
+      "장비_방어력": 590,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 826,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Fire", "Dark"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

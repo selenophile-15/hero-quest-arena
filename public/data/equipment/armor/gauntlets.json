@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "강철 팔목 보호대": {
-      "이미지_경로": null,
+    "Iron Armguards": {
+      "id": "gt1_1",
+      "name_ko": "강철 팔목 보호대",
+      "image_key": "iron_armguards",
+      "이미지_경로": "/images/equipment/armor/gauntlets/iron_armguards.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 7,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 8,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "장갑 건틀렛": {
-      "이미지_경로": null,
+    "Plated Gauntlets": {
+      "id": "gt2_1",
+      "name_ko": "장갑 건틀렛",
+      "image_key": "plated_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/plated_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 20,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 24,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "전사의 건틀렛": {
-      "이미지_경로": null,
+    "Warrior Gauntlets": {
+      "id": "gt3_1",
+      "name_ko": "전사의 건틀렛",
+      "image_key": "warrior_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/warrior_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 36,
@@ -69,29 +68,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 43,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "데미 건틀렛": {
-      "이미지_경로": null,
+    "Demi Gauntlets": {
+      "id": "gt4_1",
+      "name_ko": "데미 건틀렛",
+      "image_key": "demi_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/demi_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 54,
@@ -99,19 +96,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 65,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "호박 건틀렛": {
-      "이미지_경로": null,
+    "Pumpkin Gauntlets": {
+      "id": "gt4_2",
+      "name_ko": "호박 건틀렛",
+      "image_key": "pumpkin_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/pumpkin_gauntlets.webp",
 
       "장비_공격력": 16,
       "장비_방어력": 62,
@@ -119,19 +120,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 87,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "어둠"],
+      "원소친밀감": ["Earth", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "CM-73 조작기": {
-      "이미지_경로": null,
+    "CM-73 Manipulators": {
+      "id": "gt4_3",
+      "name_ko": "CM-73 조작기",
+      "image_key": "cm-73_manipulators",
+      "이미지_경로": "/images/equipment/armor/gauntlets/cm-73_manipulators.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 68,
@@ -139,29 +144,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 102,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "기사의 건틀렛": {
-      "이미지_경로": null,
+    "Knight Gauntlets": {
+      "id": "gt5_1",
+      "name_ko": "기사의 건틀렛",
+      "image_key": "knight_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/knight_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 82,
@@ -169,19 +172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 98,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "산타의 지킴이 건틀렛": {
-      "이미지_경로": null,
+    "Santa's Guard Gauntlets": {
+      "id": "gt5_2",
+      "name_ko": "산타의 지킴이 건틀렛",
+      "image_key": "santa's_guard_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/santa's_guard_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 88,
@@ -189,19 +196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 136,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["크리스마스"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "테디베어 발바닥": {
-      "이미지_경로": null,
+    "Teddy Bear Paws": {
+      "id": "gt5_3",
+      "name_ko": "테디베어 발바닥",
+      "image_key": "teddy_bear_paws",
+      "이미지_경로": "/images/equipment/armor/gauntlets/teddy_bear_paws.webp",
 
       "장비_공격력": 22,
       "장비_방어력": 88,
@@ -209,19 +220,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 123,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["곰"],
+      "영혼친밀감": ["Bear"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "5일의 손": {
-      "이미지_경로": null,
+    "Hands of the Fifth": {
+      "id": "gt5_4",
+      "name_ko": "5일의 손",
+      "image_key": "hands_of_the_fifth",
+      "이미지_경로": "/images/equipment/armor/gauntlets/hands_of_the_fifth.webp",
 
       "장비_공격력": 24,
       "장비_방어력": 96,
@@ -229,29 +244,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 134,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "성전사 건틀렛": {
-      "이미지_경로": null,
+    "Paladin Gauntlets": {
+      "id": "gt6_1",
+      "name_ko": "성전사 건틀렛",
+      "image_key": "paladin_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/paladin_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 105,
@@ -259,19 +272,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 126,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "해잡이 건틀렛": {
-      "이미지_경로": null,
+    "Sungrasp Gauntlets": {
+      "id": "gt6_2",
+      "name_ko": "해잡이 건틀렛",
+      "image_key": "sungrasp_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/sungrasp_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 147,
@@ -279,19 +296,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 176,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["불"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "용병 건틀렛": {
-      "이미지_경로": null,
+    "Landsknecht Gauntlets": {
+      "id": "gt6_3",
+      "name_ko": "용병 건틀렛",
+      "image_key": "landsknecht_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/landsknecht_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 110,
@@ -299,29 +320,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 167,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "사무라이 코테": {
-      "이미지_경로": null,
+    "Samurai Kote": {
+      "id": "gt7_1",
+      "name_ko": "사무라이 코테",
+      "image_key": "samurai_kote",
+      "이미지_경로": "/images/equipment/armor/gauntlets/samurai_kote.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 125,
@@ -329,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 150,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "공화국 건틀렛": {
-      "이미지_경로": null,
+    "Republic Gauntlets": {
+      "id": "gt7_2",
+      "name_ko": "공화국 건틀렛",
+      "image_key": "republic_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/republic_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 135,
@@ -349,19 +372,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 202,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "과일 건틀렛": {
-      "이미지_경로": null,
+    "Fruity Gauntlets": {
+      "id": "gt7_3",
+      "name_ko": "과일 건틀렛",
+      "image_key": "fruity_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/fruity_gauntlets.webp",
 
       "장비_공격력": 35,
       "장비_방어력": 140,
@@ -369,29 +396,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 196,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "대지"],
+      "원소친밀감": ["Earth", "Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "장군 건틀렛": {
-      "이미지_경로": null,
+    "General Gauntlets": {
+      "id": "gt8_1",
+      "name_ko": "장군 건틀렛",
+      "image_key": "general_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/general_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 165,
@@ -399,19 +424,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 198,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "아바타의 손": {
-      "이미지_경로": null,
+    "Hands of the Avatar": {
+      "id": "gt8_2",
+      "name_ko": "아바타의 손",
+      "image_key": "hands_of_the_avatar",
+      "이미지_경로": "/images/equipment/armor/gauntlets/hands_of_the_avatar.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 175,
@@ -419,29 +448,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 265,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "광전사 건틀렛": {
-      "이미지_경로": null,
+    "Berserker Gauntlets": {
+      "id": "gt9_1",
+      "name_ko": "광전사 건틀렛",
+      "image_key": "berserker_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/berserker_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 185,
@@ -449,19 +476,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 222,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "럭셔리한 건틀렛": {
-      "이미지_경로": null,
+    "Luxurious Gauntlets": {
+      "id": "gt9_2",
+      "name_ko": "럭셔리한 건틀렛",
+      "image_key": "luxurious_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/luxurious_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 190,
@@ -469,19 +500,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 228,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
+      "원소친밀감": ["Gold"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "사라진 전사의 건틀렛": {
-      "이미지_경로": null,
+    "Lost Warrior's Gauntlets": {
+      "id": "gt9_3",
+      "name_ko": "사라진 전사의 건틀렛",
+      "image_key": "lost_warrior's_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/lost_warrior's_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 200,
@@ -489,29 +524,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 305,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "저거너트 그립": {
-      "이미지_경로": null,
+    "Juggernaut Grip": {
+      "id": "gt10_1",
+      "name_ko": "저거너트 그립",
+      "image_key": "juggernaut_grip",
+      "이미지_경로": "/images/equipment/armor/gauntlets/juggernaut_grip.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 210,
@@ -519,19 +552,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 252,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "겨울의 손길": {
-      "이미지_경로": null,
+    "Winter's Touch": {
+      "id": "gt10_2",
+      "name_ko": "겨울의 손길",
+      "image_key": "winter's_touch",
+      "이미지_경로": "/images/equipment/armor/gauntlets/winter's_touch.webp",
 
       "장비_공격력": 55,
       "장비_방어력": 220,
@@ -539,29 +576,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 308,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "셀레스틸 건틀렛": {
-      "이미지_경로": null,
+    "Celesteel Gauntlets": {
+      "id": "gt11_1",
+      "name_ko": "셀레스틸 건틀렛",
+      "image_key": "celesteel_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/celesteel_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 270,
@@ -569,19 +604,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 324,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "가이아의 손길": {
-      "이미지_경로": null,
+    "Gaia's Hold": {
+      "id": "gt11_2",
+      "name_ko": "가이아의 손길",
+      "image_key": "gaia's_hold",
+      "이미지_경로": "/images/equipment/armor/gauntlets/gaia's_hold.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 270,
@@ -589,19 +628,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 409,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "선봉대 건틀렛": {
-      "이미지_경로": null,
+    "Vanguard Gauntlets": {
+      "id": "gt11_3",
+      "name_ko": "선봉대 건틀렛",
+      "image_key": "vanguard_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/vanguard_gauntlets.webp",
 
       "장비_공격력": 70,
       "장비_방어력": 280,
@@ -609,19 +652,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 392,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "허스칼 건틀렛": {
-      "이미지_경로": null,
+    "Huscarl Gauntlets": {
+      "id": "gt11_4",
+      "name_ko": "허스칼 건틀렛",
+      "image_key": "huscarl_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/huscarl_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 280,
@@ -629,29 +676,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 426,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "버밀리온 수비대의 용맹함": {
-      "이미지_경로": null,
+    "Vermilion Guard Might": {
+      "id": "gt12_1",
+      "name_ko": "버밀리온 수비대의 용맹함",
+      "image_key": "vermilion_guard_might",
+      "이미지_경로": "/images/equipment/armor/gauntlets/vermilion_guard_might.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 355,
@@ -659,19 +704,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 426,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
-      "영혼친밀감": ["불사조"],
+      "원소친밀감": ["Fire"],
+      "영혼친밀감": ["Phoenix"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "폭한의 페이스스매커": {
-      "이미지_경로": null,
+    "Goon's Facesmackers": {
+      "id": "gt12_2",
+      "name_ko": "폭한의 페이스스매커",
+      "image_key": "goon's_facesmackers",
+      "이미지_경로": "/images/equipment/armor/gauntlets/goon's_facesmackers.webp",
 
       "장비_공격력": 89,
       "장비_방어력": 355,
@@ -679,19 +728,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 497,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 용틀렛": {
-      "이미지_경로": null,
+    "Opulent Dracofists": {
+      "id": "gt12_3",
+      "name_ko": "호화로운 용틀렛",
+      "image_key": "opulent_dracofists",
+      "이미지_경로": "/images/equipment/armor/gauntlets/opulent_dracofists.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 355,
@@ -699,19 +752,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 426,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "독재자의 주먹": {
-      "이미지_경로": null,
+    "Tyrant Fists": {
+      "id": "gt12_4",
+      "name_ko": "독재자의 주먹",
+      "image_key": "tyrant_fists",
+      "이미지_경로": "/images/equipment/armor/gauntlets/tyrant_fists.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 365,
@@ -719,29 +776,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 553,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "베일파이어 건틀렛": {
-      "이미지_경로": null,
+    "Balefire Gauntlets": {
+      "id": "gt13_1",
+      "name_ko": "베일파이어 건틀렛",
+      "image_key": "balefire_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/balefire_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 435,
@@ -749,19 +804,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 522,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "파워 건틀렛": {
-      "이미지_경로": null,
+    "Power Gauntlet": {
+      "id": "gt13_2",
+      "name_ko": "파워 건틀렛",
+      "image_key": "power_gauntlet",
+      "이미지_경로": "/images/equipment/armor/gauntlets/power_gauntlet.webp",
 
       "장비_공격력": 116,
       "장비_방어력": 435,
@@ -769,19 +828,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 615,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 건틀렛": {
-      "이미지_경로": null,
+    "Platinum Gauntlets": {
+      "id": "gt13_3",
+      "name_ko": "플래티넘 건틀렛",
+      "image_key": "platinum_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/platinum_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 435,
@@ -789,19 +852,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 522,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "드래곤 송곳니 주먹": {
-      "이미지_경로": null,
+    "Dragonfang Fists": {
+      "id": "gt13_4",
+      "name_ko": "드래곤 송곳니 주먹",
+      "image_key": "dragonfang_fists",
+      "이미지_경로": "/images/equipment/armor/gauntlets/dragonfang_fists.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 450,
@@ -809,29 +876,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 680,
+      "장비_에어쉽파워보너스": 1.25,
 
-      "원소친밀감": ["불"],
-      "영혼친밀감": ["바하무트"],
+      "원소친밀감": ["Fire"],
+      "영혼친밀감": ["Bahamut"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "코발트 건틀렛": {
-      "이미지_경로": null,
+    "Cobalt Gauntlets": {
+      "id": "gt14_1",
+      "name_ko": "코발트 건틀렛",
+      "image_key": "cobalt_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/cobalt_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 545,
@@ -839,19 +904,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 654,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "영원의 건틀렛": {
-      "이미지_경로": null,
+    "Eternity Gauntlets": {
+      "id": "gt14_2",
+      "name_ko": "영원의 건틀렛",
+      "image_key": "eternity_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/eternity_gauntlets.webp",
 
       "장비_공격력": 145,
       "장비_방어력": 545,
@@ -859,19 +928,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 770,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "키틴질 발톱": {
-      "이미지_경로": null,
+    "Chitinous Claws": {
+      "id": "gt14_3",
+      "name_ko": "키틴질 발톱",
+      "image_key": "chitinous_claws",
+      "이미지_경로": "/images/equipment/armor/gauntlets/chitinous_claws.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 545,
@@ -879,19 +952,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 824,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "강력 민트 장갑": {
-      "이미지_경로": null,
+    "Mighty Mint Mitts": {
+      "id": "gt14_4",
+      "name_ko": "강력 민트 장갑",
+      "image_key": "mighty_mint_mitts",
+      "이미지_경로": "/images/equipment/armor/gauntlets/mighty_mint_mitts.webp",
 
       "장비_공격력": 149,
       "장비_방어력": 560,
@@ -899,19 +976,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 791,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["크리스마스"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "명인 건틀렛": {
-      "이미지_경로": null,
+    "Titan Gauntlets": {
+      "id": "gt14_5",
+      "name_ko": "명인 건틀렛",
+      "image_key": "titan_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/titan_gauntlets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 560,
@@ -919,29 +1000,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 847,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["명인"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Titan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "베히모스 발톱": {
-      "이미지_경로": null,
+    "Behemoth Claws": {
+      "id": "gt15_1",
+      "name_ko": "베히모스 발톱",
+      "image_key": "behemoth_claws",
+      "이미지_경로": "/images/equipment/armor/gauntlets/behemoth_claws.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 630,
@@ -949,19 +1028,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 756,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["베히모스"],
+      "영혼친밀감": ["Behemoth"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "공압 건틀렛": {
-      "이미지_경로": null,
+    "Pneumatic Gauntlets": {
+      "id": "gt15_2",
+      "name_ko": "공압 건틀렛",
+      "image_key": "pneumatic_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/pneumatic_gauntlets.webp",
 
       "장비_공격력": 168,
       "장비_방어력": 630,
@@ -969,19 +1052,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 890,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "저주받은 왕의 힘": {
-      "이미지_경로": null,
+    "Cursed King's Might": {
+      "id": "gt15_3",
+      "name_ko": "저주받은 왕의 힘",
+      "image_key": "cursed_king's_might",
+      "이미지_경로": "/images/equipment/armor/gauntlets/cursed_king's_might.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 630,
@@ -989,14 +1076,63 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 951,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Xenotype Forelimbs": {
+      "id": "gt15_4",
+      "name_ko": "제노타입 완갑",
+      "image_key": "xenotype_forelimbs",
+      "이미지_경로": "/images/equipment/armor/gauntlets/xenotype_forelimbs.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 650,
+      "장비_체력": 41,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 985,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
+
+
+    "Stone Jaguar Gauntlets": {
+      "id": "gt15_5",
+      "name_ko": "돌 재규어 건틀렛",
+      "image_key": "stone_jaguar_gauntlets",
+      "이미지_경로": "/images/equipment/armor/gauntlets/stone_jaguar_gauntlets.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 650,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1170,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Tiger"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

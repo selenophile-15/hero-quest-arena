@@ -1,7 +1,10 @@
 {
   "3티어": {
-    "트라이앵글": {
-      "이미지_경로": null,
+    "Triangle": {
+      "id": "in3_1",
+      "name_ko": "트라이앵글",
+      "image_key": "triangle",
+      "이미지_경로": "/images/equipment/weapon/instrument/triangle.webp",
 
       "장비_공격력": 96,
       "장비_방어력": 0,
@@ -9,29 +12,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 77,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1
+    },
 
-      "유물": null
+
+    "Air Guitar": {
+      "id": "in3_2",
+      "name_ko": "에어 기타",
+      "image_key": "air_guitar",
+      "이미지_경로": "/images/equipment/weapon/instrument/air_guitar.webp",
+
+      "장비_공격력": 96,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 13,
+      "장비_에어쉽파워": 177,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Air"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "사냥용 뿔피리": {
-      "이미지_경로": null,
+    "Hunting Horn": {
+      "id": "in4_1",
+      "name_ko": "사냥용 뿔피리",
+      "image_key": "hunting_horn",
+      "이미지_경로": "/images/equipment/weapon/instrument/hunting_horn.webp",
 
       "장비_공격력": 148,
       "장비_방어력": 0,
@@ -39,29 +64,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 118,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "숲 류트": {
-      "이미지_경로": null,
+    "Woodland Lute": {
+      "id": "in5_1",
+      "name_ko": "숲 류트",
+      "image_key": "woodland_lute",
+      "이미지_경로": "/images/equipment/weapon/instrument/woodland_lute.webp",
 
       "장비_공격력": 200,
       "장비_방어력": 0,
@@ -69,29 +92,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 160,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "멜랑콜리라": {
-      "이미지_경로": null,
+    "Melancholyr": {
+      "id": "in6_1",
+      "name_ko": "멜랑콜리라",
+      "image_key": "melancholyr",
+      "이미지_경로": "/images/equipment/weapon/instrument/melancholyr.webp",
 
       "장비_공격력": 260,
       "장비_방어력": 0,
@@ -99,19 +120,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 208,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "잭 오 봉고": {
-      "이미지_경로": null,
+    "Jack-O'-Bongo": {
+      "id": "in6_2",
+      "name_ko": "잭 오 봉고",
+      "image_key": "jack-o'-bongo",
+      "이미지_경로": "/images/equipment/weapon/instrument/jack-o'-bongo.webp",
 
       "장비_공격력": 260,
       "장비_방어력": 0,
@@ -119,29 +144,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 248,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "광란의 북": {
-      "이미지_경로": null,
+    "Party Drums": {
+      "id": "in7_1",
+      "name_ko": "광란의 북",
+      "image_key": "party_drums",
+      "이미지_경로": "/images/equipment/weapon/instrument/party_drums.webp",
 
       "장비_공격력": 370,
       "장비_방어력": 0,
@@ -149,29 +172,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 296,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1
+    },
 
-      "유물": null
+
+    "Ocarina of Rime": {
+      "id": "in7_2",
+      "name_ko": "서리의 오카리나",
+      "image_key": "ocarina_of_rime",
+      "이미지_경로": "/images/equipment/weapon/instrument/ocarina_of_rime.webp",
+
+      "장비_공격력": 370,
+      "장비_방어력": 93,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 408,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Water"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "뱀 조련사": {
-      "이미지_경로": null,
+    "Snake Charmer": {
+      "id": "in8_1",
+      "name_ko": "뱀 조련사",
+      "image_key": "snake_charmer",
+      "이미지_경로": "/images/equipment/weapon/instrument/snake_charmer.webp",
 
       "장비_공격력": 440,
       "장비_방어력": 0,
@@ -179,29 +224,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 352,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["독사"],
+      "영혼친밀감": ["Viper"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "휴대용 징": {
-      "이미지_경로": null,
+    "Portable Gong": {
+      "id": "in9_1",
+      "name_ko": "휴대용 징",
+      "image_key": "portable_gong",
+      "이미지_경로": "/images/equipment/weapon/instrument/portable_gong.webp",
 
       "장비_공격력": 510,
       "장비_방어력": 0,
@@ -209,29 +252,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 408,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "조개 타악기": {
-      "이미지_경로": null,
+    "Percussive Clam": {
+      "id": "in10_1",
+      "name_ko": "조개 타악기",
+      "image_key": "percussive_clam",
+      "이미지_경로": "/images/equipment/weapon/instrument/percussive_clam.webp",
 
       "장비_공격력": 590,
       "장비_방어력": 0,
@@ -239,29 +280,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 472,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "욕망의 리라": {
-      "이미지_경로": null,
+    "Lyre of Desire": {
+      "id": "in11_1",
+      "name_ko": "욕망의 리라",
+      "image_key": "lyre_of_desire",
+      "이미지_경로": "/images/equipment/weapon/instrument/lyre_of_desire.webp",
 
       "장비_공격력": 760,
       "장비_방어력": 0,
@@ -269,29 +308,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 608,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "녹은 록 스타": {
-      "이미지_경로": null,
+    "Molten Rockstar": {
+      "id": "in12_1",
+      "name_ko": "녹은 록 스타",
+      "image_key": "molten_rockstar",
+      "이미지_경로": "/images/equipment/weapon/instrument/molten_rockstar.webp",
 
       "장비_공격력": 960,
       "장비_방어력": 0,
@@ -299,29 +336,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 768,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "이세계 차임": {
-      "이미지_경로": null,
+    "Otherwordly Chime": {
+      "id": "in13_1",
+      "name_ko": "이세계 차임",
+      "image_key": "otherwordly_chime",
+      "이미지_경로": "/images/equipment/weapon/instrument/otherwordly_chime.webp",
 
       "장비_공격력": 1230,
       "장비_방어력": 0,
@@ -329,19 +364,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 984,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "일렉트로 키타": {
-      "이미지_경로": null,
+    "Electro-Keytar": {
+      "id": "in13_2",
+      "name_ko": "일렉트로 키타",
+      "image_key": "electro-keytar",
+      "이미지_경로": "/images/equipment/weapon/instrument/electro-keytar.webp",
 
       "장비_공격력": 1270,
       "장비_방어력": 0,
@@ -349,29 +388,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1216,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "우주 트럼펫": {
-      "이미지_경로": null,
+    "Cosmic Trumpet": {
+      "id": "in14_1",
+      "name_ko": "우주 트럼펫",
+      "image_key": "cosmic_trumpet",
+      "이미지_경로": "/images/equipment/weapon/instrument/cosmic_trumpet.webp",
 
       "장비_공격력": 1530,
       "장비_방어력": 0,
@@ -379,19 +416,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1224,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "엘리시움 하늘실로폰": {
-      "이미지_경로": null,
+    "Elysium Skylophone": {
+      "id": "in14_2",
+      "name_ko": "엘리시움 하늘실로폰",
+      "image_key": "elysium_skylophone",
+      "이미지_경로": "/images/equipment/weapon/instrument/elysium_skylophone.webp",
 
       "장비_공격력": 1530,
       "장비_방어력": 383,
@@ -399,19 +440,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1684,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기", "빛"],
+      "원소친밀감": ["Air", "Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 종": {
-      "이미지_경로": null,
+    "Platinum Bell": {
+      "id": "in14_3",
+      "name_ko": "플래티넘 종",
+      "image_key": "platinum_bell",
+      "이미지_경로": "/images/equipment/weapon/instrument/platinum_bell.webp",
 
       "장비_공격력": 1570,
       "장비_방어력": 0,
@@ -419,19 +464,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1256,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "록킹 더블넥": {
-      "이미지_경로": null,
+    "Rockin' Doubleneck": {
+      "id": "in14_4",
+      "name_ko": "록킹 더블넥",
+      "image_key": "rockin'_doubleneck",
+      "이미지_경로": "/images/equipment/weapon/instrument/rockin'_doubleneck.webp",
 
       "장비_공격력": 1530,
       "장비_방어력": 0,
@@ -439,29 +488,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1464,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "웬디고 드론": {
-      "이미지_경로": null,
+    "Wendigo Drone": {
+      "id": "in15_1",
+      "name_ko": "웬디고 드론",
+      "image_key": "wendigo_drone",
+      "이미지_경로": "/images/equipment/weapon/instrument/wendigo_drone.webp",
 
       "장비_공격력": 1770,
       "장비_방어력": 0,
@@ -469,19 +516,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1416,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "어둠"],
+      "원소친밀감": ["Earth", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "개구리 노래 징": {
-      "이미지_경로": null,
+    "Frogsong Gong": {
+      "id": "in15_2",
+      "name_ko": "개구리 노래 징",
+      "image_key": "frogsong_gong",
+      "이미지_경로": "/images/equipment/weapon/instrument/frogsong_gong.webp",
 
       "장비_공격력": 1770,
       "장비_방어력": 443,
@@ -489,19 +540,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1948,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "대지"],
+      "원소친밀감": ["Water", "Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "말의 유금": {
-      "이미지_경로": null,
+    "Equine Liuqin": {
+      "id": "in15_3",
+      "name_ko": "말의 유금",
+      "image_key": "equine_liuqin",
+      "이미지_경로": "/images/equipment/weapon/instrument/equine_liuqin.webp",
 
       "장비_공격력": 1770,
       "장비_방어력": 0,
@@ -509,14 +564,15 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1691,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["기린"],
+      "영혼친밀감": ["Kirin"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

@@ -1,7 +1,10 @@
 {
   "3티어": {
-    "베이컨과 달걀": {
-      "이미지_경로": null,
+    "Bacon and Eggs": {
+      "id": "ml3_1",
+      "name_ko": "베이컨과 달걀",
+      "image_key": "bacon_and_eggs",
+      "이미지_경로": "/images/equipment/accessory/meal/bacon_and_eggs.webp",
 
       "장비_공격력": 28,
       "장비_방어력": 28,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 56,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "구아바오": {
-      "이미지_경로": null,
+    "Gua Bao": {
+      "id": "ml4_1",
+      "name_ko": "구아바오",
+      "image_key": "gua_bao",
+      "이미지_경로": "/images/equipment/accessory/meal/gua_bao.webp",
 
       "장비_공격력": 36,
       "장비_방어력": 36,
@@ -39,19 +40,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 72,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "우주 시리얼": {
-      "이미지_경로": null,
+    "CosmOs Cereals": {
+      "id": "ml4_2",
+      "name_ko": "우주 시리얼",
+      "image_key": "cosmos_cereals",
+      "이미지_경로": "/images/equipment/accessory/meal/cosmos_cereals.webp",
 
       "장비_공격력": 44,
       "장비_방어력": 40,
@@ -59,29 +64,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 83,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "푸틴": {
-      "이미지_경로": null,
+    "Poutine": {
+      "id": "ml5_1",
+      "name_ko": "푸틴",
+      "image_key": "poutine",
+      "이미지_경로": "/images/equipment/accessory/meal/poutine.webp",
 
       "장비_공격력": 48,
       "장비_방어력": 48,
@@ -89,19 +92,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 96,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "슈거 쉑 스페셜": {
-      "이미지_경로": null,
+    "Sugar Shack Special": {
+      "id": "ml5_2",
+      "name_ko": "슈거 쉑 스페셜",
+      "image_key": "sugar_shack_special",
+      "이미지_경로": "/images/equipment/accessory/meal/sugar_shack_special.webp",
 
       "장비_공격력": 53,
       "장비_방어력": 79,
@@ -109,19 +116,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 137,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "셰퍼드의 파이": {
-      "이미지_경로": null,
+    "Shepherd's Pie": {
+      "id": "ml5_3",
+      "name_ko": "셰퍼드의 파이",
+      "image_key": "shepherd's_pie",
+      "이미지_경로": "/images/equipment/accessory/meal/shepherd's_pie.webp",
 
       "장비_공격력": 79,
       "장비_방어력": 53,
@@ -129,19 +140,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 127,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "나뭇잎 찹쌀밥 간식": {
-      "이미지_경로": null,
+    "Zongzi Snack": {
+      "id": "ml5_4",
+      "name_ko": "나뭇잎 찹쌀밥 간식",
+      "image_key": "zongzi_snack",
+      "이미지_경로": "/images/equipment/accessory/meal/zongzi_snack.webp",
 
       "장비_공격력": 86,
       "장비_방어력": 58,
@@ -149,19 +164,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 138,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "피망 돌마": {
-      "이미지_경로": null,
+    "Pepper Dolma": {
+      "id": "ml5_5",
+      "name_ko": "피망 돌마",
+      "image_key": "pepper_dolma",
+      "이미지_경로": "/images/equipment/accessory/meal/pepper_dolma.webp",
 
       "장비_공격력": 58,
       "장비_방어력": 86,
@@ -169,29 +188,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 150,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "치즈버거": {
-      "이미지_경로": null,
+    "Cheeseburger": {
+      "id": "ml6_1",
+      "name_ko": "치즈버거",
+      "image_key": "cheeseburger",
+      "이미지_경로": "/images/equipment/accessory/meal/cheeseburger.webp",
 
       "장비_공격력": 60,
       "장비_방어력": 60,
@@ -199,19 +216,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 120,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "마르게리타 피자": {
-      "이미지_경로": null,
+    "Margherita Pizza": {
+      "id": "ml6_2",
+      "name_ko": "마르게리타 피자",
+      "image_key": "margherita_pizza",
+      "이미지_경로": "/images/equipment/accessory/meal/margherita_pizza.webp",
 
       "장비_공격력": 98,
       "장비_방어력": 65,
@@ -219,19 +240,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 156,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "파워업 파이": {
-      "이미지_경로": null,
+    "Power-Up Pie": {
+      "id": "ml6_3",
+      "name_ko": "파워업 파이",
+      "image_key": "power-up_pie",
+      "이미지_경로": "/images/equipment/accessory/meal/power-up_pie.webp",
 
       "장비_공격력": 65,
       "장비_방어력": 98,
@@ -239,19 +264,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 170,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "킹크랩 애피타이저": {
-      "이미지_경로": null,
+    "King Crab Appetizer": {
+      "id": "ml6_4",
+      "name_ko": "킹크랩 애피타이저",
+      "image_key": "king_crab_appetizer",
+      "이미지_경로": "/images/equipment/accessory/meal/king_crab_appetizer.webp",
 
       "장비_공격력": 105,
       "장비_방어력": 70,
@@ -259,29 +288,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 168,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": null,
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "아히 포케 볼": {
-      "이미지_경로": null,
+    "Ahi Poke Bowl": {
+      "id": "ml7_1",
+      "name_ko": "아히 포케 볼",
+      "image_key": "ahi_poke_bowl",
+      "이미지_경로": "/images/equipment/accessory/meal/ahi_poke_bowl.webp",
 
       "장비_공격력": 75,
       "장비_방어력": 75,
@@ -289,19 +316,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 150,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "크림처럼 부드러운 가리비": {
-      "이미지_경로": null,
+    "Creamy Scallops": {
+      "id": "ml7_2",
+      "name_ko": "크림처럼 부드러운 가리비",
+      "image_key": "creamy_scallops",
+      "이미지_경로": "/images/equipment/accessory/meal/creamy_scallops.webp",
 
       "장비_공격력": 80,
       "장비_방어력": 120,
@@ -309,19 +340,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 208,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "투르느도 로시니": {
-      "이미지_경력": null,
+    "Tournedos Rossini": {
+      "id": "ml7_3",
+      "name_ko": "투르느도 로시니",
+      "image_key": "tournedos_rossini",
+      "이미지_경로": "/images/equipment/accessory/meal/tournedos_rossini.webp",
 
       "장비_공격력": 120,
       "장비_방어력": 80,
@@ -329,29 +364,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 192,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "스시": {
-      "이미지_경로": null,
+    "Sushi": {
+      "id": "ml8_1",
+      "name_ko": "스시",
+      "image_key": "sushi",
+      "이미지_경로": "/images/equipment/accessory/meal/sushi.webp",
 
       "장비_공격력": 95,
       "장비_방어력": 95,
@@ -359,19 +392,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 190,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "성탄 햄": {
-      "이미지_경로": null,
+    "Holiday Ham": {
+      "id": "ml8_2",
+      "name_ko": "성탄 햄",
+      "image_key": "holiday_ham",
+      "이미지_경로": "/images/equipment/accessory/meal/holiday_ham.webp",
 
       "장비_공격력": 150,
       "장비_방어력": 100,
@@ -379,19 +416,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 240,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["크리스마스"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "서리 맛 매운맛": {
-      "이미지_경로": null,
+    "Rime & Dine": {
+      "id": "ml8_3",
+      "name_ko": "서리 맛 매운맛",
+      "image_key": "rime_&_dine",
+      "이미지_경로": "/images/equipment/accessory/meal/rime_&_dine.webp",
 
       "장비_공격력": 100,
       "장비_방어력": 150,
@@ -399,29 +440,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 260,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불", "물"],
+      "원소친밀감": ["Fire", "Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "아주 매운 카레": {
-      "이미지_경로": null,
+    "Super Spicy Curry": {
+      "id": "ml9_1",
+      "name_ko": "아주 매운 카레",
+      "image_key": "super_spicy_curry",
+      "이미지_경로": "/images/equipment/accessory/meal/super_spicy_curry.webp",
 
       "장비_공격력": 115,
       "장비_방어력": 115,
@@ -429,19 +468,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 230,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "푸짐한 포장 음식": {
-      "이미지_경로": null,
+    "Packed Takeout": {
+      "id": "ml9_2",
+      "name_ko": "푸짐한 포장 음식",
+      "image_key": "packed_takeout",
+      "이미지_경로": "/images/equipment/accessory/meal/packed_takeout.webp",
 
       "장비_공격력": 180,
       "장비_방어력": 120,
@@ -449,29 +492,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 288,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "야채 케밥": {
-      "이미지_경로": null,
+    "Veggie Kebabs": {
+      "id": "ml10_1",
+      "name_ko": "야채 케밥",
+      "image_key": "veggie_kebabs",
+      "이미지_경로": "/images/equipment/accessory/meal/veggie_kebabs.webp",
 
       "장비_공격력": 130,
       "장비_방어력": 130,
@@ -479,19 +520,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 260,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "공포 그릇": {
-      "이미지_경로": null,
+    "Horrorbowl": {
+      "id": "ml10_2",
+      "name_ko": "공포 그릇",
+      "image_key": "horrorbowl",
+      "이미지_경로": "/images/equipment/accessory/meal/horrorbowl.webp",
 
       "장비_공격력": 203,
       "장비_방어력": 135,
@@ -499,29 +544,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 324,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "디럭스 라멘": {
-      "이미지_경로": null,
+    "Deluxe Ramen": {
+      "id": "ml11_1",
+      "name_ko": "디럭스 라멘",
+      "image_key": "deluxe_ramen",
+      "이미지_경로": "/images/equipment/accessory/meal/deluxe_ramen.webp",
 
       "장비_공격력": 163,
       "장비_방어력": 163,
@@ -529,19 +572,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 326,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "농어찜": {
-      "이미지_경로": null,
+    "Steamed Sea Bass": {
+      "id": "ml11_2",
+      "name_ko": "농어찜",
+      "image_key": "steamed_sea_bass",
+      "이미지_경로": "/images/equipment/accessory/meal/steamed_sea_bass.webp",
 
       "장비_공격력": 255,
       "장비_방어력": 170,
@@ -549,29 +596,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 408,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "훌리훌리 치킨": {
-      "이미지_경로": null,
+    "Huli-Huli Chicken": {
+      "id": "ml12_1",
+      "name_ko": "훌리훌리 치킨",
+      "image_key": "huli-huli_chicken",
+      "이미지_경로": "/images/equipment/accessory/meal/huli-huli_chicken.webp",
 
       "장비_공격력": 205,
       "장비_방어력": 205,
@@ -579,19 +624,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 410,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "최고급 타말레": {
-      "이미지_경로": null,
+    "Opulent Tamales": {
+      "id": "ml12_2",
+      "name_ko": "최고급 타말레",
+      "image_key": "opulent_tamales",
+      "이미지_경로": "/images/equipment/accessory/meal/opulent_tamales.webp",
 
       "장비_공격력": 205,
       "장비_방어력": 205,
@@ -599,29 +648,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 410,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "파에야가 든 냄비": {
-      "이미지_경로": null,
+    "Pot of Paella": {
+      "id": "ml13_1",
+      "name_ko": "파에야가 든 냄비",
+      "image_key": "pot_of_paella",
+      "이미지_경로": "/images/equipment/accessory/meal/pot_of_paella.webp",
 
       "장비_공격력": 263,
       "장비_방어력": 263,
@@ -629,19 +676,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 526,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
-      "영혼친밀감": ["크라켄"],
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Kraken"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "화산 냄비요리": {
-      "이미지_경로": null,
+    "Very Hot Pot": {
+      "id": "ml13_2",
+      "name_ko": "화산 냄비요리",
+      "image_key": "very_hot_pot",
+      "이미지_경로": "/images/equipment/accessory/meal/very_hot_pot.webp",
 
       "장비_공격력": 263,
       "장비_방어력": 394,
@@ -649,19 +700,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 683,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "바삭하게 구운 오리": {
-      "이미지_경로": null,
+    "Crispy Roast Duck": {
+      "id": "ml13_3",
+      "name_ko": "바삭하게 구운 오리",
+      "image_key": "crispy_roast_duck",
+      "이미지_경로": "/images/equipment/accessory/meal/crispy_roast_duck.webp",
 
       "장비_공격력": 394,
       "장비_방어력": 263,
@@ -669,19 +724,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 631,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "티타임 간식": {
-      "이미지_경로": null,
+    "Teatime Snack": {
+      "id": "ml13_4",
+      "name_ko": "티타임 간식",
+      "image_key": "teatime_snack",
+      "이미지_경로": "/images/equipment/accessory/meal/teatime_snack.webp",
 
       "장비_공격력": 405,
       "장비_방어력": 270,
@@ -689,29 +748,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 648,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "미르자 가세미": {
-      "이미지_경로": null,
+    "Mirza Ghasemi": {
+      "id": "ml14_1",
+      "name_ko": "미르자 가세미",
+      "image_key": "mirza_ghasemi",
+      "이미지_경로": "/images/equipment/accessory/meal/mirza_ghasemi.webp",
 
       "장비_공격력": 325,
       "장비_방어력": 325,
@@ -719,19 +776,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 650,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "잠봉 두 돈존": {
-      "이미지_경로": null,
+    "Jambon du Donjon": {
+      "id": "ml14_2",
+      "name_ko": "잠봉 두 돈존",
+      "image_key": "jambon_du_donjon",
+      "이미지_경로": "/images/equipment/accessory/meal/jambon_du_donjon.webp",
 
       "장비_공격력": 325,
       "장비_방어력": 488,
@@ -739,19 +800,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 846,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "트러블린 도시락": {
-      "이미지_경로": null,
+    "Troublin Bento": {
+      "id": "ml14_3",
+      "name_ko": "트러블린 도시락",
+      "image_key": "troublin_bento",
+      "이미지_경로": "/images/equipment/accessory/meal/troublin_bento.webp",
 
       "장비_공격력": 503,
       "장비_방어력": 335,
@@ -759,19 +824,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 804,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "집 스튜": {
-      "이미지_경로": null,
+    "Family Stew": {
+      "id": "ml14_4",
+      "name_ko": "집 스튜",
+      "image_key": "family_stew",
+      "이미지_경로": "/images/equipment/accessory/meal/family_stew.webp",
 
       "장비_공격력": 335,
       "장비_방어력": 503,
@@ -779,29 +848,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 872,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "공룡 너겟": {
-      "이미지_경로": null,
+    "Dino Nuggies": {
+      "id": "ml15_1",
+      "name_ko": "공룡 너겟",
+      "image_key": "dino_nuggies",
+      "이미지_경로": "/images/equipment/accessory/meal/dino_nuggies.webp",
 
       "장비_공격력": 378,
       "장비_방어력": 378,
@@ -809,19 +876,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 756,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "통치자의 만찬": {
-      "이미지_경로": null,
+    "Ruler's Feast": {
+      "id": "ml15_2",
+      "name_ko": "통치자의 만찬",
+      "image_key": "ruler's_feast",
+      "이미지_경로": "/images/equipment/accessory/meal/ruler's_feast.webp",
 
       "장비_공격력": 566,
       "장비_방어력": 378,
@@ -829,19 +900,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 906,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "왕실 만찬": {
-      "이미지_경로": null,
+
+    "Royal Feast": {
+      "id": "ml15_3",
+      "name_ko": "왕실 만찬",
+      "image_key": "royal_feast",
+      "이미지_경로": "/images/equipment/accessory/meal/royal_feast.webp",
 
       "장비_공격력": 378,
       "장비_방어력": 566,
@@ -849,14 +924,39 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 982,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
+      "원소친밀감": ["Gold"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Platinum Steak Dinner": {
+      "id": "ml15_4",
+      "name_ko": "플래티넘 스테이크 정식",
+      "image_key": "platinum_steak_dinner",
+      "이미지_경로": "/images/equipment/accessory/meal/platinum_steak_dinner.webp",
+
+      "장비_공격력": 378,
+      "장비_방어력": 378,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 756,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   }
 }

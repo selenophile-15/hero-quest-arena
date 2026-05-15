@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "깎은 나뭇가지": {
-      "이미지_경로": null,
+    "Carved Branch": {
+      "id": "st1_1",
+      "name_ko": "깎은 나뭇가지",
+      "image_key": "carved_branch",
+      "이미지_경로": "/images/equipment/weapon/staff/carved_branch.webp",
 
       "장비_공격력": 16,
       "장비_방어력": 0,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 13,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "견고한 지팡이": {
-      "이미지_경로": null,
+    "Sturdy Cane": {
+      "id": "st2_1",
+      "name_ko": "견고한 지팡이",
+      "image_key": "sturdy_cane",
+      "이미지_경로": "/images/equipment/weapon/staff/sturdy_cane.webp",
 
       "장비_공격력": 32,
       "장비_방어력": 0,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 26,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "오크 지팡이": {
-      "이미지_경로": null,
+    "Oak Staff": {
+      "id": "st3_1",
+      "name_ko": "오크 지팡이",
+      "image_key": "oak_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/oak_staff.webp",
 
       "장비_공격력": 52,
       "장비_방어력": 0,
@@ -69,19 +68,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 42,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "부엉이 횃대": {
-      "이미지_경로": null,
+    "Owl Perch": {
+      "id": "st3_2",
+      "name_ko": "부엉이 횃대",
+      "image_key": "owl_perch",
+      "이미지_경로": "/images/equipment/weapon/staff/owl_perch.webp",
 
       "장비_공격력": 88,
       "장비_방어력": 0,
@@ -89,19 +92,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 85,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
-      "영혼친밀감": ["부엉이"],
+      "원소친밀감": ["Air"],
+      "영혼친밀감": ["Owl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "고급 지팡이": {
-      "이미지_경로": null,
+    "Luxurious Stick": {
+      "id": "st3_3",
+      "name_ko": "고급 지팡이",
+      "image_key": "luxurious_stick",
+      "이미지_경로": "/images/equipment/weapon/staff/luxurious_stick.webp",
 
       "장비_공격력": 88,
       "장비_방어력": 0,
@@ -109,29 +116,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 70,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["졸로틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Xolotl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "보 지팡이": {
-      "이미지_경로": null,
+    "Bo Staff": {
+      "id": "st4_1",
+      "name_ko": "보 지팡이",
+      "image_key": "bo_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/bo_staff.webp",
 
       "장비_공격력": 104,
       "장비_방어력": 0,
@@ -139,19 +144,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 83,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "수습생 지팡이": {
-      "이미지_경로": null,
+    "Apprentice Staff": {
+      "id": "st4_2",
+      "name_ko": "수습생 지팡이",
+      "image_key": "apprentice_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/apprentice_staff.webp",
 
       "장비_공격력": 128,
       "장비_방어력": 32,
@@ -159,19 +168,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 141,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "구불구불 지팡이": {
-      "이미지_경로": null,
+    "Slithering Scepter": {
+      "id": "st4_3",
+      "name_ko": "구불구불 지팡이",
+      "image_key": "slithering_scepter",
+      "이미지_경로": "/images/equipment/weapon/staff/slithering_scepter.webp",
 
       "장비_공격력": 144,
       "장비_방어력": 0,
@@ -179,29 +192,27 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 173,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["독사"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Viper"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "비취 지팡이": {
-      "이미지_경로": null,
+    "Jade Scepter": {
+      "id": "st5_1",
+      "name_ko": "비취 지팡이",
+      "image_key": "jade_scepter",
+      "이미지_경로": "/images/equipment/weapon/staff/jade_scepter.webp",
 
       "장비_공격력": 160,
       "장비_방어력": 0,
@@ -209,19 +220,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 128,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "불씨 지팡이": {
-      "이미지_경로": null,
+    "Amber Staff": {
+      "id": "st5_2",
+      "name_ko": "불씨 지팡이",
+      "image_key": "amber_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/amber_staff.webp",
 
       "장비_공격력": 229,
       "장비_방어력": 0,
@@ -229,19 +244,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 183,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["대지"],
+      "고유원소종류": ["Earth"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "위칸 빗자루": {
-      "이미지_경로": null,
+    "Wiccan Broomstick": {
+      "id": "st5_3",
+      "name_ko": "위칸 빗자루",
+      "image_key": "wiccan_broomstick",
+      "이미지_경로": "/images/equipment/weapon/staff/wiccan_broomstick.webp",
 
       "장비_공격력": 172,
       "장비_방어력": 0,
@@ -249,19 +268,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 163,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "피자맨서의 노": {
-      "이미지_경로": null,
+    "Pizzamancer's Paddle": {
+      "id": "st5_4",
+      "name_ko": "피자맨서의 노",
+      "image_key": "pizzamancer's_paddle",
+      "이미지_경로": "/images/equipment/weapon/staff/pizzamancer's_paddle.webp",
 
       "장비_공격력": 172,
       "장비_방어력": 43,
@@ -269,29 +292,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 189,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "마법사의 지팡이": {
-      "이미지_경로": null,
+    "Wizard Staff": {
+      "id": "st6_1",
+      "name_ko": "마법사의 지팡이",
+      "image_key": "wizard_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/wizard_staff.webp",
 
       "장비_공격력": 220,
       "장비_방어력": 0,
@@ -299,19 +320,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 176,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "계절의 지팡이": {
-      "이미지_경로": null,
+    "Staff of Seasons": {
+      "id": "st6_2",
+      "name_ko": "계절의 지팡이",
+      "image_key": "staff_of_seasons",
+      "이미지_경로": "/images/equipment/weapon/staff/staff_of_seasons.webp",
 
       "장비_공격력": 230,
       "장비_방어력": 0,
@@ -319,19 +344,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 276,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "벌레 사냥꾼의 그물": {
-      "이미지_경로": null,
+    "Bug Catcher's Net": {
+      "id": "st6_3",
+      "name_ko": "벌레 사냥꾼의 그물",
+      "image_key": "bug_catcher's_net",
+      "이미지_경로": "/images/equipment/weapon/staff/bug_catcher's_net.webp",
 
       "장비_공격력": 250,
       "장비_방어력": 63,
@@ -339,29 +368,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 276,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1
+    },
 
-      "유물": null
+
+    "Elemental Dilettante": {
+      "id": "st6_4",
+      "name_ko": "원소 애호가",
+      "image_key": "elemental_dilettante",
+      "이미지_경로": "/images/equipment/weapon/staff/elemental_dilettante.webp",
+
+      "장비_공격력": 250,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 300,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["All"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "천상의 지팡이": {
-      "이미지_경로": null,
+    "Celestial Staff": {
+      "id": "st7_1",
+      "name_ko": "천상의 지팡이",
+      "image_key": "celestial_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/celestial_staff.webp",
 
       "장비_공격력": 270,
       "장비_방어력": 0,
@@ -369,19 +420,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 216,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "문드라의 지팡이": {
-      "이미지_경로": null,
+    "Mundra's Scepter": {
+      "id": "st7_2",
+      "name_ko": "문드라의 지팡이",
+      "image_key": "mundra's_scepter",
+      "이미지_경로": "/images/equipment/weapon/staff/mundra's_scepter.webp",
 
       "장비_공격력": 375,
       "장비_방어력": 0,
@@ -389,19 +444,23 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 450,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
-      "고유영혼": ["문드라"],
-
-      "유물": null
+      "고유영혼": ["Mundra"],
+      "유물": null,
+      "천상": 1
     },
 
 
-    "위대한 파고다": {
-      "이미지_경로": null,
+    "Great Pagoda": {
+      "id": "st7_3",
+      "name_ko": "위대한 파고다",
+      "image_key": "great_pagoda",
+      "이미지_경로": "/images/equipment/weapon/staff/great_pagoda.webp",
 
       "장비_공격력": 320,
       "장비_방어력": 0,
@@ -409,19 +468,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 321,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "랜턴빛 홀더": {
-      "이미지_경로": null,
+    "Lanternlight Holder": {
+      "id": "st7_4",
+      "name_ko": "랜턴빛 홀더",
+      "image_key": "lanternlight_holder",
+      "이미지_경로": "/images/equipment/weapon/staff/lanternlight_holder.webp",
 
       "장비_공격력": 320,
       "장비_방어력": 80,
@@ -429,29 +492,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 352,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
-      "영혼친밀감": ["말"],
+      "원소친밀감": ["Fire"],
+      "영혼친밀감": ["Horse"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "황제의 독수리": {
-      "이미지_경로": null,
+    "Imperial Aquila": {
+      "id": "st8_1",
+      "name_ko": "황제의 독수리",
+      "image_key": "imperial_aquila",
+      "이미지_경로": "/images/equipment/weapon/staff/imperial_aquila.webp",
 
       "장비_공격력": 340,
       "장비_방어력": 0,
@@ -459,19 +520,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 272,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["독수리"],
+      "영혼친밀감": ["Eagle"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "불사조 지팡이": {
-      "이미지_경로": null,
+    "Phoenix Staff": {
+      "id": "st8_2",
+      "name_ko": "불사조 지팡이",
+      "image_key": "phoenix_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/phoenix_staff.webp",
 
       "장비_공격력": 407,
       "장비_방어력": 0,
@@ -479,19 +544,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 326,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["독수리"],
-      "고유원소종류": ["불"],
+      "영혼친밀감": ["Eagle"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "플루트 차임": {
-      "이미지_경로": null,
+    "Fluted Chime": {
+      "id": "st8_3",
+      "name_ko": "플루트 차임",
+      "image_key": "fluted_chime",
+      "이미지_경로": "/images/equipment/weapon/staff/fluted_chime.webp",
 
       "장비_공격력": 350,
       "장비_방어력": 88,
@@ -499,19 +568,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 386,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "궁극의 등긁개": {
-      "이미지_경로": null,
+    "The Backscratcher": {
+      "id": "st8_4",
+      "name_ko": "궁극의 등긁개",
+      "image_key": "the_backscratcher",
+      "이미지_경로": "/images/equipment/weapon/staff/the_backscratcher.webp",
 
       "장비_공격력": 350,
       "장비_방어력": 0,
@@ -519,29 +592,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 365,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "트랜센던스": {
-      "이미지_경로": null,
+    "Transcendence": {
+      "id": "st9_1",
+      "name_ko": "트랜센던스",
+      "image_key": "transcendence",
+      "이미지_경로": "/images/equipment/weapon/staff/transcendence.webp",
 
       "장비_공격력": 390,
       "장비_방어력": 0,
@@ -549,19 +620,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 312,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "타이드브링어": {
-      "이미지_경로": null,
+    "Tidebringer": {
+      "id": "st9_2",
+      "name_ko": "타이드브링어",
+      "image_key": "tidebringer",
+      "이미지_경로": "/images/equipment/weapon/staff/tidebringer.webp",
 
       "장비_공격력": 482,
       "장비_방어력": 0,
@@ -569,19 +644,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 386,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "자극적인 지팡이": {
-      "이미지_경로": null,
+    "Zesty Scepter": {
+      "id": "st9_3",
+      "name_ko": "자극적인 지팡이",
+      "image_key": "zesty_scepter",
+      "이미지_경로": "/images/equipment/weapon/staff/zesty_scepter.webp",
 
       "장비_공격력": 410,
       "장비_방어력": 103,
@@ -589,29 +668,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 452,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "세라핌": {
-      "이미지_경로": null,
+    "Seraphim": {
+      "id": "st10_1",
+      "name_ko": "세라핌",
+      "image_key": "seraphim",
+      "이미지_경로": "/images/equipment/weapon/staff/seraphim.webp",
 
       "장비_공격력": 450,
       "장비_방어력": 0,
@@ -619,19 +696,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 360,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "성탄절의 지팡이": {
-      "이미지_경로": null,
+    "Staff of Merriment": {
+      "id": "st10_2",
+      "name_ko": "성탄절의 지팡이",
+      "image_key": "staff_of_merriment",
+      "이미지_경로": "/images/equipment/weapon/staff/staff_of_merriment.webp",
 
       "장비_공격력": 470,
       "장비_방어력": 118,
@@ -639,19 +720,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 518,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["크리스마스"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "애쉬랜드 소환기": {
-      "이미지_경로": null,
+    "Ashland Invoker": {
+      "id": "st10_3",
+      "name_ko": "애쉬랜드 소환기",
+      "image_key": "ashland_invoker",
+      "이미지_경로": "/images/equipment/weapon/staff/ashland_invoker.webp",
 
       "장비_공격력": 470,
       "장비_방어력": 0,
@@ -659,29 +744,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 486,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불", "어둠"],
+      "원소친밀감": ["Fire", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "반그늘": {
-      "이미지_경로": null,
+    "Penumbra": {
+      "id": "st11_1",
+      "name_ko": "반그늘",
+      "image_key": "penumbra",
+      "이미지_경로": "/images/equipment/weapon/staff/penumbra.webp",
 
       "장비_공격력": 580,
       "장비_방어력": 0,
@@ -689,19 +772,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 464,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "얼음 여왕의 지팡이": {
-      "이미지_경로": null,
+    "Ice Queen's Scepter": {
+      "id": "st11_2",
+      "name_ko": "얼음 여왕의 지팡이",
+      "image_key": "ice_queen's_scepter",
+      "이미지_경로": "/images/equipment/weapon/staff/ice_queen's_scepter.webp",
 
       "장비_공격력": 580,
       "장비_방어력": 0,
@@ -709,19 +796,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 554,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "하트캡터 지팡이": {
-      "이미지_경로": null,
+    "Heartcaptor's Staff": {
+      "id": "st11_3",
+      "name_ko": "하트캡터 지팡이",
+      "image_key": "heartcaptor's_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/heartcaptor's_staff.webp",
 
       "장비_공격력": 600,
       "장비_방어력": 150,
@@ -729,29 +820,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 660,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "졸림눌의 지팡이": {
-      "이미지_경로": null,
+    "Scepter of Xolimnul": {
+      "id": "st12_1",
+      "name_ko": "졸림눌의 지팡이",
+      "image_key": "scepter_of_xolimnul",
+      "이미지_경로": "/images/equipment/weapon/staff/scepter_of_xolimnul.webp",
 
       "장비_공격력": 730,
       "장비_방어력": 0,
@@ -759,19 +848,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 584,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 지팡이": {
-      "이미지_경로": null,
+    "Opulent Staff": {
+      "id": "st12_2",
+      "name_ko": "호화로운 지팡이",
+      "image_key": "opulent_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/opulent_staff.webp",
 
       "장비_공격력": 730,
       "장비_방어력": 0,
@@ -779,19 +872,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 584,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "영혼을 묶는 자의 지팡이": {
-      "이미지_경로": null,
+    "Soulbinder Staff": {
+      "id": "st12_3",
+      "name_ko": "영혼을 묶는 자의 지팡이",
+      "image_key": "soulbinder_staff",
+      "이미지_경로": "/images/equipment/weapon/staff/soulbinder_staff.webp",
 
       "장비_공격력": 730,
       "장비_방어력": 0,
@@ -799,19 +896,23 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 876,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "파라오의 고리십자가": {
-      "이미지_경로": null,
+    "Pharaoh's Ankh": {
+      "id": "st12_4",
+      "name_ko": "파라오의 고리십자가",
+      "image_key": "pharaoh's_ankh",
+      "이미지_경로": "/images/equipment/weapon/staff/pharaoh's_ankh.webp",
 
       "장비_공격력": 760,
       "장비_방어력": 0,
@@ -819,29 +920,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 728,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
-      "영혼친밀감": ["늑대"],
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": ["Wolf"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "클라우드 나인": {
-      "이미지_경로": null,
+    "Cloud Nine": {
+      "id": "st13_1",
+      "name_ko": "클라우드 나인",
+      "image_key": "cloud_nine",
+      "이미지_경로": "/images/equipment/weapon/staff/cloud_nine.webp",
 
       "장비_공격력": 960,
       "장비_방어력": 0,
@@ -849,19 +948,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 768,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "중력 제어기": {
-      "이미지_경로": null,
+    "Gravity Controller": {
+      "id": "st13_2",
+      "name_ko": "중력 제어기",
+      "image_key": "gravity_controller",
+      "이미지_경로": "/images/equipment/weapon/staff/gravity_controller.webp",
 
       "장비_공격력": 1108,
       "장비_방어력": 0,
@@ -869,19 +972,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 886,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["어둠"],
+      "고유원소종류": ["Dark"],
       "고유원소티어": 12,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "지혜의 지팡이": {
-      "이미지_경로": null,
+    "Scepter of Ever-Wisdom": {
+      "id": "st13_3",
+      "name_ko": "지혜의 지팡이",
+      "image_key": "scepter_of_ever-wisdom",
+      "이미지_경로": "/images/equipment/weapon/staff/scepter_of_ever-wisdom.webp",
 
       "장비_공격력": 1200,
       "장비_방어력": 300,
@@ -889,19 +996,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1320,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "크리스마스의 전령": {
-      "이미지_경로": null,
+    "Yule's Herald": {
+      "id": "st13_4",
+      "name_ko": "크리스마스의 전령",
+      "image_key": "yule's_herald",
+      "이미지_경로": "/images/equipment/weapon/staff/yule's_herald.webp",
 
       "장비_공격력": 960,
       "장비_방어력": 0,
@@ -909,19 +1020,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 918,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "빛"],
-      "영혼친밀감": ["크리스마스"],
+      "원소친밀감": ["Earth", "Light"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 지팡이": {
-      "이미지_경로": null,
+    "Platinum Scepter": {
+      "id": "st13_5",
+      "name_ko": "플래티넘 지팡이",
+      "image_key": "platinum_scepter",
+      "이미지_경로": "/images/equipment/weapon/staff/platinum_scepter.webp",
 
       "장비_공격력": 960,
       "장비_방어력": 0,
@@ -929,29 +1044,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 768,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "앱스톤 유도기": {
-      "이미지_경로": null,
+    "Ebbstone Channeler": {
+      "id": "st14_1",
+      "name_ko": "앱스톤 유도기",
+      "image_key": "ebbstone_channeler",
+      "이미지_경로": "/images/equipment/weapon/staff/ebbstone_channeler.webp",
 
       "장비_공격력": 1160,
       "장비_방어력": 0,
@@ -959,19 +1072,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 928,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "진주들의 어머니": {
-      "이미지_경로": null,
+    "Mother of Pearls": {
+      "id": "st14_2",
+      "name_ko": "진주들의 어머니",
+      "image_key": "mother_of_pearls",
+      "이미지_경로": "/images/equipment/weapon/staff/mother_of_pearls.webp",
 
       "장비_공격력": 1160,
       "장비_방어력": 290,
@@ -979,19 +1096,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1276,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "페이의 전령사": {
-      "이미지_경로": null,
+    "Herald of Feykind": {
+      "id": "st14_3",
+      "name_ko": "페이의 전령사",
+      "image_key": "herald_of_feykind",
+      "이미지_경로": "/images/equipment/weapon/staff/herald_of_feykind.webp",
 
       "장비_공격력": 1160,
       "장비_방어력": 0,
@@ -999,29 +1120,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1108,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기", "대지"],
+      "원소친밀감": ["Air", "Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "아케인 방향계": {
-      "이미지_경로": null,
+    "Arcane Vane": {
+      "id": "st15_1",
+      "name_ko": "아케인 방향계",
+      "image_key": "arcane_vane",
+      "이미지_경로": "/images/equipment/weapon/staff/arcane_vane.webp",
 
       "장비_공격력": 1340,
       "장비_방어력": 0,
@@ -1029,19 +1148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1072,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "고통의 붓": {
-      "이미지_경로": null,
+    "The Pain Brush": {
+      "id": "st15_2",
+      "name_ko": "고통의 붓",
+      "image_key": "the_pain_brush",
+      "이미지_경로": "/images/equipment/weapon/staff/the_pain_brush.webp",
 
       "장비_공격력": 1340,
       "장비_방어력": 335,
@@ -1049,19 +1172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1474,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "왕실의 권위": {
-      "이미지_경로": null,
+    "Royal Authority": {
+      "id": "st15_3",
+      "name_ko": "왕실의 권위",
+      "image_key": "royal_authority",
+      "이미지_경로": "/images/equipment/weapon/staff/royal_authority.webp",
 
       "장비_공격력": 1340,
       "장비_방어력": 0,
@@ -1069,19 +1196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1282,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
+      "원소친밀감": ["Gold"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "순수 하트 막대": {
-      "이미지_경로": null,
+    "Pure Heart Rod": {
+      "id": "st15_4",
+      "name_ko": "순수 하트 막대",
+      "image_key": "pure_heart_rod",
+      "이미지_경로": "/images/equipment/weapon/staff/pure_heart_rod.webp",
 
       "장비_공격력": 1340,
       "장비_방어력": 0,
@@ -1089,14 +1220,15 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 5,
       "장비_에어쉽파워": 1608,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

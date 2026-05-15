@@ -1,1126 +1,1286 @@
 {
   "1티어": {
-    "불꽃의 두루마리": {
-      "이미지_경로": null,
-	  
+    "Scroll of Sparks": {
+      "id": "sl1_1",
+      "name_ko": "불꽃의 두루마리",
+      "image_key": "scroll_of_sparks",
+      "이미지_경로": "/images/equipment/accessory/spell/scroll_of_sparks.webp",
+
       "장비_공격력": 44,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 35,
-	  
-      "원소친밀감": ["불"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "정화의 두루마리": {
-      "이미지_경로": null,
-	  
+
+
+    "Scroll of Cleansing": {
+      "id": "sl1_2",
+      "name_ko": "정화의 두루마리",
+      "image_key": "scroll_of_cleansing",
+      "이미지_경로": "/images/equipment/accessory/spell/scroll_of_cleansing.webp",
+
       "장비_공격력": 84,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 67,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 4,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "갑옷의 두루마리": {
-      "이미지_경로": null,
-	  
+    "Scroll of Armor": {
+      "id": "sl2_1",
+      "name_ko": "갑옷의 두루마리",
+      "image_key": "scroll_of_armor",
+      "이미지_경로": "/images/equipment/accessory/spell/scroll_of_armor.webp",
+
       "장비_공격력": 96,
       "장비_방어력": 24,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 106,
-	  
-      "원소친밀감": ["공기"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "폭풍의 두루마리": {
-      "이미지_경로": null,
-	  
+    "Scroll of Storms": {
+      "id": "sl3_1",
+      "name_ko": "폭풍의 두루마리",
+      "image_key": "scroll_of_storms",
+      "이미지_경로": "/images/equipment/accessory/spell/scroll_of_storms.webp",
+
       "장비_공격력": 156,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 125,
-	  
-      "원소친밀감": null,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "용맹의 노래": {
-      "이미지_경로": null,
-	  
+    "Song of Valor": {
+      "id": "sl4_1",
+      "name_ko": "용맹의 노래",
+      "image_key": "song_of_valor",
+      "이미지_경로": "/images/equipment/accessory/spell/song_of_valor.webp",
+
       "장비_공격력": 220,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 176,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "서신": {
-      "이미지_경로": null,
-	  
+
+
+    "Correspondence": {
+      "id": "sl4_2",
+      "name_ko": "서신",
+      "image_key": "correspondence",
+      "이미지_경로": "/images/equipment/accessory/spell/correspondence.webp",
+
       "장비_공격력": 240,
       "장비_방어력": 48,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 250,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "몬스터 매뉴얼": {
-      "이미지_경로": null,
-	  
+    "Monster Manual": {
+      "id": "sl5_1",
+      "name_ko": "몬스터 매뉴얼",
+      "image_key": "monster_manual",
+      "이미지_경로": "/images/equipment/accessory/spell/monster_manual.webp",
+
       "장비_공격력": 270,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 216,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "밤을 위한 책": {
-      "이미지_경로": null,
-	  
+
+
+    "Tome of the Night": {
+      "id": "sl5_2",
+      "name_ko": "밤을 위한 책",
+      "image_key": "tome_of_the_night",
+      "이미지_경로": "/images/equipment/accessory/spell/tome_of_the_night.webp",
+
       "장비_공격력": 347,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 278,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["어둠"],
+      "고유원소종류": ["Dark"],
       "고유원소티어": 7,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "지식의 서적": {
-      "이미지_경로": null,
-	  
+
+
+    "Tome of Knowledge": {
+      "id": "sl5_3",
+      "name_ko": "지식의 서적",
+      "image_key": "tome_of_knowledge",
+      "이미지_경로": "/images/equipment/accessory/spell/tome_of_knowledge.webp",
+
       "장비_공격력": 290,
       "장비_방어력": 58,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 302,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
-      "영혼친밀감": ["부엉이"],
+      "영혼친밀감": ["Owl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
+    },
+
+
+    "Jumanji Map": {
+      "id": "sl5_4",
+      "name_ko": "쥬만지 지도",
+      "image_key": "jumanji_map",
+      "이미지_경로": "/images/equipment/accessory/spell/jumanji_map.webp",
+
+      "장비_공격력": 290,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 5,
+      "장비_에어쉽파워": 348,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Cat"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "비밀의 서적": {
-      "이미지_경로": null,
-	  
+    "Tome of Secrets": {
+      "id": "sl6_1",
+      "name_ko": "비밀의 서적",
+      "image_key": "tome_of_secrets",
+      "이미지_경로": "/images/equipment/accessory/spell/tome_of_secrets.webp",
+
       "장비_공격력": 340,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 272,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "나쁜 아이, 착한 아이 목록": {
-      "이미지_경로": null,
-	  
+
+
+    "Naughty or Nice List": {
+      "id": "sl6_2",
+      "name_ko": "나쁜 아이, 착한 아이 목록",
+      "image_key": "naughty_or_nice_list",
+      "이미지_경로": "/images/equipment/accessory/spell/naughty_or_nice_list.webp",
+
       "장비_공격력": 370,
       "장비_방어력": 0,
       "장비_체력": 12,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 356,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
-      "영혼친밀감": ["크리스마스"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "주문 제3권": {
-      "이미지_경로": null,
-	  
+
+
+    "Spells Vol III": {
+      "id": "sl6_3",
+      "name_ko": "주문 제3권",
+      "image_key": "spells_vol_iii",
+      "이미지_경로": "/images/equipment/accessory/spell/spells_vol_iii.webp",
+
       "장비_공격력": 333,
       "장비_방어력": 133,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 426,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "어둠의 맹세": {
-      "이미지_경로": null,
-	  
+
+
+    "Dark Oath": {
+      "id": "sl6_4",
+      "name_ko": "어둠의 맹세",
+      "image_key": "dark_oath",
+      "이미지_경로": "/images/equipment/accessory/spell/dark_oath.webp",
+
       "장비_공격력": 390,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 468,
-	  
-      "원소친밀감": ["어둠"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "팔괘판": {
-      "이미지_경로": null,
-	  
+    "Bagua Board": {
+      "id": "sl7_1",
+      "name_ko": "팔괘판",
+      "image_key": "bagua_board",
+      "이미지_경로": "/images/equipment/accessory/spell/bagua_board.webp",
+
       "장비_공격력": 420,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 336,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "불꽃놀이 번들": {
-      "이미지_경로": null,
-	  
+
+
+    "Firework Bundle": {
+      "id": "sl7_2",
+      "name_ko": "불꽃놀이 번들",
+      "image_key": "firework_bundle",
+      "이미지_경로": "/images/equipment/accessory/spell/firework_bundle.webp",
+
       "장비_공격력": 450,
       "장비_방어력": 90,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 468,
-	  
-      "원소친밀감": ["불"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "유니콘의 이야기": {
-      "이미지_경로": null,
-	  
+
+
+    "Tale of the Unicorn": {
+      "id": "sl7_3",
+      "name_ko": "유니콘의 이야기",
+      "image_key": "tale_of_the_unicorn",
+      "이미지_경로": "/images/equipment/accessory/spell/tale_of_the_unicorn.webp",
+
       "장비_공격력": 450,
       "장비_방어력": 0,
       "장비_체력": 14,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 430,
-	  
-      "원소친밀감": ["물"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "타로 덱": {
-      "이미지_경로": null,
-	  
+    "Tarot Deck": {
+      "id": "sl8_1",
+      "name_ko": "타로 덱",
+      "image_key": "tarot_deck",
+      "이미지_경로": "/images/equipment/accessory/spell/tarot_deck.webp",
+
       "장비_공격력": 530,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 424,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "행운의 두루마리": {
-      "이미지_경로": null,
-	  
+
+
+    "Scroll of Fortune": {
+      "id": "sl8_2",
+      "name_ko": "행운의 두루마리",
+      "image_key": "scroll_of_fortune",
+      "이미지_경로": "/images/equipment/accessory/spell/scroll_of_fortune.webp",
+
       "장비_공격력": 560,
       "장비_방어력": 0,
       "장비_체력": 17,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 533,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "둘둘 만 가족": {
-      "이미지_경로": null,
-	  
+
+
+    "Rolled Up Leather": {
+      "id": "sl8_3",
+      "name_ko": "둘둘 만 가족",
+      "image_key": "rolled_up_leather",
+      "이미지_경로": "/images/equipment/accessory/spell/rolled_up_leather.webp",
+
       "장비_공격력": 560,
       "장비_방어력": 112,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 582,
-	  
-      "원소친밀감": ["대지"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "그리마르 컬렉션": {
-      "이미지_경로": null,
-	  
+
+
+    "Grimar's Collection": {
+      "id": "sl8_4",
+      "name_ko": "그리마르 컬렉션",
+      "image_key": "grimar's_collection",
+      "이미지_경로": "/images/equipment/accessory/spell/grimar's_collection.webp",
+
       "장비_공격력": 630,
       "장비_방어력": 0,
       "장비_체력": 20,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 604,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
       "유물": {
-	    "효과": "해당 아이템의 컬렉션 점수가 일반에 비해 5배 큽니다."
-	  }
+        "효과": "해당 아이템의 컬렉션 점수가 일반에 비해 5배 큽니다."
+      },
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "영원의 마법서": {
-      "이미지_경로": null,
-	  
+    "Grimoire Aeternum": {
+      "id": "sl9_1",
+      "name_ko": "영원의 마법서",
+      "image_key": "grimoire_aeternum",
+      "이미지_경로": "/images/equipment/accessory/spell/grimoire_aeternum.webp",
+
       "장비_공격력": 620,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 496,
-	  
-      "원소친밀감": ["빛", "어둠"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Light", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "황제의 법령": {
-      "이미지_경로": null,
-	  
+
+
+    "Imperial Decree": {
+      "id": "sl9_2",
+      "name_ko": "황제의 법령",
+      "image_key": "imperial_decree",
+      "이미지_경로": "/images/equipment/accessory/spell/imperial_decree.webp",
+
       "장비_공격력": 640,
       "장비_방어력": 128,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 666,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "고급 석판": {
-      "이미지_경로": null,
-	  
+
+
+    "Luxurious Tablet": {
+      "id": "sl9_3",
+      "name_ko": "고급 석판",
+      "image_key": "luxurious_tablet",
+      "이미지_경로": "/images/equipment/accessory/spell/luxurious_tablet.webp",
+
       "장비_공격력": 670,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 536,
-	  
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["졸로틀"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Xolotl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "추억의 바인더": {
-      "이미지_경로": null,
-	  
+
+
+    "Binder of Memories": {
+      "id": "sl9_4",
+      "name_ko": "추억의 바인더",
+      "image_key": "binder_of_memories",
+      "이미지_경로": "/images/equipment/accessory/spell/binder_of_memories.webp",
+
       "장비_공격력": 720,
       "장비_방어력": 144,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 749,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
       "유물": {
-	    "효과": "카드 컬렉션 점수의 50,000%점이 이 아이템의 가격에 추가됩니다."
-	  }
+        "효과": "카드 컬렉션 점수의 50,000%점이 이 아이템의 가격에 추가됩니다."
+      },
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "선조의 지도서": {
-      "이미지_경로": null,
-	  
+    "Ancestral Atlas": {
+      "id": "sl10_1",
+      "name_ko": "선조의 지도서",
+      "image_key": "ancestral_atlas",
+      "이미지_경로": "/images/equipment/accessory/spell/ancestral_atlas.webp",
+
       "장비_공격력": 700,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 560,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "기도서": {
-      "이미지_경로": null,
-	  
+
+
+    "Prayer Book": {
+      "id": "sl10_2",
+      "name_ko": "기도서",
+      "image_key": "prayer_book",
+      "이미지_경로": "/images/equipment/accessory/spell/prayer_book.webp",
+
       "장비_공격력": 700,
       "장비_방어력": 140,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 728,
-	  
-      "원소친밀감": ["빛"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "밤의 저주": {
-      "이미지_경로": null,
-	  
+
+
+    "Curse of the Night": {
+      "id": "sl10_3",
+      "name_ko": "밤의 저주",
+      "image_key": "curse_of_the_night",
+      "이미지_경로": "/images/equipment/accessory/spell/curse_of_the_night.webp",
+
       "장비_공격력": 730,
       "장비_방어력": 146,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 759,
-	  
-      "원소친밀감": ["어둠"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "드루이드 마법서": {
-      "이미지_경로": null,
-	  
+
+
+    "Druidic Grimoire": {
+      "id": "sl10_4",
+      "name_ko": "드루이드 마법서",
+      "image_key": "druidic_grimoire",
+      "이미지_경로": "/images/equipment/accessory/spell/druidic_grimoire.webp",
+
       "장비_공격력": 730,
       "장비_방어력": 0,
       "장비_체력": 23,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 699,
-	  
-      "원소친밀감": ["대지"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "천체 성가대": {
-      "이미지_경로": null,
-	  
+    "Celestial Choir": {
+      "id": "sl11_1",
+      "name_ko": "천체 성가대",
+      "image_key": "celestial_choir",
+      "이미지_경로": "/images/equipment/accessory/spell/celestial_choir.webp",
+
       "장비_공격력": 910,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 728,
-	  
-      "원소친밀감": ["빛"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "불사조 기도문": {
-      "이미지_경로": null,
-	  
+
+
+    "Phoenix Litany": {
+      "id": "sl11_2",
+      "name_ko": "불사조 기도문",
+      "image_key": "phoenix_litany",
+      "이미지_경로": "/images/equipment/accessory/spell/phoenix_litany.webp",
+
       "장비_공격력": 982,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 786,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
-      "영혼친밀감": ["불사조"],
-      "고유원소종류": ["불"],
+      "영혼친밀감": ["Phoenix"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 9,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "봉인된 선언문": {
-      "이미지_경로": null,
-	  
+
+
+    "Sealed Declaration": {
+      "id": "sl11_3",
+      "name_ko": "봉인된 선언문",
+      "image_key": "sealed_declaration",
+      "이미지_경로": "/images/equipment/accessory/spell/sealed_declaration.webp",
+
       "장비_공격력": 950,
       "장비_방어력": 0,
       "장비_체력": 30,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 910,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "호랑이 황제의 칙령": {
-      "이미지_경로": null,
-	  
+
+
+    "Tiger Emperor's Edict": {
+      "id": "sl11_4",
+      "name_ko": "호랑이 황제의 칙령",
+      "image_key": "tiger_emperor's_edict",
+      "이미지_경로": "/images/equipment/accessory/spell/tiger_emperor's_edict.webp",
+
       "장비_공격력": 950,
       "장비_방어력": 190,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 988,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
-      "영혼친밀감": ["호랑이"],
+      "영혼친밀감": ["Tiger"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "모든 지식의 서적": {
-      "이미지_경로": null,
-	  
+
+
+    "Tome of All-Knowledge": {
+      "id": "sl11_5",
+      "name_ko": "모든 지식의 서적",
+      "image_key": "tome_of_all-knowledge",
+      "이미지_경로": "/images/equipment/accessory/spell/tome_of_all-knowledge.webp",
+
       "장비_공격력": 990,
       "장비_방어력": 198,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1030,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "속박된 야수": {
-      "이미지_경로": null,
-	  
+    "The Bound Beast": {
+      "id": "sl12_1",
+      "name_ko": "속박된 야수",
+      "image_key": "the_bound_beast",
+      "이미지_경로": "/images/equipment/accessory/spell/the_bound_beast.webp",
+
       "장비_공격력": 1200,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 960,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "파라오의 약속": {
-      "이미지_경로": null,
-	  
+
+
+    "Pharaoh's Pact": {
+      "id": "sl12_2",
+      "name_ko": "파라오의 약속",
+      "image_key": "pharaoh's_pact",
+      "이미지_경로": "/images/equipment/accessory/spell/pharaoh's_pact.webp",
+
       "장비_공격력": 1200,
       "장비_방어력": 0,
       "장비_체력": 37,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1145,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "행방불명된 별 차트": {
-      "이미지_경로": null,
-	  
+
+
+    "Lost Star Chart": {
+      "id": "sl12_3",
+      "name_ko": "행방불명된 별 차트",
+      "image_key": "lost_star_chart",
+      "이미지_경로": "/images/equipment/accessory/spell/lost_star_chart.webp",
+
       "장비_공격력": 1240,
       "장비_방어력": 248,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1290,
-	  
-      "원소친밀감": ["빛", "어둠"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Light", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "사랑 선언문": {
-      "이미지_경로": null,
-	  
+
+
+    "Love Declaration": {
+      "id": "sl12_4",
+      "name_ko": "사랑 선언문",
+      "image_key": "love_declaration",
+      "이미지_경로": "/images/equipment/accessory/spell/love_declaration.webp",
+
       "장비_공격력": 1240,
       "장비_방어력": 0,
       "장비_체력": 44,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1212,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "호화로운 주문서": {
-      "이미지_경로": null,
-	  
+
+
+    "Opulent Incantation": {
+      "id": "sl12_5",
+      "name_ko": "호화로운 주문서",
+      "image_key": "opulent_incantation",
+      "이미지_경로": "/images/equipment/accessory/spell/opulent_incantation.webp",
+
       "장비_공격력": 1240,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 992,
-	  
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "판도라의 상자": {
-      "이미지_경로": null,
-	  
+    "Pandora's Box": {
+      "id": "sl13_1",
+      "name_ko": "판도라의 상자",
+      "image_key": "pandora's_box",
+      "이미지_경로": "/images/equipment/accessory/spell/pandora's_box.webp",
+
       "장비_공격력": 1520,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1216,
-	  
-      "원소친밀감": ["어둠"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "봉인된 허리케인": {
-      "이미지_경로": null,
-	  
+
+
+    "Sealed Hurricane": {
+      "id": "sl13_2",
+      "name_ko": "봉인된 허리케인",
+      "image_key": "sealed_hurricane",
+      "이미지_경로": "/images/equipment/accessory/spell/sealed_hurricane.webp",
+
       "장비_공격력": 1668,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1334,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["공기"],
+      "고유원소종류": ["Air"],
       "고유원소티어": 12,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "플래티넘 비밀 지도": {
-      "이미지_경로": null,
-	  
+
+
+    "Platinum Secret Map": {
+      "id": "sl13_3",
+      "name_ko": "플래티넘 비밀 지도",
+      "image_key": "platinum_secret_map",
+      "이미지_경로": "/images/equipment/accessory/spell/platinum_secret_map.webp",
+
       "장비_공격력": 1520,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1216,
-	  
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "크리스마스 이야기": {
-      "이미지_경로": null,
-	  
+
+
+    "Tales of Yule": {
+      "id": "sl13_4",
+      "name_ko": "크리스마스 이야기",
+      "image_key": "tales_of_yule",
+      "이미지_경로": "/images/equipment/accessory/spell/tales_of_yule.webp",
+
       "장비_공격력": 1520,
       "장비_방어력": 304,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1581,
-	  
-      "원소친밀감": ["대지"],
-      "영혼친밀감": ["크리스마스"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "어둠의 밀레니엄": {
-      "이미지_경로": null,
-	  
+
+
+    "Darkness Millennium": {
+      "id": "sl13_5",
+      "name_ko": "어둠의 밀레니엄",
+      "image_key": "darkness_millennium",
+      "이미지_경로": "/images/equipment/accessory/spell/darkness_millennium.webp",
+
       "장비_공격력": 1570,
       "장비_방어력": 0,
       "장비_체력": 54,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1526,
-	  
-      "원소친밀감": ["어둠"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "가이아의 인장": {
-      "이미지_경로": null,
-	  
+    "Seal of Gaia": {
+      "id": "sl14_1",
+      "name_ko": "가이아의 인장",
+      "image_key": "seal_of_gaia",
+      "이미지_경로": "/images/equipment/accessory/spell/seal_of_gaia.webp",
+
       "장비_공격력": 1840,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1472,
-	  
-      "원소친밀감": ["대지"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "크로노맨서의 시간표": {
-      "이미지_경로": null,
-	  
+
+
+    "Chronomancer's Timetable": {
+      "id": "sl14_2",
+      "name_ko": "크로노맨서의 시간표",
+      "image_key": "chronomancer's_timetable",
+      "이미지_경로": "/images/equipment/accessory/spell/chronomancer's_timetable.webp",
+
       "장비_공격력": 1840,
       "장비_방어력": 368,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1914,
-	  
-      "원소친밀감": ["공기"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "릴루의 스타폴": {
-      "이미지_경로": null,
-	  
+
+
+    "Lilu's Starfall": {
+      "id": "sl14_3",
+      "name_ko": "릴루의 스타폴",
+      "image_key": "lilu's_starfall",
+      "이미지_경로": "/images/equipment/accessory/spell/lilu's_starfall.webp",
+
       "장비_공격력": 1890,
       "장비_방어력": 0,
       "장비_체력": 65,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1837,
-	  
-      "원소친밀감": ["물", "빛"],
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Water", "Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "부족의 끄덕임": {
-      "이미지_경로": null,
-	  
+    "Tribal Scribbles": {
+      "id": "sl15_1",
+      "name_ko": "부족의 끄덕임",
+      "image_key": "tribal_scribbles",
+      "이미지_경로": "/images/equipment/accessory/spell/tribal_scribbles.webp",
+
       "장비_공격력": 2130,
       "장비_방어력": 0,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1704,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "문드라의 법령": {
-      "이미지_경로": null,
-	  
+
+
+    "Mundra's Decree": {
+      "id": "sl15_2",
+      "name_ko": "문드라의 법령",
+      "image_key": "mundra's_decree",
+      "이미지_경로": "/images/equipment/accessory/spell/mundra's_decree.webp",
+
       "장비_공격력": 2205,
       "장비_방어력": 475,
       "장비_체력": 0,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 2334,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
-      "고유영혼": ["문드라"],
-	  
-      "유물": null
+      "고유영혼": ["Mundra"],
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "유령용 함정": {
-      "이미지_경로": null,
-	  
+
+
+    "Ghost Trap": {
+      "id": "sl15_3",
+      "name_ko": "유령용 함정",
+      "image_key": "ghost_trap",
+      "이미지_경로": "/images/equipment/accessory/spell/ghost_trap.webp",
+
       "장비_공격력": 2190,
       "장비_방어력": 0,
       "장비_체력": 75,
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 2127,
-	  
+      "장비_에어쉽파워보너스": 1,
+
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-	  
-      "유물": null
+      "유물": null,
+      "천상": 1.25
+    },
+
+
+    "Chapter Cauchemar": {
+      "id": "sl15_4",
+      "name_ko": "악몽의 책",
+      "image_key": "chapter_cauchemar",
+      "이미지_경로": "/images/equipment/accessory/spell/chapter_cauchemar.webp",
+
+      "장비_공격력": 2190,
+      "장비_방어력": 438,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 2278,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

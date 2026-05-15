@@ -1,7 +1,10 @@
 {
   "5티어": {
-    "원시적인 우상": {
-      "이미지_경로": null,
+    "Primitive Idol": {
+      "id": "id5_1",
+      "name_ko": "원시적인 우상",
+      "image_key": "primitive_idol",
+      "이미지_경로": "/images/equipment/accessory/idol/primitive_idol.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 47,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 116,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "휴대용 토템 막대": {
-      "이미지_경로": null,
+    "Portable Totem Pole": {
+      "id": "id6_1",
+      "name_ko": "휴대용 토템 막대",
+      "image_key": "portable_totem_pole",
+      "이미지_경로": "/images/equipment/accessory/idol/portable_totem_pole.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 60,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 147,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
-      "영혼친밀감": ["부엉이"],
+      "원소친밀감": ["Air"],
+      "영혼친밀감": ["Owl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "수호자 조각상": {
-      "이미지_경로": null,
+    "Guardian Effigy": {
+      "id": "id7_1",
+      "name_ko": "수호자 조각상",
+      "image_key": "guardian_effigy",
+      "이미지_경로": "/images/equipment/accessory/idol/guardian_effigy.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 80,
@@ -69,29 +68,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 196,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "낡은 기둥": {
-      "이미지_경로": null,
+    "Timeworn Pillar": {
+      "id": "id8_1",
+      "name_ko": "낡은 기둥",
+      "image_key": "timeworn_pillar",
+      "이미지_경로": "/images/equipment/accessory/idol/timeworn_pillar.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 100,
@@ -99,29 +96,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 245,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "유령 같은 조롱": {
-      "이미지_경로": null,
+    "Ghostly Mockery": {
+      "id": "id9_1",
+      "name_ko": "유령 같은 조롱",
+      "image_key": "ghostly_mockery",
+      "이미지_경로": "/images/equipment/accessory/idol/ghostly_mockery.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 115,
@@ -129,29 +124,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 283,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "심연의 우상": {
-      "이미지_경로": null,
+    "Idol from the Deep": {
+      "id": "id10_1",
+      "name_ko": "심연의 우상",
+      "image_key": "idol_from_the_deep",
+      "이미지_경로": "/images/equipment/accessory/idol/idol_from_the_deep.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 133,
@@ -159,29 +152,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 325,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
-      "영혼친밀감": ["바다코끼리"],
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Walrus"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "하피 토템": {
-      "이미지_경로": null,
+    "Harpy Totem": {
+      "id": "id11_1",
+      "name_ko": "하피 토템",
+      "image_key": "harpy_totem",
+      "이미지_경로": "/images/equipment/accessory/idol/harpy_totem.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 173,
@@ -189,19 +180,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 423,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "흩어진 토템": {
-      "이미지_경로": null,
+    "Shattered Totem": {
+      "id": "id11_2",
+      "name_ko": "흩어진 토템",
+      "image_key": "shattered_totem",
+      "이미지_경로": "/images/equipment/accessory/idol/shattered_totem.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 173,
@@ -209,29 +204,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 528,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "흑요석 포식자": {
-      "이미지_경로": null,
+    "Obsidian Devourer": {
+      "id": "id12_1",
+      "name_ko": "흑요석 포식자",
+      "image_key": "obsidian_devourer",
+      "이미지_경로": "/images/equipment/accessory/idol/obsidian_devourer.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 218,
@@ -239,29 +232,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 532,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "공허의 탑": {
-      "이미지_경로": null,
+    "Tower of Void": {
+      "id": "id13_1",
+      "name_ko": "공허의 탑",
+      "image_key": "tower_of_void",
+      "이미지_경로": "/images/equipment/accessory/idol/tower_of_void.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 278,
@@ -269,19 +260,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 679,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "순수 하트 그릇": {
-      "이미지_경로": null,
+
+
+    "Pure Heart Receptacle": {
+      "id": "id13_2",
+      "name_ko": "순수 하트 그릇",
+      "image_key": "pure_heart_receptacle",
+      "이미지_경로": "/images/equipment/accessory/idol/pure_heart_receptacle.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 278,
@@ -289,29 +284,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 854,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "아바타 코어": {
-      "이미지_경로": null,
+    "Avatar Core": {
+      "id": "id14_1",
+      "name_ko": "아바타 코어",
+      "image_key": "avatar_core",
+      "이미지_경로": "/images/equipment/accessory/idol/avatar_core.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 345,
@@ -319,29 +312,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 844,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "고대의 소형 조각품": {
-      "이미지_경로": null,
+    "Ancient Statuette": {
+      "id": "id15_1",
+      "name_ko": "고대의 소형 조각품",
+      "image_key": "ancient_statuette",
+      "이미지_경로": "/images/equipment/accessory/idol/ancient_statuette.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 398,
@@ -349,19 +340,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 978,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 조상": {
-      "이미지_경로": null,
+    "Platinum Ancestor": {
+      "id": "id15_2",
+      "name_ko": "플래티넘 조상",
+      "image_key": "platinum_ancestor",
+      "이미지_경로": "/images/equipment/accessory/idol/platinum_ancestor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 398,
@@ -369,14 +364,63 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 978,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1
+    },
 
-      "유물": null
+
+    "Jaguar Statuette": {
+      "id": "id15_3",
+      "name_ko": "재규어 소형 조각상",
+      "image_key": "jaguar_statuette",
+      "이미지_경로": "/images/equipment/accessory/idol/jaguar_statuette.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 596,
+      "장비_체력": 100,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1215,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Tiger"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
+
+
+    "Avatar of Magic": {
+      "id": "id15_4",
+      "name_ko": "마법의 아바타",
+      "image_key": "avatar_of_magic",
+      "이미지_경로": "/images/equipment/accessory/idol/avatar_of_magic.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 398,
+      "장비_체력": 149,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1223,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["All"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }
