@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "흉갑": {
-      "이미지_경로": null,
+    "Breastplate": {
+      "id": "ha1_1",
+      "name_ko": "흉갑",
+      "image_key": "breastplate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/breastplate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 8,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 10,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "철갑": {
-      "이미지_경로": null,
+    "Iron Mail": {
+      "id": "ha2_1",
+      "name_ko": "철갑",
+      "image_key": "iron_mail",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/iron_mail.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 22,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 26,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "미늘 갑옷": {
-      "이미지_경로": null,
+    "Scale Armor": {
+      "id": "ha3_1",
+      "name_ko": "미늘 갑옷",
+      "image_key": "scale_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/scale_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 40,
@@ -69,29 +68,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 48,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "쇠사슬 갑옷": {
-      "이미지_경로": null,
+    "Hauberk": {
+      "id": "ha4_1",
+      "name_ko": "쇠사슬 갑옷",
+      "image_key": "hauberk",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/hauberk.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 62,
@@ -99,29 +96,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 74,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "기사의 흉갑": {
-      "이미지_경로": null,
+    "Knight Breastplate": {
+      "id": "ha5_1",
+      "name_ko": "기사의 흉갑",
+      "image_key": "knight_breastplate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/knight_breastplate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 84,
@@ -129,19 +124,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 101,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "의식용 흉갑": {
-      "이미지_경로": null,
+    "Ceremonial Breastplate": {
+      "id": "ha5_2",
+      "name_ko": "의식용 흉갑",
+      "image_key": "ceremonial_breastplate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/ceremonial_breastplate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 129,
@@ -149,19 +148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 155,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "100인 대장의 갑옷": {
-      "이미지_경로": null,
+    "Centurion Armor": {
+      "id": "ha5_3",
+      "name_ko": "100인 대장의 갑옷",
+      "image_key": "centurion_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/centurion_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 105,
@@ -169,29 +172,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 161,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "성전사 갑옷": {
-      "이미지_경로": null,
+    "Paladin Plate": {
+      "id": "ha6_1",
+      "name_ko": "성전사 갑옷",
+      "image_key": "paladin_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/paladin_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 115,
@@ -199,19 +200,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 138,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "가시 남작 갑옷": {
-      "이미지_경로": null,
+    "Thorn Baron Armor": {
+      "id": "ha6_2",
+      "name_ko": "가시 남작 갑옷",
+      "image_key": "thorn_baron_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/thorn_baron_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 115,
@@ -219,19 +224,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 173,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "어둠"],
+      "원소친밀감": ["Earth", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "벌집 지킴이 갑옷": {
-      "이미지_경로": null,
+    "Hive Guard Plate": {
+      "id": "ha6_3",
+      "name_ko": "벌집 지킴이 갑옷",
+      "image_key": "hive_guard_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/hive_guard_plate.webp",
 
       "장비_공격력": 31,
       "장비_방어력": 125,
@@ -239,29 +248,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 175,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "공기"],
+      "원소친밀감": ["Earth", "Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "사무라이 도복": {
-      "이미지_경로": null,
+    "Samurai Do": {
+      "id": "ha7_1",
+      "name_ko": "사무라이 도복",
+      "image_key": "samurai_do",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/samurai_do.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 150,
@@ -269,19 +276,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 180,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "심해 도복": {
-      "이미지_경로": null,
+    "Brinewater Do": {
+      "id": "ha7_2",
+      "name_ko": "심해 도복",
+      "image_key": "brinewater_do",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/brinewater_do.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 197,
@@ -289,19 +300,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 236,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "키요시 전사 갑옷": {
-      "이미지_경로": null,
+    "Kyoshi Warrior Armor": {
+      "id": "ha7_3",
+      "name_ko": "키요시 전사 갑옷",
+      "image_key": "kyoshi_warrior_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/kyoshi_warrior_armor.webp",
 
       "장비_공격력": 40,
       "장비_방어력": 160,
@@ -309,19 +324,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 224,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "전쟁 마스터의 갑옷": {
-      "이미지_경로": null,
+    "Warlord Plate": {
+      "id": "ha7_4",
+      "name_ko": "전쟁 마스터의 갑옷",
+      "image_key": "warlord_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/warlord_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 170,
@@ -329,29 +348,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 259,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "장군 갑옷": {
-      "이미지_경로": null,
+    "General Plate": {
+      "id": "ha8_1",
+      "name_ko": "장군 갑옷",
+      "image_key": "general_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/general_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 180,
@@ -359,19 +376,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 216,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "용병 갑옷": {
-      "이미지_경로": null,
+    "Landsknecht Plate": {
+      "id": "ha8_2",
+      "name_ko": "용병 갑옷",
+      "image_key": "landsknecht_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/landsknecht_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 190,
@@ -379,19 +400,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 288,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "산타의 지킴이 갑옷": {
-      "이미지_경로": null,
+    "Santa's Guard Plate": {
+      "id": "ha8_3",
+      "name_ko": "산타의 지킴이 갑옷",
+      "image_key": "santa's_guard_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/santa's_guard_plate.webp",
 
       "장비_공격력": 48,
       "장비_방어력": 190,
@@ -399,29 +424,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 266,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["크리스마스"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "광전사 갑옷": {
-      "이미지_경로": null,
+    "Berserker Armor": {
+      "id": "ha9_1",
+      "name_ko": "광전사 갑옷",
+      "image_key": "berserker_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/berserker_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 205,
@@ -429,19 +452,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 246,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "가이아 인포서": {
-      "이미지_경로": null,
+    "Gaia Enforcer": {
+      "id": "ha9_2",
+      "name_ko": "가이아 인포서",
+      "image_key": "gaia_enforcer",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/gaia_enforcer.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 263,
@@ -449,19 +476,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 316,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["대지"],
+      "고유원소종류": ["Earth"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "별 스팽글 갑옷": {
-      "이미지_경로": null,
+    "Star-Spangled Plate": {
+      "id": "ha9_3",
+      "name_ko": "별 스팽글 갑옷",
+      "image_key": "star-spangled_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/star-spangled_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 225,
@@ -469,19 +500,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 340,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "아르곤의 갑옷": {
-      "이미지_경로": null,
+    "Argon's Armor": {
+      "id": "ha9_4",
+      "name_ko": "아르곤의 갑옷",
+      "image_key": "argon's_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/argon's_armor.webp",
 
       "장비_공격력": 59,
       "장비_방어력": 235,
@@ -489,29 +524,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 329,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "저거너트 요새": {
-      "이미지_경로": null,
+    "Juggernaut Fortress": {
+      "id": "ha10_1",
+      "name_ko": "저거너트 요새",
+      "image_key": "juggernaut_fortress",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/juggernaut_fortress.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 245,
@@ -519,19 +552,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 294,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "불씨 성채": {
-      "이미지_경로": null,
+    "Amber Citadel": {
+      "id": "ha10_2",
+      "name_ko": "불씨 성채",
+      "image_key": "amber_citadel",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/amber_citadel.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 293,
@@ -539,19 +576,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 352,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["불"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 흉갑": {
-      "이미지_경로": null,
+    "Opulent Breastplate": {
+      "id": "ha10_3",
+      "name_ko": "호화로운 흉갑",
+      "image_key": "opulent_breastplate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/opulent_breastplate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 245,
@@ -559,19 +600,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 294,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "밀레투스 철갑": {
-      "이미지_경로": null,
+    "Milesian Mail": {
+      "id": "ha10_4",
+      "name_ko": "밀레투스 철갑",
+      "image_key": "milesian_mail",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/milesian_mail.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 245,
@@ -579,29 +624,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 369,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "셀레스틸 갑옷": {
-      "이미지_경로": null,
+    "Celesteel Plate": {
+      "id": "ha11_1",
+      "name_ko": "셀레스틸 갑옷",
+      "image_key": "celesteel_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/celesteel_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 305,
@@ -609,19 +652,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 366,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "강아지 갑옷": {
-      "이미지_경로": null,
+    "Canid Plate": {
+      "id": "ha11_2",
+      "name_ko": "강아지 갑옷",
+      "image_key": "canid_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/canid_plate.webp",
 
       "장비_공격력": 76,
       "장비_방어력": 305,
@@ -629,19 +676,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 427,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["늑대"],
+      "영혼친밀감": ["Wolf"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "불의 제국 갑옷": {
-      "이미지_경로": null,
+    "Fire Nation Armor": {
+      "id": "ha11_3",
+      "name_ko": "불의 제국 갑옷",
+      "image_key": "fire_nation_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/fire_nation_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 305,
@@ -649,29 +700,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 461,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "버밀리온 수비대 갑옷": {
-      "이미지_경로": null,
+    "Vermilion Guard Plate": {
+      "id": "ha12_1",
+      "name_ko": "버밀리온 수비대 갑옷",
+      "image_key": "vermilion_guard_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/vermilion_guard_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 385,
@@ -679,19 +728,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 462,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
-      "영혼친밀감": ["불사조"],
+      "원소친밀감": ["Fire"],
+      "영혼친밀감": ["Phoenix"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "오니 로닌 갑옷": {
-      "이미지_경로": null,
+    "Oni Rōnin Armor": {
+      "id": "ha12_2",
+      "name_ko": "오니 로닌 갑옷",
+      "image_key": "oni_rōnin_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/oni_rōnin_armor.webp",
 
       "장비_공격력": 96,
       "장비_방어력": 385,
@@ -699,19 +752,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 539,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "독재자 판 갑옷": {
-      "이미지_경로": null,
+    "Tyrant Plate Armor": {
+      "id": "ha12_3",
+      "name_ko": "독재자 판 갑옷",
+      "image_key": "tyrant_plate_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/tyrant_plate_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 400,
@@ -719,19 +776,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 605,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "사라진 전사의 갑옷": {
-      "이미지_경로": null,
+    "Lost Warrior's Plate": {
+      "id": "ha12_4",
+      "name_ko": "사라진 전사의 갑옷",
+      "image_key": "lost_warrior's_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/lost_warrior's_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 400,
@@ -739,29 +800,27 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 720,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "베일파이어 갑옷": {
-      "이미지_경로": null,
+    "Balefire Armor": {
+      "id": "ha13_1",
+      "name_ko": "베일파이어 갑옷",
+      "image_key": "balefire_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/balefire_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 510,
@@ -769,19 +828,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 612,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "마그마코어 갑옷": {
-      "이미지_경로": null,
+    "Magmacore Plate": {
+      "id": "ha13_2",
+      "name_ko": "마그마코어 갑옷",
+      "image_key": "magmacore_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/magmacore_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 609,
@@ -789,19 +852,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 731,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["불"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 12,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "명인 판 갑옷": {
-      "이미지_경로": null,
+    "Titan Plate Armor": {
+      "id": "ha13_3",
+      "name_ko": "명인 판 갑옷",
+      "image_key": "titan_plate_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/titan_plate_armor.webp",
 
       "장비_공격력": 128,
       "장비_방어력": 510,
@@ -809,19 +876,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 714,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["명인"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Titan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "CM-73 장갑 프레임": {
-      "이미지_경로": null,
+    "CM-73 Armor Frame": {
+      "id": "ha13_4",
+      "name_ko": "CM-73 장갑 프레임",
+      "image_key": "cm-73_armor_frame",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/cm-73_armor_frame.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 510,
@@ -829,29 +900,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 772,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "코발트 판 갑옷": {
-      "이미지_경로": null,
+    "Cobalt Plate Armor": {
+      "id": "ha14_1",
+      "name_ko": "코발트 판 갑옷",
+      "image_key": "cobalt_plate_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/cobalt_plate_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 615,
@@ -859,19 +928,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 738,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "저주받은 왕의 갑옷": {
-      "이미지_경로": null,
+    "Cursed King's Plate": {
+      "id": "ha14_2",
+      "name_ko": "저주받은 왕의 갑옷",
+      "image_key": "cursed_king's_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/cursed_king's_plate.webp",
 
       "장비_공격력": 154,
       "장비_방어력": 615,
@@ -879,19 +952,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 861,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 풀 플레이트 갑옷": {
-      "이미지_경로": null,
+    "Platinum Full Plate": {
+      "id": "ha14_3",
+      "name_ko": "플래티넘 풀 플레이트 갑옷",
+      "image_key": "platinum_full_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/platinum_full_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 615,
@@ -899,19 +976,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 738,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "핌불베트르 갑옷": {
-      "이미지_경로": null,
+    "Fimbulwinter Plate": {
+      "id": "ha14_4",
+      "name_ko": "핌불베트르 갑옷",
+      "image_key": "fimbulwinter_plate",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/fimbulwinter_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 615,
@@ -919,19 +1000,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 933,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "천하무적 갑옷": {
-      "이미지_경로": null,
+    "Armor of Invincibility": {
+      "id": "ha14_5",
+      "name_ko": "천하무적 갑옷",
+      "image_key": "armor_of_invincibility",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/armor_of_invincibility.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 680,
@@ -939,31 +1024,29 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1026,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
       "유물": {
-	    "효과": "이 아이템은 부서지지 않습니다."
-	  }
+        "효과": "이 아이템은 부서지지 않습니다."
+      },
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "베히모스 갑옷": {
-      "이미지_경로": null,
+    "Behemoth Armor": {
+      "id": "ha15_1",
+      "name_ko": "베히모스 갑옷",
+      "image_key": "behemoth_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/behemoth_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 710,
@@ -971,19 +1054,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 852,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["베히모스"],
+      "영혼친밀감": ["Behemoth"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "테디베어 몸통": {
-      "이미지_경로": null,
+    "Teddy Bear Body": {
+      "id": "ha15_2",
+      "name_ko": "테디베어 몸통",
+      "image_key": "teddy_bear_body",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/teddy_bear_body.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 710,
@@ -991,19 +1078,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1077,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["곰"],
+      "영혼친밀감": ["Bear"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "드라칼로스 갑옷": {
-      "이미지_경로": null,
+    "Drakalos Armor": {
+      "id": "ha15_3",
+      "name_ko": "드라칼로스 갑옷",
+      "image_key": "drakalos_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/drakalos_armor.webp",
 
       "장비_공격력": 178,
       "장비_방어력": 710,
@@ -1011,19 +1102,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 994,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "BIT.러너 갑옷": {
-      "이미지_경로": null,
+    "BIT.Runner Armor": {
+      "id": "ha15_4",
+      "name_ko": "BIT.러너 갑옷",
+      "image_key": "bit.runner_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/bit.runner_armor.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 735,
@@ -1031,14 +1126,63 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1112,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Xenotype Exoskel": {
+      "id": "ha15_5",
+      "name_ko": "제노타입 외골격",
+      "image_key": "xenotype_exoskel",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/xenotype_exoskel.webp",
+
+      "장비_공격력": 184,
+      "장비_방어력": 735,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1029,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
+
+
+    "Stone Jaguar Armor": {
+      "id": "ha15_6",
+      "name_ko": "돌 재규어 갑옷",
+      "image_key": "stone_jaguar_armor",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/stone_jaguar_armor.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 735,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1323,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Tiger"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

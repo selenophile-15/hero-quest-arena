@@ -139,8 +139,8 @@ async function getAurasongBonuses(champion: Hero): Promise<AurasongBonuses> {
   if (!aurasongName) return result;
   
   try {
-    const resp = await fetch('/data/equipment/champion/aurasong.json');
-    const data = await resp.json();
+    const { fetchEquipFileNormalized } = await import('./dataAdapter');
+    const data = await fetchEquipFileNormalized('/data/equipment/champion/aurasong.json');
     for (const tierItems of Object.values(data)) {
       if (typeof tierItems !== 'object') continue;
       const aData = (tierItems as Record<string, any>)[aurasongName];

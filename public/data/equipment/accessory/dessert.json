@@ -1,7 +1,10 @@
 {
   "3티어": {
-    "쿠키 플레이트": {
-      "이미지_경로": null,
+    "Cookie Plate": {
+      "id": "ds3_1",
+      "name_ko": "쿠키 플레이트",
+      "image_key": "cookie_plate",
+      "이미지_경로": "/images/equipment/accessory/dessert/cookie_plate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 80,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "빙수": {
-      "이미지_경로": null,
+    "Shaved Ice": {
+      "id": "ds4_1",
+      "name_ko": "빙수",
+      "image_key": "shaved_ice",
+      "이미지_경로": "/images/equipment/accessory/dessert/shaved_ice.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 100,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "붕어빵": {
-      "이미지_경로": null,
+    "Taiyaki": {
+      "id": "ds5_1",
+      "name_ko": "붕어빵",
+      "image_key": "taiyaki",
+      "이미지_경로": "/images/equipment/accessory/dessert/taiyaki.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -69,29 +68,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 135,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "치즈케이크": {
-      "이미지_경로": null,
+    "Cheesecake": {
+      "id": "ds6_1",
+      "name_ko": "치즈케이크",
+      "image_key": "cheesecake",
+      "이미지_경로": "/images/equipment/accessory/dessert/cheesecake.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -99,19 +96,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 170,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "초콜릿 상자": {
-      "이미지_경로": null,
+    "Chocolate Box": {
+      "id": "ds6_2",
+      "name_ko": "초콜릿 상자",
+      "image_key": "chocolate_box",
+      "이미지_경로": "/images/equipment/accessory/dessert/chocolate_box.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 42,
@@ -119,29 +120,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 235,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "마카롱 세트": {
-      "이미지_경로": null,
+    "Macaron Set": {
+      "id": "ds7_1",
+      "name_ko": "마카롱 세트",
+      "image_key": "macaron_set",
+      "이미지_경로": "/images/equipment/accessory/dessert/macaron_set.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -149,49 +148,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 210,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "꺼끌꺼끌한 아이스크림": {
-      "이미지_경로": null,
+    "Prickly Ice Cream": {
+      "id": "ds7_2",
+      "name_ko": "꺼끌꺼끌한 아이스크림",
+      "image_key": "prickly_ice_cream",
+      "이미지_경로": "/images/equipment/accessory/dessert/prickly_ice_cream.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
       "장비_체력": 42,
       "장비_치명타확률%": 0,
-      "장비_회피%": 7,
+      "장비_회피%": 0.07,
       "장비_에어쉽파워": 357,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "대지"],
+      "원소친밀감": ["Earth", "Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "딸기 찹쌀떡": {
-      "이미지_경로": null,
+    "Strawberry Mochi": {
+      "id": "ds8_1",
+      "name_ko": "딸기 찹쌀떡",
+      "image_key": "strawberry_mochi",
+      "이미지_경로": "/images/equipment/accessory/dessert/strawberry_mochi.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -199,29 +200,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 265,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "말차 롤케이크": {
-      "이미지_경로": null,
+    "Matcha Swiss Roll": {
+      "id": "ds9_1",
+      "name_ko": "말차 롤케이크",
+      "image_key": "matcha_swiss_roll",
+      "이미지_경로": "/images/equipment/accessory/dessert/matcha_swiss_roll.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -229,29 +228,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 320,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "파인애플 케이크": {
-      "이미지_경로": null,
+    "Pineapple Cake": {
+      "id": "ds10_1",
+      "name_ko": "파인애플 케이크",
+      "image_key": "pineapple_cake",
+      "이미지_경로": "/images/equipment/accessory/dessert/pineapple_cake.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -259,29 +256,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 365,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "턱시도 케이크": {
-      "이미지_경로": null,
+    "Tuxedo Cake": {
+      "id": "ds11_1",
+      "name_ko": "턱시도 케이크",
+      "image_key": "tuxedo_cake",
+      "이미지_경로": "/images/equipment/accessory/dessert/tuxedo_cake.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -289,29 +284,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 455,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "할로할로": {
-      "이미지_경로": null,
+    "Halo-Halo": {
+      "id": "ds12_1",
+      "name_ko": "할로할로",
+      "image_key": "halo-halo",
+      "이미지_경로": "/images/equipment/accessory/dessert/halo-halo.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -319,19 +312,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 570,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
-      "영혼친밀감": ["고양이"],
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Cat"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "코코넛 크림 케이크": {
-      "이미지_경로": null,
+    "Coconut Cream Cake": {
+      "id": "ds12_2",
+      "name_ko": "코코넛 크림 케이크",
+      "image_key": "coconut_cream_cake",
+      "이미지_경로": "/images/equipment/accessory/dessert/coconut_cream_cake.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 118,
@@ -339,19 +336,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 732,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 츄러스": {
-      "이미지_경로": null,
+    "Opulent Churros": {
+      "id": "ds12_3",
+      "name_ko": "호화로운 츄러스",
+      "image_key": "opulent_churros",
+      "이미지_경로": "/images/equipment/accessory/dessert/opulent_churros.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -359,19 +360,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 590,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "글레이즈 거울 케이크": {
-      "이미지_경로": null,
+    "Glazed Mirror Cake": {
+      "id": "ds12_4",
+      "name_ko": "글레이즈 거울 케이크",
+      "image_key": "glazed_mirror_cake",
+      "이미지_경로": "/images/equipment/accessory/dessert/glazed_mirror_cake.webp",
 
       "장비_공격력": 122,
       "장비_방어력": 0,
@@ -379,29 +384,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 708,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
+      "원소친밀감": ["Gold"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "궁극의 과일샐러드": {
-      "이미지_경로": null,
+    "Ultimate Fruit Salad": {
+      "id": "ds13_1",
+      "name_ko": "궁극의 과일샐러드",
+      "image_key": "ultimate_fruit_salad",
+      "이미지_경로": "/images/equipment/accessory/dessert/ultimate_fruit_salad.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -409,19 +412,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 755,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
-      "영혼친밀감": ["상어"],
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Shark"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "여름 스모어": {
-      "이미지_경로": null,
+    "Summer S'mores": {
+      "id": "ds13_2",
+      "name_ko": "여름 스모어",
+      "image_key": "summer_s'mores",
+      "이미지_경로": "/images/equipment/accessory/dessert/summer_s'mores.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 172,
@@ -429,19 +436,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 961,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "사탕의 뿔": {
-      "이미지_경로": null,
+    "Eversweet Cornucopia": {
+      "id": "ds13_3",
+      "name_ko": "사탕의 뿔",
+      "image_key": "eversweet_cornucopia",
+      "이미지_경로": "/images/equipment/accessory/dessert/eversweet_cornucopia.webp",
 
       "장비_공격력": 172,
       "장비_방어력": 0,
@@ -449,29 +460,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 893,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "프린슬리 바클라바": {
-      "이미지_경로": null,
+    "Princely Baklava": {
+      "id": "ds14_1",
+      "name_ko": "프린슬리 바클라바",
+      "image_key": "princely_baklava",
+      "이미지_경로": "/images/equipment/accessory/dessert/princely_baklava.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -479,19 +488,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 910,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 스트루들": {
-      "이미지_경로": null,
+    "Platinum Strudel": {
+      "id": "ds14_2",
+      "name_ko": "플래티넘 스트루들",
+      "image_key": "platinum_strudel",
+      "이미지_경로": "/images/equipment/accessory/dessert/platinum_strudel.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -499,19 +512,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 910,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "스타베리 파이": {
-      "이미지_경로": null,
+    "Starberry Pie": {
+      "id": "ds14_3",
+      "name_ko": "스타베리 파이",
+      "image_key": "starberry_pie",
+      "이미지_경로": "/images/equipment/accessory/dessert/starberry_pie.webp",
 
       "장비_공격력": 207,
       "장비_방어력": 0,
@@ -519,29 +536,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1076,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "초코드래곤 정상": {
-      "이미지_경로": null,
+    "Chocodragon Summit": {
+      "id": "ds15_1",
+      "name_ko": "초코드래곤 정상",
+      "image_key": "chocodragon_summit",
+      "이미지_경로": "/images/equipment/accessory/dessert/chocodragon_summit.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -549,39 +564,47 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1050,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["바하무트"],
+      "영혼친밀감": ["Bahamut"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "흑요석 라바 케이크": {
-      "이미지_경로": null,
+    "Obsidian Lava Cake": {
+      "id": "ds15_2",
+      "name_ko": "흑요석 라바 케이크",
+      "image_key": "obsidian_lava_cake",
+      "이미지_경로": "/images/equipment/accessory/dessert/obsidian_lava_cake.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
       "장비_체력": 210,
       "장비_치명타확률%": 0,
-      "장비_회피%": 5,
+      "장비_회피%": 0.05,
       "장비_에어쉽파워": 1575,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": null,
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "크람푸스 쿠키": {
-      "이미지_경로": null,
+    "Krampus Cookies": {
+      "id": "ds15_3",
+      "name_ko": "크람푸스 쿠키",
+      "image_key": "krampus_cookies",
+      "이미지_경로": "/images/equipment/accessory/dessert/krampus_cookies.webp",
 
       "장비_공격력": 240,
       "장비_방어력": 0,
@@ -589,15 +612,15 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1242,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
-      "영혼친밀감": ["크람푸스"],
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": ["Krampus"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   }
 }
-

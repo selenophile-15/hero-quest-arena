@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "따뜻한 차": {
-      "이미지_경로": null,
+    "Warm Tea": {
+      "id": "pt1_1",
+      "name_ko": "따뜻한 차",
+      "image_key": "warm_tea",
+      "이미지_경로": "/images/equipment/accessory/potion/warm_tea.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 25,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "치유 물약": {
-      "이미지_경로": null,
+    "Healing Potion": {
+      "id": "pt2_1",
+      "name_ko": "치유 물약",
+      "image_key": "healing_potion",
+      "이미지_경로": "/images/equipment/accessory/potion/healing_potion.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 45,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "마법 물약": {
-      "이미지_경로": null,
+    "Magic Potion": {
+      "id": "pt3_1",
+      "name_ko": "마법 물약",
+      "image_key": "magic_potion",
+      "이미지_경로": "/images/equipment/accessory/potion/magic_potion.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -69,19 +68,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 70,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "과학 프로젝트": {
-      "이미지_경로": null,
+
+    "Science Project": {
+      "id": "pt3_2",
+      "name_ko": "과학 프로젝트",
+      "image_key": "science_project",
+      "이미지_경로": "/images/equipment/accessory/potion/science_project.webp",
 
       "장비_공격력": 16,
       "장비_방어력": 0,
@@ -89,29 +92,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 88,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "대형 치유 물약": {
-      "이미지_경로": null,
+    "XL Healing Potion": {
+      "id": "pt4_1",
+      "name_ko": "대형 치유 물약",
+      "image_key": "xl_healing_potion",
+      "이미지_경로": "/images/equipment/accessory/potion/xl_healing_potion.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -119,19 +120,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 95,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "우아한 다기 세트": {
-      "이미지_경로": null,
+
+    "Elegant Tea Set": {
+      "id": "pt4_2",
+      "name_ko": "우아한 다기 세트",
+      "image_key": "elegant_tea_set",
+      "이미지_경로": "/images/equipment/accessory/potion/elegant_tea_set.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 44,
@@ -139,19 +144,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 163,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "슬라임이 담긴 병": {
-      "이미지_경로": null,
+
+    "Vial of Slime": {
+      "id": "pt4_3",
+      "name_ko": "슬라임이 담긴 병",
+      "image_key": "vial_of_slime",
+      "이미지_경로": "/images/equipment/accessory/potion/vial_of_slime.webp",
 
       "장비_공격력": 22,
       "장비_방어력": 0,
@@ -159,29 +168,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 133,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "어둠"],
+      "원소친밀감": ["Water", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "대형 마법 물약": {
-      "이미지_경로": null,
+    "XL Magic Potion": {
+      "id": "pt5_1",
+      "name_ko": "대형 마법 물약",
+      "image_key": "xl_magic_potion",
+      "이미지_경로": "/images/equipment/accessory/potion/xl_magic_potion.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -189,19 +196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 120,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "명인 물약": {
-      "이미지_경로": null,
+
+
+    "Titan Potion": {
+      "id": "pt5_2",
+      "name_ko": "명인 물약",
+      "image_key": "titan_potion",
+      "이미지_경로": "/images/equipment/accessory/potion/titan_potion.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 53,
@@ -209,19 +220,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 194,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": null,
-      "영혼친밀감": ["명인"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Titan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "노련한 뱃사공의 물약": {
-      "이미지_경로": null,
+
+
+    "Old Salt's Brew": {
+      "id": "pt5_3",
+      "name_ko": "노련한 뱃사공의 물약",
+      "image_key": "old_salt's_brew",
+      "이미지_경로": "/images/equipment/accessory/potion/old_salt's_brew.webp",
 
       "장비_공격력": 28,
       "장비_방어력": 0,
@@ -229,29 +244,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 162,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "불사조 토닉": {
-      "이미지_경로": null,
+    "Phoenix Tonic": {
+      "id": "pt6_1",
+      "name_ko": "불사조 토닉",
+      "image_key": "phoenix_tonic",
+      "이미지_경로": "/images/equipment/accessory/potion/phoenix_tonic.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -259,19 +272,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 140,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "자극적인 그라니타": {
-      "이미지_경로": null,
+
+
+    "Zesty Granita": {
+      "id": "pt6_2",
+      "name_ko": "자극적인 그라니타",
+      "image_key": "zesty_granita",
+      "이미지_경로": "/images/equipment/accessory/potion/zesty_granita.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 60,
@@ -279,19 +296,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 222,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "스타더스트 샘플": {
-      "이미지_경로": null,
+
+
+    "Stardust Sample": {
+      "id": "pt6_3",
+      "name_ko": "스타더스트 샘플",
+      "image_key": "stardust_sample",
+      "이미지_경로": "/images/equipment/accessory/potion/stardust_sample.webp",
 
       "장비_공격력": 30,
       "장비_방어력": 0,
@@ -299,29 +320,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 174,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "활력의 물약": {
-      "이미지_경로": null,
+    "Potion of Renewal": {
+      "id": "pt7_1",
+      "name_ko": "활력의 물약",
+      "image_key": "potion_of_renewal",
+      "이미지_경로": "/images/equipment/accessory/potion/potion_of_renewal.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -329,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 160,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "병에 든 웃음": {
-      "이미지_경로": null,
+
+
+    "Bottled Mirth": {
+      "id": "pt7_2",
+      "name_ko": "병에 든 웃음",
+      "image_key": "bottled_mirth",
+      "이미지_경로": "/images/equipment/accessory/potion/bottled_mirth.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -349,19 +372,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 230,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "부글거리는 병": {
-      "이미지_경로": null,
+
+
+    "Fizzy Guzzle Bottle": {
+      "id": "pt7_3",
+      "name_ko": "부글거리는 병",
+      "image_key": "fizzy_guzzle_bottle",
+      "이미지_경로": "/images/equipment/accessory/potion/fizzy_guzzle_bottle.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 70,
@@ -369,19 +396,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 264,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "카노푸스의 단지": {
-      "이미지_경로": null,
+
+
+    "Canopic Jar": {
+      "id": "pt7_4",
+      "name_ko": "카노푸스의 단지",
+      "image_key": "canopic_jar",
+      "이미지_경로": "/images/equipment/accessory/potion/canopic_jar.webp",
 
       "장비_공격력": 70,
       "장비_방어력": 0,
@@ -389,29 +420,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 236,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["늑대"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Wolf"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "보라 폭탄": {
-      "이미지_경로": null,
+    "Purple Bomb": {
+      "id": "pt8_1",
+      "name_ko": "보라 폭탄",
+      "image_key": "purple_bomb",
+      "이미지_경로": "/images/equipment/accessory/potion/purple_bomb.webp",
 
       "장비_공격력": 40,
       "장비_방어력": 0,
@@ -419,19 +448,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 232,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "고드 엘릭서": {
-      "이미지_경로": null,
+
+
+    "Gourd Elixir": {
+      "id": "pt8_2",
+      "name_ko": "고드 엘릭서",
+      "image_key": "gourd_elixir",
+      "이미지_경로": "/images/equipment/accessory/potion/gourd_elixir.webp",
 
       "장비_공격력": 83,
       "장비_방어력": 0,
@@ -439,19 +472,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 276,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "나야 스페셜": {
-      "이미지_경로": null,
+
+
+    "Naya's Special": {
+      "id": "pt8_3",
+      "name_ko": "나야 스페셜",
+      "image_key": "naya's_special",
+      "이미지_경로": "/images/equipment/accessory/potion/naya's_special.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 83,
@@ -459,19 +496,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 310,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "특별 사소나도": {
-      "이미지_경로": null,
+
+
+    "Special Sazonado": {
+      "id": "pt8_4",
+      "name_ko": "특별 사소나도",
+      "image_key": "special_sazonado",
+      "이미지_경로": "/images/equipment/accessory/potion/special_sazonado.webp",
 
       "장비_공격력": 88,
       "장비_방어력": 0,
@@ -479,19 +520,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 290,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "와이번의 엘릭서": {
-      "이미지_경로": null,
+
+
+    "Elixir of the Wyrm": {
+      "id": "pt8_5",
+      "name_ko": "와이번의 엘릭서",
+      "image_key": "elixir_of_the_wyrm",
+      "이미지_경로": "/images/equipment/accessory/potion/elixir_of_the_wyrm.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 88,
@@ -499,29 +544,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 326,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "영혼불 추출물": {
-      "이미지_경로": null,
+    "Soulfire Extract": {
+      "id": "pt9_1",
+      "name_ko": "영혼불 추출물",
+      "image_key": "soulfire_extract",
+      "이미지_경로": "/images/equipment/accessory/potion/soulfire_extract.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -529,19 +572,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 230,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "짜릿한 즙": {
-      "이미지_경로": null,
+
+
+    "Tangy Decoction": {
+      "id": "pt9_2",
+      "name_ko": "짜릿한 즙",
+      "image_key": "tangy_decoction",
+      "이미지_경로": "/images/equipment/accessory/potion/tangy_decoction.webp",
 
       "장비_공격력": 95,
       "장비_방어력": 0,
@@ -549,19 +596,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 316,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "오크 나무 정수": {
-      "이미지_경로": null,
+
+
+    "Oak Essence": {
+      "id": "pt9_3",
+      "name_ko": "오크 나무 정수",
+      "image_key": "oak_essence",
+      "이미지_경로": "/images/equipment/accessory/potion/oak_essence.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 100,
@@ -569,29 +620,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 370,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "가이아 토닉": {
-      "이미지_경로": null,
+    "Gaia Tonic": {
+      "id": "pt10_1",
+      "name_ko": "가이아 토닉",
+      "image_key": "gaia_tonic",
+      "이미지_경로": "/images/equipment/accessory/potion/gaia_tonic.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -599,19 +648,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 265,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "한밤의 기름": {
-      "이미지_경로": null,
+
+
+    "Midnight Oil": {
+      "id": "pt10_2",
+      "name_ko": "한밤의 기름",
+      "image_key": "midnight_oil",
+      "이미지_경로": "/images/equipment/accessory/potion/midnight_oil.webp",
 
       "장비_공격력": 105,
       "장비_방어력": 0,
@@ -619,19 +672,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 349,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "호화로운 엘릭서": {
-      "이미지_경로": null,
+
+
+    "Opulent Elixir": {
+      "id": "pt10_3",
+      "name_ko": "호화로운 엘릭서",
+      "image_key": "opulent_elixir",
+      "이미지_경로": "/images/equipment/accessory/potion/opulent_elixir.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -639,29 +696,75 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 275,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1
+    },
 
-      "유물": null
+
+    "Sip o' the Sea": {
+      "id": "pt10_4",
+      "name_ko": "한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력",
+      "image_key": "sip_o'_the_sea",
+      "이미지_경로": "/images/equipment/accessory/potion/sip_o'_the_sea.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 0,
+      "장비_체력": 55,
+      "장비_치명타확률%": 7,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 468,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Water"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
+
+
+    "Ninja Smoke Bomb": {
+      "id": "pt10_5",
+      "name_ko": "한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력",
+      "image_key": "ninja_smoke_bomb",
+      "이미지_경로": "/images/equipment/accessory/potion/ninja_smoke_bomb.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 0,
+      "장비_체력": 55,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 7,
+      "장비_에어쉽파워": 468,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "증류한 성운": {
-      "이미지_경로": null,
+    "Distilled Nebula": {
+      "id": "pt11_1",
+      "name_ko": "증류한 성운",
+      "image_key": "distilled_nebula",
+      "이미지_경로": "/images/equipment/accessory/potion/distilled_nebula.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -669,19 +772,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 340,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "오로라 용수": {
-      "이미지_경로": null,
+
+
+    "Aurora Springwater": {
+      "id": "pt11_2",
+      "name_ko": "오로라 용수",
+      "image_key": "aurora_springwater",
+      "이미지_경로": "/images/equipment/accessory/potion/aurora_springwater.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 135,
@@ -689,19 +796,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 502,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "꿀 항아리": {
-      "이미지_경로": null,
+
+
+    "Nectar Pitcher": {
+      "id": "pt11_3",
+      "name_ko": "꿀 항아리",
+      "image_key": "nectar_pitcher",
+      "이미지_경로": "/images/equipment/accessory/potion/nectar_pitcher.webp",
 
       "장비_공격력": 140,
       "장비_방어력": 0,
@@ -709,29 +820,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 467,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "암브로시아": {
-      "이미지_경로": null,
+    "Ambrosia": {
+      "id": "pt12_1",
+      "name_ko": "암브로시아",
+      "image_key": "ambrosia",
+      "이미지_경로": "/images/equipment/accessory/potion/ambrosia.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -739,19 +848,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 430,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "문드라의 치료법": {
-      "이미지_경로": null,
+
+
+    "Mundra's Remedy": {
+      "id": "pt12_2",
+      "name_ko": "문드라의 치료법",
+      "image_key": "mundra's_remedy",
+      "이미지_경로": "/images/equipment/accessory/potion/mundra's_remedy.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 222,
@@ -759,19 +872,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 771,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
-      "고유영혼": ["문드라"],
-
-      "유물": null
+      "고유영혼": ["Mundra"],
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "순수한 정수": {
-      "이미지_경로": null,
+
+
+    "Quintessence Purity": {
+      "id": "pt12_3",
+      "name_ko": "순수한 정수",
+      "image_key": "quintessence_purity",
+      "이미지_경로": "/images/equipment/accessory/potion/quintessence_purity.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -779,19 +896,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 595,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 12,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "최상급 선스크린": {
-      "이미지_경로": null,
+
+
+    "Supreme Sunscreen": {
+      "id": "pt12_4",
+      "name_ko": "최상급 선스크린",
+      "image_key": "supreme_sunscreen",
+      "이미지_경로": "/images/equipment/accessory/potion/supreme_sunscreen.webp",
 
       "장비_공격력": 178,
       "장비_방어력": 0,
@@ -799,19 +920,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 587,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불", "빛"],
+      "원소친밀감": ["Fire", "Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "메이플 성배": {
-      "이미지_경로": null,
+
+
+    "Maple Holy Grail": {
+      "id": "pt12_5",
+      "name_ko": "메이플 성배",
+      "image_key": "maple_holy_grail",
+      "이미지_경로": "/images/equipment/accessory/potion/maple_holy_grail.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 183,
@@ -819,29 +944,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 680,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "정복자의 피": {
-      "이미지_경로": null,
+    "Conqueror's Blood": {
+      "id": "pt13_1",
+      "name_ko": "정복자의 피",
+      "image_key": "conqueror's_blood",
+      "이미지_경로": "/images/equipment/accessory/potion/conqueror's_blood.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -849,19 +972,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 545,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
-      "영혼친밀감": ["불사조"],
+      "원소친밀감": ["Fire"],
+      "영혼친밀감": ["Phoenix"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "필수품이 든 작은 가방": {
-      "이미지_경로": null,
+
+
+    "Satchel of Essentials": {
+      "id": "pt13_2",
+      "name_ko": "필수품이 든 작은 가방",
+      "image_key": "satchel_of_essentials",
+      "이미지_경로": "/images/equipment/accessory/potion/satchel_of_essentials.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 218,
@@ -869,19 +996,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 807,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["카벙클"],
+      "영혼친밀감": ["Carbuncle"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "억만장자의 커피": {
-      "이미지_경로": null,
+
+
+    "Billionaire Brew": {
+      "id": "pt13_3",
+      "name_ko": "억만장자의 커피",
+      "image_key": "billionaire_brew",
+      "이미지_경로": "/images/equipment/accessory/potion/billionaire_brew.webp",
 
       "장비_공격력": 218,
       "장비_방어력": 0,
@@ -889,19 +1020,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 719,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "향기로운 보습제": {
-      "이미지_경로": null,
+
+
+    "Fragrant Moisturizer": {
+      "id": "pt13_4",
+      "name_ko": "향기로운 보습제",
+      "image_key": "fragrant_moisturizer",
+      "이미지_경로": "/images/equipment/accessory/potion/fragrant_moisturizer.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 270,
@@ -909,29 +1044,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 889,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "최후의 팅크": {
-      "이미지_경로": null,
+    "Tincture of Finality": {
+      "id": "pt14_1",
+      "name_ko": "최후의 팅크",
+      "image_key": "tincture_of_finality",
+      "이미지_경로": "/images/equipment/accessory/potion/tincture_of_finality.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -939,19 +1072,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 680,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛", "어둠"],
+      "원소친밀감": ["Light", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "단백질 쉐이크": {
-      "이미지_경로": null,
+
+
+    "Protein Shake": {
+      "id": "pt14_2",
+      "name_ko": "단백질 쉐이크",
+      "image_key": "protein_shake",
+      "이미지_경로": "/images/equipment/accessory/potion/protein_shake.webp",
 
       "장비_공격력": 273,
       "장비_방어력": 0,
@@ -959,19 +1096,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 898,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "병입 신성": {
-      "이미지_경로": null,
+
+
+    "Divine Contained": {
+      "id": "pt14_3",
+      "name_ko": "병입 신성",
+      "image_key": "divine_contained",
+      "이미지_경로": "/images/equipment/accessory/potion/divine_contained.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 327,
@@ -979,19 +1120,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1072,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "플래티넘 맥주잔": {
-      "이미지_경로": null,
+
+
+    "Platinum Tankard": {
+      "id": "pt14_4",
+      "name_ko": "플래티넘 맥주잔",
+      "image_key": "platinum_tankard",
+      "이미지_경로": "/images/equipment/accessory/potion/platinum_tankard.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -999,19 +1144,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 680,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "할머니의 찻주전자": {
-      "이미지_경로": null,
+
+
+    "Grandma's Teapot": {
+      "id": "pt14_5",
+      "name_ko": "할머니의 찻주전자",
+      "image_key": "grandma's_teapot",
+      "이미지_경로": "/images/equipment/accessory/potion/grandma's_teapot.webp",
 
       "장비_공격력": 280,
       "장비_방어력": 0,
@@ -1019,29 +1168,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 924,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "원시의 불": {
-      "이미지_경로": null,
+    "Primal Fire": {
+      "id": "pt15_1",
+      "name_ko": "원시의 불",
+      "image_key": "primal_fire",
+      "이미지_경로": "/images/equipment/accessory/potion/primal_fire.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -1049,19 +1196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 790,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "고대의 물": {
-      "이미지_경로": null,
+
+
+    "Ancient Waters": {
+      "id": "pt15_2",
+      "name_ko": "고대의 물",
+      "image_key": "ancient_waters",
+      "이미지_경로": "/images/equipment/accessory/potion/ancient_waters.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -1069,19 +1220,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1035,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 14,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "보글거리는 가마솥": {
-      "이미지_경로": null,
+
+
+    "Bubbling Cauldron": {
+      "id": "pt15_3",
+      "name_ko": "보글거리는 가마솥",
+      "image_key": "bubbling_cauldron",
+      "이미지_경로": "/images/equipment/accessory/potion/bubbling_cauldron.webp",
 
       "장비_공격력": 315,
       "장비_방어력": 0,
@@ -1089,14 +1244,39 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1052,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "어둠"],
+      "원소친밀감": ["Dark", "Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Elemental Conflux": {
+      "id": "pt15_4",
+      "name_ko": "원소 융합체",
+      "image_key": "elemental_conflux",
+      "이미지_경로": "/images/equipment/accessory/potion/elemental_conflux.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 0,
+      "장비_체력": 158,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1185,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["All"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

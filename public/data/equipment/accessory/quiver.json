@@ -1,7 +1,10 @@
 {
   "5티어": {
-    "습지 배낭": {
-      "이미지_경로": null,
+    "Swamp Knapsack": {
+      "id": "qv5_1",
+      "name_ko": "습지 배낭",
+      "image_key": "swamp_knapsack",
+      "이미지_경로": "/images/equipment/accessory/quiver/swamp_knapsack.webp",
 
       "장비_공격력": 55,
       "장비_방어력": 55,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 110,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "불모지 화살통": {
-      "이미지_경로": null,
+    "Wasterlander's Quiver": {
+      "id": "qv6_1",
+      "name_ko": "불모지 화살통",
+      "image_key": "wasterlander's_quiver",
+      "이미지_경로": "/images/equipment/accessory/quiver/wasterlander's_quiver.webp",
 
       "장비_공격력": 73,
       "장비_방어력": 73,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 146,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "파라오의 군수품": {
-      "이미지_경로": null,
+    "Pharaoh's Arsenal": {
+      "id": "qv7_1",
+      "name_ko": "파라오의 군수품",
+      "image_key": "pharaoh's_arsenal",
+      "이미지_경로": "/images/equipment/accessory/quiver/pharaoh's_arsenal.webp",
 
       "장비_공격력": 95,
       "장비_방어력": 95,
@@ -69,29 +68,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 190,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "폐허의 화살": {
-      "이미지_경로": null,
+    "Arrows of Ruin": {
+      "id": "qv8_1",
+      "name_ko": "폐허의 화살",
+      "image_key": "arrows_of_ruin",
+      "이미지_경로": "/images/equipment/accessory/quiver/arrows_of_ruin.webp",
 
       "장비_공격력": 120,
       "장비_방어력": 120,
@@ -99,29 +96,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 240,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "기사 화살통": {
-      "이미지_경로": null,
+    "Knightly Quiver": {
+      "id": "qv9_1",
+      "name_ko": "기사 화살통",
+      "image_key": "knightly_quiver",
+      "이미지_경로": "/images/equipment/accessory/quiver/knightly_quiver.webp",
 
       "장비_공격력": 140,
       "장비_방어력": 140,
@@ -129,29 +124,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 280,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "모래톱 화살통": {
-      "이미지_경로": null,
+    "Quiver of Shoals": {
+      "id": "qv10_1",
+      "name_ko": "모래톱 화살통",
+      "image_key": "quiver_of_shoals",
+      "이미지_경로": "/images/equipment/accessory/quiver/quiver_of_shoals.webp",
 
       "장비_공격력": 160,
       "장비_방어력": 160,
@@ -159,29 +152,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 320,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "브릭스파이어 번들": {
-      "이미지_경로": null,
+    "Bleakspire Bundle": {
+      "id": "qv11_1",
+      "name_ko": "브릭스파이어 번들",
+      "image_key": "bleakspire_bundle",
+      "이미지_경로": "/images/equipment/accessory/quiver/bleakspire_bundle.webp",
 
       "장비_공격력": 210,
       "장비_방어력": 210,
@@ -189,29 +180,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 420,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "화산 주머니": {
-      "이미지_경로": null,
+    "Volcanic Pocket": {
+      "id": "qv12_1",
+      "name_ko": "화산 주머니",
+      "image_key": "volcanic_pocket",
+      "이미지_경로": "/images/equipment/accessory/quiver/volcanic_pocket.webp",
 
       "장비_공격력": 265,
       "장비_방어력": 265,
@@ -219,29 +208,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 530,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "어딘가의 화살": {
-      "이미지_경로": null,
+    "Elsewhere Arrows": {
+      "id": "qv13_1",
+      "name_ko": "어딘가의 화살",
+      "image_key": "elsewhere_arrows",
+      "이미지_경로": "/images/equipment/accessory/quiver/elsewhere_arrows.webp",
 
       "장비_공격력": 338,
       "장비_방어력": 338,
@@ -249,29 +236,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 676,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "아바타의 화살통": {
-      "이미지_경로": null,
+    "Quiver of the Avatar": {
+      "id": "qv14_1",
+      "name_ko": "아바타의 화살통",
+      "image_key": "quiver_of_the_avatar",
+      "이미지_경로": "/images/equipment/accessory/quiver/quiver_of_the_avatar.webp",
 
       "장비_공격력": 420,
       "장비_방어력": 420,
@@ -279,19 +264,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 840,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "산타의 선물 주머니": {
-      "이미지_경로": null,
+    "Santa's Present Bag": {
+      "id": "qv14_2",
+      "name_ko": "산타의 선물 주머니",
+      "image_key": "santa's_present_bag",
+      "이미지_경로": "/images/equipment/accessory/quiver/santa's_present_bag.webp",
 
       "장비_공격력": 420,
       "장비_방어력": 630,
@@ -299,29 +288,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1092,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["크리스마스"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "티라노 백팩": {
-      "이미지_경로": null,
+    "Rex Backpack": {
+      "id": "qv15_1",
+      "name_ko": "티라노 백팩",
+      "image_key": "rex_backpack",
+      "이미지_경로": "/images/equipment/accessory/quiver/rex_backpack.webp",
 
       "장비_공격력": 488,
       "장비_방어력": 488,
@@ -329,19 +316,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 976,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "송곳 볼트": {
-      "이미지_경로": null,
+    "Biting Bolts": {
+      "id": "qv15_2",
+      "name_ko": "송곳 볼트",
+      "image_key": "biting_bolts",
+      "이미지_경로": "/images/equipment/accessory/quiver/biting_bolts.webp",
 
       "장비_공격력": 731,
       "장비_방어력": 488,
@@ -349,19 +340,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1170,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["우로보로스"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Ouroboros"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 화살통": {
-      "이미지_경로": null,
+    "Platinum Quiver": {
+      "id": "qv15_3",
+      "name_ko": "플래티넘 화살통",
+      "image_key": "platinum_quiver",
+      "이미지_경로": "/images/equipment/accessory/quiver/platinum_quiver.webp",
 
       "장비_공격력": 488,
       "장비_방어력": 488,
@@ -369,14 +364,15 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 976,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   }
 }

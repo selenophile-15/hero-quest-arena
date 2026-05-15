@@ -1,7 +1,10 @@
 {
   "3티어": {
-    "트러블린": {
-      "이미지_경로": null,
+    "Troublin": {
+      "id": "fm3_1",
+      "name_ko": "트러블린",
+      "image_key": "troublin",
+      "이미지_경로": "/images/equipment/champion/familiar/troublin.webp",
 
       "장비_공격력": 82,
       "장비_방어력": 0,
@@ -14,23 +17,20 @@
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "설인": {
-      "이미지_경로": null,
+    "Yeti": {
+      "id": "fm4_1",
+      "name_ko": "설인",
+      "image_key": "yeti",
+      "이미지_경로": "/images/equipment/champion/familiar/yeti.webp",
 
       "장비_공격력": 125,
       "장비_방어력": 0,
@@ -38,28 +38,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "두꺼비 마녀": {
-      "이미지_경로": null,
+    "Toadwitch": {
+      "id": "fm5_1",
+      "name_ko": "두꺼비 마녀",
+      "image_key": "toadwitch",
+      "이미지_경로": "/images/equipment/champion/familiar/toadwitch.webp",
 
       "장비_공격력": 175,
       "장비_방어력": 175,
@@ -67,28 +64,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "머시군": {
-      "이미지_경로": null,
+    "Mushgoon": {
+      "id": "fm6_1",
+      "name_ko": "머시군",
+      "image_key": "mushgoon",
+      "이미지_경로": "/images/equipment/champion/familiar/mushgoon.webp",
 
       "장비_공격력": 230,
       "장비_방어력": 0,
@@ -96,28 +90,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "아누비스": {
-      "이미지_경로": null,
+    "Anubis": {
+      "id": "fm7_1",
+      "name_ko": "아누비스",
+      "image_key": "anubis",
+      "이미지_경로": "/images/equipment/champion/familiar/anubis.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 320,
@@ -125,18 +116,21 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["어둠"],
-      "영혼친밀감": ["늑대"],
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": ["Wolf"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
-	
-    "기린": {
-      "이미지_경로": null,
+
+
+    "Kirin": {
+      "id": "fm7_2",
+      "name_ko": "기린",
+      "image_key": "kirin",
+      "이미지_경로": "/images/equipment/champion/familiar/kirin.webp",
 
       "장비_공격력": 320,
       "장비_방어력": 0,
@@ -144,28 +138,25 @@
       "장비_치명타확률%": 7,
       "장비_회피%": 0,
 
-      "원소친밀감": ["모든 원소"],
-      "영혼친밀감": ["기린"],
+      "원소친밀감": ["All"],
+      "영혼친밀감": ["Kirin"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "키클롭스": {
-      "이미지_경로": null,
+    "Cyclops": {
+      "id": "fm8_1",
+      "name_ko": "키클롭스",
+      "image_key": "cyclops",
+      "이미지_경로": "/images/equipment/champion/familiar/cyclops.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
@@ -174,27 +165,24 @@
       "장비_회피%": 10,
 
       "원소친밀감": null,
-      "영혼친밀감": ["말"],
+      "영혼친밀감": ["Horse"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "독재자": {
-      "이미지_경로": null,
+    "Tyrant": {
+      "id": "fm9_1",
+      "name_ko": "독재자",
+      "image_key": "tyrant",
+      "이미지_경로": "/images/equipment/champion/familiar/tyrant.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 445,
@@ -202,28 +190,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "인어": {
-      "이미지_경로": null,
+    "Mermaid": {
+      "id": "fm10_1",
+      "name_ko": "인어",
+      "image_key": "mermaid",
+      "이미지_경로": "/images/equipment/champion/familiar/mermaid.webp",
 
       "장비_공격력": 510,
       "장비_방어력": 510,
@@ -231,28 +216,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "하피": {
-      "이미지_경로": null,
+    "Harpy": {
+      "id": "fm11_1",
+      "name_ko": "하피",
+      "image_key": "harpy",
+      "이미지_경로": "/images/equipment/champion/familiar/harpy.webp",
 
       "장비_공격력": 660,
       "장비_방어력": 0,
@@ -260,18 +242,21 @@
       "장비_치명타확률%": 10,
       "장비_회피%": 0,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 골렘": {
-      "이미지_경로": null,
+    "Opulent Golem": {
+      "id": "fm11_2",
+      "name_ko": "호화로운 골렘",
+      "image_key": "opulent_golem",
+      "이미지_경로": "/images/equipment/champion/familiar/opulent_golem.webp",
 
       "장비_공격력": 660,
       "장비_방어력": 0,
@@ -279,28 +264,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "크러쉬타션": {
-      "이미지_경로": null,
+    "Crushtacean": {
+      "id": "fm12_1",
+      "name_ko": "크러쉬타션",
+      "image_key": "crushtacean",
+      "이미지_경로": "/images/equipment/champion/familiar/crushtacean.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 835,
@@ -308,28 +290,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "보이들링": {
-      "이미지_경로": null,
+    "Voidling": {
+      "id": "fm13_1",
+      "name_ko": "보이들링",
+      "image_key": "voidling",
+      "이미지_경로": "/images/equipment/champion/familiar/voidling.webp",
 
       "장비_공격력": 1070,
       "장비_방어력": 1070,
@@ -337,28 +316,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "아바타": {
-      "이미지_경로": null,
+    "Avatar": {
+      "id": "fm14_1",
+      "name_ko": "아바타",
+      "image_key": "avatar",
+      "이미지_경로": "/images/equipment/champion/familiar/avatar.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 1335,
@@ -366,18 +342,21 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 골렘": {
-      "이미지_경로": null,
+    "Platinum Golem": {
+      "id": "fm14_2",
+      "name_ko": "플래티넘 골렘",
+      "image_key": "platinum_golem",
+      "이미지_경로": "/images/equipment/champion/familiar/platinum_golem.webp",
 
       "장비_공격력": 1335,
       "장비_방어력": 1335,
@@ -385,28 +364,25 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "티라노": {
-      "이미지_경로": null,
+    "Rex": {
+      "id": "fm15_1",
+      "name_ko": "티라노",
+      "image_key": "rex",
+      "이미지_경로": "/images/equipment/champion/familiar/rex.webp",
 
       "장비_공격력": 1545,
       "장비_방어력": 0,
@@ -414,18 +390,21 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
 
-      "원소친밀감": ["대지"],
-      "영혼친밀감": ["공룡"],
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "춤추는 사자": {
-      "이미지_경로": null,
+    "Dancing Lion": {
+      "id": "fm15_2",
+      "name_ko": "춤추는 사자",
+      "image_key": "dancing_lion",
+      "이미지_경로": "/images/equipment/champion/familiar/dancing_lion.webp",
 
       "장비_공격력": 1590,
       "장비_방어력": 0,
@@ -434,12 +413,12 @@
       "장비_회피%": 10,
 
       "원소친밀감": null,
-      "영혼친밀감": ["사자"],
+      "영혼친밀감": ["Lion"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

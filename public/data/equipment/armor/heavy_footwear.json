@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "정강이 보호대": {
-      "이미지_경로": null,
+    "Shin Guards": {
+      "id": "hf1_1",
+      "name_ko": "정강이 보호대",
+      "image_key": "shin_guards",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/shin_guards.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 8,
@@ -9,30 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 10,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "2티어": {
-    "롱 부츠": {
-      "이미지_경로": null,
+    "Long Boots": {
+      "id": "hf2_1",
+      "name_ko": "롱 부츠",
+      "image_key": "long_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/long_boots.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 17,
@@ -40,30 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 20,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "3티어": {
-    "강철 정강이 보호대": {
-      "이미지_경로": null,
+    "Iron Greaves": {
+      "id": "hf3_1",
+      "name_ko": "강철 정강이 보호대",
+      "image_key": "iron_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/iron_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 28,
@@ -71,19 +68,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 34,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "영웅의 부츠": {
-      "이미지_경로": null,
+
+    "Hero's Boots": {
+      "id": "hf3_2",
+      "name_ko": "영웅의 부츠",
+      "image_key": "hero's_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/hero's_boots.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 34,
@@ -91,30 +92,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 51,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "4티어": {
-    "강화 정강이 보호대": {
-      "이미지_경로": null,
+    "Reinforced Greaves": {
+      "id": "hf4_1",
+      "name_ko": "강화 정강이 보호대",
+      "image_key": "reinforced_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/reinforced_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 47,
@@ -122,19 +120,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 56,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "삑삑이 신발": {
-      "이미지_경로": null,
+
+    "Plated Squeakers": {
+      "id": "hf4_2",
+      "name_ko": "삑삑이 신발",
+      "image_key": "plated_squeakers",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/plated_squeakers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 54,
@@ -142,30 +144,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 80,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "5티어": {
-    "기사의 쇠 구두": {
-      "이미지_경로": null,
+    "Knight Sollerets": {
+      "id": "hf5_1",
+      "name_ko": "기사의 쇠 구두",
+      "image_key": "knight_sollerets",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/knight_sollerets.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 84,
@@ -173,19 +172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 101,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "신더솔": {
-      "이미지_경로": null,
+
+    "Cindersole": {
+      "id": "hf5_2",
+      "name_ko": "신더솔",
+      "image_key": "cindersole",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/cindersole.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 129,
@@ -193,19 +196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 155,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["불"],
+      "고유원소종류": ["Fire"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "전쟁군주 부츠": {
-      "이미지_경로": null,
+
+    "Warlord Boots": {
+      "id": "hf5_3",
+      "name_ko": "전쟁군주 부츠",
+      "image_key": "warlord_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/warlord_boots.webp",
 
       "장비_공격력": 25,
       "장비_방어력": 100,
@@ -213,30 +220,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 140,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "6티어": {
-    "성전사 부츠": {
-      "이미지_경로": null,
+    "Paladin Boots": {
+      "id": "hf6_1",
+      "name_ko": "성전사 부츠",
+      "image_key": "paladin_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/paladin_boots.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 115,
@@ -244,19 +248,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 138,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "강아지 발자국": {
-      "이미지_경로": null,
+
+    "Canid Paws": {
+      "id": "hf6_2",
+      "name_ko": "강아지 발자국",
+      "image_key": "canid_paws",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/canid_paws.webp",
 
       "장비_공격력": 31,
       "장비_방어력": 125,
@@ -264,19 +272,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 175,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["늑대"],
+      "영혼친밀감": ["Wolf"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "재기차기 부츠": {
-      "이미지_경로": null,
+
+    "Ashkickers": {
+      "id": "hf6_3",
+      "name_ko": "재기차기 부츠",
+      "image_key": "ashkickers",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/ashkickers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 125,
@@ -284,30 +296,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 190,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "7티어": {
-    "사무라이 하이다테": {
-      "이미지_경로": null,
+    "Samurai Haidate": {
+      "id": "hf7_1",
+      "name_ko": "사무라이 하이다테",
+      "image_key": "samurai_haidate",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/samurai_haidate.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 140,
@@ -315,19 +324,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 168,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "황옥 정강이 보호대": {
-      "이미지_경로": null,
+
+    "Topaz Greaves": {
+      "id": "hf7_2",
+      "name_ko": "황옥 정강이 보호대",
+      "image_key": "topaz_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/topaz_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 160,
@@ -335,30 +348,51 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 242,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Xenotype Walkers": {
+      "id": "hf7_3",
+      "name_ko": "제노타입 워커",
+      "image_key": "xenotype_walkers",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/xenotype_walkers.webp",
+
+      "장비_공격력": 40,
+      "장비_방어력": 160,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 224,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "8티어": {
-    "장군 정강이 보호대": {
-      "이미지_경로": null,
+    "General Greaves": {
+      "id": "hf8_1",
+      "name_ko": "장군 정강이 보호대",
+      "image_key": "general_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/general_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 180,
@@ -366,19 +400,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 216,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "CM-73 제트 부츠": {
-      "이미지_경로": null,
+
+    "CM-73 Jetboots": {
+      "id": "hf8_2",
+      "name_ko": "CM-73 제트 부츠",
+      "image_key": "cm-73_jetboots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/cm-73_jetboots.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 180,
@@ -386,30 +424,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 271,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "9티어": {
-    "광전사 스톰퍼": {
-      "이미지_경로": null,
+    "Berserker Stompers": {
+      "id": "hf9_1",
+      "name_ko": "광전사 스톰퍼",
+      "image_key": "berserker_stompers",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/berserker_stompers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 205,
@@ -417,19 +452,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 246,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "고급 부츠": {
-      "이미지_경로": null,
+
+    "Luxurious Boots": {
+      "id": "hf9_2",
+      "name_ko": "고급 부츠",
+      "image_key": "luxurious_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/luxurious_boots.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 215,
@@ -437,19 +476,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 258,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["졸로틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Xolotl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "선봉대 정강이 보호대": {
-      "이미지_경로": null,
+
+    "Vanguard Greaves": {
+      "id": "hf9_3",
+      "name_ko": "선봉대 정강이 보호대",
+      "image_key": "vanguard_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/vanguard_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 225,
@@ -457,19 +500,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 340,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "사라진 전사의 다리 보호대": {
-      "이미지_경로": null,
+
+    "Lost Warrior's Greaves": {
+      "id": "hf9_4",
+      "name_ko": "사라진 전사의 다리 보호대",
+      "image_key": "lost_warrior's_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/lost_warrior's_greaves.webp",
 
       "장비_공격력": 56,
       "장비_방어력": 225,
@@ -477,30 +524,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 315,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "10티어": {
-    "저거너트 정강이 보호대": {
-      "이미지_경로": null,
+    "Juggernaut Greaves": {
+      "id": "hf10_1",
+      "name_ko": "저거너트 정강이 보호대",
+      "image_key": "juggernaut_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/juggernaut_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 235,
@@ -508,19 +552,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 282,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "버니버니 부츠": {
-      "이미지_경로": null,
+
+    "Bunbun Booties": {
+      "id": "hf10_2",
+      "name_ko": "버니버니 부츠",
+      "image_key": "bunbun_booties",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/bunbun_booties.webp",
 
       "장비_공격력": 61,
       "장비_방어력": 245,
@@ -528,19 +576,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 343,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["토끼"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "5일의 다리 보호대": {
-      "이미지_경로": null,
+
+    "Greaves of the Fifth": {
+      "id": "hf10_3",
+      "name_ko": "5일의 다리 보호대",
+      "image_key": "greaves_of_the_fifth",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/greaves_of_the_fifth.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 245,
@@ -548,30 +600,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 369,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "11티어": {
-    "셀레스틸 부츠": {
-      "이미지_경로": null,
+    "Celesteel Boots": {
+      "id": "hf11_1",
+      "name_ko": "셀레스틸 부츠",
+      "image_key": "celesteel_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/celesteel_boots.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 305,
@@ -579,19 +628,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 366,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "별 스팽글 정강이 보호대": {
-      "이미지_경로": null,
+
+    "Star-Spangled Greaves": {
+      "id": "hf11_2",
+      "name_ko": "별 스팽글 정강이 보호대",
+      "image_key": "star-spangled_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/star-spangled_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 305,
@@ -599,19 +652,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 461,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "산타의 지킴이 부츠": {
-      "이미지_경로": null,
+
+    "Santa's Guard Boots": {
+      "id": "hf11_3",
+      "name_ko": "산타의 지킴이 부츠",
+      "image_key": "santa's_guard_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/santa's_guard_boots.webp",
 
       "장비_공격력": 80,
       "장비_방어력": 320,
@@ -619,30 +676,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 448,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["크리스마스"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "12티어": {
-    "버밀리온 수비대 정강이 보호대": {
-      "이미지_경로": null,
+    "Vermilion Guard Greaves": {
+      "id": "hf12_1",
+      "name_ko": "버밀리온 수비대 정강이 보호대",
+      "image_key": "vermilion_guard_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/vermilion_guard_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 385,
@@ -650,19 +704,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 462,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
-      "영혼친밀감": ["불사조"],
+      "원소친밀감": ["Fire"],
+      "영혼친밀감": ["Phoenix"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "열정의 부츠": {
-      "이미지_경로": null,
+
+    "Boots of Zeal": {
+      "id": "hf12_2",
+      "name_ko": "열정의 부츠",
+      "image_key": "boots_of_zeal",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/boots_of_zeal.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 499,
@@ -670,19 +728,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 599,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 12,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "과일 부츠": {
-      "이미지_경로": null,
+
+    "Fruity Booties": {
+      "id": "hf12_3",
+      "name_ko": "과일 부츠",
+      "image_key": "fruity_booties",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/fruity_booties.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 400,
@@ -690,19 +752,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 605,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "대지"],
+      "원소친밀감": ["Earth", "Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "호화로운 다리 보호대": {
-      "이미지_경로": null,
+
+    "Opulent Greaves": {
+      "id": "hf12_4",
+      "name_ko": "호화로운 다리 보호대",
+      "image_key": "opulent_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/opulent_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 400,
@@ -710,19 +776,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 480,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
-	
 
-    "렉스 스톰퍼": {
-      "이미지_경로": null,
+
+    "Rex Stompers": {
+      "id": "hf12_5",
+      "name_ko": "렉스 스톰퍼",
+      "image_key": "rex_stompers",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/rex_stompers.webp",
 
       "장비_공격력": 100,
       "장비_방어력": 400,
@@ -730,30 +800,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 560,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "13티어": {
-    "베일파이어 다리 보호대": {
-      "이미지_경로": null,
+    "Balefire Greaves": {
+      "id": "hf13_1",
+      "name_ko": "베일파이어 다리 보호대",
+      "image_key": "balefire_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/balefire_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 495,
@@ -761,19 +828,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 594,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "명인 부츠": {
-      "이미지_경로": null,
+
+    "Titan Boots": {
+      "id": "hf13_2",
+      "name_ko": "명인 부츠",
+      "image_key": "titan_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/titan_boots.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 495,
@@ -781,19 +852,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 749,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["명인"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Titan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "크리스털 쇠 구두": {
-      "이미지_경로": null,
+    "Crystal Sollerets": {
+      "id": "hf13_3",
+      "name_ko": "크리스털 쇠 구두",
+      "image_key": "crystal_sollerets",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/crystal_sollerets.webp",
 
       "장비_공격력": 128,
       "장비_방어력": 510,
@@ -801,30 +876,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 714,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "14티어": {
-    "코발트 정강이 보호대": {
-      "이미지_경로": null,
+    "Cobalt Greaves": {
+      "id": "hf14_1",
+      "name_ko": "코발트 정강이 보호대",
+      "image_key": "cobalt_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/cobalt_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 615,
@@ -832,19 +904,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 738,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "독재자의 발걸음": {
-      "이미지_경로": null,
+
+    "Tyrant's Wake": {
+      "id": "hf14_2",
+      "name_ko": "독재자의 발걸음",
+      "image_key": "tyrant's_wake",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/tyrant's_wake.webp",
 
       "장비_공격력": 154,
       "장비_방어력": 615,
@@ -852,19 +928,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 861,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "마그마코어 다리 보호대": {
-      "이미지_경로": null,
+
+    "Magmacore Greaves": {
+      "id": "hf14_3",
+      "name_ko": "마그마코어 다리 보호대",
+      "image_key": "magmacore_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/magmacore_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 615,
@@ -872,19 +952,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 933,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "핌불베르트 부츠": {
-      "이미지_경로": null,
+
+    "Fimbulwinter Boots": {
+      "id": "hf14_4",
+      "name_ko": "핌불베르트 부츠",
+      "image_key": "fimbulwinter_boots",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/fimbulwinter_boots.webp",
 
       "장비_공격력": 159,
       "장비_방어력": 635,
@@ -892,19 +976,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 889,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "락 스톰퍼": {
-      "이미지_경로": null,
+
+    "Rock Stompers": {
+      "id": "hf14_5",
+      "name_ko": "락 스톰퍼",
+      "image_key": "rock_stompers",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/rock_stompers.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 680,
@@ -912,32 +1000,29 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1026,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
       "유물": {
-	    "효과": "+방어력 250, +방어력 25%\n회피가 0%로 고정되며 변경할 수 없습니다."
-	  }
+        "효과": "+방어력 250, +방어력 25%\n회피가 0%로 고정되며 변경할 수 없습니다."
+      },
+      "천상": 1.25
     }
   },
 
 
 
 
-
-
-
-
-
-
-
   "15티어": {
-    "베히모스 발": {
-      "이미지_경로": null,
+    "Behemoth Feet": {
+      "id": "hf15_1",
+      "name_ko": "베히모스 발",
+      "image_key": "behemoth_feet",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/behemoth_feet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 710,
@@ -945,19 +1030,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 852,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["베히모스"],
+      "영혼친밀감": ["Behemoth"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "테디베어 발": {
-      "이미지_경로": null,
+
+    "Teddy Bear Feet": {
+      "id": "hf15_2",
+      "name_ko": "테디베어 발",
+      "image_key": "teddy_bear_feet",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/teddy_bear_feet.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 710,
@@ -965,19 +1054,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1077,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["곰"],
+      "영혼친밀감": ["Bear"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "크람푸스 발굽": {
-      "이미지_경로": null,
+
+    "Krampus Hooves": {
+      "id": "hf15_3",
+      "name_ko": "크람푸스 발굽",
+      "image_key": "krampus_hooves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/krampus_hooves.webp",
 
       "장비_공격력": 178,
       "장비_방어력": 710,
@@ -985,19 +1078,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 994,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
-      "영혼친밀감": ["크람푸스"],
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": ["Krampus"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
 
-    "플래티넘 다리 보호대": {
-      "이미지_경로": null,
+
+    "Platinum Greaves": {
+      "id": "hf15_4",
+      "name_ko": "플래티넘 다리 보호대",
+      "image_key": "platinum_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/platinum_greaves.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 710,
@@ -1005,14 +1102,39 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 852,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1
+    },
 
-      "유물": null
+
+    "Stone Jaguar Greaves": {
+      "id": "hf15_5",
+      "name_ko": "돌 재규어 정강이 보호대",
+      "image_key": "stone_jaguar_greaves",
+      "이미지_경로": "/images/equipment/armor/heavy_footwear/stone_jaguar_greaves.webp",
+
+      "장비_공격력": 0,
+      "장비_방어력": 710,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1278,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Tiger"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

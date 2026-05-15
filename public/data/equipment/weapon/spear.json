@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "투창": {
-      "이미지_경로": null,
+    "Javelin": {
+      "id": "sp1_1",
+      "name_ko": "투창",
+      "image_key": "javelin",
+      "이미지_경로": "/images/equipment/weapon/spear/javelin.webp",
 
       "장비_공격력": 30,
       "장비_방어력": 0,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 24,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "사냥용 창": {
-      "이미지_경로": null,
+    "Hunting Spear": {
+      "id": "sp2_1",
+      "name_ko": "사냥용 창",
+      "image_key": "hunting_spear",
+      "이미지_경로": "/images/equipment/weapon/spear/hunting_spear.webp",
 
       "장비_공격력": 50,
       "장비_방어력": 0,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 40,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "검날창": {
-      "이미지_경로": null,
+    "Bladed Spear": {
+      "id": "sp3_1",
+      "name_ko": "검날창",
+      "image_key": "bladed_spear",
+      "이미지_경로": "/images/equipment/weapon/spear/bladed_spear.webp",
 
       "장비_공격력": 84,
       "장비_방어력": 0,
@@ -69,19 +68,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 67,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "튼튼한 쇠스랑": {
-      "이미지_경로": null,
+    "Sturdy Pitchfork": {
+      "id": "sp3_2",
+      "name_ko": "튼튼한 쇠스랑",
+      "image_key": "sturdy_pitchfork",
+      "이미지_경로": "/images/equipment/weapon/spear/sturdy_pitchfork.webp",
 
       "장비_공격력": 96,
       "장비_방어력": 0,
@@ -89,29 +92,27 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 115,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "랜서": {
-      "이미지_경로": null,
+    "Ranseur": {
+      "id": "sp4_1",
+      "name_ko": "랜서",
+      "image_key": "ranseur",
+      "이미지_경로": "/images/equipment/weapon/spear/ranseur.webp",
 
       "장비_공격력": 124,
       "장비_방어력": 0,
@@ -119,29 +120,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 99,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "트리슐라": {
-      "이미지_경로": null,
+    "Trishula": {
+      "id": "sp5_1",
+      "name_ko": "트리슐라",
+      "image_key": "trishula",
+      "이미지_경로": "/images/equipment/weapon/spear/trishula.webp",
 
       "장비_공격력": 164,
       "장비_방어력": 0,
@@ -149,19 +148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 131,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "버니버니 창": {
-      "이미지_경로": null,
+    "Bunbun Lance": {
+      "id": "sp5_2",
+      "name_ko": "버니버니 창",
+      "image_key": "bunbun_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/bunbun_lance.webp",
 
       "장비_공격력": 176,
       "장비_방어력": 44,
@@ -169,19 +172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 194,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
-      "영혼친밀감": ["토끼"],
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "전쟁 마스터의 미늘창": {
-      "이미지_경로": null,
+    "Warlord Halberd": {
+      "id": "sp5_3",
+      "name_ko": "전쟁 마스터의 미늘창",
+      "image_key": "warlord_halberd",
+      "이미지_경로": "/images/equipment/weapon/spear/warlord_halberd.webp",
 
       "장비_공격력": 192,
       "장비_방어력": 0,
@@ -189,29 +196,27 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 230,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "스피툼": {
-      "이미지_경로": null,
+    "Spetum": {
+      "id": "sp6_1",
+      "name_ko": "스피툼",
+      "image_key": "spetum",
+      "이미지_경로": "/images/equipment/weapon/spear/spetum.webp",
 
       "장비_공격력": 210,
       "장비_방어력": 0,
@@ -219,19 +224,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 168,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "트리톤 창": {
-      "이미지_경로": null,
+    "Triton Lance": {
+      "id": "sp6_2",
+      "name_ko": "트리톤 창",
+      "image_key": "triton_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/triton_lance.webp",
 
       "장비_공격력": 277,
       "장비_방어력": 0,
@@ -239,19 +248,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 222,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "쿠훌린의 창": {
-      "이미지_경로": null,
+    "Cu Chulainn's Lance": {
+      "id": "sp6_3",
+      "name_ko": "쿠훌린의 창",
+      "image_key": "cu_chulainn's_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/cu_chulainn's_lance.webp",
 
       "장비_공격력": 240,
       "장비_방어력": 0,
@@ -259,29 +272,27 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 288,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "왕족의 미늘창": {
-      "이미지_경로": null,
+    "Royal Halberd": {
+      "id": "sp7_1",
+      "name_ko": "왕족의 미늘창",
+      "image_key": "royal_halberd",
+      "이미지_경로": "/images/equipment/weapon/spear/royal_halberd.webp",
 
       "장비_공격력": 270,
       "장비_방어력": 0,
@@ -289,19 +300,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 216,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "방천화극": {
-      "이미지_경로": null,
+    "Fangtian Huaji": {
+      "id": "sp7_2",
+      "name_ko": "방천화극",
+      "image_key": "fangtian_huaji",
+      "이미지_경로": "/images/equipment/weapon/spear/fangtian_huaji.webp",
 
       "장비_공격력": 270,
       "장비_방어력": 68,
@@ -309,19 +324,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 298,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["독사"],
+      "영혼친밀감": ["Viper"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "고드름 투창": {
-      "이미지_경로": null,
+    "Twicicle Javelin": {
+      "id": "sp7_3",
+      "name_ko": "고드름 투창",
+      "image_key": "twicicle_javelin",
+      "이미지_경로": "/images/equipment/weapon/spear/twicicle_javelin.webp",
 
       "장비_공격력": 280,
       "장비_방어력": 70,
@@ -329,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 308,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "전사의 투창": {
-      "이미지_경로": null,
+    "Warrior Assegai": {
+      "id": "sp7_4",
+      "name_ko": "전사의 투창",
+      "image_key": "warrior_assegai",
+      "이미지_경로": "/images/equipment/weapon/spear/warrior_assegai.webp",
 
       "장비_공격력": 280,
       "장비_방어력": 0,
@@ -349,29 +372,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 274,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "챔피언 창": {
-      "이미지_경로": null,
+    "Champion Lance": {
+      "id": "sp8_1",
+      "name_ko": "챔피언 창",
+      "image_key": "champion_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/champion_lance.webp",
 
       "장비_공격력": 320,
       "장비_방어력": 0,
@@ -379,19 +400,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 256,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "일몰의 창": {
-      "이미지_경로": null,
+    "Sunset Yari": {
+      "id": "sp8_2",
+      "name_ko": "일몰의 창",
+      "image_key": "sunset_yari",
+      "이미지_경로": "/images/equipment/weapon/spear/sunset_yari.webp",
 
       "장비_공격력": 330,
       "장비_방어력": 0,
@@ -399,19 +424,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 314,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "별 창": {
-      "이미지_경로": null,
+    "Star Lancer": {
+      "id": "sp8_3",
+      "name_ko": "별 창",
+      "image_key": "star_lancer",
+      "이미지_경로": "/images/equipment/weapon/spear/star_lancer.webp",
 
       "장비_공격력": 330,
       "장비_방어력": 83,
@@ -419,19 +448,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 364,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "올림픽 투창": {
-      "이미지_경로": null,
+    "Olympian Javelin": {
+      "id": "sp8_4",
+      "name_ko": "올림픽 투창",
+      "image_key": "olympian_javelin",
+      "이미지_경로": "/images/equipment/weapon/spear/olympian_javelin.webp",
 
       "장비_공격력": 350,
       "장비_방어력": 0,
@@ -439,29 +472,27 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 420,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
+      "원소친밀감": ["Gold"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "와이번 글레이브": {
-      "이미지_경로": null,
+    "Wyvern Glaive": {
+      "id": "sp9_1",
+      "name_ko": "와이번 글레이브",
+      "image_key": "wyvern_glaive",
+      "이미지_경로": "/images/equipment/weapon/spear/wyvern_glaive.webp",
 
       "장비_공격력": 370,
       "장비_방어력": 0,
@@ -469,19 +500,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 296,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "호어투스 창": {
-      "이미지_경로": null,
+    "Hoartooth Lance": {
+      "id": "sp9_2",
+      "name_ko": "호어투스 창",
+      "image_key": "hoartooth_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/hoartooth_lance.webp",
 
       "장비_공격력": 380,
       "장비_방어력": 0,
@@ -489,19 +524,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 364,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["바다코끼리"],
+      "영혼친밀감": ["Walrus"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "고급 창": {
-      "이미지_경로": null,
+    "Luxurious Spear": {
+      "id": "sp9_3",
+      "name_ko": "고급 창",
+      "image_key": "luxurious_spear",
+      "이미지_경로": "/images/equipment/weapon/spear/luxurious_spear.webp",
 
       "장비_공격력": 380,
       "장비_방어력": 0,
@@ -509,19 +548,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 304,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["졸로틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Xolotl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "가시나무 레이저": {
-      "이미지_경로": null,
+    "Blackthorn Razor": {
+      "id": "sp9_4",
+      "name_ko": "가시나무 레이저",
+      "image_key": "blackthorn_razor",
+      "이미지_경로": "/images/equipment/weapon/spear/blackthorn_razor.webp",
 
       "장비_공격력": 400,
       "장비_방어력": 100,
@@ -529,19 +572,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 440,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "빈터 창": {
-      "이미지_경로": null,
+    "Glade Lance": {
+      "id": "sp9_5",
+      "name_ko": "빈터 창",
+      "image_key": "glade_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/glade_lance.webp",
 
       "장비_공격력": 400,
       "장비_방어력": 0,
@@ -549,29 +596,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 385,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기", "대지"],
+      "원소친밀감": ["Air", "Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "스텔라리아": {
-      "이미지_경로": null,
+    "Stellaria": {
+      "id": "sp10_1",
+      "name_ko": "스텔라리아",
+      "image_key": "stellaria",
+      "이미지_경로": "/images/equipment/weapon/spear/stellaria.webp",
 
       "장비_공격력": 420,
       "장비_방어력": 0,
@@ -579,19 +624,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 336,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "롱기누스": {
-      "이미지_경로": null,
+    "Longinus": {
+      "id": "sp10_2",
+      "name_ko": "롱기누스",
+      "image_key": "longinus",
+      "이미지_경로": "/images/equipment/weapon/spear/longinus.webp",
 
       "장비_공격력": 492,
       "장비_방어력": 0,
@@ -599,19 +648,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 394,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["빛"],
+      "고유원소종류": ["Light"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "버드베인 미늘창": {
-      "이미지_경로": null,
+    "Birdbane Halberd": {
+      "id": "sp10_3",
+      "name_ko": "버드베인 미늘창",
+      "image_key": "birdbane_halberd",
+      "이미지_경로": "/images/equipment/weapon/spear/birdbane_halberd.webp",
 
       "장비_공격력": 440,
       "장비_방어력": 110,
@@ -619,19 +672,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 484,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
-      "영혼친밀감": ["그리핀"],
+      "원소친밀감": ["Air"],
+      "영혼친밀감": ["Griffin"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "비명 증폭기": {
-      "이미지_경로": null,
+    "Scream Amplifier": {
+      "id": "sp10_4",
+      "name_ko": "비명 증폭기",
+      "image_key": "scream_amplifier",
+      "이미지_경로": "/images/equipment/weapon/spear/scream_amplifier.webp",
 
       "장비_공격력": 440,
       "장비_방어력": 0,
@@ -639,29 +696,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 422,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기", "어둠"],
+      "원소친밀감": ["Air", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "티타니아의 선물": {
-      "이미지_경로": null,
+    "Titania's Gift": {
+      "id": "sp11_1",
+      "name_ko": "티타니아의 선물",
+      "image_key": "titania's_gift",
+      "이미지_경로": "/images/equipment/weapon/spear/titania's_gift.webp",
 
       "장비_공격력": 540,
       "장비_방어력": 0,
@@ -669,19 +724,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 432,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "광대 창기사": {
-      "이미지_경로": null,
+    "Jester Jouster": {
+      "id": "sp11_2",
+      "name_ko": "광대 창기사",
+      "image_key": "jester_jouster",
+      "이미지_경로": "/images/equipment/weapon/spear/jester_jouster.webp",
 
       "장비_공격력": 540,
       "장비_방어력": 0,
@@ -689,19 +748,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 517,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "거룩한 밤 창": {
-      "이미지_경로": null,
+    "Holy Night Lance": {
+      "id": "sp11_3",
+      "name_ko": "거룩한 밤 창",
+      "image_key": "holy_night_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/holy_night_lance.webp",
 
       "장비_공격력": 560,
       "장비_방어력": 140,
@@ -709,29 +772,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 616,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["크리스마스"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Christmas"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "하늘의 분노": {
-      "이미지_경로": null,
+    "Heaven's Wrath": {
+      "id": "sp12_1",
+      "name_ko": "하늘의 분노",
+      "image_key": "heaven's_wrath",
+      "이미지_경로": "/images/equipment/weapon/spear/heaven's_wrath.webp",
 
       "장비_공격력": 690,
       "장비_방어력": 0,
@@ -739,19 +800,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 552,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "프로펠러 창": {
-      "이미지_경로": null,
+    "Propeller-Pike": {
+      "id": "sp12_2",
+      "name_ko": "프로펠러 창",
+      "image_key": "propeller-pike",
+      "이미지_경로": "/images/equipment/weapon/spear/propeller-pike.webp",
 
       "장비_공격력": 690,
       "장비_방어력": 0,
@@ -759,19 +824,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 657,
+      "장비_에어쉽파워보너스": 1.2,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "뾰족한 파라솔": {
-      "이미지_경로": null,
+    "Pokey Parasol": {
+      "id": "sp12_3",
+      "name_ko": "뾰족한 파라솔",
+      "image_key": "pokey_parasol",
+      "이미지_경로": "/images/equipment/weapon/spear/pokey_parasol.webp",
 
       "장비_공격력": 710,
       "장비_방어력": 178,
@@ -779,19 +848,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 782,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 미늘창": {
-      "이미지_경로": null,
+    "Opulent Halberd": {
+      "id": "sp12_4",
+      "name_ko": "호화로운 미늘창",
+      "image_key": "opulent_halberd",
+      "이미지_경로": "/images/equipment/weapon/spear/opulent_halberd.webp",
 
       "장비_공격력": 710,
       "장비_방어력": 0,
@@ -799,29 +872,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 568,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "새까만 바디시": {
-      "이미지_경로": null,
+    "Blackened Bardiche": {
+      "id": "sp13_1",
+      "name_ko": "새까만 바디시",
+      "image_key": "blackened_bardiche",
+      "이미지_경로": "/images/equipment/weapon/spear/blackened_bardiche.webp",
 
       "장비_공격력": 870,
       "장비_방어력": 0,
@@ -829,19 +900,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 696,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "격랑": {
-      "이미지_경로": null,
+    "Riptide": {
+      "id": "sp13_2",
+      "name_ko": "격랑",
+      "image_key": "riptide",
+      "이미지_경로": "/images/equipment/weapon/spear/riptide.webp",
 
       "장비_공격력": 1018,
       "장비_방어력": 0,
@@ -849,19 +924,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 814,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 12,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "살벌한 작살": {
-      "이미지_경로": null,
+    "Dire Kakivak": {
+      "id": "sp13_3",
+      "name_ko": "살벌한 작살",
+      "image_key": "dire_kakivak",
+      "이미지_경로": "/images/equipment/weapon/spear/dire_kakivak.webp",
 
       "장비_공격력": 870,
       "장비_방어력": 0,
@@ -869,19 +948,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 831,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
-      "영혼친밀감": ["크라켄"],
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Kraken"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "천룡 창": {
-      "이미지_경로": null,
+    "Tianlong Lance": {
+      "id": "sp13_4",
+      "name_ko": "천룡 창",
+      "image_key": "tianlong_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/tianlong_lance.webp",
 
       "장비_공격력": 900,
       "장비_방어력": 225,
@@ -889,29 +972,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 990,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["바하무트"],
+      "영혼친밀감": ["Bahamut"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "해신의 권한": {
-      "이미지_경로": null,
+    "Neptune's Authority": {
+      "id": "sp14_1",
+      "name_ko": "해신의 권한",
+      "image_key": "neptune's_authority",
+      "이미지_경로": "/images/equipment/weapon/spear/neptune's_authority.webp",
 
       "장비_공격력": 1090,
       "장비_방어력": 0,
@@ -919,19 +1000,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 872,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
-      "영혼친밀감": ["레비아탄"],
+      "원소친밀감": ["Water"],
+      "영혼친밀감": ["Leviathan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "외날개 미늘창": {
-      "이미지_경로": null,
+    "One-Winged Halberd": {
+      "id": "sp14_2",
+      "name_ko": "외날개 미늘창",
+      "image_key": "one-winged_halberd",
+      "이미지_경로": "/images/equipment/weapon/spear/one-winged_halberd.webp",
 
       "장비_공격력": 1090,
       "장비_방어력": 0,
@@ -939,19 +1024,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1042,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "영광의 불길": {
-      "이미지_경로": null,
+    "Blaze of Glory": {
+      "id": "sp14_3",
+      "name_ko": "영광의 불길",
+      "image_key": "blaze_of_glory",
+      "이미지_경로": "/images/equipment/weapon/spear/blaze_of_glory.webp",
 
       "장비_공격력": 1090,
       "장비_방어력": 273,
@@ -959,29 +1048,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1200,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "꽃봉오리검": {
-      "이미지_경로": null,
+    "Blossomblade": {
+      "id": "sp15_1",
+      "name_ko": "꽃봉오리검",
+      "image_key": "blossomblade",
+      "이미지_경로": "/images/equipment/weapon/spear/blossomblade.webp",
 
       "장비_공격력": 1260,
       "장비_방어력": 0,
@@ -989,19 +1076,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1008,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기", "대지"],
-      "영혼친밀감": ["레비아탄"],
+      "원소친밀감": ["Air", "Earth"],
+      "영혼친밀감": ["Leviathan"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "석양 브리오나크": {
-      "이미지_경로": null,
+    "Twilight Brionac": {
+      "id": "sp15_2",
+      "name_ko": "석양 브리오나크",
+      "image_key": "twilight_brionac",
+      "이미지_경로": "/images/equipment/weapon/spear/twilight_brionac.webp",
 
       "장비_공격력": 1260,
       "장비_방어력": 315,
@@ -1009,19 +1100,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1386,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛", "어둠"],
+      "원소친밀감": ["Light", "Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 창": {
-      "이미지_경로": null,
+    "Platinum Lance": {
+      "id": "sp15_3",
+      "name_ko": "플래티넘 창",
+      "image_key": "platinum_lance",
+      "이미지_경로": "/images/equipment/weapon/spear/platinum_lance.webp",
 
       "장비_공격력": 1260,
       "장비_방어력": 0,
@@ -1029,14 +1124,39 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1008,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1
+    },
 
-      "유물": null
+
+    "Papertape Poker": {
+      "id": "sp15_4",
+      "name_ko": "종이테이프 포커",
+      "image_key": "papertape_poker",
+      "이미지_경로": "/images/equipment/weapon/spear/papertape_poker.webp",
+
+      "장비_공격력": 1260,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1512,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
     }
   }
 }

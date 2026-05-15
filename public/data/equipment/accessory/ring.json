@@ -1,7 +1,10 @@
 {
   "1티어": {
-    "강철 반지": {
-      "이미지_경로": null,
+    "Iron Ring": {
+      "id": "rg1_1",
+      "name_ko": "강철 반지",
+      "image_key": "iron_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/iron_ring.webp",
 
       "장비_공격력": 29,
       "장비_방어력": 0,
@@ -9,29 +12,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 23,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "2티어": {
-    "합금 고리": {
-      "이미지_경로": null,
+    "Alloy Loop": {
+      "id": "rg2_1",
+      "name_ko": "합금 고리",
+      "image_key": "alloy_loop",
+      "이미지_경로": "/images/equipment/accessory/ring/alloy_loop.webp",
 
       "장비_공격력": 42,
       "장비_방어력": 0,
@@ -39,29 +40,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 34,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "3티어": {
-    "루비 반지": {
-      "이미지_경로": null,
+    "Ruby Ring": {
+      "id": "rg3_1",
+      "name_ko": "루비 반지",
+      "image_key": "ruby_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/ruby_ring.webp",
 
       "장비_공격력": 64,
       "장비_방어력": 0,
@@ -69,19 +68,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 51,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "에메랄드 반지": {
-      "이미지_경로": null,
+    "Emerald Ring": {
+      "id": "rg3_2",
+      "name_ko": "에메랄드 반지",
+      "image_key": "emerald_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/emerald_ring.webp",
 
       "장비_공격력": 96,
       "장비_방어력": 0,
@@ -89,29 +92,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 77,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 4,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "4티어": {
-    "은가락지": {
-      "이미지_경로": null,
+    "Silver Band": {
+      "id": "rg4_1",
+      "name_ko": "은가락지",
+      "image_key": "silver_band",
+      "이미지_경로": "/images/equipment/accessory/ring/silver_band.webp",
 
       "장비_공격력": 88,
       "장비_방어력": 0,
@@ -119,19 +120,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 70,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "열정의 반지": {
-      "이미지_경로": null,
+    "Ring of Passion": {
+      "id": "rg4_2",
+      "name_ko": "열정의 반지",
+      "image_key": "ring_of_passion",
+      "이미지_경로": "/images/equipment/accessory/ring/ring_of_passion.webp",
 
       "장비_공격력": 96,
       "장비_방어력": 0,
@@ -139,29 +144,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 107,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "5티어": {
-    "귀족의 반지": {
-      "이미지_경로": null,
+    "Noble Ring": {
+      "id": "rg5_1",
+      "name_ko": "귀족의 반지",
+      "image_key": "noble_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/noble_ring.webp",
 
       "장비_공격력": 105,
       "장비_방어력": 0,
@@ -169,19 +172,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 84,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "리듬의 반지": {
-      "이미지_경로": null,
+    "Ring of Rhythm": {
+      "id": "rg5_2",
+      "name_ko": "리듬의 반지",
+      "image_key": "ring_of_rhythm",
+      "이미지_경로": "/images/equipment/accessory/ring/ring_of_rhythm.webp",
 
       "장비_공격력": 105,
       "장비_방어력": 0,
@@ -189,19 +196,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 119,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "클라우드의 소원": {
-      "이미지_경로": null,
+    "Claud's Will": {
+      "id": "rg5_3",
+      "name_ko": "클라우드의 소원",
+      "image_key": "claud's_will",
+      "이미지_경로": "/images/equipment/accessory/ring/claud's_will.webp",
 
       "장비_공격력": 115,
       "장비_방어력": 29,
@@ -209,29 +220,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 127,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "기사의 인장": {
-      "이미지_경로": null,
+    "Knight Signet": {
+      "id": "rg6_1",
+      "name_ko": "기사의 인장",
+      "image_key": "knight_signet",
+      "이미지_경로": "/images/equipment/accessory/ring/knight_signet.webp",
 
       "장비_공격력": 120,
       "장비_방어력": 0,
@@ -239,19 +248,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 96,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "자유의 반지": {
-      "이미지_경로": null,
+    "Ring of Liberty": {
+      "id": "rg6_2",
+      "name_ko": "자유의 반지",
+      "image_key": "ring_of_liberty",
+      "이미지_경로": "/images/equipment/accessory/ring/ring_of_liberty.webp",
 
       "장비_공격력": 130,
       "장비_방어력": 33,
@@ -259,19 +272,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 144,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["독수리"],
+      "영혼친밀감": ["Eagle"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "돈 전 고리": {
-      "이미지_경로": null,
+    "Qian Loop": {
+      "id": "rg6_3",
+      "name_ko": "돈 전 고리",
+      "image_key": "qian_loop",
+      "이미지_경로": "/images/equipment/accessory/ring/qian_loop.webp",
 
       "장비_공격력": 130,
       "장비_방어력": 0,
@@ -279,19 +296,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 144,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "사파이어 반지": {
-      "이미지_경로": null,
+    "Sapphire Ring": {
+      "id": "rg6_4",
+      "name_ko": "사파이어 반지",
+      "image_key": "sapphire_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/sapphire_ring.webp",
 
       "장비_공격력": 140,
       "장비_방어력": 35,
@@ -299,29 +320,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 154,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "바트라카이트 돌": {
-      "이미지_경로": null,
+    "Batrachite Stone": {
+      "id": "rg7_1",
+      "name_ko": "바트라카이트 돌",
+      "image_key": "batrachite_stone",
+      "이미지_경로": "/images/equipment/accessory/ring/batrachite_stone.webp",
 
       "장비_공격력": 150,
       "장비_방어력": 0,
@@ -329,19 +348,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 120,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "소울스톤 반지": {
-      "이미지_경로": null,
+    "Soulstone Ring": {
+      "id": "rg7_2",
+      "name_ko": "소울스톤 반지",
+      "image_key": "soulstone_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/soulstone_ring.webp",
 
       "장비_공격력": 217,
       "장비_방어력": 0,
@@ -349,19 +372,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 174,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["어둠"],
+      "고유원소종류": ["Dark"],
       "고유원소티어": 7,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "선택 받은 자의 반지": {
-      "이미지_경로": null,
+    "Ring of the Chosen": {
+      "id": "rg7_3",
+      "name_ko": "선택 받은 자의 반지",
+      "image_key": "ring_of_the_chosen",
+      "이미지_경로": "/images/equipment/accessory/ring/ring_of_the_chosen.webp",
 
       "장비_공격력": 170,
       "장비_방어력": 43,
@@ -369,19 +396,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 188,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "트윈 코일 반지": {
-      "이미지_경로": null,
+    "Twin Coiled Ring": {
+      "id": "rg7_4",
+      "name_ko": "트윈 코일 반지",
+      "image_key": "twin_coiled_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/twin_coiled_ring.webp",
 
       "장비_공격력": 180,
       "장비_방어력": 45,
@@ -389,29 +420,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 198,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
-      "영혼친밀감": ["독사"],
+      "원소친밀감": ["Light"],
+      "영혼친밀감": ["Viper"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "유황 코일": {
-      "이미지_경로": null,
+    "Brimstone Coil": {
+      "id": "rg8_1",
+      "name_ko": "유황 코일",
+      "image_key": "brimstone_coil",
+      "이미지_경로": "/images/equipment/accessory/ring/brimstone_coil.webp",
 
       "장비_공격력": 200,
       "장비_방어력": 0,
@@ -419,19 +448,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 160,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "뱀파이어 친족의 반지": {
-      "이미지_경로": null,
+    "Ring of Vampire Kin": {
+      "id": "rg8_2",
+      "name_ko": "뱀파이어 친족의 반지",
+      "image_key": "ring_of_vampire_kin",
+      "이미지_경로": "/images/equipment/accessory/ring/ring_of_vampire_kin.webp",
 
       "장비_공격력": 210,
       "장비_방어력": 0,
@@ -439,19 +472,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 233,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "생존 끈": {
-      "이미지_경로": null,
+    "Survival Strap": {
+      "id": "rg8_3",
+      "name_ko": "생존 끈",
+      "image_key": "survival_strap",
+      "이미지_경로": "/images/equipment/accessory/ring/survival_strap.webp",
 
       "장비_공격력": 210,
       "장비_방어력": 60,
@@ -459,29 +496,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 240,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "페어포크 밴드": {
-      "이미지_경로": null,
+    "Fairfolk Band": {
+      "id": "rg9_1",
+      "name_ko": "페어포크 밴드",
+      "image_key": "fairfolk_band",
+      "이미지_경로": "/images/equipment/accessory/ring/fairfolk_band.webp",
 
       "장비_공격력": 220,
       "장비_방어력": 0,
@@ -489,19 +524,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 176,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "새벽꽃 반지": {
-      "이미지_경로": null,
+    "Dawnflower Ring": {
+      "id": "rg9_2",
+      "name_ko": "새벽꽃 반지",
+      "image_key": "dawnflower_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/dawnflower_ring.webp",
 
       "장비_공격력": 230,
       "장비_방어력": 0,
@@ -509,19 +548,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 254,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "수석 졸업생 반지": {
-      "이미지_경로": null,
+    "Valedictorian Ring": {
+      "id": "rg9_3",
+      "name_ko": "수석 졸업생 반지",
+      "image_key": "valedictorian_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/valedictorian_ring.webp",
 
       "장비_공격력": 240,
       "장비_방어력": 60,
@@ -529,19 +572,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 264,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "고급 인장": {
-      "이미지_경로": null,
+    "Luxurious Signet": {
+      "id": "rg9_4",
+      "name_ko": "고급 인장",
+      "image_key": "luxurious_signet",
+      "이미지_경로": "/images/equipment/accessory/ring/luxurious_signet.webp",
 
       "장비_공격력": 240,
       "장비_방어력": 0,
@@ -549,29 +596,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 192,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["졸로틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Xolotl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "보렐리스": {
-      "이미지_경로": null,
+    "Borealis": {
+      "id": "rg10_1",
+      "name_ko": "보렐리스",
+      "image_key": "borealis",
+      "이미지_경로": "/images/equipment/accessory/ring/borealis.webp",
 
       "장비_공격력": 250,
       "장비_방어력": 0,
@@ -579,19 +624,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 200,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "북풍 보석": {
-      "이미지_경로": null,
+    "Northwind Gem": {
+      "id": "rg10_2",
+      "name_ko": "북풍 보석",
+      "image_key": "northwind_gem",
+      "이미지_경로": "/images/equipment/accessory/ring/northwind_gem.webp",
 
       "장비_공격력": 332,
       "장비_방어력": 0,
@@ -599,19 +648,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 266,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["공기"],
+      "고유원소종류": ["Air"],
       "고유원소티어": 9,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "블리저드 반지": {
-      "이미지_경로": null,
+    "Blizzard Ring": {
+      "id": "rg10_3",
+      "name_ko": "블리저드 반지",
+      "image_key": "blizzard_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/blizzard_ring.webp",
 
       "장비_공격력": 260,
       "장비_방어력": 65,
@@ -619,19 +672,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 286,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "버니버니 밴드": {
-      "이미지_경로": null,
+    "Bunbun Band": {
+      "id": "rg10_4",
+      "name_ko": "버니버니 밴드",
+      "image_key": "bunbun_band",
+      "이미지_경로": "/images/equipment/accessory/ring/bunbun_band.webp",
 
       "장비_공격력": 270,
       "장비_방어력": 0,
@@ -639,29 +696,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 301,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["토끼"],
+      "영혼친밀감": ["Bunny"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "루비콘 감옥": {
-      "이미지_경로": null,
+    "Rubicon Prison": {
+      "id": "rg11_1",
+      "name_ko": "루비콘 감옥",
+      "image_key": "rubicon_prison",
+      "이미지_경로": "/images/equipment/accessory/ring/rubicon_prison.webp",
 
       "장비_공격력": 325,
       "장비_방어력": 0,
@@ -669,19 +724,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 260,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "바삭한 팔찌": {
-      "이미지_경로": null,
+    "Crunchy Bracelet": {
+      "id": "rg11_2",
+      "name_ko": "바삭한 팔찌",
+      "image_key": "crunchy_bracelet",
+      "이미지_경로": "/images/equipment/accessory/ring/crunchy_bracelet.webp",
 
       "장비_공격력": 340,
       "장비_방어력": 85,
@@ -689,19 +748,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 374,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "새로운 시작의 반지": {
-      "이미지_경로": null,
+    "Ring of New Beginnings": {
+      "id": "rg11_3",
+      "name_ko": "새로운 시작의 반지",
+      "image_key": "ring_of_new_beginnings",
+      "이미지_경로": "/images/equipment/accessory/ring/ring_of_new_beginnings.webp",
 
       "장비_공격력": 340,
       "장비_방어력": 0,
@@ -709,29 +772,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 377,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "완벽한 진주빛": {
-      "이미지_경로": null,
+    "Pearlescent Perfection": {
+      "id": "rg12_1",
+      "name_ko": "완벽한 진주빛",
+      "image_key": "pearlescent_perfection",
+      "이미지_경로": "/images/equipment/accessory/ring/pearlescent_perfection.webp",
 
       "장비_공격력": 410,
       "장비_방어력": 0,
@@ -739,19 +800,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 328,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "크리스털 고리": {
-      "이미지_경로": null,
+    "Crystalice Loop": {
+      "id": "rg12_2",
+      "name_ko": "크리스털 고리",
+      "image_key": "crystalice_loop",
+      "이미지_경로": "/images/equipment/accessory/ring/crystalice_loop.webp",
 
       "장비_공격력": 425,
       "장비_방어력": 106,
@@ -759,19 +824,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 467,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "오군의 오닉스 반지": {
-      "이미지_경력": null,
+    "Ogun's Onyx Ring": {
+      "id": "rg12_3",
+      "name_ko": "오군의 오닉스 반지",
+      "image_key": "ogun's_onyx_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/ogun's_onyx_ring.webp",
 
       "장비_공격력": 425,
       "장비_방어력": 0,
@@ -779,19 +848,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 485,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "소형 메이플": {
-      "이미지_경로": null,
+    "Maple Ration Mini": {
+      "id": "rg12_4",
+      "name_ko": "소형 메이플",
+      "image_key": "maple_ration_mini",
+      "이미지_경로": "/images/equipment/accessory/ring/maple_ration_mini.webp",
 
       "장비_공격력": 440,
       "장비_방어력": 0,
@@ -799,19 +872,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 502,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "호화로운 인장": {
-      "이미지_경로": null,
+    "Opulent Signet": {
+      "id": "rg12_5",
+      "name_ko": "호화로운 인장",
+      "image_key": "opulent_signet",
+      "이미지_경로": "/images/equipment/accessory/ring/opulent_signet.webp",
 
       "장비_공격력": 440,
       "장비_방어력": 0,
@@ -819,29 +896,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 352,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["케찰코아틀"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Quetzalcoatl"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "우로보로스의 표식": {
-      "이미지_경로": null,
+    "Mark of Ouroboros": {
+      "id": "rg13_1",
+      "name_ko": "우로보로스의 표식",
+      "image_key": "mark_of_ouroboros",
+      "이미지_경로": "/images/equipment/accessory/ring/mark_of_ouroboros.webp",
 
       "장비_공격력": 525,
       "장비_방어력": 0,
@@ -849,19 +924,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 420,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["우로보로스"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ouroboros"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "비취 연꽃 고리": {
-      "이미지_경로": null,
+    "Jade Lotus Loop": {
+      "id": "rg13_2",
+      "name_ko": "비취 연꽃 고리",
+      "image_key": "jade_lotus_loop",
+      "이미지_경로": "/images/equipment/accessory/ring/jade_lotus_loop.webp",
 
       "장비_공격력": 525,
       "장비_방어력": 150,
@@ -869,19 +948,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 600,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물", "대지"],
+      "원소친밀감": ["Earth", "Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "플래티넘 반지": {
-      "이미지_경로": null,
+    "Platinum Rings": {
+      "id": "rg13_3",
+      "name_ko": "플래티넘 반지",
+      "image_key": "platinum_rings",
+      "이미지_경로": "/images/equipment/accessory/ring/platinum_rings.webp",
 
       "장비_공격력": 525,
       "장비_방어력": 0,
@@ -889,19 +972,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 595,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["골드"],
-      "영혼친밀감": ["조상"],
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1
     },
 
 
-    "신성한 풍뎅이": {
-      "이미지_경로": null,
+    "Sacred Scarab": {
+      "id": "rg13_4",
+      "name_ko": "신성한 풍뎅이",
+      "image_key": "sacred_scarab",
+      "이미지_경로": "/images/equipment/accessory/ring/sacred_scarab.webp",
 
       "장비_공격력": 540,
       "장비_방어력": 0,
@@ -909,29 +996,27 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 617,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지", "빛"],
+      "원소친밀감": ["Earth", "Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "주머니 장벽": {
-      "이미지_경로": null,
+    "Pocket Dimension": {
+      "id": "rg14_1",
+      "name_ko": "주머니 장벽",
+      "image_key": "pocket_dimension",
+      "이미지_경로": "/images/equipment/accessory/ring/pocket_dimension.webp",
 
       "장비_공격력": 650,
       "장비_방어력": 0,
@@ -939,19 +1024,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 520,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "해신의 영역": {
-      "이미지_경로": null,
+    "Neptune's Domain": {
+      "id": "rg14_2",
+      "name_ko": "해신의 영역",
+      "image_key": "neptune's_domain",
+      "이미지_경로": "/images/equipment/accessory/ring/neptune's_domain.webp",
 
       "장비_공격력": 896,
       "장비_방어력": 0,
@@ -959,19 +1048,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 717,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
-      "고유원소종류": ["물"],
+      "고유원소종류": ["Water"],
       "고유원소티어": 14,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "그린라이트 반지": {
-      "이미지_경로": null,
+    "Greenlight Ring": {
+      "id": "rg14_3",
+      "name_ko": "그린라이트 반지",
+      "image_key": "greenlight_ring",
+      "이미지_경로": "/images/equipment/accessory/ring/greenlight_ring.webp",
 
       "장비_공격력": 650,
       "장비_방어력": 186,
@@ -979,19 +1072,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 743,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "고요한 물결": {
-      "이미지_경로": null,
+    "Serene Tide": {
+      "id": "rg14_4",
+      "name_ko": "고요한 물결",
+      "image_key": "serene_tide",
+      "이미지_경로": "/images/equipment/accessory/ring/serene_tide.webp",
 
       "장비_공격력": 670,
       "장비_방어력": 0,
@@ -999,29 +1096,27 @@
       "장비_치명타확률%": 5,
       "장비_회피%": 0,
       "장비_에어쉽파워": 804,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "블러드스톤 발톱": {
-      "이미지_경로": null,
+    "Bloodstone Claw": {
+      "id": "rg15_1",
+      "name_ko": "블러드스톤 발톱",
+      "image_key": "bloodstone_claw",
+      "이미지_경로": "/images/equipment/accessory/ring/bloodstone_claw.webp",
 
       "장비_공격력": 755,
       "장비_방어력": 0,
@@ -1029,19 +1124,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 604,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "다채로운 색의 반지": {
-      "이미지_경로": null,
+    "Ring of Many Colors": {
+      "id": "rg15_2",
+      "name_ko": "다채로운 색의 반지",
+      "image_key": "ring_of_many_colors",
+      "이미지_경로": "/images/equipment/accessory/ring/ring_of_many_colors.webp",
 
       "장비_공격력": 755,
       "장비_방어력": 216,
@@ -1049,19 +1148,23 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 863,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["모든 원소"],
+      "원소친밀감": ["All"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
-
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
 
 
-    "깨지지 않은 인장": {
-      "이미지_경로": null,
+    "Unbroken Signet": {
+      "id": "rg15_3",
+      "name_ko": "깨지지 않은 인장",
+      "image_key": "unbroken_signet",
+      "이미지_경로": "/images/equipment/accessory/ring/unbroken_signet.webp",
 
       "장비_공격력": 755,
       "장비_방어력": 0,
@@ -1069,14 +1172,41 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 859,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-      "유물": null
+
+    "Ring of Midas": {
+      "id": "rg15_4",
+      "name_ko": "미다스의 반지",
+      "image_key": "ring_of_midas",
+      "이미지_경로": "/images/equipment/accessory/ring/ring_of_midas.webp",
+
+      "장비_공격력": 775,
+      "장비_방어력": 0,
+      "장비_체력": 52,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 880,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": {
+        "효과": "+사라진 황금의 도시 장비 보너스 스탯 50%"
+      },
+      "천상": 1
     }
   }
 }

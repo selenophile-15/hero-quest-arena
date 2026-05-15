@@ -1,7 +1,10 @@
 {
   "5티어": {
-    "천연 독성 물질": {
-      "이미지_경로": null,
+    "Natural Toxifier": {
+      "id": "ca5_1",
+      "name_ko": "천연 독성 물질",
+      "image_key": "natural_toxifier",
+      "이미지_경로": "/images/equipment/weapon/catalyst/natural_toxifier.webp",
 
       "장비_공격력": 196,
       "장비_방어력": 0,
@@ -9,29 +12,28 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 157,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "6티어": {
-    "모래 폭풍 촉매": {
-      "이미지_경로": null,
+    "Sandstorm Catalyst": {
+      "id": "ca6_1",
+      "name_ko": "모래 폭풍 촉매",
+      "image_key": "sandstorm_catalyst",
+      "이미지_경로": "/images/equipment/weapon/catalyst/sandstorm_catalyst.webp",
 
       "장비_공격력": 250,
       "장비_방어력": 0,
@@ -39,29 +41,28 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 200,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["공기"],
+      "원소친밀감": ["Air"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "7티어": {
-    "호루스의 시선": {
-      "이미지_경로": null,
+    "Gaze of Horus": {
+      "id": "ca7_1",
+      "name_ko": "호루스의 시선",
+      "image_key": "gaze_of_horus",
+      "이미지_경로": "/images/equipment/weapon/catalyst/gaze_of_horus.webp",
 
       "장비_공격력": 350,
       "장비_방어력": 0,
@@ -69,6 +70,7 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 280,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
@@ -76,22 +78,20 @@
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "8티어": {
-    "크로노맨틱 정체기": {
-      "이미지_경로": null,
+    "Chronomantic Stasis": {
+      "id": "ca8_1",
+      "name_ko": "크로노맨틱 정체기",
+      "image_key": "chronomantic_stasis",
+      "이미지_경로": "/images/equipment/weapon/catalyst/chronomantic_stasis.webp",
 
       "장비_공격력": 420,
       "장비_방어력": 0,
@@ -99,6 +99,7 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 336,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
       "영혼친밀감": null,
@@ -106,22 +107,20 @@
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "9티어": {
-    "검은 힘의 오브": {
-      "이미지_경로": null,
+    "Orb of Dark Might": {
+      "id": "ca9_1",
+      "name_ko": "검은 힘의 오브",
+      "image_key": "orb_of_dark_might",
+      "이미지_경로": "/images/equipment/weapon/catalyst/orb_of_dark_might.webp",
 
       "장비_공격력": 490,
       "장비_방어력": 0,
@@ -129,29 +128,28 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 392,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "10티어": {
-    "소금물 스프레이": {
-      "이미지_경로": null,
+    "Saltwater Spray": {
+      "id": "ca10_1",
+      "name_ko": "소금물 스프레이",
+      "image_key": "saltwater_spray",
+      "이미지_경로": "/images/equipment/weapon/catalyst/saltwater_spray.webp",
 
       "장비_공격력": 560,
       "장비_방어력": 0,
@@ -159,19 +157,24 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 448,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["물"],
+      "원소친밀감": ["Water"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     },
-	
-	
-    "컨페티 조화기": {
-      "이미지_경로": null,
+
+
+    "Confetti Harmonizer": {
+      "id": "ca10_2",
+      "name_ko": "컨페티 조화기",
+      "image_key": "confetti_harmonizer",
+      "이미지_경로": "/images/equipment/weapon/catalyst/confetti_harmonizer.webp",
 
       "장비_공격력": 560,
       "장비_방어력": 0,
@@ -179,29 +182,28 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 533,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "11티어": {
-    "부리 폭풍 볼": {
-      "이미지_경로": null,
+    "Beakstorm Ball": {
+      "id": "ca11_1",
+      "name_ko": "부리 폭풍 볼",
+      "image_key": "beakstorm_ball",
+      "이미지_경로": "/images/equipment/weapon/catalyst/beakstorm_ball.webp",
 
       "장비_공격력": 720,
       "장비_방어력": 0,
@@ -209,29 +211,28 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 576,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["대지"],
+      "원소친밀감": ["Earth"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "12티어": {
-    "봉인된 분출": {
-      "이미지_경로": null,
+    "Sealed Eruption": {
+      "id": "ca12_1",
+      "name_ko": "봉인된 분출",
+      "image_key": "sealed_eruption",
+      "이미지_경로": "/images/equipment/weapon/catalyst/sealed_eruption.webp",
 
       "장비_공격력": 910,
       "장비_방어력": 0,
@@ -239,29 +240,28 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 728,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["불"],
+      "원소친밀감": ["Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "13티어": {
-    "갇혀버린 공허": {
-      "이미지_경로": null,
+    "Caged Nothingness": {
+      "id": "ca13_1",
+      "name_ko": "갇혀버린 공허",
+      "image_key": "caged_nothingness",
+      "이미지_경로": "/images/equipment/weapon/catalyst/caged_nothingness.webp",
 
       "장비_공격력": 1170,
       "장비_방어력": 0,
@@ -269,29 +269,28 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 936,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["어둠"],
+      "원소친밀감": ["Dark"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "14티어": {
-    "신성 융합": {
-      "이미지_경로": null,
+    "Divine Coalescence": {
+      "id": "ca14_1",
+      "name_ko": "신성 융합",
+      "image_key": "divine_coalescence",
+      "이미지_경로": "/images/equipment/weapon/catalyst/divine_coalescence.webp",
 
       "장비_공격력": 1450,
       "장비_방어력": 0,
@@ -299,29 +298,28 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1160,
+      "장비_에어쉽파워보너스": 1,
 
-      "원소친밀감": ["빛"],
+      "원소친밀감": ["Light"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
     }
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
   "15티어": {
-    "무한한 허기의 오브": {
-      "이미지_경로": null,
+    "Orb of Everhunger": {
+      "id": "ca15_1",
+      "name_ko": "무한한 허기의 오브",
+      "image_key": "orb_of_everhunger",
+      "이미지_경로": "/images/equipment/weapon/catalyst/orb_of_everhunger.webp",
 
       "장비_공격력": 1630,
       "장비_방어력": 0,
@@ -329,14 +327,91 @@
       "장비_치명타확률%": 0,
       "장비_회피%": 0,
       "장비_에어쉽파워": 1304,
+      "장비_에어쉽파워보너스": 1,
 
       "원소친밀감": null,
-      "영혼친밀감": ["공룡"],
+      "영혼친밀감": ["Dinosaur"],
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
 
-      "유물": null
+      "유물": null,
+      "천상": 1.25
+    },
+
+
+    "Darkensmog": {
+      "id": "ca15_2",
+      "name_ko": "암흑 스모그",
+      "image_key": "darkensmog",
+      "이미지_경로": "/images/equipment/weapon/catalyst/darkensmog.webp",
+
+      "장비_공격력": 1630,
+      "장비_방어력": 408,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1794,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+
+      "유물": null,
+      "천상": 1.25
+    },
+
+
+    "Monster Catcher": {
+      "id": "ca15_3",
+      "name_ko": "몬스터 캐처",
+      "image_key": "monster_catcher",
+      "이미지_경로": "/images/equipment/weapon/catalyst/monster_catcher.webp",
+
+      "장비_공격력": 1630,
+      "장비_방어력": 0,
+      "장비_체력": 51,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1559,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+
+      "유물": null,
+      "천상": 1.25
+    },
+
+
+    "Platinum Orb": {
+      "id": "ca15_4",
+      "name_ko": "플래티넘 오브",
+      "image_key": "platinum_orb",
+      "이미지_경로": "/images/equipment/weapon/catalyst/platinum_orb.webp",
+
+      "장비_공격력": 1630,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1304,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Gold"],
+      "영혼친밀감": ["Ancestor"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+
+      "유물": null,
+      "천상": 1
     }
   }
 }
