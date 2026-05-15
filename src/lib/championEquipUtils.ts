@@ -117,7 +117,7 @@ export async function loadFamiliars(): Promise<EquipmentItem[]> {
         if (itemData['장비_체력']) stats.push({ key: '장비_체력', value: itemData['장비_체력'] });
         if (itemData['장비_치명타확률%']) stats.push({ key: '장비_치명타확률%', value: itemData['장비_치명타확률%'] });
         if (itemData['장비_회피%']) stats.push({ key: '장비_회피%', value: itemData['장비_회피%'] });
-        items.push({
+        const built: any = {
           name: korName,
           engName: itemData.engName || FAMILIAR_NAME_MAP[korName] || '',
           imageKey: itemData.image_key || '',
@@ -139,7 +139,9 @@ export async function loadFamiliars(): Promise<EquipmentItem[]> {
           uniqueElementTier: itemData['고유원소티어'] || null,
           uniqueSpirit: itemData['고유영혼'] || null,
           judgmentTypes: null,
-        });
+        };
+        if (itemData['천상'] !== undefined) built['천상'] = itemData['천상'];
+        items.push(built);
       }
     }
     items.sort((a, b) => b.tier - a.tier);
