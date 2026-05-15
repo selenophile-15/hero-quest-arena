@@ -80,6 +80,7 @@ export function getEquipImagePath(korName: string, typeFile: string, category: s
 export interface EquipmentItem {
   name: string;
   engName: string;
+  imageKey?: string;
   type: string;
   typeKor: string;
   category: string;
@@ -90,6 +91,8 @@ export interface EquipmentItem {
   relic: boolean;
   relicEffect: string | null;
   airshipPower: number;
+  airshipPowerBonus?: number;
+  heavenlyMul?: number;
   elementAffinity: string[] | null;
   spiritAffinity: string[] | null;
   uniqueElement: string[] | null;
