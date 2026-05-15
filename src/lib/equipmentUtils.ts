@@ -177,7 +177,7 @@ export async function loadEquipmentByTypes(
             if (itemData['장비_치명타확률%']) stats.push({ key: '장비_치명타확률%', value: itemData['장비_치명타확률%'] });
             if (itemData['장비_회피%']) stats.push({ key: '장비_회피%', value: itemData['장비_회피%'] });
 
-            items.push({
+            const built: any = {
               name: korName,
               engName,
               imageKey,
@@ -199,7 +199,10 @@ export async function loadEquipmentByTypes(
               uniqueElementTier: itemData['고유원소티어'] || null,
               uniqueSpirit: itemData['고유영혼'] || null,
               judgmentTypes: itemData['판정타입'] || null,
-            });
+            };
+            // Preserve raw 천상 key for downstream code that reads item['천상']
+            if (itemData['천상'] !== undefined) built['천상'] = itemData['천상'];
+            items.push(built);
           }
         }
 
