@@ -104,8 +104,7 @@ export function getAurasongBonusStatsSync(aurasongName: string): Record<string, 
 export async function loadFamiliars(): Promise<EquipmentItem[]> {
   if (familiarCache) return familiarCache;
   try {
-    const resp = await fetch('/data/equipment/champion/familiar.json');
-    const data = await resp.json();
+    const data = await fetchEquipFileNormalized('/data/equipment/champion/familiar.json');
     const items: EquipmentItem[] = [];
     for (const [tierKey, tierItems] of Object.entries(data)) {
       const tierMatch = tierKey.match(/(\d+)/);
@@ -120,17 +119,20 @@ export async function loadFamiliars(): Promise<EquipmentItem[]> {
         if (itemData['장비_회피%']) stats.push({ key: '장비_회피%', value: itemData['장비_회피%'] });
         items.push({
           name: korName,
-          engName: FAMILIAR_NAME_MAP[korName] || '',
+          engName: itemData.engName || FAMILIAR_NAME_MAP[korName] || '',
+          imageKey: itemData.image_key || '',
           type: 'familiar',
           typeKor: '퍼밀리어',
           category: 'champion',
           tier,
-          imagePath: getFamiliarImagePath(korName),
+          imagePath: itemData['이미지_경로'] || getFamiliarImagePath(korName),
           stats,
           quality: 'common',
           relic: itemData['유물'] != null && itemData['유물'] !== false && itemData['유물'] !== null,
           relicEffect: null,
-          airshipPower: 0,
+          airshipPower: itemData['장비_에어쉽파워'] || 0,
+          airshipPowerBonus: itemData['장비_에어쉽파워보너스'] ?? undefined,
+          heavenlyMul: typeof itemData['천상'] === 'number' ? itemData['천상'] : undefined,
           elementAffinity: itemData['원소친밀감'] || null,
           spiritAffinity: itemData['영혼친밀감'] || null,
           uniqueElement: itemData['고유원소종류'] || null,
