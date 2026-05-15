@@ -254,8 +254,7 @@ let dualWieldDataCache: any[] | null = null;
 export async function loadDualWieldData(): Promise<any[]> {
   if (dualWieldDataCache) return dualWieldDataCache;
   try {
-    const resp = await fetch('/data/equipment/weapon/dual_wield.json');
-    const data = await resp.json();
+    const data = await fetchEquipFileNormalized('/data/equipment/weapon/dual_wield.json');
     const items: any[] = [];
     for (const [tierKey, tierItems] of Object.entries(data)) {
       for (const [korName, itemData] of Object.entries(tierItems as Record<string, any>)) {
