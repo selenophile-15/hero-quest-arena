@@ -1,6 +1,7 @@
 // Champion equipment utilities - familiar and aura song data loading
 
 import { EquipmentItem } from './equipmentUtils';
+import { fetchEquipFileNormalized } from './dataAdapter';
 import { formatNumber } from './format';
 
 // Familiar name map (Korean → English image filename without extension)
