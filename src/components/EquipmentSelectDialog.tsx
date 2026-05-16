@@ -743,9 +743,9 @@ export default function EquipmentSelectDialog({
                               if (tableSortKey === 'name') { av = a.name; bv = b.name; }
                               else if (tableSortKey === 'type') { av = a.typeKor || ''; bv = b.typeKor || ''; }
                               else if (tableSortKey === 'tier') { av = a.tier; bv = b.tier; }
-                              else if (tableSortKey === 'atk') { av = a.stats.find(s => s.key === '장비_공격력')?.value || 0; bv = b.stats.find(s => s.key === '장비_공격력')?.value || 0; }
-                              else if (tableSortKey === 'def') { av = a.stats.find(s => s.key === '장비_방어력')?.value || 0; bv = b.stats.find(s => s.key === '장비_방어력')?.value || 0; }
-                              else if (tableSortKey === 'hp') { av = a.stats.find(s => s.key === '장비_체력')?.value || 0; bv = b.stats.find(s => s.key === '장비_체력')?.value || 0; }
+                              else if (tableSortKey === 'atk') { const ma = (a as any)['천상'] || 1; const mb = (b as any)['천상'] || 1; av = Math.round((a.stats.find(s => s.key === '장비_공격력')?.value || 0) * ma); bv = Math.round((b.stats.find(s => s.key === '장비_공격력')?.value || 0) * mb); }
+                              else if (tableSortKey === 'def') { const ma = (a as any)['천상'] || 1; const mb = (b as any)['천상'] || 1; av = Math.round((a.stats.find(s => s.key === '장비_방어력')?.value || 0) * ma); bv = Math.round((b.stats.find(s => s.key === '장비_방어력')?.value || 0) * mb); }
+                              else if (tableSortKey === 'hp') { const ma = (a as any)['천상'] || 1; const mb = (b as any)['천상'] || 1; av = Math.round((a.stats.find(s => s.key === '장비_체력')?.value || 0) * ma); bv = Math.round((b.stats.find(s => s.key === '장비_체력')?.value || 0) * mb); }
                               else if (tableSortKey === 'crit') { av = a.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; bv = b.stats.find(s => s.key === '장비_치명타확률%')?.value || 0; }
                               else if (tableSortKey === 'eva') { av = a.stats.find(s => s.key === '장비_회피%')?.value || 0; bv = b.stats.find(s => s.key === '장비_회피%')?.value || 0; }
                               if (typeof av === 'string' && typeof bv === 'string') return tableSortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
@@ -756,9 +756,13 @@ export default function EquipmentSelectDialog({
                         })().map((item, idx) => {
                           const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
                           const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
-                          const atkVal = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
-                          const defVal = item.stats.find(s => s.key === '장비_방어력')?.value || 0;
-                          const hpVal = item.stats.find(s => s.key === '장비_체력')?.value || 0;
+                          const starforgedMul = (item as any)['천상'] || 1;
+                          const rawAtk = item.stats.find(s => s.key === '장비_공격력')?.value || 0;
+                          const rawDef = item.stats.find(s => s.key === '장비_방어력')?.value || 0;
+                          const rawHp = item.stats.find(s => s.key === '장비_체력')?.value || 0;
+                          const atkVal = Math.round(rawAtk * starforgedMul);
+                          const defVal = Math.round(rawDef * starforgedMul);
+                          const hpVal = Math.round(rawHp * starforgedMul);
                           const critVal = item.stats.find(s => s.key === '장비_치명타확률%')?.value || 0;
                           const evaVal = item.stats.find(s => s.key === '장비_회피%')?.value || 0;
                           return (
