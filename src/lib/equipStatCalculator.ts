@@ -37,6 +37,14 @@ export interface EquipSlotCalc {
   qualityDef: number;
   qualityHp: number;
 
+  // Starforged (천상) multiplier from item data (1 or 1.25)
+  starforgedMul: number;
+
+  // Stats just before starforged is applied (after quiver/bonus%)
+  preStarforgedAtk: number;
+  preStarforgedDef: number;
+  preStarforgedHp: number;
+
   // Enchantment raw stats (after affinity)
   elementRawAtk: number;
   elementRawDef: number;
@@ -104,7 +112,9 @@ export interface RelicEffect {
 interface SlotInput {
   item: any | null;
   quality: string;
+  /** @deprecated 천상 is now derived purely from item data ('천상' field). Kept for type compatibility. */
   heavenly?: boolean;
+  starforged?: boolean;
   element: { type: string; tier: number; affinity: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
