@@ -113,7 +113,7 @@ interface SlotInput {
   item: any | null;
   quality: string;
   /** @deprecated 천상 is now derived purely from item data ('천상' field). Kept for type compatibility. */
-  heavenly?: boolean;
+  starforged?: boolean;
   starforged?: boolean;
   element: { type: string; tier: number; affinity: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;

@@ -20,7 +20,7 @@ import {
 interface EquipmentSlotData {
   item: EquipmentItem | null;
   quality: string;
-  heavenly?: boolean;
+  starforged?: boolean;
   element: { type: string; tier: number; affinity: boolean; allElementAffinity?: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
@@ -571,10 +571,10 @@ export default function EquipmentSelectDialog({
                       >
                         <input
                           type="checkbox"
-                          checked={!!slots[activeSlot]?.heavenly}
+                          checked={!!slots[activeSlot]?.starforged}
                           onChange={(e) => {
                             const v = e.target.checked;
-                            setSlots(prev => prev.map((s, i) => i === activeSlot ? { ...s, heavenly: v } : s));
+                            setSlots(prev => prev.map((s, i) => i === activeSlot ? { ...s, starforged: v } : s));
                           }}
                           className="w-3.5 h-3.5 cursor-pointer"
                         />
@@ -582,8 +582,8 @@ export default function EquipmentSelectDialog({
                       </label>
                       <Button size="sm" variant="outline" className="h-7 text-xs bg-primary/30 border-primary/40 text-white hover:bg-primary/50"
                         onClick={() => {
-                          const v = !!slots[activeSlot]?.heavenly;
-                          setSlots(prev => prev.map(s => ({ ...s, heavenly: v })));
+                          const v = !!slots[activeSlot]?.starforged;
+                          setSlots(prev => prev.map(s => ({ ...s, starforged: v })));
                         }}
                       >
                         전체
@@ -670,7 +670,7 @@ export default function EquipmentSelectDialog({
                       newSlots[activeSlot] = {
                         item: { ...item },
                         quality: existingSlot?.quality || slotQuality,
-                        heavenly: (item as any)['천상'] === 1.25 ? true : !!existingSlot?.heavenly,
+                        starforged: (item as any)['천상'] === 1.25 ? true : !!existingSlot?.starforged,
                         element: slotElement,
                         spirit: slotSpirit,
                       };
@@ -841,7 +841,7 @@ export default function EquipmentSelectDialog({
                                 className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isRelicBlocked ? 'opacity-40 cursor-not-allowed' :
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
-                                } ${isSelected && slots[activeSlot]?.heavenly ? `equip-heavenly equip-q-${quality}` : ''}`}
+                                } ${isSelected && slots[activeSlot]?.starforged ? `equip-starforged equip-q-${quality}` : ''}`}
                                 style={isSelected ? {
                                   background: `radial-gradient(circle, ${QUALITY_RADIAL[quality]} 0%, transparent 100%)`,
                                   boxShadow: QUALITY_SHADOW[quality],
@@ -1043,10 +1043,10 @@ export default function EquipmentSelectDialog({
                 >
                   {/* Slot number with quality background */}
                   <div
-                    className={`w-5 flex items-center justify-center flex-shrink-0 ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
+                    className={`w-5 flex items-center justify-center flex-shrink-0 ${s.starforged ? `equip-starforged equip-q-${s.quality}` : ''}`}
                     style={{ background: s.item ? qualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
                   >
-                    <span className={`text-[10px] font-bold ${s.heavenly ? 'heavenly-slot-number relative z-10' : 'text-black'}`}>{i + 1}</span>
+                    <span className={`text-[10px] font-bold ${s.starforged ? 'starforged-slot-number relative z-10' : 'text-black'}`}>{i + 1}</span>
                   </div>
                   {s.item ? (
                     <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">

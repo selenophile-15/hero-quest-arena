@@ -189,7 +189,7 @@ export async function calculateChampionStats(params: {
   equipmentSlots: Array<{
     item: any | null;
     quality: string;
-    heavenly?: boolean;
+    starforged?: boolean;
     element: any | null;
     spirit: any | null;
   }>;

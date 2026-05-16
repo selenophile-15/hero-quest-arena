@@ -193,10 +193,10 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
   const [equipmentSlots, setEquipmentSlots] = useState<Array<{
     item: any | null;
     quality: string;
-    heavenly?: boolean;
+    starforged?: boolean;
     element: any | null;
     spirit: any | null;
-  }>>(hero?.equipmentSlots || Array.from({ length: 2 }, () => ({ item: null, quality: 'common', heavenly: false, element: null, spirit: null })));
+  }>>(hero?.equipmentSlots || Array.from({ length: 2 }, () => ({ item: null, quality: 'common', starforged: false, element: null, spirit: null })));
 
   const [championSkillsData, setChampionSkillsData] = useState<Record<string, any>>({});
   const [familiarItems, setFamiliarItems] = useState<EquipmentItem[]>([]);
@@ -501,7 +501,7 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
         }}
       >
         <div
-          className={`relative w-full rounded-lg border-[2.5px] ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} ${slotData?.heavenly ? `equip-heavenly equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
+          className={`relative w-full rounded-lg border-[2.5px] ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} ${slotData?.starforged ? `equip-starforged equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
           style={equipItem ? {
             background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
             boxShadow: QUALITY_SHADOW_COLOR[quality],
@@ -774,10 +774,10 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                         >
                           <input
                             type="checkbox"
-                            checked={!!equipmentSlots[slotIdx]?.heavenly}
+                            checked={!!equipmentSlots[slotIdx]?.starforged}
                             onChange={(e) => {
                               const v = e.target.checked;
-                              setEquipmentSlots(prev => prev.map((s, i) => i === slotIdx ? { ...s, heavenly: v } : s));
+                              setEquipmentSlots(prev => prev.map((s, i) => i === slotIdx ? { ...s, starforged: v } : s));
                             }}
                             className="w-3.5 h-3.5 cursor-pointer"
                           />
@@ -785,8 +785,8 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                         </label>
                         <Button size="sm" variant="outline" className="h-7 text-xs bg-primary/30 border-primary/40 text-white hover:bg-primary/50"
                           onClick={() => {
-                            const v = !!equipmentSlots[slotIdx]?.heavenly;
-                            setEquipmentSlots(prev => prev.map(s => ({ ...s, heavenly: v })));
+                            const v = !!equipmentSlots[slotIdx]?.starforged;
+                            setEquipmentSlots(prev => prev.map(s => ({ ...s, starforged: v })));
                           }}
                         >
                           전체
@@ -832,7 +832,7 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                         newSlots[slotIdx] = {
                           item: { ...item },
                           quality: existingSlot?.quality || equipSlotQuality,
-                          heavenly: (item as any)['천상'] === 1.25 ? true : !!existingSlot?.heavenly,
+                          starforged: (item as any)['천상'] === 1.25 ? true : !!existingSlot?.starforged,
                           element: slotElement,
                           spirit: slotSpirit,
                         };
@@ -950,9 +950,9 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                                     }
 
                                     const quality = equipmentSlots[slotIdx]?.quality || 'common';
-                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.heavenly;
-                                    const heavenly = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
-                                    newSlots[slotIdx] = { item: { ...item }, quality, heavenly, element: newElement, spirit: newSpirit };
+                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.starforged;
+                                    const starforged = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
+                                    newSlots[slotIdx] = { item: { ...item }, quality, starforged, element: newElement, spirit: newSpirit };
                                   }
                                   setEquipmentSlots(newSlots);
                                 }}
@@ -1053,15 +1053,15 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                                       }
                                     }
 
-                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.heavenly;
-                                    const heavenly = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
-                                    newSlots[slotIdx] = { item: { ...item }, quality, heavenly, element: newElement, spirit: newSpirit };
+                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.starforged;
+                                    const starforged = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
+                                    newSlots[slotIdx] = { item: { ...item }, quality, starforged, element: newElement, spirit: newSpirit };
                                   }
                                   setEquipmentSlots(newSlots);
                                 }}
                                 className={`relative flex flex-col rounded-lg border-[2.5px] transition-all cursor-pointer aspect-square overflow-hidden ${
                                   isSelected ? `${QUALITY_BORDER[quality]} bg-accent/10` : 'border-border/50 bg-secondary/20 hover:border-primary/50'
-                                } ${isSelected && equipmentSlots[slotIdx]?.heavenly ? `equip-heavenly equip-q-${quality}` : ''}`}
+                                } ${isSelected && equipmentSlots[slotIdx]?.starforged ? `equip-starforged equip-q-${quality}` : ''}`}
                                 style={isSelected ? {
                                   background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 100%)`,
                                   boxShadow: QUALITY_SHADOW_COLOR[quality],
@@ -1213,10 +1213,10 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                     >
                       {/* Slot number with quality background */}
                       <div
-                        className={`w-5 flex items-center justify-center flex-shrink-0 ${s.heavenly ? `equip-heavenly equip-q-${s.quality}` : ''}`}
+                        className={`w-5 flex items-center justify-center flex-shrink-0 ${s.starforged ? `equip-starforged equip-q-${s.quality}` : ''}`}
                         style={{ background: s.item ? champQualityColor[s.quality] || 'transparent' : 'hsl(var(--secondary) / 0.3)' }}
                       >
-                        <span className={`text-[10px] font-bold ${s.heavenly ? 'heavenly-slot-number relative z-10' : 'text-black'}`}>{i + 1}</span>
+                        <span className={`text-[10px] font-bold ${s.starforged ? 'starforged-slot-number relative z-10' : 'text-black'}`}>{i + 1}</span>
                       </div>
                       {s.item ? (
                         <div className="flex items-center gap-1.5 flex-1 min-w-0 p-1.5">

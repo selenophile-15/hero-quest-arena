@@ -1223,7 +1223,7 @@ export default function HeroList() {
                   return (
                     <div key={i} className="flex flex-col items-center">
                       <div
-                        className={`relative w-full aspect-square rounded-lg border-2 ${item ? QUALITY_BORDER[quality] : 'border-border'} ${slot?.heavenly ? `equip-heavenly equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden`}
+                        className={`relative w-full aspect-square rounded-lg border-2 ${item ? QUALITY_BORDER[quality] : 'border-border'} ${slot?.starforged ? `equip-starforged equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden`}
                         style={item ? {
                           background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                           boxShadow: QUALITY_SHADOW_COLOR[quality],
@@ -1388,7 +1388,7 @@ export default function HeroList() {
                   return (
                     <div
                       key={i}
-                      className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} ${slot?.heavenly ? `equip-heavenly equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden`}
+                      className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} ${slot?.starforged ? `equip-starforged equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden`}
                       style={{
                         width: '64px',
                         ...(item
@@ -1446,7 +1446,7 @@ export default function HeroList() {
                   return (
                     <div
                       key={i}
-                      className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} ${slot?.heavenly ? `equip-heavenly equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden min-h-[78px]`}
+                      className={`rounded border ${item ? QUALITY_BORDER[quality] : 'border-border/30'} ${slot?.starforged ? `equip-starforged equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden min-h-[78px]`}
                       style={item ? { background: `radial-gradient(circle, ${(colorMode === 'light' ? QUALITY_RADIAL_COLOR_LIGHT : QUALITY_RADIAL_COLOR)[quality]} 0%, transparent 85%)`, boxShadow: (colorMode === 'light' ? QUALITY_SHADOW_COLOR_LIGHT : QUALITY_SHADOW_COLOR)[quality] } : { background: 'hsl(var(--secondary) / 0.2)' }}
                     >
                       <div className="w-full flex items-center justify-between px-0.5 pt-0.5" style={{ minHeight: '14px' }}>
