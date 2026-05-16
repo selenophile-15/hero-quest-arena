@@ -92,7 +92,7 @@ export interface EquipmentItem {
   relicEffect: string | null;
   airshipPower: number;
   airshipPowerBonus?: number;
-  heavenlyMul?: number;
+  starforgedMul?: number;
   elementAffinity: string[] | null;
   spiritAffinity: string[] | null;
   uniqueElement: string[] | null;
@@ -192,7 +192,7 @@ export async function loadEquipmentByTypes(
               relicEffect: typeof itemData['유물'] === 'object' && itemData['유물']?.['효과'] ? itemData['유물']['효과'] : null,
               airshipPower: itemData['장비_에어쉽파워'] || 0,
               airshipPowerBonus: itemData['장비_에어쉽파워보너스'] ?? undefined,
-              heavenlyMul: typeof itemData['천상'] === 'number' ? itemData['천상'] : undefined,
+              starforgedMul: typeof itemData['천상'] === 'number' ? itemData['천상'] : undefined,
               elementAffinity: itemData['원소친밀감'] || null,
               spiritAffinity: itemData['영혼친밀감'] || null,
               uniqueElement: itemData['고유원소종류'] || null,

@@ -950,8 +950,8 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                                     }
 
                                     const quality = equipmentSlots[slotIdx]?.quality || 'common';
-                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.starforged;
-                                    const starforged = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
+                                    const prevStarforged = !!equipmentSlots[slotIdx]?.starforged;
+                                    const starforged = (item as any)['천상'] === 1.25 ? true : prevStarforged;
                                     newSlots[slotIdx] = { item: { ...item }, quality, starforged, element: newElement, spirit: newSpirit };
                                   }
                                   setEquipmentSlots(newSlots);
@@ -1053,8 +1053,8 @@ export default function ChampionForm({ hero, onSave, onCancel, saveLabel, saveAs
                                       }
                                     }
 
-                                    const prevHeavenly = !!equipmentSlots[slotIdx]?.starforged;
-                                    const starforged = (item as any)['천상'] === 1.25 ? true : prevHeavenly;
+                                    const prevStarforged = !!equipmentSlots[slotIdx]?.starforged;
+                                    const starforged = (item as any)['천상'] === 1.25 ? true : prevStarforged;
                                     newSlots[slotIdx] = { item: { ...item }, quality, starforged, element: newElement, spirit: newSpirit };
                                   }
                                   setEquipmentSlots(newSlots);
