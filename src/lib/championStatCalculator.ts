@@ -64,7 +64,9 @@ export interface ChampionEquipSlotCalc {
   spiritCapAtk: number;
   spiritCapDef: number;
   spiritCapHp: number;
-  // Final slot stats (quality + capped enchants)
+  // Starforged (천상) multiplier from item data (1 or 1.25)
+  starforgedMul: number;
+  // Final slot stats (quality + capped enchants, then × starforged)
   finalAtk: number;
   finalDef: number;
   finalHp: number;
@@ -187,7 +189,7 @@ export async function calculateChampionStats(params: {
   equipmentSlots: Array<{
     item: any | null;
     quality: string;
-    heavenly?: boolean;
+    starforged?: boolean;
     element: any | null;
     spirit: any | null;
   }>;
@@ -256,6 +258,7 @@ export async function calculateChampionStats(params: {
         elementCapAtk: 0, elementCapDef: 0, elementCapHp: 0,
         spiritName: '', spiritRawAtk: 0, spiritRawDef: 0, spiritRawHp: 0,
         spiritCapAtk: 0, spiritCapDef: 0, spiritCapHp: 0,
+        starforgedMul: 1,
         finalAtk: 0, finalDef: 0, finalHp: 0, finalCrit: 0, finalEvasion: 0,
       });
       continue;
@@ -341,15 +344,14 @@ export async function calculateChampionStats(params: {
     let finalCrit = baseCrit;
     let finalEvasion = baseEvasion;
 
-    // 천상 (Airship Heaven) 적용: 장비 데이터의 "천상" 값(1.25)일 때 슬롯 heavenly 활성 시 최종값 ×1.25
-    const itemHeavenlyMul = (typeof item['천상'] === 'number') ? item['천상'] : 1;
-    const heavenlyActive = !!slot.heavenly && itemHeavenlyMul === 1.25;
-    if (heavenlyActive) {
-      finalAtk = Math.round(finalAtk * 1.25);
-      finalDef = Math.round(finalDef * 1.25);
-      finalHp = Math.round(finalHp * 1.25);
-      finalCrit = Math.round(finalCrit * 1.25 * 10) / 10;
-      finalEvasion = Math.round(finalEvasion * 1.25 * 10) / 10;
+    // 천상(Starforged) 적용: 장비 데이터의 "천상" 값(1 또는 1.25)을 그대로 사용 (데이터 기반).
+    const starforgedMul: number = (typeof item['천상'] === 'number') ? item['천상'] : 1;
+    if (starforgedMul !== 1) {
+      finalAtk = Math.round(finalAtk * starforgedMul);
+      finalDef = Math.round(finalDef * starforgedMul);
+      finalHp = Math.round(finalHp * starforgedMul);
+      finalCrit = Math.round(finalCrit * starforgedMul * 10) / 10;
+      finalEvasion = Math.round(finalEvasion * starforgedMul * 10) / 10;
     }
 
     equipSlots.push({
@@ -363,6 +365,7 @@ export async function calculateChampionStats(params: {
       elementCapAtk, elementCapDef, elementCapHp,
       spiritName, spiritRawAtk: spiritRaw.atk, spiritRawDef: spiritRaw.def, spiritRawHp: spiritRaw.hp,
       spiritCapAtk, spiritCapDef, spiritCapHp,
+      starforgedMul,
       finalAtk, finalDef, finalHp, finalCrit, finalEvasion,
     });
 

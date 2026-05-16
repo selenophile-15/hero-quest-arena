@@ -227,10 +227,10 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
   const [equipmentSlots, setEquipmentSlots] = useState<Array<{
     item: any | null;
     quality: string;
-    heavenly?: boolean;
+    starforged?: boolean;
     element: any | null;
     spirit: any | null;
-  }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', heavenly: false, element: null, spirit: null })));
+  }>>(hero?.equipmentSlots || Array.from({ length: 6 }, () => ({ item: null, quality: 'common', starforged: false, element: null, spirit: null })));
   const isInitialHeroClass = useRef(!!hero);
   const isPromotionToggle = useRef(false);
   const previousJobRef = useRef(heroClass);
@@ -1107,7 +1107,7 @@ export default function HeroForm({ hero, onSave, onCancel, saveLabel, saveAsLabe
                   }}
                 >
                   <div
-                    className={`relative w-full rounded-lg border-[2.5px] ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} ${slotData?.heavenly ? `equip-heavenly equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
+                    className={`relative w-full rounded-lg border-[2.5px] ${equipItem ? QUALITY_BORDER[quality] : 'border-border'} ${slotData?.starforged ? `equip-starforged equip-q-${quality}` : ''} flex flex-col items-stretch overflow-hidden hover:border-primary/50 transition-all`}
                     style={equipItem ? {
                       background: `radial-gradient(circle, ${QUALITY_RADIAL_COLOR[quality]} 0%, transparent 85%)`,
                       boxShadow: QUALITY_SHADOW_COLOR[quality],

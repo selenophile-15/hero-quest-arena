@@ -180,6 +180,11 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                                 {spiritVal < spiritRaw && <span className="text-muted-foreground"> (제한: {spiritRaw}→{spiritVal})</span>}
                               </div>
                             )}
+                            {(slot as any).starforgedMul > 1 ? (
+                              <div className="text-amber-600 dark:text-amber-300">천상: +{Math.round(((slot as any).starforgedMul - 1) * 100)}%</div>
+                            ) : (
+                              <div className="text-muted-foreground">천상: -</div>
+                            )}
                           </div>
                         </div>
                       </td>

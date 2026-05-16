@@ -37,6 +37,14 @@ export interface EquipSlotCalc {
   qualityDef: number;
   qualityHp: number;
 
+  // Starforged (천상) multiplier from item data (1 or 1.25)
+  starforgedMul: number;
+
+  // Stats just before starforged is applied (after quiver/bonus%)
+  preStarforgedAtk: number;
+  preStarforgedDef: number;
+  preStarforgedHp: number;
+
   // Enchantment raw stats (after affinity)
   elementRawAtk: number;
   elementRawDef: number;
@@ -104,7 +112,8 @@ export interface RelicEffect {
 interface SlotInput {
   item: any | null;
   quality: string;
-  heavenly?: boolean;
+  /** Cosmetic flag; calc uses item['천상'] data directly. */
+  starforged?: boolean;
   element: { type: string; tier: number; affinity: boolean } | null;
   spirit: { name: string; affinity: boolean } | null;
 }
@@ -576,16 +585,18 @@ export async function calculateEquipmentStats(
     let finalCrit = baseCrit;
     let finalEvasion = baseEvasion;
 
-    // 천상 (Airship Heaven) 적용: 장비 데이터의 "천상" 값(1 또는 1.25) × 슬롯 heavenly 플래그.
-    // 마법부여로 인한 보너스에는 적용하지 않으나, 현재 구현은 최종값 기준으로 일괄 1.25 적용.
-    const itemHeavenlyMul = (typeof item['천상'] === 'number') ? item['천상'] : 1;
-    const heavenlyActive = !!slot.heavenly && itemHeavenlyMul === 1.25;
-    if (heavenlyActive) {
-      finalAtk = Math.round(finalAtk * 1.25);
-      finalDef = Math.round(finalDef * 1.25);
-      finalHp = Math.round(finalHp * 1.25);
-      finalCrit = Math.round(finalCrit * 1.25 * 10) / 10;
-      finalEvasion = Math.round(finalEvasion * 1.25 * 10) / 10;
+    // 천상(Starforged) 적용: 장비 데이터의 "천상" 값(1 또는 1.25)을 그대로 사용 (데이터 기반).
+    // 장비 보너스 % 적용 후의 최종 스탯에 곱하고 반올림.
+    const starforgedMul: number = (typeof item['천상'] === 'number') ? item['천상'] : 1;
+    const preStarforgedAtk = finalAtk;
+    const preStarforgedDef = finalDef;
+    const preStarforgedHp = finalHp;
+    if (starforgedMul !== 1) {
+      finalAtk = Math.round(finalAtk * starforgedMul);
+      finalDef = Math.round(finalDef * starforgedMul);
+      finalHp = Math.round(finalHp * starforgedMul);
+      finalCrit = Math.round(finalCrit * starforgedMul * 10) / 10;
+      finalEvasion = Math.round(finalEvasion * starforgedMul * 10) / 10;
     }
 
     // Quiver zeroing
@@ -611,6 +622,8 @@ export async function calculateEquipmentStats(
       judgmentTypes: matchTypes,
       baseAtk, baseDef, baseHp, baseCrit, baseEvasion,
       qualityAtk, qualityDef, qualityHp,
+      starforgedMul,
+      preStarforgedAtk, preStarforgedDef, preStarforgedHp,
       elementRawAtk: elementRaw.atk, elementRawDef: elementRaw.def, elementRawHp: elementRaw.hp,
       spiritRawAtk: spiritRaw.atk, spiritRawDef: spiritRaw.def, spiritRawHp: spiritRaw.hp,
       elementCapAtk, elementCapDef, elementCapHp,
@@ -640,6 +653,8 @@ function emptySlotCalc(index: number): EquipSlotCalc {
     judgmentTypes: [],
     baseAtk: 0, baseDef: 0, baseHp: 0, baseCrit: 0, baseEvasion: 0,
     qualityAtk: 0, qualityDef: 0, qualityHp: 0,
+    starforgedMul: 1,
+    preStarforgedAtk: 0, preStarforgedDef: 0, preStarforgedHp: 0,
     elementRawAtk: 0, elementRawDef: 0, elementRawHp: 0,
     spiritRawAtk: 0, spiritRawDef: 0, spiritRawHp: 0,
     elementCapAtk: 0, elementCapDef: 0, elementCapHp: 0,
