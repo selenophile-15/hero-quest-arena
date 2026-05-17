@@ -44,7 +44,13 @@ export interface EquipSlotCalc {
   // 미다스 (사라진 황금의 도시) 보너스 % applied to this slot (0 if not applicable)
   midasBonusPct: number;
 
-  // Starforged (천상) multiplier from item data (1 or 1.25)
+  // 천상 체크 여부
+  starforged: boolean;
+
+  // 장비 데이터에 들어있는 천상 배율 (1 또는 1.25)
+  itemStarforgedMul: number;
+
+  // 실제 적용된 천상 배율
   starforgedMul: number;
 
   // Stats just before starforged is applied (after quiver/bonus%)
