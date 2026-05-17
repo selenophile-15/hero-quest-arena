@@ -710,7 +710,7 @@
 
     "Sip o' the Sea": {
       "id": "pt10_4",
-      "name_ko": "한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력",
+      "name_ko": "바다 한 모금",
       "image_key": "sip_o'_the_sea",
       "이미지_경로": "/images/equipment/accessory/potion/sip_o'_the_sea.webp",
 
@@ -734,7 +734,7 @@
 
     "Ninja Smoke Bomb": {
       "id": "pt10_5",
-      "name_ko": "한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력한글이름입력",
+      "name_ko": "닌자 연막탄",
       "image_key": "ninja_smoke_bomb",
       "이미지_경로": "/images/equipment/accessory/potion/ninja_smoke_bomb.webp",
 
