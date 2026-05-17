@@ -103,6 +103,13 @@ export interface EquipCalcResult {
   totalEvasion: number;
   // Relic effects detected
   relicEffects: RelicEffect[];
+  // 미다스 (사라진 황금의 도시) 유물 활성화 정보
+  midasInfo: {
+    ringActive: boolean;
+    amuletActive: boolean;
+    totalPct: number; // ring(50) + amulet(25)
+    affectedSlotIndices: number[];
+  };
 }
 
 export interface RelicEffect {
