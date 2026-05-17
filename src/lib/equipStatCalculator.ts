@@ -41,6 +41,9 @@ export interface EquipSlotCalc {
   qualityDef: number;
   qualityHp: number;
 
+  // 미다스 (사라진 황금의 도시) 보너스 % applied to this slot (0 if not applicable)
+  midasBonusPct: number;
+
   // Starforged (천상) multiplier from item data (1 or 1.25)
   starforgedMul: number;
 
@@ -100,6 +103,13 @@ export interface EquipCalcResult {
   totalEvasion: number;
   // Relic effects detected
   relicEffects: RelicEffect[];
+  // 미다스 (사라진 황금의 도시) 유물 활성화 정보
+  midasInfo: {
+    ringActive: boolean;
+    amuletActive: boolean;
+    totalPct: number; // ring(50) + amulet(25)
+    affectedSlotIndices: number[];
+  };
 }
 
 export interface RelicEffect {
@@ -271,6 +281,7 @@ function getItemBaseStat(item: any, key: string): number {
 
 // Reverse map: file type → Korean type names
 import { EQUIP_TYPE_MAP } from "./equipmentUtils";
+import { isLostCityItem, midasBonusPctFor } from "./lostCityItems";
 
 const FILE_TO_KOR: Record<string, string[]> = {};
 for (const [kor, { file }] of Object.entries(EQUIP_TYPE_MAP)) {
@@ -381,6 +392,17 @@ export async function calculateEquipmentStats(
 
   // 화살통 보너스: 활/크로스보우/총에 30% 보너스 적용
   const hasQuiver = slots.some((s) => s?.item?.type === "quiver");
+
+  // 미다스 유물: 사라진 황금의 도시 장비에 +50%(반지) / +25%(애뮬릿) 추가 (보너스% 단계)
+  let midasRingActive = false;
+  let midasAmuletActive = false;
+  for (const s of slots) {
+    const pct = midasBonusPctFor(s?.item);
+    if (pct === 50) midasRingActive = true;
+    if (pct === 25) midasAmuletActive = true;
+  }
+  const midasTotalPct = (midasRingActive ? 50 : 0) + (midasAmuletActive ? 25 : 0);
+  const midasAffectedSlots: number[] = [];
 
   for (let i = 0; i < 6; i++) {
     const slot = slots[i];
@@ -574,6 +596,16 @@ export async function calculateEquipmentStats(
     let bonusDefPct = specificDefPct + skillBonuses.모든장비방어력 + skillBonuses.모든장비전체;
     let bonusHpPct = specificHpPct + skillBonuses.모든장비체력 + skillBonuses.모든장비전체;
 
+    // 미다스 보너스: 사라진 황금의 도시 장비에 한해 보너스% 단계에 (반지 50% + 애뮬릿 25%)를 추가
+    let slotMidasBonusPct = 0;
+    if (midasTotalPct > 0 && isLostCityItem(item)) {
+      slotMidasBonusPct = midasTotalPct;
+      bonusAtkPct += slotMidasBonusPct;
+      bonusDefPct += slotMidasBonusPct;
+      bonusHpPct += slotMidasBonusPct;
+      midasAffectedSlots.push(i);
+    }
+
     // 역효과 해머: +100% to self (added to bonus pool, not multiplied separately)
     if (item.name === "역효과 해머") {
       bonusAtkPct += 100;
@@ -651,6 +683,7 @@ export async function calculateEquipmentStats(
       qualityAtk,
       qualityDef,
       qualityHp,
+      midasBonusPct: slotMidasBonusPct,
       starforgedMul,
       preStarforgedAtk,
       preStarforgedDef,
@@ -693,6 +726,12 @@ export async function calculateEquipmentStats(
     totalCrit: slotResults.reduce((sum, s) => sum + s.finalCrit, 0),
     totalEvasion: slotResults.reduce((sum, s) => sum + s.finalEvasion, 0),
     relicEffects,
+    midasInfo: {
+      ringActive: midasRingActive,
+      amuletActive: midasAmuletActive,
+      totalPct: midasTotalPct,
+      affectedSlotIndices: midasAffectedSlots,
+    },
   };
 }
 
@@ -712,6 +751,7 @@ function emptySlotCalc(index: number): EquipSlotCalc {
     qualityAtk: 0,
     qualityDef: 0,
     qualityHp: 0,
+    midasBonusPct: 0,
     starforgedMul: 1,
     preStarforgedAtk: 0,
     preStarforgedDef: 0,

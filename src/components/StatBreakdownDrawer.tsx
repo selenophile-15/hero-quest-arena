@@ -303,6 +303,37 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                 })}
               </tbody>
             </table>
+            {/* 미다스 (사라진 황금의 도시) 보너스 */}
+            {calcStats?.equipResult?.midasInfo && calcStats.equipResult.midasInfo.totalPct > 0 && (
+              <table className="w-full text-xs mt-2">
+                <thead>
+                  <tr className="border-b border-border/50">
+                    <th className="py-1 text-left text-foreground/60">미다스 (사라진 황금의 도시)</th>
+                    <th className="py-1 text-right text-foreground/60">%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {calcStats.equipResult.midasInfo.ringActive && (
+                    <tr className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">
+                        <span className="text-[9px] mr-1 px-1 rounded bg-yellow-700/60">유물</span>
+                        미다스의 반지 → 사라진 황금의 도시 장비
+                      </td>
+                      <td className="py-1 text-right tabular-nums text-yellow-300">+50%</td>
+                    </tr>
+                  )}
+                  {calcStats.equipResult.midasInfo.amuletActive && (
+                    <tr className="border-b border-border/20">
+                      <td className="py-1 text-foreground/70">
+                        <span className="text-[9px] mr-1 px-1 rounded bg-yellow-700/60">유물</span>
+                        미다스의 애뮬릿 → 사라진 황금의 도시 장비
+                      </td>
+                      <td className="py-1 text-right tabular-nums text-yellow-300">+25%</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
 
           <div className="px-3">
@@ -428,7 +459,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       <tr className="border-b border-border/20">
                         <td className="px-2 py-1 text-foreground/70">장비 보너스 %</td>
                         <td className="px-2 py-1 text-right tabular-nums text-foreground">
-                          {slot ? `${getSlotStatDirect(slot, bonusPctKey as keyof EquipSlotCalc)}%` : '0%'}
+                          {slot ? `${(getSlotStatDirect(slot, bonusPctKey as keyof EquipSlotCalc) as number) - (slot.midasBonusPct || 0)}%` : '0%'}
                         </td>
                       </tr>
                       {/* 화살통 보너스: 보너스 적용 후 마지막에 추가 */}
@@ -449,6 +480,17 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                         <tr className="border-b border-border/20">
                           <td colSpan={2} className="px-2 py-1 text-[10px] text-yellow-400/80">
                             ⚠ 활/석궁/총 미장착 시 화살통 스탯 0
+                          </td>
+                        </tr>
+                      )}
+                      {slot && slot.midasBonusPct > 0 && (
+                        <tr className="border-b border-border/20">
+                          <td className="px-2 py-1 text-yellow-700 dark:text-yellow-300 text-[11px]">
+                            <span className="text-[9px] mr-1 px-1 rounded bg-yellow-700/60 text-white">미다스</span>
+                            사라진 황금의 도시 보너스
+                          </td>
+                          <td className="px-2 py-1 text-right tabular-nums text-yellow-700 dark:text-yellow-300 font-medium">
+                            +{slot.midasBonusPct}%
                           </td>
                         </tr>
                       )}
