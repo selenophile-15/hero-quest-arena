@@ -954,18 +954,33 @@ export default function EquipmentSelectDialog({
                                 av = a.tier;
                                 bv = b.tier;
                               } else if (tableSortKey === "atk") {
-                                const ma = (a as any)["천상"] || 1;
-                                const mb = (b as any)["천상"] || 1;
+                                const isStarforgedPreview = !!slots[activeSlot]?.starforged;
+                                const ma = isStarforgedPreview
+                                  ? ((a as any)["천상"] ?? (a as any).starforgedMul ?? 1)
+                                  : 1;
+                                const mb = isStarforgedPreview
+                                  ? ((b as any)["천상"] ?? (b as any).starforgedMul ?? 1)
+                                  : 1;
                                 av = Math.round((a.stats.find((s) => s.key === "장비_공격력")?.value || 0) * ma);
                                 bv = Math.round((b.stats.find((s) => s.key === "장비_공격력")?.value || 0) * mb);
                               } else if (tableSortKey === "def") {
-                                const ma = (a as any)["천상"] || 1;
-                                const mb = (b as any)["천상"] || 1;
+                                const isStarforgedPreview = !!slots[activeSlot]?.starforged;
+                                const ma = isStarforgedPreview
+                                  ? ((a as any)["천상"] ?? (a as any).starforgedMul ?? 1)
+                                  : 1;
+                                const mb = isStarforgedPreview
+                                  ? ((b as any)["천상"] ?? (b as any).starforgedMul ?? 1)
+                                  : 1;
                                 av = Math.round((a.stats.find((s) => s.key === "장비_방어력")?.value || 0) * ma);
                                 bv = Math.round((b.stats.find((s) => s.key === "장비_방어력")?.value || 0) * mb);
                               } else if (tableSortKey === "hp") {
-                                const ma = (a as any)["천상"] || 1;
-                                const mb = (b as any)["천상"] || 1;
+                                const isStarforgedPreview = !!slots[activeSlot]?.starforged;
+                                const ma = isStarforgedPreview
+                                  ? ((a as any)["천상"] ?? (a as any).starforgedMul ?? 1)
+                                  : 1;
+                                const mb = isStarforgedPreview
+                                  ? ((b as any)["천상"] ?? (b as any).starforgedMul ?? 1)
+                                  : 1;
                                 av = Math.round((a.stats.find((s) => s.key === "장비_체력")?.value || 0) * ma);
                                 bv = Math.round((b.stats.find((s) => s.key === "장비_체력")?.value || 0) * mb);
                               } else if (tableSortKey === "crit") {
@@ -986,7 +1001,13 @@ export default function EquipmentSelectDialog({
                         })().map((item, idx) => {
                           const isSelected = currentSlotItem?.name === item.name && currentSlotItem?.tier === item.tier;
                           const isRelicBlocked = item.relic && hasRelicEquipped && !currentSlotHasRelic;
-                          const starforgedMul = (item as any)["천상"] || 1;
+
+                          const isStarforgedPreview = !!slots[activeSlot]?.starforged;
+                          const rawStarforgedMul = (item as any)["천상"] ?? (item as any).starforgedMul;
+                          const itemStarforgedMul =
+                            typeof rawStarforgedMul === "number" ? rawStarforgedMul : Number(rawStarforgedMul) || 1;
+                          const starforgedMul = isStarforgedPreview ? itemStarforgedMul : 1;
+
                           const rawAtk = item.stats.find((s) => s.key === "장비_공격력")?.value || 0;
                           const rawDef = item.stats.find((s) => s.key === "장비_방어력")?.value || 0;
                           const rawHp = item.stats.find((s) => s.key === "장비_체력")?.value || 0;
