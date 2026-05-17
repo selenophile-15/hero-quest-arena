@@ -46,6 +46,7 @@ export const AURASONG_NAME_MAP: Record<string, string> = {
   '영감의 오라': 'aura_of_inspiration',
   'A.U.R.A. 어시스턴트': 'a.u.r.a._assistant',
   '플래티넘 오라': 'platinum_aura',
+  '쥬만지의 운명': 'fate_of_jumanji'
 };
 
 // Aura song skill icon map (Korean aura name → skill icon file in sk_aurasong)
@@ -68,6 +69,7 @@ export const AURASONG_SKILL_ICON_MAP: Record<string, string> = {
   '변이의 오라': 'transmutation',
   '영감의 오라': 'inspiration',
   '플래티넘 오라': 'platinum',
+  '쥬만지의 운명': 'jumanji'
   'A.U.R.A. 어시스턴트': 'a.u.r.a.',
 };
 
