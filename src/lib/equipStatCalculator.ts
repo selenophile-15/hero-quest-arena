@@ -44,13 +44,7 @@ export interface EquipSlotCalc {
   // 미다스 (사라진 황금의 도시) 보너스 % applied to this slot (0 if not applicable)
   midasBonusPct: number;
 
-  // 천상 체크 여부
-  starforged: boolean;
-
-  // 장비 데이터에 들어있는 천상 배율 (1 또는 1.25)
-  itemStarforgedMul: number;
-
-  // 실제 적용된 천상 배율
+  // Starforged (천상) multiplier from item data (1 or 1.25)
   starforgedMul: number;
 
   // Stats just before starforged is applied (after quiver/bonus%)
@@ -647,6 +641,8 @@ export async function calculateEquipmentStats(
     let finalCrit = baseCrit;
     let finalEvasion = baseEvasion;
 
+    // 천상(Starforged) 적용
+    // - slot.starforged 체크박스가 켜졌을 때만 적용한다.
     // - 적용 배율은 장비 데이터의 "천상" 값을 그대로 사용한다.
     // - 공격력 / 방어력 / 체력에만 적용한다.
     // - 치명타 / 회피에는 적용하지 않는다.
@@ -654,8 +650,7 @@ export async function calculateEquipmentStats(
 
     const itemStarforgedMul = typeof rawStarforgedMul === "number" ? rawStarforgedMul : Number(rawStarforgedMul) || 1;
 
-    const starforged = !!slot.starforged;
-    const starforgedMul = starforged ? itemStarforgedMul : 1;
+    const starforgedMul = slot.starforged ? itemStarforgedMul : 1;
 
     const preStarforgedAtk = finalAtk;
     const preStarforgedDef = finalDef;
@@ -697,8 +692,6 @@ export async function calculateEquipmentStats(
       qualityDef,
       qualityHp,
       midasBonusPct: slotMidasBonusPct,
-      starforged,
-      itemStarforgedMul,
       starforgedMul,
       preStarforgedAtk,
       preStarforgedDef,
@@ -767,8 +760,6 @@ function emptySlotCalc(index: number): EquipSlotCalc {
     qualityDef: 0,
     qualityHp: 0,
     midasBonusPct: 0,
-    starforged: false,
-    itemStarforgedMul: 1,
     starforgedMul: 1,
     preStarforgedAtk: 0,
     preStarforgedDef: 0,
