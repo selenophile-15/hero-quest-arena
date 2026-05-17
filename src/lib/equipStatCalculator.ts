@@ -41,6 +41,9 @@ export interface EquipSlotCalc {
   qualityDef: number;
   qualityHp: number;
 
+  // 미다스 (사라진 황금의 도시) 보너스 % applied to this slot (0 if not applicable)
+  midasBonusPct: number;
+
   // Starforged (천상) multiplier from item data (1 or 1.25)
   starforgedMul: number;
 
