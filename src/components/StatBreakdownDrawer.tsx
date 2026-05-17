@@ -459,7 +459,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       <tr className="border-b border-border/20">
                         <td className="px-2 py-1 text-foreground/70">장비 보너스 %</td>
                         <td className="px-2 py-1 text-right tabular-nums text-foreground">
-                          {slot ? `${getSlotStatDirect(slot, bonusPctKey as keyof EquipSlotCalc)}%` : '0%'}
+                          {slot ? `${(getSlotStatDirect(slot, bonusPctKey as keyof EquipSlotCalc) as number) - (slot.midasBonusPct || 0)}%` : '0%'}
                         </td>
                       </tr>
                       {/* 화살통 보너스: 보너스 적용 후 마지막에 추가 */}
