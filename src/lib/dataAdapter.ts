@@ -111,6 +111,16 @@ export function normalizeEquipItem(raw: any): { korName: string; item: any } | n
 
   const item: any = { ...raw };
 
+  // Normalize Starforged/천상 multiplier.
+  // In equipment JSON, "천상" means the multiplier to use when slot.starforged is checked.
+  // Keep both keys so calculators and UI can read it consistently.
+  const rawStarforgedMul = raw["천상"] ?? raw.starforgedMul;
+
+  const starforgedMul = typeof rawStarforgedMul === "number" ? rawStarforgedMul : Number(rawStarforgedMul) || 1;
+
+  item["천상"] = starforgedMul;
+  item.starforgedMul = starforgedMul;
+
   // Translate affinity arrays from English → Korean
   if (item["원소친밀감"]) item["원소친밀감"] = mapArr(item["원소친밀감"], toKoElement);
   if (item["고유원소종류"]) item["고유원소종류"] = mapArr(item["고유원소종류"], toKoElement);
