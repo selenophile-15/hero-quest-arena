@@ -392,6 +392,18 @@ export async function calculateEquipmentStats(
   // 화살통 보너스: 활/크로스보우/총에 30% 보너스 적용
   const hasQuiver = slots.some((s) => s?.item?.type === "quiver");
 
+  // 미다스 유물: 사라진 황금의 도시 장비에 +50%(반지) / +25%(애뮬릿) 추가 (보너스% 단계)
+  const { isLostCityItem, midasBonusPctFor } = await import("./lostCityItems");
+  let midasRingActive = false;
+  let midasAmuletActive = false;
+  for (const s of slots) {
+    const pct = midasBonusPctFor(s?.item);
+    if (pct === 50) midasRingActive = true;
+    if (pct === 25) midasAmuletActive = true;
+  }
+  const midasTotalPct = (midasRingActive ? 50 : 0) + (midasAmuletActive ? 25 : 0);
+  const midasAffectedSlots: number[] = [];
+
   for (let i = 0; i < 6; i++) {
     const slot = slots[i];
     const item = slot?.item;
