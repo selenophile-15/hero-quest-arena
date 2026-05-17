@@ -281,6 +281,7 @@ function getItemBaseStat(item: any, key: string): number {
 
 // Reverse map: file type → Korean type names
 import { EQUIP_TYPE_MAP } from "./equipmentUtils";
+import { isLostCityItem, midasBonusPctFor } from "./lostCityItems";
 
 const FILE_TO_KOR: Record<string, string[]> = {};
 for (const [kor, { file }] of Object.entries(EQUIP_TYPE_MAP)) {
@@ -393,7 +394,6 @@ export async function calculateEquipmentStats(
   const hasQuiver = slots.some((s) => s?.item?.type === "quiver");
 
   // 미다스 유물: 사라진 황금의 도시 장비에 +50%(반지) / +25%(애뮬릿) 추가 (보너스% 단계)
-  const { isLostCityItem, midasBonusPctFor } = await import("./lostCityItems");
   let midasRingActive = false;
   let midasAmuletActive = false;
   for (const s of slots) {
