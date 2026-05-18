@@ -282,6 +282,7 @@ function getItemBaseStat(item: any, key: string): number {
 // Reverse map: file type → Korean type names
 import { EQUIP_TYPE_MAP } from "./equipmentUtils";
 import { isLostCityItem, midasBonusPctFor } from "./lostCityItems";
+import { lookupStarforgedMul } from "./dataAdapter";
 
 const FILE_TO_KOR: Record<string, string[]> = {};
 for (const [kor, { file }] of Object.entries(EQUIP_TYPE_MAP)) {
