@@ -1595,10 +1595,6 @@ export default function HeroList() {
 
 
   return (
-    <>
-      {showHeroForm && <HeroForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); setExpandedId(null); setSortKey('heroClass'); setSortDir('asc'); }} />}
-      {showChampionForm && <ChampionForm hero={editing || undefined} onSave={handleSave} onCancel={() => { setAddingType(null); setEditing(null); setExpandedId(null); setSortKey('heroClass'); setSortDir('asc'); }} />}
-      <div style={{ display: showList ? 'block' : 'none' }}>
     <div className="animate-fade-in">
       {/* Tab: Hero / Champion / Summary + View mode + Add buttons */}
       <div className="flex items-center justify-between mb-0">
@@ -2034,6 +2030,5 @@ export default function HeroList() {
       {/* Save list dialog */}
       <SaveListDialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen} heroes={heroes} />
     </div>
-    </>
   );
 }
