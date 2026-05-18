@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { STAT_ICON_MAP } from '@/types/game';
-import { formatNumber } from '@/lib/format';
-import { ChampionCalcResult, CARD_LEVEL_BONUS } from '@/lib/championStatCalculator';
+import { useState } from "react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { STAT_ICON_MAP } from "@/types/game";
+import { formatNumber } from "@/lib/format";
+import { ChampionCalcResult, CARD_LEVEL_BONUS } from "@/lib/championStatCalculator";
 
 interface ChampionStatBreakdownDrawerProps {
   open: boolean;
@@ -12,49 +12,59 @@ interface ChampionStatBreakdownDrawerProps {
   championName: string;
 }
 
-type StatTab = 'atk' | 'def' | 'hp' | 'other';
+type StatTab = "atk" | "def" | "hp" | "other";
 
 const STAT_TABS: { key: StatTab; label: string; icon: string; color: string; headerBg: string }[] = [
-  { key: 'atk', label: '공격력', icon: STAT_ICON_MAP.atk, color: 'text-red-400', headerBg: 'bg-red-900/60' },
-  { key: 'def', label: '방어력', icon: STAT_ICON_MAP.def, color: 'text-blue-400', headerBg: 'bg-blue-900/60' },
-  { key: 'hp', label: '체력', icon: STAT_ICON_MAP.hp, color: 'text-orange-400', headerBg: 'bg-[#a85200]/60' },
-  { key: 'other', label: '기타', icon: '', color: 'text-gray-400', headerBg: 'bg-gray-700/60' },
+  { key: "atk", label: "공격력", icon: STAT_ICON_MAP.atk, color: "text-red-400", headerBg: "bg-red-900/60" },
+  { key: "def", label: "방어력", icon: STAT_ICON_MAP.def, color: "text-blue-400", headerBg: "bg-blue-900/60" },
+  { key: "hp", label: "체력", icon: STAT_ICON_MAP.hp, color: "text-orange-400", headerBg: "bg-[#a85200]/60" },
+  { key: "other", label: "기타", icon: "", color: "text-gray-400", headerBg: "bg-gray-700/60" },
 ];
 
-function DiffBadge({ value, suffix = '' }: { value: number; suffix?: string }) {
+function DiffBadge({ value, suffix = "" }: { value: number; suffix?: string }) {
   if (value === 0) return null;
   const isPos = value > 0;
   return (
-    <span className={`text-[10px] font-semibold ml-1 ${isPos ? 'text-green-400' : 'text-red-400'}`}>
-      ({isPos ? '+' : ''}{formatNumber(Math.round(value))}{suffix})
+    <span className={`text-[10px] font-semibold ml-1 ${isPos ? "text-green-400" : "text-red-400"}`}>
+      ({isPos ? "+" : ""}
+      {formatNumber(Math.round(value))}
+      {suffix})
     </span>
   );
 }
 
-export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcResult, championName }: ChampionStatBreakdownDrawerProps) {
-  const [activeTab, setActiveTab] = useState<StatTab>('atk');
+export default function ChampionStatBreakdownDrawer({
+  open,
+  onOpenChange,
+  calcResult,
+  championName,
+}: ChampionStatBreakdownDrawerProps) {
+  const [activeTab, setActiveTab] = useState<StatTab>("atk");
 
   if (!calcResult) return null;
   const r = calcResult;
 
-  const renderMultBreakdown = (statType: 'atk' | 'def' | 'hp') => {
-    const config = STAT_TABS.find(t => t.key === statType)!;
+  const renderMultBreakdown = (statType: "atk" | "def" | "hp") => {
+    const config = STAT_TABS.find((t) => t.key === statType)!;
 
-    const rankBase = statType === 'atk' ? r.rankBaseAtk : statType === 'def' ? r.rankBaseDef : r.rankBaseHp;
-    const promotedRankVal = statType === 'atk' ? r.promotedRankAtk : statType === 'def' ? r.promotedRankDef : r.promotedRankHp;
-    const afterSoulMult = statType === 'atk' ? r.promotedAtk : statType === 'def' ? r.promotedDef : r.promotedHp;
-    const nonPromotedBase = statType === 'atk' ? r.nonPromotedAtk : statType === 'def' ? r.nonPromotedDef : r.nonPromotedHp;
+    const rankBase = statType === "atk" ? r.rankBaseAtk : statType === "def" ? r.rankBaseDef : r.rankBaseHp;
+    const promotedRankVal =
+      statType === "atk" ? r.promotedRankAtk : statType === "def" ? r.promotedRankDef : r.promotedRankHp;
+    const afterSoulMult = statType === "atk" ? r.promotedAtk : statType === "def" ? r.promotedDef : r.promotedHp;
+    const nonPromotedBase =
+      statType === "atk" ? r.nonPromotedAtk : statType === "def" ? r.nonPromotedDef : r.nonPromotedHp;
 
-    const levelVal = statType === 'atk' ? r.levelAtk : statType === 'def' ? r.levelDef : r.levelHp;
+    const levelVal = statType === "atk" ? r.levelAtk : statType === "def" ? r.levelDef : r.levelHp;
 
-    const seedRaw = statType === 'atk' ? r.seedAtk : statType === 'def' ? r.seedDef : r.seedHp;
-    const seedFinal = statType === 'atk' ? r.seedAtkMult : statType === 'def' ? r.seedDefMult : r.seedHp;
-    const seedMultLabel = statType === 'hp' ? '' : ' × 4';
+    const seedRaw = statType === "atk" ? r.seedAtk : statType === "def" ? r.seedDef : r.seedHp;
+    const seedFinal = statType === "atk" ? r.seedAtkMult : statType === "def" ? r.seedDefMult : r.seedHp;
+    const seedMultLabel = statType === "hp" ? "" : " × 4";
 
-    const equipTotal = statType === 'atk' ? r.totalEquipAtk : statType === 'def' ? r.totalEquipDef : r.totalEquipHp;
-    const subtotal = statType === 'atk' ? r.subtotalAtk : statType === 'def' ? r.subtotalDef : r.subtotalHp;
-    const final = statType === 'atk' ? r.finalAtk : statType === 'def' ? r.finalDef : r.finalHp;
-    const nonPromotedFinal = statType === 'atk' ? r.nonPromotedFinalAtk : statType === 'def' ? r.nonPromotedFinalDef : r.nonPromotedFinalHp;
+    const equipTotal = statType === "atk" ? r.totalEquipAtk : statType === "def" ? r.totalEquipDef : r.totalEquipHp;
+    const subtotal = statType === "atk" ? r.subtotalAtk : statType === "def" ? r.subtotalDef : r.subtotalHp;
+    const final = statType === "atk" ? r.finalAtk : statType === "def" ? r.finalDef : r.finalHp;
+    const nonPromotedFinal =
+      statType === "atk" ? r.nonPromotedFinalAtk : statType === "def" ? r.nonPromotedFinalDef : r.nonPromotedFinalHp;
 
     const promotedDiff = r.promoted ? final - nonPromotedFinal : 0;
 
@@ -76,34 +86,54 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
           <div>
             <h5 className="text-xs font-semibold text-primary mb-1.5">
               ① 기본 스탯
-              {r.promoted && <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-yellow-600/60 text-yellow-200">승급 적용</span>}
+              {r.promoted && (
+                <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-yellow-600/60 text-yellow-200">
+                  승급 적용
+                </span>
+              )}
             </h5>
             <table className="w-full text-xs">
               <tbody>
                 {r.promoted ? (
                   <>
                     <tr className="border-b border-border/30">
-                      <td className="py-1.5 text-foreground/60">랭크 {r.rank}+2 = {r.rank + 2} 기준</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(promotedRankVal)}</td>
+                      <td className="py-1.5 text-foreground/60">
+                        랭크 {r.rank}+2 = {r.rank + 2} 기준
+                      </td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground/60">
+                        {formatNumber(promotedRankVal)}
+                      </td>
                     </tr>
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 text-foreground/60">× 1.5 (챔피언 소울)</td>
-                      <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(Math.round(promotedRankVal * 1.5))}</td>
+                      <td className="py-1.5 text-right tabular-nums text-foreground/60">
+                        {formatNumber(Math.round(promotedRankVal * 1.5))}
+                      </td>
                     </tr>
                     <tr className="border-b border-border/50">
                       <td className="py-1.5 text-foreground font-medium">기본 {config.label}</td>
-                      <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">{formatNumber(baseStat)}</td>
+                      <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">
+                        {formatNumber(baseStat)}
+                      </td>
                     </tr>
                   </>
                 ) : (
                   <tr className="border-b border-border/50">
-                    <td className="py-1.5 text-foreground font-medium">랭크 {r.rank} {config.label}</td>
-                    <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(baseStat)}</td>
+                    <td className="py-1.5 text-foreground font-medium">
+                      랭크 {r.rank} {config.label}
+                    </td>
+                    <td className="py-1.5 text-right tabular-nums text-foreground font-bold">
+                      {formatNumber(baseStat)}
+                    </td>
                   </tr>
                 )}
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">레벨 {r.level} {config.label}</td>
-                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">{formatNumber(levelVal)}</td>
+                  <td className="py-1.5 text-foreground/70">
+                    레벨 {r.level} {config.label}
+                  </td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-medium">
+                    {formatNumber(levelVal)}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -122,7 +152,8 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                   <td className="py-1.5 text-right tabular-nums text-foreground font-medium">
                     {seedRaw > 0 ? (
                       <>
-                        {formatNumber(seedRaw)}{seedMultLabel ? ` = ${formatNumber(seedFinal)}` : ''}
+                        {formatNumber(seedRaw)}
+                        {seedMultLabel ? ` = ${formatNumber(seedFinal)}` : ""}
                       </>
                     ) : (
                       <span className="text-muted-foreground">0</span>
@@ -148,13 +179,27 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                     );
                   }
 
-                  const qualityVal = statType === 'atk' ? slot.qualityAtk : statType === 'def' ? slot.qualityDef : slot.qualityHp;
-                  const elementVal = statType === 'atk' ? slot.elementCapAtk : statType === 'def' ? slot.elementCapDef : slot.elementCapHp;
-                  const elementRaw = statType === 'atk' ? slot.elementRawAtk : statType === 'def' ? slot.elementRawDef : slot.elementRawHp;
-                  const spiritVal = statType === 'atk' ? slot.spiritCapAtk : statType === 'def' ? slot.spiritCapDef : slot.spiritCapHp;
-                  const spiritRaw = statType === 'atk' ? slot.spiritRawAtk : statType === 'def' ? slot.spiritRawDef : slot.spiritRawHp;
-                  const finalVal = statType === 'atk' ? slot.finalAtk : statType === 'def' ? slot.finalDef : slot.finalHp;
-                  const isCapped = (elementVal < elementRaw) || (spiritVal < spiritRaw);
+                  const qualityVal =
+                    statType === "atk" ? slot.qualityAtk : statType === "def" ? slot.qualityDef : slot.qualityHp;
+                  const elementVal =
+                    statType === "atk"
+                      ? slot.elementCapAtk
+                      : statType === "def"
+                        ? slot.elementCapDef
+                        : slot.elementCapHp;
+                  const elementRaw =
+                    statType === "atk"
+                      ? slot.elementRawAtk
+                      : statType === "def"
+                        ? slot.elementRawDef
+                        : slot.elementRawHp;
+                  const spiritVal =
+                    statType === "atk" ? slot.spiritCapAtk : statType === "def" ? slot.spiritCapDef : slot.spiritCapHp;
+                  const spiritRaw =
+                    statType === "atk" ? slot.spiritRawAtk : statType === "def" ? slot.spiritRawDef : slot.spiritRawHp;
+                  const finalVal =
+                    statType === "atk" ? slot.finalAtk : statType === "def" ? slot.finalDef : slot.finalHp;
+                  const isCapped = elementVal < elementRaw || spiritVal < spiritRaw;
 
                   return (
                     <tr key={i} className="border-b border-border/30">
@@ -167,37 +212,55 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                             </span>
                           </span>
                           <div className="text-xs text-foreground/60 pl-2 space-y-0.5">
-                            <div>등급 ({slot.quality} ×{slot.qualityMult}): {formatNumber(qualityVal)}</div>
+                            <div>
+                              등급 ({slot.quality} ×{slot.qualityMult}): {formatNumber(qualityVal)}
+                            </div>
                             {slot.elementName && (
-                              <div className={elementVal < elementRaw ? 'text-yellow-400' : ''}>
+                              <div className={elementVal < elementRaw ? "text-yellow-400" : ""}>
                                 원소 {slot.elementName}: {formatNumber(elementVal)}
-                                {elementVal < elementRaw && <span className="text-muted-foreground"> (제한: {elementRaw}→{elementVal})</span>}
+                                {elementVal < elementRaw && (
+                                  <span className="text-muted-foreground">
+                                    {" "}
+                                    (제한: {elementRaw}→{elementVal})
+                                  </span>
+                                )}
                               </div>
                             )}
                             {slot.spiritName && (
-                              <div className={spiritVal < spiritRaw ? 'text-yellow-400' : ''}>
+                              <div className={spiritVal < spiritRaw ? "text-yellow-400" : ""}>
                                 영혼 {slot.spiritName}: {formatNumber(spiritVal)}
-                                {spiritVal < spiritRaw && <span className="text-muted-foreground"> (제한: {spiritRaw}→{spiritVal})</span>}
+                                {spiritVal < spiritRaw && (
+                                  <span className="text-muted-foreground">
+                                    {" "}
+                                    (제한: {spiritRaw}→{spiritVal})
+                                  </span>
+                                )}
                               </div>
                             )}
-                            {(slot as any).starforgedMul > 1 ? (
-                              <div className="text-amber-600 dark:text-amber-300">천상: +{Math.round(((slot as any).starforgedMul - 1) * 100)}%</div>
-                            ) : (
-                              <div className="text-muted-foreground">천상: -</div>
+                            {(slot as any).starforgedMul > 1 && (
+                              <div className="text-amber-600 dark:text-amber-300">
+                                천상: +{Math.round(((slot as any).starforgedMul - 1) * 100)}%
+                              </div>
                             )}
                           </div>
                         </div>
                       </td>
                       <td className="py-1.5 text-right tabular-nums text-foreground align-top">
                         <span className="font-medium">{formatNumber(finalVal)}</span>
-                        {isCapped && <span className="ml-0.5 text-[9px] text-yellow-400" title="마법부여 제한 적용됨">⚠</span>}
+                        {isCapped && (
+                          <span className="ml-0.5 text-[9px] text-yellow-400" title="마법부여 제한 적용됨">
+                            ⚠
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );
                 })}
                 <tr className="border-b border-border/50">
                   <td className="py-1.5 text-foreground/70 font-medium">장비 합계</td>
-                  <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(equipTotal)}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-bold">
+                    {formatNumber(equipTotal)}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -210,9 +273,12 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
               <tbody>
                 <tr className="border-b border-border/30">
                   <td className="py-1.5 text-foreground/70">
-                    기본({formatNumber(baseStat)}) + 레벨({formatNumber(levelVal)}) + 씨앗({formatNumber(seedFinal)}) + 장비({formatNumber(equipTotal)})
+                    기본({formatNumber(baseStat)}) + 레벨({formatNumber(levelVal)}) + 씨앗({formatNumber(seedFinal)}) +
+                    장비({formatNumber(equipTotal)})
                   </td>
-                  <td className="py-1.5 text-right tabular-nums text-foreground font-bold">{formatNumber(Math.round(subtotal))}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground font-bold">
+                    {formatNumber(Math.round(subtotal))}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -224,31 +290,28 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <table className="w-full text-xs">
               <tbody>
                 <tr className="border-b border-border/30">
-                  <td className="py-1.5 text-foreground/70">
-                    카드 LV {r.cardLevel}
-                  </td>
-                  <td className="py-1.5 text-right tabular-nums text-foreground">
-                    +{r.cardLevelBonusPct}%
-                  </td>
+                  <td className="py-1.5 text-foreground/70">카드 LV {r.cardLevel}</td>
+                  <td className="py-1.5 text-right tabular-nums text-foreground">+{r.cardLevelBonusPct}%</td>
                 </tr>
                 {(() => {
-                  const spiritPct = statType === 'atk' ? r.spiritPctAtk : statType === 'def' ? r.spiritPctDef : r.spiritPctHp;
-                  const totalPct = statType === 'atk' ? r.totalPctAtk : statType === 'def' ? r.totalPctDef : r.totalPctHp;
+                  const spiritPct =
+                    statType === "atk" ? r.spiritPctAtk : statType === "def" ? r.spiritPctDef : r.spiritPctHp;
+                  const totalPct =
+                    statType === "atk" ? r.totalPctAtk : statType === "def" ? r.totalPctDef : r.totalPctHp;
                   return (
                     <>
                       {r.spiritSources.length > 0 && (
                         <>
                           {r.spiritSources.map((src, idx) => {
-                            const srcPct = statType === 'atk' ? src.pctAtk : statType === 'def' ? src.pctDef : src.pctHp;
+                            const srcPct =
+                              statType === "atk" ? src.pctAtk : statType === "def" ? src.pctDef : src.pctHp;
                             if (srcPct === 0) return null;
                             return (
                               <tr key={idx} className="border-b border-border/30">
                                 <td className="py-1.5 text-foreground/70">
                                   <span className="text-purple-400">[영혼]</span> {src.name}
                                 </td>
-                                <td className="py-1.5 text-right tabular-nums text-purple-300">
-                                  +{srcPct}%
-                                </td>
+                                <td className="py-1.5 text-right tabular-nums text-purple-300">+{srcPct}%</td>
                               </tr>
                             );
                           })}
@@ -279,9 +342,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
                 <img src={config.icon} alt="" className="w-5 h-5" />
                 최종 {config.label}
               </span>
-              <span className={`text-lg font-black tabular-nums ${config.color}`}>
-                {formatNumber(final)}
-              </span>
+              <span className={`text-lg font-black tabular-nums ${config.color}`}>{formatNumber(final)}</span>
             </div>
             {r.promoted && (
               <div className="mt-1 text-[11px] text-yellow-200/70 flex items-center justify-between">
@@ -338,11 +399,17 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <tbody>
               <tr className="border-b border-border/30">
                 <td className="py-1.5 text-foreground/70">치명타 대미지 계수</td>
-                <td className="py-1.5 text-right tabular-nums text-foreground">{r.totalCritDmg}% <span className="text-foreground/60">→ x{(r.totalCritDmg / 100).toFixed(1)}</span></td>
+                <td className="py-1.5 text-right tabular-nums text-foreground">
+                  {r.totalCritDmg}% <span className="text-foreground/60">→ x{(r.totalCritDmg / 100).toFixed(1)}</span>
+                </td>
               </tr>
               <tr className="border-b border-border/30">
-                <td className="py-1.5 text-foreground/70">치명타 공격력 (ATK × x{(r.totalCritDmg / 100).toFixed(1)})</td>
-                <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">{formatNumber(r.critAttack)}</td>
+                <td className="py-1.5 text-foreground/70">
+                  치명타 공격력 (ATK × x{(r.totalCritDmg / 100).toFixed(1)})
+                </td>
+                <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">
+                  {formatNumber(r.critAttack)}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -395,7 +462,7 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             <tbody>
               <tr className="border-b border-border/30">
                 <td className="py-1.5 text-foreground/70">원소 종류</td>
-                <td className="py-1.5 text-right text-foreground">{r.fixedElement || '-'}</td>
+                <td className="py-1.5 text-right text-foreground">{r.fixedElement || "-"}</td>
               </tr>
               <tr className="border-b border-border/30">
                 <td className="py-1.5 text-foreground/70">랭크 {r.rank} 원소량</td>
@@ -426,14 +493,16 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
               </thead>
               <tbody>
                 {[
-                  { label: 'HP', before: r.nonPromotedFinalHp, after: r.finalHp },
-                  { label: 'ATK', before: r.nonPromotedFinalAtk, after: r.finalAtk },
-                  { label: 'DEF', before: r.nonPromotedFinalDef, after: r.finalDef },
-                ].map(row => (
+                  { label: "HP", before: r.nonPromotedFinalHp, after: r.finalHp },
+                  { label: "ATK", before: r.nonPromotedFinalAtk, after: r.finalAtk },
+                  { label: "DEF", before: r.nonPromotedFinalDef, after: r.finalDef },
+                ].map((row) => (
                   <tr key={row.label} className="border-b border-border/20">
                     <td className="py-1.5 text-foreground/80 font-medium">{row.label}</td>
                     <td className="py-1.5 text-right tabular-nums text-foreground/60">{formatNumber(row.before)}</td>
-                    <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">{formatNumber(row.after)}</td>
+                    <td className="py-1.5 text-right tabular-nums text-yellow-400 font-bold">
+                      {formatNumber(row.after)}
+                    </td>
                     <td className="py-1.5 text-right tabular-nums">
                       <DiffBadge value={row.after - row.before} />
                     </td>
@@ -461,9 +530,13 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
         </SheetHeader>
 
         <div className="flex-1 flex flex-col min-h-0 px-4 pt-2">
-          <Tabs value={activeTab} onValueChange={v => setActiveTab(v as StatTab)} className="flex-1 flex flex-col min-h-0">
+          <Tabs
+            value={activeTab}
+            onValueChange={(v) => setActiveTab(v as StatTab)}
+            className="flex-1 flex flex-col min-h-0"
+          >
             <TabsList className="w-full justify-start shrink-0">
-              {STAT_TABS.map(tab => (
+              {STAT_TABS.map((tab) => (
                 <TabsTrigger key={tab.key} value={tab.key} className="flex items-center gap-1.5 text-xs">
                   {tab.icon && <img src={tab.icon} alt="" className="w-4 h-4" />}
                   {tab.label}
@@ -472,10 +545,10 @@ export default function ChampionStatBreakdownDrawer({ open, onOpenChange, calcRe
             </TabsList>
 
             <div className="flex-1 min-h-0 overflow-y-auto mt-2">
-              {activeTab === 'atk' && renderMultBreakdown('atk')}
-              {activeTab === 'def' && renderMultBreakdown('def')}
-              {activeTab === 'hp' && renderMultBreakdown('hp')}
-              {activeTab === 'other' && renderOtherBreakdown()}
+              {activeTab === "atk" && renderMultBreakdown("atk")}
+              {activeTab === "def" && renderMultBreakdown("def")}
+              {activeTab === "hp" && renderMultBreakdown("hp")}
+              {activeTab === "other" && renderOtherBreakdown()}
             </div>
           </Tabs>
         </div>
