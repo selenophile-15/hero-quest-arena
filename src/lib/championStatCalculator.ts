@@ -25,6 +25,7 @@ import {
 } from "./equipStatCalculator";
 import { parseSoulBonuses, type SoulBonusInput, type SkillBonusSource } from "./skillBonusParser";
 import { lookupStarforgedMul } from "./dataAdapter";
+import { preloadStarforgedRegistry } from "./equipmentUtils";
 
 export const CARD_LEVEL_BONUS: Record<number, number> = {
   0: 0,
