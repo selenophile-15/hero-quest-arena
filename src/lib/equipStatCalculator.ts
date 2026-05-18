@@ -280,7 +280,7 @@ function getItemBaseStat(item: any, key: string): number {
 }
 
 // Reverse map: file type → Korean type names
-import { EQUIP_TYPE_MAP } from "./equipmentUtils";
+import { EQUIP_TYPE_MAP, preloadStarforgedRegistry } from "./equipmentUtils";
 import { isLostCityItem, midasBonusPctFor } from "./lostCityItems";
 import { lookupStarforgedMul } from "./dataAdapter";
 
