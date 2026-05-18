@@ -238,6 +238,7 @@ export async function calculateChampionStats(params: {
 
   // Load enchant data
   const [elementData, spiritData] = await Promise.all([loadElementStats(), loadSpiritStats()]);
+  await preloadStarforgedRegistry();
 
   // Equipment calculation with enchant
   const SLOT_NAMES = ["퍼밀리어", "오라의 노래"];
