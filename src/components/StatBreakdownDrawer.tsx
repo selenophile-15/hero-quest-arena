@@ -603,20 +603,9 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                             </td>
                           </tr>
                         )}
-                      {slot && slot.midasBonusPct > 0 && (
-                        <tr className="border-b border-border/20">
-                          <td className="px-2 py-1 text-yellow-700 dark:text-yellow-300 text-[11px]">
-                            <span className="text-[9px] mr-1 px-1 rounded bg-yellow-700/60 text-white">미다스</span>
-                            사라진 황금의 도시 보너스
-                          </td>
-                          <td className="px-2 py-1 text-right tabular-nums text-yellow-700 dark:text-yellow-300 font-medium">
-                            +{slot.midasBonusPct}%
-                          </td>
-                        </tr>
-                      )}
                       {slot && slot.starforgedMul > 1 && (
                         <tr className="border-b border-border/20">
-                          <td className="px-2 py-1 text-amber-600 dark:text-amber-300 text-[11px]">천상</td>
+                          <td className="px-2 py-1 text-amber-600 dark:text-amber-300">천상</td>
                           <td className="px-2 py-1 text-right tabular-nums text-amber-600 dark:text-amber-300 font-medium">
                             +{Math.round((slot.starforgedMul - 1) * 100)}%
                           </td>
@@ -624,8 +613,8 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                       )}
                       {slot && slot.itemName && slot.starforgedMul === 1 && (
                         <tr className="border-b border-border/20">
-                          <td className="px-2 py-1 text-foreground/50 text-[11px]">천상</td>
-                          <td className="px-2 py-1 text-right tabular-nums text-muted-foreground">-</td>
+                          <td className="px-2 py-1 text-foreground/70">천상</td>
+                          <td className="px-2 py-1 text-right tabular-nums text-foreground">-</td>
                         </tr>
                       )}
                       <tr className={hasItem ? "bg-secondary/30" : ""}>
