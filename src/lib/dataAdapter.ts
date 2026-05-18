@@ -184,6 +184,10 @@ export function normalizeEquipFile(raw: any): any {
       const norm = normalizeEquipItem(raw2);
       if (!norm) continue;
       norm.item.engName = enKey;
+      // Register starforged value by English key as well for fallback lookups.
+      if (enKey && typeof norm.item.starforgedMul === "number") {
+        starforgedRegistry[enKey.toLowerCase()] = norm.item.starforgedMul;
+      }
       // Avoid clobbering when two items share the same Korean name
       const key = newBlock[norm.korName] ? `${norm.korName}__${enKey}` : norm.korName;
       newBlock[key] = norm.item;
