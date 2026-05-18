@@ -383,6 +383,8 @@ export async function calculateEquipmentStats(
   isWeaponlessJob: boolean = false,
 ): Promise<EquipCalcResult> {
   const [elementData, spiritData] = await Promise.all([loadElementStats(), loadSpiritStats()]);
+  // Ensure starforged registry is populated so saved items lacking 천상 still resolve.
+  await preloadStarforgedRegistry();
 
   const slotResults: EquipSlotCalc[] = [];
   const relicEffects: RelicEffect[] = [];
