@@ -371,10 +371,10 @@ export async function calculateChampionStats(params: {
     let finalCrit = baseCrit;
     let finalEvasion = baseEvasion;
 
-    // 천상(Starforged) 적용: 항상 장비 데이터의 "천상" 값(1 또는 1.25)을 그대로 사용한다.
+    // 천상(Starforged) 적용: 슬롯의 starforged 체크박스가 true일 때만 적용한다.
     // 저장된 챔피언이 구버전이라 item에 값이 없으면 이름 기반 레지스트리에서 보충한다.
     // 공격력 / 방어력 / 체력 에만 적용 (치명타·회피는 영향 없음).
-    const starforgedMul: number = lookupStarforgedMul(item);
+    const starforgedMul: number = equipmentSlots[i]?.starforged ? lookupStarforgedMul(item) : 1;
     if (starforgedMul !== 1) {
       finalAtk = Math.round(finalAtk * starforgedMul);
       finalDef = Math.round(finalDef * starforgedMul);
