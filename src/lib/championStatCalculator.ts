@@ -24,6 +24,8 @@ import {
   type EnchantStats,
 } from "./equipStatCalculator";
 import { parseSoulBonuses, type SoulBonusInput, type SkillBonusSource } from "./skillBonusParser";
+import { lookupStarforgedMul } from "./dataAdapter";
+import { preloadStarforgedRegistry } from "./equipmentUtils";
 
 export const CARD_LEVEL_BONUS: Record<number, number> = {
   0: 0,
@@ -236,6 +238,7 @@ export async function calculateChampionStats(params: {
 
   // Load enchant data
   const [elementData, spiritData] = await Promise.all([loadElementStats(), loadSpiritStats()]);
+  await preloadStarforgedRegistry();
 
   // Equipment calculation with enchant
   const SLOT_NAMES = ["퍼밀리어", "오라의 노래"];
@@ -368,10 +371,10 @@ export async function calculateChampionStats(params: {
     let finalCrit = baseCrit;
     let finalEvasion = baseEvasion;
 
-    // 천상(Starforged) 적용: 사용자 UI 토글(slot.starforged) 또는 데이터의 "천상"===1.25 일 때 1.25배.
+    // 천상(Starforged) 적용: 항상 장비 데이터의 "천상" 값(1 또는 1.25)을 그대로 사용한다.
+    // 저장된 챔피언이 구버전이라 item에 값이 없으면 이름 기반 레지스트리에서 보충한다.
     // 공격력 / 방어력 / 체력 에만 적용 (치명타·회피는 영향 없음).
-    const isStarforged = !!slot.starforged || item["천상"] === 1.25;
-    const starforgedMul: number = isStarforged ? 1.25 : 1;
+    const starforgedMul: number = lookupStarforgedMul(item);
     if (starforgedMul !== 1) {
       finalAtk = Math.round(finalAtk * starforgedMul);
       finalDef = Math.round(finalDef * starforgedMul);

@@ -280,8 +280,9 @@ function getItemBaseStat(item: any, key: string): number {
 }
 
 // Reverse map: file type → Korean type names
-import { EQUIP_TYPE_MAP } from "./equipmentUtils";
+import { EQUIP_TYPE_MAP, preloadStarforgedRegistry } from "./equipmentUtils";
 import { isLostCityItem, midasBonusPctFor } from "./lostCityItems";
+import { lookupStarforgedMul } from "./dataAdapter";
 
 const FILE_TO_KOR: Record<string, string[]> = {};
 for (const [kor, { file }] of Object.entries(EQUIP_TYPE_MAP)) {
@@ -382,6 +383,8 @@ export async function calculateEquipmentStats(
   isWeaponlessJob: boolean = false,
 ): Promise<EquipCalcResult> {
   const [elementData, spiritData] = await Promise.all([loadElementStats(), loadSpiritStats()]);
+  // Ensure starforged registry is populated so saved items lacking 천상 still resolve.
+  await preloadStarforgedRegistry();
 
   const slotResults: EquipSlotCalc[] = [];
   const relicEffects: RelicEffect[] = [];
@@ -644,9 +647,8 @@ export async function calculateEquipmentStats(
     // 천상(Starforged) 적용
     // - 장비 데이터의 "천상" 값(1 또는 1.25)을 그대로 사용한다.
     // - 공격력 / 방어력 / 체력에만 적용한다. 치명타 / 회피에는 적용하지 않는다.
-    const rawStarforgedMul = item["천상"] ?? item.starforgedMul;
-    const itemStarforgedMul = typeof rawStarforgedMul === "number" ? rawStarforgedMul : Number(rawStarforgedMul) || 1;
-    const starforgedMul = itemStarforgedMul;
+    // - 항목에 값이 없으면(예: 구버전에 저장된 영웅) 전역 레지스트리에서 이름으로 보충한다.
+    const starforgedMul = lookupStarforgedMul(item);
 
     const preStarforgedAtk = finalAtk;
     const preStarforgedDef = finalDef;

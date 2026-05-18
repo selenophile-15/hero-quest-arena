@@ -227,6 +227,22 @@ export async function loadEquipmentByTypes(
   return results;
 }
 
+// Preload every equipment file once so that side effects of normalization
+// (like the starforged registry in dataAdapter) are populated. Safe to call
+// repeatedly; underlying fetches are cached.
+let _starforgedPreloadPromise: Promise<void> | null = null;
+export async function preloadStarforgedRegistry(): Promise<void> {
+  if (_starforgedPreloadPromise) return _starforgedPreloadPromise;
+  const files = new Set<string>();
+  for (const { file, category } of Object.values(EQUIP_TYPE_MAP)) {
+    files.add(`/data/equipment/${category}/${file}.json`);
+  }
+  _starforgedPreloadPromise = Promise.all(
+    Array.from(files).map((url) => fetchEquipFileNormalized(url).catch(() => null)),
+  ).then(() => undefined);
+  return _starforgedPreloadPromise;
+}
+
 // SID data cache
 let sidCache: Record<string, Record<string, string[]>> | null = null;
 

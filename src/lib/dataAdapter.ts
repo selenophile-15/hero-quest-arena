@@ -104,6 +104,29 @@ function mapArr(arr: any, fn: (s: string) => string): any {
 
 // ─── Normalize one equipment item ────────────────────────────────────────
 
+// Global registry of starforged multipliers per item, populated as data is normalized.
+// Key candidates: korName, engName (lowercased). Allows the calculator to recover
+// 천상 values for items stored without that field (e.g. saved heroes from older versions).
+export const starforgedRegistry: Record<string, number> = {};
+
+export function lookupStarforgedMul(item: any): number {
+  if (!item) return 1;
+  const direct = item["천상"] ?? item.starforgedMul;
+  if (typeof direct === "number" && direct > 0) return direct;
+  const candidates = [
+    item.name,
+    item.engName,
+    item.name_ko,
+    item.name_en,
+  ].filter(Boolean);
+  for (const c of candidates) {
+    const key = String(c).toLowerCase();
+    const v = starforgedRegistry[key];
+    if (typeof v === "number" && v > 0) return v;
+  }
+  return 1;
+}
+
 export function normalizeEquipItem(raw: any): { korName: string; item: any } | null {
   if (!raw || typeof raw !== "object") return null;
   const korName: string = raw.name_ko || raw["name_ko"] || "";
@@ -120,6 +143,11 @@ export function normalizeEquipItem(raw: any): { korName: string; item: any } | n
 
   item["천상"] = starforgedMul;
   item.starforgedMul = starforgedMul;
+
+  // Register by Korean name and English name for later fallback lookups.
+  if (korName) starforgedRegistry[korName.toLowerCase()] = starforgedMul;
+  const enKey = raw.name_en || raw.engName;
+  if (enKey) starforgedRegistry[String(enKey).toLowerCase()] = starforgedMul;
 
   // Translate affinity arrays from English → Korean
   if (item["원소친밀감"]) item["원소친밀감"] = mapArr(item["원소친밀감"], toKoElement);
@@ -156,6 +184,10 @@ export function normalizeEquipFile(raw: any): any {
       const norm = normalizeEquipItem(raw2);
       if (!norm) continue;
       norm.item.engName = enKey;
+      // Register starforged value by English key as well for fallback lookups.
+      if (enKey && typeof norm.item.starforgedMul === "number") {
+        starforgedRegistry[enKey.toLowerCase()] = norm.item.starforgedMul;
+      }
       // Avoid clobbering when two items share the same Korean name
       const key = newBlock[norm.korName] ? `${norm.korName}__${enKey}` : norm.korName;
       newBlock[key] = norm.item;
