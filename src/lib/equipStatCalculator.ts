@@ -642,15 +642,11 @@ export async function calculateEquipmentStats(
     let finalEvasion = baseEvasion;
 
     // 천상(Starforged) 적용
-    // - slot.starforged 체크박스가 켜졌을 때만 적용한다.
-    // - 적용 배율은 장비 데이터의 "천상" 값을 그대로 사용한다.
-    // - 공격력 / 방어력 / 체력에만 적용한다.
-    // - 치명타 / 회피에는 적용하지 않는다.
+    // - 장비 데이터의 "천상" 값(1 또는 1.25)을 그대로 사용한다.
+    // - 공격력 / 방어력 / 체력에만 적용한다. 치명타 / 회피에는 적용하지 않는다.
     const rawStarforgedMul = item["천상"] ?? item.starforgedMul;
-
     const itemStarforgedMul = typeof rawStarforgedMul === "number" ? rawStarforgedMul : Number(rawStarforgedMul) || 1;
-
-    const starforgedMul = slot.starforged ? itemStarforgedMul : 1;
+    const starforgedMul = itemStarforgedMul;
 
     const preStarforgedAtk = finalAtk;
     const preStarforgedDef = finalDef;
