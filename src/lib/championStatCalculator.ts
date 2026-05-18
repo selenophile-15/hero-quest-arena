@@ -24,6 +24,7 @@ import {
   type EnchantStats,
 } from "./equipStatCalculator";
 import { parseSoulBonuses, type SoulBonusInput, type SkillBonusSource } from "./skillBonusParser";
+import { lookupStarforgedMul } from "./dataAdapter";
 
 export const CARD_LEVEL_BONUS: Record<number, number> = {
   0: 0,
