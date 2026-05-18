@@ -628,12 +628,6 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                           <td className="px-2 py-1 text-right tabular-nums text-muted-foreground">-</td>
                         </tr>
                       )}
-                      {slot && slot.itemName && slot.starforgedMul === 1 && (
-                        <tr className="border-b border-border/20">
-                          <td className="px-2 py-1 text-foreground/50 text-[11px]">천상</td>
-                          <td className="px-2 py-1 text-right tabular-nums text-muted-foreground">-</td>
-                        </tr>
-                      )}
                       <tr className={hasItem ? "bg-secondary/30" : ""}>
                         <td className="px-2 py-1 font-semibold text-foreground">최종</td>
                         <td className={`px-2 py-1 text-right tabular-nums font-bold ${config.color}`}>
