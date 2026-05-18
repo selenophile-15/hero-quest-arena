@@ -647,7 +647,6 @@ export async function calculateEquipmentStats(
     const rawStarforgedMul = item["천상"] ?? item.starforgedMul;
     const itemStarforgedMul = typeof rawStarforgedMul === "number" ? rawStarforgedMul : Number(rawStarforgedMul) || 1;
     const starforgedMul = itemStarforgedMul;
-    console.log('[starforged]', item.name, '천상=', item["천상"], 'starforgedMul=', item.starforgedMul, '→', starforgedMul);
 
     const preStarforgedAtk = finalAtk;
     const preStarforgedDef = finalDef;
