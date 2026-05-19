@@ -311,12 +311,14 @@ export default function HeroList() {
   const [highlightIds, setHighlightIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    getCommonSkills().then((data) => {
-      setCommonSkillsData(data);
-      setSkillGradeCache(data);
-    });
-    getUniqueSkills().then(setUniqueSkillsData);
-    getChampionSkillsData().then(setChampionSkillsData);
+    Promise.all([getCommonSkills(), getUniqueSkills(), getChampionSkillsData()]).then(
+      ([commonData, uniqueData, championData]) => {
+        setCommonSkillsData(commonData);
+        setSkillGradeCache(commonData);
+        setUniqueSkillsData(uniqueData);
+        setChampionSkillsData(championData);
+      },
+    );
     ensureAurasongDataLoaded();
   }, []);
 
