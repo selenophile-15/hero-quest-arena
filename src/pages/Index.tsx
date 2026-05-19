@@ -2,8 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { warmupGameData } from "@/lib/gameData";
 import { preloadImages } from "@/lib/imagePreloader";
-import { SKILL_NAME_MAP, JOB_NAME_MAP, CHAMPION_NAME_MAP } from "@/lib/nameMap";
-import { EQUIP_TYPE_MAP, loadEquipmentByTypes, loadEquipNameMap } from "@/lib/equipmentUtils";
+import { JOB_NAME_MAP, CHAMPION_NAME_MAP, SPIRIT_NAME_MAP } from "@/lib/nameMap";
+import { getSkillImagePath } from "@/lib/skillUtils";
+import { getHeroes } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
 import { Monitor } from "lucide-react";
 import { useMobileGestures } from "@/hooks/use-mobile-gestures";
@@ -25,35 +26,63 @@ const Index = () => {
 
   useMobileGestures(desktopMode);
 
-  // 백그라운드 프리로드: 대시보드 진입 전에 데이터+이미지 모두 준비
+  // 백그라운드 프리로드: 저장된 영웅들이 실제로 쓰는 이미지만 미리 로드
   useEffect(() => {
-    // 1) JSON 데이터 워밍업
     warmupGameData();
 
-    // 2) 스킬 이미지 전체 프리로드
-    const skillImgs: string[] = [];
-    for (const [kor, eng] of Object.entries(SKILL_NAME_MAP)) {
-      skillImgs.push(`/images/skills/sk_hero/normal/${eng}.webp`);
-      skillImgs.push(`/images/skills/sk_hero/rare/${eng}.webp`);
-      skillImgs.push(`/images/skills/sk_hero/epic/${eng}.webp`);
-    }
-    preloadImages(skillImgs);
+    const heroes = getHeroes();
+    const imgs = new Set<string>();
 
-    // 3) 직업/챔피언 이미지 프리로드
-    const heroImgs = Object.values(JOB_NAME_MAP).flatMap((eng) => [
-      `/images/classes/${eng}.webp`,
-      `/images/classillust/${eng}.webp`,
-    ]);
-    const champImgs = Object.values(CHAMPION_NAME_MAP).flatMap((eng) => [
-      `/images/champion/${eng}.webp`,
-      ...[1, 2, 3, 4].map((t) => `/images/skills/sk_champion/${eng}_${t}.webp`),
-    ]);
-    preloadImages([...heroImgs, ...champImgs]);
+    const ELEMENT_ENG: Record<string, string> = {
+      불: "fire",
+      물: "water",
+      공기: "air",
+      대지: "earth",
+      빛: "light",
+      어둠: "dark",
+    };
 
-    // 4) 장비 이미지 프리로드 (JSON 로드 후 imagePath 사용)
-    loadEquipNameMap()
-      .then((nameMap) => loadEquipmentByTypes(Object.keys(EQUIP_TYPE_MAP), nameMap))
-      .then((items) => preloadImages(items.map((i) => i.imagePath)));
+    heroes.forEach((hero) => {
+      // 직업/챔피언 아이콘
+      if (hero.heroClass) {
+        const eng = JOB_NAME_MAP[hero.heroClass];
+        if (eng) {
+          imgs.add(`/images/classes/${eng}.webp`);
+          imgs.add(`/images/classillust/${eng}.webp`);
+        }
+      }
+      if (hero.type === "champion" && hero.championName) {
+        const eng = CHAMPION_NAME_MAP[hero.championName];
+        if (eng) {
+          imgs.add(`/images/champion/${eng}.webp`);
+          [1, 2, 3, 4].forEach((t) => imgs.add(`/images/skills/sk_champion/${eng}_${t}.webp`));
+        }
+      }
+      // 스킬 이미지
+      hero.skills?.forEach((sk) => {
+        if (sk) imgs.add(getSkillImagePath(sk));
+      });
+      // 장비 이미지
+      hero.equipmentSlots?.forEach((slot: any) => {
+        if (slot?.item?.imagePath) imgs.add(slot.item.imagePath);
+        const el = slot?.element;
+        if (el?.type && el?.tier) {
+          const eng = ELEMENT_ENG[el.type] || el.type;
+          imgs.add(`/images/enchant/element/${eng}${el.tier}_${el.affinity ? "2" : "1"}.webp`);
+        }
+        const sp = slot?.spirit;
+        if (sp?.name) {
+          if (sp.name === "문드라") {
+            imgs.add("/images/enchant/spirit/mundra.webp");
+          } else {
+            const eng = SPIRIT_NAME_MAP[sp.name];
+            if (eng) imgs.add(`/images/enchant/spirit/${eng}_${sp.affinity ? "2" : "1"}.webp`);
+          }
+        }
+      });
+    });
+
+    preloadImages(imgs);
   }, []);
 
   useEffect(() => {
