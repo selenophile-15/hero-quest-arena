@@ -155,6 +155,8 @@ const Index = () => {
         </button>
       </div>
 
+      <link rel="preload" href={titleLogo} as="image" />
+      <link rel="preload" href={sponsorFrame} as="image" />
       <style>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0.1; transform: scale(0.8); }
