@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { warmupGameData } from "@/lib/gameData";
+import { loadElementStats, loadSpiritStats } from "@/lib/equipStatCalculator";
+import { preloadStarforgedRegistry } from "@/lib/equipmentUtils";
 import { preloadImages } from "@/lib/imagePreloader";
 import { JOB_NAME_MAP, CHAMPION_NAME_MAP, SPIRIT_NAME_MAP } from "@/lib/nameMap";
 import { getSkillImagePath } from "@/lib/skillUtils";
@@ -29,6 +31,9 @@ const Index = () => {
   // 백그라운드 프리로드: 저장된 영웅들이 실제로 쓰는 이미지만 미리 로드
   useEffect(() => {
     warmupGameData();
+    loadElementStats();
+    loadSpiritStats();
+    preloadStarforgedRegistry();
 
     const heroes = getHeroes();
     const imgs = new Set<string>();
