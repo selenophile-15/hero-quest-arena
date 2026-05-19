@@ -232,17 +232,8 @@ export default function EquipmentSelectDialog({
   const currentSlotHasRelic = slots[activeSlot]?.item?.relic || false;
 
   const spiritNames = useMemo(() => {
-    const set = new Set<string>();
-    const allowedTypes = slotAllowedTypes[activeSlot] || [];
-    const allowedFileTypes = new Set(allowedTypes.map((t) => EQUIP_TYPE_MAP[t]?.file).filter(Boolean) as string[]);
-    allItems.forEach((item) => {
-      const matches = item.type === "dual_wield" ? allowedFileTypes.size > 0 : allowedFileTypes.has(item.type);
-      if (!matches) return;
-      item.spiritAffinity?.forEach((s) => set.add(s));
-      item.uniqueSpirit?.forEach((s) => set.add(s));
-    });
-    return Array.from(set).sort((a, b) => getSpiritTier(b) - getSpiritTier(a));
-  }, [allItems, activeSlot, slotAllowedTypes]);
+    return Object.keys(SPIRIT_TIER).sort((a, b) => getSpiritTier(b) - getSpiritTier(a));
+  }, []);
 
   const spiritGroups = useMemo(() => {
     const groups: { tier: number; spirits: string[] }[] = [];
