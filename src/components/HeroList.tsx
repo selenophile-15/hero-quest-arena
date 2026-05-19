@@ -2407,7 +2407,7 @@ export default function HeroList() {
           }}
         />
       )}
-      <div style={{ display: showList ? "block" : "none" }} className="animate-fade-in">
+      <div style={{ display: showList ? "block" : "none" }}>
         {/* Tab: Hero / Champion / Summary + View mode + Add buttons */}
         <div className="flex items-center justify-between mb-0">
           <div className="flex items-end gap-0 border-b border-border w-full">
