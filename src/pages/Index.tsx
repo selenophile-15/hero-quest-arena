@@ -18,13 +18,14 @@ const Index = () => {
   const particlesRef = useRef<HTMLDivElement>(null);
   const shootingStarsRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
+  
 
   useMobileGestures(desktopMode);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -32,10 +33,10 @@ const Index = () => {
     const starsEl = starsRef.current;
     if (starsEl && starsEl.childElementCount === 0) {
       for (let i = 0; i < 200; i++) {
-        const s = document.createElement("div");
+        const s = document.createElement('div');
         const size = Math.random() * 2 + 0.5;
         const brightness = Math.random() > 0.9 ? 1 : Math.random() * 0.6 + 0.1;
-        s.style.cssText = `position:absolute;background:#fff;border-radius:50%;left:${Math.random() * 100}%;top:${Math.random() * 100}%;width:${size}px;height:${size}px;animation:twinkle ${2 + Math.random() * 5}s ease-in-out infinite;animation-delay:${Math.random() * 6}s;opacity:${brightness}`;
+        s.style.cssText = `position:absolute;background:#fff;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;animation:twinkle ${2+Math.random()*5}s ease-in-out infinite;animation-delay:${Math.random()*6}s;opacity:${brightness}`;
         starsEl.appendChild(s);
       }
     }
@@ -43,11 +44,11 @@ const Index = () => {
     // Create rising particles (fire/mana embers)
     const pEl = particlesRef.current;
     if (pEl && pEl.childElementCount === 0) {
-      const colors = ["#b39dff", "#8a7dff", "#6b8aff", "#a8c8ff", "#e8e0ff", "#d4d8ff", "#c0b8ff", "#ffffff"];
+      const colors = ['#b39dff','#8a7dff','#6b8aff','#a8c8ff','#e8e0ff','#d4d8ff','#c0b8ff','#ffffff'];
       for (let i = 0; i < 40; i++) {
-        const d = document.createElement("div");
+        const d = document.createElement('div');
         const size = 1.5 + Math.random() * 3;
-        d.style.cssText = `position:absolute;border-radius:50%;left:${Math.random() * 100}%;bottom:0;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random() * colors.length)]};animation:rise ${8 + Math.random() * 12}s linear infinite;animation-delay:${Math.random() * 8}s;box-shadow:0 0 ${size * 2}px ${colors[Math.floor(Math.random() * colors.length)]}`;
+        d.style.cssText = `position:absolute;border-radius:50%;left:${Math.random()*100}%;bottom:0;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};animation:rise ${8+Math.random()*12}s linear infinite;animation-delay:${Math.random()*8}s;box-shadow:0 0 ${size*2}px ${colors[Math.floor(Math.random()*colors.length)]}`;
         pEl.appendChild(d);
       }
     }
@@ -56,7 +57,7 @@ const Index = () => {
     const ssEl = shootingStarsRef.current;
     if (ssEl) {
       const createShootingStar = () => {
-        const star = document.createElement("div");
+        const star = document.createElement('div');
         const startX = Math.random() * 80 + 10;
         const startY = Math.random() * 30;
         const angle = 25 + Math.random() * 20;
@@ -72,14 +73,15 @@ const Index = () => {
     }
   }, []);
 
+
   return (
     <div className="min-h-[200vh] bg-background relative overflow-hidden">
       <div className="fixed top-4 right-4 z-20">
         <button
           onClick={() => setDesktopMode((value) => !value)}
-          title={desktopMode ? "모바일 모드로 전환" : "데스크탑 모드로 전환"}
+          title={desktopMode ? '모바일 모드로 전환' : '데스크탑 모드로 전환'}
           className={`flex items-center justify-center w-8 h-8 rounded-md border border-border/70 backdrop-blur-sm transition-colors ${
-            desktopMode ? "bg-primary text-primary-foreground" : "bg-card/80 text-foreground hover:bg-card"
+            desktopMode ? 'bg-primary text-primary-foreground' : 'bg-card/80 text-foreground hover:bg-card'
           }`}
         >
           <Monitor className="w-4 h-4" />
@@ -148,94 +150,45 @@ const Index = () => {
 
       {/* Background image - single, scrolls with page */}
       <div className="absolute inset-x-0 top-0 z-0 pointer-events-none">
-        <div className="relative w-full" style={{ height: "200vh" }}>
-          <img
-            src={landingBg}
-            alt=""
-            className="w-full h-full object-cover"
-            width={1920}
-            height={1280}
-            loading="eager"
-            decoding="sync"
-            {...({ fetchpriority: "high" } as any)}
-          />
+        <div className="relative w-full" style={{ height: '200vh' }}>
+          <img src={landingBg} alt="" className="w-full h-full object-cover" width={1920} height={1280} loading="eager" decoding="sync" {...({ fetchpriority: 'high' } as any)} />
           {/* Dark overlay on top portion for title readability */}
-          <div
-            className="absolute top-0 left-0 right-0 h-[50%]"
-            style={{
-              background: "linear-gradient(180deg, rgba(5,8,20,0.85) 0%, rgba(10,15,30,0.6) 40%, transparent 100%)",
-            }}
-          />
+          <div className="absolute top-0 left-0 right-0 h-[50%]" style={{
+            background: 'linear-gradient(180deg, rgba(5,8,20,0.85) 0%, rgba(10,15,30,0.6) 40%, transparent 100%)'
+          }} />
           {/* Bottom fade */}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-[20%]"
-            style={{
-              background: "linear-gradient(0deg, rgba(10,10,15,0.95) 0%, transparent 100%)",
-            }}
-          />
+          <div className="absolute bottom-0 left-0 right-0 h-[20%]" style={{
+            background: 'linear-gradient(0deg, rgba(10,10,15,0.95) 0%, transparent 100%)'
+          }} />
         </div>
       </div>
 
       {/* Stars overlay */}
-      <div
-        ref={starsRef}
-        className="fixed inset-0 z-[1] pointer-events-none"
-        style={{
-          opacity: Math.max(0, 1 - scrollY / 1200),
-        }}
-      />
+      <div ref={starsRef} className="fixed inset-0 z-[1] pointer-events-none" style={{
+        opacity: Math.max(0, 1 - scrollY / 1200),
+      }} />
 
       {/* Shooting stars */}
       <div ref={shootingStarsRef} className="fixed inset-0 z-[1] pointer-events-none" />
 
       {/* Rising particles (embers) */}
-      <div
-        ref={particlesRef}
-        className="absolute inset-x-0 z-[3] pointer-events-none"
-        style={{ top: "60vh", height: "140vh" }}
-      />
+      <div ref={particlesRef} className="absolute inset-x-0 z-[3] pointer-events-none" style={{ top: '60vh', height: '140vh' }} />
 
       {/* ===== HERO SECTION ===== */}
       <div className="relative z-10 min-h-screen flex items-center justify-center">
-        <div
-          className="text-center px-4 py-20"
-          style={{
-            opacity: Math.max(0, 1 - scrollY / 600),
-          }}
-        >
-          <div className="mb-6 relative" style={{ animation: "logoFloat 6s ease-in-out infinite" }}>
+        <div className="text-center px-4 py-20" style={{
+          opacity: Math.max(0, 1 - scrollY / 600),
+        }}>
+          <div className="mb-6 relative" style={{ animation: 'logoFloat 6s ease-in-out infinite' }}>
             {/* Decorative star sparkles around title */}
-            <div
-              className="absolute -top-6 -left-12 text-blue-200 text-lg"
-              style={{ animation: "starSparkle 3s ease-in-out infinite" }}
-            >
-              ✦
-            </div>
-            <div
-              className="absolute -top-4 -right-10 text-purple-200 text-sm"
-              style={{ animation: "starSparkle 4s ease-in-out infinite 1s" }}
-            >
-              ✧
-            </div>
-            <div
-              className="absolute -bottom-4 -left-8 text-purple-300/60 text-sm"
-              style={{ animation: "starSparkle 3.5s ease-in-out infinite 0.5s" }}
-            >
-              ✦
-            </div>
-            <div
-              className="absolute -bottom-6 -right-14 text-blue-300/50 text-base"
-              style={{ animation: "starSparkle 5s ease-in-out infinite 2s" }}
-            >
-              ✧
-            </div>
+            <div className="absolute -top-6 -left-12 text-blue-200 text-lg" style={{ animation: 'starSparkle 3s ease-in-out infinite' }}>✦</div>
+            <div className="absolute -top-4 -right-10 text-purple-200 text-sm" style={{ animation: 'starSparkle 4s ease-in-out infinite 1s' }}>✧</div>
+            <div className="absolute -bottom-4 -left-8 text-purple-300/60 text-sm" style={{ animation: 'starSparkle 3.5s ease-in-out infinite 0.5s' }}>✦</div>
+            <div className="absolute -bottom-6 -right-14 text-blue-300/50 text-base" style={{ animation: 'starSparkle 5s ease-in-out infinite 2s' }}>✧</div>
 
-            <span
-              className="font-display text-[13px] tracking-[0.2em] uppercase block mb-4 bulb-flicker"
-              style={{
-                color: "hsl(260 40% 65%)",
-              }}
-            >
+            <span className="font-display text-[13px] tracking-[0.2em] uppercase block mb-4 bulb-flicker" style={{
+              color: 'hsl(260 40% 65%)',
+            }}>
               ⚔ 셀레노필 제작 ⚔
             </span>
 
@@ -247,21 +200,18 @@ const Index = () => {
               width={1584}
               height={672}
               style={{
-                maxWidth: "min(520px, 85vw)",
-                height: "auto",
-                filter: "drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))",
-                animation: "glowPulse 4s ease-in-out infinite",
+                maxWidth: 'min(520px, 85vw)',
+                height: 'auto',
+                filter: 'drop-shadow(0 0 20px rgba(140,100,255,0.3)) drop-shadow(0 0 40px rgba(140,100,255,0.15))',
+                animation: 'glowPulse 4s ease-in-out infinite',
               }}
             />
 
             {/* Subtitle tagline */}
-            <p
-              className="mt-3 text-[14px] tracking-[0.15em]"
-              style={{
-                color: "hsl(260 30% 60%)",
-                textShadow: "0 0 8px rgba(160,130,255,0.2)",
-              }}
-            >
+            <p className="mt-3 text-[14px] tracking-[0.15em]" style={{
+              color: 'hsl(260 30% 60%)',
+              textShadow: '0 0 8px rgba(160,130,255,0.2)',
+            }}>
               ─── SHOP TITANS QUEST SIMULATOR ───
             </p>
           </div>
@@ -270,37 +220,29 @@ const Index = () => {
 
           <Button
             size="lg"
-            onClick={() => {
-              window.scrollTo(0, 0);
-              navigate("/dashboard");
-            }}
+            onClick={() => navigate("/dashboard")}
             className="btn-shine text-base px-14 py-7 font-display tracking-wider relative group
               transition-all duration-300 ease-out
               hover:scale-105 hover:shadow-[0_0_36px_rgba(180,150,255,0.5),0_0_72px_rgba(140,100,255,0.25)]
               active:scale-95"
             style={{
-              background: "linear-gradient(135deg, #1a1438 0%, #2a1f5c 50%, #3a2870 100%)",
-              boxShadow:
-                "0 0 24px rgba(180,150,255,0.25), 0 6px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(220,200,255,0.3), inset 0 -1px 0 rgba(120,80,200,0.4)",
-              border: "1px solid rgba(200,170,255,0.35)",
+              background: 'linear-gradient(135deg, #1a1438 0%, #2a1f5c 50%, #3a2870 100%)',
+              boxShadow: '0 0 24px rgba(180,150,255,0.25), 0 6px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(220,200,255,0.3), inset 0 -1px 0 rgba(120,80,200,0.4)',
+              border: '1px solid rgba(200,170,255,0.35)',
             }}
           >
-            <span
-              style={{
-                fontFamily: "'Noto Sans KR', sans-serif",
-                fontWeight: 700,
-                letterSpacing: "0.32em",
-                paddingLeft: "0.32em",
-                fontSize: "1.1rem",
-                background: "linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 55%, #a98cff 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textShadow: "0 0 12px rgba(200,170,255,0.4)",
-                filter: "drop-shadow(0 0 6px rgba(180,150,255,0.5))",
-              }}
-            >
-              모험 시작
-            </span>
+            <span style={{
+              fontFamily: "'Noto Sans KR', sans-serif",
+              fontWeight: 700,
+              letterSpacing: '0.32em',
+              paddingLeft: '0.32em',
+              fontSize: '1.1rem',
+              background: 'linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 55%, #a98cff 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 0 12px rgba(200,170,255,0.4)',
+              filter: 'drop-shadow(0 0 6px rgba(180,150,255,0.5))',
+            }}>모험 시작</span>
           </Button>
 
           <div className="mt-20 animate-bounce opacity-40">
@@ -312,39 +254,39 @@ const Index = () => {
       </div>
 
       {/* ===== SPONSOR LIST SECTION ===== */}
-      <div className="relative z-10 max-w-3xl mx-auto px-6 pb-32" style={{ marginTop: "-2rem" }}>
+      <div className="relative z-10 max-w-3xl mx-auto px-6 pb-32" style={{ marginTop: '-2rem' }}>
         <div
           className="relative mx-auto select-none"
           style={{
-            width: "100%",
-            aspectRatio: "1536 / 1024",
+            width: '100%',
+            aspectRatio: '1536 / 1024',
             backgroundImage: `url(${sponsorFrame})`,
-            backgroundSize: "100% 100%",
-            backgroundRepeat: "no-repeat",
-            filter: "drop-shadow(0 0 30px rgba(140,100,255,0.25)) drop-shadow(0 8px 24px rgba(0,0,0,0.5))",
+            backgroundSize: '100% 100%',
+            backgroundRepeat: 'no-repeat',
+            filter: 'drop-shadow(0 0 30px rgba(140,100,255,0.25)) drop-shadow(0 8px 24px rgba(0,0,0,0.5))',
           }}
         >
           {/* Title overlay: replace "후원자 명단" with "후원자" - aligned with the leaf flourishes */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
             style={{
-              top: "21%",
-              width: "38%",
-              height: "8%",
+              top: '21%',
+              width: '38%',
+              height: '8%',
             }}
           >
             <span
               className="font-display"
               style={{
-                fontSize: "1.15rem",
-                letterSpacing: "0.32em",
+                fontSize: '1.15rem',
+                letterSpacing: '0.32em',
                 fontWeight: 600,
-                paddingLeft: "0.32em",
-                background: "linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 60%, #a98cff 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textShadow: "0 0 12px rgba(180,150,255,0.35)",
-                filter: "drop-shadow(0 0 6px rgba(200,170,255,0.4))",
+                paddingLeft: '0.32em',
+                background: 'linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 60%, #a98cff 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: '0 0 12px rgba(180,150,255,0.35)',
+                filter: 'drop-shadow(0 0 6px rgba(200,170,255,0.4))',
               }}
             >
               후원자
@@ -355,11 +297,11 @@ const Index = () => {
           <div
             className="absolute inset-x-0 flex flex-col items-start"
             style={{
-              top: "36%",
-              bottom: "20%",
-              paddingLeft: "14%",
-              paddingRight: "14%",
-              gap: "0.9rem",
+              top: '36%',
+              bottom: '20%',
+              paddingLeft: '14%',
+              paddingRight: '14%',
+              gap: '0.9rem',
             }}
           >
             {Array.from({ length: Math.ceil(SPONSORS.length / 3) }).map((_, rowIdx) => {
@@ -370,8 +312,8 @@ const Index = () => {
                   className="w-full grid"
                   style={{
                     gridTemplateColumns: `repeat(${rowNames.length}, minmax(0, 1fr))`,
-                    columnGap: "1rem",
-                    justifyItems: "center",
+                    columnGap: '1rem',
+                    justifyItems: 'center',
                   }}
                 >
                   {rowNames.map((name) => (
@@ -379,14 +321,14 @@ const Index = () => {
                       key={name}
                       className="font-display"
                       style={{
-                        fontSize: "1.05rem",
-                        letterSpacing: "0.18em",
+                        fontSize: '1.05rem',
+                        letterSpacing: '0.18em',
                         fontWeight: 600,
-                        background: "linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 45%, #ffd97a 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        textShadow: "0 0 14px rgba(200,170,255,0.55), 0 0 28px rgba(160,130,255,0.35)",
-                        filter: "drop-shadow(0 0 8px rgba(200,170,255,0.5))",
+                        background: 'linear-gradient(180deg, #f3e8ff 0%, #c8b3ff 45%, #ffd97a 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textShadow: '0 0 14px rgba(200,170,255,0.55), 0 0 28px rgba(160,130,255,0.35)',
+                        filter: 'drop-shadow(0 0 8px rgba(200,170,255,0.5))',
                       }}
                     >
                       {name}
@@ -398,6 +340,7 @@ const Index = () => {
           </div>
         </div>
       </div>
+
     </div>
   );
 };
