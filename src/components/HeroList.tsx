@@ -326,10 +326,13 @@ export default function HeroList() {
   useEffect(() => {
     const refresh = () => setHeroes(getHeroes());
     window.addEventListener("heroes-updated", refresh);
-    window.addEventListener("focus", refresh);
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
     return () => {
       window.removeEventListener("heroes-updated", refresh);
-      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 
