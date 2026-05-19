@@ -165,6 +165,7 @@ function getSpiritTier(name: string): number {
 }
 
 import { getTypeImagePath as getTypeImagePathUtil } from "@/lib/typeImageUtils";
+import { preloadImagesAndWait } from "@/lib/imagePreloader";
 // getTypeImagePath is now theme-aware, resolved inside component
 
 function formatEquipStat(key: string, value: number): string {
@@ -1177,6 +1178,8 @@ export default function EquipmentSelectDialog({
                                         src={item.imagePath}
                                         alt={item.name}
                                         className="w-20 h-20 object-contain"
+                                        loading="eager"
+                                        decoding="sync"
                                         onError={(e) => {
                                           e.currentTarget.style.display = "none";
                                           const p = e.currentTarget.parentElement;
@@ -1219,6 +1222,8 @@ export default function EquipmentSelectDialog({
                                                   src={getElementIconPath(el)}
                                                   alt={el}
                                                   className="w-6 h-6"
+                                                  loading="eager"
+                                                  decoding="sync"
                                                   title={`친밀 원소: ${el}`}
                                                   onError={(e) => {
                                                     e.currentTarget.style.display = "none";
@@ -1234,6 +1239,8 @@ export default function EquipmentSelectDialog({
                                                     src={eng ? `/images/enchant/element/${eng}${tier}_2.webp` : ""}
                                                     alt={el}
                                                     className="w-6 h-6"
+                                                    loading="eager"
+                                                    decoding="sync"
                                                     title={`고유 원소: ${el} T${tier}`}
                                                     onError={(e) => {
                                                       e.currentTarget.style.display = "none";
@@ -1256,6 +1263,8 @@ export default function EquipmentSelectDialog({
                                                     src={eng ? `/images/enchant/spirit/${eng}_1.webp` : ""}
                                                     alt={sp}
                                                     className="w-6 h-6"
+                                                    loading="eager"
+                                                    decoding="sync"
                                                     title={`친밀 영혼: ${sp}`}
                                                     onError={(e) => {
                                                       e.currentTarget.style.display = "none";
@@ -1277,6 +1286,8 @@ export default function EquipmentSelectDialog({
                                                     src={imgSrc}
                                                     alt={sp}
                                                     className="w-6 h-6"
+                                                    loading="eager"
+                                                    decoding="sync"
                                                     title={`고유 영혼: ${sp}`}
                                                     onError={(e) => {
                                                       e.currentTarget.style.display = "none";
