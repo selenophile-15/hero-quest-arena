@@ -1,27 +1,71 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { useTheme } from '@/hooks/use-theme';
-import { Hero, ELEMENT_ICON_MAP } from '@/types/game';
-import { HERO_CLASS_MAP } from '@/lib/gameData';
-import { formatNumber } from '@/lib/format';
-import { getHeroes } from '@/lib/storage';
-import { getJobImagePath, getChampionImagePath, getJobIllustPath } from '@/lib/nameMap';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Swords, Shield, Heart, Zap, Crown, Users, Info, Plus, Clock, Coffee, Loader2, Save, ListChecks, GitCompare, RotateCcw, AlertTriangle, Camera, Dices, Flame, Target, Crosshair, Wind, HelpCircle, Shirt, Hourglass, FileText, Settings, Upload, BookUser } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import QuestConfigDialog from '@/components/QuestConfigDialog';
-import HeroSelectDialog from '@/components/HeroSelectDialog';
-import { runCombatSimulation, runSingleCombatLog, type SimulationResult as CombatSimResult, type QuestMonster, type MiniBossType, type BoosterType, type CombatLogEntry } from '@/lib/combatSimulation';
-import HeroForm from '@/components/HeroForm';
-import ChampionForm from '@/components/ChampionForm';
-import SavePartyToListDialog from '@/components/SavePartyToListDialog';
-import { updateHero as storageUpdateHero } from '@/lib/storage';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useTheme } from "@/hooks/use-theme";
+import { Hero, ELEMENT_ICON_MAP } from "@/types/game";
+import { HERO_CLASS_MAP } from "@/lib/gameData";
+import { formatNumber } from "@/lib/format";
+import { getHeroes } from "@/lib/storage";
+import { getJobImagePath, getChampionImagePath, getJobIllustPath } from "@/lib/nameMap";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Swords,
+  Shield,
+  Heart,
+  Zap,
+  Crown,
+  Users,
+  Info,
+  Plus,
+  Clock,
+  Coffee,
+  Loader2,
+  Save,
+  ListChecks,
+  GitCompare,
+  RotateCcw,
+  AlertTriangle,
+  Camera,
+  Dices,
+  Flame,
+  Target,
+  Crosshair,
+  Wind,
+  HelpCircle,
+  Shirt,
+  Hourglass,
+  FileText,
+  Settings,
+  Upload,
+  BookUser,
+} from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import QuestConfigDialog from "@/components/QuestConfigDialog";
+import HeroSelectDialog from "@/components/HeroSelectDialog";
+import {
+  runCombatSimulation,
+  runSingleCombatLog,
+  type SimulationResult as CombatSimResult,
+  type QuestMonster,
+  type MiniBossType,
+  type BoosterType,
+  type CombatLogEntry,
+} from "@/lib/combatSimulation";
+import HeroForm from "@/components/HeroForm";
+import ChampionForm from "@/components/ChampionForm";
+import SavePartyToListDialog from "@/components/SavePartyToListDialog";
+import { updateHero as storageUpdateHero } from "@/lib/storage";
+import { preloadImagesAndWait } from "@/lib/imagePreloader";
 
 // 마법검/스펠나이트: all elements at 50% effectiveness for barriers
-const SPELLKNIGHT_CLASSES = ['마법검', '스펠나이트'];
+const SPELLKNIGHT_CLASSES = ["마법검", "스펠나이트"];
 function getHeroBarrierContribution(h: Hero, barrierEl: string): number {
   if (SPELLKNIGHT_CLASSES.includes(h.heroClass)) {
     const allVals = Object.values(h.equipmentElements || {});
@@ -30,17 +74,24 @@ function getHeroBarrierContribution(h: Hero, barrierEl: string): number {
   }
   return h.equipmentElements?.[barrierEl] || 0;
 }
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from '@/lib/partyBuffCalculator';
-import { getChampionLeaderSkillTier } from '@/lib/championTier';
-import PartyBuffBreakdownDrawer from '@/components/PartyBuffBreakdownDrawer';
-import CombatBattlefield from '@/components/CombatBattlefield';
-import SavedResults from '@/components/SavedResults';
-import CompareAnalysis from '@/components/CompareAnalysis';
-import { saveSimulationResult, overwriteSimulationResult, getSavedSimulations, SAVED_SIMULATIONS_UPDATED_EVENT, SavedSimulationSummary, SavedSimBarrierInfo } from '@/lib/savedSimulations';
-import OverwriteSimulationDialog from './OverwriteSimulationDialog';
-import { toast } from '@/hooks/use-toast';
-import { saveCanvasImage } from '@/lib/fileDownload';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { calculatePartyBuffs, type BuffedHeroStats, type PartyBuffSummary } from "@/lib/partyBuffCalculator";
+import { getChampionLeaderSkillTier } from "@/lib/championTier";
+import PartyBuffBreakdownDrawer from "@/components/PartyBuffBreakdownDrawer";
+import CombatBattlefield from "@/components/CombatBattlefield";
+import SavedResults from "@/components/SavedResults";
+import CompareAnalysis from "@/components/CompareAnalysis";
+import {
+  saveSimulationResult,
+  overwriteSimulationResult,
+  getSavedSimulations,
+  SAVED_SIMULATIONS_UPDATED_EVENT,
+  SavedSimulationSummary,
+  SavedSimBarrierInfo,
+} from "@/lib/savedSimulations";
+import OverwriteSimulationDialog from "./OverwriteSimulationDialog";
+import { toast } from "@/hooks/use-toast";
+import { saveCanvasImage } from "@/lib/fileDownload";
 
 // Group header label with optional info tooltip (?) icon, kept centered.
 function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.ReactNode }) {
@@ -50,7 +101,11 @@ function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.Rea
       <span className="text-center">{label}</span>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button type="button" className="absolute right-1 inline-flex items-center justify-center text-muted-foreground hover:text-foreground" aria-label="설명">
+          <button
+            type="button"
+            className="absolute right-1 inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
+            aria-label="설명"
+          >
             <HelpCircle className="w-3.5 h-3.5" />
           </button>
         </TooltipTrigger>
@@ -64,17 +119,23 @@ function GroupHeader({ label, info }: { label: React.ReactNode; info?: React.Rea
 
 // Inline 3-button toggle for All/Win/Lose, used at the right of each group title row.
 // Optional retry-only filter button (hourglass) shown when retry simulation data exists.
-function ResultTabsToggle({ value, onChange, retryOnly, onToggleRetryOnly, hasRetry }: {
-  value: 'all' | 'win' | 'lose';
-  onChange: (v: 'all' | 'win' | 'lose') => void;
+function ResultTabsToggle({
+  value,
+  onChange,
+  retryOnly,
+  onToggleRetryOnly,
+  hasRetry,
+}: {
+  value: "all" | "win" | "lose";
+  onChange: (v: "all" | "win" | "lose") => void;
   retryOnly?: boolean;
   onToggleRetryOnly?: () => void;
   hasRetry?: boolean;
 }) {
-  const opts: Array<{ v: 'all' | 'win' | 'lose'; label: string }> = [
-    { v: 'all', label: '전체' },
-    { v: 'win', label: '성공' },
-    { v: 'lose', label: '실패' },
+  const opts: Array<{ v: "all" | "win" | "lose"; label: string }> = [
+    { v: "all", label: "전체" },
+    { v: "win", label: "성공" },
+    { v: "lose", label: "실패" },
   ];
   return (
     <div className="ml-auto flex items-center gap-1.5">
@@ -83,25 +144,20 @@ function ResultTabsToggle({ value, onChange, retryOnly, onToggleRetryOnly, hasRe
           type="button"
           onClick={onToggleRetryOnly}
           aria-pressed={!!retryOnly}
-          title={retryOnly ? '재시도 판만 보기 (켜짐)' : '재시도 판만 보기'}
+          title={retryOnly ? "재시도 판만 보기 (켜짐)" : "재시도 판만 보기"}
           className={
-            'inline-flex items-center justify-center w-7 h-7 rounded-md border transition-all ' +
+            "inline-flex items-center justify-center w-7 h-7 rounded-md border transition-all " +
             (retryOnly
-              ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_10px_hsl(var(--primary)/0.45)]'
-              : 'bg-muted text-muted-foreground border-border hover:bg-muted/80 hover:text-foreground')
+              ? "bg-primary text-primary-foreground border-primary shadow-[0_0_10px_hsl(var(--primary)/0.45)]"
+              : "bg-muted text-muted-foreground border-border hover:bg-muted/80 hover:text-foreground")
           }
         >
           <Hourglass className="w-3.5 h-3.5" />
         </button>
       )}
       <div className="result-tabs-premium">
-        {opts.map(o => (
-          <button
-            key={o.v}
-            type="button"
-            onClick={() => onChange(o.v)}
-            data-active={value === o.v}
-          >
+        {opts.map((o) => (
+          <button key={o.v} type="button" onClick={() => onChange(o.v)} data-active={value === o.v}>
             {o.label}
           </button>
         ))}
@@ -111,8 +167,8 @@ function ResultTabsToggle({ value, onChange, retryOnly, onToggleRetryOnly, hasRe
 }
 
 // Empty-state row shown when the selected outcome bucket (win/lose) has zero results.
-function EmptyBucketRow({ tab, colSpan }: { tab: 'all' | 'win' | 'lose'; colSpan: number }) {
-  const msg = tab === 'win' ? '성공한 판이 없습니다' : tab === 'lose' ? '실패한 판이 없습니다' : '데이터 없음';
+function EmptyBucketRow({ tab, colSpan }: { tab: "all" | "win" | "lose"; colSpan: number }) {
+  const msg = tab === "win" ? "성공한 판이 없습니다" : tab === "lose" ? "실패한 판이 없습니다" : "데이터 없음";
   return (
     <tr>
       <td colSpan={colSpan} className="py-4 px-2 text-center text-muted-foreground text-sm italic">
@@ -183,10 +239,10 @@ interface QuestCommon {
 }
 
 const QUEST_FILES = [
-  { key: 'normal', file: 'normal_quest.json' },
-  { key: 'flash', file: 'flash_quest.json' },
-  { key: 'lcog', file: 'lcog_quest.json' },
-  { key: 'tot', file: 'tot_quest.json' },
+  { key: "normal", file: "normal_quest.json" },
+  { key: "flash", file: "flash_quest.json" },
+  { key: "lcog", file: "lcog_quest.json" },
+  { key: "tot", file: "tot_quest.json" },
 ];
 
 function formatTime(seconds: number): string {
@@ -207,41 +263,55 @@ function formatTime(seconds: number): string {
 interface TimeSettingItem {
   id: string;
   label: string;
-  category: 'quest' | 'rest';
+  category: "quest" | "rest";
   color?: string;
   enabled: boolean;
   value: number | null; // null = not yet implemented
 }
 
 const DEFAULT_TIME_SETTINGS: TimeSettingItem[] = [
-  { id: 'region_level', label: '퀘스트) 지역 레벨 효과', category: 'quest', enabled: false, value: null },
-  { id: 'skill_boss_time', label: '재능) 보스 시간 감소', category: 'quest', color: 'text-red-400', enabled: false, value: null },
-  { id: 'skill_airship_time', label: '재능) 에어쉽 시간 감소', category: 'quest', enabled: false, value: null },
-  { id: 'skill_blackquest_time', label: '재능) 깜깜퀘스트 시간 감소', category: 'quest', enabled: false, value: null },
-  { id: 'champion_ami', label: '챔피언) 아미', category: 'quest', enabled: false, value: null },
-  { id: 'champion_emily', label: '챔피언) 에밀리', category: 'quest', enabled: false, value: null },
-  { id: 'booster_compass', label: '부스터) 나침반 효과', category: 'quest', enabled: false, value: null },
-  { id: 'equip_song', label: '장비) 오라의 노래 효과', category: 'quest', enabled: false, value: null },
-  { id: 'event_quest', label: '이벤트) 퀘스트, 휴식 감소', category: 'quest', enabled: false, value: null },
-  { id: 'guild_quest', label: '길드) 퀘스트, 휴식 부스트', category: 'quest', enabled: false, value: null },
+  { id: "region_level", label: "퀘스트) 지역 레벨 효과", category: "quest", enabled: false, value: null },
+  {
+    id: "skill_boss_time",
+    label: "재능) 보스 시간 감소",
+    category: "quest",
+    color: "text-red-400",
+    enabled: false,
+    value: null,
+  },
+  { id: "skill_airship_time", label: "재능) 에어쉽 시간 감소", category: "quest", enabled: false, value: null },
+  { id: "skill_blackquest_time", label: "재능) 깜깜퀘스트 시간 감소", category: "quest", enabled: false, value: null },
+  { id: "champion_ami", label: "챔피언) 아미", category: "quest", enabled: false, value: null },
+  { id: "champion_emily", label: "챔피언) 에밀리", category: "quest", enabled: false, value: null },
+  { id: "booster_compass", label: "부스터) 나침반 효과", category: "quest", enabled: false, value: null },
+  { id: "equip_song", label: "장비) 오라의 노래 효과", category: "quest", enabled: false, value: null },
+  { id: "event_quest", label: "이벤트) 퀘스트, 휴식 감소", category: "quest", enabled: false, value: null },
+  { id: "guild_quest", label: "길드) 퀘스트, 휴식 부스트", category: "quest", enabled: false, value: null },
   // Rest
-  { id: 'rest_region_level', label: '퀘스트) 지역 레벨 효과', category: 'rest', enabled: false, value: null },
-  { id: 'rest_guild_emerald', label: '길드) 에메랄드 여관 효과', category: 'rest', color: 'text-lime-400', enabled: false, value: null },
-  { id: 'rest_skill_hero_champ', label: '재능) 영웅, 챔피언 시간 감소', category: 'rest', enabled: false, value: null },
-  { id: 'rest_skill_airship', label: '재능) 에어쉽 시간 감소', category: 'rest', enabled: false, value: null },
-  { id: 'rest_champion_pillow', label: '챔피언) 필루', category: 'rest', enabled: false, value: null },
-  { id: 'rest_booster_compass', label: '부스터) 나침반 효과', category: 'rest', enabled: false, value: null },
-  { id: 'rest_equip_song', label: '장비) 오라의 노래 효과', category: 'rest', enabled: false, value: null },
-  { id: 'rest_event', label: '이벤트) 퀘스트, 휴식 감소', category: 'rest', enabled: false, value: null },
-  { id: 'rest_guild_boost', label: '길드) 퀘스트, 휴식 부스트', category: 'rest', enabled: false, value: null },
+  { id: "rest_region_level", label: "퀘스트) 지역 레벨 효과", category: "rest", enabled: false, value: null },
+  {
+    id: "rest_guild_emerald",
+    label: "길드) 에메랄드 여관 효과",
+    category: "rest",
+    color: "text-lime-400",
+    enabled: false,
+    value: null,
+  },
+  { id: "rest_skill_hero_champ", label: "재능) 영웅, 챔피언 시간 감소", category: "rest", enabled: false, value: null },
+  { id: "rest_skill_airship", label: "재능) 에어쉽 시간 감소", category: "rest", enabled: false, value: null },
+  { id: "rest_champion_pillow", label: "챔피언) 필루", category: "rest", enabled: false, value: null },
+  { id: "rest_booster_compass", label: "부스터) 나침반 효과", category: "rest", enabled: false, value: null },
+  { id: "rest_equip_song", label: "장비) 오라의 노래 효과", category: "rest", enabled: false, value: null },
+  { id: "rest_event", label: "이벤트) 퀘스트, 휴식 감소", category: "rest", enabled: false, value: null },
+  { id: "rest_guild_boost", label: "길드) 퀘스트, 휴식 부스트", category: "rest", enabled: false, value: null },
 ];
 
-type QuestSubTab = 'simulation' | 'saved' | 'compare';
+type QuestSubTab = "simulation" | "saved" | "compare";
 
 const QUEST_SUB_TABS = [
-  { id: 'simulation' as const, label: '시뮬레이션', icon: Swords },
-  { id: 'saved' as const, label: '내 결과', icon: ListChecks },
-  { id: 'compare' as const, label: '비교 분석실', icon: GitCompare },
+  { id: "simulation" as const, label: "시뮬레이션", icon: Swords },
+  { id: "saved" as const, label: "내 결과", icon: ListChecks },
+  { id: "compare" as const, label: "비교 분석실", icon: GitCompare },
 ];
 
 export default function QuestSimulation() {
@@ -251,8 +321,8 @@ export default function QuestSimulation() {
   // Fallback snapshots for heroes that were loaded from saved results but no longer exist in user's list
   const [fallbackHeroes, setFallbackHeroes] = useState<Hero[]>([]);
   const allHeroes = useMemo(() => {
-    const ids = new Set(allHeroesBase.map(h => h.id));
-    const extras = fallbackHeroes.filter(h => !ids.has(h.id));
+    const ids = new Set(allHeroesBase.map((h) => h.id));
+    const extras = fallbackHeroes.filter((h) => !ids.has(h.id));
     return [...allHeroesBase, ...extras];
   }, [allHeroesBase, fallbackHeroes]);
   // Only bump heroesVersion when the underlying data actually changed (prevents needless sim re-runs on window focus)
@@ -262,42 +332,42 @@ export default function QuestSimulation() {
       const next = JSON.stringify(getHeroes());
       if (next !== lastHeroesHashRef.current) {
         lastHeroesHashRef.current = next;
-        setHeroesVersion(v => v + 1);
+        setHeroesVersion((v) => v + 1);
       }
     };
-    window.addEventListener('heroes-updated', refresh);
-    window.addEventListener('storage', refresh);
-    window.addEventListener('focus', refresh);
+    window.addEventListener("heroes-updated", refresh);
+    window.addEventListener("storage", refresh);
+    window.addEventListener("focus", refresh);
     return () => {
-      window.removeEventListener('heroes-updated', refresh);
-      window.removeEventListener('storage', refresh);
-      window.removeEventListener('focus', refresh);
+      window.removeEventListener("heroes-updated", refresh);
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("focus", refresh);
     };
   }, []);
   const [questDataMap, setQuestDataMap] = useState<Record<string, QuestData>>({});
   const [commonData, setCommonData] = useState<QuestCommon | null>(null);
   const [loading, setLoading] = useState(true);
-  const [subTab, setSubTab] = useState<QuestSubTab>('simulation');
+  const [subTab, setSubTab] = useState<QuestSubTab>("simulation");
   const [savedResultsVersion, setSavedResultsVersion] = useState(0);
   const [savedResultsCount, setSavedResultsCount] = useState(() => getSavedSimulations().length);
 
   useEffect(() => {
     const refreshSavedResultsCount = () => {
       setSavedResultsCount(getSavedSimulations().length);
-      setSavedResultsVersion(v => v + 1);
+      setSavedResultsVersion((v) => v + 1);
     };
     window.addEventListener(SAVED_SIMULATIONS_UPDATED_EVENT, refreshSavedResultsCount);
-    window.addEventListener('storage', refreshSavedResultsCount);
-    window.addEventListener('focus', refreshSavedResultsCount);
+    window.addEventListener("storage", refreshSavedResultsCount);
+    window.addEventListener("focus", refreshSavedResultsCount);
     return () => {
       window.removeEventListener(SAVED_SIMULATIONS_UPDATED_EVENT, refreshSavedResultsCount);
-      window.removeEventListener('storage', refreshSavedResultsCount);
-      window.removeEventListener('focus', refreshSavedResultsCount);
+      window.removeEventListener("storage", refreshSavedResultsCount);
+      window.removeEventListener("focus", refreshSavedResultsCount);
     };
   }, []);
 
   // Selection state
-  const [selectedQuestType, setSelectedQuestType] = useState<string>('');
+  const [selectedQuestType, setSelectedQuestType] = useState<string>("");
   const [selectedRegionIdx, setSelectedRegionIdx] = useState<number>(-1);
   const [selectedSubAreaIdx, setSelectedSubAreaIdx] = useState<number>(-1);
   const [selectedQuestIdx, setSelectedQuestIdx] = useState<number>(-1);
@@ -305,8 +375,10 @@ export default function QuestSimulation() {
 
   // Dialogs
   const [configOpen, setConfigOpen] = useState(false);
-  const [configInitialStep, setConfigInitialStep] = useState<'type' | 'region' | 'subarea' | undefined>();
-  const [configInitialState, setConfigInitialState] = useState<{ questTypeKey: string; regionIdx: number; subAreaIdx: number } | undefined>();
+  const [configInitialStep, setConfigInitialStep] = useState<"type" | "region" | "subarea" | undefined>();
+  const [configInitialState, setConfigInitialState] = useState<
+    { questTypeKey: string; regionIdx: number; subAreaIdx: number } | undefined
+  >();
   const [heroSelectOpen, setHeroSelectOpen] = useState(false);
   const [editingSlotIdx, setEditingSlotIdx] = useState<number | null>(null);
 
@@ -321,13 +393,13 @@ export default function QuestSimulation() {
   const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
   const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
-  const [selectedBooster, setSelectedBooster] = useState<'none' | 'normal' | 'super' | 'mega'>('none');
+  const [selectedBooster, setSelectedBooster] = useState<"none" | "normal" | "super" | "mega">("none");
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
   const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
-  const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>('random');
-  const [jobDisplayMode, setJobDisplayMode] = useState<'icon' | 'illust' | 'none'>('icon');
-  const [simResultsFilter, setSimResultsFilter] = useState<string>('all');
-  const [mainResultsTab, setMainResultsTab] = useState<'all' | 'win' | 'lose'>('all');
+  const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>("random");
+  const [jobDisplayMode, setJobDisplayMode] = useState<"icon" | "illust" | "none">("icon");
+  const [simResultsFilter, setSimResultsFilter] = useState<string>("all");
+  const [mainResultsTab, setMainResultsTab] = useState<"all" | "win" | "lose">("all");
   const [specialInfoOpen, setSpecialInfoOpen] = useState(true);
   const [retryOnly, setRetryOnly] = useState(false);
   const [boosterOpen, setBoosterOpen] = useState(false);
@@ -340,11 +412,13 @@ export default function QuestSimulation() {
   const [savePartyOpen, setSavePartyOpen] = useState(false);
 
   // Reset retry-only filter whenever the underlying simulation no longer has retry data.
-  useEffect(() => { if (!simResult?.retryResult) setRetryOnly(false); }, [simResult]);
+  useEffect(() => {
+    if (!simResult?.retryResult) setRetryOnly(false);
+  }, [simResult]);
 
   // Display source: when retry-only is active and retry data exists, swap the entire result.
   const hasRetry = !!simResult?.retryResult;
-  const dispSim = (retryOnly && simResult?.retryResult) ? simResult.retryResult : simResult;
+  const dispSim = retryOnly && simResult?.retryResult ? simResult.retryResult : simResult;
   const retryBoosterActive = retryOnly && hasRetry;
   // Extra +20% atk/def from the implicit retry booster (stacked on top of partyAtkMult/partyDefMult)
   const RETRY_BOOSTER_EXTRA = 0.2;
@@ -354,8 +428,8 @@ export default function QuestSimulation() {
     const loadData = async () => {
       try {
         const [commonRes, ...questResults] = await Promise.all([
-          fetch('/data/quest/quest_common.json').then(r => r.json()),
-          ...QUEST_FILES.map(f => fetch(`/data/quest/${f.file}`).then(r => r.json())),
+          fetch("/data/quest/quest_common.json").then((r) => r.json()),
+          ...QUEST_FILES.map((f) => fetch(`/data/quest/${f.file}`).then((r) => r.json())),
         ]);
         setCommonData(commonRes);
         const map: Record<string, QuestData> = {};
@@ -366,15 +440,17 @@ export default function QuestSimulation() {
         // Preload all region/sub-area images + hero job/champion images
         const preloadImages: string[] = [];
         Object.values(map).forEach((qd: QuestData) => {
-          qd.regions.forEach(r => {
+          qd.regions.forEach((r) => {
             if (r.areaImage) preloadImages.push(r.areaImage);
-            r.subAreas.forEach(s => { if (s.image) preloadImages.push(s.image); });
+            r.subAreas.forEach((s) => {
+              if (s.image) preloadImages.push(s.image);
+            });
             if (r.boss?.image) preloadImages.push(r.boss.image);
           });
         });
         // Preload hero job icons and illustrations
-        allHeroes.forEach(h => {
-          if (h.type === 'champion') {
+        allHeroes.forEach((h) => {
+          if (h.type === "champion") {
             const p = getChampionImagePath(h.championName || h.name);
             if (p) preloadImages.push(p);
           } else if (h.heroClass) {
@@ -386,16 +462,15 @@ export default function QuestSimulation() {
         });
         // Preload booster images
         if (commonRes?.boosters) {
-          Object.values(commonRes.boosters).forEach((b: any) => { if (b?.image) preloadImages.push(b.image); });
+          Object.values(commonRes.boosters).forEach((b: any) => {
+            if (b?.image) preloadImages.push(b.image);
+          });
         }
         // Deduplicate and preload all in parallel (non-blocking)
         const unique = [...new Set(preloadImages)];
-        unique.forEach(src => {
-          const img = new Image();
-          img.src = src;
-        });
+        preloadImagesAndWait(unique);
       } catch (e) {
-        console.error('Failed to load quest data', e);
+        console.error("Failed to load quest data", e);
       } finally {
         setLoading(false);
       }
@@ -407,7 +482,10 @@ export default function QuestSimulation() {
   const currentRegion = currentQuestData && selectedRegionIdx >= 0 ? currentQuestData.regions[selectedRegionIdx] : null;
   const currentQuest = currentRegion && selectedQuestIdx >= 0 ? currentRegion.quests[selectedQuestIdx] : null;
   const hasSubAreas = currentRegion && currentRegion.subAreas.length > 1;
-  const selectedSubArea = currentRegion && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99 ? currentRegion.subAreas[selectedSubAreaIdx] : null;
+  const selectedSubArea =
+    currentRegion && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+      ? currentRegion.subAreas[selectedSubAreaIdx]
+      : null;
 
   // Sort party: champions first, then heroes by class order (HERO_CLASS_MAP)
   const JOB_SORT_MAP = useMemo(() => {
@@ -421,13 +499,13 @@ export default function QuestSimulation() {
 
   const selectedHeroes = useMemo(() => {
     const heroes = allHeroes
-      .filter(h => selectedHeroIds.has(h.id))
-      .map(h => tempOverrides[h.id] ? tempOverrides[h.id] : h);
+      .filter((h) => selectedHeroIds.has(h.id))
+      .map((h) => (tempOverrides[h.id] ? tempOverrides[h.id] : h));
     return heroes.sort((a, b) => {
       // Champions first
-      if (a.type === 'champion' && b.type !== 'champion') return -1;
-      if (a.type !== 'champion' && b.type === 'champion') return 1;
-      if (a.type === 'champion' && b.type === 'champion') return 0;
+      if (a.type === "champion" && b.type !== "champion") return -1;
+      if (a.type !== "champion" && b.type === "champion") return 1;
+      if (a.type === "champion" && b.type === "champion") return 0;
       // Then by class order
       const aOrder = JOB_SORT_MAP[a.heroClass] ?? 999;
       const bOrder = JOB_SORT_MAP[b.heroClass] ?? 999;
@@ -437,22 +515,22 @@ export default function QuestSimulation() {
 
   const maxMembers = currentRegion?.maxMembers || 5;
   const isBossQuest = currentQuest?.isBoss || false;
-  const isFlashQuest = selectedQuestType === 'flash';
+  const isFlashQuest = selectedQuestType === "flash";
 
   // Trim party from the right when dungeon maxMembers shrinks
   useEffect(() => {
     if (!currentRegion) return;
     if (selectedHeroIds.size <= maxMembers) return;
     // Preserve order using selectedHeroes (sorted: champions first); drop from the right
-    const keepIds = selectedHeroes.slice(0, maxMembers).map(h => h.id);
+    const keepIds = selectedHeroes.slice(0, maxMembers).map((h) => h.id);
     setSelectedHeroIds(new Set(keepIds));
     // selectedHeroes is derived from selectedHeroIds; safe under React batching
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxMembers]);
 
   // Rudo element bonus: +50% to total party element values (rounded)
-  const champion = selectedHeroes.find(h => h.type === 'champion');
-  const isRudo = champion && (champion.championName?.includes('루도') || champion.name?.includes('루도'));
+  const champion = selectedHeroes.find((h) => h.type === "champion");
+  const isRudo = champion && (champion.championName?.includes("루도") || champion.name?.includes("루도"));
   const rudoElementMultiplier = isRudo && getChampionLeaderSkillTier(champion) >= 3 ? 1.5 : 1.0;
 
   // Compute party-buffed stats whenever party changes
@@ -465,15 +543,15 @@ export default function QuestSimulation() {
       return;
     }
     if (selectedHeroes.length === 0) return;
-    calculatePartyBuffs({ heroes: selectedHeroes, isBoss: isBossQuest, isFlashQuest })
-      .then(({ summary, buffedStats: bs }) => {
+    calculatePartyBuffs({ heroes: selectedHeroes, isBoss: isBossQuest, isFlashQuest }).then(
+      ({ summary, buffedStats: bs }) => {
         // Apply booster on top of party buffs
-        if (selectedBooster !== 'none') {
-          const boosterAtkPct = selectedBooster === 'mega' ? 0.8 : selectedBooster === 'super' ? 0.4 : 0.2;
+        if (selectedBooster !== "none") {
+          const boosterAtkPct = selectedBooster === "mega" ? 0.8 : selectedBooster === "super" ? 0.4 : 0.2;
           const boosterDefPct = boosterAtkPct;
-          const boosterCrit = selectedBooster === 'mega' ? 25 : selectedBooster === 'super' ? 10 : 0;
-          const boosterCritDmg = selectedBooster === 'mega' ? 50 : 0;
-          
+          const boosterCrit = selectedBooster === "mega" ? 25 : selectedBooster === "super" ? 10 : 0;
+          const boosterCritDmg = selectedBooster === "mega" ? 50 : 0;
+
           bs.forEach((stat, i) => {
             const hero = selectedHeroes[i];
             const atkAdd = Math.floor((hero.atk || 0) * boosterAtkPct);
@@ -487,26 +565,27 @@ export default function QuestSimulation() {
             stat.critDmg += boosterCritDmg;
             stat.deltaCritDmg += boosterCritDmg;
           });
-          
+
           const boosterNames: Record<string, string> = {
-            normal: '전투력 부스터',
-            super: '슈퍼 전투력 부스터',
-            mega: '메가 전투력 부스터',
+            normal: "전투력 부스터",
+            super: "슈퍼 전투력 부스터",
+            mega: "메가 전투력 부스터",
           };
           summary.sources.push({
             name: boosterNames[selectedBooster],
-            type: 'aurasong',
+            type: "aurasong",
             atkPct: boosterAtkPct * 100,
             defPct: boosterDefPct * 100,
             critPct: boosterCrit || undefined,
             critDmgPct: boosterCritDmg || undefined,
-            note: '부스터',
+            note: "부스터",
           });
         }
-        
+
         setBuffedStats(bs);
         setBuffSummary(summary);
-      });
+      },
+    );
   }, [selectedHeroes, isBossQuest, isFlashQuest, selectedBooster]);
 
   // Auto-run simulation when party or booster changes
@@ -527,17 +606,24 @@ export default function QuestSimulation() {
     setSimRunning(true);
     const timer = setTimeout(() => {
       simScheduledRef.current = false;
-      const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
-      const bElements = currentQuest?.barrier ? (() => {
-        const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
-        const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-          ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
-          : null;
-        const rawElements = barrierElement2
-          ? [barrierElement2]
-          : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
-        return [...new Set(rawElements)] as string[];
-      })() : [];
+      const isTerrorTower = selectedQuestType === "tot" && currentRegion.name === "공포";
+      const bElements = currentQuest?.barrier
+        ? (() => {
+            const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+            const barrierElement2 =
+              hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                ? selectedSubAreaIdx === 0
+                  ? currentQuest.barrier!.sub1
+                  : selectedSubAreaIdx === 1
+                    ? currentQuest.barrier!.sub2
+                    : currentQuest.barrier!.sub3
+                : null;
+            const rawElements = barrierElement2
+              ? [barrierElement2]
+              : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
+            return [...new Set(rawElements)] as string[];
+          })()
+        : [];
       const questMonster: QuestMonster = {
         hp: currentQuest.hp,
         atk: currentQuest.atk,
@@ -550,7 +636,7 @@ export default function QuestSimulation() {
         barrierElement: bElements[0] || null,
       };
       // Boss quests never have mini-bosses
-      const effectiveMiniBoss = currentQuest.isBoss ? 'none' as MiniBossType : selectedMiniBoss;
+      const effectiveMiniBoss = currentQuest.isBoss ? ("none" as MiniBossType) : selectedMiniBoss;
       // Always pass precomputed stats (buffedStats includes champion + aurasong + booster)
       // Also derive PDF-formula fields per hero so combatSimulation can apply
       // conditional bonuses (shark/dino/mundra/berserker) inside the common ATK% sum
@@ -559,14 +645,14 @@ export default function QuestSimulation() {
       const auraFlatDef = buffSummary?.flatDef || 0;
       const precomputed = buffedStats.map((bs, i) => {
         const hero = selectedHeroes[i];
-        const cAtk = (hero.detailStats?.['공통 공격력 계수'] ?? 0) / 100;
-        const cDef = (hero.detailStats?.['공통 방어력 계수'] ?? 0) / 100;
+        const cAtk = (hero.detailStats?.["공통 공격력 계수"] ?? 0) / 100;
+        const cDef = (hero.detailStats?.["공통 방어력 계수"] ?? 0) / 100;
         // Use stored pre-pct constants directly (no inversion).
         // Fallback to division only for legacy heroes without the field.
-        const atkConstant = hero.detailStats?.['공격력 상수']
-          ?? ((1 + cAtk) > 0 ? (hero.atk || 0) / (1 + cAtk) : (hero.atk || 0));
-        const defConstant = hero.detailStats?.['방어력 상수']
-          ?? ((1 + cDef) > 0 ? (hero.def || 0) / (1 + cDef) : (hero.def || 0));
+        const atkConstant =
+          hero.detailStats?.["공격력 상수"] ?? (1 + cAtk > 0 ? (hero.atk || 0) / (1 + cAtk) : hero.atk || 0);
+        const defConstant =
+          hero.detailStats?.["방어력 상수"] ?? (1 + cDef > 0 ? (hero.def || 0) / (1 + cDef) : hero.def || 0);
         const partyAtkMult = (hero.atk || 0) > 0 ? (bs.atk - auraFlatAtk) / hero.atk : 1;
         const partyDefMult = (hero.def || 0) > 0 ? (bs.def - auraFlatDef) / hero.def : 1;
         return {
@@ -597,7 +683,10 @@ export default function QuestSimulation() {
       setSimResult(result);
       setSimRunning(false);
     }, 150);
-    return () => { clearTimeout(timer); simScheduledRef.current = false; };
+    return () => {
+      clearTimeout(timer);
+      simScheduledRef.current = false;
+    };
     // NOTE: do NOT add selectedBooster / selectedHeroes here — they already trigger
     // a buffedStats recompute, and listing them again would cause the simulation
     // effect to fire twice (once with stale buffedStats, once with fresh).
@@ -613,7 +702,7 @@ export default function QuestSimulation() {
 
   const toggleHero = (id: string) => {
     if (!currentRegion) return;
-    setSelectedHeroIds(prev => {
+    setSelectedHeroIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else if (next.size < currentRegion.maxMembers) next.add(id);
@@ -632,24 +721,29 @@ export default function QuestSimulation() {
   };
 
   const clearQuest = () => {
-    setSelectedQuestType('');
+    setSelectedQuestType("");
     setSelectedRegionIdx(-1);
     setSelectedSubAreaIdx(-1);
     setSelectedQuestIdx(-1);
     setSelectedHeroIds(new Set());
-    setSelectedMiniBoss('random');
+    setSelectedMiniBoss("random");
   };
 
-  const handleQuestSelect = (sel: { questTypeKey: string; regionIdx: number; subAreaIdx: number; questIdx: number }) => {
+  const handleQuestSelect = (sel: {
+    questTypeKey: string;
+    regionIdx: number;
+    subAreaIdx: number;
+    questIdx: number;
+  }) => {
     setSelectedQuestType(sel.questTypeKey);
     setSelectedRegionIdx(sel.regionIdx);
     setSelectedSubAreaIdx(sel.subAreaIdx);
     setSelectedQuestIdx(sel.questIdx);
     // 파티 구성 유지 (던전 변경시 초기화 안함)
-    setSelectedMiniBoss('random');
+    setSelectedMiniBoss("random");
   };
 
-  const openConfigAtStep = (step: 'type' | 'region' | 'subarea') => {
+  const openConfigAtStep = (step: "type" | "region" | "subarea") => {
     setConfigInitialStep(step);
     setConfigInitialState({
       questTypeKey: selectedQuestType,
@@ -662,25 +756,23 @@ export default function QuestSimulation() {
   // Build a saved simulation summary object from current state
   const buildSavedSim = (): SavedSimulationSummary | null => {
     if (!simResult || !currentQuest || !currentRegion) return null;
-    const selectedHeroList = allHeroes.filter(h => selectedHeroIds.has(h.id));
+    const selectedHeroList = allHeroes.filter((h) => selectedHeroIds.has(h.id));
     const questData = questDataMap[selectedQuestType];
     const regionName = currentRegion.name;
-    const diffLabel = currentQuest.difficulty !== '없음' ? ` ${currentQuest.difficulty}` : '';
-    const autoName = `${questData?.questType || ''} ${regionName}${diffLabel}`;
+    const diffLabel = currentQuest.difficulty !== "없음" ? ` ${currentQuest.difficulty}` : "";
+    const autoName = `${questData?.questType || ""} ${regionName}${diffLabel}`;
 
     const totalDmg = simResult.heroResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-    const heroSummaries = simResult.heroResults.map(hr => {
-      const heroObj = selectedHeroList.find(h => h.id === hr.heroId);
+    const heroSummaries = simResult.heroResults.map((hr) => {
+      const heroObj = selectedHeroList.find((h) => h.id === hr.heroId);
       const powerBelowMin = !!(currentQuest && heroObj && heroObj.power > 0 && heroObj.power < currentQuest.minPower);
       return {
         heroId: hr.heroId,
         heroName: hr.heroName,
-        heroClass: heroObj?.type === 'champion'
-          ? (heroObj.championName || heroObj.name || '')
-          : (heroObj?.heroClass || ''),
+        heroClass: heroObj?.type === "champion" ? heroObj.championName || heroObj.name || "" : heroObj?.heroClass || "",
         survivalRate: hr.survivalRate,
         avgDamageDealt: hr.avgDamageDealt,
-        damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg * 100) : 0,
+        damageShare: totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0,
         tankingShare: hr.tankingRate ?? 0,
         powerBelowMin,
       };
@@ -688,32 +780,51 @@ export default function QuestSimulation() {
 
     // Display snapshots
     const isBoss = selectedSubAreaIdx === 99;
-    const subAreaSnap = isBoss ? (currentRegion?.boss?.name || '') : (selectedSubArea?.name || '');
-    const subAreaImage = isBoss ? (currentRegion?.boss?.image || '') : (selectedSubArea?.image || '');
-    const boosterKeysMap: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
-    const boosterImage = (selectedBooster !== 'none' && commonData?.boosters?.[boosterKeysMap[selectedBooster]]?.image) || '';
-    const miniBossLabelsMap: Record<string, string> = { huge: '거대한', dire: '흉포한', legendary: '전설의' };
-    const miniBossLabel = selectedMiniBoss !== 'none' ? miniBossLabelsMap[selectedMiniBoss] || '' : '';
-    const barrierInfos: SavedSimBarrierInfo[] = (barrierElements || []).map(el => ({
+    const subAreaSnap = isBoss ? currentRegion?.boss?.name || "" : selectedSubArea?.name || "";
+    const subAreaImage = isBoss ? currentRegion?.boss?.image || "" : selectedSubArea?.image || "";
+    const boosterKeysMap: Record<string, string> = {
+      normal: "전투력 부스터",
+      super: "슈퍼 전투력 부스터",
+      mega: "메가 전투력 부스터",
+    };
+    const boosterImage =
+      (selectedBooster !== "none" && commonData?.boosters?.[boosterKeysMap[selectedBooster]]?.image) || "";
+    const miniBossLabelsMap: Record<string, string> = { huge: "거대한", dire: "흉포한", legendary: "전설의" };
+    const miniBossLabel = selectedMiniBoss !== "none" ? miniBossLabelsMap[selectedMiniBoss] || "" : "";
+    const barrierInfos: SavedSimBarrierInfo[] = (barrierElements || []).map((el) => ({
       element: el,
-      iconPath: commonData?.elementalBarriers?.[el]?.image || '',
+      iconPath: commonData?.elementalBarriers?.[el]?.image || "",
       partySum: getPartyElementSum(el),
       required: currentQuest.barrier?.hp || 0,
     }));
     // Quality score for avg gear
     const qScore: Record<string, number> = {
-      common: 1, uncommon: 1.25, flawless: 1.5, epic: 2, legendary: 3,
-      '일반': 1, '고급': 1.25, '최고급': 1.5, '에픽': 2, '전설': 3,
+      common: 1,
+      uncommon: 1.25,
+      flawless: 1.5,
+      epic: 2,
+      legendary: 3,
+      일반: 1,
+      고급: 1.25,
+      최고급: 1.5,
+      에픽: 2,
+      전설: 3,
     };
-    const gearAvgs = selectedHeroList.map(h => {
-      let t = 0, e = 0;
-      (h.equipmentSlots || []).forEach(s => { if (s.item) { e++; t += qScore[s.quality] || 1; } });
+    const gearAvgs = selectedHeroList.map((h) => {
+      let t = 0,
+        e = 0;
+      (h.equipmentSlots || []).forEach((s) => {
+        if (s.item) {
+          e++;
+          t += qScore[s.quality] || 1;
+        }
+      });
       return e > 0 ? t / e : 0;
     });
     const avgGearScore = gearAvgs.length > 0 ? gearAvgs.reduce((a, b) => a + b, 0) / gearAvgs.length : 0;
     const total = simResult.totalSimulations || 0;
-    const successCount = simResult.winSimCount ?? Math.round(simResult.winRate / 100 * total);
-    const failCount = simResult.loseSimCount ?? (total - successCount);
+    const successCount = simResult.winSimCount ?? Math.round((simResult.winRate / 100) * total);
+    const failCount = simResult.loseSimCount ?? total - successCount;
     const retryCount = simResult.retryResult?.totalSimulations || 0;
 
     return {
@@ -731,14 +842,14 @@ export default function QuestSimulation() {
       avgRounds: simResult.avgRounds,
       minRounds: simResult.minRounds,
       maxRounds: simResult.maxRounds,
-      questTypeLabel: questData?.questType || '',
+      questTypeLabel: questData?.questType || "",
       regionName,
       subAreaName: subAreaSnap,
-      difficulty: currentQuest.difficulty !== '없음' ? currentQuest.difficulty : '',
-      regionImage: currentRegion.areaImage || '',
+      difficulty: currentQuest.difficulty !== "없음" ? currentQuest.difficulty : "",
+      regionImage: currentRegion.areaImage || "",
       subAreaImage,
       boosterImage,
-      boosterLabel: selectedBooster !== 'none' ? (boosterKeysMap[selectedBooster] || '') : '',
+      boosterLabel: selectedBooster !== "none" ? boosterKeysMap[selectedBooster] || "" : "",
       miniBossLabel,
       isBoss,
       barrierInfos,
@@ -756,7 +867,7 @@ export default function QuestSimulation() {
     const sim = buildSavedSim();
     if (!sim) return;
     saveSimulationResult(sim);
-    const t = toast({ title: '결과 저장 완료', description: sim.name });
+    const t = toast({ title: "결과 저장 완료", description: sim.name });
     setTimeout(() => t.dismiss(), 1000);
   };
 
@@ -768,7 +879,7 @@ export default function QuestSimulation() {
     if (!sim) return;
     overwriteSimulationResult(targetId, sim);
     setLoadedSimId(targetId);
-    const t = toast({ title: '덮어쓰기 완료', description: sim.name });
+    const t = toast({ title: "덮어쓰기 완료", description: sim.name });
     setTimeout(() => t.dismiss(), 1000);
   };
 
@@ -779,23 +890,23 @@ export default function QuestSimulation() {
     setSelectedSubAreaIdx(sim.subAreaIdx);
     setSelectedQuestIdx(sim.questIdx);
     // For each saved hero id: prefer current list (latest data); fall back to snapshot if missing
-    const currentIds = new Set(allHeroesBase.map(h => h.id));
+    const currentIds = new Set(allHeroesBase.map((h) => h.id));
     const snapshots = sim.heroSnapshots || [];
-    const missingSnapshots = snapshots.filter(s => !currentIds.has(s.id));
+    const missingSnapshots = snapshots.filter((s) => !currentIds.has(s.id));
     if (missingSnapshots.length > 0) {
-      setFallbackHeroes(prev => {
-        const ids = new Set(prev.map(h => h.id));
-        return [...prev, ...missingSnapshots.filter(s => !ids.has(s.id))];
+      setFallbackHeroes((prev) => {
+        const ids = new Set(prev.map((h) => h.id));
+        return [...prev, ...missingSnapshots.filter((s) => !ids.has(s.id))];
       });
     }
     // Detect unrecoverable hero IDs (no snapshot, not in current list)
-    const snapshotIds = new Set(snapshots.map(s => s.id));
-    const unrecoverable = sim.heroIds.filter(id => !currentIds.has(id) && !snapshotIds.has(id));
+    const snapshotIds = new Set(snapshots.map((s) => s.id));
+    const unrecoverable = sim.heroIds.filter((id) => !currentIds.has(id) && !snapshotIds.has(id));
     if (unrecoverable.length > 0) {
       const t = toast({
-        title: '일부 영웅을 복원할 수 없습니다',
-        description: '오래된 저장 결과에 스냅샷이 없어 일부 영웅이 누락되었습니다. 새로 저장하면 향후에는 복원됩니다.',
-        variant: 'destructive',
+        title: "일부 영웅을 복원할 수 없습니다",
+        description: "오래된 저장 결과에 스냅샷이 없어 일부 영웅이 누락되었습니다. 새로 저장하면 향후에는 복원됩니다.",
+        variant: "destructive",
       });
       setTimeout(() => t.dismiss(), 2500);
     }
@@ -803,45 +914,67 @@ export default function QuestSimulation() {
     setSelectedBooster(sim.booster as any);
     setSelectedMiniBoss(sim.miniBoss as MiniBossType);
     setLoadedSimId(sim.id);
-    setSubTab('simulation');
+    setSubTab("simulation");
   };
 
   // Get barrier elements for display
-  const barrierElements = currentQuest?.barrier ? (() => {
-    const barrierElement = hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-      ? getSubAreaBarrierElement(currentQuest.barrier) : null;
-    const rawElements = barrierElement
-      ? [barrierElement]
-      : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
-    return [...new Set(rawElements)] as string[];
-  })() : [];
-
+  const barrierElements = currentQuest?.barrier
+    ? (() => {
+        const barrierElement =
+          hasSubAreas && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+            ? getSubAreaBarrierElement(currentQuest.barrier)
+            : null;
+        const rawElements = barrierElement
+          ? [barrierElement]
+          : [currentQuest.barrier.sub1, currentQuest.barrier.sub2, currentQuest.barrier.sub3].filter(Boolean);
+        return [...new Set(rawElements)] as string[];
+      })()
+    : [];
 
   // Sub-area or boss display name - use stage if available
-  const locationName = selectedSubAreaIdx === 99 && currentRegion?.boss
-    ? currentRegion.boss.name
-    : currentQuest?.stage
-    ? `${selectedSubArea?.name ? currentRegion?.name + ' ' : ''}${currentQuest.stage}단계`
-    : selectedSubArea
-    ? selectedSubArea.name
-    : currentRegion?.name || '';
+  const locationName =
+    selectedSubAreaIdx === 99 && currentRegion?.boss
+      ? currentRegion.boss.name
+      : currentQuest?.stage
+        ? `${selectedSubArea?.name ? currentRegion?.name + " " : ""}${currentQuest.stage}단계`
+        : selectedSubArea
+          ? selectedSubArea.name
+          : currentRegion?.name || "";
 
   // Center image
   const centerImage = currentQuest
     ? (selectedSubAreaIdx === 99 && currentRegion?.boss
-      ? currentRegion.boss.image
-      : selectedSubArea
-      ? selectedSubArea.image
-      : currentRegion?.areaImage) || null
+        ? currentRegion.boss.image
+        : selectedSubArea
+          ? selectedSubArea.image
+          : currentRegion?.areaImage) || null
     : null;
 
   // Defense thresholds (from -50%=0 to 75%)
   const defThresholds = [
-    { key: 'neg50' as const, label: '-50%', color: '#a855f7', textClass: 'text-purple-400', value: 0 },
-    { key: 'r0' as const, label: '0%', color: '#ef4444', textClass: 'text-red-400', value: currentQuest?.def.r0 || 0 },
-    { key: 'r50' as const, label: '50%', color: '#eab308', textClass: 'text-yellow-400', value: currentQuest?.def.r50 || 0 },
-    { key: 'r70' as const, label: '70%', color: '#84cc16', textClass: 'text-lime-400', value: currentQuest?.def.r70 || 0 },
-    { key: 'r75' as const, label: '75%', color: '#22d3ee', textClass: 'text-cyan-300', value: currentQuest?.def.r75 || 0 },
+    { key: "neg50" as const, label: "-50%", color: "#a855f7", textClass: "text-purple-400", value: 0 },
+    { key: "r0" as const, label: "0%", color: "#ef4444", textClass: "text-red-400", value: currentQuest?.def.r0 || 0 },
+    {
+      key: "r50" as const,
+      label: "50%",
+      color: "#eab308",
+      textClass: "text-yellow-400",
+      value: currentQuest?.def.r50 || 0,
+    },
+    {
+      key: "r70" as const,
+      label: "70%",
+      color: "#84cc16",
+      textClass: "text-lime-400",
+      value: currentQuest?.def.r70 || 0,
+    },
+    {
+      key: "r75" as const,
+      label: "75%",
+      color: "#22d3ee",
+      textClass: "text-cyan-300",
+      value: currentQuest?.def.r75 || 0,
+    },
   ];
 
   // Calculate damage reduction % for a given defense value using threshold interpolation
@@ -868,38 +1001,42 @@ export default function QuestSimulation() {
 
   const barrierBrokenGlobal = (() => {
     if (!currentQuest?.barrier || barrierElements.length === 0) return true;
-    return barrierElements.every(el => {
+    return barrierElements.every((el) => {
       return getPartyElementSum(el) >= currentQuest.barrier!.hp;
     });
   })();
 
-  const questTimeSettings = timeSettings.filter(s => s.category === 'quest');
-  const restTimeSettings = timeSettings.filter(s => s.category === 'rest');
+  const questTimeSettings = timeSettings.filter((s) => s.category === "quest");
+  const restTimeSettings = timeSettings.filter((s) => s.category === "rest");
 
   // Temp-edit full-page view (replaces simulation UI while editing a party member)
   if (tempEditingHero) {
     const onTempSave = (updated: Hero) => {
-      setTempOverrides(prev => ({ ...prev, [updated.id]: updated }));
+      setTempOverrides((prev) => ({ ...prev, [updated.id]: updated }));
       setTempEditingHero(null);
     };
     const onListOverwrite = (updated: Hero) => {
       storageUpdateHero(updated);
-      window.dispatchEvent(new Event('heroes-updated'));
-      setTempOverrides(prev => {
+      window.dispatchEvent(new Event("heroes-updated"));
+      setTempOverrides((prev) => {
         const next = { ...prev };
         delete next[updated.id];
         return next;
       });
       setTempEditingHero(null);
-      toast({ title: '리스트에 반영됨', description: `${updated.name}의 수정 사항이 내 ${tempEditingHero.type === 'champion' ? '챔피언' : '영웅'} 리스트에 저장되었습니다.` });
+      toast({
+        title: "리스트에 반영됨",
+        description: `${updated.name}의 수정 사항이 내 ${tempEditingHero.type === "champion" ? "챔피언" : "영웅"} 리스트에 저장되었습니다.`,
+      });
     };
     const confirmSaveAs = {
-      title: '리스트에 정말 덮어쓸까요?',
-      description: '이 작업은 되돌릴 수 없습니다. 내 리스트의 해당 영웅/챔피언이 현재 임시 수정 상태로 완전히 교체됩니다.',
+      title: "리스트에 정말 덮어쓸까요?",
+      description:
+        "이 작업은 되돌릴 수 없습니다. 내 리스트의 해당 영웅/챔피언이 현재 임시 수정 상태로 완전히 교체됩니다.",
     };
     return (
       <div className="animate-fade-in">
-        {tempEditingHero.type === 'champion' ? (
+        {tempEditingHero.type === "champion" ? (
           <ChampionForm
             hero={tempEditingHero}
             titleOverride="챔피언 임시 수정"
@@ -931,33 +1068,34 @@ export default function QuestSimulation() {
   return (
     <div className="animate-fade-in">
       {/* Sub-tabs - bookmark style */}
-      <div className="flex gap-0.5 mb-4 relative items-end" style={{ paddingBottom: '1px' }}>
+      <div className="flex gap-0.5 mb-4 relative items-end" style={{ paddingBottom: "1px" }}>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-border/40" />
-        {QUEST_SUB_TABS.map(tab => {
+        {QUEST_SUB_TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = subTab === tab.id;
-          const savedCount = tab.id === 'saved' ? savedResultsCount : 0;
-          const label = tab.id === 'saved' ? `${tab.label} (${savedCount})` : tab.label;
+          const savedCount = tab.id === "saved" ? savedResultsCount : 0;
+          const label = tab.id === "saved" ? `${tab.label} (${savedCount})` : tab.label;
           return (
-              <button
-                key={tab.id}
-                onClick={() => setSubTab(tab.id)}
-                className={`sub-tab-bookmark relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg border border-b-0 transition-all duration-200
-                  ${isActive
-                    ? 'bg-card text-primary border-border/60 z-10 shadow-sm -mb-px'
-                    : 'bg-secondary/30 text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary/50 hover:-translate-y-0.5'
+            <button
+              key={tab.id}
+              onClick={() => setSubTab(tab.id)}
+              className={`sub-tab-bookmark relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg border border-b-0 transition-all duration-200
+                  ${
+                    isActive
+                      ? "bg-card text-primary border-border/60 z-10 shadow-sm -mb-px"
+                      : "bg-secondary/30 text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary/50 hover:-translate-y-0.5"
                   }`}
-                data-active={isActive}
-                style={isActive ? { boxShadow: '0 -2px 8px hsl(var(--primary) / 0.15)' } : {}}
-              >
-                <Icon className={`w-4 h-4 transition-transform ${isActive ? 'scale-110' : ''}`} />
-                {label}
-              </button>
+              data-active={isActive}
+              style={isActive ? { boxShadow: "0 -2px 8px hsl(var(--primary) / 0.15)" } : {}}
+            >
+              <Icon className={`w-4 h-4 transition-transform ${isActive ? "scale-110" : ""}`} />
+              {label}
+            </button>
           );
         })}
 
         {/* Action buttons - right aligned in sub-tab row */}
-        {subTab === 'simulation' && currentQuest && selectedHeroes.length > 0 && simResult && (
+        {subTab === "simulation" && currentQuest && selectedHeroes.length > 0 && simResult && (
           <div className="flex items-center gap-1.5 ml-auto mb-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -982,27 +1120,45 @@ export default function QuestSimulation() {
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
               onClick={() => {
                 if (!currentQuest || !currentRegion) return;
-                const isTerrorTower = selectedQuestType === 'tot' && currentRegion.name === '공포';
-                const bElements = currentQuest?.barrier ? (() => {
-                  const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
-                  const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-                    ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
-                    : null;
-                  const rawElements = barrierElement2
-                    ? [barrierElement2]
-                    : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
-                  return [...new Set(rawElements)] as string[];
-                })() : [];
+                const isTerrorTower = selectedQuestType === "tot" && currentRegion.name === "공포";
+                const bElements = currentQuest?.barrier
+                  ? (() => {
+                      const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                      const barrierElement2 =
+                        hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                          ? selectedSubAreaIdx === 0
+                            ? currentQuest.barrier!.sub1
+                            : selectedSubAreaIdx === 1
+                              ? currentQuest.barrier!.sub2
+                              : currentQuest.barrier!.sub3
+                          : null;
+                      const rawElements = barrierElement2
+                        ? [barrierElement2]
+                        : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(
+                            Boolean,
+                          );
+                      return [...new Set(rawElements)] as string[];
+                    })()
+                  : [];
                 const questMonster: QuestMonster = {
-                  hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
-                  aoeChance: currentQuest.aoeChance, def: currentQuest.def,
-                  isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
-                  barrier: currentQuest.barrier, barrierElement: bElements[0] || null,
+                  hp: currentQuest.hp,
+                  atk: currentQuest.atk,
+                  aoe: currentQuest.aoe,
+                  aoeChance: currentQuest.aoeChance,
+                  def: currentQuest.def,
+                  isBoss: currentQuest.isBoss,
+                  isExtreme: currentQuest.isExtreme,
+                  barrier: currentQuest.barrier,
+                  barrierElement: bElements[0] || null,
                 };
                 const entries = runSingleCombatLog({
-                  heroes: selectedHeroes, monster: questMonster,
-                  miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
-                  questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower,
+                  heroes: selectedHeroes,
+                  monster: questMonster,
+                  miniBoss: selectedMiniBoss,
+                  booster: { type: selectedBooster },
+                  questTypeKey: selectedQuestType,
+                  regionName: currentRegion.name,
+                  isTerrorTower,
                 });
                 setCombatLog(entries);
                 setCombatLogDialogOpen(true);
@@ -1014,50 +1170,64 @@ export default function QuestSimulation() {
             <button
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium"
               onClick={async () => {
-                const el = document.querySelector('[data-quest-screenshot]') as HTMLElement;
+                const el = document.querySelector("[data-quest-screenshot]") as HTMLElement;
                 if (!el) return;
-                const overlay = document.createElement('div');
-                overlay.id = 'screenshot-overlay';
-                overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
-                overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+                const overlay = document.createElement("div");
+                overlay.id = "screenshot-overlay";
+                overlay.style.cssText =
+                  "position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)";
+                overlay.innerHTML =
+                  '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:white;font-size:14px"><div style="width:32px;height:32px;border:3px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div>스크린샷 저장 중...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
                 document.body.appendChild(overlay);
                 try {
-                  const { default: html2canvas } = await import('html2canvas');
-                  const allCells = el.querySelectorAll('td, th');
-                  allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
+                  const { default: html2canvas } = await import("html2canvas");
+                  const allCells = el.querySelectorAll("td, th");
+                  allCells.forEach((cell) => {
+                    (cell as HTMLElement).style.verticalAlign = "middle";
+                  });
                   const bgStyle = getComputedStyle(document.documentElement);
-                  const bgHsl = bgStyle.getPropertyValue('--background').trim();
-                  const bgColor = bgHsl ? `hsl(${bgHsl})` : (colorMode === 'light' ? '#f5f3f0' : '#1a1a2e');
+                  const bgHsl = bgStyle.getPropertyValue("--background").trim();
+                  const bgColor = bgHsl ? `hsl(${bgHsl})` : colorMode === "light" ? "#f5f3f0" : "#1a1a2e";
                   const PAD = 40;
                   const canvas = await html2canvas(el, {
                     backgroundColor: bgColor,
-                    useCORS: true, scrollY: -window.scrollY, scrollX: 0, scale: 2, logging: false,
+                    useCORS: true,
+                    scrollY: -window.scrollY,
+                    scrollX: 0,
+                    scale: 2,
+                    logging: false,
                     onclone: (doc) => {
-                      const clonedEl = doc.querySelector('[data-quest-screenshot]') as HTMLElement;
+                      const clonedEl = doc.querySelector("[data-quest-screenshot]") as HTMLElement;
                       if (clonedEl) {
                         const root = doc.documentElement;
-                        root.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'gold');
-                        root.setAttribute('data-color-mode', colorMode);
-                        clonedEl.style.overflow = 'visible';
-                        clonedEl.style.height = 'auto';
-                        clonedEl.style.maxHeight = 'none';
+                        root.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "gold");
+                        root.setAttribute("data-color-mode", colorMode);
+                        clonedEl.style.overflow = "visible";
+                        clonedEl.style.height = "auto";
+                        clonedEl.style.maxHeight = "none";
                         clonedEl.style.padding = `${PAD}px`;
-                        clonedEl.style.display = 'inline-block';
-                        clonedEl.style.boxSizing = 'border-box';
-                        clonedEl.querySelectorAll('td, th').forEach(cell => { (cell as HTMLElement).style.verticalAlign = 'middle'; });
-                        const flexRow = clonedEl.querySelector('[data-quest-sim]') as HTMLElement;
-                        if (flexRow) { flexRow.style.alignItems = 'flex-start'; }
-                        clonedEl.querySelectorAll('img, span, svg').forEach(e => {
+                        clonedEl.style.display = "inline-block";
+                        clonedEl.style.boxSizing = "border-box";
+                        clonedEl.querySelectorAll("td, th").forEach((cell) => {
+                          (cell as HTMLElement).style.verticalAlign = "middle";
+                        });
+                        const flexRow = clonedEl.querySelector("[data-quest-sim]") as HTMLElement;
+                        if (flexRow) {
+                          flexRow.style.alignItems = "flex-start";
+                        }
+                        clonedEl.querySelectorAll("img, span, svg").forEach((e) => {
                           const cs = window.getComputedStyle(e);
-                          if (cs.display === 'inline-block' || cs.display === 'inline') {
-                            (e as HTMLElement).style.verticalAlign = 'middle';
+                          if (cs.display === "inline-block" || cs.display === "inline") {
+                            (e as HTMLElement).style.verticalAlign = "middle";
                           }
                         });
                       }
-                    }
+                    },
                   });
-                  allCells.forEach(cell => { (cell as HTMLElement).style.verticalAlign = ''; });
-                  await saveCanvasImage(canvas, `quest-sim-${Date.now()}.jpg`, 'image/jpeg', 0.92);
+                  allCells.forEach((cell) => {
+                    (cell as HTMLElement).style.verticalAlign = "";
+                  });
+                  await saveCanvasImage(canvas, `quest-sim-${Date.now()}.jpg`, "image/jpeg", 0.92);
                 } finally {
                   overlay.remove();
                 }
@@ -1069,2492 +1239,4045 @@ export default function QuestSimulation() {
           </div>
         )}
       </div>
-
       {/* Tab: Saved Results */}
-      <div style={{ display: subTab === 'saved' ? 'block' : 'none' }}>
+      <div style={{ display: subTab === "saved" ? "block" : "none" }}>
         <SavedResults onLoadSimulation={handleLoadSimulation} refreshKey={savedResultsVersion} />
       </div>
-
       {/* Tab: Compare */}
-      <div style={{ display: subTab === 'compare' ? 'block' : 'none' }}>
-        <CompareAnalysis refreshKey={subTab === 'compare' ? Date.now() : 0} />
+      <div style={{ display: subTab === "compare" ? "block" : "none" }}>
+        <CompareAnalysis refreshKey={subTab === "compare" ? Date.now() : 0} />
       </div>
-
       {/* Tab: Simulation */}
-      <div style={{ display: subTab === 'simulation' ? 'block' : 'none' }}>
-
-      {loading ? (
-        <div className="text-center py-20">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">퀘스트 데이터 로딩 중...</p>
-        </div>
-      ) : allHeroes.length === 0 ? (
-        <div className="text-center py-20">
-          <Swords className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">먼저 리스트 관리에서 영웅을 추가해주세요</p>
-        </div>
-      ) : (
-      <>
-      {/* Action buttons are now inside the 주요 결과 header */}
-
-      <div data-quest-screenshot>
-      <div className="flex gap-4 flex-col lg:flex-row" data-quest-sim>
-
-        {/* LEFT: Monster Info */}
-        <div className="w-full lg:w-80 shrink-0">
-          <div className="flex items-center gap-2 mb-3">
-            <Info className="w-5 h-5 text-primary" />
-            <h3 className="text-lg text-foreground font-bold">몬스터 정보</h3>
-            {currentQuest && (
-              <button
-                onClick={() => {
-                  setSelectedQuestType('');
-                  setSelectedRegionIdx(-1);
-                  setSelectedSubAreaIdx(-1);
-                  setSelectedQuestIdx(-1);
-                  setSelectedMiniBoss('none');
-                  setSelectedBooster('none');
-                  setSimResult(null);
-                }}
-                className="ml-auto p-1.5 rounded-md bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-colors"
-                title="몬스터 정보 초기화"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
-            )}
+      <div style={{ display: subTab === "simulation" ? "block" : "none" }}>
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">퀘스트 데이터 로딩 중...</p>
           </div>
-          <div className="card-fantasy p-4 pb-8 relative min-h-[440px]">
-            {/* Region icon - top left, bigger */}
-            {currentRegion && (
-              <button
-                onClick={() => openConfigAtStep('region')}
-                className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 hover:border-primary/70 transition-all cursor-pointer"
-                title="지역 변경"
-              >
-                <img src={currentRegion.areaImage} alt={currentRegion.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-              </button>
-            )}
-
-            {/* Booster slot - top right, symmetric with region icon */}
-            <Popover open={boosterOpen} onOpenChange={setBoosterOpen}>
-              <PopoverTrigger asChild>
-                <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
-                  {selectedBooster !== 'none' && commonData?.boosters ? (() => {
-                    const boosterKeys: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
-                    const boosterEntry = commonData.boosters[boosterKeys[selectedBooster]];
-                    return boosterEntry ? (
-                      <img src={boosterEntry.image} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-lg">⚡</span>
-                    );
-                  })() : (
-                    <Plus className="w-5 h-5 text-muted-foreground/40" />
-                  )}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-96 p-2.5" align="end">
-                <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
-                <div className="space-y-1.5">
-                  <button
-                    onClick={() => { setSelectedBooster('none'); setBoosterOpen(false); }}
-                    className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === 'none' ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
-                  >
-                    <span className="w-8 h-8 rounded flex items-center justify-center bg-secondary/50 text-muted-foreground shrink-0">✕</span>
-                    <span className="font-medium">부스터 없음</span>
-                  </button>
-                  {(['normal', 'super', 'mega'] as const).map(bType => {
-                    const names: Record<string, string> = { normal: '전투력 부스터', super: '슈퍼 전투력 부스터', mega: '메가 전투력 부스터' };
-                    const descs: Record<string, string> = { normal: '공/방 +20%', super: '공/방 +40% / 치확 +10%', mega: '공/방 +80% / 치확 +25% / 치명타 대미지 +50%' };
-                    const bEntry = commonData?.boosters?.[names[bType]];
-                    return (
+        ) : allHeroes.length === 0 ? (
+          <div className="text-center py-20">
+            <Swords className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">먼저 리스트 관리에서 영웅을 추가해주세요</p>
+          </div>
+        ) : (
+          <>
+            {/* Action buttons are now inside the 주요 결과 header */}
+            <div data-quest-screenshot>
+              <div className="flex gap-4 flex-col lg:flex-row" data-quest-sim>
+                {/* LEFT: Monster Info */}
+                <div className="w-full lg:w-80 shrink-0">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Info className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg text-foreground font-bold">몬스터 정보</h3>
+                    {currentQuest && (
                       <button
-                        key={bType}
-                        onClick={() => { setSelectedBooster(bType); setBoosterOpen(false); }}
-                        className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'}`}
+                        onClick={() => {
+                          setSelectedQuestType("");
+                          setSelectedRegionIdx(-1);
+                          setSelectedSubAreaIdx(-1);
+                          setSelectedQuestIdx(-1);
+                          setSelectedMiniBoss("none");
+                          setSelectedBooster("none");
+                          setSimResult(null);
+                        }}
+                        className="ml-auto p-1.5 rounded-md bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-colors"
+                        title="몬스터 정보 초기화"
                       >
-                        {bEntry && <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />}
-                        <div className="text-left min-w-0">
-                          <div className="font-medium">{names[bType]}</div>
-                          <div className="text-xs text-foreground/60 dark:text-foreground/50 whitespace-nowrap">{descs[bType]}</div>
-                        </div>
+                        <RotateCcw className="w-3.5 h-3.5" />
                       </button>
-                    );
-                  })}
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            {/* Quest select button - centered, larger with less cropping */}
-            <div className="flex justify-center pt-2 mb-4">
-              <button
-                onClick={() => {
-                  if (!currentQuest) {
-                    // 아무것도 선택 안 된 상태: 처음부터
-                    setConfigInitialStep(undefined);
-                    setConfigInitialState(undefined);
-                    setConfigOpen(true);
-                  } else {
-                    // 이미 선택된 상태: 세부 지역 & 난이도부터
-                    openConfigAtStep('subarea');
-                  }
-                }}
-                className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
-                  currentQuest
-                    ? `border-primary/60 ${colorMode === 'dark' ? 'shadow-[0_0_20px_hsla(var(--primary)/0.4)]' : 'shadow-[0_0_20px_hsla(var(--primary)/0.3)]'}`
-                    : 'border-dashed border-muted-foreground/40 hover:border-primary/50'
-                }`}
-              >
-                {currentQuest && centerImage ? (
-                  <>
-                    <img src={centerImage} alt="" className="w-full h-full object-cover scale-90" />
-                    <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="text-[10px] text-foreground font-medium">변경</span>
-                    </div>
-                  </>
-                ) : (
-                  <Plus className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
-                )}
-              </button>
-            </div>
-
-            {currentQuest ? (
-              <div className="space-y-2">
-                {/* Line 1: Region (parent) + Location */}
-                {currentRegion && currentRegion.name && currentRegion.name !== locationName && (
-                  <div className="text-center">
-                    <span className="text-sm text-foreground/80 font-medium">{currentRegion.name}</span>
+                    )}
                   </div>
-                )}
-                <div className="text-center">
-                  <span className="text-sm text-foreground font-medium">{locationName}</span>
-                </div>
+                  <div className="card-fantasy p-4 pb-8 relative min-h-[440px]">
+                    {/* Region icon - top left, bigger */}
+                    {currentRegion && (
+                      <button
+                        onClick={() => openConfigAtStep("region")}
+                        className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 hover:border-primary/70 transition-all cursor-pointer"
+                        title="지역 변경"
+                      >
+                        <img
+                          src={currentRegion.areaImage}
+                          alt={currentRegion.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      </button>
+                    )}
 
-                {/* Line 2: Difficulty - display only, no click to change */}
-                {currentQuest.difficulty !== '없음' && (
-                  <div className="text-center text-sm">
-                    <span
-                      className={`font-medium ${
-                        currentQuest.difficulty === '쉬움' ? 'text-lime-400' :
-                        currentQuest.difficulty === '보통' ? 'text-blue-400' :
-                        currentQuest.difficulty === '어려움' ? 'text-orange-400' :
-                        currentQuest.difficulty === '익스트림' ? 'text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]' : 'text-muted-foreground'
-                      }`}
-                    >{currentQuest.difficulty}</span>
-                  </div>
-                )}
-
-                {/* Line 3: Boss or Mini Boss selector */}
-                {currentQuest.isBoss ? (
-                  <div className="text-center text-sm">
-                    <span className="text-red-400">
-                      <Crown className="w-3.5 h-3.5 inline mr-0.5" />보스
-                    </span>
-                  </div>
-                ) : !currentQuest.isBoss && selectedSubAreaIdx !== 99 && (
-                  <div className="text-center">
-                    <Popover>
+                    {/* Booster slot - top right, symmetric with region icon */}
+                    <Popover open={boosterOpen} onOpenChange={setBoosterOpen}>
                       <PopoverTrigger asChild>
-                        <button className={`text-xs px-2 py-0.5 rounded border transition-all ${
-                          selectedMiniBoss !== 'random'
-                            ? selectedMiniBoss === 'huge' ? 'border-lime-500/40 bg-lime-500/10 text-lime-400' :
-                              selectedMiniBoss === 'agile' ? 'border-blue-500/40 bg-blue-500/10 text-blue-400' :
-                              selectedMiniBoss === 'dire' ? 'border-red-500/40 bg-red-500/10 text-red-400' :
-                              selectedMiniBoss === 'wealthy' ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400' :
-                              selectedMiniBoss === 'legendary' ? 'border-purple-500/40 bg-purple-500/10 text-purple-400' :
-                              'border-border/40 text-muted-foreground hover:border-primary/40'
-                            : 'border-primary/40 bg-primary/10 text-primary'
-                        }`}>
-                          {selectedMiniBoss === 'random' ? '랜덤 (2%)' :
-                           selectedMiniBoss === 'none' ? '미니보스 없음' :
-                           selectedMiniBoss === 'huge' ? '거대한' :
-                           selectedMiniBoss === 'agile' ? '민첩한' :
-                           selectedMiniBoss === 'dire' ? '흉포한' :
-                           selectedMiniBoss === 'wealthy' ? '부유한' :
-                           selectedMiniBoss === 'legendary' ? '전설의' : '미니보스'}
+                        <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
+                          {selectedBooster !== "none" && commonData?.boosters ? (
+                            (() => {
+                              const boosterKeys: Record<string, string> = {
+                                normal: "전투력 부스터",
+                                super: "슈퍼 전투력 부스터",
+                                mega: "메가 전투력 부스터",
+                              };
+                              const boosterEntry = commonData.boosters[boosterKeys[selectedBooster]];
+                              return boosterEntry ? (
+                                <img src={boosterEntry.image} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                <span className="text-lg">⚡</span>
+                              );
+                            })()
+                          ) : (
+                            <Plus className="w-5 h-5 text-muted-foreground/40" />
+                          )}
                         </button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-52 p-2" align="center">
-                        <div className="text-xs font-medium text-foreground mb-2">미니보스 수식어</div>
-                        <div className="space-y-1">
-                          {([
-                            { id: 'random', label: '랜덤', desc: '2% 확률로 미니보스 등장', color: 'text-primary' },
-                            { id: 'none', label: '없음 (항상)', desc: '미니보스 없음 고정', color: '' },
-                            { id: 'huge', label: '거대한 (항상)', desc: 'HP ×2, 광역 확률 ×3', color: 'text-lime-400' },
-                            { id: 'agile', label: '민첩한 (항상)', desc: '회피 40%', color: 'text-blue-400' },
-                            { id: 'dire', label: '흉포한 (항상)', desc: 'HP ×1.5, 치확 30%', color: 'text-red-400' },
-                            { id: 'wealthy', label: '부유한 (항상)', desc: '보상 증가', color: 'text-yellow-400' },
-                            { id: 'legendary', label: '전설의 (항상)', desc: 'HP ×1.5, ATK ×1.25, 치확 15%, 회피 10%', color: 'text-purple-400' },
-                          ] as const).map(mb => (
-                            <button
-                              key={mb.id}
-                              onClick={() => setSelectedMiniBoss(mb.id as MiniBossType)}
-                              className={`w-full text-left px-2 py-1.5 rounded text-xs transition-colors ${
-                                selectedMiniBoss === mb.id ? 'bg-primary/20 text-primary' : 'text-foreground hover:bg-secondary'
-                              }`}
-                            >
-                              <span className={`font-medium ${mb.color}`}>{mb.label}</span>
-                              <span className="text-[10px] text-muted-foreground ml-1">{mb.desc}</span>
-                            </button>
-                          ))}
+                      <PopoverContent className="w-96 p-2.5" align="end">
+                        <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
+                        <div className="space-y-1.5">
+                          <button
+                            onClick={() => {
+                              setSelectedBooster("none");
+                              setBoosterOpen(false);
+                            }}
+                            className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === "none" ? "bg-primary/20 text-primary" : "text-foreground hover:bg-secondary"}`}
+                          >
+                            <span className="w-8 h-8 rounded flex items-center justify-center bg-secondary/50 text-muted-foreground shrink-0">
+                              ✕
+                            </span>
+                            <span className="font-medium">부스터 없음</span>
+                          </button>
+                          {(["normal", "super", "mega"] as const).map((bType) => {
+                            const names: Record<string, string> = {
+                              normal: "전투력 부스터",
+                              super: "슈퍼 전투력 부스터",
+                              mega: "메가 전투력 부스터",
+                            };
+                            const descs: Record<string, string> = {
+                              normal: "공/방 +20%",
+                              super: "공/방 +40% / 치확 +10%",
+                              mega: "공/방 +80% / 치확 +25% / 치명타 대미지 +50%",
+                            };
+                            const bEntry = commonData?.boosters?.[names[bType]];
+                            return (
+                              <button
+                                key={bType}
+                                onClick={() => {
+                                  setSelectedBooster(bType);
+                                  setBoosterOpen(false);
+                                }}
+                                className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? "bg-primary/20 text-primary" : "text-foreground hover:bg-secondary"}`}
+                              >
+                                {bEntry && <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />}
+                                <div className="text-left min-w-0">
+                                  <div className="font-medium">{names[bType]}</div>
+                                  <div className="text-xs text-foreground/60 dark:text-foreground/50 whitespace-nowrap">
+                                    {descs[bType]}
+                                  </div>
+                                </div>
+                              </button>
+                            );
+                          })}
                         </div>
                       </PopoverContent>
                     </Popover>
-                  </div>
-                )}
 
-                {/* (time display removed) */}
+                    {/* Quest select button - centered, larger with less cropping */}
+                    <div className="flex justify-center pt-2 mb-4">
+                      <button
+                        onClick={() => {
+                          if (!currentQuest) {
+                            // 아무것도 선택 안 된 상태: 처음부터
+                            setConfigInitialStep(undefined);
+                            setConfigInitialState(undefined);
+                            setConfigOpen(true);
+                          } else {
+                            // 이미 선택된 상태: 세부 지역 & 난이도부터
+                            openConfigAtStep("subarea");
+                          }
+                        }}
+                        className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
+                          currentQuest
+                            ? `border-primary/60 ${colorMode === "dark" ? "shadow-[0_0_20px_hsla(var(--primary)/0.4)]" : "shadow-[0_0_20px_hsla(var(--primary)/0.3)]"}`
+                            : "border-dashed border-muted-foreground/40 hover:border-primary/50"
+                        }`}
+                      >
+                        {currentQuest && centerImage ? (
+                          <>
+                            <img src={centerImage} alt="" className="w-full h-full object-cover scale-90" />
+                            <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <span className="text-[10px] text-foreground font-medium">변경</span>
+                            </div>
+                          </>
+                        ) : (
+                          <Plus className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
+                        )}
+                      </button>
+                    </div>
 
-                {/* Line 4: Element Barrier */}
-                {barrierElements.length > 0 && currentQuest.barrier && (
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-center gap-4">
-                      {barrierElements.map((el, i) => {
-                        const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                        const heroSum = getPartyElementSum(el);
-                        const required = currentQuest.barrier!.hp;
-                        const isMet = heroSum >= required;
-                        return (
-                          <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? 'border-lime-500/40 bg-lime-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
-                            {iconPath && <img src={iconPath} alt="" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
-                            <span className={`text-sm font-mono font-bold ${isMet ? 'text-lime-400' : 'text-red-400'}`}>
-                              {formatNumber(heroSum)} / {formatNumber(required)}
+                    {currentQuest ? (
+                      <div className="space-y-2">
+                        {/* Line 1: Region (parent) + Location */}
+                        {currentRegion && currentRegion.name && currentRegion.name !== locationName && (
+                          <div className="text-center">
+                            <span className="text-sm text-foreground/80 font-medium">{currentRegion.name}</span>
+                          </div>
+                        )}
+                        <div className="text-center">
+                          <span className="text-sm text-foreground font-medium">{locationName}</span>
+                        </div>
+
+                        {/* Line 2: Difficulty - display only, no click to change */}
+                        {currentQuest.difficulty !== "없음" && (
+                          <div className="text-center text-sm">
+                            <span
+                              className={`font-medium ${
+                                currentQuest.difficulty === "쉬움"
+                                  ? "text-lime-400"
+                                  : currentQuest.difficulty === "보통"
+                                    ? "text-blue-400"
+                                    : currentQuest.difficulty === "어려움"
+                                      ? "text-orange-400"
+                                      : currentQuest.difficulty === "익스트림"
+                                        ? "text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]"
+                                        : "text-muted-foreground"
+                              }`}
+                            >
+                              {currentQuest.difficulty}
                             </span>
                           </div>
-                        );
-                      })}
-                    </div>
-                    {!barrierBrokenGlobal && selectedHeroes.length > 0 && (
-                      <div className="text-center">
-                        <span className="text-[10px] text-red-400 font-medium">
-                          ⚠ 배리어 미충족: 대미지 20%로 감소
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                        )}
 
-                {/* Stats: vertical list */}
-                {(() => {
-                  // Calculate modified values based on mini-boss
-                  const hpMod = selectedMiniBoss === 'huge' ? 2.0 : selectedMiniBoss === 'dire' ? 1.5 : selectedMiniBoss === 'legendary' ? 1.5 : 1.0;
-                  const atkMod = selectedMiniBoss === 'legendary' ? 1.25 : 1.0;
-                  const aoeMod = selectedMiniBoss === 'huge' ? 3.0 : 1.0;
-                  const displayHp = Math.round(currentQuest.hp * hpMod);
-                  const displayAtk = Math.round(currentQuest.atk * atkMod);
-                  const displayAoeChance = Math.min(currentQuest.aoeChance * aoeMod, 100);
-                  const displayAoe = Math.round(currentQuest.aoe * atkMod);
-                  const finalCrit = selectedMiniBoss === 'dire' ? 30 : selectedMiniBoss === 'legendary' ? 15 : 10;
-                  const mobEva = selectedMiniBoss === 'agile' ? 40 : selectedMiniBoss === 'legendary' ? 10 : 0;
-                  const isHpMod = hpMod !== 1.0;
-                  const isAtkMod = atkMod !== 1.0;
-                  const isAoeMod = aoeMod !== 1.0;
-                  const isCritMod = selectedMiniBoss === 'dire' || selectedMiniBoss === 'legendary';
-                  return (
-                    <div className="space-y-1.5 pt-2 border-t border-border/30">
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Heart className="w-3.5 h-3.5 text-orange-400" />
-                          <span className="text-xs text-foreground">체력</span>
-                        </div>
-                        <span className={`text-sm font-bold font-mono ${isHpMod ? 'text-lime-400' : 'text-foreground'}`}>
-                          {formatNumber(displayHp)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Swords className="w-3.5 h-3.5 text-red-400" />
-                          <span className="text-xs text-foreground">공격력</span>
-                        </div>
-                        <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
-                          {formatNumber(displayAtk)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                          <span className="text-xs text-foreground">광역 공격 확률</span>
-                        </div>
-                        <span className={`text-sm font-bold font-mono ${isAoeMod ? 'text-yellow-400' : 'text-foreground'}`}>
-                          {displayAoeChance}%
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Swords className="w-3.5 h-3.5 text-yellow-400" />
-                          <span className="text-xs text-foreground">광역 대미지</span>
-                        </div>
-                        <span className={`text-sm font-bold font-mono ${isAtkMod ? 'text-orange-400' : 'text-foreground'}`}>
-                          {formatNumber(displayAoe)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Crosshair className="w-3.5 h-3.5 text-yellow-400" />
-                          <span className="text-xs text-foreground">치명타 확률</span>
-                        </div>
-                        <span className={`text-sm font-bold font-mono ${isCritMod ? 'text-red-400' : 'text-foreground'}`}>
-                          {finalCrit}%
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Wind className="w-3.5 h-3.5 text-teal-400" />
-                          <span className="text-xs text-foreground">회피</span>
-                        </div>
-                        <span className={`text-sm font-bold font-mono ${mobEva > 0 ? 'text-teal-400' : 'text-foreground'}`}>{mobEva}%</span>
-                      </div>
-                      {/* Defense reference label row (with right-aligned helper) */}
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-1.5">
-                          <Shield className="w-3.5 h-3.5 text-blue-400" />
-                          <span className="text-xs text-foreground">방어력 기준치</span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">[ 기준 (받는 대미지%) ]</span>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* Defense Reference - inside monster info (show even without party) */}
-                {(() => {
-                  const hasHeroes = selectedHeroes.length > 0 && buffedStats.length > 0;
-                  const defToBarPct = (def: number) => {
-                    for (let i = defThresholds.length - 1; i >= 1; i--) {
-                      const upper = defThresholds[i];
-                      const lower = defThresholds[i - 1];
-                      if (def >= lower.value) {
-                        const range = upper.value - lower.value;
-                        const segPct = range > 0 ? Math.min(1, (def - lower.value) / range) : 0;
-                        const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
-                        const upperPos = (i / (defThresholds.length - 1)) * 100;
-                        return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
-                      }
-                    }
-                    return 0;
-                  };
-
-                  const barH = 260;
-                  const reductions = [-50, 0, 50, 70, 75];
-                  const rows = defThresholds.map((t, i) => ({
-                    key: t.key, label: t.label, value: t.value, color: t.color, textClass: t.textClass,
-                    pct: (i / (defThresholds.length - 1)) * 100,
-                    applied: Math.round(100 - reductions[i]),
-                  }));
-
-                  const getHeroColor = (heroDef: number): string => {
-                    let color = defThresholds[0].color;
-                    for (const t of defThresholds) { if (heroDef >= t.value) color = t.color; }
-                    return color;
-                  };
-
-                  const heroEntries = hasHeroes ? selectedHeroes.map((h, hi) => {
-                    const bs = buffedStats[hi];
-                    const heroDef = bs ? bs.def : (h.def || 0);
-                    const pinPct = defToBarPct(heroDef);
-                    const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
-                    const color = getHeroColor(heroDef);
-                    return { id: h.id, name: h.name, heroDef, pinPct, dmgApplied, color };
-                  }) : [];
-
-                  const n = heroEntries.length;
-                  const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
-                  const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
-                  const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
-
-                    return (
-                    <div className="mt-3 pt-6 border-t border-border/30" style={{ marginBottom: '8px' }}>
-                      {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — bar group left-aligned with stat icons */}
-                      <div className="relative grid gap-x-1 px-1" style={{ height: `${barH}px`, gridTemplateColumns: '52px 18px 44px 1fr 120px' }}>
-                        {/* Column 1: threshold values (aligned with monster info icons on left) */}
-                        <div className="relative">
-                          {rows.map(r => (
-                            <div key={`thrv-${r.key}`} className="absolute right-0 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[13px] font-mono font-semibold tabular-nums ${r.textClass}`}>{formatNumber(r.value)}</span>
+                        {/* Line 3: Boss or Mini Boss selector */}
+                        {currentQuest.isBoss ? (
+                          <div className="text-center text-sm">
+                            <span className="text-red-400">
+                              <Crown className="w-3.5 h-3.5 inline mr-0.5" />
+                              보스
+                            </span>
+                          </div>
+                        ) : (
+                          !currentQuest.isBoss &&
+                          selectedSubAreaIdx !== 99 && (
+                            <div className="text-center">
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    className={`text-xs px-2 py-0.5 rounded border transition-all ${
+                                      selectedMiniBoss !== "random"
+                                        ? selectedMiniBoss === "huge"
+                                          ? "border-lime-500/40 bg-lime-500/10 text-lime-400"
+                                          : selectedMiniBoss === "agile"
+                                            ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
+                                            : selectedMiniBoss === "dire"
+                                              ? "border-red-500/40 bg-red-500/10 text-red-400"
+                                              : selectedMiniBoss === "wealthy"
+                                                ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
+                                                : selectedMiniBoss === "legendary"
+                                                  ? "border-purple-500/40 bg-purple-500/10 text-purple-400"
+                                                  : "border-border/40 text-muted-foreground hover:border-primary/40"
+                                        : "border-primary/40 bg-primary/10 text-primary"
+                                    }`}
+                                  >
+                                    {selectedMiniBoss === "random"
+                                      ? "랜덤 (2%)"
+                                      : selectedMiniBoss === "none"
+                                        ? "미니보스 없음"
+                                        : selectedMiniBoss === "huge"
+                                          ? "거대한"
+                                          : selectedMiniBoss === "agile"
+                                            ? "민첩한"
+                                            : selectedMiniBoss === "dire"
+                                              ? "흉포한"
+                                              : selectedMiniBoss === "wealthy"
+                                                ? "부유한"
+                                                : selectedMiniBoss === "legendary"
+                                                  ? "전설의"
+                                                  : "미니보스"}
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-52 p-2" align="center">
+                                  <div className="text-xs font-medium text-foreground mb-2">미니보스 수식어</div>
+                                  <div className="space-y-1">
+                                    {(
+                                      [
+                                        {
+                                          id: "random",
+                                          label: "랜덤",
+                                          desc: "2% 확률로 미니보스 등장",
+                                          color: "text-primary",
+                                        },
+                                        { id: "none", label: "없음 (항상)", desc: "미니보스 없음 고정", color: "" },
+                                        {
+                                          id: "huge",
+                                          label: "거대한 (항상)",
+                                          desc: "HP ×2, 광역 확률 ×3",
+                                          color: "text-lime-400",
+                                        },
+                                        {
+                                          id: "agile",
+                                          label: "민첩한 (항상)",
+                                          desc: "회피 40%",
+                                          color: "text-blue-400",
+                                        },
+                                        {
+                                          id: "dire",
+                                          label: "흉포한 (항상)",
+                                          desc: "HP ×1.5, 치확 30%",
+                                          color: "text-red-400",
+                                        },
+                                        {
+                                          id: "wealthy",
+                                          label: "부유한 (항상)",
+                                          desc: "보상 증가",
+                                          color: "text-yellow-400",
+                                        },
+                                        {
+                                          id: "legendary",
+                                          label: "전설의 (항상)",
+                                          desc: "HP ×1.5, ATK ×1.25, 치확 15%, 회피 10%",
+                                          color: "text-purple-400",
+                                        },
+                                      ] as const
+                                    ).map((mb) => (
+                                      <button
+                                        key={mb.id}
+                                        onClick={() => setSelectedMiniBoss(mb.id as MiniBossType)}
+                                        className={`w-full text-left px-2 py-1.5 rounded text-xs transition-colors ${
+                                          selectedMiniBoss === mb.id
+                                            ? "bg-primary/20 text-primary"
+                                            : "text-foreground hover:bg-secondary"
+                                        }`}
+                                      >
+                                        <span className={`font-medium ${mb.color}`}>{mb.label}</span>
+                                        <span className="text-[10px] text-muted-foreground ml-1">{mb.desc}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
                             </div>
-                          ))}
-                        </div>
-                        {/* Column 2: bar */}
-                        <div className="relative">
-                          <div className="absolute inset-0 rounded-full overflow-hidden border border-border/50" style={{
-                            background: 'linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)'
-                          }} />
-                          {rows.map(r => (
-                            <div key={`tick-${r.key}`} className="absolute left-0 right-0 flex items-center pointer-events-none" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 2 }}>
-                              <div className="h-[2px] w-full" style={{ backgroundColor: r.color, opacity: 0.9 }} />
-                            </div>
-                          ))}
-                          {heroEntries.map(h => (
-                            <div key={`pin-${h.id}`} className="absolute" style={{ bottom: `${Math.min(100, h.pinPct)}%`, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 10 }}>
-                              <div className="w-4 h-4 rounded-full border-[2.5px] shadow-[0_0_8px_rgba(255,255,255,0.6)]" style={{ borderColor: '#fff', backgroundColor: h.color }} />
-                            </div>
-                          ))}
-                        </div>
-                        {/* Column 3: applied % (right next to bar) */}
-                        <div className="relative pl-1">
-                          {rows.map(r => (
-                            <div key={`thrp-${r.key}`} className="absolute left-1 flex items-center" style={{ bottom: `${r.pct}%`, transform: 'translateY(50%)', zIndex: 1 }}>
-                              <span className={`text-[12px] font-mono tabular-nums opacity-70 ${r.textClass}`}>({r.applied}%)</span>
-                            </div>
-                          ))}
-                        </div>
-                        {/* Spacer column — halved */}
-                        <div aria-hidden="true" />
-                        {/* Column 5: connectors + hero name labels */}
-                        <div className="relative ml-1.5">
-                          <svg className="absolute inset-0 pointer-events-none" width="100%" height="100%" style={{ overflow: 'visible' }}>
-                            {heroLayout.map(h => {
-                              const clamped = Math.min(100, h.pinPct);
-                              const yPin = (1 - clamped / 100) * barH;
-                              const yLabel = (1 - h.labelPct / 100) * barH;
-                              const x1 = 0;
-                              const x2 = 28;
-                              const cx = (x1 + x2) / 2;
-                              return (
-                                <path key={`line-${h.id}`}
-                                  d={`M ${x1} ${yPin} C ${cx} ${yPin}, ${cx} ${yLabel}, ${x2} ${yLabel}`}
-                                  fill="none" stroke={h.color} strokeWidth="1.5" opacity="0.8"
-                                />
-                              );
-                            })}
-                          </svg>
-                          {heroLayout.map(h => (
-                            <div key={`label-${h.id}`} className="absolute flex flex-col items-start whitespace-nowrap text-left" style={{ bottom: `${h.labelPct}%`, right: '0', transform: 'translateY(50%)', zIndex: 5 }}>
-                              <span className="text-[13px] font-semibold truncate max-w-[110px] leading-tight" style={{ color: h.color }}>{h.name}</span>
-                              <span className="text-[12px] font-mono font-semibold tabular-nums leading-tight" style={{ color: h.color }}>
-                                {formatNumber(h.heroDef)} ({h.dmgApplied}%)
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-muted-foreground text-sm">퀘스트를 선택하세요</p>
-                <p className="text-muted-foreground/60 text-xs mt-1">위의 + 버튼을 눌러 설정</p>
-              </div>
-            )}
-          </div>
-        </div>
+                          )
+                        )}
 
-        {/* CENTER: Hero Slots */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-3">
-            <Users className="w-5 h-5 text-primary" />
-            <h3 className="text-lg text-foreground font-bold">파티 구성</h3>
-            <span className="text-xs text-muted-foreground ml-auto">{selectedHeroIds.size}/{maxMembers}</span>
-            {selectedHeroIds.size > 0 && (
-              <button
-                onClick={() => setSelectedHeroIds(new Set())}
-                className="ml-1 p-1.5 rounded-md bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-colors"
-                title="파티 구성 초기화"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-          <div className="card-fantasy p-4 overflow-x-auto">
-            {currentQuest && selectedHeroes.length > 0 && (
-              <div className="mb-3 flex items-center gap-3">
-                <Button
-                  onClick={() => setBuffBreakdownOpen(true)}
-                  size="sm"
-                  className="gap-1.5 btn-force-white"
-                >
-                  <FileText className="w-4 h-4" />
-                  스탯 계산표
-                </Button>
-                <Button
-                  onClick={() => setSavePartyOpen(true)}
-                  size="icon"
-                  variant="outline"
-                  className="ml-auto h-8 w-8"
-                  title="현재 파티원들을 내 영웅/챔피언 리스트에 저장"
-                  aria-label="리스트에 저장"
-                >
-                  <BookUser className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
-            {currentQuest && selectedHeroes.length > 0 && (() => {
-              const winRate = simResult ? (dispSim!.winRate ?? 0) : 0;
-              const winColor =
-                !simResult ? 'sim-result-number--muted' :
-                winRate >= 70 ? 'sim-result-number--success' :
-                winRate >= 50 ? 'sim-result-number--warning' :
-                winRate >= 30 ? 'sim-result-number--orange' :
-                'sim-result-number--danger';
-              // Compute party gear average for efficiency score
-              const qualityScore: Record<string, number> = {
-                'common': 1, 'uncommon': 1.25, 'flawless': 1.5, 'epic': 2, 'legendary': 3,
-                '일반': 1, '고급': 1.25, '최고급': 1.5, '에픽': 2, '전설': 3,
-              };
-              let gearSum = 0, gearCount = 0;
-              selectedHeroes.forEach(h => {
-                const slots = h.equipmentSlots || [];
-                let tot = 0, eq = 0;
-                slots.forEach(s => { if (s.item) { eq++; tot += qualityScore[s.quality] || 1; } });
-                if (eq > 0) { gearSum += tot / eq; gearCount++; }
-              });
-              const partyAvgGear = gearCount > 0 ? gearSum / gearCount : 0;
-              const gearScore = simResult && partyAvgGear > 0 ? winRate / partyAvgGear : 0;
-              const gearColor =
-                !simResult || gearScore <= 0 ? 'sim-result-number--muted' :
-                gearScore >= 81 ? 'sim-result-number--success' :
-                gearScore >= 61 ? 'sim-result-number--good' :
-                gearScore >= 41 ? 'sim-result-number--warning' :
-                gearScore >= 21 ? 'sim-result-number--orange' :
-                'sim-result-number--danger';
-              return (
-              <div className="mb-3 rounded-xl relative overflow-hidden" style={{
-                background: !simResult 
-                  ? 'linear-gradient(135deg, hsla(0,0%,50%,0.08) 0%, hsla(0,0%,50%,0.02) 100%)'
-                  : winRate >= 90 ? 'linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)'
-                  : winRate >= 50 ? 'linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)'
-                  : 'linear-gradient(135deg, hsla(0,80%,50%,0.12) 0%, hsla(0,80%,50%,0.04) 100%)',
-                border: `1px solid ${!simResult ? 'hsla(0,0%,50%,0.15)' : winRate >= 90 ? 'hsla(82,80%,45%,0.25)' : winRate >= 50 ? 'hsla(48,80%,50%,0.25)' : 'hsla(0,80%,50%,0.25)'}`,
-                boxShadow: simResult ? (winRate >= 90 ? '0 0 20px hsla(82,80%,45%,0.1), inset 0 0 30px hsla(82,80%,45%,0.05)' : winRate >= 50 ? '0 0 20px hsla(48,80%,50%,0.1), inset 0 0 30px hsla(48,80%,50%,0.05)' : '0 0 20px hsla(0,80%,50%,0.1)') : 'none',
-              }}>
-                <div className="grid grid-cols-2 divide-x divide-border/30">
-                  {/* LEFT: win rate */}
-                  <div className="py-3 px-4 text-center">
-                    <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">승률</div>
-                    {simResult ? (
-                      <>
-                        <div className={`sim-result-number text-3xl font-black font-mono tracking-tight ${winColor}`}>
-                          {winRate.toFixed(1)}%
-                        </div>
-                        {(() => {
-                          const total = dispSim!.totalSimulations || 0;
-                          const firstWins = dispSim!.winSimCount ?? Math.round(winRate / 100 * total);
-                          const firstLosses = dispSim!.loseSimCount ?? (total - firstWins);
-                          const retried = (!retryOnly && simResult!.retryResult)
-                            ? (simResult!.retryResult.totalSimulations || 0)
-                            : 0;
-                          const retryWins = (!retryOnly && simResult!.retryResult)
-                            ? (simResult!.retryResult.winSimCount || 0)
-                            : 0;
-                          const retryLosses = retried - retryWins;
-                          // Combined totals (first try + successful retries)
-                          const wins = firstWins + retryWins;
-                          const losses = firstLosses - retryWins;
-                          // Detect Fateweaver/Chronomancer in party (even when no failures occurred)
-                          const fateweaverInParty = !retryOnly && (simResult!.heroResults || []).some(
-                            (h: any) => h && h.chronomancerRetries !== undefined
-                          );
-                          return (
-                            <>
-                              <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
-                                [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
+                        {/* (time display removed) */}
+
+                        {/* Line 4: Element Barrier */}
+                        {barrierElements.length > 0 && currentQuest.barrier && (
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-center gap-4">
+                              {barrierElements.map((el, i) => {
+                                const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                                const heroSum = getPartyElementSum(el);
+                                const required = currentQuest.barrier!.hp;
+                                const isMet = heroSum >= required;
+                                return (
+                                  <div
+                                    key={i}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? "border-lime-500/40 bg-lime-500/10" : "border-red-500/30 bg-red-500/10"}`}
+                                  >
+                                    {iconPath && (
+                                      <img
+                                        src={iconPath}
+                                        alt=""
+                                        className="w-7 h-7"
+                                        onError={(e) => {
+                                          e.currentTarget.style.display = "none";
+                                        }}
+                                      />
+                                    )}
+                                    <span
+                                      className={`text-sm font-mono font-bold ${isMet ? "text-lime-400" : "text-red-400"}`}
+                                    >
+                                      {formatNumber(heroSum)} / {formatNumber(required)}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            {!barrierBrokenGlobal && selectedHeroes.length > 0 && (
+                              <div className="text-center">
+                                <span className="text-[10px] text-red-400 font-medium">
+                                  ⚠ 배리어 미충족: 대미지 20%로 감소
+                                </span>
                               </div>
-                              {fateweaverInParty && (
-                                <div className="text-xs text-amber-500 dark:text-amber-300 font-medium mt-0.5" title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도">
-                                  {retried > 0
-                                    ? `[ 재시도 : ${formatNumber(retryWins)}판 / ${formatNumber(retryLosses)}판 ]`
-                                    : `[ 재시도 없음 ]`}
+                            )}
+                          </div>
+                        )}
+
+                        {/* Stats: vertical list */}
+                        {(() => {
+                          // Calculate modified values based on mini-boss
+                          const hpMod =
+                            selectedMiniBoss === "huge"
+                              ? 2.0
+                              : selectedMiniBoss === "dire"
+                                ? 1.5
+                                : selectedMiniBoss === "legendary"
+                                  ? 1.5
+                                  : 1.0;
+                          const atkMod = selectedMiniBoss === "legendary" ? 1.25 : 1.0;
+                          const aoeMod = selectedMiniBoss === "huge" ? 3.0 : 1.0;
+                          const displayHp = Math.round(currentQuest.hp * hpMod);
+                          const displayAtk = Math.round(currentQuest.atk * atkMod);
+                          const displayAoeChance = Math.min(currentQuest.aoeChance * aoeMod, 100);
+                          const displayAoe = Math.round(currentQuest.aoe * atkMod);
+                          const finalCrit =
+                            selectedMiniBoss === "dire" ? 30 : selectedMiniBoss === "legendary" ? 15 : 10;
+                          const mobEva = selectedMiniBoss === "agile" ? 40 : selectedMiniBoss === "legendary" ? 10 : 0;
+                          const isHpMod = hpMod !== 1.0;
+                          const isAtkMod = atkMod !== 1.0;
+                          const isAoeMod = aoeMod !== 1.0;
+                          const isCritMod = selectedMiniBoss === "dire" || selectedMiniBoss === "legendary";
+                          return (
+                            <div className="space-y-1.5 pt-2 border-t border-border/30">
+                              <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-1.5">
+                                  <Heart className="w-3.5 h-3.5 text-orange-400" />
+                                  <span className="text-xs text-foreground">체력</span>
                                 </div>
-                              )}
-                            </>
+                                <span
+                                  className={`text-sm font-bold font-mono ${isHpMod ? "text-lime-400" : "text-foreground"}`}
+                                >
+                                  {formatNumber(displayHp)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-1.5">
+                                  <Swords className="w-3.5 h-3.5 text-red-400" />
+                                  <span className="text-xs text-foreground">공격력</span>
+                                </div>
+                                <span
+                                  className={`text-sm font-bold font-mono ${isAtkMod ? "text-orange-400" : "text-foreground"}`}
+                                >
+                                  {formatNumber(displayAtk)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-1.5">
+                                  <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                                  <span className="text-xs text-foreground">광역 공격 확률</span>
+                                </div>
+                                <span
+                                  className={`text-sm font-bold font-mono ${isAoeMod ? "text-yellow-400" : "text-foreground"}`}
+                                >
+                                  {displayAoeChance}%
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-1.5">
+                                  <Swords className="w-3.5 h-3.5 text-yellow-400" />
+                                  <span className="text-xs text-foreground">광역 대미지</span>
+                                </div>
+                                <span
+                                  className={`text-sm font-bold font-mono ${isAtkMod ? "text-orange-400" : "text-foreground"}`}
+                                >
+                                  {formatNumber(displayAoe)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-1.5">
+                                  <Crosshair className="w-3.5 h-3.5 text-yellow-400" />
+                                  <span className="text-xs text-foreground">치명타 확률</span>
+                                </div>
+                                <span
+                                  className={`text-sm font-bold font-mono ${isCritMod ? "text-red-400" : "text-foreground"}`}
+                                >
+                                  {finalCrit}%
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-1.5">
+                                  <Wind className="w-3.5 h-3.5 text-teal-400" />
+                                  <span className="text-xs text-foreground">회피</span>
+                                </div>
+                                <span
+                                  className={`text-sm font-bold font-mono ${mobEva > 0 ? "text-teal-400" : "text-foreground"}`}
+                                >
+                                  {mobEva}%
+                                </span>
+                              </div>
+                              {/* Defense reference label row (with right-aligned helper) */}
+                              <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-1.5">
+                                  <Shield className="w-3.5 h-3.5 text-blue-400" />
+                                  <span className="text-xs text-foreground">방어력 기준치</span>
+                                </div>
+                                <span className="text-xs text-muted-foreground">[ 기준 (받는 대미지%) ]</span>
+                              </div>
+                            </div>
                           );
                         })()}
-                      </>
-                    ) : (
-                      <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
-                        -
+
+                        {/* Defense Reference - inside monster info (show even without party) */}
+                        {(() => {
+                          const hasHeroes = selectedHeroes.length > 0 && buffedStats.length > 0;
+                          const defToBarPct = (def: number) => {
+                            for (let i = defThresholds.length - 1; i >= 1; i--) {
+                              const upper = defThresholds[i];
+                              const lower = defThresholds[i - 1];
+                              if (def >= lower.value) {
+                                const range = upper.value - lower.value;
+                                const segPct = range > 0 ? Math.min(1, (def - lower.value) / range) : 0;
+                                const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
+                                const upperPos = (i / (defThresholds.length - 1)) * 100;
+                                return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
+                              }
+                            }
+                            return 0;
+                          };
+
+                          const barH = 260;
+                          const reductions = [-50, 0, 50, 70, 75];
+                          const rows = defThresholds.map((t, i) => ({
+                            key: t.key,
+                            label: t.label,
+                            value: t.value,
+                            color: t.color,
+                            textClass: t.textClass,
+                            pct: (i / (defThresholds.length - 1)) * 100,
+                            applied: Math.round(100 - reductions[i]),
+                          }));
+
+                          const getHeroColor = (heroDef: number): string => {
+                            let color = defThresholds[0].color;
+                            for (const t of defThresholds) {
+                              if (heroDef >= t.value) color = t.color;
+                            }
+                            return color;
+                          };
+
+                          const heroEntries = hasHeroes
+                            ? selectedHeroes.map((h, hi) => {
+                                const bs = buffedStats[hi];
+                                const heroDef = bs ? bs.def : h.def || 0;
+                                const pinPct = defToBarPct(heroDef);
+                                const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
+                                const color = getHeroColor(heroDef);
+                                return { id: h.id, name: h.name, heroDef, pinPct, dmgApplied, color };
+                              })
+                            : [];
+
+                          const n = heroEntries.length;
+                          const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
+                          const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
+                          const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
+
+                          return (
+                            <div className="mt-3 pt-6 border-t border-border/30" style={{ marginBottom: "8px" }}>
+                              {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — bar group left-aligned with stat icons */}
+                              <div
+                                className="relative grid gap-x-1 px-1"
+                                style={{ height: `${barH}px`, gridTemplateColumns: "52px 18px 44px 1fr 120px" }}
+                              >
+                                {/* Column 1: threshold values (aligned with monster info icons on left) */}
+                                <div className="relative">
+                                  {rows.map((r) => (
+                                    <div
+                                      key={`thrv-${r.key}`}
+                                      className="absolute right-0 flex items-center"
+                                      style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 1 }}
+                                    >
+                                      <span
+                                        className={`text-[13px] font-mono font-semibold tabular-nums ${r.textClass}`}
+                                      >
+                                        {formatNumber(r.value)}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                                {/* Column 2: bar */}
+                                <div className="relative">
+                                  <div
+                                    className="absolute inset-0 rounded-full overflow-hidden border border-border/50"
+                                    style={{
+                                      background:
+                                        "linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)",
+                                    }}
+                                  />
+                                  {rows.map((r) => (
+                                    <div
+                                      key={`tick-${r.key}`}
+                                      className="absolute left-0 right-0 flex items-center pointer-events-none"
+                                      style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 2 }}
+                                    >
+                                      <div
+                                        className="h-[2px] w-full"
+                                        style={{ backgroundColor: r.color, opacity: 0.9 }}
+                                      />
+                                    </div>
+                                  ))}
+                                  {heroEntries.map((h) => (
+                                    <div
+                                      key={`pin-${h.id}`}
+                                      className="absolute"
+                                      style={{
+                                        bottom: `${Math.min(100, h.pinPct)}%`,
+                                        left: "50%",
+                                        transform: "translate(-50%, 50%)",
+                                        zIndex: 10,
+                                      }}
+                                    >
+                                      <div
+                                        className="w-4 h-4 rounded-full border-[2.5px] shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+                                        style={{ borderColor: "#fff", backgroundColor: h.color }}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                                {/* Column 3: applied % (right next to bar) */}
+                                <div className="relative pl-1">
+                                  {rows.map((r) => (
+                                    <div
+                                      key={`thrp-${r.key}`}
+                                      className="absolute left-1 flex items-center"
+                                      style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 1 }}
+                                    >
+                                      <span className={`text-[12px] font-mono tabular-nums opacity-70 ${r.textClass}`}>
+                                        ({r.applied}%)
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                                {/* Spacer column — halved */}
+                                <div aria-hidden="true" />
+                                {/* Column 5: connectors + hero name labels */}
+                                <div className="relative ml-1.5">
+                                  <svg
+                                    className="absolute inset-0 pointer-events-none"
+                                    width="100%"
+                                    height="100%"
+                                    style={{ overflow: "visible" }}
+                                  >
+                                    {heroLayout.map((h) => {
+                                      const clamped = Math.min(100, h.pinPct);
+                                      const yPin = (1 - clamped / 100) * barH;
+                                      const yLabel = (1 - h.labelPct / 100) * barH;
+                                      const x1 = 0;
+                                      const x2 = 28;
+                                      const cx = (x1 + x2) / 2;
+                                      return (
+                                        <path
+                                          key={`line-${h.id}`}
+                                          d={`M ${x1} ${yPin} C ${cx} ${yPin}, ${cx} ${yLabel}, ${x2} ${yLabel}`}
+                                          fill="none"
+                                          stroke={h.color}
+                                          strokeWidth="1.5"
+                                          opacity="0.8"
+                                        />
+                                      );
+                                    })}
+                                  </svg>
+                                  {heroLayout.map((h) => (
+                                    <div
+                                      key={`label-${h.id}`}
+                                      className="absolute flex flex-col items-start whitespace-nowrap text-left"
+                                      style={{
+                                        bottom: `${h.labelPct}%`,
+                                        right: "0",
+                                        transform: "translateY(50%)",
+                                        zIndex: 5,
+                                      }}
+                                    >
+                                      <span
+                                        className="text-[13px] font-semibold truncate max-w-[110px] leading-tight"
+                                        style={{ color: h.color }}
+                                      >
+                                        {h.name}
+                                      </span>
+                                      <span
+                                        className="text-[12px] font-mono font-semibold tabular-nums leading-tight"
+                                        style={{ color: h.color }}
+                                      >
+                                        {formatNumber(h.heroDef)} ({h.dmgApplied}%)
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
-                    )}
-                    {simRunning && (
-                      <div className="flex items-center justify-center gap-2 mt-1 text-xs text-muted-foreground">
-                        <Loader2 className="w-3 h-3 animate-spin" /> 계산 중...
-                      </div>
-                    )}
-                  </div>
-                  {/* RIGHT: gear-relative score */}
-                  <div className="py-3 px-4 text-center">
-                    <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">장비 대비 승률</div>
-                    {simResult && gearScore > 0 ? (
-                      <>
-                        <div className={`sim-result-number text-3xl font-black font-mono tracking-tight ${gearColor}`}>
-                          {gearScore.toFixed(1)}
-                        </div>
-                        <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
-                          [ 장비 평균 : {partyAvgGear.toFixed(2)} ]
-                        </div>
-                      </>
                     ) : (
-                      <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
-                        -
+                      <div className="text-center py-4">
+                        <p className="text-muted-foreground text-sm">퀘스트를 선택하세요</p>
+                        <p className="text-muted-foreground/60 text-xs mt-1">위의 + 버튼을 눌러 설정</p>
                       </div>
                     )}
                   </div>
                 </div>
-              </div>
-              );
-            })()}
-            <table className="w-full text-xs table-fixed">
-              <colgroup>
-                <col style={{ width: '72px' }} />
-                {Array.from({ length: maxMembers }).map((_, i) => (
-                  <col key={i} style={{ width: `${(100 - 10) / maxMembers}%` }} />
-                ))}
-              </colgroup>
-              <tbody>
-                {/* Row: Element barrier icons */}
-                {barrierElements.length > 0 && (
-                  <tr>
-                    <td className="py-1 px-1.5 text-foreground/70 text-sm">원소</td>
-                    {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                      const hero = selectedHeroes[slotIdx];
-                      if (!hero) return <td key={`el-empty-${slotIdx}`} className="text-center py-1" />;
-                      const isSpellKnight = SPELLKNIGHT_CLASSES.includes(hero.heroClass);
-                      if (isSpellKnight) {
-                        // Show '모든 원소' icon with total * 50%
-                        const allTotal = Object.values(hero.equipmentElements || {}).reduce((a, b) => a + b, 0);
-                        const halfTotal = Math.floor(allTotal * 0.5);
+
+                {/* CENTER: Hero Slots */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Users className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg text-foreground font-bold">파티 구성</h3>
+                    <span className="text-xs text-muted-foreground ml-auto">
+                      {selectedHeroIds.size}/{maxMembers}
+                    </span>
+                    {selectedHeroIds.size > 0 && (
+                      <button
+                        onClick={() => setSelectedHeroIds(new Set())}
+                        className="ml-1 p-1.5 rounded-md bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-colors"
+                        title="파티 구성 초기화"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="card-fantasy p-4 overflow-x-auto">
+                    {currentQuest && selectedHeroes.length > 0 && (
+                      <div className="mb-3 flex items-center gap-3">
+                        <Button
+                          onClick={() => setBuffBreakdownOpen(true)}
+                          size="sm"
+                          className="gap-1.5 btn-force-white"
+                        >
+                          <FileText className="w-4 h-4" />
+                          스탯 계산표
+                        </Button>
+                        <Button
+                          onClick={() => setSavePartyOpen(true)}
+                          size="icon"
+                          variant="outline"
+                          className="ml-auto h-8 w-8"
+                          title="현재 파티원들을 내 영웅/챔피언 리스트에 저장"
+                          aria-label="리스트에 저장"
+                        >
+                          <BookUser className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
+                    {currentQuest &&
+                      selectedHeroes.length > 0 &&
+                      (() => {
+                        const winRate = simResult ? (dispSim!.winRate ?? 0) : 0;
+                        const winColor = !simResult
+                          ? "sim-result-number--muted"
+                          : winRate >= 70
+                            ? "sim-result-number--success"
+                            : winRate >= 50
+                              ? "sim-result-number--warning"
+                              : winRate >= 30
+                                ? "sim-result-number--orange"
+                                : "sim-result-number--danger";
+                        // Compute party gear average for efficiency score
+                        const qualityScore: Record<string, number> = {
+                          common: 1,
+                          uncommon: 1.25,
+                          flawless: 1.5,
+                          epic: 2,
+                          legendary: 3,
+                          일반: 1,
+                          고급: 1.25,
+                          최고급: 1.5,
+                          에픽: 2,
+                          전설: 3,
+                        };
+                        let gearSum = 0,
+                          gearCount = 0;
+                        selectedHeroes.forEach((h) => {
+                          const slots = h.equipmentSlots || [];
+                          let tot = 0,
+                            eq = 0;
+                          slots.forEach((s) => {
+                            if (s.item) {
+                              eq++;
+                              tot += qualityScore[s.quality] || 1;
+                            }
+                          });
+                          if (eq > 0) {
+                            gearSum += tot / eq;
+                            gearCount++;
+                          }
+                        });
+                        const partyAvgGear = gearCount > 0 ? gearSum / gearCount : 0;
+                        const gearScore = simResult && partyAvgGear > 0 ? winRate / partyAvgGear : 0;
+                        const gearColor =
+                          !simResult || gearScore <= 0
+                            ? "sim-result-number--muted"
+                            : gearScore >= 81
+                              ? "sim-result-number--success"
+                              : gearScore >= 61
+                                ? "sim-result-number--good"
+                                : gearScore >= 41
+                                  ? "sim-result-number--warning"
+                                  : gearScore >= 21
+                                    ? "sim-result-number--orange"
+                                    : "sim-result-number--danger";
                         return (
-                          <td key={hero.id} className="text-center py-1">
-                            <div className="flex justify-center gap-1">
-                              <div className="flex flex-col items-center">
-                                <img src="/images/elements/all.webp" alt="모든 원소" className="w-5 h-5" />
-                                <span className="text-xs font-mono font-bold text-purple-300">{halfTotal > 0 ? formatNumber(halfTotal) : '-'}</span>
+                          <div
+                            className="mb-3 rounded-xl relative overflow-hidden"
+                            style={{
+                              background: !simResult
+                                ? "linear-gradient(135deg, hsla(0,0%,50%,0.08) 0%, hsla(0,0%,50%,0.02) 100%)"
+                                : winRate >= 90
+                                  ? "linear-gradient(135deg, hsla(82,80%,45%,0.12) 0%, hsla(82,80%,45%,0.04) 100%)"
+                                  : winRate >= 50
+                                    ? "linear-gradient(135deg, hsla(48,80%,50%,0.12) 0%, hsla(48,80%,50%,0.04) 100%)"
+                                    : "linear-gradient(135deg, hsla(0,80%,50%,0.12) 0%, hsla(0,80%,50%,0.04) 100%)",
+                              border: `1px solid ${!simResult ? "hsla(0,0%,50%,0.15)" : winRate >= 90 ? "hsla(82,80%,45%,0.25)" : winRate >= 50 ? "hsla(48,80%,50%,0.25)" : "hsla(0,80%,50%,0.25)"}`,
+                              boxShadow: simResult
+                                ? winRate >= 90
+                                  ? "0 0 20px hsla(82,80%,45%,0.1), inset 0 0 30px hsla(82,80%,45%,0.05)"
+                                  : winRate >= 50
+                                    ? "0 0 20px hsla(48,80%,50%,0.1), inset 0 0 30px hsla(48,80%,50%,0.05)"
+                                    : "0 0 20px hsla(0,80%,50%,0.1)"
+                                : "none",
+                            }}
+                          >
+                            <div className="grid grid-cols-2 divide-x divide-border/30">
+                              {/* LEFT: win rate */}
+                              <div className="py-3 px-4 text-center">
+                                <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">
+                                  승률
+                                </div>
+                                {simResult ? (
+                                  <>
+                                    <div
+                                      className={`sim-result-number text-3xl font-black font-mono tracking-tight ${winColor}`}
+                                    >
+                                      {winRate.toFixed(1)}%
+                                    </div>
+                                    {(() => {
+                                      const total = dispSim!.totalSimulations || 0;
+                                      const firstWins = dispSim!.winSimCount ?? Math.round((winRate / 100) * total);
+                                      const firstLosses = dispSim!.loseSimCount ?? total - firstWins;
+                                      const retried =
+                                        !retryOnly && simResult!.retryResult
+                                          ? simResult!.retryResult.totalSimulations || 0
+                                          : 0;
+                                      const retryWins =
+                                        !retryOnly && simResult!.retryResult
+                                          ? simResult!.retryResult.winSimCount || 0
+                                          : 0;
+                                      const retryLosses = retried - retryWins;
+                                      // Combined totals (first try + successful retries)
+                                      const wins = firstWins + retryWins;
+                                      const losses = firstLosses - retryWins;
+                                      // Detect Fateweaver/Chronomancer in party (even when no failures occurred)
+                                      const fateweaverInParty =
+                                        !retryOnly &&
+                                        (simResult!.heroResults || []).some(
+                                          (h: any) => h && h.chronomancerRetries !== undefined,
+                                        );
+                                      return (
+                                        <>
+                                          <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
+                                            [ 성공 : {formatNumber(wins)}판 · 실패 : {formatNumber(losses)}판 ]
+                                          </div>
+                                          {fateweaverInParty && (
+                                            <div
+                                              className="text-xs text-amber-500 dark:text-amber-300 font-medium mt-0.5"
+                                              title="재시도(페이트위버/크로노맨서)가 발생한 판수 — 성공한 판 중 재시도 / 실패한 판 중 재시도"
+                                            >
+                                              {retried > 0
+                                                ? `[ 재시도 : ${formatNumber(retryWins)}판 / ${formatNumber(retryLosses)}판 ]`
+                                                : `[ 재시도 없음 ]`}
+                                            </div>
+                                          )}
+                                        </>
+                                      );
+                                    })()}
+                                  </>
+                                ) : (
+                                  <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
+                                    -
+                                  </div>
+                                )}
+                                {simRunning && (
+                                  <div className="flex items-center justify-center gap-2 mt-1 text-xs text-muted-foreground">
+                                    <Loader2 className="w-3 h-3 animate-spin" /> 계산 중...
+                                  </div>
+                                )}
+                              </div>
+                              {/* RIGHT: gear-relative score */}
+                              <div className="py-3 px-4 text-center">
+                                <div className="text-xs text-foreground/80 dark:text-foreground/90 mb-1 font-semibold">
+                                  장비 대비 승률
+                                </div>
+                                {simResult && gearScore > 0 ? (
+                                  <>
+                                    <div
+                                      className={`sim-result-number text-3xl font-black font-mono tracking-tight ${gearColor}`}
+                                    >
+                                      {gearScore.toFixed(1)}
+                                    </div>
+                                    <div className="text-xs text-foreground/70 dark:text-foreground/80 font-medium mt-0.5">
+                                      [ 장비 평균 : {partyAvgGear.toFixed(2)} ]
+                                    </div>
+                                  </>
+                                ) : (
+                                  <div className="text-3xl font-black font-mono tracking-tight text-muted-foreground/30">
+                                    -
+                                  </div>
+                                )}
                               </div>
                             </div>
-                          </td>
+                          </div>
                         );
-                      }
-                      const icons = barrierElements.map(el => ({
-                        el, iconPath: ELEMENT_ICON_MAP[el], val: hero.equipmentElements?.[el] || 0,
-                      })).filter(b => b.val > 0);
-                      return (
-                        <td key={hero.id} className="text-center py-1">
-                          <div className="flex justify-center gap-1">
-                            {icons.length > 0 ? icons.map(b => (
-                              <div key={b.el} className="flex flex-col items-center">
-                                {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-5 h-5" />}
-                                <span className="text-xs font-mono font-bold text-purple-300">{formatNumber(b.val)}</span>
-                              </div>
-                            )) : <span className="text-xs text-foreground/30">-</span>}
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                )}
-                {/* Row: Face - based on death count, using face images */}
-                <tr>
-                  <td className="py-1 px-1.5 text-foreground/70 text-sm">표정</td>
-                  {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                    const hero = selectedHeroes[slotIdx];
-                    if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
-                    
-                    const heroResult = dispSim?.heroResults.find(r => r.heroId === hero.id);
-                    const totalSims = dispSim?.totalSimulations || 1;
-                    const scale = totalSims / 20;
-                    
-                    let faceImg = '/images/quest/face/icon_shop_face_A.webp';
-                    if (heroResult && simResult) {
-                      const deathCount = totalSims - Math.round(heroResult.survivalRate / 100 * totalSims);
-                      const belowMinPower = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
-                      
-                      if (belowMinPower || deathCount >= 20 * scale) faceImg = '/images/quest/face/icon_shop_face_D.webp';
-                      else if (deathCount >= 12 * scale) faceImg = '/images/quest/face/icon_shop_face_C.webp';
-                      else if (deathCount >= 8 * scale) faceImg = '/images/quest/face/icon_shop_face_B.webp';
-                      else if (deathCount >= 3 * scale) faceImg = '/images/quest/face/icon_shop_face_A.webp';
-                      else if (deathCount >= 0.01 * scale) faceImg = '/images/quest/face/icon_shop_face_S.webp';
-                      else if (dispSim!.avgRounds <= 1 && dispSim!.winRate >= 99.9) faceImg = '/images/quest/face/icon_shop_face_SSS.webp';
-                      else faceImg = '/images/quest/face/icon_shop_face_S.webp';
-                    }
-                    
-                    return (
-                      <td key={hero.id} className="text-center py-1">
-                        <img src={faceImg} alt="face" className="w-8 h-8 mx-auto" />
-                      </td>
-                    );
-                  })}
-                </tr>
-                {/* Row: Hero circle (job image) */}
-                <tr>
-                  <td className="py-1 px-1.5">
-                    <button
-                      onClick={() => setJobDisplayMode(m => m === 'icon' ? 'illust' : m === 'illust' ? 'none' : 'icon')}
-                      className="text-foreground/70 hover:text-foreground transition-colors flex items-center gap-0.5 text-sm"
-                      title="클릭하여 직업 표시 방식 변경 (아이콘 → 일러스트 → 없음)"
-                    >
-                      직업
-                      <span className="text-[10px] opacity-50 ml-0.5">
-                        {jobDisplayMode === 'icon' ? '●○○' : jobDisplayMode === 'illust' ? '○●○' : '○○●'}
-                      </span>
-                    </button>
-                  </td>
-                  {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                    const hero = selectedHeroes[slotIdx];
-                    if (!hero) {
-                      return (
-                        <td key={`slot-empty-${slotIdx}`} className="text-center py-2">
-                          <button
-                            onClick={() => currentQuest && openSlotForAdd()}
-                            className={`w-16 h-16 rounded-full border-2 border-dashed inline-flex items-center justify-center transition-all ${
-                              currentQuest ? 'border-muted-foreground/30 hover:border-primary/50 cursor-pointer' : 'border-muted-foreground/15 cursor-not-allowed'
-                            }`}>
-                            <Plus className="w-5 h-5 text-muted-foreground/30" />
-                          </button>
-                        </td>
-                      );
-                    }
-                    const belowMin = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
-                    const iconImg = hero.type === 'champion'
-                      ? getChampionImagePath(hero.championName || hero.name)
-                      : hero.heroClass ? getJobImagePath(hero.heroClass) : null;
-                    const illustImg = hero.type === 'champion'
-                      ? getChampionImagePath(hero.championName || hero.name)
-                      : hero.heroClass ? getJobIllustPath(hero.heroClass) : null;
-
-                    if (jobDisplayMode === 'none') {
-                      return (
-                        <td key={hero.id} className="text-center py-2">
-                          <div className="relative inline-flex flex-col items-center gap-0.5 group">
-                            {belowMin && (
-                              <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
-                            )}
-                            <button onClick={() => openSlotForEdit(slotIdx)}
-                              className={`relative w-8 h-8 rounded-full border-2 bg-secondary/50 flex items-center justify-center transition-all ${
-                                belowMin ? 'border-red-500/70' : 'border-primary/30'
-                              } hover:border-primary/70`}
-                              title={`${hero.name} (클릭하여 변경)`}>
-                              <span className="text-xs">⚔</span>
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
-                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
-                              title="제거">✕</button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setTempEditingHero(hero); }}
-                              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-zinc-600"
-                              style={{ color: '#fff' }}
-                              title="임시 수정"><Settings className="w-3 h-3" /></button>
-                          </div>
-                        </td>
-                      );
-                    }
-
-                    if (jobDisplayMode === 'illust') {
-                      return (
-                        <td key={hero.id} className="text-center py-1">
-                          <div className="relative inline-flex flex-col items-center gap-0.5 group">
-                            {belowMin && (
-                              <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
-                            )}
-                            <button onClick={() => openSlotForEdit(slotIdx)}
-                              className="relative w-36 h-36 flex items-center justify-center overflow-hidden transition-all hover:opacity-80 rounded"
-                              title={`${hero.name} (클릭하여 변경)`}>
-                              {illustImg ? (
-                                <img src={illustImg} alt="" className="w-full h-full object-cover object-center" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                              ) : (
-                                <span className="text-lg">⚔</span>
-                              )}
-                              <div className="absolute inset-0 bg-primary/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <span className="text-foreground text-xs font-bold">변경</span>
-                              </div>
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
-                              className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
-                              title="제거">✕</button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setTempEditingHero(hero); }}
-                              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 hover:bg-zinc-600"
-                              style={{ color: '#fff' }}
-                              title="임시 수정"><Settings className="w-3.5 h-3.5" /></button>
-                          </div>
-                        </td>
-                      );
-                    }
-
-                    // icon mode (default)
-                    return (
-                      <td key={hero.id} className="text-center py-2">
-                        <div className="relative inline-flex flex-col items-center gap-0.5 group">
-                          {belowMin && (
-                            <span className="text-[10px] font-mono text-red-400 font-bold">⚠ {formatNumber(hero.power)}</span>
-                          )}
-                          <button onClick={() => openSlotForEdit(slotIdx)}
-                            className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all ${
-                              belowMin ? 'border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]' : 'border-primary/50'
-                            } hover:border-primary/70`}
-                            title={`${hero.name} (클릭하여 변경)`}>
-                            {iconImg ? (
-                              <img src={iconImg} alt="" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
-                            ) : (
-                              <span className="text-lg">⚔</span>
-                            )}
-                            <div className="absolute inset-0 bg-primary/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                              <span className="text-foreground text-xs font-bold">변경</span>
-                            </div>
-                          </button>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); toggleHero(hero.id); }}
-                            className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
-                            title="제거">✕</button>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); setTempEditingHero(hero); }}
-                            className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 hover:bg-zinc-600"
-                            style={{ color: '#fff' }}
-                            title="임시 수정"><Settings className="w-3.5 h-3.5" /></button>
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-                {/* Row: Name */}
-                <tr className="border-b border-border/30">
-                  <td className="py-1 px-1.5 text-foreground/70 text-sm">이름</td>
-                  {Array.from({ length: maxMembers }).map((_, slotIdx) => {
-                    const hero = selectedHeroes[slotIdx];
-                    return (
-                      <td key={hero?.id || `name-empty-${slotIdx}`} className="text-center py-1">
-                        {hero && (
-                          <div>
-                            <div className="text-sm text-foreground font-medium truncate">{hero.name}</div>
-                            <div className="text-xs text-foreground/60">{hero.heroClass || hero.championName || ''}</div>
-                          </div>
+                      })()}
+                    <table className="w-full text-xs table-fixed">
+                      <colgroup>
+                        <col style={{ width: "72px" }} />
+                        {Array.from({ length: maxMembers }).map((_, i) => (
+                          <col key={i} style={{ width: `${(100 - 10) / maxMembers}%` }} />
+                        ))}
+                      </colgroup>
+                      <tbody>
+                        {/* Row: Element barrier icons */}
+                        {barrierElements.length > 0 && (
+                          <tr>
+                            <td className="py-1 px-1.5 text-foreground/70 text-sm">원소</td>
+                            {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                              const hero = selectedHeroes[slotIdx];
+                              if (!hero) return <td key={`el-empty-${slotIdx}`} className="text-center py-1" />;
+                              const isSpellKnight = SPELLKNIGHT_CLASSES.includes(hero.heroClass);
+                              if (isSpellKnight) {
+                                // Show '모든 원소' icon with total * 50%
+                                const allTotal = Object.values(hero.equipmentElements || {}).reduce((a, b) => a + b, 0);
+                                const halfTotal = Math.floor(allTotal * 0.5);
+                                return (
+                                  <td key={hero.id} className="text-center py-1">
+                                    <div className="flex justify-center gap-1">
+                                      <div className="flex flex-col items-center">
+                                        <img src="/images/elements/all.webp" alt="모든 원소" className="w-5 h-5" />
+                                        <span className="text-xs font-mono font-bold text-purple-300">
+                                          {halfTotal > 0 ? formatNumber(halfTotal) : "-"}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </td>
+                                );
+                              }
+                              const icons = barrierElements
+                                .map((el) => ({
+                                  el,
+                                  iconPath: ELEMENT_ICON_MAP[el],
+                                  val: hero.equipmentElements?.[el] || 0,
+                                }))
+                                .filter((b) => b.val > 0);
+                              return (
+                                <td key={hero.id} className="text-center py-1">
+                                  <div className="flex justify-center gap-1">
+                                    {icons.length > 0 ? (
+                                      icons.map((b) => (
+                                        <div key={b.el} className="flex flex-col items-center">
+                                          {b.iconPath && <img src={b.iconPath} alt={b.el} className="w-5 h-5" />}
+                                          <span className="text-xs font-mono font-bold text-purple-300">
+                                            {formatNumber(b.val)}
+                                          </span>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <span className="text-xs text-foreground/30">-</span>
+                                    )}
+                                  </div>
+                                </td>
+                              );
+                            })}
+                          </tr>
                         )}
-                      </td>
-                    );
-                  })}
-                </tr>
-                {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF, CRIT.C, EVA, THREAT */}
-                {selectedHeroes.length > 0 && (() => {
-                  const hasEvasionPenalty = currentQuest && (
-                    currentQuest.isExtreme ||
-                    (selectedQuestType === 'tot' && currentRegion?.name === '공포')
-                  );
-
-                  // Check if barrier is broken (with Rudo bonus)
-                  const barrierBroken = (() => {
-                    if (!currentQuest?.barrier || barrierElements.length === 0) return true;
-                    return barrierElements.every(el => getPartyElementSum(el) >= currentQuest.barrier!.hp);
-                  })();
-
-                  const statRows = [
-                    { label: 'HP', key: 'hp', bKey: 'hp', dKey: 'deltaHp', color: 'text-orange-500 dark:text-orange-400', labelColor: 'text-orange-500 dark:text-orange-400' },
-                    { label: 'ATK', key: 'atk', bKey: 'atk', dKey: 'deltaAtk', color: 'text-red-400', labelColor: 'text-red-400' },
-                    { label: 'DEF', key: 'def', bKey: 'def', dKey: 'deltaDef', color: 'text-blue-400', labelColor: 'text-blue-400' },
-                    { label: 'CRIT.C', key: 'crit', bKey: 'crit', dKey: 'deltaCrit', color: 'text-yellow-400', suffix: '%', labelColor: 'text-yellow-400' },
-                    { label: 'CRIT.D', key: 'critAttack', bKey: 'critAttack', dKey: null, color: 'text-yellow-400', computed: true, labelColor: 'text-yellow-400' },
-                    { label: 'EVA', key: 'evasion', bKey: 'evasion', dKey: 'deltaEvasion', color: 'text-cyan-500 dark:text-cyan-400', suffix: '%', labelColor: 'text-cyan-500 dark:text-cyan-400' },
-                    { label: 'THREAT', key: 'threat', bKey: 'threat', dKey: null, color: 'text-foreground', labelColor: 'text-foreground/70' },
-                  ];
-
-                  const hasBuffs = buffSummary && buffSummary.sources.length > 0;
-
-                  return (
-                    <>
-                      {statRows.map(stat => (
-                        <tr key={stat.key} className="border-b border-border/20">
-                          <td className={`py-1.5 px-1.5 font-medium text-sm ${(stat as any).labelColor || 'text-foreground/70'}`}>{stat.label}</td>
+                        {/* Row: Face - based on death count, using face images */}
+                        <tr>
+                          <td className="py-1 px-1.5 text-foreground/70 text-sm">표정</td>
                           {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
-                            if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
-                            const bs = buffedStats[slotIdx];
-                            
-                            let val: number;
-                            let delta = 0;
-                            if (bs && hasBuffs) {
-                              if ((stat as any).computed) {
-                                val = Math.floor(bs.atk * bs.critDmg / 100);
-                                const rawVal = Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100);
-                                delta = val - rawVal;
-                              } else {
-                                val = (bs as any)[stat.bKey] || 0;
-                                delta = stat.dKey ? ((bs as any)[stat.dKey] || 0) : 0;
-                              }
-                            } else {
-                              val = (stat as any).computed
-                                ? Math.floor((hero.atk || 0) * (hero.critDmg || 0) / 100)
-                                : (hero as any)[stat.key] || 0;
+                            if (!hero) return <td key={`face-empty-${slotIdx}`} className="text-center py-1" />;
+
+                            const heroResult = dispSim?.heroResults.find((r) => r.heroId === hero.id);
+                            const totalSims = dispSim?.totalSimulations || 1;
+                            const scale = totalSims / 20;
+
+                            let faceImg = "/images/quest/face/icon_shop_face_A.webp";
+                            if (heroResult && simResult) {
+                              const deathCount = totalSims - Math.round((heroResult.survivalRate / 100) * totalSims);
+                              const belowMinPower =
+                                currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
+
+                              if (belowMinPower || deathCount >= 20 * scale)
+                                faceImg = "/images/quest/face/icon_shop_face_D.webp";
+                              else if (deathCount >= 12 * scale) faceImg = "/images/quest/face/icon_shop_face_C.webp";
+                              else if (deathCount >= 8 * scale) faceImg = "/images/quest/face/icon_shop_face_B.webp";
+                              else if (deathCount >= 3 * scale) faceImg = "/images/quest/face/icon_shop_face_A.webp";
+                              else if (deathCount >= 0.01 * scale) faceImg = "/images/quest/face/icon_shop_face_S.webp";
+                              else if (dispSim!.avgRounds <= 1 && dispSim!.winRate >= 99.9)
+                                faceImg = "/images/quest/face/icon_shop_face_SSS.webp";
+                              else faceImg = "/images/quest/face/icon_shop_face_S.webp";
                             }
 
-                            // Retry-booster (+20% atk/def) display override
-                            if (retryBoosterActive && bs && (stat.key === 'atk' || stat.key === 'def')) {
-                              const isAtk = stat.key === 'atk';
-                              const cPct = ((hero.detailStats?.[isAtk ? '공통 공격력 계수' : '공통 방어력 계수'] ?? 0)) / 100;
-                              const baseStat = isAtk ? (hero.atk || 0) : (hero.def || 0);
-                              const constant = hero.detailStats?.[isAtk ? '공격력 상수' : '방어력 상수']
-                                ?? ((1 + cPct) > 0 ? baseStat / (1 + cPct) : baseStat);
-                              const auraFlat = isAtk ? (buffSummary?.flatAtk || 0) : (buffSummary?.flatDef || 0);
-                              const bsVal = isAtk ? bs.atk : bs.def;
-                              const partyMult = baseStat > 0 ? (bsVal - auraFlat) / baseStat : 1;
-                              const boosted = Math.round(constant * (1 + cPct + RETRY_BOOSTER_EXTRA) * partyMult + auraFlat);
-                              delta += (boosted - val);
-                              val = boosted;
-                            }
-                            
-                            // Evasion special handling
-                            let displayColor = stat.color;
-                            let evasionNote = '';
-                            let barrierNote = '';
-                            if (stat.key === 'evasion') {
-                              const hasRockStompers = hero.equipmentSlots?.some(s => s.item?.name === '락 스톰퍼') || false;
-                              const isPathfinder = (hero.heroClass || '').includes('길잡이');
-                              const cap = isPathfinder ? 78 : 75;
-                              if (hasRockStompers) {
-                                val = 0;
-                                delta = 0;
-                              } else {
-                                if (hasEvasionPenalty) {
-                                  val = val - 20;
-                                  delta = delta - 20;
-                                }
-                                if (val > cap) {
-                                  evasionNote = `(${val}%)`;
-                                  val = cap;
-                                }
-                              }
-                              if (val < 0) displayColor = 'text-purple-400';
-                            }
-
-                            // Crit chance: cap display at 100%, show raw in parentheses for Ninja/Sensei only
-                            let critCapNote = '';
-                            let rawCritVal = 0;
-                            if (stat.key === 'crit' && val > 100) {
-                              rawCritVal = val;
-                              const isNinjaSensei = hero.heroClass === '닌자' || hero.heroClass === '센세' || hero.heroClass === 'Ninja' || hero.heroClass === 'Sensei';
-                              if (isNinjaSensei) {
-                                critCapNote = `(실제: ${rawCritVal}%)`;
-                              }
-                              val = 100;
-                            }
-
-                            // Barrier not broken: ATK and CRIT.DMG show 20% values
-                            let barrierOriginal = 0;
-                            if (!barrierBroken && (stat.key === 'atk' || (stat as any).computed)) {
-                              barrierOriginal = val;
-                              val = Math.floor(val * 0.2);
-                              displayColor = 'text-purple-400';
-                            }
-                            
                             return (
-                              <td key={hero.id} className={`py-1.5 px-1 text-center font-mono text-sm font-bold ${displayColor}`}>
-                                <div className="flex flex-col items-center">
-                                  <span>
-                                    {stat.suffix ? `${val}${stat.suffix}` : val !== 0 ? formatNumber(val) : '-'}
-                                  </span>
-                                  {barrierOriginal > 0 && (
-                                    <span className="text-[11px] text-muted-foreground leading-tight">({formatNumber(barrierOriginal)})</span>
+                              <td key={hero.id} className="text-center py-1">
+                                <img src={faceImg} alt="face" className="w-8 h-8 mx-auto" />
+                              </td>
+                            );
+                          })}
+                        </tr>
+                        {/* Row: Hero circle (job image) */}
+                        <tr>
+                          <td className="py-1 px-1.5">
+                            <button
+                              onClick={() =>
+                                setJobDisplayMode((m) => (m === "icon" ? "illust" : m === "illust" ? "none" : "icon"))
+                              }
+                              className="text-foreground/70 hover:text-foreground transition-colors flex items-center gap-0.5 text-sm"
+                              title="클릭하여 직업 표시 방식 변경 (아이콘 → 일러스트 → 없음)"
+                            >
+                              직업
+                              <span className="text-[10px] opacity-50 ml-0.5">
+                                {jobDisplayMode === "icon" ? "●○○" : jobDisplayMode === "illust" ? "○●○" : "○○●"}
+                              </span>
+                            </button>
+                          </td>
+                          {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                            const hero = selectedHeroes[slotIdx];
+                            if (!hero) {
+                              return (
+                                <td key={`slot-empty-${slotIdx}`} className="text-center py-2">
+                                  <button
+                                    onClick={() => currentQuest && openSlotForAdd()}
+                                    className={`w-16 h-16 rounded-full border-2 border-dashed inline-flex items-center justify-center transition-all ${
+                                      currentQuest
+                                        ? "border-muted-foreground/30 hover:border-primary/50 cursor-pointer"
+                                        : "border-muted-foreground/15 cursor-not-allowed"
+                                    }`}
+                                  >
+                                    <Plus className="w-5 h-5 text-muted-foreground/30" />
+                                  </button>
+                                </td>
+                              );
+                            }
+                            const belowMin = currentQuest && hero.power > 0 && hero.power < currentQuest.minPower;
+                            const iconImg =
+                              hero.type === "champion"
+                                ? getChampionImagePath(hero.championName || hero.name)
+                                : hero.heroClass
+                                  ? getJobImagePath(hero.heroClass)
+                                  : null;
+                            const illustImg =
+                              hero.type === "champion"
+                                ? getChampionImagePath(hero.championName || hero.name)
+                                : hero.heroClass
+                                  ? getJobIllustPath(hero.heroClass)
+                                  : null;
+
+                            if (jobDisplayMode === "none") {
+                              return (
+                                <td key={hero.id} className="text-center py-2">
+                                  <div className="relative inline-flex flex-col items-center gap-0.5 group">
+                                    {belowMin && (
+                                      <span className="text-[10px] font-mono text-red-400 font-bold">
+                                        ⚠ {formatNumber(hero.power)}
+                                      </span>
+                                    )}
+                                    <button
+                                      onClick={() => openSlotForEdit(slotIdx)}
+                                      className={`relative w-8 h-8 rounded-full border-2 bg-secondary/50 flex items-center justify-center transition-all ${
+                                        belowMin ? "border-red-500/70" : "border-primary/30"
+                                      } hover:border-primary/70`}
+                                      title={`${hero.name} (클릭하여 변경)`}
+                                    >
+                                      <span className="text-xs">⚔</span>
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleHero(hero.id);
+                                      }}
+                                      className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                                      title="제거"
+                                    >
+                                      ✕
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setTempEditingHero(hero);
+                                      }}
+                                      className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-zinc-600"
+                                      style={{ color: "#fff" }}
+                                      title="임시 수정"
+                                    >
+                                      <Settings className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                </td>
+                              );
+                            }
+
+                            if (jobDisplayMode === "illust") {
+                              return (
+                                <td key={hero.id} className="text-center py-1">
+                                  <div className="relative inline-flex flex-col items-center gap-0.5 group">
+                                    {belowMin && (
+                                      <span className="text-[10px] font-mono text-red-400 font-bold">
+                                        ⚠ {formatNumber(hero.power)}
+                                      </span>
+                                    )}
+                                    <button
+                                      onClick={() => openSlotForEdit(slotIdx)}
+                                      className="relative w-36 h-36 flex items-center justify-center overflow-hidden transition-all hover:opacity-80 rounded"
+                                      title={`${hero.name} (클릭하여 변경)`}
+                                    >
+                                      {illustImg ? (
+                                        <img
+                                          src={illustImg}
+                                          alt=""
+                                          className="w-full h-full object-cover object-center"
+                                          onError={(e) => {
+                                            e.currentTarget.style.display = "none";
+                                          }}
+                                        />
+                                      ) : (
+                                        <span className="text-lg">⚔</span>
+                                      )}
+                                      <div className="absolute inset-0 bg-primary/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <span className="text-foreground text-xs font-bold">변경</span>
+                                      </div>
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleHero(hero.id);
+                                      }}
+                                      className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+                                      title="제거"
+                                    >
+                                      ✕
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setTempEditingHero(hero);
+                                      }}
+                                      className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 hover:bg-zinc-600"
+                                      style={{ color: "#fff" }}
+                                      title="임시 수정"
+                                    >
+                                      <Settings className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                </td>
+                              );
+                            }
+
+                            // icon mode (default)
+                            return (
+                              <td key={hero.id} className="text-center py-2">
+                                <div className="relative inline-flex flex-col items-center gap-0.5 group">
+                                  {belowMin && (
+                                    <span className="text-[10px] font-mono text-red-400 font-bold">
+                                      ⚠ {formatNumber(hero.power)}
+                                    </span>
                                   )}
-                                  {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
-                                  {critCapNote && <span className="text-[9px] text-muted-foreground">{critCapNote}</span>}
+                                  <button
+                                    onClick={() => openSlotForEdit(slotIdx)}
+                                    className={`relative w-16 h-16 rounded-full border-2 bg-secondary/50 flex items-center justify-center overflow-hidden transition-all ${
+                                      belowMin
+                                        ? "border-red-500/70 shadow-[0_0_8px_rgba(239,68,68,0.3)]"
+                                        : "border-primary/50"
+                                    } hover:border-primary/70`}
+                                    title={`${hero.name} (클릭하여 변경)`}
+                                  >
+                                    {iconImg ? (
+                                      <img
+                                        src={iconImg}
+                                        alt=""
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          e.currentTarget.style.display = "none";
+                                        }}
+                                      />
+                                    ) : (
+                                      <span className="text-lg">⚔</span>
+                                    )}
+                                    <div className="absolute inset-0 bg-primary/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                                      <span className="text-foreground text-xs font-bold">변경</span>
+                                    </div>
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleHero(hero.id);
+                                    }}
+                                    className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+                                    title="제거"
+                                  >
+                                    ✕
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setTempEditingHero(hero);
+                                    }}
+                                    className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 hover:bg-zinc-600"
+                                    style={{ color: "#fff" }}
+                                    title="임시 수정"
+                                  >
+                                    <Settings className="w-3.5 h-3.5" />
+                                  </button>
                                 </div>
                               </td>
                             );
                           })}
                         </tr>
-                      ))}
-                      {/* Targeting chance row (threat-based) */}
-                      <tr className="border-b border-border/20 bg-muted/20">
-                        <td className="py-1.5 px-1.5 text-foreground/70 font-medium text-sm">피격 확률</td>
-                        {(() => {
-                          const totalThreat = selectedHeroes.reduce((sum, h) => sum + (h.threat || 1), 0);
-                          return Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                        {/* Row: Name */}
+                        <tr className="border-b border-border/30">
+                          <td className="py-1 px-1.5 text-foreground/70 text-sm">이름</td>
+                          {Array.from({ length: maxMembers }).map((_, slotIdx) => {
                             const hero = selectedHeroes[slotIdx];
-                            if (!hero) return <td key={`hit-empty-${slotIdx}`} />;
-                            const threat = hero.threat || 1;
-                            const targetChance = totalThreat > 0 ? (threat / totalThreat) * 100 : 0;
                             return (
-                              <td key={hero.id} className="py-1.5 px-1 text-center font-mono text-sm font-bold">
-                                <span className={targetChance >= 40 ? 'text-red-400' : targetChance >= 25 ? 'text-yellow-400' : 'text-lime-400'}>
-                                  {targetChance.toFixed(1)}%
-                                </span>
+                              <td key={hero?.id || `name-empty-${slotIdx}`} className="text-center py-1">
+                                {hero && (
+                                  <div>
+                                    <div className="text-sm text-foreground font-medium truncate">{hero.name}</div>
+                                    <div className="text-xs text-foreground/60">
+                                      {hero.heroClass || hero.championName || ""}
+                                    </div>
+                                  </div>
+                                )}
                               </td>
                             );
-                          });
-                        })()}
-                      </tr>
-                    </>
-                  );
-                })()}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                          })}
+                        </tr>
+                        {/* Stat rows - order: HP, ATK, CRIT.DMG, DEF, CRIT.C, EVA, THREAT */}
+                        {selectedHeroes.length > 0 &&
+                          (() => {
+                            const hasEvasionPenalty =
+                              currentQuest &&
+                              (currentQuest.isExtreme ||
+                                (selectedQuestType === "tot" && currentRegion?.name === "공포"));
 
-        {/* RIGHT: Main Results */}
-        <div className="w-full lg:w-80 shrink-0">
-              {/* Main Results Header with dropdown */}
-              <div className="flex items-center gap-2 mb-3">
-                <Crown className="w-5 h-5 text-primary" />
-                <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
-                {currentQuest && simResult && selectedHeroes.length > 0 && (
-                  <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} />
-                )}
-              </div>
+                            // Check if barrier is broken (with Rudo bonus)
+                            const barrierBroken = (() => {
+                              if (!currentQuest?.barrier || barrierElements.length === 0) return true;
+                              return barrierElements.every((el) => getPartyElementSum(el) >= currentQuest.barrier!.hp);
+                            })();
 
-              {/* Skeleton / Real results */}
-              {currentQuest && simResult && selectedHeroes.length > 0 ? (
-              <>
-              <div className="card-fantasy p-4 mb-3">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <Clock className="w-3.5 h-3.5 text-blue-400" />
-                  <span className="text-sm font-bold text-foreground">턴 수</span>
-                </div>
-                {(() => {
-                  const rounds = mainResultsTab === 'win' ? dispSim!.winRounds
-                    : mainResultsTab === 'lose' ? dispSim!.loseRounds
-                    : { avg: dispSim!.avgRounds, min: dispSim!.minRounds, max: dispSim!.maxRounds };
-                  if (!rounds) return (
-                    <div className="text-center text-xs text-muted-foreground py-3">
-                      {mainResultsTab === 'win' ? '성공한 판 없음' : '실패한 판 없음'}
-                    </div>
-                  );
-                  return (
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="turn-stat-box rounded p-2">
-                        <div className="text-[10px] text-muted-foreground">최소</div>
-                        <div className="text-lg font-bold font-mono text-foreground">{rounds.min}</div>
-                      </div>
-                      <div className="turn-stat-box rounded p-2">
-                        <div className="text-[10px] text-muted-foreground">평균</div>
-                        <div className="text-lg font-bold font-mono text-primary">{Math.round(rounds.avg)}</div>
-                      </div>
-                      <div className="turn-stat-box rounded p-2">
-                        <div className="text-[10px] text-muted-foreground">최대</div>
-                        <div className="text-lg font-bold font-mono text-foreground">{rounds.max}</div>
-                      </div>
-                    </div>
-                  );
-                })()}
-                {dispSim!.roundLimitRate > 0 && (() => {
-                  const limitCount = Math.round((dispSim!.roundLimitRate / 100) * (dispSim!.totalSimulations || 0));
-                  return (
-                    <div className="mt-2 text-center text-[10px] text-red-400">
-                      ⚠ 라운드 제한 도달: {dispSim!.roundLimitRate.toFixed(1)}% ({limitCount}판)
-                    </div>
-                  );
-                })()}
-              </div>
+                            const statRows = [
+                              {
+                                label: "HP",
+                                key: "hp",
+                                bKey: "hp",
+                                dKey: "deltaHp",
+                                color: "text-orange-500 dark:text-orange-400",
+                                labelColor: "text-orange-500 dark:text-orange-400",
+                              },
+                              {
+                                label: "ATK",
+                                key: "atk",
+                                bKey: "atk",
+                                dKey: "deltaAtk",
+                                color: "text-red-400",
+                                labelColor: "text-red-400",
+                              },
+                              {
+                                label: "DEF",
+                                key: "def",
+                                bKey: "def",
+                                dKey: "deltaDef",
+                                color: "text-blue-400",
+                                labelColor: "text-blue-400",
+                              },
+                              {
+                                label: "CRIT.C",
+                                key: "crit",
+                                bKey: "crit",
+                                dKey: "deltaCrit",
+                                color: "text-yellow-400",
+                                suffix: "%",
+                                labelColor: "text-yellow-400",
+                              },
+                              {
+                                label: "CRIT.D",
+                                key: "critAttack",
+                                bKey: "critAttack",
+                                dKey: null,
+                                color: "text-yellow-400",
+                                computed: true,
+                                labelColor: "text-yellow-400",
+                              },
+                              {
+                                label: "EVA",
+                                key: "evasion",
+                                bKey: "evasion",
+                                dKey: "deltaEvasion",
+                                color: "text-cyan-500 dark:text-cyan-400",
+                                suffix: "%",
+                                labelColor: "text-cyan-500 dark:text-cyan-400",
+                              },
+                              {
+                                label: "THREAT",
+                                key: "threat",
+                                bKey: "threat",
+                                dKey: null,
+                                color: "text-foreground",
+                                labelColor: "text-foreground/70",
+                              },
+                            ];
 
-              {/* Damage Contribution */}
-              <div className="card-fantasy p-4 mb-3">
-                <div className="flex items-center gap-1.5 mb-3">
-                  <Swords className="w-3.5 h-3.5 text-red-400" />
-                  <span className="text-sm font-bold text-foreground">대미지 기여도</span>
-                </div>
-                {(() => {
-                  const bucketResults = mainResultsTab === 'win' && dispSim!.winHeroResults ? dispSim!.winHeroResults
-                    : mainResultsTab === 'lose' && dispSim!.loseHeroResults ? dispSim!.loseHeroResults
-                    : dispSim!.heroResults;
-                  const totalDmg = bucketResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                  const sorted = [...bucketResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
-                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
-                  const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
-                  return (
-                    <div className="space-y-2">
-                      {sorted.map((hr) => {
-                        const pct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
-                        return (
-                          <div key={hr.heroId}>
-                            <div className="flex items-center justify-between mb-0.5">
-                              <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">{hr.heroName}</span>
-                              <span className={`text-[11px] font-mono ${getTextColor(pct)}`}>{pct.toFixed(1)}%</span>
-                            </div>
-                            <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
-                              <div className={`h-full rounded-full ${getBarColor(pct)} transition-all`} style={{ width: `${pct}%` }} />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })()}
-              </div>
+                            const hasBuffs = buffSummary && buffSummary.sources.length > 0;
 
-              {/* Tanking Contribution */}
-              <div className="card-fantasy p-4 mb-3">
-                <div className="flex items-center gap-1.5 mb-3">
-                  <Shield className="w-3.5 h-3.5 text-blue-400" />
-                  <span className="text-sm font-bold text-foreground">탱킹 기여도</span>
-                </div>
-                {(() => {
-                  const bucketResults = mainResultsTab === 'win' && dispSim!.winHeroResults ? dispSim!.winHeroResults
-                    : mainResultsTab === 'lose' && dispSim!.loseHeroResults ? dispSim!.loseHeroResults
-                    : dispSim!.heroResults;
-                  const sorted = [...bucketResults].sort((a, b) => b.tankingRate - a.tankingRate);
-                  const getBarColor = (pct: number) => pct >= 81 ? 'bg-lime-500' : pct >= 61 ? 'bg-yellow-500' : pct >= 41 ? 'bg-orange-500' : pct >= 21 ? 'bg-red-500' : 'bg-purple-500';
-                  const getTextColor = (pct: number) => pct >= 81 ? 'text-lime-400' : pct >= 61 ? 'text-yellow-400' : pct >= 41 ? 'text-orange-400' : pct >= 21 ? 'text-red-400' : 'text-purple-400';
-                  return (
-                    <div className="space-y-2">
-                      {sorted.map((hr) => (
-                        <div key={hr.heroId}>
-                          <div className="flex items-center justify-between mb-0.5">
-                            <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">{hr.heroName}</span>
-                            <span className={`text-[11px] font-mono ${getTextColor(hr.tankingRate)}`}>{hr.tankingRate.toFixed(1)}%</span>
-                          </div>
-                          <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
-                            <div className={`h-full rounded-full ${getBarColor(hr.tankingRate)} transition-all`} style={{ width: `${hr.tankingRate}%` }} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* Equipment Grade Score */}
-              <div className="card-fantasy p-4 mb-3">
-                <div className="flex items-center gap-1.5 mb-3">
-                  <Shirt className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
-                  <span className="text-sm font-bold text-foreground">장비 등급</span>
-                </div>
-                {(() => {
-                  const qualityScore: Record<string, number> = {
-                    'common': 1, 'uncommon': 1.25, 'flawless': 1.5, 'epic': 2, 'legendary': 3,
-                    '일반': 1, '고급': 1.25, '최고급': 1.5, '에픽': 2, '전설': 3,
-                  };
-                  const heroGrades = selectedHeroes.map(h => {
-                    const slots = h.equipmentSlots || [];
-                    const maxSlots = h.type === 'champion' ? 2 : 6;
-                    let totalScore = 0;
-                    let equipped = 0;
-                    slots.forEach(s => {
-                      if (s.item) {
-                        equipped++;
-                        totalScore += qualityScore[s.quality] || 1;
-                      }
-                    });
-                    const avg = equipped > 0 ? totalScore / equipped : 0;
-                    return { name: h.name, avg, equipped, maxSlots };
-                  });
-                  const partyTotal = heroGrades.reduce((s, g) => s + g.avg, 0);
-                  const partyAvg = heroGrades.length > 0 ? partyTotal / heroGrades.length : 0;
-                  const getGradeColor = (score: number) => score >= 2.5 ? 'text-yellow-400' : score >= 2 ? 'text-fuchsia-400' : score >= 1.5 ? 'text-cyan-400' : score >= 1.25 ? 'text-lime-400' : 'text-gray-400';
-                  const getBarColor = (score: number) => score >= 2.5 ? 'bg-yellow-500' : score >= 2 ? 'bg-fuchsia-500' : score >= 1.5 ? 'bg-cyan-500' : score >= 1.25 ? 'bg-lime-500' : 'bg-gray-400';
-                  return (
-                    <div className="space-y-2">
-                      {heroGrades.map(g => (
-                        <div key={g.name}>
-                          <div className="flex items-center justify-between mb-0.5">
-                            <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">{g.name}</span>
-                            <span className={`text-[11px] font-mono ${getGradeColor(g.avg)}`}>
-                              {g.avg > 0 ? g.avg.toFixed(2) : '-'}
-                              <span className="text-muted-foreground/60 ml-1">({g.equipped}/{g.maxSlots})</span>
-                            </span>
-                          </div>
-                          <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
-                            <div className={`h-full rounded-full ${getBarColor(g.avg)} transition-all`} style={{ width: `${Math.min(100, (g.avg / 3) * 100)}%` }} />
-                          </div>
-                        </div>
-                      ))}
-                      <div className="border-t border-border/30 pt-2 mt-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[11px] text-foreground font-bold">파티 평균</span>
-                          <span className={`text-sm font-mono font-bold ${getGradeColor(partyAvg)}`}>{partyAvg > 0 ? partyAvg.toFixed(2) : '-'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-              </>
-              ) : (
-                /* Skeleton frame before simulation */
-                <>
-                  <div className="card-fantasy p-4 mb-3">
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <Clock className="w-3.5 h-3.5 text-muted-foreground/40" />
-                      <span className="text-sm font-bold text-muted-foreground/40">턴 수</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      {['최소', '평균', '최대'].map(label => (
-                        <div key={label} className="bg-secondary/20 rounded p-2">
-                          <div className="text-[10px] text-muted-foreground/40">{label}</div>
-                          <div className="text-lg font-bold font-mono text-muted-foreground/20">-</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="card-fantasy p-4 mb-3">
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Swords className="w-3.5 h-3.5 text-muted-foreground/30" />
-                      <span className="text-sm font-bold text-muted-foreground/30">대미지 기여도</span>
-                    </div>
-                    <div className="space-y-3">
-                      {[1,2,3].map(i => (
-                        <div key={i}>
-                          <div className="h-3 w-16 bg-secondary/20 rounded mb-1" />
-                          <div className="w-full bg-secondary/20 rounded-full h-3" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="card-fantasy p-4 mb-3">
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Shield className="w-3.5 h-3.5 text-muted-foreground/30" />
-                      <span className="text-sm font-bold text-muted-foreground/30">탱킹 기여도</span>
-                    </div>
-                    <div className="space-y-3">
-                      {[1,2,3].map(i => (
-                        <div key={i}>
-                          <div className="h-3 w-16 bg-secondary/20 rounded mb-1" />
-                          <div className="w-full bg-secondary/20 rounded-full h-3" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-        </div>
-      </div>
-
-      {/* Full-width Simulation Details Box */}
-      {currentQuest && selectedHeroes.length > 0 && simResult && (
-        <>
-          <div className="flex items-center gap-2 mt-4 mb-3">
-            <ListChecks className="w-5 h-5 text-primary" />
-            <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
-          </div>
-          <div className="card-fantasy p-4" data-detail-info>
-
-          {/* Mini-boss breakdown (only for random mode, not boss quests) */}
-          {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
-            <div className="mb-4">
-              <div className="text-xs text-muted-foreground mb-2 font-medium">미니보스별 결과</div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
-                {dispSim!.miniBossResults.map(mbr => {
-                  const typeLabel = mbr.type === 'normal' ? '일반' :
-                    mbr.type === 'huge' ? '거대한' :
-                    mbr.type === 'agile' ? '민첩한' :
-                    mbr.type === 'dire' ? '흉포한' :
-                    mbr.type === 'wealthy' ? '부유한' :
-                    mbr.type === 'legendary' ? '전설의' : mbr.type;
-                  const typeColor = mbr.type === 'normal' ? 'text-foreground' :
-                    mbr.type === 'huge' ? 'text-lime-400' :
-                    mbr.type === 'agile' ? 'text-blue-400' :
-                    mbr.type === 'dire' ? 'text-red-400' :
-                    mbr.type === 'wealthy' ? 'text-yellow-400' :
-                    mbr.type === 'legendary' ? 'text-purple-400' : 'text-foreground';
-                    return (
-                      <div key={mbr.type} className="bg-secondary/30 rounded p-2 text-center">
-                        <div className={`text-[12px] font-medium ${typeColor}`}>{typeLabel}</div>
-                        <div className="text-[11px] text-muted-foreground">{mbr.encounters.toLocaleString()}회</div>
-                        <div className={`text-sm font-mono font-bold ${
-                          mbr.winRate >= 90 ? 'text-lime-400' :
-                          mbr.winRate >= 70 ? 'text-lime-400' :
-                          mbr.winRate >= 50 ? 'text-yellow-400' : 'text-red-400'
-                        }`}>
-                          {mbr.winRate.toFixed(1)}%
-                        </div>
-                        <div className="text-[11px] text-muted-foreground mt-0.5">
-                          평균 {Math.round(mbr.avgRounds)}R
-                        </div>
-                      </div>
-                    );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Per-hero results - full width detailed table */}
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
-                <>
-                  <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
-                  <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
-                    <SelectTrigger className="h-8 w-[120px] text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
-                      <SelectItem value="normal">일반</SelectItem>
-                      <SelectItem value="huge">거대한</SelectItem>
-                      <SelectItem value="agile">민첩한</SelectItem>
-                      <SelectItem value="dire">흉포한</SelectItem>
-                      <SelectItem value="wealthy">부유한</SelectItem>
-                      <SelectItem value="legendary">전설의</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </>
-              )}
-            </div>
-            {(() => {
-              // Get the hero results based on filter
-              // Priority: miniboss filter (if random mode and chosen) > outcome filter
-              let displayResults = dispSim!.heroResults;
-              if (simResultsFilter !== 'all' && dispSim!.miniBossResults) {
-                const filtered = dispSim!.miniBossResults.find(m => m.type === simResultsFilter);
-                if (filtered) {
-                  if (mainResultsTab === 'win' && filtered.winHero) displayResults = filtered.winHero;
-                  else if (mainResultsTab === 'lose' && filtered.loseHero) displayResults = filtered.loseHero;
-                  else displayResults = filtered.heroResults;
-                }
-              } else if (mainResultsTab === 'win' && dispSim!.winHeroResults) {
-                displayResults = dispSim!.winHeroResults;
-              } else if (mainResultsTab === 'lose' && dispSim!.loseHeroResults) {
-                displayResults = dispSim!.loseHeroResults;
-              }
-              const noBucket = (mainResultsTab === 'win' && !displayResults) || (mainResultsTab === 'lose' && !displayResults);
-              const zeroBucket = (mainResultsTab === 'win' && (dispSim!.winSimCount ?? 0) === 0)
-                || (mainResultsTab === 'lose' && (dispSim!.loseSimCount ?? 0) === 0);
-              if (!displayResults || displayResults.length === 0 || noBucket) {
-                return (
-                  <div className="text-center text-xs text-muted-foreground py-8">
-                    {mainResultsTab === 'win' ? '성공한 판 없음' : mainResultsTab === 'lose' ? '실패한 판 없음' : '데이터 없음'}
-                  </div>
-                );
-              }
-              return (
-                <div className="space-y-8">
-                  {/* Table 1: 대미지 + 딜링 비중 */}
-                  <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Swords className="w-4 h-4 text-foreground" />가하는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
-                    <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                      {(() => {
-                        const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                        // Party totals — use per-sim party distribution from engine when available,
-                        // bucketed by current results tab. Fallback to summed individual values.
-                        const pAgg = mainResultsTab === 'win'
-                          ? { dmg: dispSim!.winPartyDmgDealt, perTurn: dispSim!.winPartyDmgPerTurn }
-                          : mainResultsTab === 'lose'
-                          ? { dmg: dispSim!.losePartyDmgDealt, perTurn: dispSim!.losePartyDmgPerTurn }
-                          : { dmg: dispSim!.partyDmgDealt, perTurn: dispSim!.partyDmgPerTurn };
-                        const partyAvg = pAgg.dmg?.avg ?? displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
-                        const partyMin = pAgg.dmg?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
-                        const partyMax = pAgg.dmg?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
-                        const partyAvgPerTurn = pAgg.perTurn?.avg ?? displayResults.reduce((s, hr) => s + (hr.avgDamagePerTurn || 0), 0);
-                        const partyMinPerTurn = pAgg.perTurn?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamagePerTurn || 0), 0);
-                        const partyMaxPerTurn = pAgg.perTurn?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamagePerTurn || 0), 0);
-                        const partyNormal = displayResults.reduce((s, hr) => s + hr.normalDmgDealtAvg, 0);
-                        const partyCrit = displayResults.reduce((s, hr) => s + hr.critDmgDealtAvg, 0);
-                        return (
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                        <colgroup>
-                          <col style={{ width: '110px' }} />
-                          <col style={{ width: '90px' }} /><col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
-                          <col style={{ width: '90px' }} /><col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
-                          <col style={{ width: '110px' }} /><col style={{ width: '110px' }} />
-                          <col style={{ width: '70px' }} /><col style={{ width: '110px' }} />
-                        </colgroup>
-                        <thead>
-                          <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}><GroupHeader label="전체" info={'시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}><GroupHeader label="턴" info={'시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={2}><GroupHeader label="일반 / 치명" info={'평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%).'} /></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={2}><GroupHeader label="대미지 비중" info={'전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%).'} /></th>
-                          </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">최소</th>
-                            <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
-                            <th className="text-center py-1 px-2 bg-secondary/70">최대</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">최소</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">일반</th>
-                            <th className="text-center py-1 px-2 bg-secondary/70">치명</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">비율</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">그래프</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {zeroBucket ? (
-                            <EmptyBucketRow tab={mainResultsTab} colSpan={11} />
-                          ) : (
-                          <>
-                          {displayResults.map((hr, idx) => {
-                            const dmgPct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
-                            const getContribBar = (p: number) => p >= 81 ? 'bg-lime-500' : p >= 61 ? 'bg-yellow-500' : p >= 41 ? 'bg-orange-500' : p >= 21 ? 'bg-red-500' : 'bg-purple-500';
-                            const getContribText = (p: number) => p >= 81 ? 'text-lime-400' : p >= 61 ? 'text-yellow-400' : p >= 41 ? 'text-orange-400' : p >= 21 ? 'text-red-400' : 'text-purple-400';
-                            const minPerTurn = hr.minDamagePerTurn ?? 0;
-                            const maxPerTurn = hr.maxDamagePerTurn ?? 0;
                             return (
-                              <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                {/* 전체 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{formatNumber(Math.round(hr.minDamageDealt))}</td>
-                                <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamageDealt))}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(hr.maxDamageDealt))}</td>
-                                {/* 턴 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{formatNumber(Math.round(minPerTurn))}</td>
-                                <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(hr.avgDamagePerTurn))}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(maxPerTurn))}</td>
-                                {/* Normal/Crit damage breakdown */}
-                                {(() => {
-                                  const normalPct = hr.avgDamageDealt > 0 ? (hr.normalDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
-                                  const critPct = hr.avgDamageDealt > 0 ? (hr.critDmgDealtAvg / hr.avgDamageDealt) * 100 : 0;
-                                  const normalWins = hr.normalDmgDealtAvg >= hr.critDmgDealtAvg;
-                                  const normalCls = normalWins ? 'text-red-400' : 'text-muted-foreground';
-                                  const critCls = !normalWins ? 'text-yellow-400' : 'text-muted-foreground';
-                                  return (
-                                    <>
-                                       <td className={`py-1 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${normalCls}`}>{formatNumber(Math.round(hr.normalDmgDealtAvg))} ({normalPct.toFixed(1)}%)</td>
-                                       <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${critCls}`}>{formatNumber(Math.round(hr.critDmgDealtAvg))} ({critPct.toFixed(1)}%)</td>
-                                    </>
-                                  );
-                                })()}
-                                <td className={`py-1 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${getContribText(dmgPct)}`}>{dmgPct.toFixed(1)}%</td>
-                                <td className="py-1 px-2">
-                                  <div className="w-full bg-secondary/20 rounded-full h-3 overflow-hidden">
-                                    <div className={`h-full rounded-full ${getContribBar(dmgPct)} transition-all`} style={{ width: `${dmgPct}%` }} />
+                              <>
+                                {statRows.map((stat) => (
+                                  <tr key={stat.key} className="border-b border-border/20">
+                                    <td
+                                      className={`py-1.5 px-1.5 font-medium text-sm ${(stat as any).labelColor || "text-foreground/70"}`}
+                                    >
+                                      {stat.label}
+                                    </td>
+                                    {Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                                      const hero = selectedHeroes[slotIdx];
+                                      if (!hero) return <td key={`stat-empty-${slotIdx}`} />;
+                                      const bs = buffedStats[slotIdx];
+
+                                      let val: number;
+                                      let delta = 0;
+                                      if (bs && hasBuffs) {
+                                        if ((stat as any).computed) {
+                                          val = Math.floor((bs.atk * bs.critDmg) / 100);
+                                          const rawVal = Math.floor(((hero.atk || 0) * (hero.critDmg || 0)) / 100);
+                                          delta = val - rawVal;
+                                        } else {
+                                          val = (bs as any)[stat.bKey] || 0;
+                                          delta = stat.dKey ? (bs as any)[stat.dKey] || 0 : 0;
+                                        }
+                                      } else {
+                                        val = (stat as any).computed
+                                          ? Math.floor(((hero.atk || 0) * (hero.critDmg || 0)) / 100)
+                                          : (hero as any)[stat.key] || 0;
+                                      }
+
+                                      // Retry-booster (+20% atk/def) display override
+                                      if (retryBoosterActive && bs && (stat.key === "atk" || stat.key === "def")) {
+                                        const isAtk = stat.key === "atk";
+                                        const cPct =
+                                          (hero.detailStats?.[isAtk ? "공통 공격력 계수" : "공통 방어력 계수"] ?? 0) /
+                                          100;
+                                        const baseStat = isAtk ? hero.atk || 0 : hero.def || 0;
+                                        const constant =
+                                          hero.detailStats?.[isAtk ? "공격력 상수" : "방어력 상수"] ??
+                                          (1 + cPct > 0 ? baseStat / (1 + cPct) : baseStat);
+                                        const auraFlat = isAtk ? buffSummary?.flatAtk || 0 : buffSummary?.flatDef || 0;
+                                        const bsVal = isAtk ? bs.atk : bs.def;
+                                        const partyMult = baseStat > 0 ? (bsVal - auraFlat) / baseStat : 1;
+                                        const boosted = Math.round(
+                                          constant * (1 + cPct + RETRY_BOOSTER_EXTRA) * partyMult + auraFlat,
+                                        );
+                                        delta += boosted - val;
+                                        val = boosted;
+                                      }
+
+                                      // Evasion special handling
+                                      let displayColor = stat.color;
+                                      let evasionNote = "";
+                                      let barrierNote = "";
+                                      if (stat.key === "evasion") {
+                                        const hasRockStompers =
+                                          hero.equipmentSlots?.some((s) => s.item?.name === "락 스톰퍼") || false;
+                                        const isPathfinder = (hero.heroClass || "").includes("길잡이");
+                                        const cap = isPathfinder ? 78 : 75;
+                                        if (hasRockStompers) {
+                                          val = 0;
+                                          delta = 0;
+                                        } else {
+                                          if (hasEvasionPenalty) {
+                                            val = val - 20;
+                                            delta = delta - 20;
+                                          }
+                                          if (val > cap) {
+                                            evasionNote = `(${val}%)`;
+                                            val = cap;
+                                          }
+                                        }
+                                        if (val < 0) displayColor = "text-purple-400";
+                                      }
+
+                                      // Crit chance: cap display at 100%, show raw in parentheses for Ninja/Sensei only
+                                      let critCapNote = "";
+                                      let rawCritVal = 0;
+                                      if (stat.key === "crit" && val > 100) {
+                                        rawCritVal = val;
+                                        const isNinjaSensei =
+                                          hero.heroClass === "닌자" ||
+                                          hero.heroClass === "센세" ||
+                                          hero.heroClass === "Ninja" ||
+                                          hero.heroClass === "Sensei";
+                                        if (isNinjaSensei) {
+                                          critCapNote = `(실제: ${rawCritVal}%)`;
+                                        }
+                                        val = 100;
+                                      }
+
+                                      // Barrier not broken: ATK and CRIT.DMG show 20% values
+                                      let barrierOriginal = 0;
+                                      if (!barrierBroken && (stat.key === "atk" || (stat as any).computed)) {
+                                        barrierOriginal = val;
+                                        val = Math.floor(val * 0.2);
+                                        displayColor = "text-purple-400";
+                                      }
+
+                                      return (
+                                        <td
+                                          key={hero.id}
+                                          className={`py-1.5 px-1 text-center font-mono text-sm font-bold ${displayColor}`}
+                                        >
+                                          <div className="flex flex-col items-center">
+                                            <span>
+                                              {stat.suffix
+                                                ? `${val}${stat.suffix}`
+                                                : val !== 0
+                                                  ? formatNumber(val)
+                                                  : "-"}
+                                            </span>
+                                            {barrierOriginal > 0 && (
+                                              <span className="text-[11px] text-muted-foreground leading-tight">
+                                                ({formatNumber(barrierOriginal)})
+                                              </span>
+                                            )}
+                                            {evasionNote && <span className="text-[9px]">{evasionNote}</span>}
+                                            {critCapNote && (
+                                              <span className="text-[9px] text-muted-foreground">{critCapNote}</span>
+                                            )}
+                                          </div>
+                                        </td>
+                                      );
+                                    })}
+                                  </tr>
+                                ))}
+                                {/* Targeting chance row (threat-based) */}
+                                <tr className="border-b border-border/20 bg-muted/20">
+                                  <td className="py-1.5 px-1.5 text-foreground/70 font-medium text-sm">피격 확률</td>
+                                  {(() => {
+                                    const totalThreat = selectedHeroes.reduce((sum, h) => sum + (h.threat || 1), 0);
+                                    return Array.from({ length: maxMembers }).map((_, slotIdx) => {
+                                      const hero = selectedHeroes[slotIdx];
+                                      if (!hero) return <td key={`hit-empty-${slotIdx}`} />;
+                                      const threat = hero.threat || 1;
+                                      const targetChance = totalThreat > 0 ? (threat / totalThreat) * 100 : 0;
+                                      return (
+                                        <td
+                                          key={hero.id}
+                                          className="py-1.5 px-1 text-center font-mono text-sm font-bold"
+                                        >
+                                          <span
+                                            className={
+                                              targetChance >= 40
+                                                ? "text-red-400"
+                                                : targetChance >= 25
+                                                  ? "text-yellow-400"
+                                                  : "text-lime-400"
+                                            }
+                                          >
+                                            {targetChance.toFixed(1)}%
+                                          </span>
+                                        </td>
+                                      );
+                                    });
+                                  })()}
+                                </tr>
+                              </>
+                            );
+                          })()}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* RIGHT: Main Results */}
+                <div className="w-full lg:w-80 shrink-0">
+                  {/* Main Results Header with dropdown */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <Crown className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg text-foreground font-bold">주요 결과</h3>
+                    {currentQuest && simResult && selectedHeroes.length > 0 && (
+                      <ResultTabsToggle
+                        value={mainResultsTab}
+                        onChange={(v) => setMainResultsTab(v)}
+                        retryOnly={retryOnly}
+                        onToggleRetryOnly={() => setRetryOnly((v) => !v)}
+                        hasRetry={hasRetry}
+                      />
+                    )}
+                  </div>
+
+                  {/* Skeleton / Real results */}
+                  {currentQuest && simResult && selectedHeroes.length > 0 ? (
+                    <>
+                      <div className="card-fantasy p-4 mb-3">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <Clock className="w-3.5 h-3.5 text-blue-400" />
+                          <span className="text-sm font-bold text-foreground">턴 수</span>
+                        </div>
+                        {(() => {
+                          const rounds =
+                            mainResultsTab === "win"
+                              ? dispSim!.winRounds
+                              : mainResultsTab === "lose"
+                                ? dispSim!.loseRounds
+                                : { avg: dispSim!.avgRounds, min: dispSim!.minRounds, max: dispSim!.maxRounds };
+                          if (!rounds)
+                            return (
+                              <div className="text-center text-xs text-muted-foreground py-3">
+                                {mainResultsTab === "win" ? "성공한 판 없음" : "실패한 판 없음"}
+                              </div>
+                            );
+                          return (
+                            <div className="grid grid-cols-3 gap-2 text-center">
+                              <div className="turn-stat-box rounded p-2">
+                                <div className="text-[10px] text-muted-foreground">최소</div>
+                                <div className="text-lg font-bold font-mono text-foreground">{rounds.min}</div>
+                              </div>
+                              <div className="turn-stat-box rounded p-2">
+                                <div className="text-[10px] text-muted-foreground">평균</div>
+                                <div className="text-lg font-bold font-mono text-primary">{Math.round(rounds.avg)}</div>
+                              </div>
+                              <div className="turn-stat-box rounded p-2">
+                                <div className="text-[10px] text-muted-foreground">최대</div>
+                                <div className="text-lg font-bold font-mono text-foreground">{rounds.max}</div>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                        {dispSim!.roundLimitRate > 0 &&
+                          (() => {
+                            const limitCount = Math.round(
+                              (dispSim!.roundLimitRate / 100) * (dispSim!.totalSimulations || 0),
+                            );
+                            return (
+                              <div className="mt-2 text-center text-[10px] text-red-400">
+                                ⚠ 라운드 제한 도달: {dispSim!.roundLimitRate.toFixed(1)}% ({limitCount}판)
+                              </div>
+                            );
+                          })()}
+                      </div>
+
+                      {/* Damage Contribution */}
+                      <div className="card-fantasy p-4 mb-3">
+                        <div className="flex items-center gap-1.5 mb-3">
+                          <Swords className="w-3.5 h-3.5 text-red-400" />
+                          <span className="text-sm font-bold text-foreground">대미지 기여도</span>
+                        </div>
+                        {(() => {
+                          const bucketResults =
+                            mainResultsTab === "win" && dispSim!.winHeroResults
+                              ? dispSim!.winHeroResults
+                              : mainResultsTab === "lose" && dispSim!.loseHeroResults
+                                ? dispSim!.loseHeroResults
+                                : dispSim!.heroResults;
+                          const totalDmg = bucketResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
+                          const sorted = [...bucketResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
+                          const getBarColor = (pct: number) =>
+                            pct >= 81
+                              ? "bg-lime-500"
+                              : pct >= 61
+                                ? "bg-yellow-500"
+                                : pct >= 41
+                                  ? "bg-orange-500"
+                                  : pct >= 21
+                                    ? "bg-red-500"
+                                    : "bg-purple-500";
+                          const getTextColor = (pct: number) =>
+                            pct >= 81
+                              ? "text-lime-400"
+                              : pct >= 61
+                                ? "text-yellow-400"
+                                : pct >= 41
+                                  ? "text-orange-400"
+                                  : pct >= 21
+                                    ? "text-red-400"
+                                    : "text-purple-400";
+                          return (
+                            <div className="space-y-2">
+                              {sorted.map((hr) => {
+                                const pct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
+                                return (
+                                  <div key={hr.heroId}>
+                                    <div className="flex items-center justify-between mb-0.5">
+                                      <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">
+                                        {hr.heroName}
+                                      </span>
+                                      <span className={`text-[11px] font-mono ${getTextColor(pct)}`}>
+                                        {pct.toFixed(1)}%
+                                      </span>
+                                    </div>
+                                    <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
+                                      <div
+                                        className={`h-full rounded-full ${getBarColor(pct)} transition-all`}
+                                        style={{ width: `${pct}%` }}
+                                      />
+                                    </div>
                                   </div>
-                                </td>
-                              </tr>
+                                );
+                              })}
+                            </div>
+                          );
+                        })()}
+                      </div>
+
+                      {/* Tanking Contribution */}
+                      <div className="card-fantasy p-4 mb-3">
+                        <div className="flex items-center gap-1.5 mb-3">
+                          <Shield className="w-3.5 h-3.5 text-blue-400" />
+                          <span className="text-sm font-bold text-foreground">탱킹 기여도</span>
+                        </div>
+                        {(() => {
+                          const bucketResults =
+                            mainResultsTab === "win" && dispSim!.winHeroResults
+                              ? dispSim!.winHeroResults
+                              : mainResultsTab === "lose" && dispSim!.loseHeroResults
+                                ? dispSim!.loseHeroResults
+                                : dispSim!.heroResults;
+                          const sorted = [...bucketResults].sort((a, b) => b.tankingRate - a.tankingRate);
+                          const getBarColor = (pct: number) =>
+                            pct >= 81
+                              ? "bg-lime-500"
+                              : pct >= 61
+                                ? "bg-yellow-500"
+                                : pct >= 41
+                                  ? "bg-orange-500"
+                                  : pct >= 21
+                                    ? "bg-red-500"
+                                    : "bg-purple-500";
+                          const getTextColor = (pct: number) =>
+                            pct >= 81
+                              ? "text-lime-400"
+                              : pct >= 61
+                                ? "text-yellow-400"
+                                : pct >= 41
+                                  ? "text-orange-400"
+                                  : pct >= 21
+                                    ? "text-red-400"
+                                    : "text-purple-400";
+                          return (
+                            <div className="space-y-2">
+                              {sorted.map((hr) => (
+                                <div key={hr.heroId}>
+                                  <div className="flex items-center justify-between mb-0.5">
+                                    <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">
+                                      {hr.heroName}
+                                    </span>
+                                    <span className={`text-[11px] font-mono ${getTextColor(hr.tankingRate)}`}>
+                                      {hr.tankingRate.toFixed(1)}%
+                                    </span>
+                                  </div>
+                                  <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
+                                    <div
+                                      className={`h-full rounded-full ${getBarColor(hr.tankingRate)} transition-all`}
+                                      style={{ width: `${hr.tankingRate}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
+                      </div>
+
+                      {/* Equipment Grade Score */}
+                      <div className="card-fantasy p-4 mb-3">
+                        <div className="flex items-center gap-1.5 mb-3">
+                          <Shirt className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
+                          <span className="text-sm font-bold text-foreground">장비 등급</span>
+                        </div>
+                        {(() => {
+                          const qualityScore: Record<string, number> = {
+                            common: 1,
+                            uncommon: 1.25,
+                            flawless: 1.5,
+                            epic: 2,
+                            legendary: 3,
+                            일반: 1,
+                            고급: 1.25,
+                            최고급: 1.5,
+                            에픽: 2,
+                            전설: 3,
+                          };
+                          const heroGrades = selectedHeroes.map((h) => {
+                            const slots = h.equipmentSlots || [];
+                            const maxSlots = h.type === "champion" ? 2 : 6;
+                            let totalScore = 0;
+                            let equipped = 0;
+                            slots.forEach((s) => {
+                              if (s.item) {
+                                equipped++;
+                                totalScore += qualityScore[s.quality] || 1;
+                              }
+                            });
+                            const avg = equipped > 0 ? totalScore / equipped : 0;
+                            return { name: h.name, avg, equipped, maxSlots };
+                          });
+                          const partyTotal = heroGrades.reduce((s, g) => s + g.avg, 0);
+                          const partyAvg = heroGrades.length > 0 ? partyTotal / heroGrades.length : 0;
+                          const getGradeColor = (score: number) =>
+                            score >= 2.5
+                              ? "text-yellow-400"
+                              : score >= 2
+                                ? "text-fuchsia-400"
+                                : score >= 1.5
+                                  ? "text-cyan-400"
+                                  : score >= 1.25
+                                    ? "text-lime-400"
+                                    : "text-gray-400";
+                          const getBarColor = (score: number) =>
+                            score >= 2.5
+                              ? "bg-yellow-500"
+                              : score >= 2
+                                ? "bg-fuchsia-500"
+                                : score >= 1.5
+                                  ? "bg-cyan-500"
+                                  : score >= 1.25
+                                    ? "bg-lime-500"
+                                    : "bg-gray-400";
+                          return (
+                            <div className="space-y-2">
+                              {heroGrades.map((g) => (
+                                <div key={g.name}>
+                                  <div className="flex items-center justify-between mb-0.5">
+                                    <span className="text-[11px] text-foreground font-medium truncate max-w-[120px]">
+                                      {g.name}
+                                    </span>
+                                    <span className={`text-[11px] font-mono ${getGradeColor(g.avg)}`}>
+                                      {g.avg > 0 ? g.avg.toFixed(2) : "-"}
+                                      <span className="text-muted-foreground/60 ml-1">
+                                        ({g.equipped}/{g.maxSlots})
+                                      </span>
+                                    </span>
+                                  </div>
+                                  <div className="w-full bg-secondary/30 rounded-full h-3 overflow-hidden">
+                                    <div
+                                      className={`h-full rounded-full ${getBarColor(g.avg)} transition-all`}
+                                      style={{ width: `${Math.min(100, (g.avg / 3) * 100)}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                              <div className="border-t border-border/30 pt-2 mt-2">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[11px] text-foreground font-bold">파티 평균</span>
+                                  <span className={`text-sm font-mono font-bold ${getGradeColor(partyAvg)}`}>
+                                    {partyAvg > 0 ? partyAvg.toFixed(2) : "-"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </>
+                  ) : (
+                    /* Skeleton frame before simulation */
+                    <>
+                      <div className="card-fantasy p-4 mb-3">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <Clock className="w-3.5 h-3.5 text-muted-foreground/40" />
+                          <span className="text-sm font-bold text-muted-foreground/40">턴 수</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                          {["최소", "평균", "최대"].map((label) => (
+                            <div key={label} className="bg-secondary/20 rounded p-2">
+                              <div className="text-[10px] text-muted-foreground/40">{label}</div>
+                              <div className="text-lg font-bold font-mono text-muted-foreground/20">-</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="card-fantasy p-4 mb-3">
+                        <div className="flex items-center gap-1.5 mb-3">
+                          <Swords className="w-3.5 h-3.5 text-muted-foreground/30" />
+                          <span className="text-sm font-bold text-muted-foreground/30">대미지 기여도</span>
+                        </div>
+                        <div className="space-y-3">
+                          {[1, 2, 3].map((i) => (
+                            <div key={i}>
+                              <div className="h-3 w-16 bg-secondary/20 rounded mb-1" />
+                              <div className="w-full bg-secondary/20 rounded-full h-3" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="card-fantasy p-4 mb-3">
+                        <div className="flex items-center gap-1.5 mb-3">
+                          <Shield className="w-3.5 h-3.5 text-muted-foreground/30" />
+                          <span className="text-sm font-bold text-muted-foreground/30">탱킹 기여도</span>
+                        </div>
+                        <div className="space-y-3">
+                          {[1, 2, 3].map((i) => (
+                            <div key={i}>
+                              <div className="h-3 w-16 bg-secondary/20 rounded mb-1" />
+                              <div className="w-full bg-secondary/20 rounded-full h-3" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Full-width Simulation Details Box */}
+              {currentQuest && selectedHeroes.length > 0 && simResult && (
+                <>
+                  <div className="flex items-center gap-2 mt-4 mb-3">
+                    <ListChecks className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg text-foreground font-bold">상세 정보</h3>
+                  </div>
+                  <div className="card-fantasy p-4" data-detail-info>
+                    {/* Mini-boss breakdown (only for random mode, not boss quests) */}
+                    {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
+                      <div className="mb-4">
+                        <div className="text-xs text-muted-foreground mb-2 font-medium">미니보스별 결과</div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+                          {dispSim!.miniBossResults.map((mbr) => {
+                            const typeLabel =
+                              mbr.type === "normal"
+                                ? "일반"
+                                : mbr.type === "huge"
+                                  ? "거대한"
+                                  : mbr.type === "agile"
+                                    ? "민첩한"
+                                    : mbr.type === "dire"
+                                      ? "흉포한"
+                                      : mbr.type === "wealthy"
+                                        ? "부유한"
+                                        : mbr.type === "legendary"
+                                          ? "전설의"
+                                          : mbr.type;
+                            const typeColor =
+                              mbr.type === "normal"
+                                ? "text-foreground"
+                                : mbr.type === "huge"
+                                  ? "text-lime-400"
+                                  : mbr.type === "agile"
+                                    ? "text-blue-400"
+                                    : mbr.type === "dire"
+                                      ? "text-red-400"
+                                      : mbr.type === "wealthy"
+                                        ? "text-yellow-400"
+                                        : mbr.type === "legendary"
+                                          ? "text-purple-400"
+                                          : "text-foreground";
+                            return (
+                              <div key={mbr.type} className="bg-secondary/30 rounded p-2 text-center">
+                                <div className={`text-[12px] font-medium ${typeColor}`}>{typeLabel}</div>
+                                <div className="text-[11px] text-muted-foreground">
+                                  {mbr.encounters.toLocaleString()}회
+                                </div>
+                                <div
+                                  className={`text-sm font-mono font-bold ${
+                                    mbr.winRate >= 90
+                                      ? "text-lime-400"
+                                      : mbr.winRate >= 70
+                                        ? "text-lime-400"
+                                        : mbr.winRate >= 50
+                                          ? "text-yellow-400"
+                                          : "text-red-400"
+                                  }`}
+                                >
+                                  {mbr.winRate.toFixed(1)}%
+                                </div>
+                                <div className="text-[11px] text-muted-foreground mt-0.5">
+                                  평균 {Math.round(mbr.avgRounds)}R
+                                </div>
+                              </div>
                             );
                           })}
-                          {/* Party total row */}
-                          <tr className="border-t-2 border-border/60 bg-primary/10 font-bold">
-                            <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">파티</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{formatNumber(Math.round(partyMin))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(partyAvg))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyMax))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{formatNumber(Math.round(partyMinPerTurn))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(Math.round(partyAvgPerTurn))}</td>
-                            <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(Math.round(partyMaxPerTurn))}</td>
-                            {(() => {
-                              const partyTotal = partyNormal + partyCrit;
-                              const nPct = partyTotal > 0 ? (partyNormal / partyTotal) * 100 : 0;
-                              const cPct = partyTotal > 0 ? (partyCrit / partyTotal) * 100 : 0;
-                              const normalWins = partyNormal >= partyCrit;
-                              const normalCls = normalWins ? 'text-red-400' : 'text-muted-foreground';
-                              const critCls = !normalWins ? 'text-yellow-400' : 'text-muted-foreground';
-                              return (<>
-                                <td className={`py-1.5 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${normalCls}`}>{formatNumber(Math.round(partyNormal))} ({nPct.toFixed(1)}%)</td>
-                                <td className={`py-1.5 px-2 text-center font-mono whitespace-nowrap ${critCls}`}>{formatNumber(Math.round(partyCrit))} ({cPct.toFixed(1)}%)</td>
-                              </>);
-                            })()}
-                            <td className="py-1.5 px-2 border-l-2 border-primary/40" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
-                            <td className="py-1.5 px-2" style={{ background: 'transparent', borderColor: 'transparent' }}></td>
-                          </tr>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Per-hero results - full width detailed table */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        {!isBossQuest && dispSim!.miniBossResults && dispSim!.miniBossResults.length > 0 && (
+                          <>
+                            <span className="text-xs text-muted-foreground font-medium">미니보스 결과</span>
+                            <Select value={simResultsFilter} onValueChange={setSimResultsFilter}>
+                              <SelectTrigger className="h-8 w-[120px] text-xs font-bold border-2 border-primary/60 bg-primary/10 text-foreground hover:bg-primary/20 transition-colors shadow-sm">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">전체</SelectItem>
+                                <SelectItem value="normal">일반</SelectItem>
+                                <SelectItem value="huge">거대한</SelectItem>
+                                <SelectItem value="agile">민첩한</SelectItem>
+                                <SelectItem value="dire">흉포한</SelectItem>
+                                <SelectItem value="wealthy">부유한</SelectItem>
+                                <SelectItem value="legendary">전설의</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </>
-                          )}
-                        </tbody>
-                      </table>
+                        )}
+                      </div>
+                      {(() => {
+                        // Get the hero results based on filter
+                        // Priority: miniboss filter (if random mode and chosen) > outcome filter
+                        let displayResults = dispSim!.heroResults;
+                        if (simResultsFilter !== "all" && dispSim!.miniBossResults) {
+                          const filtered = dispSim!.miniBossResults.find((m) => m.type === simResultsFilter);
+                          if (filtered) {
+                            if (mainResultsTab === "win" && filtered.winHero) displayResults = filtered.winHero;
+                            else if (mainResultsTab === "lose" && filtered.loseHero) displayResults = filtered.loseHero;
+                            else displayResults = filtered.heroResults;
+                          }
+                        } else if (mainResultsTab === "win" && dispSim!.winHeroResults) {
+                          displayResults = dispSim!.winHeroResults;
+                        } else if (mainResultsTab === "lose" && dispSim!.loseHeroResults) {
+                          displayResults = dispSim!.loseHeroResults;
+                        }
+                        const noBucket =
+                          (mainResultsTab === "win" && !displayResults) ||
+                          (mainResultsTab === "lose" && !displayResults);
+                        const zeroBucket =
+                          (mainResultsTab === "win" && (dispSim!.winSimCount ?? 0) === 0) ||
+                          (mainResultsTab === "lose" && (dispSim!.loseSimCount ?? 0) === 0);
+                        if (!displayResults || displayResults.length === 0 || noBucket) {
+                          return (
+                            <div className="text-center text-xs text-muted-foreground py-8">
+                              {mainResultsTab === "win"
+                                ? "성공한 판 없음"
+                                : mainResultsTab === "lose"
+                                  ? "실패한 판 없음"
+                                  : "데이터 없음"}
+                            </div>
+                          );
+                        }
+                        return (
+                          <div className="space-y-8">
+                            {/* Table 1: 대미지 + 딜링 비중 */}
+                            <div>
+                              <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1">
+                                <Swords className="w-4 h-4 text-foreground" />
+                                가하는 대미지
+                                <ResultTabsToggle
+                                  value={mainResultsTab}
+                                  onChange={(v) => setMainResultsTab(v)}
+                                  retryOnly={retryOnly}
+                                  onToggleRetryOnly={() => setRetryOnly((v) => !v)}
+                                  hasRetry={hasRetry}
+                                />
+                              </div>
+                              <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                {(() => {
+                                  const totalDmg = displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
+                                  // Party totals — use per-sim party distribution from engine when available,
+                                  // bucketed by current results tab. Fallback to summed individual values.
+                                  const pAgg =
+                                    mainResultsTab === "win"
+                                      ? { dmg: dispSim!.winPartyDmgDealt, perTurn: dispSim!.winPartyDmgPerTurn }
+                                      : mainResultsTab === "lose"
+                                        ? { dmg: dispSim!.losePartyDmgDealt, perTurn: dispSim!.losePartyDmgPerTurn }
+                                        : { dmg: dispSim!.partyDmgDealt, perTurn: dispSim!.partyDmgPerTurn };
+                                  const partyAvg =
+                                    pAgg.dmg?.avg ?? displayResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
+                                  const partyMin =
+                                    pAgg.dmg?.min ?? displayResults.reduce((s, hr) => s + (hr.minDamageDealt || 0), 0);
+                                  const partyMax =
+                                    pAgg.dmg?.max ?? displayResults.reduce((s, hr) => s + (hr.maxDamageDealt || 0), 0);
+                                  const partyAvgPerTurn =
+                                    pAgg.perTurn?.avg ??
+                                    displayResults.reduce((s, hr) => s + (hr.avgDamagePerTurn || 0), 0);
+                                  const partyMinPerTurn =
+                                    pAgg.perTurn?.min ??
+                                    displayResults.reduce((s, hr) => s + (hr.minDamagePerTurn || 0), 0);
+                                  const partyMaxPerTurn =
+                                    pAgg.perTurn?.max ??
+                                    displayResults.reduce((s, hr) => s + (hr.maxDamagePerTurn || 0), 0);
+                                  const partyNormal = displayResults.reduce((s, hr) => s + hr.normalDmgDealtAvg, 0);
+                                  const partyCrit = displayResults.reduce((s, hr) => s + hr.critDmgDealtAvg, 0);
+                                  return (
+                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                      <colgroup>
+                                        <col style={{ width: "110px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        <col style={{ width: "110px" }} />
+                                        <col style={{ width: "110px" }} />
+                                        <col style={{ width: "70px" }} />
+                                        <col style={{ width: "110px" }} />
+                                      </colgroup>
+                                      <thead>
+                                        <tr className="border-b-2 border-border/60">
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap"
+                                            rowSpan={2}
+                                          ></th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={3}
+                                          >
+                                            <GroupHeader
+                                              label="전체"
+                                              info={"시뮬레이션 1회당 총 가한 대미지의 분포(최소 / 평균 / 최대)."}
+                                            />
+                                          </th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={3}
+                                          >
+                                            <GroupHeader
+                                              label="턴"
+                                              info={
+                                                "시뮬레이션 1회당 평균 턴당 가한 대미지의 분포(최소 / 평균 / 최대)."
+                                              }
+                                            />
+                                          </th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={2}
+                                          >
+                                            <GroupHeader
+                                              label="일반 / 치명"
+                                              info={
+                                                "평균 일반 대미지 / 평균 치명 대미지 (옆 괄호 = 전체 가한 대미지 중 비중%)."
+                                              }
+                                            />
+                                          </th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={2}
+                                          >
+                                            <GroupHeader
+                                              label="대미지 비중"
+                                              info={"전체 파티 가한 대미지 중 해당 파티원이 차지한 비율(%)."}
+                                            />
+                                          </th>
+                                        </tr>
+                                        <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">
+                                            최소
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
+                                          <th className="text-center py-1 px-2 bg-secondary/70">최대</th>
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">
+                                            최소
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">
+                                            일반
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/70">치명</th>
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">
+                                            비율
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">그래프</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {zeroBucket ? (
+                                          <EmptyBucketRow tab={mainResultsTab} colSpan={11} />
+                                        ) : (
+                                          <>
+                                            {displayResults.map((hr, idx) => {
+                                              const dmgPct = totalDmg > 0 ? (hr.avgDamageDealt / totalDmg) * 100 : 0;
+                                              const getContribBar = (p: number) =>
+                                                p >= 81
+                                                  ? "bg-lime-500"
+                                                  : p >= 61
+                                                    ? "bg-yellow-500"
+                                                    : p >= 41
+                                                      ? "bg-orange-500"
+                                                      : p >= 21
+                                                        ? "bg-red-500"
+                                                        : "bg-purple-500";
+                                              const getContribText = (p: number) =>
+                                                p >= 81
+                                                  ? "text-lime-400"
+                                                  : p >= 61
+                                                    ? "text-yellow-400"
+                                                    : p >= 41
+                                                      ? "text-orange-400"
+                                                      : p >= 21
+                                                        ? "text-red-400"
+                                                        : "text-purple-400";
+                                              const minPerTurn = hr.minDamagePerTurn ?? 0;
+                                              const maxPerTurn = hr.maxDamagePerTurn ?? 0;
+                                              return (
+                                                <tr
+                                                  key={hr.heroId}
+                                                  className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                >
+                                                  <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">
+                                                    {hr.heroName}
+                                                  </td>
+                                                  {/* 전체 */}
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                    {formatNumber(Math.round(hr.minDamageDealt))}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                    {formatNumber(Math.round(hr.avgDamageDealt))}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                    {formatNumber(Math.round(hr.maxDamageDealt))}
+                                                  </td>
+                                                  {/* 턴 */}
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                    {formatNumber(Math.round(minPerTurn))}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                    {formatNumber(Math.round(hr.avgDamagePerTurn))}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                    {formatNumber(Math.round(maxPerTurn))}
+                                                  </td>
+                                                  {/* Normal/Crit damage breakdown */}
+                                                  {(() => {
+                                                    const normalPct =
+                                                      hr.avgDamageDealt > 0
+                                                        ? (hr.normalDmgDealtAvg / hr.avgDamageDealt) * 100
+                                                        : 0;
+                                                    const critPct =
+                                                      hr.avgDamageDealt > 0
+                                                        ? (hr.critDmgDealtAvg / hr.avgDamageDealt) * 100
+                                                        : 0;
+                                                    const normalWins = hr.normalDmgDealtAvg >= hr.critDmgDealtAvg;
+                                                    const normalCls = normalWins
+                                                      ? "text-red-400"
+                                                      : "text-muted-foreground";
+                                                    const critCls = !normalWins
+                                                      ? "text-yellow-400"
+                                                      : "text-muted-foreground";
+                                                    return (
+                                                      <>
+                                                        <td
+                                                          className={`py-1 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${normalCls}`}
+                                                        >
+                                                          {formatNumber(Math.round(hr.normalDmgDealtAvg))} (
+                                                          {normalPct.toFixed(1)}%)
+                                                        </td>
+                                                        <td
+                                                          className={`py-1 px-2 text-center font-mono whitespace-nowrap ${critCls}`}
+                                                        >
+                                                          {formatNumber(Math.round(hr.critDmgDealtAvg))} (
+                                                          {critPct.toFixed(1)}%)
+                                                        </td>
+                                                      </>
+                                                    );
+                                                  })()}
+                                                  <td
+                                                    className={`py-1 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${getContribText(dmgPct)}`}
+                                                  >
+                                                    {dmgPct.toFixed(1)}%
+                                                  </td>
+                                                  <td className="py-1 px-2">
+                                                    <div className="w-full bg-secondary/20 rounded-full h-3 overflow-hidden">
+                                                      <div
+                                                        className={`h-full rounded-full ${getContribBar(dmgPct)} transition-all`}
+                                                        style={{ width: `${dmgPct}%` }}
+                                                      />
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              );
+                                            })}
+                                            {/* Party total row */}
+                                            <tr className="border-t-2 border-border/60 bg-primary/10 font-bold">
+                                              <td className="py-1.5 px-2 text-center text-foreground whitespace-nowrap">
+                                                파티
+                                              </td>
+                                              <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                {formatNumber(Math.round(partyMin))}
+                                              </td>
+                                              <td className="py-1.5 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                {formatNumber(Math.round(partyAvg))}
+                                              </td>
+                                              <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                {formatNumber(Math.round(partyMax))}
+                                              </td>
+                                              <td className="py-1.5 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                {formatNumber(Math.round(partyMinPerTurn))}
+                                              </td>
+                                              <td className="py-1.5 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                {formatNumber(Math.round(partyAvgPerTurn))}
+                                              </td>
+                                              <td className="py-1.5 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                {formatNumber(Math.round(partyMaxPerTurn))}
+                                              </td>
+                                              {(() => {
+                                                const partyTotal = partyNormal + partyCrit;
+                                                const nPct = partyTotal > 0 ? (partyNormal / partyTotal) * 100 : 0;
+                                                const cPct = partyTotal > 0 ? (partyCrit / partyTotal) * 100 : 0;
+                                                const normalWins = partyNormal >= partyCrit;
+                                                const normalCls = normalWins ? "text-red-400" : "text-muted-foreground";
+                                                const critCls = !normalWins
+                                                  ? "text-yellow-400"
+                                                  : "text-muted-foreground";
+                                                return (
+                                                  <>
+                                                    <td
+                                                      className={`py-1.5 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${normalCls}`}
+                                                    >
+                                                      {formatNumber(Math.round(partyNormal))} ({nPct.toFixed(1)}%)
+                                                    </td>
+                                                    <td
+                                                      className={`py-1.5 px-2 text-center font-mono whitespace-nowrap ${critCls}`}
+                                                    >
+                                                      {formatNumber(Math.round(partyCrit))} ({cPct.toFixed(1)}%)
+                                                    </td>
+                                                  </>
+                                                );
+                                              })()}
+                                              <td
+                                                className="py-1.5 px-2 border-l-2 border-primary/40"
+                                                style={{ background: "transparent", borderColor: "transparent" }}
+                                              ></td>
+                                              <td
+                                                className="py-1.5 px-2"
+                                                style={{ background: "transparent", borderColor: "transparent" }}
+                                              ></td>
+                                            </tr>
+                                          </>
+                                        )}
+                                      </tbody>
+                                    </table>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+
+                            {/* (Removed Table 1.5: 특수 대미지 — 데이터는 특수 정보 그룹으로 이동) */}
+
+                            {/* Table 2: 생존 — 생존률 / 턴 / 남은 체력(필터) / 타겟팅 / 치명타 생존 / 회복 */}
+                            {(() => {
+                              // Bucket selector for remaining HP based on mainResultsTab
+                              const hpKey =
+                                mainResultsTab === "win" ? "win" : mainResultsTab === "lose" ? "lose" : "all";
+                              return (
+                                <div>
+                                  <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2">
+                                    <span className="flex items-center gap-1">
+                                      <Heart className="w-4 h-4 text-foreground" />
+                                      생존
+                                    </span>
+                                    <ResultTabsToggle
+                                      value={mainResultsTab}
+                                      onChange={(v) => setMainResultsTab(v)}
+                                      retryOnly={retryOnly}
+                                      onToggleRetryOnly={() => setRetryOnly((v) => !v)}
+                                      hasRetry={hasRetry}
+                                    />
+                                  </div>
+                                  <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                      <colgroup>
+                                        <col style={{ width: "110px" }} />
+                                        {/* 기본: 생존률 */}
+                                        <col style={{ width: "90px" }} />
+                                        {/* 턴: 최소/평균/최대/라운드 도달 */}
+                                        <col style={{ width: "75px" }} />
+                                        <col style={{ width: "80px" }} />
+                                        <col style={{ width: "75px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        {/* 남은 체력: min/avg/max */}
+                                        <col style={{ width: "85px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        <col style={{ width: "85px" }} />
+                                        {/* 타겟팅: 위협도, 실제, 회피 */}
+                                        <col style={{ width: "85px" }} />
+                                        <col style={{ width: "85px" }} />
+                                        <col style={{ width: "85px" }} />
+                                        {/* 치명타 생존: 확률, 발동 비율 */}
+                                        <col style={{ width: "85px" }} />
+                                        <col style={{ width: "90px" }} />
+                                        {/* 회복: 턴, 전체 평균 */}
+                                        <col style={{ width: "85px" }} />
+                                        <col style={{ width: "95px" }} />
+                                      </colgroup>
+                                      <thead>
+                                        <tr className="border-b-2 border-border/60">
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap"
+                                            rowSpan={2}
+                                          ></th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={1}
+                                          >
+                                            <GroupHeader
+                                              label="기본"
+                                              info={"생존률 — 전체 시뮬레이션 중 끝까지 생존한 비율(%)."}
+                                            />
+                                          </th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={4}
+                                          >
+                                            <GroupHeader
+                                              label="생존 턴"
+                                              info={
+                                                "각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한에 도달했음에도 살아있어 종료된 시뮬레이션의 비율."
+                                              }
+                                            />
+                                          </th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={3}
+                                          >
+                                            <GroupHeader
+                                              label="남은 체력"
+                                              info={
+                                                "시뮬레이션 종료 시 남은 HP의 분포 (최소 / 평균 / 최대).\n선택된 필터(전체/성공/실패)에 해당하는 판만 반영."
+                                              }
+                                            />
+                                          </th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={3}
+                                          >
+                                            <GroupHeader
+                                              label="타겟팅"
+                                              info={
+                                                "· 위협도: 위협도 기반 단일 공격 피격 확률.\n· 실제: 실제 단일 공격을 받은 비율 (= 탱킹 기여도). 마지막 1인이 남는 시점까지의 단일공격 가능 턴이 분모.\n· 회피: 단일+광역 공격 중 회피한 비율."
+                                              }
+                                            />
+                                          </th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={2}
+                                          >
+                                            <GroupHeader
+                                              label="치명타 생존"
+                                              info={
+                                                "· 확률: 치명타 생존 발동 확률 (스탯 기준).\n· 발동 비율: 전체 시뮬레이션 중 치명타 생존이 한 번이라도 발동된 판의 비율."
+                                              }
+                                            />
+                                          </th>
+                                          <th
+                                            className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                            colSpan={2}
+                                          >
+                                            <GroupHeader
+                                              label="회복"
+                                              info={
+                                                "· 턴: 매턴 실제 체력 재생 수치 (영혼/스킬 매턴체력회복(도마뱀·불사조·우로보로스·클레릭·비숍 등) + 오라의 노래 매턴회복 + 챔피언 회복(릴루 등) 합산).\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량."
+                                              }
+                                            />
+                                          </th>
+                                        </tr>
+                                        <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">
+                                            생존률
+                                          </th>
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">
+                                            최소
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">라운드 제한</th>
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">
+                                            최소
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
+                                          <th className="text-center py-1 px-2 bg-secondary/70">최대</th>
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">
+                                            위협도
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">실제</th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">회피</th>
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">
+                                            확률
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/70">발동 비율</th>
+                                          <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">
+                                            턴
+                                          </th>
+                                          <th className="text-center py-1 px-2 bg-secondary/20">전체 평균</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {zeroBucket ? (
+                                          <EmptyBucketRow tab={mainResultsTab} colSpan={16} />
+                                        ) : (
+                                          <>
+                                            {displayResults.map((hr, idx) => {
+                                              const blank = "";
+                                              const fadeZero = (s: string, isZero: boolean) =>
+                                                isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
+                                              const csChance = hr.critSurvivalChance ?? 0;
+                                              const csApply = hr.critSurvivalApplyRate ?? 0;
+                                              const heal = hr.totalHealingAvg || 0;
+                                              const healT = hr.healPerTurn || 0;
+                                              // HP based on filter
+                                              const hpMin =
+                                                hpKey === "win"
+                                                  ? (hr.winHpRemainMin ?? 0)
+                                                  : hpKey === "lose"
+                                                    ? (hr.loseHpRemainMin ?? 0)
+                                                    : (hr.overallHpRemainMin ?? 0);
+                                              const hpAvg =
+                                                hpKey === "win"
+                                                  ? (hr.winHpRemainAvg ?? 0)
+                                                  : hpKey === "lose"
+                                                    ? (hr.loseHpRemainAvg ?? 0)
+                                                    : (hr.overallHpRemainAvg ?? 0);
+                                              const hpMax =
+                                                hpKey === "win"
+                                                  ? (hr.winHpRemainMax ?? 0)
+                                                  : hpKey === "lose"
+                                                    ? (hr.loseHpRemainMax ?? 0)
+                                                    : (hr.overallHpRemainMax ?? 0);
+                                              const aMin = hr.aliveTurnsMin ?? 0;
+                                              const aAvg = hr.aliveTurnsAvg ?? 0;
+                                              const aMax = hr.aliveTurnsMax ?? 0;
+                                              const aLimit = hr.roundLimitAliveRate ?? 0;
+                                              return (
+                                                <tr
+                                                  key={hr.heroId}
+                                                  className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                >
+                                                  <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">
+                                                    {hr.heroName}
+                                                  </td>
+                                                  {/* 기본: 생존률 */}
+                                                  <td
+                                                    className={`py-1 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${
+                                                      hr.survivalRate >= 90
+                                                        ? "text-lime-400"
+                                                        : hr.survivalRate >= 50
+                                                          ? "text-yellow-400"
+                                                          : "text-red-400"
+                                                    }`}
+                                                  >
+                                                    {(hr.survivalRate >= 100
+                                                      ? 100
+                                                      : Math.floor(hr.survivalRate * 10) / 10
+                                                    ).toFixed(1)}
+                                                    %
+                                                  </td>
+                                                  {/* 턴 */}
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                    {aAvg > 0 ? formatNumber(aMin) : blank}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                    {aAvg > 0 ? aAvg.toFixed(1) : blank}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                    {aAvg > 0 ? formatNumber(aMax) : blank}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono whitespace-nowrap">
+                                                    {fadeZero(`${aLimit.toFixed(1)}%`, aLimit === 0)}
+                                                  </td>
+                                                  {/* 남은 체력 */}
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                    {hpAvg > 0 ? formatNumber(hpMin) : blank}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                    {hpAvg > 0 ? formatNumber(hpAvg) : blank}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                    {hpAvg > 0 ? formatNumber(hpMax) : blank}
+                                                  </td>
+                                                  {/* 타겟팅 */}
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                    {fadeZero(
+                                                      `${hr.targetingRate.toFixed(1)}%`,
+                                                      hr.targetingRate === 0,
+                                                    )}
+                                                  </td>
+                                                  {(() => {
+                                                    const tr = hr.singleTargetRate ?? 0;
+                                                    const tankText =
+                                                      tr >= 81
+                                                        ? "text-lime-400"
+                                                        : tr >= 61
+                                                          ? "text-yellow-400"
+                                                          : tr >= 41
+                                                            ? "text-orange-400"
+                                                            : tr >= 21
+                                                              ? "text-red-400"
+                                                              : "text-purple-400";
+                                                    return (
+                                                      <td
+                                                        className={`py-1 px-2 text-center font-mono whitespace-nowrap ${tr === 0 ? "text-muted-foreground" : tankText}`}
+                                                      >
+                                                        {fadeZero(`${tr.toFixed(1)}%`, tr === 0)}
+                                                      </td>
+                                                    );
+                                                  })()}
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                    {fadeZero(`${hr.evasionRate.toFixed(1)}%`, hr.evasionRate === 0)}
+                                                  </td>
+                                                  {/* 치명타 생존 */}
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                    {fadeZero(`${Math.round(csChance)}%`, csChance === 0)}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                    {fadeZero(`${csApply.toFixed(1)}%`, csApply === 0)}
+                                                  </td>
+                                                  {/* 회복 */}
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                    {healT > 0 ? formatNumber(Math.round(healT)) : blank}
+                                                  </td>
+                                                  <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                    {heal > 0 ? formatNumber(Math.round(heal)) : blank}
+                                                  </td>
+                                                </tr>
+                                              );
+                                            })}
+                                          </>
+                                        )}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              );
+                            })()}
+
+                            {/* Table 3: 받는 대미지 — 전체(단일+광역) / 단일+광역 합본 */}
+                            <div>
+                              <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1">
+                                <Shield className="w-4 h-4 text-foreground" />
+                                받는 대미지
+                                <ResultTabsToggle
+                                  value={mainResultsTab}
+                                  onChange={(v) => setMainResultsTab(v)}
+                                  retryOnly={retryOnly}
+                                  onToggleRetryOnly={() => setRetryOnly((v) => !v)}
+                                  hasRetry={hasRetry}
+                                />
+                              </div>
+                              {(() => {
+                                const blank = "";
+                                const fadeZero = (s: string, isZero: boolean) =>
+                                  isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
+                                // Party-level distributions (true sim-based)
+                                const pTaken =
+                                  mainResultsTab === "win"
+                                    ? dispSim!.winPartyDmgTaken
+                                    : mainResultsTab === "lose"
+                                      ? dispSim!.losePartyDmgTaken
+                                      : dispSim!.partyDmgTaken;
+                                const pTakenT =
+                                  mainResultsTab === "win"
+                                    ? dispSim!.winPartyDmgTakenPerTurn
+                                    : mainResultsTab === "lose"
+                                      ? dispSim!.losePartyDmgTakenPerTurn
+                                      : dispSim!.partyDmgTakenPerTurn;
+                                const partyTakenAvg =
+                                  pTaken?.avg ?? displayResults.reduce((s, hr) => s + (hr.totalDamageTakenAvg || 0), 0);
+                                const partyTakenMin = pTaken?.min ?? 0;
+                                const partyTakenMax = pTaken?.max ?? 0;
+                                const partyTakenAvgT =
+                                  pTakenT?.avg ??
+                                  displayResults.reduce((s, hr) => s + (hr.avgDamageTakenPerTurn || 0), 0);
+                                const partyTakenMinT = pTakenT?.min ?? 0;
+                                const partyTakenMaxT = pTakenT?.max ?? 0;
+
+                                // Monster raw atk/aoe (rounded)
+                                const monAtk = currentQuest?.atk || 0;
+                                const monAoe = currentQuest?.aoe || 0;
+
+                                // ─── Table 3-A: 전체 ───
+                                // Layout: name | [기본: 단일 raw, 광역 raw, 보정%, 단일 일반, 단일 치명, 광역 일반] | 받은 대미지 (전체) [min,avg,max]
+                                const renderTotalTable = () => (
+                                  <div className="mb-4">
+                                    <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 전체</div>
+                                    <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                        <colgroup>
+                                          <col style={{ width: "110px" }} />
+                                          {/* 기본: 단일 raw, 광역 raw, 보정, 단일 일반, 단일 치명, 광역 일반 */}
+                                          <col style={{ width: "85px" }} />
+                                          <col style={{ width: "85px" }} />
+                                          <col style={{ width: "80px" }} />
+                                          <col style={{ width: "90px" }} />
+                                          <col style={{ width: "90px" }} />
+                                          <col style={{ width: "90px" }} />
+                                          {/* 받은 대미지 (전체): min/avg/max */}
+                                          <col style={{ width: "90px" }} />
+                                          <col style={{ width: "95px" }} />
+                                          <col style={{ width: "90px" }} />
+                                        </colgroup>
+                                        <thead>
+                                          <tr className="border-b-2 border-border/60">
+                                            <th
+                                              className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap"
+                                              rowSpan={2}
+                                            ></th>
+                                            <th
+                                              className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                              colSpan={6}
+                                            >
+                                              <GroupHeader
+                                                label="기본"
+                                                info={
+                                                  "· 단일: 몬스터의 단일 공격력(원본).\n· 광역: 몬스터의 광역 공격력(원본).\n· 보정: 방어력으로 인한 대미지 적용률(%).\n· 단일 일반/치명: 단일 공격에서 일반/치명 평균 받은 대미지.\n· 광역 일반: 광역 공격에서 평균 받은 대미지(광역은 치명 없음)."
+                                                }
+                                              />
+                                            </th>
+                                            <th
+                                              className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                              colSpan={3}
+                                            >
+                                              <GroupHeader
+                                                label="받은 대미지 (전체)"
+                                                info={
+                                                  "각 시뮬레이션에서 단일 / 광역 공격을 모두 합산한 총 받은 대미지 분포(최소 / 평균 / 최대). 단순 단일+광역 합이 아니라 매턴 실제로 발생한 대미지를 반영함. 헴마 자해 대미지 포함."
+                                                }
+                                              />
+                                            </th>
+                                          </tr>
+                                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">
+                                              단일
+                                            </th>
+                                            <th className="text-center py-1 px-2 bg-secondary/70">광역</th>
+                                            <th className="text-center py-1 px-2 bg-secondary/70">보정</th>
+                                            <th className="text-center py-1 px-2 bg-secondary/70">단일 일반</th>
+                                            <th className="text-center py-1 px-2 bg-secondary/70">단일 치명</th>
+                                            <th className="text-center py-1 px-2 bg-secondary/70">광역 일반</th>
+                                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">
+                                              최소
+                                            </th>
+                                            <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
+                                            <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {zeroBucket ? (
+                                            <EmptyBucketRow tab={mainResultsTab} colSpan={10} />
+                                          ) : (
+                                            <>
+                                              {displayResults.map((hr, idx) => {
+                                                const dar = hr.damageApplicationRate || 0;
+                                                const minTotal = hr.minDamageTaken ?? 0;
+                                                const avgTotal = hr.totalDamageTakenAvg ?? 0;
+                                                const maxTotal = hr.maxDamageTaken ?? 0;
+                                                return (
+                                                  <tr
+                                                    key={hr.heroId}
+                                                    className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                  >
+                                                    <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">
+                                                      {hr.heroName}
+                                                    </td>
+                                                    {/* 단일/광역 raw cells: only show on first row (rowSpan) */}
+                                                    {idx === 0 ? (
+                                                      <td
+                                                        className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap"
+                                                        rowSpan={displayResults.length}
+                                                      >
+                                                        {monAtk > 0 ? formatNumber(monAtk) : blank}
+                                                      </td>
+                                                    ) : null}
+                                                    {idx === 0 ? (
+                                                      <td
+                                                        className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap"
+                                                        rowSpan={displayResults.length}
+                                                      >
+                                                        {monAoe > 0 ? formatNumber(monAoe) : blank}
+                                                      </td>
+                                                    ) : null}
+                                                    <td
+                                                      className="py-1 px-2 text-center font-mono whitespace-nowrap"
+                                                      style={{
+                                                        color:
+                                                          dar <= 25
+                                                            ? "hsl(var(--muted-foreground))"
+                                                            : dar <= 50
+                                                              ? "#84cc16"
+                                                              : dar <= 100
+                                                                ? "#eab308"
+                                                                : "#ef4444",
+                                                      }}
+                                                    >
+                                                      {dar > 0 ? `${dar}%` : blank}
+                                                    </td>
+                                                    {/* 단일 일반 = 원래 단일 대미지 × 보정%, 단일 치명 = 단일 일반 × 1.5, 광역 일반 = 원래 광역 대미지 × 보정% */}
+                                                    <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                      {monAtk > 0 && dar > 0
+                                                        ? formatNumber(Math.round((monAtk * dar) / 100))
+                                                        : blank}
+                                                    </td>
+                                                    <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                      {monAtk > 0 && dar > 0
+                                                        ? formatNumber(Math.round(((monAtk * dar) / 100) * 1.5))
+                                                        : blank}
+                                                    </td>
+                                                    <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                      {monAoe > 0 && dar > 0
+                                                        ? formatNumber(Math.round((monAoe * dar) / 100))
+                                                        : blank}
+                                                    </td>
+                                                    {/* 받은 대미지 전체 */}
+                                                    <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                      {avgTotal > 0 ? formatNumber(Math.round(minTotal)) : blank}
+                                                    </td>
+                                                    <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                      {avgTotal > 0 ? formatNumber(Math.round(avgTotal)) : blank}
+                                                    </td>
+                                                    <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                      {avgTotal > 0 ? formatNumber(Math.round(maxTotal)) : blank}
+                                                    </td>
+                                                  </tr>
+                                                );
+                                              })}
+                                            </>
+                                          )}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                );
+
+                                // ─── Table 3-B: 단일/광역 합본 ───
+                                // Layout: name | [단일: 받은(전체) min/avg/max + 일반%/치명%] | [광역: 받은(전체) min/avg/max]
+                                const renderSplitTable = () => {
+                                  return (
+                                    <div className="mb-4">
+                                      <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                        - 단일 / 광역
+                                      </div>
+                                      <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                        <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                          <colgroup>
+                                            <col style={{ width: "110px" }} />
+                                            <col style={{ width: "85px" }} />
+                                            <col style={{ width: "95px" }} />
+                                            <col style={{ width: "85px" }} />
+                                            <col style={{ width: "80px" }} />
+                                            <col style={{ width: "85px" }} />
+                                            <col style={{ width: "95px" }} />
+                                            <col style={{ width: "85px" }} />
+                                          </colgroup>
+                                          <thead>
+                                            <tr className="border-b-2 border-border/60">
+                                              <th
+                                                className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap"
+                                                rowSpan={2}
+                                              ></th>
+                                              <th
+                                                className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                                colSpan={4}
+                                              >
+                                                <GroupHeader
+                                                  label="단일"
+                                                  info={
+                                                    "단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 치명타 확률 = 몬스터 기본 치명타 확률에서 파티원 회피를 차감한 값(최소 5%)."
+                                                  }
+                                                />
+                                              </th>
+                                              <th
+                                                className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                                colSpan={3}
+                                              >
+                                                <GroupHeader
+                                                  label="광역"
+                                                  info={"광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음."}
+                                                />
+                                              </th>
+                                            </tr>
+                                            <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                                              <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">
+                                                최소
+                                              </th>
+                                              <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
+                                              <th className="text-center py-1 px-2 bg-secondary/70">최대</th>
+                                              <th className="text-center py-1 px-2 bg-secondary/70">치명타 확률</th>
+                                              <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">
+                                                최소
+                                              </th>
+                                              <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
+                                              <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {zeroBucket ? (
+                                              <EmptyBucketRow tab={mainResultsTab} colSpan={8} />
+                                            ) : (
+                                              <>
+                                                {displayResults.map((hr, idx) => {
+                                                  const sMin = hr.singleDmgTakenMin ?? 0;
+                                                  const sAvg = hr.singleDmgTakenAvg ?? 0;
+                                                  const sMax = hr.singleDmgTakenMax ?? 0;
+                                                  const aMin = hr.aoeDmgTakenMin ?? 0;
+                                                  const aAvg = hr.aoeDmgTakenAvg ?? 0;
+                                                  const aMax = hr.aoeDmgTakenMax ?? 0;
+                                                  // 치명타 확률 = 몬스터 기본 치확(미니보스 효과 포함) + 음수 회피 보너스(최대 +5%).
+                                                  const critProb = Math.round((hr.monsterCritChance ?? 0) * 10) / 10;
+                                                  return (
+                                                    <tr
+                                                      key={hr.heroId}
+                                                      className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                    >
+                                                      <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">
+                                                        {hr.heroName}
+                                                      </td>
+                                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                        {formatNumber(sMin)}
+                                                      </td>
+                                                      <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                        {formatNumber(sAvg)}
+                                                      </td>
+                                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                        {formatNumber(sMax)}
+                                                      </td>
+                                                      <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">
+                                                        {critProb}%
+                                                      </td>
+                                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">
+                                                        {formatNumber(aMin)}
+                                                      </td>
+                                                      <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">
+                                                        {formatNumber(aAvg)}
+                                                      </td>
+                                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
+                                                        {formatNumber(aMax)}
+                                                      </td>
+                                                    </tr>
+                                                  );
+                                                })}
+                                              </>
+                                            )}
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  );
+                                };
+
+                                return (
+                                  <>
+                                    {renderTotalTable()}
+                                    {renderSplitTable()}
+                                  </>
+                                );
+                              })()}
+                            </div>
+
+                            {/* Table 4: 특수 정보 — 항상 4개 표 (상어/공룡/헴마, 군주/정복자/닌자센세, 광전사, 폴로니아) */}
+                            {(() => {
+                              const blank = "";
+                              const fadeZero = (s: string, isZero: boolean) =>
+                                isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
+                              const partyAvgDmg = displayResults.reduce((s, hr) => s + (hr.avgDamageDealt || 0), 0);
+
+                              // ── Table A: 상어 / 공룡 / 헴마 — 항상 표시, 파티원 전체 노출 ──
+                              const hemmaRow = displayResults.find((hr) => hr.isHemmaHero);
+
+                              // ── Table B: 군주 / 정복자 / 닌자·센세 ──
+                              const lordRow = displayResults.find((hr) => hr.isLordHero);
+                              const lordProtected = lordRow ? displayResults.filter((hr) => !hr.isLordHero) : [];
+                              const conquerorRows = displayResults.filter((hr) => hr.isConquerorHero);
+                              const ninjaSenseiRows = displayResults.filter((hr) => hr.isNinjaHero || hr.isSenseiHero);
+                              const showLord = !!lordRow;
+                              const showConqueror = conquerorRows.length > 0;
+                              const showNinjaSensei = ninjaSenseiRows.length > 0;
+                              const showBerserker = displayResults.some(
+                                (hr) => hr.isBerserkerHero && hr.berserkerStageDmg,
+                              );
+                              const hasHemma = displayResults.some((hr) => hr.isHemmaHero);
+                              const hasRudo = displayResults.some((hr) => hr.isRudoInParty);
+
+                              // ── Table D: 폴로니아 도둑질 ──
+                              const poloniaLoot = dispSim!.poloniaLoot;
+                              const hasPolonia = !!poloniaLoot?.hasPolonia;
+
+                              const monAtk = currentQuest?.atk || 0;
+                              const monAoe = currentQuest?.aoe || 0;
+
+                              return (
+                                <div>
+                                  <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => setSpecialInfoOpen((v) => !v)}
+                                      className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
+                                      aria-expanded={specialInfoOpen}
+                                    >
+                                      <Info className="w-4 h-4 text-foreground" />
+                                      <span>특수 정보</span>
+                                      <span
+                                        className={`text-xs text-muted-foreground transition-transform ${specialInfoOpen ? "rotate-0" : "-rotate-90"}`}
+                                      >
+                                        ▼
+                                      </span>
+                                    </button>
+                                    <ResultTabsToggle
+                                      value={mainResultsTab}
+                                      onChange={(v) => setMainResultsTab(v)}
+                                      retryOnly={retryOnly}
+                                      onToggleRetryOnly={() => setRetryOnly((v) => !v)}
+                                      hasRetry={hasRetry}
+                                    />
+                                  </div>
+                                  {specialInfoOpen && (
+                                    <div className="space-y-6">
+                                      {/* ===== Table A: 상어 / 공룡·다이묘 — 해당 파티원만 ===== */}
+                                      {(() => {
+                                        const sharkHeroes = displayResults.filter((hr) => hr.hasSharkSpirit);
+                                        const dinoHeroes = displayResults.filter(
+                                          (hr) => hr.hasDinosaurSpirit || hr.isSamuraiOrDaimyo,
+                                        );
+                                        if (sharkHeroes.length === 0 && dinoHeroes.length === 0) return null;
+                                        return (
+                                          <div className="space-y-4">
+                                            {sharkHeroes.length > 0 && (
+                                              <div>
+                                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                                  - 상어 (영혼)
+                                                </div>
+                                                <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                                    <colgroup>
+                                                      <col style={{ width: "110px" }} />
+                                                      <col />
+                                                      <col />
+                                                      <col />
+                                                    </colgroup>
+                                                    <thead>
+                                                      <tr className="border-b-2 border-border/60">
+                                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                          파티원
+                                                        </th>
+                                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                          일반
+                                                        </th>
+                                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                          치명
+                                                        </th>
+                                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                          평균
+                                                        </th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                      {zeroBucket ? (
+                                                        <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                                      ) : (
+                                                        sharkHeroes.map((hr, idx) => {
+                                                          const avg = Math.round(
+                                                            (hr.sharkNormalDmg + hr.sharkCritDmg) / 2,
+                                                          );
+                                                          return (
+                                                            <tr
+                                                              key={`shk-${hr.heroId}`}
+                                                              className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                            >
+                                                              <td className="py-1 px-2 text-center text-foreground font-medium">
+                                                                {hr.heroName}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {formatNumber(hr.sharkNormalDmg)}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {formatNumber(hr.sharkCritDmg)}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {formatNumber(avg)}
+                                                              </td>
+                                                            </tr>
+                                                          );
+                                                        })
+                                                      )}
+                                                    </tbody>
+                                                  </table>
+                                                </div>
+                                              </div>
+                                            )}
+                                            {dinoHeroes.length > 0 && (
+                                              <div>
+                                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                                  - 공룡 / 사무라이(다이묘) (첫 턴)
+                                                </div>
+                                                <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                                    <colgroup>
+                                                      <col style={{ width: "110px" }} />
+                                                      <col />
+                                                      <col />
+                                                      <col />
+                                                    </colgroup>
+                                                    <thead>
+                                                      <tr className="border-b-2 border-border/60">
+                                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                          파티원
+                                                        </th>
+                                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                          일반
+                                                        </th>
+                                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                          치명
+                                                        </th>
+                                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                          전체 딜 비중
+                                                        </th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                      {zeroBucket ? (
+                                                        <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                                      ) : (
+                                                        dinoHeroes.map((hr, idx) => {
+                                                          const norm = hr.dinosaurNormalDmg;
+                                                          const crit = hr.dinosaurCritDmg;
+                                                          const total = norm + crit;
+                                                          const pct =
+                                                            hr.avgDamageDealt > 0
+                                                              ? (total / 2 / hr.avgDamageDealt) * 100
+                                                              : 0;
+                                                          return (
+                                                            <tr
+                                                              key={`dino-${hr.heroId}`}
+                                                              className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                            >
+                                                              <td className="py-1 px-2 text-center text-foreground font-medium">
+                                                                {hr.heroName}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {norm > 0 ? formatNumber(norm) : "-"}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {crit > 0 ? formatNumber(crit) : "-"}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {pct > 0 ? `${pct.toFixed(1)}%` : "-"}
+                                                              </td>
+                                                            </tr>
+                                                          );
+                                                        })
+                                                      )}
+                                                    </tbody>
+                                                  </table>
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        );
+                                      })()}
+
+                                      {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 해당 파티원이 있을 때만 ===== */}
+                                      {(showLord || showConqueror || showNinjaSensei) && (
+                                        <div className="space-y-4">
+                                          {/* 군주 */}
+                                          {showLord && (
+                                            <div>
+                                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                                - 군주 보호
+                                              </div>
+                                              <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                                  <colgroup>
+                                                    <col style={{ width: "110px" }} />
+                                                    <col style={{ width: "110px" }} />
+                                                    <col />
+                                                    <col />
+                                                  </colgroup>
+                                                  <thead>
+                                                    <tr className="border-b-2 border-border/60">
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        파티원
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        보호받은 동료
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="보호 비율"
+                                                          info={
+                                                            "전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율."
+                                                          }
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="군주가 받게 되는 단일 / 광역"
+                                                          info={
+                                                            "보호 발동 시 군주가 받는 단일 / 광역 대미지. 항상 던전 몬스터 원본 대미지 이상으로 받음. (실제 받은 값 / 던전 원본 대미지)."
+                                                          }
+                                                        />
+                                                      </th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    {zeroBucket ? (
+                                                      <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                                    ) : !lordRow ? (
+                                                      <tr>
+                                                        <td
+                                                          colSpan={4}
+                                                          className="py-2 px-2 text-center text-muted-foreground/60 italic"
+                                                        >
+                                                          군주 직업 파티원 없음
+                                                        </td>
+                                                      </tr>
+                                                    ) : lordProtected.length === 0 ? (
+                                                      <tr>
+                                                        <td
+                                                          colSpan={4}
+                                                          className="py-2 px-2 text-center text-muted-foreground/60 italic"
+                                                        >
+                                                          동료 없음
+                                                        </td>
+                                                      </tr>
+                                                    ) : (
+                                                      lordProtected.map((a, idx) => {
+                                                        const single = a.lordSavedSingleAvgDmg ?? 0;
+                                                        const aoe = a.lordSavedAoeAvgDmg ?? 0;
+                                                        const protRate = a.lordProtectionSimRate ?? 0;
+                                                        return (
+                                                          <tr
+                                                            key={`lord-${a.heroId}`}
+                                                            className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                          >
+                                                            {idx === 0 && (
+                                                              <td
+                                                                rowSpan={lordProtected.length}
+                                                                className="py-1 px-2 text-center text-foreground font-medium"
+                                                              >
+                                                                {lordRow!.heroName}
+                                                              </td>
+                                                            )}
+                                                            <td className="py-1 px-2 text-center text-foreground font-medium">
+                                                              {a.heroName}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {fadeZero(`${protRate.toFixed(1)}%`, protRate === 0)}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground text-[12px]">
+                                                              <span>
+                                                                단일:{" "}
+                                                                {single > 0
+                                                                  ? `${formatNumber(single)} / ${formatNumber(monAtk)}`
+                                                                  : blank}
+                                                              </span>
+                                                              <span className="mx-2">·</span>
+                                                              <span>
+                                                                광역:{" "}
+                                                                {aoe > 0
+                                                                  ? `${formatNumber(aoe)} / ${formatNumber(monAoe)}`
+                                                                  : blank}
+                                                              </span>
+                                                            </td>
+                                                          </tr>
+                                                        );
+                                                      })
+                                                    )}
+                                                  </tbody>
+                                                </table>
+                                              </div>
+                                            </div>
+                                          )}
+
+                                          {/* 정복자 */}
+                                          {showConqueror && (
+                                            <div>
+                                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                                - 정복자 (스택 0~4)
+                                              </div>
+                                              <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                                  <colgroup>
+                                                    <col style={{ width: "110px" }} />
+                                                    <col style={{ width: "60px" }} />
+                                                    <col style={{ width: "130px" }} />
+                                                    <col style={{ width: "130px" }} />
+                                                    <col style={{ width: "130px" }} />
+                                                    <col style={{ width: "140px" }} />
+                                                    <col style={{ width: "140px" }} />
+                                                  </colgroup>
+                                                  <thead>
+                                                    <tr className="border-b-2 border-border/60">
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        파티원
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        스택
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide whitespace-nowrap">
+                                                        <GroupHeader
+                                                          label="치명타 대미지 증가량"
+                                                          info={
+                                                            "해당 스택에서 더해지는 치명타 대미지 계수(+25%/스택, 최대 +100%)."
+                                                          }
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap">
+                                                        <GroupHeader
+                                                          label="최종 치댐 계수"
+                                                          info={
+                                                            "기본 치명타 대미지 계수에 스택 보너스를 더한 최종 치명타 대미지 계수."
+                                                          }
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="공격 비율"
+                                                          info={"해당 스택 상태로 공격한 턴의 비율."}
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="중첩별 치명타 대미지"
+                                                          info={
+                                                            "평균 공격력 × (기본 치명타 대미지 계수 + 스택 보너스). 해당 스택에서 치명타가 터졌을 때 들어가는 대미지의 이론값."
+                                                          }
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="평균 대미지"
+                                                          info={
+                                                            "해당 스택에서 한 판 동안 누적된 대미지의 평균 (해당 스택 누적 대미지 ÷ 그 스택으로 한 번이라도 공격한 판 수). 공격 비율이 높은 스택일수록 평균 대미지도 높게 나타남. 한 번도 공격하지 않았다면 빈 값."
+                                                          }
+                                                        />
+                                                      </th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    {zeroBucket ? (
+                                                      <EmptyBucketRow tab={mainResultsTab} colSpan={7} />
+                                                    ) : conquerorRows.length === 0 ? (
+                                                      <tr>
+                                                        <td
+                                                          colSpan={7}
+                                                          className="py-2 px-2 text-center text-muted-foreground/60 italic"
+                                                        >
+                                                          정복자 직업 파티원 없음
+                                                        </td>
+                                                      </tr>
+                                                    ) : (
+                                                      conquerorRows.map((hr, hi) => {
+                                                        return [0, 1, 2, 3, 4].map((s) => {
+                                                          const turn = hr.conquerorStackTurnRate?.[s] ?? 0;
+                                                          const cdmg = hr.conquerorStackCritDmg?.[s] ?? 0;
+                                                          const adm = hr.conquerorStackAvgDmg?.[s] ?? 0;
+                                                          const bonus = s * 25;
+                                                          const baseCritPct = Math.round(
+                                                            (hr.conquerorBaseCritMult ?? 0) * 100,
+                                                          );
+                                                          const finalCritPct = baseCritPct + bonus;
+                                                          return (
+                                                            <tr
+                                                              key={`conq-${hr.heroId}-${s}`}
+                                                              className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                            >
+                                                              {s === 0 && (
+                                                                <td
+                                                                  rowSpan={5}
+                                                                  className="py-1 px-2 text-center text-foreground font-medium"
+                                                                >
+                                                                  {hr.heroName}
+                                                                </td>
+                                                              )}
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {s}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-yellow-400">
+                                                                {fadeZero(`+${bonus}%`, bonus === 0)}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-yellow-400">
+                                                                {baseCritPct > 0 ? `${finalCritPct}%` : blank}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {turn === 0 && adm > 0 ? (
+                                                                  <span className="opacity-70">{"<0.1%"}</span>
+                                                                ) : (
+                                                                  fadeZero(`${turn.toFixed(1)}%`, turn === 0)
+                                                                )}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {cdmg > 0 ? formatNumber(cdmg) : blank}
+                                                              </td>
+                                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                                {adm > 0 ? formatNumber(adm) : blank}
+                                                              </td>
+                                                            </tr>
+                                                          );
+                                                        });
+                                                      })
+                                                    )}
+                                                  </tbody>
+                                                </table>
+                                              </div>
+                                            </div>
+                                          )}
+
+                                          {/* 닌자/센세 */}
+                                          {showNinjaSensei && (
+                                            <div>
+                                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                                - 닌자 / 센세
+                                              </div>
+                                              <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                                  <colgroup>
+                                                    <col style={{ width: "110px" }} />
+                                                    <col />
+                                                    <col />
+                                                    <col />
+                                                    <col />
+                                                  </colgroup>
+                                                  <thead>
+                                                    <tr className="border-b-2 border-border/60">
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        파티원
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="보너스 소실"
+                                                          info={"고유 치확/회피 보너스가 사라진 평균 횟수."}
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="보너스 재생성"
+                                                          info={"센세 한정 — 보너스가 다시 생성된 평균 횟수."}
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="보너스 ON 평균 대미지"
+                                                          info={
+                                                            "고유 보너스가 활성 상태일 때의 평균 대미지(전체 평균 중 비중%)."
+                                                          }
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="보너스 OFF 평균 대미지"
+                                                          info={
+                                                            "고유 보너스가 비활성 상태일 때의 평균 대미지(전체 평균 중 비중%)."
+                                                          }
+                                                        />
+                                                      </th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    {zeroBucket ? (
+                                                      <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
+                                                    ) : ninjaSenseiRows.length === 0 ? (
+                                                      <tr>
+                                                        <td
+                                                          colSpan={5}
+                                                          className="py-2 px-2 text-center text-muted-foreground/60 italic"
+                                                        >
+                                                          닌자 / 센세 직업 파티원 없음
+                                                        </td>
+                                                      </tr>
+                                                    ) : (
+                                                      ninjaSenseiRows.map((hr, idx) => {
+                                                        const wIn = hr.withInnateAvgDmg ?? 0;
+                                                        const wOut = hr.withoutInnateAvgDmg ?? 0;
+                                                        const tot = wIn + wOut;
+                                                        const inPct = tot > 0 ? (wIn / tot) * 100 : 0;
+                                                        const outPct = tot > 0 ? (wOut / tot) * 100 : 0;
+                                                        return (
+                                                          <tr
+                                                            key={`ns-${hr.heroId}`}
+                                                            className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                          >
+                                                            <td className="py-1 px-2 text-center text-foreground font-medium">
+                                                              {hr.heroName}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{`${(hr.innateLossCount ?? 0).toFixed(1)}회`}</td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {hr.isSenseiHero
+                                                                ? `${(hr.innateRegenCount ?? 0).toFixed(1)}회`
+                                                                : blank}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {wIn > 0 ? (
+                                                                <>
+                                                                  {formatNumber(wIn)}{" "}
+                                                                  <span className="opacity-70">
+                                                                    ({inPct.toFixed(1)}%)
+                                                                  </span>
+                                                                </>
+                                                              ) : (
+                                                                blank
+                                                              )}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {wOut > 0 ? (
+                                                                <>
+                                                                  {formatNumber(wOut)}{" "}
+                                                                  <span className="opacity-70">
+                                                                    ({outPct.toFixed(1)}%)
+                                                                  </span>
+                                                                </>
+                                                              ) : (
+                                                                blank
+                                                              )}
+                                                            </td>
+                                                          </tr>
+                                                        );
+                                                      })
+                                                    )}
+                                                  </tbody>
+                                                </table>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+
+                                      {/* ===== Table C: 광전사 / 잘 (4 stages) ===== */}
+                                      {showBerserker && (
+                                        <div>
+                                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                            - 광전사 / 잘
+                                          </div>
+                                          <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                            <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                              <colgroup>
+                                                <col style={{ width: "110px" }} />
+                                                <col style={{ width: "60px" }} />
+                                                <col />
+                                                <col />
+                                                <col />
+                                                <col />
+                                                <col />
+                                                <col />
+                                                <col />
+                                                <col />
+                                                <col />
+                                                <col />
+                                              </colgroup>
+                                              <thead>
+                                                <tr className="border-b-2 border-border/60">
+                                                  <th
+                                                    className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide"
+                                                    rowSpan={2}
+                                                  >
+                                                    파티원
+                                                  </th>
+                                                  <th
+                                                    className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide"
+                                                    rowSpan={2}
+                                                  >
+                                                    단계
+                                                  </th>
+                                                  <th
+                                                    className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide"
+                                                    colSpan={2}
+                                                  >
+                                                    <GroupHeader
+                                                      label="기본"
+                                                      info={"각 단계의 기준 체력과 발동 비율(단계별 합산 100%)."}
+                                                    />
+                                                  </th>
+                                                  <th
+                                                    className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                                    colSpan={5}
+                                                  >
+                                                    <GroupHeader
+                                                      label="공격력"
+                                                      info={
+                                                        "단계별 공격력% 증가, 일반/치명/평균 대미지 및 단계별 가한 대미지 비중."
+                                                      }
+                                                    />
+                                                  </th>
+                                                  <th
+                                                    className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40"
+                                                    colSpan={3}
+                                                  >
+                                                    <GroupHeader
+                                                      label="회피"
+                                                      info={"단계별 회피% 증가, 최종 회피, 실제 회피율."}
+                                                    />
+                                                  </th>
+                                                </tr>
+                                                <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
+                                                  <th className="text-center py-1 px-2 bg-secondary/20">기준 체력</th>
+                                                  <th className="text-center py-1 px-2 bg-secondary/20">발동 비율</th>
+                                                  <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">
+                                                    공격력%
+                                                  </th>
+                                                  <th className="text-center py-1 px-2 bg-secondary/70">일반</th>
+                                                  <th className="text-center py-1 px-2 bg-secondary/70">치명</th>
+                                                  <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
+                                                  <th className="text-center py-1 px-2 bg-secondary/70">대미지 비중</th>
+                                                  <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">
+                                                    회피%
+                                                  </th>
+                                                  <th className="text-center py-1 px-2 bg-secondary/20">최종 회피</th>
+                                                  <th className="text-center py-1 px-2 bg-secondary/20">실제 회피율</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                {(() => {
+                                                  if (zeroBucket) {
+                                                    return <EmptyBucketRow tab={mainResultsTab} colSpan={12} />;
+                                                  }
+                                                  const brkRows = displayResults.filter(
+                                                    (hr) => hr.isBerserkerHero && hr.berserkerStageDmg,
+                                                  );
+                                                  if (brkRows.length === 0) {
+                                                    return (
+                                                      <tr>
+                                                        <td
+                                                          colSpan={12}
+                                                          className="py-2 px-2 text-center text-muted-foreground/60 italic"
+                                                        >
+                                                          광전사 / 잘 직업 파티원 없음
+                                                        </td>
+                                                      </tr>
+                                                    );
+                                                  }
+                                                  return brkRows.map((hr, hi) => {
+                                                    const stageTotals = hr.berserkerStageDmg!.map((d) => d.total);
+                                                    const sumTotal = stageTotals.reduce((a, b) => a + b, 0);
+                                                    return [0, 1, 2, 3].map((s) => {
+                                                      const stageDmg = hr.berserkerStageDmg?.[s];
+                                                      const stageEva = hr.berserkerStageEvaRate?.[s] ?? 0;
+                                                      const stageRate = hr.berserkerThresholds?.[s]?.belowRate ?? 0;
+                                                      const thr = hr.berserkerThresholds?.[s]?.threshold ?? 100;
+                                                      const totalDmg = stageDmg?.total ?? 0;
+                                                      const dmgPct = sumTotal > 0 ? (totalDmg / sumTotal) * 100 : 0;
+                                                      const atkBonus = hr.berserkerAtkBonus?.[s] ?? 0;
+                                                      const evaBonus = hr.berserkerEvaBonus?.[s] ?? 0;
+                                                      const finalEva = (hr.finalEvasion ?? 0) + evaBonus;
+                                                      return (
+                                                        <tr
+                                                          key={`brk-${hr.heroId}-${s}`}
+                                                          className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                        >
+                                                          {s === 0 && (
+                                                            <td
+                                                              rowSpan={4}
+                                                              className="py-1 px-2 text-center text-foreground font-medium"
+                                                            >
+                                                              {hr.heroName}
+                                                            </td>
+                                                          )}
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                            {s}단계
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                            {s === 0 ? "-" : `${thr}%`}
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                            {fadeZero(`${stageRate.toFixed(1)}%`, stageRate === 0)}
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40">
+                                                            +{atkBonus}%
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                            {stageDmg && stageDmg.normal > 0
+                                                              ? formatNumber(stageDmg.normal)
+                                                              : blank}
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                            {stageDmg && stageDmg.crit > 0
+                                                              ? formatNumber(stageDmg.crit)
+                                                              : blank}
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                            {stageDmg && stageDmg.avg > 0
+                                                              ? formatNumber(stageDmg.avg)
+                                                              : blank}
+                                                          </td>
+                                                          <td className="py-1 px-2 font-mono text-muted-foreground text-[11px]">
+                                                            {totalDmg > 0 ? (
+                                                              <div className="flex items-center gap-1">
+                                                                <div className="flex-1 bg-secondary/40 h-2 rounded overflow-hidden">
+                                                                  <div
+                                                                    className="h-full bg-primary/70"
+                                                                    style={{ width: `${Math.min(dmgPct, 100)}%` }}
+                                                                  />
+                                                                </div>
+                                                                <span className="opacity-70 whitespace-nowrap">
+                                                                  {dmgPct.toFixed(1)}%
+                                                                </span>
+                                                              </div>
+                                                            ) : (
+                                                              blank
+                                                            )}
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40">
+                                                            +{evaBonus}%
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                            {Math.round(finalEva)}%
+                                                          </td>
+                                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                            {fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}
+                                                          </td>
+                                                        </tr>
+                                                      );
+                                                    });
+                                                  });
+                                                })()}
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* ===== Table D: 폴로니아 ===== */}
+                                      {hasPolonia && (
+                                        <div>
+                                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                            - 폴로니아
+                                          </div>
+                                          <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                            <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                              <colgroup>
+                                                <col style={{ width: "110px" }} />
+                                                <col />
+                                                <col />
+                                                <col />
+                                              </colgroup>
+                                              <thead>
+                                                <tr className="border-b-2 border-border/60">
+                                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                    파티원
+                                                  </th>
+                                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                    <GroupHeader
+                                                      label="훔친 수"
+                                                      info={"시뮬레이션 1회당 해당 파티원이 훔친 평균 아이템 수."}
+                                                    />
+                                                  </th>
+                                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                    <GroupHeader
+                                                      label="훔칠 확률"
+                                                      info={
+                                                        "시뮬레이션에 적용된 훔칠 확률 (폴로니아 리더 스킬 + 사기꾼 1명당 +2%)."
+                                                      }
+                                                    />
+                                                  </th>
+                                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                    <GroupHeader
+                                                      label="훔치기 한도"
+                                                      info={"시뮬레이션에 적용된 한도 (기본 20 + 사기꾼 1명당 +2)."}
+                                                    />
+                                                  </th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                {zeroBucket ? (
+                                                  <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                                ) : !hasPolonia ? (
+                                                  <tr>
+                                                    <td
+                                                      colSpan={4}
+                                                      className="py-2 px-2 text-center text-muted-foreground/60 italic"
+                                                    >
+                                                      폴로니아 챔피언이 파티에 없음
+                                                    </td>
+                                                  </tr>
+                                                ) : (
+                                                  <>
+                                                    {displayResults.map((hr, idx) => (
+                                                      <tr
+                                                        key={`pol-${hr.heroId}`}
+                                                        className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                      >
+                                                        <td className="py-1 px-2 text-center text-foreground font-medium">
+                                                          {hr.heroName}
+                                                        </td>
+                                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                          {(hr.poloniaStolenAvg ?? 0) > 0
+                                                            ? `${(hr.poloniaStolenAvg ?? 0).toFixed(2)}개`
+                                                            : blank}
+                                                        </td>
+                                                        {idx === 0 && poloniaLoot && (
+                                                          <>
+                                                            <td
+                                                              rowSpan={displayResults.length}
+                                                              className="py-1 px-2 text-center font-mono text-muted-foreground align-middle"
+                                                            >
+                                                              {poloniaLoot.baseChance.toFixed(1)}%
+                                                              {poloniaLoot.numTricksters > 0 && (
+                                                                <span className="ml-1 text-[10px] opacity-70">
+                                                                  (+{poloniaLoot.numTricksters * 2}%)
+                                                                </span>
+                                                              )}
+                                                            </td>
+                                                            <td
+                                                              rowSpan={displayResults.length}
+                                                              className="py-1 px-2 text-center font-mono text-muted-foreground align-middle"
+                                                            >
+                                                              {poloniaLoot.capMax}개
+                                                              {poloniaLoot.numTricksters > 0 && (
+                                                                <span className="ml-1 text-[10px] opacity-70">
+                                                                  (+{poloniaLoot.numTricksters * 2})
+                                                                </span>
+                                                              )}
+                                                            </td>
+                                                          </>
+                                                        )}
+                                                      </tr>
+                                                    ))}
+                                                    {poloniaLoot && (
+                                                      <tr className="border-t-2 border-border/60 bg-primary/5 font-bold">
+                                                        <td className="py-1 px-2 text-center text-foreground">
+                                                          파티 합계
+                                                        </td>
+                                                        <td
+                                                          className="py-1 px-2 text-center font-mono text-foreground"
+                                                          colSpan={3}
+                                                        >
+                                                          평균 {poloniaLoot.avgPerSim.toFixed(2)}개 · 최소{" "}
+                                                          {poloniaLoot.minPerSim}개 · 최대 {poloniaLoot.maxPerSim}개
+                                                          <span className="ml-2 opacity-70 font-normal">
+                                                            (한도 도달률 {poloniaLoot.capHitRate.toFixed(1)}%)
+                                                          </span>
+                                                        </td>
+                                                      </tr>
+                                                    )}
+                                                  </>
+                                                )}
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* ===== Table D2: 루도 ===== */}
+                                      {hasRudo &&
+                                        (() => {
+                                          return (
+                                            <div>
+                                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                                - 루도
+                                              </div>
+                                              <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                                  <colgroup>
+                                                    <col style={{ width: "110px" }} />
+                                                    <col style={{ width: "18%" }} />
+                                                    <col style={{ width: "18%" }} />
+                                                    <col style={{ width: "32%" }} />
+                                                    <col style={{ width: "32%" }} />
+                                                  </colgroup>
+                                                  <thead>
+                                                    <tr className="border-b-2 border-border/60">
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        파티원
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="치명타 확률 보너스"
+                                                          info={"루도 리더 스킬로 추가되는 치명타 확률 보너스."}
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="최종 치명타 확률"
+                                                          info={"루도 보너스가 더해진 최종 치명타 확률."}
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="보너스 라운드 평균 대미지"
+                                                          info={
+                                                            "루도 치명타 확률 보너스가 적용되는 동안 가한 총 평균 대미지(시뮬레이션당)."
+                                                          }
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="대미지 비중"
+                                                          info={
+                                                            "루도 보너스 라운드 평균 대미지가 본 영웅 전체 평균 대미지에서 차지하는 비중."
+                                                          }
+                                                        />
+                                                      </th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    {zeroBucket ? (
+                                                      <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
+                                                    ) : !hasRudo ? (
+                                                      <tr>
+                                                        <td
+                                                          colSpan={5}
+                                                          className="py-2 px-2 text-center text-muted-foreground/60 italic"
+                                                        >
+                                                          루도 챔피언이 파티에 없음
+                                                        </td>
+                                                      </tr>
+                                                    ) : (
+                                                      displayResults.map((hr, idx) => {
+                                                        const share =
+                                                          hr.avgDamageDealt && hr.avgDamageDealt > 0
+                                                            ? ((hr.rudoBonusDmgAvg ?? 0) / hr.avgDamageDealt) * 100
+                                                            : 0;
+                                                        return (
+                                                          <tr
+                                                            key={`rudo-${hr.heroId}`}
+                                                            className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                          >
+                                                            <td className="py-1 px-2 text-center text-foreground font-medium">
+                                                              {hr.heroName}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-yellow-500 dark:text-yellow-300">
+                                                              +{(hr.rudoCritBonusPct ?? 0).toFixed(1)}%
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-yellow-500 dark:text-yellow-300">
+                                                              {(hr.rudoFinalCritChance ?? 0).toFixed(1)}%
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {formatNumber(hr.rudoBonusDmgAvg ?? 0)}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {share.toFixed(1)}%
+                                                            </td>
+                                                          </tr>
+                                                        );
+                                                      })
+                                                    )}
+                                                  </tbody>
+                                                </table>
+                                              </div>
+                                            </div>
+                                          );
+                                        })()}
+
+                                      {/* ===== Table E: 헴마 (별도 분리) ===== */}
+                                      {hasHemma &&
+                                        (() => {
+                                          return (
+                                            <div>
+                                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">
+                                                - 헴마
+                                              </div>
+                                              <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
+                                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
+                                                  <colgroup>
+                                                    <col style={{ width: "110px" }} />
+                                                    <col />
+                                                    <col />
+                                                    <col />
+                                                  </colgroup>
+                                                  <thead>
+                                                    <tr className="border-b-2 border-border/60">
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        파티원
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="흡수 턴"
+                                                          info={"헴마 흡수가 적용된 평균 턴 수."}
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="흡수 공격력"
+                                                          info={"헴마 흡수로 증가한 평균 공격 대미지."}
+                                                        />
+                                                      </th>
+                                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
+                                                        <GroupHeader
+                                                          label="깎인 체력"
+                                                          info={
+                                                            "헴마 흡수로 인해 평균 깎인 동료의 체력. (헴마 본인 행: 표시 안 함)"
+                                                          }
+                                                        />
+                                                      </th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    {zeroBucket ? (
+                                                      <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
+                                                    ) : !hasHemma ? (
+                                                      <tr>
+                                                        <td
+                                                          colSpan={4}
+                                                          className="py-2 px-2 text-center text-muted-foreground/60 italic"
+                                                        >
+                                                          헴마 챔피언이 파티에 없음
+                                                        </td>
+                                                      </tr>
+                                                    ) : (
+                                                      (() => {
+                                                        const totalCount = displayResults.reduce(
+                                                          (s, r) =>
+                                                            s + (r.isHemmaHero ? 0 : (r.hemmaAbsorbedCount ?? 0)),
+                                                          0,
+                                                        );
+                                                        return displayResults.map((hr, idx) => (
+                                                          <tr
+                                                            key={`hem-${hr.heroId}`}
+                                                            className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}
+                                                          >
+                                                            <td className="py-1 px-2 text-center text-foreground font-medium">
+                                                              {hr.heroName}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {hr.isHemmaHero ? `${Math.round(totalCount)}회` : blank}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {hr.isHemmaHero
+                                                                ? formatNumber(hr.hemmaAtkGainAvg ?? 0)
+                                                                : blank}
+                                                            </td>
+                                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">
+                                                              {!hr.isHemmaHero && (hr.hemmaAbsorbedCount ?? 0) > 0
+                                                                ? formatNumber(hr.hemmaAbsorbedDmg ?? 0)
+                                                                : blank}
+                                                            </td>
+                                                          </tr>
+                                                        ));
+                                                      })()
+                                                    )}
+                                                  </tbody>
+                                                </table>
+                                              </div>
+                                            </div>
+                                          );
+                                        })()}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
                         );
                       })()}
                     </div>
                   </div>
-
-                  {/* (Removed Table 1.5: 특수 대미지 — 데이터는 특수 정보 그룹으로 이동) */}
-
-                  {/* Table 2: 생존 — 생존률 / 턴 / 남은 체력(필터) / 타겟팅 / 치명타 생존 / 회복 */}
-                  {(() => {
-                    // Bucket selector for remaining HP based on mainResultsTab
-                    const hpKey = mainResultsTab === 'win' ? 'win' : mainResultsTab === 'lose' ? 'lose' : 'all';
-                    return (
-                  <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center justify-between gap-2"><span className="flex items-center gap-1"><Heart className="w-4 h-4 text-foreground" />생존</span><ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
-                    <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                      <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                        <colgroup>
-                          <col style={{ width: '110px' }} />
-                          {/* 기본: 생존률 */}
-                          <col style={{ width: '90px' }} />
-                          {/* 턴: 최소/평균/최대/라운드 도달 */}
-                          <col style={{ width: '75px' }} /><col style={{ width: '80px' }} /><col style={{ width: '75px' }} /><col style={{ width: '90px' }} />
-                          {/* 남은 체력: min/avg/max */}
-                          <col style={{ width: '85px' }} /><col style={{ width: '90px' }} /><col style={{ width: '85px' }} />
-                          {/* 타겟팅: 위협도, 실제, 회피 */}
-                          <col style={{ width: '85px' }} /><col style={{ width: '85px' }} /><col style={{ width: '85px' }} />
-                          {/* 치명타 생존: 확률, 발동 비율 */}
-                          <col style={{ width: '85px' }} /><col style={{ width: '90px' }} />
-                          {/* 회복: 턴, 전체 평균 */}
-                          <col style={{ width: '85px' }} /><col style={{ width: '95px' }} />
-                        </colgroup>
-                        <thead>
-                          <tr className="border-b-2 border-border/60">
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={1}>
-                              <GroupHeader label="기본" info={'생존률 — 전체 시뮬레이션 중 끝까지 생존한 비율(%).'} />
-                            </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={4}>
-                              <GroupHeader label="생존 턴" info={'각 시뮬레이션에서 해당 파티원이 살아있던 턴 수의 분포.\n· 최소 / 평균 / 최대\n· 라운드 제한: 500라운드 제한에 도달했음에도 살아있어 종료된 시뮬레이션의 비율.'} />
-                            </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
-                              <GroupHeader label="남은 체력" info={'시뮬레이션 종료 시 남은 HP의 분포 (최소 / 평균 / 최대).\n선택된 필터(전체/성공/실패)에 해당하는 판만 반영.'} />
-                            </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
-                              <GroupHeader label="타겟팅" info={'· 위협도: 위협도 기반 단일 공격 피격 확률.\n· 실제: 실제 단일 공격을 받은 비율 (= 탱킹 기여도). 마지막 1인이 남는 시점까지의 단일공격 가능 턴이 분모.\n· 회피: 단일+광역 공격 중 회피한 비율.'} />
-                            </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={2}>
-                              <GroupHeader label="치명타 생존" info={'· 확률: 치명타 생존 발동 확률 (스탯 기준).\n· 발동 비율: 전체 시뮬레이션 중 치명타 생존이 한 번이라도 발동된 판의 비율.'} />
-                            </th>
-                            <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={2}>
-                              <GroupHeader label="회복" info={'· 턴: 매턴 실제 체력 재생 수치 (영혼/스킬 매턴체력회복(도마뱀·불사조·우로보로스·클레릭·비숍 등) + 오라의 노래 매턴회복 + 챔피언 회복(릴루 등) 합산).\n· 전체 평균: 시뮬레이션 1회당 평균 총 회복량.'} />
-                            </th>
-                          </tr>
-                          <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">생존률</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">최소</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">라운드 제한</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">최소</th>
-                            <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
-                            <th className="text-center py-1 px-2 bg-secondary/70">최대</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">위협도</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">실제</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">회피</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">확률</th>
-                            <th className="text-center py-1 px-2 bg-secondary/70">발동 비율</th>
-                            <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">턴</th>
-                            <th className="text-center py-1 px-2 bg-secondary/20">전체 평균</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {zeroBucket ? (
-                            <EmptyBucketRow tab={mainResultsTab} colSpan={16} />
-                          ) : (
-                          <>
-                          {displayResults.map((hr, idx) => {
-                            const blank = '';
-                            const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
-                            const csChance = hr.critSurvivalChance ?? 0;
-                            const csApply = hr.critSurvivalApplyRate ?? 0;
-                            const heal = hr.totalHealingAvg || 0;
-                            const healT = hr.healPerTurn || 0;
-                            // HP based on filter
-                            const hpMin = hpKey === 'win' ? (hr.winHpRemainMin ?? 0)
-                                       : hpKey === 'lose' ? (hr.loseHpRemainMin ?? 0)
-                                       : (hr.overallHpRemainMin ?? 0);
-                            const hpAvg = hpKey === 'win' ? (hr.winHpRemainAvg ?? 0)
-                                       : hpKey === 'lose' ? (hr.loseHpRemainAvg ?? 0)
-                                       : (hr.overallHpRemainAvg ?? 0);
-                            const hpMax = hpKey === 'win' ? (hr.winHpRemainMax ?? 0)
-                                       : hpKey === 'lose' ? (hr.loseHpRemainMax ?? 0)
-                                       : (hr.overallHpRemainMax ?? 0);
-                            const aMin = hr.aliveTurnsMin ?? 0;
-                            const aAvg = hr.aliveTurnsAvg ?? 0;
-                            const aMax = hr.aliveTurnsMax ?? 0;
-                            const aLimit = hr.roundLimitAliveRate ?? 0;
-                            return (
-                              <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                {/* 기본: 생존률 */}
-                                <td className={`py-1 px-2 text-center font-mono border-l-2 border-primary/40 whitespace-nowrap ${
-                                  hr.survivalRate >= 90 ? 'text-lime-400' : hr.survivalRate >= 50 ? 'text-yellow-400' : 'text-red-400'
-                                }`}>{(hr.survivalRate >= 100 ? 100 : Math.floor(hr.survivalRate * 10) / 10).toFixed(1)}%</td>
-                                {/* 턴 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{aAvg > 0 ? formatNumber(aMin) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{aAvg > 0 ? aAvg.toFixed(1) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{aAvg > 0 ? formatNumber(aMax) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono whitespace-nowrap">{fadeZero(`${aLimit.toFixed(1)}%`, aLimit === 0)}</td>
-                                {/* 남은 체력 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpMin) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpAvg) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{hpAvg > 0 ? formatNumber(hpMax) : blank}</td>
-                                {/* 타겟팅 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{fadeZero(`${hr.targetingRate.toFixed(1)}%`, hr.targetingRate === 0)}</td>
-                                {(() => {
-                                  const tr = hr.singleTargetRate ?? 0;
-                                  const tankText = tr >= 81 ? 'text-lime-400' : tr >= 61 ? 'text-yellow-400' : tr >= 41 ? 'text-orange-400' : tr >= 21 ? 'text-red-400' : 'text-purple-400';
-                                  return <td className={`py-1 px-2 text-center font-mono whitespace-nowrap ${tr === 0 ? 'text-muted-foreground' : tankText}`}>{fadeZero(`${tr.toFixed(1)}%`, tr === 0)}</td>;
-                                })()}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${hr.evasionRate.toFixed(1)}%`, hr.evasionRate === 0)}</td>
-                                {/* 치명타 생존 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{fadeZero(`${Math.round(csChance)}%`, csChance === 0)}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{fadeZero(`${csApply.toFixed(1)}%`, csApply === 0)}</td>
-                                {/* 회복 */}
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{healT > 0 ? formatNumber(Math.round(healT)) : blank}</td>
-                                <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{heal > 0 ? formatNumber(Math.round(heal)) : blank}</td>
-                              </tr>
-                            );
-                          })}
-                          </>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                    );
-                  })()}
-
-                  {/* Table 3: 받는 대미지 — 전체(단일+광역) / 단일+광역 합본 */}
-                  <div>
-                    <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1"><Shield className="w-4 h-4 text-foreground" />받는 대미지<ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} /></div>
-                    {(() => {
-                      const blank = '';
-                      const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
-                      // Party-level distributions (true sim-based)
-                      const pTaken = mainResultsTab === 'win' ? dispSim!.winPartyDmgTaken
-                        : mainResultsTab === 'lose' ? dispSim!.losePartyDmgTaken
-                        : dispSim!.partyDmgTaken;
-                      const pTakenT = mainResultsTab === 'win' ? dispSim!.winPartyDmgTakenPerTurn
-                        : mainResultsTab === 'lose' ? dispSim!.losePartyDmgTakenPerTurn
-                        : dispSim!.partyDmgTakenPerTurn;
-                      const partyTakenAvg = pTaken?.avg ?? displayResults.reduce((s, hr) => s + (hr.totalDamageTakenAvg || 0), 0);
-                      const partyTakenMin = pTaken?.min ?? 0;
-                      const partyTakenMax = pTaken?.max ?? 0;
-                      const partyTakenAvgT = pTakenT?.avg ?? displayResults.reduce((s, hr) => s + (hr.avgDamageTakenPerTurn || 0), 0);
-                      const partyTakenMinT = pTakenT?.min ?? 0;
-                      const partyTakenMaxT = pTakenT?.max ?? 0;
-
-                      // Monster raw atk/aoe (rounded)
-                      const monAtk = currentQuest?.atk || 0;
-                      const monAoe = currentQuest?.aoe || 0;
-
-                      // ─── Table 3-A: 전체 ───
-                      // Layout: name | [기본: 단일 raw, 광역 raw, 보정%, 단일 일반, 단일 치명, 광역 일반] | 받은 대미지 (전체) [min,avg,max]
-                      const renderTotalTable = () => (
-                        <div className="mb-4">
-                          <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 전체</div>
-                          <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                            <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                              <colgroup>
-                                <col style={{ width: '110px' }} />
-                                {/* 기본: 단일 raw, 광역 raw, 보정, 단일 일반, 단일 치명, 광역 일반 */}
-                                <col style={{ width: '85px' }} /><col style={{ width: '85px' }} /><col style={{ width: '80px' }} />
-                                <col style={{ width: '90px' }} /><col style={{ width: '90px' }} /><col style={{ width: '90px' }} />
-                                {/* 받은 대미지 (전체): min/avg/max */}
-                                <col style={{ width: '90px' }} /><col style={{ width: '95px' }} /><col style={{ width: '90px' }} />
-                              </colgroup>
-                              <thead>
-                                <tr className="border-b-2 border-border/60">
-                                   <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
-                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={6}>
-                                    <GroupHeader label="기본" info={'· 단일: 몬스터의 단일 공격력(원본).\n· 광역: 몬스터의 광역 공격력(원본).\n· 보정: 방어력으로 인한 대미지 적용률(%).\n· 단일 일반/치명: 단일 공격에서 일반/치명 평균 받은 대미지.\n· 광역 일반: 광역 공격에서 평균 받은 대미지(광역은 치명 없음).'} />
-                                  </th>
-                                  <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
-                                    <GroupHeader label="받은 대미지 (전체)" info={'각 시뮬레이션에서 단일 / 광역 공격을 모두 합산한 총 받은 대미지 분포(최소 / 평균 / 최대). 단순 단일+광역 합이 아니라 매턴 실제로 발생한 대미지를 반영함. 헴마 자해 대미지 포함.'} />
-                                  </th>
-                                </tr>
-                                <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
-                                  <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">단일</th>
-                                  <th className="text-center py-1 px-2 bg-secondary/70">광역</th>
-                                  <th className="text-center py-1 px-2 bg-secondary/70">보정</th>
-                                  <th className="text-center py-1 px-2 bg-secondary/70">단일 일반</th>
-                                  <th className="text-center py-1 px-2 bg-secondary/70">단일 치명</th>
-                                  <th className="text-center py-1 px-2 bg-secondary/70">광역 일반</th>
-                                  <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">최소</th>
-                                  <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
-                                  <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {zeroBucket ? (
-                                  <EmptyBucketRow tab={mainResultsTab} colSpan={10} />
-                                ) : (
-                                <>
-                                {displayResults.map((hr, idx) => {
-                                  const dar = hr.damageApplicationRate || 0;
-                                  const minTotal = hr.minDamageTaken ?? 0;
-                                  const avgTotal = hr.totalDamageTakenAvg ?? 0;
-                                  const maxTotal = hr.maxDamageTaken ?? 0;
-                                  return (
-                                    <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                      <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                      {/* 단일/광역 raw cells: only show on first row (rowSpan) */}
-                                      {idx === 0 ? (
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap" rowSpan={displayResults.length}>{monAtk > 0 ? formatNumber(monAtk) : blank}</td>
-                                      ) : null}
-                                      {idx === 0 ? (
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap" rowSpan={displayResults.length}>{monAoe > 0 ? formatNumber(monAoe) : blank}</td>
-                                      ) : null}
-                                      <td className="py-1 px-2 text-center font-mono whitespace-nowrap" style={{
-                                        color: dar <= 25 ? 'hsl(var(--muted-foreground))' : dar <= 50 ? '#84cc16' : dar <= 100 ? '#eab308' : '#ef4444'
-                                      }}>{dar > 0 ? `${dar}%` : blank}</td>
-                                      {/* 단일 일반 = 원래 단일 대미지 × 보정%, 단일 치명 = 단일 일반 × 1.5, 광역 일반 = 원래 광역 대미지 × 보정% */}
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAtk > 0 && dar > 0) ? formatNumber(Math.round(monAtk * dar / 100)) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAtk > 0 && dar > 0) ? formatNumber(Math.round(monAtk * dar / 100 * 1.5)) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{(monAoe > 0 && dar > 0) ? formatNumber(Math.round(monAoe * dar / 100)) : blank}</td>
-                                      {/* 받은 대미지 전체 */}
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(minTotal)) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(avgTotal)) : blank}</td>
-                                      <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{avgTotal > 0 ? formatNumber(Math.round(maxTotal)) : blank}</td>
-                                    </tr>
-                                  );
-                                })}
-                                </>
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      );
-
-                      // ─── Table 3-B: 단일/광역 합본 ───
-                      // Layout: name | [단일: 받은(전체) min/avg/max + 일반%/치명%] | [광역: 받은(전체) min/avg/max]
-                      const renderSplitTable = () => {
-                        return (
-                          <div className="mb-4">
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 단일 / 광역</div>
-                            <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                <colgroup>
-                                  <col style={{ width: '110px' }} />
-                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} /><col style={{ width: '80px' }} />
-                                  <col style={{ width: '85px' }} /><col style={{ width: '95px' }} /><col style={{ width: '85px' }} />
-                                </colgroup>
-                                <thead>
-                                  <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap" rowSpan={2}></th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={4}>
-                                      <GroupHeader label="단일" info={'단일 공격으로 받은 대미지 분포(최소 / 평균 / 최대). 치명타 확률 = 몬스터 기본 치명타 확률에서 파티원 회피를 차감한 값(최소 5%).'} />
-                                    </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
-                                      <GroupHeader label="광역" info={'광역 공격으로 받은 대미지 분포. 광역 공격은 치명타가 없음.'} />
-                                    </th>
-                                  </tr>
-                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
-                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">최소</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/70">최대</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/70">치명타 확률</th>
-                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">최소</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/20">평균</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/20">최대</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {zeroBucket ? (
-                                    <EmptyBucketRow tab={mainResultsTab} colSpan={8} />
-                                  ) : (
-                                  <>
-                                  {displayResults.map((hr, idx) => {
-                                    const sMin = hr.singleDmgTakenMin ?? 0;
-                                    const sAvg = hr.singleDmgTakenAvg ?? 0;
-                                    const sMax = hr.singleDmgTakenMax ?? 0;
-                                    const aMin = hr.aoeDmgTakenMin ?? 0;
-                                    const aAvg = hr.aoeDmgTakenAvg ?? 0;
-                                    const aMax = hr.aoeDmgTakenMax ?? 0;
-                                    // 치명타 확률 = 몬스터 기본 치확(미니보스 효과 포함) + 음수 회피 보너스(최대 +5%).
-                                    const critProb = Math.round((hr.monsterCritChance ?? 0) * 10) / 10;
-                                    return (
-                                      <tr key={hr.heroId} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                        <td className="py-1 px-2 text-center text-foreground font-medium whitespace-nowrap">{hr.heroName}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{formatNumber(sMin)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(sAvg)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(sMax)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-yellow-400 whitespace-nowrap">{critProb}%</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40 whitespace-nowrap">{formatNumber(aMin)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-red-400 whitespace-nowrap">{formatNumber(aAvg)}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">{formatNumber(aMax)}</td>
-                                      </tr>
-                                    );
-                                  })}
-                                  </>
-                                  )}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        );
+                </>
+              )}
+            </div>{" "}
+            {/* end data-quest-screenshot */}
+            {/* Combat Log Dialog */}
+            <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
+              <DialogContent className="max-w-[92vw] h-[85vh] flex flex-col overflow-hidden p-4">
+                <DialogHeader>
+                  <DialogTitle className="sr-only">1회 추적 로그</DialogTitle>
+                </DialogHeader>
+                {combatLog && (
+                  <CombatBattlefield
+                    log={combatLog}
+                    heroes={selectedHeroes}
+                    monsterHp={currentQuest?.hp || 0}
+                    monsterName={locationName}
+                    monsterImage={centerImage}
+                    onNewBattle={() => {
+                      if (!currentQuest || !currentRegion) return;
+                      const isTerrorTower2 = selectedQuestType === "tot" && currentRegion.name === "공포";
+                      const bElements2 = currentQuest?.barrier
+                        ? (() => {
+                            const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
+                            const barrierElement2 =
+                              hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
+                                ? selectedSubAreaIdx === 0
+                                  ? currentQuest.barrier!.sub1
+                                  : selectedSubAreaIdx === 1
+                                    ? currentQuest.barrier!.sub2
+                                    : currentQuest.barrier!.sub3
+                                : null;
+                            const rawElements = barrierElement2
+                              ? [barrierElement2]
+                              : [
+                                  currentQuest.barrier!.sub1,
+                                  currentQuest.barrier!.sub2,
+                                  currentQuest.barrier!.sub3,
+                                ].filter(Boolean);
+                            return [...new Set(rawElements)] as string[];
+                          })()
+                        : [];
+                      const questMonster2: QuestMonster = {
+                        hp: currentQuest.hp,
+                        atk: currentQuest.atk,
+                        aoe: currentQuest.aoe,
+                        aoeChance: currentQuest.aoeChance,
+                        def: currentQuest.def,
+                        isBoss: currentQuest.isBoss,
+                        isExtreme: currentQuest.isExtreme,
+                        barrier: currentQuest.barrier,
+                        barrierElement: bElements2[0] || null,
                       };
-
-                      return (<>
-                        {renderTotalTable()}
-                        {renderSplitTable()}
-                      </>);
-                    })()}
-                  </div>
-
-                  {/* Table 4: 특수 정보 — 항상 4개 표 (상어/공룡/헴마, 군주/정복자/닌자센세, 광전사, 폴로니아) */}
-                  {(() => {
-                    const blank = '';
-                    const fadeZero = (s: string, isZero: boolean) => isZero ? <span className="text-muted-foreground/30"></span> : <>{s}</>;
-                    const partyAvgDmg = displayResults.reduce((s, hr) => s + (hr.avgDamageDealt || 0), 0);
-
-                    // ── Table A: 상어 / 공룡 / 헴마 — 항상 표시, 파티원 전체 노출 ──
-                    const hemmaRow = displayResults.find(hr => hr.isHemmaHero);
-
-                    // ── Table B: 군주 / 정복자 / 닌자·센세 ──
-                    const lordRow = displayResults.find(hr => hr.isLordHero);
-                    const lordProtected = lordRow ? displayResults.filter(hr => !hr.isLordHero) : [];
-                    const conquerorRows = displayResults.filter(hr => hr.isConquerorHero);
-                    const ninjaSenseiRows = displayResults.filter(hr => hr.isNinjaHero || hr.isSenseiHero);
-                    const showLord = !!lordRow;
-                    const showConqueror = conquerorRows.length > 0;
-                    const showNinjaSensei = ninjaSenseiRows.length > 0;
-                    const showBerserker = displayResults.some(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
-                    const hasHemma = displayResults.some(hr => hr.isHemmaHero);
-                    const hasRudo = displayResults.some(hr => hr.isRudoInParty);
-
-                    // ── Table D: 폴로니아 도둑질 ──
-                    const poloniaLoot = dispSim!.poloniaLoot;
-                    const hasPolonia = !!poloniaLoot?.hasPolonia;
-
-                    const monAtk = currentQuest?.atk || 0;
-                    const monAoe = currentQuest?.aoe || 0;
-
-                    return (
-                      <div>
-                        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => setSpecialInfoOpen(v => !v)}
-                            className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
-                            aria-expanded={specialInfoOpen}
-                          >
-                            <Info className="w-4 h-4 text-foreground" />
-                            <span>특수 정보</span>
-                            <span className={`text-xs text-muted-foreground transition-transform ${specialInfoOpen ? 'rotate-0' : '-rotate-90'}`}>▼</span>
-                          </button>
-                          <ResultTabsToggle value={mainResultsTab} onChange={(v) => setMainResultsTab(v)} retryOnly={retryOnly} onToggleRetryOnly={() => setRetryOnly(v => !v)} hasRetry={hasRetry} />
-                        </div>
-                        {specialInfoOpen && (
-                        <div className="space-y-6">
-
-                          {/* ===== Table A: 상어 / 공룡·다이묘 — 해당 파티원만 ===== */}
-                          {(() => {
-                            const sharkHeroes = displayResults.filter(hr => hr.hasSharkSpirit);
-                            const dinoHeroes = displayResults.filter(hr => hr.hasDinosaurSpirit || hr.isSamuraiOrDaimyo);
-                            if (sharkHeroes.length === 0 && dinoHeroes.length === 0) return null;
-                            return (
-                              <div className="space-y-4">
-                                {sharkHeroes.length > 0 && (
-                                <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 상어 (영혼)</div>
-                                  <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                      <colgroup>
-                                        <col style={{ width: '110px' }} /><col /><col /><col />
-                                      </colgroup>
-                                      <thead>
-                                        <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">일반</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">치명</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">평균</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {zeroBucket ? (
-                                          <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                        ) : sharkHeroes.map((hr, idx) => {
-                                          const avg = Math.round((hr.sharkNormalDmg + hr.sharkCritDmg) / 2);
-                                          return (
-                                            <tr key={`shk-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                              <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{formatNumber(hr.sharkNormalDmg)}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{formatNumber(hr.sharkCritDmg)}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{formatNumber(avg)}</td>
-                                            </tr>
-                                          );
-                                        })}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                                )}
-                                {dinoHeroes.length > 0 && (
-                                <div>
-                                  <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 공룡 / 사무라이(다이묘) (첫 턴)</div>
-                                  <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                    <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                      <colgroup>
-                                        <col style={{ width: '110px' }} /><col /><col /><col />
-                                      </colgroup>
-                                      <thead>
-                                        <tr className="border-b-2 border-border/60">
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">일반</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">치명</th>
-                                          <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">전체 딜 비중</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {zeroBucket ? (
-                                          <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                        ) : dinoHeroes.map((hr, idx) => {
-                                          const norm = hr.dinosaurNormalDmg;
-                                          const crit = hr.dinosaurCritDmg;
-                                          const total = norm + crit;
-                                          const pct = hr.avgDamageDealt > 0 ? (total / 2 / hr.avgDamageDealt) * 100 : 0;
-                                          return (
-                                            <tr key={`dino-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                              <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{norm > 0 ? formatNumber(norm) : '-'}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{crit > 0 ? formatNumber(crit) : '-'}</td>
-                                              <td className="py-1 px-2 text-center font-mono text-muted-foreground">{pct > 0 ? `${pct.toFixed(1)}%` : '-'}</td>
-                                            </tr>
-                                          );
-                                        })}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                                )}
-                              </div>
-                            );
-                          })()}
-
-                          {/* ===== Table B: 군주 / 정복자 / 닌자·센세 — 해당 파티원이 있을 때만 ===== */}
-                          {(showLord || showConqueror || showNinjaSensei) && (
-                          <div className="space-y-4">
-                            {/* 군주 */}
-                            {showLord && (
-                              <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 군주 보호</div>
-                                <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                    <colgroup>
-                                      <col style={{ width: '110px' }} /><col style={{ width: '110px' }} /><col /><col />
-                                    </colgroup>
-                                    <thead>
-                                      <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">보호받은 동료</th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="보호 비율" info={'전체 시뮬레이션 중 해당 동료가 군주의 보호를 한 번이라도 받은 판의 비율.'} />
-                                        </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="군주가 받게 되는 단일 / 광역" info={'보호 발동 시 군주가 받는 단일 / 광역 대미지. 항상 던전 몬스터 원본 대미지 이상으로 받음. (실제 받은 값 / 던전 원본 대미지).'} />
-                                        </th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {zeroBucket ? (
-                                        <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                      ) : !lordRow ? (
-                                        <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">군주 직업 파티원 없음</td></tr>
-                                      ) : lordProtected.length === 0 ? (
-                                        <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">동료 없음</td></tr>
-                                      ) : lordProtected.map((a, idx) => {
-                                        const single = a.lordSavedSingleAvgDmg ?? 0;
-                                        const aoe = a.lordSavedAoeAvgDmg ?? 0;
-                                        const protRate = a.lordProtectionSimRate ?? 0;
-                                        return (
-                                          <tr key={`lord-${a.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            {idx === 0 && (
-                                              <td rowSpan={lordProtected.length} className="py-1 px-2 text-center text-foreground font-medium">{lordRow!.heroName}</td>
-                                            )}
-                                            <td className="py-1 px-2 text-center text-foreground font-medium">{a.heroName}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${protRate.toFixed(1)}%`, protRate === 0)}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground text-[12px]">
-                                              <span>단일: {single > 0 ? `${formatNumber(single)} / ${formatNumber(monAtk)}` : blank}</span>
-                                              <span className="mx-2">·</span>
-                                              <span>광역: {aoe > 0 ? `${formatNumber(aoe)} / ${formatNumber(monAoe)}` : blank}</span>
-                                            </td>
-                                          </tr>
-                                        );
-                                      })}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* 정복자 */}
-                            {showConqueror && (
-                            <div>
-                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 정복자 (스택 0~4)</div>
-                              <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                  <colgroup>
-                                    <col style={{ width: '110px' }} /><col style={{ width: '60px' }} /><col style={{ width: '130px' }} />
-                                    <col style={{ width: '130px' }} /><col style={{ width: '130px' }} /><col style={{ width: '140px' }} /><col style={{ width: '140px' }} />
-                                  </colgroup>
-                                  <thead>
-                                    <tr className="border-b-2 border-border/60">
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">스택</th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide whitespace-nowrap">
-                                        <GroupHeader label="치명타 대미지 증가량" info={'해당 스택에서 더해지는 치명타 대미지 계수(+25%/스택, 최대 +100%).'} />
-                                      </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide whitespace-nowrap">
-                                        <GroupHeader label="최종 치댐 계수" info={'기본 치명타 대미지 계수에 스택 보너스를 더한 최종 치명타 대미지 계수.'} />
-                                      </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="공격 비율" info={'해당 스택 상태로 공격한 턴의 비율.'} />
-                                      </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="중첩별 치명타 대미지" info={'평균 공격력 × (기본 치명타 대미지 계수 + 스택 보너스). 해당 스택에서 치명타가 터졌을 때 들어가는 대미지의 이론값.'} />
-                                      </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="평균 대미지" info={'해당 스택에서 한 판 동안 누적된 대미지의 평균 (해당 스택 누적 대미지 ÷ 그 스택으로 한 번이라도 공격한 판 수). 공격 비율이 높은 스택일수록 평균 대미지도 높게 나타남. 한 번도 공격하지 않았다면 빈 값.'} />
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {zeroBucket ? (
-                                      <EmptyBucketRow tab={mainResultsTab} colSpan={7} />
-                                    ) : conquerorRows.length === 0 ? (
-                                      <tr><td colSpan={7} className="py-2 px-2 text-center text-muted-foreground/60 italic">정복자 직업 파티원 없음</td></tr>
-                                    ) : conquerorRows.map((hr, hi) => {
-                                      return [0, 1, 2, 3, 4].map(s => {
-                                        const turn = hr.conquerorStackTurnRate?.[s] ?? 0;
-                                        const cdmg = hr.conquerorStackCritDmg?.[s] ?? 0;
-                                        const adm = hr.conquerorStackAvgDmg?.[s] ?? 0;
-                                        const bonus = s * 25;
-                                        const baseCritPct = Math.round((hr.conquerorBaseCritMult ?? 0) * 100);
-                                        const finalCritPct = baseCritPct + bonus;
-                                        return (
-                                          <tr key={`conq-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            {s === 0 && (
-                                              <td rowSpan={5} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                            )}
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-yellow-400">{fadeZero(`+${bonus}%`, bonus === 0)}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-yellow-400">{baseCritPct > 0 ? `${finalCritPct}%` : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{turn === 0 && adm > 0 ? <span className="opacity-70">{'<0.1%'}</span> : fadeZero(`${turn.toFixed(1)}%`, turn === 0)}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{cdmg > 0 ? formatNumber(cdmg) : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{adm > 0 ? formatNumber(adm) : blank}</td>
-                                          </tr>
-                                        );
-                                      });
-                                    })}
-                                  </tbody>
-                                </table>
-                              </div>
-                            </div>
-                            )}
-
-                            {/* 닌자/센세 */}
-                            {showNinjaSensei && (
-                            <div>
-                              <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 닌자 / 센세</div>
-                              <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                  <colgroup>
-                                    <col style={{ width: '110px' }} /><col /><col /><col /><col />
-                                  </colgroup>
-                                  <thead>
-                                    <tr className="border-b-2 border-border/60">
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="보너스 소실" info={'고유 치확/회피 보너스가 사라진 평균 횟수.'} />
-                                      </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="보너스 재생성" info={'센세 한정 — 보너스가 다시 생성된 평균 횟수.'} />
-                                      </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="보너스 ON 평균 대미지" info={'고유 보너스가 활성 상태일 때의 평균 대미지(전체 평균 중 비중%).'} />
-                                      </th>
-                                      <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                        <GroupHeader label="보너스 OFF 평균 대미지" info={'고유 보너스가 비활성 상태일 때의 평균 대미지(전체 평균 중 비중%).'} />
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {zeroBucket ? (
-                                      <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
-                                    ) : ninjaSenseiRows.length === 0 ? (
-                                      <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">닌자 / 센세 직업 파티원 없음</td></tr>
-                                    ) : ninjaSenseiRows.map((hr, idx) => {
-                                      const wIn = hr.withInnateAvgDmg ?? 0;
-                                      const wOut = hr.withoutInnateAvgDmg ?? 0;
-                                      const tot = wIn + wOut;
-                                      const inPct = tot > 0 ? (wIn / tot) * 100 : 0;
-                                      const outPct = tot > 0 ? (wOut / tot) * 100 : 0;
-                                      return (
-                                        <tr key={`ns-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                          <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{`${(hr.innateLossCount ?? 0).toFixed(1)}회`}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isSenseiHero ? `${(hr.innateRegenCount ?? 0).toFixed(1)}회` : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{wIn > 0 ? <>{formatNumber(wIn)} <span className="opacity-70">({inPct.toFixed(1)}%)</span></> : blank}</td>
-                                          <td className="py-1 px-2 text-center font-mono text-muted-foreground">{wOut > 0 ? <>{formatNumber(wOut)} <span className="opacity-70">({outPct.toFixed(1)}%)</span></> : blank}</td>
-                                        </tr>
-                                      );
-                                    })}
-                                  </tbody>
-                                </table>
-                              </div>
-                            </div>
-                            )}
-                          </div>
-                          )}
-
-                          {/* ===== Table C: 광전사 / 잘 (4 stages) ===== */}
-                          {showBerserker && (
-                          <div>
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 광전사 / 잘</div>
-                            <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                <colgroup>
-                                  <col style={{ width: '110px' }} /><col style={{ width: '60px' }} />
-                                  <col /><col />
-                                  <col /><col /><col /><col /><col />
-                                  <col /><col /><col />
-                                </colgroup>
-                                <thead>
-                                  <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide" rowSpan={2}>파티원</th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide" rowSpan={2}>단계</th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide" colSpan={2}>
-                                      <GroupHeader label="기본" info={'각 단계의 기준 체력과 발동 비율(단계별 합산 100%).'} />
-                                    </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={5}>
-                                      <GroupHeader label="공격력" info={'단계별 공격력% 증가, 일반/치명/평균 대미지 및 단계별 가한 대미지 비중.'} />
-                                    </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide border-l-2 border-primary/40" colSpan={3}>
-                                      <GroupHeader label="회피" info={'단계별 회피% 증가, 최종 회피, 실제 회피율.'} />
-                                    </th>
-                                  </tr>
-                                  <tr className="border-b-2 border-border/60 text-[12px] text-muted-foreground font-semibold">
-                                    <th className="text-center py-1 px-2 bg-secondary/20">기준 체력</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/20">발동 비율</th>
-                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/70">공격력%</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/70">일반</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/70">치명</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/70">평균</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/70">대미지 비중</th>
-                                    <th className="text-center py-1 px-2 border-l-2 border-primary/40 bg-secondary/20">회피%</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/20">최종 회피</th>
-                                    <th className="text-center py-1 px-2 bg-secondary/20">실제 회피율</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {(() => {
-                                    if (zeroBucket) {
-                                      return <EmptyBucketRow tab={mainResultsTab} colSpan={12} />;
-                                    }
-                                    const brkRows = displayResults.filter(hr => hr.isBerserkerHero && hr.berserkerStageDmg);
-                                    if (brkRows.length === 0) {
-                                      return (
-                                        <tr><td colSpan={12} className="py-2 px-2 text-center text-muted-foreground/60 italic">광전사 / 잘 직업 파티원 없음</td></tr>
-                                      );
-                                    }
-                                    return brkRows.map((hr, hi) => {
-                                      const stageTotals = hr.berserkerStageDmg!.map(d => d.total);
-                                      const sumTotal = stageTotals.reduce((a, b) => a + b, 0);
-                                      return [0, 1, 2, 3].map(s => {
-                                        const stageDmg = hr.berserkerStageDmg?.[s];
-                                        const stageEva = hr.berserkerStageEvaRate?.[s] ?? 0;
-                                        const stageRate = hr.berserkerThresholds?.[s]?.belowRate ?? 0;
-                                        const thr = hr.berserkerThresholds?.[s]?.threshold ?? 100;
-                                        const totalDmg = stageDmg?.total ?? 0;
-                                        const dmgPct = sumTotal > 0 ? (totalDmg / sumTotal) * 100 : 0;
-                                        const atkBonus = hr.berserkerAtkBonus?.[s] ?? 0;
-                                        const evaBonus = hr.berserkerEvaBonus?.[s] ?? 0;
-                                        const finalEva = (hr.finalEvasion ?? 0) + evaBonus;
-                                        return (
-                                          <tr key={`brk-${hr.heroId}-${s}`} className={`border-b border-border/10 ${(hi + s) % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            {s === 0 && (
-                                              <td rowSpan={4} className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                            )}
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s}단계</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{s === 0 ? '-' : `${thr}%`}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageRate.toFixed(1)}%`, stageRate === 0)}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40">+{atkBonus}%</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.normal > 0 ? formatNumber(stageDmg.normal) : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.crit > 0 ? formatNumber(stageDmg.crit) : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{stageDmg && stageDmg.avg > 0 ? formatNumber(stageDmg.avg) : blank}</td>
-                                            <td className="py-1 px-2 font-mono text-muted-foreground text-[11px]">
-                                              {totalDmg > 0 ? (
-                                                <div className="flex items-center gap-1">
-                                                  <div className="flex-1 bg-secondary/40 h-2 rounded overflow-hidden">
-                                                    <div className="h-full bg-primary/70" style={{ width: `${Math.min(dmgPct, 100)}%` }} />
-                                                  </div>
-                                                  <span className="opacity-70 whitespace-nowrap">{dmgPct.toFixed(1)}%</span>
-                                                </div>
-                                              ) : blank}
-                                            </td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground border-l-2 border-primary/40">+{evaBonus}%</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{Math.round(finalEva)}%</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{fadeZero(`${stageEva.toFixed(1)}%`, stageEva === 0)}</td>
-                                          </tr>
-                                        );
-                                      });
-                                    });
-                                  })()}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                          )}
-
-
-                          {/* ===== Table D: 폴로니아 ===== */}
-                          {hasPolonia && (
-                          <div>
-                            <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 폴로니아</div>
-                            <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                              <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                <colgroup>
-                                  <col style={{ width: '110px' }} />
-                                  <col /><col /><col />
-                                </colgroup>
-                                <thead>
-                                  <tr className="border-b-2 border-border/60">
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                      <GroupHeader label="훔친 수" info={'시뮬레이션 1회당 해당 파티원이 훔친 평균 아이템 수.'} />
-                                    </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                      <GroupHeader label="훔칠 확률" info={'시뮬레이션에 적용된 훔칠 확률 (폴로니아 리더 스킬 + 사기꾼 1명당 +2%).'} />
-                                    </th>
-                                    <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                      <GroupHeader label="훔치기 한도" info={'시뮬레이션에 적용된 한도 (기본 20 + 사기꾼 1명당 +2).'} />
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {zeroBucket ? (
-                                    <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                  ) : !hasPolonia ? (
-                                    <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">폴로니아 챔피언이 파티에 없음</td></tr>
-                                  ) : (<>
-                                    {displayResults.map((hr, idx) => (
-                                      <tr key={`pol-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                        <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                        <td className="py-1 px-2 text-center font-mono text-muted-foreground">{(hr.poloniaStolenAvg ?? 0) > 0 ? `${(hr.poloniaStolenAvg ?? 0).toFixed(2)}개` : blank}</td>
-                                        {idx === 0 && poloniaLoot && (
-                                          <>
-                                            <td rowSpan={displayResults.length} className="py-1 px-2 text-center font-mono text-muted-foreground align-middle">
-                                              {poloniaLoot.baseChance.toFixed(1)}%
-                                              {poloniaLoot.numTricksters > 0 && <span className="ml-1 text-[10px] opacity-70">(+{poloniaLoot.numTricksters * 2}%)</span>}
-                                            </td>
-                                            <td rowSpan={displayResults.length} className="py-1 px-2 text-center font-mono text-muted-foreground align-middle">
-                                              {poloniaLoot.capMax}개
-                                              {poloniaLoot.numTricksters > 0 && <span className="ml-1 text-[10px] opacity-70">(+{poloniaLoot.numTricksters * 2})</span>}
-                                            </td>
-                                          </>
-                                        )}
-                                      </tr>
-                                    ))}
-                                    {poloniaLoot && (
-                                      <tr className="border-t-2 border-border/60 bg-primary/5 font-bold">
-                                        <td className="py-1 px-2 text-center text-foreground">파티 합계</td>
-                                        <td className="py-1 px-2 text-center font-mono text-foreground" colSpan={3}>
-                                          평균 {poloniaLoot.avgPerSim.toFixed(2)}개 · 최소 {poloniaLoot.minPerSim}개 · 최대 {poloniaLoot.maxPerSim}개
-                                          <span className="ml-2 opacity-70 font-normal">(한도 도달률 {poloniaLoot.capHitRate.toFixed(1)}%)</span>
-                                        </td>
-                                      </tr>
-                                    )}
-                                  </>)}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                          )}
-
-                          {/* ===== Table D2: 루도 ===== */}
-                          {hasRudo && (() => {
-                            return (
-                              <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 루도</div>
-                                <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                    <colgroup>
-                                      <col style={{ width: '110px' }} />
-                                      <col style={{ width: '18%' }} />
-                                      <col style={{ width: '18%' }} />
-                                      <col style={{ width: '32%' }} />
-                                      <col style={{ width: '32%' }} />
-                                    </colgroup>
-                                    <thead>
-                                      <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="치명타 확률 보너스" info={'루도 리더 스킬로 추가되는 치명타 확률 보너스.'} />
-                                        </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="최종 치명타 확률" info={'루도 보너스가 더해진 최종 치명타 확률.'} />
-                                        </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="보너스 라운드 평균 대미지" info={'루도 치명타 확률 보너스가 적용되는 동안 가한 총 평균 대미지(시뮬레이션당).'} />
-                                        </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="대미지 비중" info={'루도 보너스 라운드 평균 대미지가 본 영웅 전체 평균 대미지에서 차지하는 비중.'} />
-                                        </th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {zeroBucket ? (
-                                        <EmptyBucketRow tab={mainResultsTab} colSpan={5} />
-                                      ) : !hasRudo ? (
-                                        <tr><td colSpan={5} className="py-2 px-2 text-center text-muted-foreground/60 italic">루도 챔피언이 파티에 없음</td></tr>
-                                      ) : displayResults.map((hr, idx) => {
-                                        const share = (hr.avgDamageDealt && hr.avgDamageDealt > 0)
-                                          ? (hr.rudoBonusDmgAvg ?? 0) / hr.avgDamageDealt * 100
-                                          : 0;
-                                        return (
-                                          <tr key={`rudo-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-yellow-500 dark:text-yellow-300">+{(hr.rudoCritBonusPct ?? 0).toFixed(1)}%</td>
-                                            <td className="py-1 px-2 text-center font-mono text-yellow-500 dark:text-yellow-300">{(hr.rudoFinalCritChance ?? 0).toFixed(1)}%</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{formatNumber(hr.rudoBonusDmgAvg ?? 0)}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{share.toFixed(1)}%</td>
-                                          </tr>
-                                        );
-                                      })}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            );
-                          })()}
-
-                          {/* ===== Table E: 헴마 (별도 분리) ===== */}
-                          {hasHemma && (() => {
-                            return (
-                              <div>
-                                <div className="text-xs font-semibold text-foreground mb-1 ml-1">- 헴마</div>
-                                <div className="overflow-x-auto rounded-xl border border-border/60 shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.25)] bg-card/40">
-                                  <table className="w-full text-[13px] border-collapse [&_td]:border [&_td]:border-border/40 [&_th]:border [&_th]:border-border/40 table-fixed">
-                                    <colgroup>
-                                      <col style={{ width: '110px' }} />
-                                      <col /><col /><col />
-                                    </colgroup>
-                                    <thead>
-                                      <tr className="border-b-2 border-border/60">
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">파티원</th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="흡수 턴" info={'헴마 흡수가 적용된 평균 턴 수.'} />
-                                        </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/10 text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="흡수 공격력" info={'헴마 흡수로 증가한 평균 공격 대미지.'} />
-                                        </th>
-                                        <th className="text-center py-1.5 px-2 bg-gradient-to-b from-primary/15 via-primary/10 to-transparent text-foreground font-bold tracking-wide">
-                                          <GroupHeader label="깎인 체력" info={'헴마 흡수로 인해 평균 깎인 동료의 체력. (헴마 본인 행: 표시 안 함)'} />
-                                        </th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {zeroBucket ? (
-                                        <EmptyBucketRow tab={mainResultsTab} colSpan={4} />
-                                      ) : !hasHemma ? (
-                                        <tr><td colSpan={4} className="py-2 px-2 text-center text-muted-foreground/60 italic">헴마 챔피언이 파티에 없음</td></tr>
-                                      ) : (() => {
-                                        const totalCount = displayResults.reduce((s, r) => s + (r.isHemmaHero ? 0 : (r.hemmaAbsorbedCount ?? 0)), 0);
-                                        return displayResults.map((hr, idx) => (
-                                          <tr key={`hem-${hr.heroId}`} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                                            <td className="py-1 px-2 text-center text-foreground font-medium">{hr.heroName}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? `${Math.round(totalCount)}회` : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{hr.isHemmaHero ? formatNumber(hr.hemmaAtkGainAvg ?? 0) : blank}</td>
-                                            <td className="py-1 px-2 text-center font-mono text-muted-foreground">{!hr.isHemmaHero && (hr.hemmaAbsorbedCount ?? 0) > 0 ? formatNumber(hr.hemmaAbsorbedDmg ?? 0) : blank}</td>
-                                          </tr>
-                                        ));
-                                      })()}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            );
-                          })()}
-
-                        </div>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </div>
-              );
-            })()}
-          </div>
-
-        </div>
-        </>
-      )}
-      </div> {/* end data-quest-screenshot */}
-
-
-      {/* Combat Log Dialog */}
-      <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
-        <DialogContent className="max-w-[92vw] h-[85vh] flex flex-col overflow-hidden p-4">
-          <DialogHeader>
-            <DialogTitle className="sr-only">1회 추적 로그</DialogTitle>
-          </DialogHeader>
-          {combatLog && (
-            <CombatBattlefield
-              log={combatLog}
+                      const entries = runSingleCombatLog({
+                        heroes: selectedHeroes,
+                        monster: questMonster2,
+                        miniBoss: selectedMiniBoss,
+                        booster: { type: selectedBooster },
+                        questTypeKey: selectedQuestType,
+                        regionName: currentRegion.name,
+                        isTerrorTower: isTerrorTower2,
+                      });
+                      setCombatLog(entries);
+                    }}
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
+            {/* Config Dialog */}
+            <QuestConfigDialog
+              open={configOpen}
+              onOpenChange={(open) => {
+                setConfigOpen(open);
+                if (!open) {
+                  setConfigInitialStep(undefined);
+                  setConfigInitialState(undefined);
+                }
+              }}
+              questDataMap={questDataMap}
+              questFiles={QUEST_FILES}
+              onSelect={handleQuestSelect}
+              initialStep={configInitialStep}
+              initialState={configInitialState}
+            />
+            {/* Hero Select Dialog */}
+            <HeroSelectDialog
+              open={heroSelectOpen}
+              onOpenChange={(open) => {
+                setHeroSelectOpen(open);
+                if (!open) setEditingSlotIdx(null);
+              }}
+              heroes={allHeroes}
+              selectedIds={selectedHeroIds}
+              maxMembers={maxMembers}
+              minPower={currentQuest?.minPower || 0}
+              onConfirm={(ids) => {
+                setSelectedHeroIds(ids);
+                setHeroSelectOpen(false);
+                setEditingSlotIdx(null);
+              }}
+              editingSlotIdx={editingSlotIdx}
+              barrierElements={barrierElements}
+            />
+            {/* Party Buff Breakdown Drawer */}
+            <PartyBuffBreakdownDrawer
+              open={buffBreakdownOpen}
+              onOpenChange={setBuffBreakdownOpen}
               heroes={selectedHeroes}
-              monsterHp={currentQuest?.hp || 0}
-              monsterName={locationName}
-              monsterImage={centerImage}
-              onNewBattle={() => {
-                if (!currentQuest || !currentRegion) return;
-                const isTerrorTower2 = selectedQuestType === 'tot' && currentRegion.name === '공포';
-                const bElements2 = currentQuest?.barrier ? (() => {
-                  const hasSubAreas2 = currentRegion && currentRegion.subAreas.length > 1;
-                  const barrierElement2 = hasSubAreas2 && selectedSubAreaIdx >= 0 && selectedSubAreaIdx !== 99
-                    ? (selectedSubAreaIdx === 0 ? currentQuest.barrier!.sub1 : selectedSubAreaIdx === 1 ? currentQuest.barrier!.sub2 : currentQuest.barrier!.sub3)
-                    : null;
-                  const rawElements = barrierElement2
-                    ? [barrierElement2]
-                    : [currentQuest.barrier!.sub1, currentQuest.barrier!.sub2, currentQuest.barrier!.sub3].filter(Boolean);
-                  return [...new Set(rawElements)] as string[];
-                })() : [];
-                const questMonster2: QuestMonster = {
-                  hp: currentQuest.hp, atk: currentQuest.atk, aoe: currentQuest.aoe,
-                  aoeChance: currentQuest.aoeChance, def: currentQuest.def,
-                  isBoss: currentQuest.isBoss, isExtreme: currentQuest.isExtreme,
-                  barrier: currentQuest.barrier, barrierElement: bElements2[0] || null,
-                };
-                const entries = runSingleCombatLog({
-                  heroes: selectedHeroes, monster: questMonster2,
-                  miniBoss: selectedMiniBoss, booster: { type: selectedBooster },
-                  questTypeKey: selectedQuestType, regionName: currentRegion.name, isTerrorTower: isTerrorTower2,
+              buffSummary={buffSummary}
+              buffedStats={buffedStats}
+              hasEvasionPenalty={
+                !!(
+                  currentQuest &&
+                  (currentQuest.isExtreme || (selectedQuestType === "tot" && currentRegion?.name === "공포"))
+                )
+              }
+            />
+            {/* Overwrite Saved Simulation Dialog */}
+            <OverwriteSimulationDialog
+              open={overwriteDialogOpen}
+              onOpenChange={setOverwriteDialogOpen}
+              onConfirm={handleOverwriteResult}
+              defaultSelectedId={loadedSimId}
+            />
+            {/* Save current party to my list */}
+            <SavePartyToListDialog
+              open={savePartyOpen}
+              onOpenChange={setSavePartyOpen}
+              members={selectedHeroes}
+              onPersisted={(ids) => {
+                // After persisting to storage, drop temp overrides for those heroes
+                // (the storage value is now the canonical one).
+                setTempOverrides((prev) => {
+                  const next = { ...prev };
+                  ids.forEach((id) => {
+                    delete next[id];
+                  });
+                  return next;
                 });
-                setCombatLog(entries);
               }}
             />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Config Dialog */}
-      <QuestConfigDialog
-        open={configOpen}
-        onOpenChange={(open) => {
-          setConfigOpen(open);
-          if (!open) {
-            setConfigInitialStep(undefined);
-            setConfigInitialState(undefined);
-          }
-        }}
-        questDataMap={questDataMap}
-        questFiles={QUEST_FILES}
-        onSelect={handleQuestSelect}
-        initialStep={configInitialStep}
-        initialState={configInitialState}
-      />
-
-      {/* Hero Select Dialog */}
-      <HeroSelectDialog
-        open={heroSelectOpen}
-        onOpenChange={(open) => { setHeroSelectOpen(open); if (!open) setEditingSlotIdx(null); }}
-        heroes={allHeroes}
-        selectedIds={selectedHeroIds}
-        maxMembers={maxMembers}
-        minPower={currentQuest?.minPower || 0}
-        onConfirm={(ids) => {
-          setSelectedHeroIds(ids);
-          setHeroSelectOpen(false);
-          setEditingSlotIdx(null);
-        }}
-        editingSlotIdx={editingSlotIdx}
-        barrierElements={barrierElements}
-      />
-
-      {/* Party Buff Breakdown Drawer */}
-      <PartyBuffBreakdownDrawer
-        open={buffBreakdownOpen}
-        onOpenChange={setBuffBreakdownOpen}
-        heroes={selectedHeroes}
-        buffSummary={buffSummary}
-        buffedStats={buffedStats}
-        hasEvasionPenalty={!!(currentQuest && (currentQuest.isExtreme || (selectedQuestType === 'tot' && currentRegion?.name === '공포')))}
-      />
-
-      {/* Overwrite Saved Simulation Dialog */}
-      <OverwriteSimulationDialog
-        open={overwriteDialogOpen}
-        onOpenChange={setOverwriteDialogOpen}
-        onConfirm={handleOverwriteResult}
-        defaultSelectedId={loadedSimId}
-      />
-
-      {/* Save current party to my list */}
-      <SavePartyToListDialog
-        open={savePartyOpen}
-        onOpenChange={setSavePartyOpen}
-        members={selectedHeroes}
-        onPersisted={(ids) => {
-          // After persisting to storage, drop temp overrides for those heroes
-          // (the storage value is now the canonical one).
-          setTempOverrides(prev => {
-            const next = { ...prev };
-            ids.forEach(id => { delete next[id]; });
-            return next;
-          });
-        }}
-      />
-
-    </>
-      )}
-      </div> {/* end simulation tab */}
+          </>
+        )}
+      </div>{" "}
+      {/* end simulation tab */}
     </div>
   );
 }
