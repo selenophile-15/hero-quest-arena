@@ -254,7 +254,7 @@ const StableImage = ({ src, onError, ...props }: StableImageProps) => {
 
 export default function HeroList() {
   const { colorMode } = useTheme();
-  const [heroes, setHeroes] = useState<Hero[]>(getHeroes());
+  const [heroes, setHeroes] = useState<Hero[]>(() => getHeroes());
   const [editing, setEditing] = useState<Hero | null>(null);
   const [addingType, setAddingType] = useState<"hero" | "champion" | null>(null);
   const [sortKey, setSortKey] = useState<string>("heroClass");
