@@ -233,12 +233,21 @@ export default function EquipmentSelectDialog({
 
   const spiritNames = useMemo(() => {
     const set = new Set<string>();
-    allItems.forEach((item) => {
+    // 현재 슬롯에서 보이는 아이템 기준으로만 영혼 목록 구성
+    const baseItems =
+      filterSpirit === "_all"
+        ? filteredItems
+        : allItems.filter((item) => {
+            const allowedTypes = slotAllowedTypes[activeSlot] || [];
+            const allowedFileTypes = new Set(allowedTypes.map((t) => EQUIP_TYPE_MAP[t]?.file).filter(Boolean));
+            return item.type === "dual_wield" ? true : allowedFileTypes.has(item.type);
+          });
+    baseItems.forEach((item) => {
       item.spiritAffinity?.forEach((s) => set.add(s));
       if (item.uniqueSpirit) item.uniqueSpirit.forEach((s) => set.add(s));
     });
     return Array.from(set).sort((a, b) => getSpiritTier(b) - getSpiritTier(a));
-  }, [allItems]);
+  }, [allItems, filteredItems, activeSlot, slotAllowedTypes, filterSpirit]);
 
   const spiritGroups = useMemo(() => {
     const groups: { tier: number; spirits: string[] }[] = [];
