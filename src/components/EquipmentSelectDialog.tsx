@@ -287,40 +287,55 @@ export default function EquipmentSelectDialog({
       });
       setAllItems(items);
 
-      // 장비 이미지 + 마법부여 이미지 전부 로드 완료 후에 로딩 해제
-      const enchantImgs: string[] = [];
-      items.forEach((item) => {
-        item.elementAffinity?.forEach((el) => {
-          const eng = ELEMENT_ENG[el];
-          if (eng && eng !== "all") {
-            for (let t = 1; t <= 15; t++) {
-              enchantImgs.push(`/images/enchant/element/${eng}${t}_1.webp`);
-              enchantImgs.push(`/images/enchant/element/${eng}${t}_2.webp`);
-            }
-          }
-        });
-        item.uniqueElement?.forEach((el) => {
-          const eng = ELEMENT_ENG[el];
-          if (eng) enchantImgs.push(`/images/enchant/element/${eng}${item.uniqueElementTier || 1}_2.webp`);
-        });
-        item.spiritAffinity?.forEach((sp) => {
-          const eng = SPIRIT_NAME_MAP[sp];
-          if (eng) {
-            enchantImgs.push(`/images/enchant/spirit/${eng}_1.webp`);
-            enchantImgs.push(`/images/enchant/spirit/${eng}_2.webp`);
-          }
-        });
-        item.uniqueSpirit?.forEach((sp) => {
-          if (sp === "문드라") enchantImgs.push("/images/enchant/spirit/mundra.webp");
-          else {
-            const eng = SPIRIT_NAME_MAP[sp];
-            if (eng) enchantImgs.push(`/images/enchant/spirit/${eng}_2.webp`);
-          }
-        });
-      });
+      // 현재 슬롯에 해당하는 타입의 아이템만 먼저 추출
+      const initialAllowedTypes = new Set(
+        (allowedPerSlot[initialSlot] || []).map((t) => EQUIP_TYPE_MAP[t]?.file).filter(Boolean),
+      );
+      const priorityItems = items.filter((item) =>
+        item.type === "dual_wield" ? initialAllowedTypes.size > 0 : initialAllowedTypes.has(item.type),
+      );
+      const otherItems = items.filter((item) => !priorityItems.includes(item));
 
-      await preloadImagesAndWait([...items.map((i) => i.imagePath), ...enchantImgs]);
+      function collectEnchantImgs(targets: EquipmentItem[]): string[] {
+        const imgs: string[] = [];
+        targets.forEach((item) => {
+          item.elementAffinity?.forEach((el) => {
+            const eng = ELEMENT_ENG[el];
+            if (eng && eng !== "all") {
+              for (let t = 1; t <= 15; t++) {
+                imgs.push(`/images/enchant/element/${eng}${t}_1.webp`);
+                imgs.push(`/images/enchant/element/${eng}${t}_2.webp`);
+              }
+            }
+          });
+          item.uniqueElement?.forEach((el) => {
+            const eng = ELEMENT_ENG[el];
+            if (eng) imgs.push(`/images/enchant/element/${eng}${item.uniqueElementTier || 1}_2.webp`);
+          });
+          item.spiritAffinity?.forEach((sp) => {
+            const eng = SPIRIT_NAME_MAP[sp];
+            if (eng) {
+              imgs.push(`/images/enchant/spirit/${eng}_1.webp`);
+              imgs.push(`/images/enchant/spirit/${eng}_2.webp`);
+            }
+          });
+          item.uniqueSpirit?.forEach((sp) => {
+            if (sp === "문드라") imgs.push("/images/enchant/spirit/mundra.webp");
+            else {
+              const eng = SPIRIT_NAME_MAP[sp];
+              if (eng) imgs.push(`/images/enchant/spirit/${eng}_2.webp`);
+            }
+          });
+        });
+        return imgs;
+      }
+
+      // 현재 슬롯 이미지 먼저 대기
+      await preloadImagesAndWait([...priorityItems.map((i) => i.imagePath), ...collectEnchantImgs(priorityItems)]);
       setLoading(false);
+
+      // 나머지는 백그라운드에서 로딩
+      preloadImagesAndWait([...otherItems.map((i) => i.imagePath), ...collectEnchantImgs(otherItems)]);
     };
     load();
   }, [open, jobName, slotCount]);
