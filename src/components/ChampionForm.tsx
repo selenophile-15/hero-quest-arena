@@ -970,14 +970,31 @@ export default function ChampionForm({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="_all">전체</SelectItem>
-                            {Object.entries(SPIRIT_TIER)
-                              .sort(([, a], [, b]) => b - a)
-                              .map(([sp, tier]) => (
-                                <SelectItem key={sp} value={sp}>
-                                  <span className="text-muted-foreground text-[10px] mr-1">T{tier})</span>
-                                  {sp}
-                                </SelectItem>
-                              ))}
+                            {(() => {
+                              const groups: { tier: number; spirits: string[] }[] = [];
+                              let lastTier = -1;
+                              Object.entries(SPIRIT_TIER)
+                                .sort(([, a], [, b]) => b - a)
+                                .forEach(([sp, tier]) => {
+                                  if (tier !== lastTier) {
+                                    groups.push({ tier, spirits: [sp] });
+                                    lastTier = tier;
+                                  } else {
+                                    groups[groups.length - 1].spirits.push(sp);
+                                  }
+                                });
+                              return groups.map((group, gi) => (
+                                <div key={gi}>
+                                  {gi > 0 && <div className="border-t border-border/30 my-1" />}
+                                  {group.spirits.map((sp) => (
+                                    <SelectItem key={sp} value={sp}>
+                                      <span className="text-muted-foreground text-[10px] mr-1">T{group.tier})</span>
+                                      {sp}
+                                    </SelectItem>
+                                  ))}
+                                </div>
+                              ));
+                            })()}
                           </SelectContent>
                         </Select>
 
