@@ -322,9 +322,20 @@ export default function HeroList() {
     ensureAurasongDataLoaded();
   }, []);
 
-  // Sync with storage when heroes are added/updated elsewhere
+  // Sync with storage when heroes are added/updated elsewhere.
+  // Only update state when the serialized content actually changes — otherwise
+  // every visibilitychange / focus event would replace the array reference and
+  // trigger a cascade of re-renders (which looked like the list flickering /
+  // reloading multiple times when entering this tab).
   useEffect(() => {
-    const refresh = () => setHeroes(getHeroes());
+    const lastSerialized = { current: JSON.stringify(getHeroes()) };
+    const refresh = () => {
+      const next = getHeroes();
+      const serialized = JSON.stringify(next);
+      if (serialized === lastSerialized.current) return;
+      lastSerialized.current = serialized;
+      setHeroes(next);
+    };
     window.addEventListener("heroes-updated", refresh);
     const handleVisibility = () => {
       if (document.visibilityState === "visible") refresh();
