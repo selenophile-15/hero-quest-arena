@@ -215,7 +215,7 @@ export default function QuestConfigDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <DialogHeader>
           <DialogTitle className="font-bold flex items-center gap-2">
             {step !== "type" && (
@@ -269,7 +269,8 @@ export default function QuestConfigDialog({
                     loading="eager"
                     decoding="sync"
                     onError={(e) => {
-                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                      if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                        e.currentTarget.src = "/images/fallback.svg";
                     }}
                   />
                 </div>
@@ -297,7 +298,8 @@ export default function QuestConfigDialog({
                 loading="eager"
                 decoding="sync"
                 onError={(e) => {
-                  if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                  if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                    e.currentTarget.src = "/images/fallback.svg";
                 }}
               />
               <div>
@@ -309,9 +311,9 @@ export default function QuestConfigDialog({
             </div>
 
             {/* Sub-areas with difficulty buttons */}
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-nowrap justify-start gap-4 overflow-x-auto pb-2">
               {areaCards.map((card) => (
-                <div key={card.key} className="flex w-[132px] flex-col items-center gap-2">
+                <div key={card.key} className="flex w-[132px] flex-shrink-0 flex-col items-center gap-2">
                   <div
                     className={`w-24 h-24 rounded-lg border ${card.isBoss ? "border-red-500/40 bg-secondary/30" : "border-border bg-secondary/30"} flex items-center justify-center overflow-hidden aspect-square`}
                   >
@@ -322,7 +324,8 @@ export default function QuestConfigDialog({
                       loading="eager"
                       decoding="sync"
                       onError={(e) => {
-                        if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                        if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                          e.currentTarget.src = "/images/fallback.svg";
                       }}
                     />
                   </div>

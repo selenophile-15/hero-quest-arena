@@ -12,6 +12,8 @@ export function useMobileGestures(desktopMode: boolean) {
   const pinchStartDistRef = useRef(0);
   const pinchStartZoomRef = useRef(1);
   const lastTapRef = useRef(0);
+  const pinchStartCenterRef = useRef({ x: 0, y: 0 });
+  const pinchStartScrollRef = useRef({ x: 0, y: 0 });
 
   const applyScale = useCallback((zoom: number) => {
     currentZoomRef.current = zoom;
@@ -108,6 +110,14 @@ export function useMobileGestures(desktopMode: boolean) {
       if (e.touches.length === 2) {
         pinchStartDistRef.current = getDistance(e.touches[0], e.touches[1]);
         pinchStartZoomRef.current = currentZoomRef.current;
+        pinchStartCenterRef.current = {
+          x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+          y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
+        };
+        pinchStartScrollRef.current = {
+          x: window.scrollX,
+          y: window.scrollY,
+        };
       }
     };
 
@@ -117,7 +127,20 @@ export function useMobileGestures(desktopMode: boolean) {
         const dist = getDistance(e.touches[0], e.touches[1]);
         const ratio = dist / pinchStartDistRef.current;
         const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchStartZoomRef.current * ratio));
+
+        const oldTotalScale = fitScaleRef.current * pinchStartZoomRef.current;
+        const newTotalScale = fitScaleRef.current * newZoom;
+
+        // 핀치 중심점이 가리키는 콘텐츠 좌표
+        const cx = pinchStartCenterRef.current.x;
+        const cy = pinchStartCenterRef.current.y;
+        const contentX = (pinchStartScrollRef.current.x + cx) / oldTotalScale;
+        const contentY = (pinchStartScrollRef.current.y + cy) / oldTotalScale;
+
         applyScale(newZoom);
+
+        // 핀치 중심이 같은 콘텐츠 위치를 가리키도록 스크롤 보정
+        window.scrollTo(contentX * newTotalScale - cx, contentY * newTotalScale - cy);
       }
     };
 
