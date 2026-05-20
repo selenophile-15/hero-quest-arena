@@ -581,8 +581,8 @@
     "Glörkberry Parfait": {
       "id": "ds16_1",
       "name_ko": "글록베리 파르페",
-      "image_key": "glörkberry_parfait",
-      "이미지_경로": "/images/equipment/accessory/dessert/glörkberry_parfait.webp",
+      "image_key": "glorkberry_parfait",
+      "이미지_경로": "/images/equipment/accessory/dessert/glorkberry_parfait.webp",
 
       "장비_공격력": 0,
       "장비_방어력": 0,
