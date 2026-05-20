@@ -355,6 +355,29 @@
       "고유영혼": null,
       "유물": null,
       "천상": 1
+    },
+
+    "Slumberthorn Curse": {
+      "id": "sp7_5",
+      "name_ko": "잠가시 저주",
+      "image_key": "slumberthorn_curse",
+      "이미지_경로": "/images/equipment/weapon/spear/slumberthorn_curse.webp",
+
+      "장비_공격력": 280,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 336,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": ["Dark", "Earth"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1
     }
   },
 
