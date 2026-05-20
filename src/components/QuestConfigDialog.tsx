@@ -269,7 +269,7 @@ export default function QuestConfigDialog({
                     loading="eager"
                     decoding="sync"
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                     }}
                   />
                 </div>
@@ -297,7 +297,7 @@ export default function QuestConfigDialog({
                 loading="eager"
                 decoding="sync"
                 onError={(e) => {
-                  e.currentTarget.style.display = "none";
+                  if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                 }}
               />
               <div>
@@ -322,7 +322,7 @@ export default function QuestConfigDialog({
                       loading="eager"
                       decoding="sync"
                       onError={(e) => {
-                        e.currentTarget.style.display = "none";
+                        if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                       }}
                     />
                   </div>

@@ -239,7 +239,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
         } : { background: 'hsl(var(--secondary) / 0.2)' }}>
         <div className="relative w-full flex items-center justify-center pt-0.5">
           {item?.imagePath
-            ? <img src={item.imagePath} alt="" className="w-8 h-8 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+            ? <img src={item.imagePath} alt="" className="w-8 h-8 object-contain" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
             : <span className="text-[6px] text-muted-foreground/40 py-1">-</span>
           }
           {isManual && <ManualOverlay />}
@@ -248,12 +248,12 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
           <div className="flex items-center justify-center gap-0.5 pb-0.5">
             {displayElement && (
               <img src={`/images/enchant/element/${ELEMENT_ENG[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? '2' : '1'}.webp`}
-                className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                className="w-4 h-4" alt="" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
             )}
             {displaySpirit && (() => {
               const eng = SPIRIT_NAME_MAP[displaySpirit.name];
-              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />;
-              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+              if (displaySpirit.name === '문드라') return <img src="/images/enchant/spirit/mundra.webp" className="w-4 h-4" alt="" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />;
+              return eng ? <img src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? '2' : '1'}.webp`} className="w-4 h-4" alt="" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} /> : null;
             })()}
           </div>
         )}
@@ -286,7 +286,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                 const imgPath = h.type === 'champion' && h.championName ? getChampionImagePath(h.championName) : h.heroClass ? getJobImagePath(h.heroClass) : '';
                 return (
                   <div key={h.id} className="flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 border border-primary/30">
-                    {imgPath && <img src={imgPath} alt="" className="w-5 h-5 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                    {imgPath && <img src={imgPath} alt="" className="w-5 h-5 rounded-full" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />}
                     <span className="text-xs font-medium text-foreground">{h.name}</span>
                     <button onClick={() => setLocalIds(prev => { const n = new Set(prev); n.delete(h.id); return n; })} className="text-muted-foreground hover:text-foreground ml-0.5">
                       <X className="w-3 h-3" />
@@ -438,14 +438,14 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           <div className="flex flex-col items-center gap-0.5">
                             <div className="w-28 h-28 overflow-hidden rounded border border-border/30 bg-secondary/20">
                               {illustPath
-                                ? <img src={illustPath} alt="" className="w-full h-full object-cover" onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }} />
+                                ? <img src={illustPath} alt="" className="w-full h-full object-cover" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                                 : null}
                             </div>
                             <span className="text-[10px] whitespace-nowrap text-muted-foreground">{jobLabel}</span>
                           </div>
                         ) : (
                           <div className="flex items-center gap-1 justify-center">
-                            {jobIconPath && <img src={jobIconPath} alt="" className="w-4 h-4 rounded-full" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                            {jobIconPath && <img src={jobIconPath} alt="" className="w-4 h-4 rounded-full" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />}
                             <span className="text-xs whitespace-nowrap font-bold text-foreground">{jobLabel}</span>
                           </div>
                         )}
@@ -475,7 +475,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                                 const champEng = hero.championName ? CHAMPION_NAME_MAP[hero.championName] : '';
                                 const tier = getChampionLeaderSkillTier(hero);
                                 const leaderIcon = champEng ? `/images/skills/sk_champion/${champEng}_${tier}.webp` : '';
-                                return leaderIcon ? <img src={leaderIcon} alt="리더" className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                                return leaderIcon ? <img src={leaderIcon} alt="리더" className="w-6 h-6" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} /> : null;
                               })()}
                               {(() => {
                                 const aurasongItem = hero.equipmentSlots?.[1]?.item;
@@ -484,7 +484,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                                 const auraIcon = getAurasongSkillIconPath(aurasongItem.name);
                                 return auraIcon ? (
                                   <div className="relative">
-                                    <img src={auraIcon} alt="오라" className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                    <img src={auraIcon} alt="오라" className="w-6 h-6" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                                     {isManual && <ManualOverlay />}
                                   </div>
                                 ) : null;
@@ -493,10 +493,10 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           ) : (
                             <>
                               {hero.heroClass && (
-                                <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-6 h-6" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                               )}
                               {hero.skills?.slice(1, 5).map((sk, i) => sk ? (
-                                <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-6 h-6" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                                <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-6 h-6" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                               ) : null)}
                             </>
                           )}
@@ -574,7 +574,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                     <div className="w-full rounded-lg bg-secondary/20 py-1">
                       <div className="w-full aspect-square flex items-center justify-center overflow-hidden">
                         {illustPath
-                          ? <img src={illustPath} alt={hero.name} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                          ? <img src={illustPath} alt={hero.name} className="w-full h-full object-cover" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                           : <span className="text-muted-foreground text-xs">{hero.name}</span>}
                       </div>
                     </div>
@@ -593,7 +593,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                     {/* Skills */}
                     {isChampion ? (
                       <div className="flex items-center gap-1 justify-center flex-wrap">
-                        {champLeaderIcon && <img src={champLeaderIcon} alt="리더" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                        {champLeaderIcon && <img src={champLeaderIcon} alt="리더" className="w-7 h-7" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />}
                         {(() => {
                           const aurasongItem = hero.equipmentSlots?.[1]?.item;
                           if (!aurasongItem) return null;
@@ -601,7 +601,7 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                           const auraIcon = getAurasongSkillIconPath(aurasongItem.name);
                           return auraIcon ? (
                             <div className="relative">
-                              <img src={auraIcon} alt="오라" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                              <img src={auraIcon} alt="오라" className="w-7 h-7" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                               {isManual && <ManualOverlay />}
                             </div>
                           ) : null;
@@ -611,10 +611,10 @@ export default function HeroSelectDialog({ open, onOpenChange, heroes, selectedI
                       hero.skills && hero.skills.length > 0 && (
                         <div className="flex items-center gap-0.5 flex-wrap justify-center">
                           {hero.heroClass && (
-                            <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                            <img src={getUniqueSkillImagePath(hero.heroClass)} alt="" className="w-7 h-7" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                           )}
                           {hero.skills.slice(1, 5).map((sk, i) => (
-                            <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-7 h-7" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                            <img key={i} src={getSkillImagePath(sk)} alt={sk} title={sk} className="w-7 h-7" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                           ))}
                         </div>
                       )

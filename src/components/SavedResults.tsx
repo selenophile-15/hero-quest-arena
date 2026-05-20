@@ -622,10 +622,10 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     {/* a: region image + sub-area image */}
                     <div className="flex items-center gap-2 shrink-0 mr-8">
                       {sim.regionImage && (
-                        <img src={sim.regionImage} alt="" className="w-20 h-20 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        <img src={sim.regionImage} alt="" className="w-20 h-20 object-contain" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                       )}
                       {sim.subAreaImage && (
-                        <img src={sim.subAreaImage} alt="" className="w-20 h-20 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        <img src={sim.subAreaImage} alt="" className="w-20 h-20 object-contain" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                       )}
                     </div>
 
@@ -667,7 +667,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                 <div className="flex items-center gap-1 shrink-0">
                                   {heroElements.filter(e => e.value > 0).map(e => (
                                     <span key={e.element} className="flex items-center gap-0.5">
-                                      {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-[22px] h-[22px]" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
+                                      {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-[22px] h-[22px]" onError={ev => { if (!ev.currentTarget.src.endsWith('/images/fallback.svg')) ev.currentTarget.src = '/images/fallback.svg'; }} />}
                                       <span className={`text-[13px] font-mono font-bold tabular-nums text-black dark:text-white`}>{formatNumber(e.value)}</span>
                                     </span>
                                   ))}
@@ -720,7 +720,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                           const isMet = b.partySum >= b.required;
                           return (
                             <span key={i} className={`saved-chip saved-chip-barrier text-[13px] ${isMet ? 'is-met text-lime-700' : 'is-unmet text-red-700'}`}>
-                              {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                              {b.iconPath && <img src={b.iconPath} alt={b.element} className="w-4 h-4" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />}
                               {formatNumber(b.partySum)} / {formatNumber(b.required)}
                             </span>
                           );
@@ -730,7 +730,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                     {(sim.barrierInfos?.length && sim.boosterImage) ? <span className="text-muted-foreground/40">·</span> : null}
                     {sim.boosterImage && (
                       <span className="flex items-center gap-1.5">
-                        <img src={sim.boosterImage} alt="booster" className="w-5 h-5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                        <img src={sim.boosterImage} alt="booster" className="w-5 h-5 object-contain" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                         <span className="font-bold text-foreground/90">{sim.boosterLabel || '부스터'}</span>
                       </span>
                     )}

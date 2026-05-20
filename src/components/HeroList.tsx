@@ -936,7 +936,7 @@ export default function HeroList() {
               alt=""
               className={`${iconCls} rounded-full`}
               onError={(e) => {
-                e.currentTarget.style.display = "none";
+                if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
               }}
             />
             {spacer}
@@ -957,7 +957,7 @@ export default function HeroList() {
             alt=""
             className={iconCls}
             onError={(e) => {
-              e.currentTarget.style.display = "none";
+              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
             }}
           />
           {spacer}
@@ -976,7 +976,7 @@ export default function HeroList() {
             alt=""
             className={`${iconCls} rounded-full`}
             onError={(e) => {
-              e.currentTarget.style.display = "none";
+              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
             }}
           />
           {spacer}
@@ -1038,7 +1038,7 @@ export default function HeroList() {
                   className="inline-block align-middle w-9 h-9"
                   title="리더 스킬"
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                   }}
                 />
               )}
@@ -1049,7 +1049,7 @@ export default function HeroList() {
                   className="inline-block align-middle w-9 h-9"
                   title="오라의 노래"
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                   }}
                 />
               )}
@@ -1066,7 +1066,7 @@ export default function HeroList() {
                 className="w-9 h-9"
                 title="리더 스킬"
                 onError={(e) => {
-                  e.currentTarget.style.display = "none";
+                  if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                 }}
               />
             )}
@@ -1077,7 +1077,7 @@ export default function HeroList() {
                 className="w-9 h-9"
                 title="오라의 노래"
                 onError={(e) => {
-                  e.currentTarget.style.display = "none";
+                  if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                 }}
               />
             )}
@@ -1097,7 +1097,7 @@ export default function HeroList() {
                 className="inline-block align-middle w-9 h-9"
                 title={hero.skills?.[0] || "고유 스킬"}
                 onError={(e) => {
-                  e.currentTarget.style.display = "none";
+                  if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                 }}
               />
             )}
@@ -1115,7 +1115,7 @@ export default function HeroList() {
                   className="inline-block align-middle w-9 h-9"
                   title={sk}
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                   }}
                 />
               ) : (
@@ -1135,7 +1135,7 @@ export default function HeroList() {
                 className="w-9 h-9"
                 title={hero.skills?.[0] || "고유 스킬"}
                 onError={(e) => {
-                  e.currentTarget.style.display = "none";
+                  if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                 }}
               />
             )}
@@ -1152,7 +1152,7 @@ export default function HeroList() {
                     className="w-9 h-9"
                     title={sk}
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                     }}
                   />
                 ) : null}
@@ -1186,7 +1186,7 @@ export default function HeroList() {
                   className="inline-block align-middle w-9 h-9 object-contain"
                   title={item.name}
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                   }}
                 />
               );
@@ -1212,7 +1212,7 @@ export default function HeroList() {
                 className="w-9 h-9 object-contain"
                 title={item.name}
                 onError={(e) => {
-                  e.currentTarget.style.display = "none";
+                  if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                 }}
               />
             );
@@ -1246,7 +1246,7 @@ export default function HeroList() {
                     alt=""
                     className="inline-block align-middle w-4 h-4"
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                     }}
                   />
                   <span className={`inline-block align-middle text-xs tabular-nums leading-none ${seedColor}`}>
@@ -1277,7 +1277,7 @@ export default function HeroList() {
                   alt=""
                   className="w-4 h-4"
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                   }}
                 />
                 <span className={`text-xs tabular-nums ${seedColor}`}>{seedVal}</span>
@@ -1405,7 +1405,7 @@ export default function HeroList() {
                     alt=""
                     className="w-10 h-10 object-contain rounded-full"
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                     }}
                   />
                 </div>
@@ -1416,7 +1416,7 @@ export default function HeroList() {
                     alt=""
                     className="w-10 h-10 object-contain"
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                     }}
                   />
                 </div>
@@ -1510,7 +1510,7 @@ export default function HeroList() {
                         alt=""
                         className="w-10 h-10 flex-shrink-0"
                         onError={(e) => {
-                          e.currentTarget.style.display = "none";
+                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                         }}
                       />
                       <div>
@@ -1528,7 +1528,7 @@ export default function HeroList() {
                         alt=""
                         className="w-10 h-10 flex-shrink-0"
                         onError={(e) => {
-                          e.currentTarget.style.display = "none";
+                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                         }}
                       />
                       <div>
@@ -1558,7 +1558,7 @@ export default function HeroList() {
                             alt=""
                             className="w-10 h-10 flex-shrink-0"
                             onError={(e) => {
-                              e.currentTarget.style.display = "none";
+                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                             }}
                           />
                           <div className="min-w-0 flex-1">
@@ -1610,7 +1610,7 @@ export default function HeroList() {
                           alt=""
                           className="w-10 h-10 flex-shrink-0"
                           onError={(e) => {
-                            e.currentTarget.style.display = "none";
+                            if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                           }}
                         />
                         <div className="min-w-0 flex-1">
@@ -1712,7 +1712,7 @@ export default function HeroList() {
                               alt=""
                               className="w-4 h-4"
                               onError={(e) => {
-                                (e.target as HTMLElement).style.display = "none";
+                                if (!(e.target as HTMLImageElement).src.endsWith('/images/fallback.svg')) (e.target as HTMLImageElement).src = '/images/fallback.svg';
                               }}
                             />
                           ) : (
@@ -1728,7 +1728,7 @@ export default function HeroList() {
                               alt={item.name}
                               className="w-[55%] object-contain"
                               onError={(e) => {
-                                (e.target as HTMLElement).style.display = "none";
+                                if (!(e.target as HTMLImageElement).src.endsWith('/images/fallback.svg')) (e.target as HTMLImageElement).src = '/images/fallback.svg';
                               }}
                             />
                           ) : (
@@ -1746,7 +1746,7 @@ export default function HeroList() {
                                 className="w-8 h-8"
                                 alt=""
                                 onError={(e) => {
-                                  (e.target as HTMLElement).style.display = "none";
+                                  if (!(e.target as HTMLImageElement).src.endsWith('/images/fallback.svg')) (e.target as HTMLImageElement).src = '/images/fallback.svg';
                                 }}
                               />
                             )}
@@ -1760,7 +1760,7 @@ export default function HeroList() {
                                       className="w-8 h-8"
                                       alt=""
                                       onError={(e) => {
-                                        (e.target as HTMLElement).style.display = "none";
+                                        if (!(e.target as HTMLImageElement).src.endsWith('/images/fallback.svg')) (e.target as HTMLImageElement).src = '/images/fallback.svg';
                                       }}
                                     />
                                   );
@@ -1770,7 +1770,7 @@ export default function HeroList() {
                                     className="w-8 h-8"
                                     alt=""
                                     onError={(e) => {
-                                      (e.target as HTMLElement).style.display = "none";
+                                      if (!(e.target as HTMLImageElement).src.endsWith('/images/fallback.svg')) (e.target as HTMLImageElement).src = '/images/fallback.svg';
                                     }}
                                   />
                                 ) : null;
@@ -1781,7 +1781,7 @@ export default function HeroList() {
                                 className="w-8 h-8"
                                 alt=""
                                 onError={(e) => {
-                                  (e.target as HTMLElement).style.display = "none";
+                                  if (!(e.target as HTMLImageElement).src.endsWith('/images/fallback.svg')) (e.target as HTMLImageElement).src = '/images/fallback.svg';
                                 }}
                               />
                             )}
@@ -1896,7 +1896,7 @@ export default function HeroList() {
                     alt={hero.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                     }}
                   />
                 ) : (
@@ -1928,7 +1928,7 @@ export default function HeroList() {
                       className="w-9 h-9"
                       title="리더 스킬"
                       onError={(e) => {
-                        e.currentTarget.style.display = "none";
+                        if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                       }}
                     />
                   )}
@@ -1939,7 +1939,7 @@ export default function HeroList() {
                       className="w-9 h-9"
                       title="오라의 노래"
                       onError={(e) => {
-                        e.currentTarget.style.display = "none";
+                        if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                       }}
                     />
                   )}
@@ -1955,7 +1955,7 @@ export default function HeroList() {
                         className="w-9 h-9"
                         title={hero.skills?.[0]}
                         onError={(e) => {
-                          e.currentTarget.style.display = "none";
+                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                         }}
                       />
                     )}
@@ -1967,7 +1967,7 @@ export default function HeroList() {
                         className="w-9 h-9"
                         title={sk}
                         onError={(e) => {
-                          e.currentTarget.style.display = "none";
+                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                         }}
                       />
                     ))}
@@ -2022,7 +2022,7 @@ export default function HeroList() {
                             alt=""
                             className="w-3 h-3"
                             onError={(e) => {
-                              e.currentTarget.style.display = "none";
+                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                             }}
                           />
                         ) : (
@@ -2038,7 +2038,7 @@ export default function HeroList() {
                             alt=""
                             className="w-11 h-11 object-contain"
                             onError={(e) => {
-                              e.currentTarget.style.display = "none";
+                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                             }}
                           />
                         ) : (
@@ -2053,7 +2053,7 @@ export default function HeroList() {
                               className="w-5 h-5"
                               alt=""
                               onError={(e) => {
-                                e.currentTarget.style.display = "none";
+                                if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                               }}
                             />
                           )}
@@ -2067,7 +2067,7 @@ export default function HeroList() {
                                     className="w-5 h-5"
                                     alt=""
                                     onError={(e) => {
-                                      e.currentTarget.style.display = "none";
+                                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                     }}
                                   />
                                 );
@@ -2077,7 +2077,7 @@ export default function HeroList() {
                                   className="w-5 h-5"
                                   alt=""
                                   onError={(e) => {
-                                    e.currentTarget.style.display = "none";
+                                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                   }}
                                 />
                               ) : null;
@@ -2088,7 +2088,7 @@ export default function HeroList() {
                               className="w-5 h-5"
                               alt=""
                               onError={(e) => {
-                                e.currentTarget.style.display = "none";
+                                if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                               }}
                             />
                           )}
@@ -2143,7 +2143,7 @@ export default function HeroList() {
                             alt=""
                             className="w-3 h-3"
                             onError={(e) => {
-                              e.currentTarget.style.display = "none";
+                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                             }}
                           />
                         ) : (
@@ -2159,7 +2159,7 @@ export default function HeroList() {
                             alt=""
                             className="w-11 h-11 object-contain"
                             onError={(e) => {
-                              e.currentTarget.style.display = "none";
+                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                             }}
                           />
                         ) : (
@@ -2174,7 +2174,7 @@ export default function HeroList() {
                               className="w-5 h-5"
                               alt=""
                               onError={(e) => {
-                                e.currentTarget.style.display = "none";
+                                if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                               }}
                             />
                           )}
@@ -2188,7 +2188,7 @@ export default function HeroList() {
                                     className="w-5 h-5"
                                     alt=""
                                     onError={(e) => {
-                                      e.currentTarget.style.display = "none";
+                                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                     }}
                                   />
                                 );
@@ -2198,7 +2198,7 @@ export default function HeroList() {
                                   className="w-5 h-5"
                                   alt=""
                                   onError={(e) => {
-                                    e.currentTarget.style.display = "none";
+                                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                   }}
                                 />
                               ) : null;
@@ -2209,7 +2209,7 @@ export default function HeroList() {
                               className="w-5 h-5"
                               alt=""
                               onError={(e) => {
-                                e.currentTarget.style.display = "none";
+                                if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                               }}
                             />
                           )}
@@ -2312,7 +2312,7 @@ export default function HeroList() {
                       alt={si.label}
                       className="w-4 h-4"
                       onError={(e) => {
-                        e.currentTarget.style.display = "none";
+                        if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                       }}
                     />
                     <span

@@ -219,7 +219,7 @@ function HeroPicker({ open, onClose, allHeroes, ownedIds, plannedIds, onConfirm 
           className={checkboxClass}
         />
         {imgPath && (
-          <img src={imgPath} alt="" className="w-5 h-5 object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+          <img src={imgPath} alt="" className="w-5 h-5 object-contain" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
         )}
         {h.type === 'hero' ? (
           <>
