@@ -1137,8 +1137,8 @@
     "Mundra's Crystal Spear": {
       "id": "sp16_2",
       "name_ko": "문드라의 수정 창",
-      "image_key": "mundras_crystal_spear",
-      "이미지_경로": "/images/equipment/weapon/spear/mundras_crystal_spear.webp",
+      "image_key": "mundra's_crystal_spear",
+      "이미지_경로": "/images/equipment/weapon/spear/mundra's_crystal_spear.webp",
 
       "장비_공격력": 1405,
       "장비_방어력": 0,
