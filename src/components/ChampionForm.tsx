@@ -671,6 +671,8 @@ export default function ChampionForm({
                   src="/images/special/icon_global_artifact.webp"
                   alt="유물"
                   className="w-5 h-5"
+                  loading="eager"
+                  decoding="sync"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
                   }}
@@ -685,6 +687,8 @@ export default function ChampionForm({
                 src={equipItem.imagePath}
                 alt={equipItem.name}
                 className="w-4/5 h-4/5 object-contain"
+                loading="eager"
+                decoding="sync"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
@@ -708,6 +712,8 @@ export default function ChampionForm({
                   src={`/images/enchant/element/${ELEMENT_ENG_MAP[displayElement.type] || displayElement.type}${displayElement.tier}_${displayElement.affinity ? "2" : "1"}.webp`}
                   className="w-[80%] h-[80%] object-cover"
                   alt=""
+                  loading="eager"
+                  decoding="sync"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
                   }}
@@ -733,6 +739,8 @@ export default function ChampionForm({
                         src="/images/enchant/spirit/mundra.webp"
                         className="w-[80%] h-[80%] object-cover"
                         alt=""
+                        loading="eager"
+                        decoding="sync"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}
@@ -744,6 +752,8 @@ export default function ChampionForm({
                       src={`/images/enchant/spirit/${eng}_${displaySpirit.affinity ? "2" : "1"}.webp`}
                       className="w-[80%] h-[80%] object-cover"
                       alt=""
+                      loading="eager"
+                      decoding="sync"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
                       }}
@@ -761,7 +771,8 @@ export default function ChampionForm({
                 <img
                   src={getTypeImagePath(typeFile, colorMode)}
                   className="w-[80%] h-[80%] object-contain"
-                  alt=""
+                  loading="eager"
+                  decoding="sync"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
                   }}
@@ -1755,6 +1766,8 @@ export default function ChampionForm({
                               src={s.item.imagePath}
                               alt=""
                               className="w-9 h-9 object-contain flex-shrink-0"
+                              loading="eager"
+                              decoding="sync"
                               onError={(e) => {
                                 e.currentTarget.style.display = "none";
                               }}
@@ -1988,6 +2001,8 @@ export default function ChampionForm({
                 src={getChampionImagePath(championName)}
                 alt={championName}
                 className="max-w-full max-h-[340px] object-contain drop-shadow-lg rounded-full"
+                loading="eager"
+                decoding="sync"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
@@ -2032,6 +2047,8 @@ export default function ChampionForm({
                 src={getChampionImagePath(championName)}
                 alt={championName}
                 className="w-12 h-12 object-contain rounded-full"
+                loading="eager"
+                decoding="sync"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
@@ -2250,6 +2267,8 @@ export default function ChampionForm({
                         src={`/images/skills/sk_champion/${champEng}_${leaderSkillTier}.webp`}
                         alt=""
                         className="w-9 h-9 object-contain"
+                        loading="eager"
+                        decoding="sync"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}
@@ -2278,6 +2297,8 @@ export default function ChampionForm({
                           src={aurasongSkillIcon}
                           alt=""
                           className="w-9 h-9 object-contain"
+                          loading="eager"
+                          decoding="sync"
                           onError={(e) => {
                             e.currentTarget.style.display = "none";
                           }}
