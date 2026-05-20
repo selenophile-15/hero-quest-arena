@@ -40,7 +40,7 @@ export function useMobileGestures(desktopMode: boolean) {
       portalRoot.style.transform = `scale(${totalScale})`;
       portalRoot.style.transformOrigin = "top left";
       portalRoot.style.zIndex = "9999";
-      portalRoot.style.pointerEvents = "auto"; // 모달/다이얼로그 클릭 허용
+      portalRoot.style.pointerEvents = "none"; // 배경 터치 통과
     }
   }, []);
 
