@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 
 const DESKTOP_WIDTH = 1366;
 const DOUBLE_TAP_DELAY = 300;
-const MIN_ZOOM = 0.5;
+const MIN_ZOOM = 1;
 const MAX_ZOOM = 5;
 const DEFAULT_VIEWPORT = "width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover";
 
@@ -34,7 +34,7 @@ export function useMobileGestures(desktopMode: boolean) {
       portalRoot.style.left = "0";
       portalRoot.style.width = `${DESKTOP_WIDTH}px`;
       portalRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-      portalRoot.style.height = `${(DESKTOP_WIDTH / totalScale) * (window.innerHeight / window.innerWidth)}px`;
+      portalRoot.style.height = `${window.innerHeight / totalScale}px`;
       portalRoot.style.transform = `scale(${totalScale})`;
       portalRoot.style.transformOrigin = "top left";
       portalRoot.style.zIndex = "9999";
@@ -58,10 +58,12 @@ export function useMobileGestures(desktopMode: boolean) {
         portalRoot.style.cssText = "";
       }
       if (viewport) viewport.setAttribute("content", DEFAULT_VIEWPORT);
+      document.documentElement.removeAttribute("data-desktop");
       return;
     }
 
     currentZoomRef.current = 1;
+    document.documentElement.setAttribute("data-desktop", "true");
 
     if (viewport) {
       viewport.setAttribute(
@@ -145,6 +147,7 @@ export function useMobileGestures(desktopMode: boolean) {
       }
       if (portalRoot) portalRoot.style.cssText = "";
       if (viewport) viewport.setAttribute("content", DEFAULT_VIEWPORT);
+      document.documentElement.removeAttribute("data-desktop");
     };
   }, [desktopMode, applyScale]);
 }
