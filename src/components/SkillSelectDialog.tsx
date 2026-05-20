@@ -192,7 +192,7 @@ export default function SkillSelectDialog({
                     alt={skill}
                     className="w-9 h-9 object-contain"
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                     }}
                   />
                 ) : (

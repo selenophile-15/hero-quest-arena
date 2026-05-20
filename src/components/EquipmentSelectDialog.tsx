@@ -1173,7 +1173,7 @@ export default function EquipmentSelectDialog({
                                       alt="유물"
                                       className="absolute top-1 right-1 w-4 h-4 z-10"
                                       onError={(e) => {
-                                        e.currentTarget.style.display = "none";
+                                        if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                       }}
                                     />
                                   )}
@@ -1191,7 +1191,7 @@ export default function EquipmentSelectDialog({
                                         loading="eager"
                                         decoding="sync"
                                         onError={(e) => {
-                                          e.currentTarget.style.display = "none";
+                                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                           const p = e.currentTarget.parentElement;
                                           if (p) {
                                             const s = document.createElement("span");
@@ -1236,7 +1236,7 @@ export default function EquipmentSelectDialog({
                                                   decoding="sync"
                                                   title={`친밀 원소: ${el}`}
                                                   onError={(e) => {
-                                                    e.currentTarget.style.display = "none";
+                                                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                                   }}
                                                 />
                                               ))}
@@ -1253,7 +1253,7 @@ export default function EquipmentSelectDialog({
                                                     decoding="sync"
                                                     title={`고유 원소: ${el} T${tier}`}
                                                     onError={(e) => {
-                                                      e.currentTarget.style.display = "none";
+                                                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                                     }}
                                                   />
                                                 );
@@ -1277,7 +1277,7 @@ export default function EquipmentSelectDialog({
                                                     decoding="sync"
                                                     title={`친밀 영혼: ${sp}`}
                                                     onError={(e) => {
-                                                      e.currentTarget.style.display = "none";
+                                                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                                     }}
                                                   />
                                                 );
@@ -1300,7 +1300,7 @@ export default function EquipmentSelectDialog({
                                                     decoding="sync"
                                                     title={`고유 영혼: ${sp}`}
                                                     onError={(e) => {
-                                                      e.currentTarget.style.display = "none";
+                                                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                                     }}
                                                   />
                                                 );
@@ -1478,7 +1478,7 @@ export default function EquipmentSelectDialog({
                             alt=""
                             className="w-9 h-9 object-contain flex-shrink-0"
                             onError={(e) => {
-                              e.currentTarget.style.display = "none";
+                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                             }}
                           />
                         ) : null}

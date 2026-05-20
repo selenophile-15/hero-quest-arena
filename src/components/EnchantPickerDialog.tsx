@@ -283,11 +283,11 @@ export default function EnchantPickerDialog({
         <Tabs defaultValue={initialTab || 'element'} key={initialTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="element" className="text-sm gap-2">
-              <img src="/images/type/element.webp" alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+              <img src="/images/type/element.webp" alt="" className="w-5 h-5" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
               원소 인챈트
             </TabsTrigger>
             <TabsTrigger value="spirit" className="text-sm gap-2">
-              <img src="/images/type/spirit.webp" alt="" className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+              <img src="/images/type/spirit.webp" alt="" className="w-5 h-5" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
               영혼 인챈트
             </TabsTrigger>
           </TabsList>
@@ -326,7 +326,7 @@ export default function EnchantPickerDialog({
                 const val = elementTotals[el] || 0;
                 return (
                   <div key={el} className="flex items-center gap-1">
-                    <img src={`/images/elements/${ELEMENT_ENG[el]}.webp`} alt={el} className="w-5 h-5" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                    <img src={`/images/elements/${ELEMENT_ENG[el]}.webp`} alt={el} className="w-5 h-5" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                     <span className={`text-sm font-bold tabular-nums ${val > 0 ? ELEMENT_COLORS[el] : 'text-muted-foreground'}`}>{val}</span>
                   </div>
                 );
@@ -362,7 +362,7 @@ export default function EnchantPickerDialog({
                       {hasUniqueEl ? (
                         <div className="flex items-center gap-2">
                           <img src={`/images/enchant/element/${ELEMENT_ENG[info!.uniqueElement![0]] || ''}${info!.uniqueElementTier || 1}_2.webp`}
-                            className="w-8 h-8" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                            className="w-8 h-8" alt="" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
                           <span className={`text-sm font-semibold ${ELEMENT_COLORS[info!.uniqueElement![0]] || 'text-foreground'}`}>
                             {info!.uniqueElement![0]} T{info!.uniqueElementTier} (고유)
                           </span>
@@ -397,7 +397,7 @@ export default function EnchantPickerDialog({
                       {slot?.element && (
                         <img
                           src={`/images/enchant/element/${ELEMENT_ENG[slot.element.type] || slot.element.type}${slot.element.tier}_${slot.element.affinity ? '2' : '1'}.webp`}
-                          className="w-8 h-8" alt="" onError={e => { e.currentTarget.style.display = 'none'; }}
+                          className="w-8 h-8" alt="" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }}
                         />
                       )}
                     </div>
@@ -477,7 +477,7 @@ export default function EnchantPickerDialog({
                         <div className="flex items-center gap-2">
                           {(() => {
                             const eng = SPIRIT_NAME_MAP[info!.uniqueSpirit![0]];
-                            return eng ? <img src={`/images/enchant/spirit/${eng}_2.webp`} className="w-8 h-8" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                            return eng ? <img src={`/images/enchant/spirit/${eng}_2.webp`} className="w-8 h-8" alt="" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} /> : null;
                           })()}
                           <span className="text-sm font-semibold text-foreground">
                             {info!.uniqueSpirit![0]} (고유)
@@ -495,9 +495,9 @@ export default function EnchantPickerDialog({
                       {slot?.spirit && (() => {
                         const eng = SPIRIT_NAME_MAP[slot.spirit.name];
                         if (slot.spirit.name === '문드라') {
-                          return <img src="/images/enchant/spirit/mundra.webp" className="w-8 h-8" alt="문드라" onError={e => { e.currentTarget.style.display = 'none'; }} />;
+                          return <img src="/images/enchant/spirit/mundra.webp" className="w-8 h-8" alt="문드라" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />;
                         }
-                        return eng ? <img src={`/images/enchant/spirit/${eng}_${slot.spirit.affinity ? '2' : '1'}.webp`} className="w-8 h-8" alt="" onError={e => { e.currentTarget.style.display = 'none'; }} /> : null;
+                        return eng ? <img src={`/images/enchant/spirit/${eng}_${slot.spirit.affinity ? '2' : '1'}.webp`} className="w-8 h-8" alt="" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} /> : null;
                       })()}
                     </div>
 

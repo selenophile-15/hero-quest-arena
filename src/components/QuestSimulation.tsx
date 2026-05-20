@@ -1300,7 +1300,7 @@ export default function QuestSimulation() {
                           alt={currentRegion.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            e.currentTarget.style.display = "none";
+                            if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                           }}
                         />
                       </button>
@@ -1579,7 +1579,7 @@ export default function QuestSimulation() {
                                         alt=""
                                         className="w-7 h-7"
                                         onError={(e) => {
-                                          e.currentTarget.style.display = "none";
+                                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                         }}
                                       />
                                     )}
@@ -2323,7 +2323,7 @@ export default function QuestSimulation() {
                                           alt=""
                                           className="w-full h-full object-cover object-center"
                                           onError={(e) => {
-                                            e.currentTarget.style.display = "none";
+                                            if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                           }}
                                         />
                                       ) : (
@@ -2383,7 +2383,7 @@ export default function QuestSimulation() {
                                         alt=""
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
-                                          e.currentTarget.style.display = "none";
+                                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                                         }}
                                       />
                                     ) : (

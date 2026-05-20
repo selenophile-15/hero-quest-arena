@@ -464,7 +464,7 @@ export default function StatBreakdownDrawer({ open, onOpenChange, calcStats }: S
                   alt="유물"
                   className="w-4 h-4"
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
                   }}
                 />
                 유물 효과

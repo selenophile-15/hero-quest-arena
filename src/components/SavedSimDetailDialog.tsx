@@ -73,7 +73,7 @@ function HeroDetailCard({ hero }: { hero: Hero }) {
           {slots.map((slot, i) => (
             <div key={i} className="aspect-square rounded border border-border/40 bg-secondary/20 flex items-center justify-center overflow-hidden">
               {slot?.item?.imagePath ? (
-                <img src={slot.item.imagePath} alt="" className="w-full h-full object-contain" onError={e => { e.currentTarget.style.display = 'none'; }} />
+                <img src={slot.item.imagePath} alt="" className="w-full h-full object-contain" onError={e => { if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg'; }} />
               ) : (
                 <span className="text-[8px] text-muted-foreground/40">-</span>
               )}
