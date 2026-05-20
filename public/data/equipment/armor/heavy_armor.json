@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Iron Mail": {
       "id": "ha2_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "3티어": {
     "Scale Armor": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Hauberk": {
       "id": "ha4_1",
@@ -108,9 +99,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Knight Breastplate": {
       "id": "ha5_1",
@@ -135,7 +123,6 @@
       "천상": 1
     },
 
-
     "Ceremonial Breastplate": {
       "id": "ha5_2",
       "name_ko": "의식용 흉갑",
@@ -158,7 +145,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Centurion Armor": {
       "id": "ha5_3",
@@ -184,9 +170,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Paladin Plate": {
       "id": "ha6_1",
@@ -211,7 +194,6 @@
       "천상": 1
     },
 
-
     "Thorn Baron Armor": {
       "id": "ha6_2",
       "name_ko": "가시 남작 갑옷",
@@ -234,7 +216,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Hive Guard Plate": {
       "id": "ha6_3",
@@ -260,9 +241,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Samurai Do": {
       "id": "ha7_1",
@@ -287,7 +265,6 @@
       "천상": 1.25
     },
 
-
     "Brinewater Do": {
       "id": "ha7_2",
       "name_ko": "심해 도복",
@@ -311,7 +288,6 @@
       "천상": 1.25
     },
 
-
     "Kyoshi Warrior Armor": {
       "id": "ha7_3",
       "name_ko": "키요시 전사 갑옷",
@@ -334,7 +310,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Warlord Plate": {
       "id": "ha7_4",
@@ -360,9 +335,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "General Plate": {
       "id": "ha8_1",
@@ -387,7 +359,6 @@
       "천상": 1.25
     },
 
-
     "Landsknecht Plate": {
       "id": "ha8_2",
       "name_ko": "용병 갑옷",
@@ -410,7 +381,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Santa's Guard Plate": {
       "id": "ha8_3",
@@ -436,9 +406,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Berserker Armor": {
       "id": "ha9_1",
@@ -463,7 +430,6 @@
       "천상": 1.25
     },
 
-
     "Gaia Enforcer": {
       "id": "ha9_2",
       "name_ko": "가이아 인포서",
@@ -487,7 +453,6 @@
       "천상": 1.25
     },
 
-
     "Star-Spangled Plate": {
       "id": "ha9_3",
       "name_ko": "별 스팽글 갑옷",
@@ -510,7 +475,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Argon's Armor": {
       "id": "ha9_4",
@@ -536,9 +500,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Juggernaut Fortress": {
       "id": "ha10_1",
@@ -563,7 +524,6 @@
       "천상": 1.25
     },
 
-
     "Amber Citadel": {
       "id": "ha10_2",
       "name_ko": "불씨 성채",
@@ -587,7 +547,6 @@
       "천상": 1.25
     },
 
-
     "Opulent Breastplate": {
       "id": "ha10_3",
       "name_ko": "호화로운 흉갑",
@@ -610,7 +569,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Milesian Mail": {
       "id": "ha10_4",
@@ -636,9 +594,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Celesteel Plate": {
       "id": "ha11_1",
@@ -663,7 +618,6 @@
       "천상": 1.25
     },
 
-
     "Canid Plate": {
       "id": "ha11_2",
       "name_ko": "강아지 갑옷",
@@ -686,7 +640,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Fire Nation Armor": {
       "id": "ha11_3",
@@ -712,9 +665,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Vermilion Guard Plate": {
       "id": "ha12_1",
@@ -739,7 +689,6 @@
       "천상": 1.25
     },
 
-
     "Oni Rōnin Armor": {
       "id": "ha12_2",
       "name_ko": "오니 로닌 갑옷",
@@ -763,7 +712,6 @@
       "천상": 1.25
     },
 
-
     "Tyrant Plate Armor": {
       "id": "ha12_3",
       "name_ko": "독재자 판 갑옷",
@@ -786,7 +734,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Lost Warrior's Plate": {
       "id": "ha12_4",
@@ -812,9 +759,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Balefire Armor": {
       "id": "ha13_1",
@@ -839,7 +783,6 @@
       "천상": 1.25
     },
 
-
     "Magmacore Plate": {
       "id": "ha13_2",
       "name_ko": "마그마코어 갑옷",
@@ -863,7 +806,6 @@
       "천상": 1.25
     },
 
-
     "Titan Plate Armor": {
       "id": "ha13_3",
       "name_ko": "명인 판 갑옷",
@@ -886,7 +828,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "CM-73 Armor Frame": {
       "id": "ha13_4",
@@ -912,9 +853,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Cobalt Plate Armor": {
       "id": "ha14_1",
@@ -939,7 +877,6 @@
       "천상": 1.25
     },
 
-
     "Cursed King's Plate": {
       "id": "ha14_2",
       "name_ko": "저주받은 왕의 갑옷",
@@ -962,7 +899,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Platinum Full Plate": {
       "id": "ha14_3",
@@ -987,7 +923,6 @@
       "천상": 1
     },
 
-
     "Fimbulwinter Plate": {
       "id": "ha14_4",
       "name_ko": "핌불베트르 갑옷",
@@ -1010,7 +945,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Armor of Invincibility": {
       "id": "ha14_5",
@@ -1038,9 +972,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Behemoth Armor": {
       "id": "ha15_1",
@@ -1065,7 +996,6 @@
       "천상": 1.25
     },
 
-
     "Teddy Bear Body": {
       "id": "ha15_2",
       "name_ko": "테디베어 몸통",
@@ -1088,7 +1018,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Drakalos Armor": {
       "id": "ha15_3",
@@ -1113,7 +1042,6 @@
       "천상": 1.25
     },
 
-
     "BIT.Runner Armor": {
       "id": "ha15_4",
       "name_ko": "BIT.러너 갑옷",
@@ -1137,7 +1065,6 @@
       "천상": 1.25
     },
 
-
     "Xenotype Exoskel": {
       "id": "ha15_5",
       "name_ko": "제노타입 외골격",
@@ -1160,7 +1087,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Stone Jaguar Armor": {
       "id": "ha15_6",
@@ -1186,30 +1112,28 @@
     }
   },
 
+  "16티어": {
+    "Darkmatter Frame": {
+      "id": "ha16_1",
+      "name_ko": "암흑 물질 프레임",
+      "image_key": "darkmatter_frame",
+      "이미지_경로": "/images/equipment/armor/heavy_armor/darkmatter_frame.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 755,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 906,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Darkmatter Frame": {
-    "id": "ha16_1",
-    "name_ko": "암흑 물질 프레임",
-    "image_key": "darkmatter_frame",
-    "이미지_경로": "/images/equipment/armor/heavy_armor/darkmatter_frame.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 755,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 906,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

@@ -23,7 +23,6 @@
       "천상": 1
     },
 
-
     "Trailblazers": {
       "id": "lf1_2",
       "name_ko": "개척자",
@@ -47,9 +46,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "2티어": {
     "Flip-Flops": {
@@ -76,9 +72,6 @@
     }
   },
 
-
-
-
   "3티어": {
     "Soft Shoes": {
       "id": "lf3_1",
@@ -102,7 +95,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Legionnaire Sandals": {
       "id": "lf3_2",
@@ -128,9 +120,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Thief's Shoes": {
       "id": "lf4_1",
@@ -154,7 +143,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Perennial Sandals": {
       "id": "lf4_2",
@@ -180,9 +168,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Elven Shoes": {
       "id": "lf5_1",
@@ -207,7 +192,6 @@
       "천상": 1
     },
 
-
     "Moonlight Zōri": {
       "id": "lf5_2",
       "name_ko": "문라이트 조리",
@@ -230,7 +214,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Lilu's Shoes": {
       "id": "lf5_3",
@@ -256,9 +239,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Savage Stride": {
       "id": "lf6_1",
@@ -283,7 +263,6 @@
       "천상": 1
     },
 
-
     "Sakura Tabi": {
       "id": "lf6_2",
       "name_ko": "사쿠라 버선",
@@ -307,7 +286,6 @@
       "천상": 1
     },
 
-
     "Sultan Steps": {
       "id": "lf6_3",
       "name_ko": "술탄의 걸음",
@@ -330,7 +308,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Compact Snowshoes": {
       "id": "lf6_4",
@@ -356,9 +333,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Ninja Tabi": {
       "id": "lf7_1",
@@ -383,7 +357,6 @@
       "천상": 1
     },
 
-
     "Nightwing Shoes": {
       "id": "lf7_2",
       "name_ko": "나이트윙 신발",
@@ -407,7 +380,6 @@
       "천상": 1
     },
 
-
     "Hallowitch Shoes": {
       "id": "lf7_3",
       "name_ko": "핼러위치 신발",
@@ -430,7 +402,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Cardboard Clogs": {
       "id": "lf7_4",
@@ -456,9 +427,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Windrunner Boots": {
       "id": "lf8_1",
@@ -483,7 +451,6 @@
       "천상": 1
     },
 
-
     "Alpine Stride": {
       "id": "lf8_2",
       "name_ko": "알파인의 걸음",
@@ -507,7 +474,6 @@
       "천상": 1
     },
 
-
     "Birdrunners": {
       "id": "lf8_3",
       "name_ko": "버드러너",
@@ -530,7 +496,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Lacrosse Cleats": {
       "id": "lf8_4",
@@ -556,9 +521,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Drakeskin Boots": {
       "id": "lf9_1",
@@ -583,7 +545,6 @@
       "천상": 1
     },
 
-
     "Plaguewalkers": {
       "id": "lf9_2",
       "name_ko": "전염병운반자",
@@ -606,7 +567,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Shoes of Style": {
       "id": "lf9_3",
@@ -632,9 +592,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Corsair Boots": {
       "id": "lf10_1",
@@ -658,7 +615,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Cloudwalker Steps": {
       "id": "lf10_2",
@@ -684,9 +640,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Everdusk Boots": {
       "id": "lf11_1",
@@ -711,7 +664,6 @@
       "천상": 1.25
     },
 
-
     "Raptor Talons": {
       "id": "lf11_2",
       "name_ko": "랩터 발톱",
@@ -734,7 +686,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Opulent Footwraps": {
       "id": "lf11_3",
@@ -760,9 +711,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Dawn Thief's Path": {
       "id": "lf12_1",
@@ -787,7 +735,6 @@
       "천상": 1.25
     },
 
-
     "Desperado Spurs": {
       "id": "lf12_2",
       "name_ko": "데스페라도 박차",
@@ -811,7 +758,6 @@
       "천상": 1.25
     },
 
-
     "Hunter Moccasins": {
       "id": "lf12_3",
       "name_ko": "사냥꾼 모카신",
@@ -834,7 +780,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Fairy Sandals": {
       "id": "lf12_4",
@@ -860,9 +805,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Wildhunt Sandals": {
       "id": "lf13_1",
@@ -887,7 +829,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Shoes": {
       "id": "lf13_2",
       "name_ko": "플래티넘 신발",
@@ -910,7 +851,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Deluxe Flip-Flops": {
       "id": "lf13_3",
@@ -935,7 +875,6 @@
       "천상": 1.25
     },
 
-
     "Hermes Sandals": {
       "id": "lf13_4",
       "name_ko": "헤르메스 샌들",
@@ -958,7 +897,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Voidwalkers": {
       "id": "lf13_5",
@@ -984,9 +922,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Soothsayer's Boots": {
       "id": "lf14_1",
@@ -1011,7 +946,6 @@
       "천상": 1.25
     },
 
-
     "Hi-Cardio Shoes": {
       "id": "lf14_2",
       "name_ko": "안녕유산소 신발",
@@ -1035,7 +969,6 @@
       "천상": 1.25
     },
 
-
     "Werewolf Feet": {
       "id": "lf14_3",
       "name_ko": "늑대인간 발",
@@ -1058,7 +991,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Steel-Studded Boots": {
       "id": "lf14_4",
@@ -1084,9 +1016,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Chrysalid Boots": {
       "id": "lf15_1",
@@ -1111,7 +1040,6 @@
       "천상": 1.25
     },
 
-
     "Fleetfoot Travelers": {
       "id": "lf15_2",
       "name_ko": "발빠른 여행자",
@@ -1134,7 +1062,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Sia's Sandals": {
       "id": "lf15_3",
@@ -1159,7 +1086,6 @@
       "천상": 1.25
     },
 
-
     "Titan Admiral Boots": {
       "id": "lf15_4",
       "name_ko": "명인 제독 부츠",
@@ -1183,7 +1109,6 @@
       "천상": 1.25
     },
 
-
     "Slathered Slippers": {
       "id": "lf15_5",
       "name_ko": "듬뿍 슬리퍼",
@@ -1206,7 +1131,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Phoenix Talons": {
       "id": "lf15_6",
@@ -1232,30 +1156,28 @@
     }
   },
 
+  "16티어": {
+    "Voyager Stabilizers": {
+      "id": "lf16_1",
+      "name_ko": "항해자 안정기",
+      "image_key": "voyager_stabilizers",
+      "이미지_경로": "/images/equipment/armor/light_footwear/voyager_stabilizers.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 665,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 798,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Voyager Stabilizers": {
-    "id": "lf16_1",
-    "name_ko": "항해자 안정기",
-    "image_key": "voyager_stabilizers",
-    "이미지_경로": "/images/equipment/armor/light_footwear/voyager_stabilizers.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 665,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 798,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

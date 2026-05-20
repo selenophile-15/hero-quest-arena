@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Warrior Helmet": {
       "id": "hm2_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "3티어": {
     "Horned Helm": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Raider Helm": {
       "id": "hm4_1",
@@ -108,9 +99,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Knight Heaume": {
       "id": "hm5_1",
@@ -135,7 +123,6 @@
       "천상": 1
     },
 
-
     "Brinewater Helm": {
       "id": "hm5_2",
       "name_ko": "심해의 투구",
@@ -159,7 +146,6 @@
       "천상": 1
     },
 
-
     "Eagle Helm": {
       "id": "hm5_3",
       "name_ko": "독수리 투구",
@@ -182,7 +168,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Rex Chomper": {
       "id": "hm5_4",
@@ -208,9 +193,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Paladin Helm": {
       "id": "hm6_1",
@@ -235,7 +217,6 @@
       "천상": 1
     },
 
-
     "Kodiak Helmet": {
       "id": "hm6_2",
       "name_ko": "코디액 머리보호대",
@@ -259,7 +240,6 @@
       "천상": 1
     },
 
-
     "Fire Nation Helm": {
       "id": "hm6_3",
       "name_ko": "불의 제국 투구",
@@ -282,7 +262,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Crown of Tyranny": {
       "id": "hm6_4",
@@ -308,9 +287,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Samurai Kabuto": {
       "id": "hm7_1",
@@ -335,7 +311,6 @@
       "천상": 1.25
     },
 
-
     "Gladiator Helm": {
       "id": "hm7_2",
       "name_ko": "검투사의 투구",
@@ -359,7 +334,6 @@
       "천상": 1.25
     },
 
-
     "Sandcastle Protector": {
       "id": "hm7_3",
       "name_ko": "모래성 보호자",
@@ -382,7 +356,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Titan Helm": {
       "id": "hm7_4",
@@ -408,9 +381,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "General Heaume": {
       "id": "hm8_1",
@@ -435,7 +405,6 @@
       "천상": 1.25
     },
 
-
     "Crusader Helmet": {
       "id": "hm8_2",
       "name_ko": "구원자 머리보호대",
@@ -459,7 +428,6 @@
       "천상": 1.25
     },
 
-
     "Warlord Helmet": {
       "id": "hm8_3",
       "name_ko": "전쟁 마스터의 머리보호대",
@@ -482,7 +450,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Dragon Skull": {
       "id": "hm8_4",
@@ -508,9 +475,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Berserker Helmet": {
       "id": "hm9_1",
@@ -535,7 +499,6 @@
       "천상": 1.25
     },
 
-
     "Fimbulwinter Dome": {
       "id": "hm9_2",
       "name_ko": "100인 대장의 머리보호대",
@@ -558,7 +521,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Centurion Helmet": {
       "id": "hm9_3",
@@ -584,9 +546,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Juggernaut Furnace": {
       "id": "hm10_1",
@@ -611,7 +570,6 @@
       "천상": 1.25
     },
 
-
     "Gobble Lord Helm": {
       "id": "hm10_2",
       "name_ko": "칠면조 군주 투구",
@@ -634,7 +592,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Opulent Heaume": {
       "id": "hm10_3",
@@ -660,9 +617,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Celesteel Heaume": {
       "id": "hm11_1",
@@ -687,7 +641,6 @@
       "천상": 1.25
     },
 
-
     "Canid Helmet": {
       "id": "hm11_2",
       "name_ko": "강아지 헬멧",
@@ -711,7 +664,6 @@
       "천상": 1.25
     },
 
-
     "Cupid's Heaume": {
       "id": "hm11_3",
       "name_ko": "큐피드의 투구",
@@ -734,7 +686,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Xenotype Visage": {
       "id": "hm11_4",
@@ -760,9 +711,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Vermilion Guard Helm": {
       "id": "hm12_1",
@@ -787,7 +735,6 @@
       "천상": 1.25
     },
 
-
     "Onyx King Helm": {
       "id": "hm12_2",
       "name_ko": "오닉스 킹 투구",
@@ -810,7 +757,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Thorn Baron Helm": {
       "id": "hm12_3",
@@ -836,9 +782,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Balefire Gaze": {
       "id": "hm13_1",
@@ -863,7 +806,6 @@
       "천상": 1.25
     },
 
-
     "Taishōgun Kabuto": {
       "id": "hm13_2",
       "name_ko": "타이쇼군 카부토",
@@ -886,7 +828,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "CM-73 Visor": {
       "id": "hm13_3",
@@ -911,7 +852,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Helm": {
       "id": "hm13_4",
       "name_ko": "플래티넘 투구",
@@ -934,7 +874,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Creature's Chitin": {
       "id": "hm13_5",
@@ -960,9 +899,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Cobalt Commander": {
       "id": "hm14_1",
@@ -987,7 +923,6 @@
       "천상": 1.25
     },
 
-
     "Heaume of Apotheosis": {
       "id": "hm14_2",
       "name_ko": "신격화의 투구",
@@ -1010,7 +945,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Mundra's Skull": {
       "id": "hm14_3",
@@ -1035,7 +969,6 @@
       "천상": 1.25
     },
 
-
     "Hercules Horn": {
       "id": "hm14_4",
       "name_ko": "헤라클레스의 뿔",
@@ -1058,7 +991,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Argon's Helm": {
       "id": "hm14_5",
@@ -1084,9 +1016,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Behemoth Skull": {
       "id": "hm15_1",
@@ -1111,7 +1040,6 @@
       "천상": 1.25
     },
 
-
     "Teddy Bear Head": {
       "id": "hm15_2",
       "name_ko": "테디베어 머리",
@@ -1134,7 +1062,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Cursed King's Helm": {
       "id": "hm15_3",
@@ -1159,7 +1086,6 @@
       "천상": 1.25
     },
 
-
     "BIT.Runner Visor": {
       "id": "hm15_4",
       "name_ko": "BIT.러너 고글",
@@ -1182,7 +1108,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Stone Jaguar Head": {
       "id": "hm15_5",
@@ -1208,55 +1133,51 @@
     }
   },
 
+  "16티어": {
+    "Darkmatter Cortex": {
+      "id": "hm16_1",
+      "name_ko": "암흑물질 코텍스",
+      "image_key": "darkmatter_cortex",
+      "이미지_경로": "/images/equipment/armor/helmet/darkmatter_cortex.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 800,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 960,
+      "장비_에어쉽파워보너스": 1,
 
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-// armor/helmet.json
-"16티어": {
-  "Darkmatter Cortex": {
-    "id": "hm16_1",
-    "name_ko": "암흑물질 코텍스",
-    "image_key": "darkmatter_cortex",
-    "이미지_경로": "/images/equipment/armor/helmet/darkmatter_cortex.webp",
+    "Atlantean Deepdiver": {
+      "id": "hm16_2",
+      "name_ko": "아틀란티스 심해 잠수부",
+      "image_key": "atlantean_deepdiver",
+      "이미지_경로": "/images/equipment/armor/helmet/atlantean_deepdiver.webp",
 
-    "장비_공격력": 0,
-    "장비_방어력": 800,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 960,
-    "장비_에어쉽파워보너스": 1,
+      "장비_공격력": 0,
+      "장비_방어력": 963,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1156,
+      "장비_에어쉽파워보너스": 1,
 
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
-  },
-
-
-  "Atlantean Deepdiver": {
-    "id": "hm16_2",
-    "name_ko": "아틀란티스 심해 잠수부",
-    "image_key": "atlantean_deepdiver",
-    "이미지_경로": "/images/equipment/armor/helmet/atlantean_deepdiver.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 963,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1156,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": ["Leviathan"],
-    "고유원소종류": ["Water"],
-    "고유원소티어": 14,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": ["Leviathan"],
+      "고유원소종류": ["Water"],
+      "고유원소티어": 14,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

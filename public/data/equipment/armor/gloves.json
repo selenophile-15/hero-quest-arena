@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Bracers": {
       "id": "gl2_1",
@@ -52,9 +49,6 @@
     }
   },
 
-
-
-
   "3티어": {
     "Thief's Gloves": {
       "id": "gl3_1",
@@ -79,7 +73,6 @@
       "천상": 1
     },
 
-
     "Swift Mitts": {
       "id": "gl3_2",
       "name_ko": "빠른 장갑",
@@ -102,7 +95,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Patchleather Bracers": {
       "id": "gl3_3",
@@ -128,9 +120,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Studded Gloves": {
       "id": "gl4_1",
@@ -154,7 +143,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Regal Bangles": {
       "id": "gl4_2",
@@ -180,9 +168,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Elven Vambraces": {
       "id": "gl5_1",
@@ -207,7 +192,6 @@
       "천상": 1
     },
 
-
     "Ostara Gloves": {
       "id": "gl5_2",
       "name_ko": "오스타라 장갑",
@@ -230,7 +214,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Sia's Gloves": {
       "id": "gl5_3",
@@ -256,9 +239,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Savage Claws": {
       "id": "gl6_1",
@@ -283,7 +263,6 @@
       "천상": 1
     },
 
-
     "Starlight Fingers": {
       "id": "gl6_2",
       "name_ko": "별빛 손가락",
@@ -306,7 +285,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Black Wyrm Claws": {
       "id": "gl6_3",
@@ -332,9 +310,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Ninja Gloves": {
       "id": "gl7_1",
@@ -359,7 +334,6 @@
       "천상": 1.25
     },
 
-
     "Cat Burglar Claws": {
       "id": "gl7_2",
       "name_ko": "고양이 도둑 발톱",
@@ -382,7 +356,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Gothita Glovelettes": {
       "id": "gl7_3",
@@ -408,9 +381,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Windrunner Gloves": {
       "id": "gl8_1",
@@ -435,7 +405,6 @@
       "천상": 1.25
     },
 
-
     "Sakura Cuffs": {
       "id": "gl8_2",
       "name_ko": "사쿠라 커프스",
@@ -458,7 +427,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Hands of Sleight": {
       "id": "gl8_3",
@@ -484,9 +452,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Drakeskin Gloves": {
       "id": "gl9_1",
@@ -511,7 +476,6 @@
       "천상": 1.25
     },
 
-
     "Mountain Man Mitts": {
       "id": "gl9_2",
       "name_ko": "산악인 장갑",
@@ -535,7 +499,6 @@
       "천상": 1.25
     },
 
-
     "Boatswain's Glove": {
       "id": "gl9_3",
       "name_ko": "갑판장의 장갑",
@@ -558,7 +521,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Werewolf Claws": {
       "id": "gl9_4",
@@ -584,9 +546,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Corsair Gloves": {
       "id": "gl10_1",
@@ -611,7 +570,6 @@
       "천상": 1.25
     },
 
-
     "Fortunate Gloves": {
       "id": "gl10_2",
       "name_ko": "행운의 장갑",
@@ -635,7 +593,6 @@
       "천상": 1.25
     },
 
-
     "Yami's Gloves": {
       "id": "gl10_3",
       "name_ko": "야미의 장갑",
@@ -658,7 +615,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Opulent Grasp": {
       "id": "gl10_4",
@@ -684,9 +640,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Everdusk Gloves": {
       "id": "gl11_1",
@@ -711,7 +664,6 @@
       "천상": 1.25
     },
 
-
     "Raptor Wings": {
       "id": "gl11_2",
       "name_ko": "랩터 날개",
@@ -734,7 +686,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Nightwing Vambraces": {
       "id": "gl11_3",
@@ -760,9 +711,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Dawn Thief's Touch": {
       "id": "gl12_1",
@@ -787,7 +735,6 @@
       "천상": 1.25
     },
 
-
     "Swindler's Fingers": {
       "id": "gl12_2",
       "name_ko": "사기꾼의 손가락",
@@ -811,7 +758,6 @@
       "천상": 1.25
     },
 
-
     "Gloves of Rhythm": {
       "id": "gl12_3",
       "name_ko": "리듬의 반장갑",
@@ -834,7 +780,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Gants d'Artagnan": {
       "id": "gl12_4",
@@ -860,9 +805,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Wildhunt Gloves": {
       "id": "gl13_1",
@@ -887,7 +829,6 @@
       "천상": 1.25
     },
 
-
     "Camper's Compass": {
       "id": "gl13_2",
       "name_ko": "캠핑족 나침반",
@@ -910,7 +851,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Pure Heart Gloves": {
       "id": "gl13_3",
@@ -936,9 +876,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Soothsayer's Hands": {
       "id": "gl14_1",
@@ -963,7 +900,6 @@
       "천상": 1.25
     },
 
-
     "Lacrosse Gloves": {
       "id": "gl14_2",
       "name_ko": "라크로스 장갑",
@@ -986,7 +922,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Platinum Gloves": {
       "id": "gl14_3",
@@ -1011,7 +946,6 @@
       "천상": 1
     },
 
-
     "Frostfire Weavers": {
       "id": "gl14_4",
       "name_ko": "얼음불 위버",
@@ -1034,7 +968,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Betrayer's Hands": {
       "id": "gl14_5",
@@ -1060,9 +993,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Chrysalid Gloves": {
       "id": "gl15_1",
@@ -1087,7 +1017,6 @@
       "천상": 1.25
     },
 
-
     "Titan Admiral Gloves": {
       "id": "gl15_2",
       "name_ko": "명인 제독 장갑",
@@ -1110,7 +1039,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Hallowitch Gloves": {
       "id": "gl15_3",
@@ -1136,54 +1064,51 @@
     }
   },
 
+  "16티어": {
+    "Voyager Dexteroses": {
+      "id": "gl16_1",
+      "name_ko": "항해자 덱스테로세스",
+      "image_key": "voyager_dexteroses",
+      "이미지_경로": "/images/equipment/armor/gloves/voyager_dexteroses.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 580,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 696,
+      "장비_에어쉽파워보너스": 1,
 
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-"16티어": {
-  "Voyager Dexteroses": {
-    "id": "gl16_1",
-    "name_ko": "항해자 덱스테로세스",
-    "image_key": "voyager_dexteroses",
-    "이미지_경로": "/images/equipment/armor/gloves/voyager_dexteroses.webp",
+    "Hands of Purpose": {
+      "id": "gl16_2",
+      "name_ko": "목적의 손",
+      "image_key": "hands_of_purpose",
+      "이미지_경로": "/images/equipment/armor/gloves/hands_of_purpose.webp",
 
-    "장비_공격력": 0,
-    "장비_방어력": 580,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 696,
-    "장비_에어쉽파워보너스": 1,
+      "장비_공격력": 0,
+      "장비_방어력": 743,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 892,
+      "장비_에어쉽파워보너스": 1,
 
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
-  },
-
-
-  "Hands of Purpose": {
-    "id": "gl16_2",
-    "name_ko": "목적의 손",
-    "image_key": "hands_of_purpose",
-    "이미지_경로": "/images/equipment/armor/gloves/hands_of_purpose.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 743,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 892,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": ["Titan"],
-    "고유원소종류": ["Light"],
-    "고유원소티어": 14,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": ["Titan"],
+      "고유원소종류": ["Light"],
+      "고유원소티어": 14,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

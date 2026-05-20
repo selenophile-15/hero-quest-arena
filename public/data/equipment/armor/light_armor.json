@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Gambeson": {
       "id": "la2_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "3티어": {
     "Doublet": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Studded Armor": {
       "id": "la4_1",
@@ -106,7 +97,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Blizzard Armor": {
       "id": "la4_2",
@@ -132,9 +122,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Hide Armor": {
       "id": "la5_1",
@@ -159,7 +146,6 @@
       "천상": 1
     },
 
-
     "Mundra's Tabard": {
       "id": "la5_2",
       "name_ko": "문드라의 외투",
@@ -182,7 +168,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Sky Pirate Outfit": {
       "id": "la5_3",
@@ -208,9 +193,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Savage Garb": {
       "id": "la6_1",
@@ -235,7 +217,6 @@
       "천상": 1
     },
 
-
     "Glade Guard Armor": {
       "id": "la6_2",
       "name_ko": "글레이드 수비대 갑옷",
@@ -258,7 +239,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Pumpkin Armor": {
       "id": "la6_3",
@@ -284,9 +264,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Ninja Garb": {
       "id": "la7_1",
@@ -311,7 +288,6 @@
       "천상": 1.25
     },
 
-
     "Nightwing Mantle": {
       "id": "la7_2",
       "name_ko": "나이트윙 망토",
@@ -334,7 +310,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Golden Fleece": {
       "id": "la7_3",
@@ -360,9 +335,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Windrunner Armor": {
       "id": "la8_1",
@@ -387,7 +359,6 @@
       "천상": 1.25
     },
 
-
     "Sokka's Outfit": {
       "id": "la8_2",
       "name_ko": "소카의 의상",
@@ -410,7 +381,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Jester Outfit": {
       "id": "la8_3",
@@ -436,9 +406,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Drakeskin Armor": {
       "id": "la9_1",
@@ -463,7 +430,6 @@
       "천상": 1.25
     },
 
-
     "Smith Attire": {
       "id": "la9_2",
       "name_ko": "대장장이 의복",
@@ -486,7 +452,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Royal Attire": {
       "id": "la9_3",
@@ -512,9 +477,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Corsair Mantle": {
       "id": "la10_1",
@@ -539,7 +501,6 @@
       "천상": 1.25
     },
 
-
     "Swan's Garment": {
       "id": "la10_2",
       "name_ko": "스완의 의복",
@@ -562,7 +523,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Cloudwalker Armor": {
       "id": "la10_3",
@@ -588,9 +548,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Everdusk Lord Attire": {
       "id": "la11_1",
@@ -615,7 +572,6 @@
       "천상": 1.25
     },
 
-
     "Opulent Armor": {
       "id": "la11_2",
       "name_ko": "호화로운 갑옷",
@@ -639,7 +595,6 @@
       "천상": 1
     },
 
-
     "Barkback's Armor": {
       "id": "la11_3",
       "name_ko": "박백의 갑옷",
@@ -662,7 +617,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Cat Burglar Outfit": {
       "id": "la11_4",
@@ -688,9 +642,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Dawn Thief Uniform": {
       "id": "la12_1",
@@ -715,7 +666,6 @@
       "천상": 1.25
     },
 
-
     "Shroud of the Lost": {
       "id": "la12_2",
       "name_ko": "사라진 자의 장막",
@@ -739,7 +689,6 @@
       "천상": 1.25
     },
 
-
     "Stylish Poncho": {
       "id": "la12_3",
       "name_ko": "멋진 판초",
@@ -762,7 +711,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Desperado Outfit": {
       "id": "la12_4",
@@ -788,9 +736,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Wildhunt Leathers": {
       "id": "la13_1",
@@ -815,7 +760,6 @@
       "천상": 1.25
     },
 
-
     "Garbs of Morpheus": {
       "id": "la13_2",
       "name_ko": "꿈의 신 모르페우스 의복",
@@ -839,7 +783,6 @@
       "천상": 1.25
     },
 
-
     "Wayfinder's Outfit": {
       "id": "la13_3",
       "name_ko": "길잡이의 의상",
@@ -862,7 +805,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Leathermaster's Apron": {
       "id": "la13_4",
@@ -888,9 +830,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Soothsayer's Garbs": {
       "id": "la14_1",
@@ -915,7 +854,6 @@
       "천상": 1.25
     },
 
-
     "Titan Admiral Coat": {
       "id": "la14_2",
       "name_ko": "명인 제독 코트",
@@ -939,7 +877,6 @@
       "천상": 1.25
     },
 
-
     "Lacrosse Set": {
       "id": "la14_3",
       "name_ko": "라크로스 세트",
@@ -962,7 +899,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Serpent Vestment": {
       "id": "la14_4",
@@ -988,9 +924,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Chrysalid Silks": {
       "id": "la15_1",
@@ -1015,7 +948,6 @@
       "천상": 1.25
     },
 
-
     "Sia's Fancy Outfit": {
       "id": "la15_2",
       "name_ko": "시아의 화려한 의상",
@@ -1038,7 +970,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Princely Attire": {
       "id": "la15_3",
@@ -1063,7 +994,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Gambeson": {
       "id": "la15_4",
       "name_ko": "플래티넘 갬비슨",
@@ -1087,7 +1017,6 @@
       "천상": 1
     },
 
-
     "Kintsugi Armor": {
       "id": "la15_5",
       "name_ko": "킨츠기 갑옷",
@@ -1110,7 +1039,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Ghostbusters Suit": {
       "id": "la15_6",
@@ -1136,31 +1064,29 @@
     }
   },
 
+  "16티어": {
+    "Voyager Biosuit": {
+      "id": "la16_1",
+      "name_ko": "보이저 바이오슈트",
+      "image_key": "voyager_biosuit",
+      "이미지_경로": "/images/equipment/armor/light_armor/voyager_biosuit.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 710,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 852,
+      "장비_에어쉽파워보너스": 1,
 
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
 
-"16티어": {
-  "Voyager Biosuit": {
-    "id": "la16_1",
-    "name_ko": "보이저 바이오슈트",
-    "image_key": "voyager_biosuit",
-    "이미지_경로": "/images/equipment/armor/light_armor/voyager_biosuit.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 710,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 852,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-
-    "유물": null,
-    "천상": 1.25
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }
