@@ -1206,5 +1206,57 @@
       "유물": null,
       "천상": 1.25
     }
+  },
+
+
+
+
+// armor/helmet.json
+"16티어": {
+  "Darkmatter Cortex": {
+    "id": "hm16_1",
+    "name_ko": "암흑물질 코텍스",
+    "image_key": "darkmatter_cortex",
+    "이미지_경로": "/images/equipment/armor/helmet/darkmatter_cortex.webp",
+
+    "장비_공격력": 0,
+    "장비_방어력": 800,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 960,
+    "장비_에어쉽파워보너스": 1,
+
+    "원소친밀감": null,
+    "영혼친밀감": null,
+    "고유원소종류": null,
+    "고유원소티어": null,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
+  },
+
+
+  "Atlantean Deepdiver": {
+    "id": "hm16_2",
+    "name_ko": "아틀란티스 심해 잠수부",
+    "image_key": "atlantean_deepdiver",
+    "이미지_경로": "/images/equipment/armor/helmet/atlantean_deepdiver.webp",
+
+    "장비_공격력": 0,
+    "장비_방어력": 963,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 1156,
+    "장비_에어쉽파워보너스": 1,
+
+    "원소친밀감": null,
+    "영혼친밀감": ["Leviathan"],
+    "고유원소종류": ["Water"],
+    "고유원소티어": 14,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
   }
 }
