@@ -558,6 +558,10 @@ export default function HeroList() {
       });
       hero.equipmentSlots?.forEach((slot: any) => {
         if (slot?.item?.imagePath) imagesToPreload.add(slot.item.imagePath);
+        if (slot?.item?.type) {
+          imagesToPreload.add(`/images/type_dark/${slot.item.type}.webp`);
+          imagesToPreload.add(`/images/type_white/${slot.item.type}.webp`);
+        }
         const el = slot?.element;
         if (el?.type && el?.tier) {
           imagesToPreload.add(
