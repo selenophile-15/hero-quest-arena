@@ -1184,5 +1184,32 @@
       "유물": null,
       "천상": 1.25
     }
+  },
+
+
+
+
+"16티어": {
+  "Darkmatter Frame": {
+    "id": "ha16_1",
+    "name_ko": "암흑 물질 프레임",
+    "image_key": "darkmatter_frame",
+    "이미지_경로": "/images/equipment/armor/heavy_armor/darkmatter_frame.webp",
+
+    "장비_공격력": 0,
+    "장비_방어력": 755,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 906,
+    "장비_에어쉽파워보너스": 1,
+
+    "원소친밀감": null,
+    "영혼친밀감": null,
+    "고유원소종류": null,
+    "고유원소티어": null,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
   }
 }
