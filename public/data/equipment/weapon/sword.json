@@ -1243,6 +1243,7 @@
     "name_ko": "플루토늄 검",
     "image_key": "plutonium_blade",
     "이미지_경로": "/images/equipment/weapon/sword/plutonium_blade.webp",
+      
     "장비_공격력": 1420,
     "장비_방어력": 0,
     "장비_체력": 0,
@@ -1266,6 +1267,7 @@
     "name_ko": "투구꽃 가위",
     "image_key": "wolfbane_scissors",
     "이미지_경로": "/images/equipment/weapon/sword/wolfbane_scissors.webp",
+      
     "장비_공격력": 1420,
     "장비_방어력": 0,
     "장비_체력": 0,
