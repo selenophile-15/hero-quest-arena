@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Administrator Cloak": {
       "id": "ck4_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "5티어": {
     "Druid Cloak": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Imperial Cape": {
       "id": "ck6_1",
@@ -107,7 +98,6 @@
       "천상": 1
     },
 
-
     "Vampire Wings": {
       "id": "ck6_2",
       "name_ko": "뱀파이어 날개",
@@ -131,9 +121,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "7티어": {
     "Elven Cloak": {
@@ -160,9 +147,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Beast King's Cloak": {
       "id": "ck8_1",
@@ -188,9 +172,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Dragonlord Crest": {
       "id": "ck9_1",
@@ -215,7 +196,6 @@
       "천상": 1
     },
 
-
     "Tyrant Cloak": {
       "id": "ck9_2",
       "name_ko": "독재자의 망토",
@@ -239,9 +219,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "10티어": {
     "Archbishop Mantle": {
@@ -268,9 +245,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Voidcloth From Beyond": {
       "id": "ck11_1",
@@ -295,7 +269,6 @@
       "천상": 1.25
     },
 
-
     "Opulent Cloak": {
       "id": "ck11_2",
       "name_ko": "호화로운 망토",
@@ -318,7 +291,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Woven Lilycloak": {
       "id": "ck11_3",
@@ -344,9 +316,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Herald's Mantle": {
       "id": "ck12_1",
@@ -371,7 +340,6 @@
       "천상": 1.25
     },
 
-
     "Sakura Cloak": {
       "id": "ck12_2",
       "name_ko": "사쿠라 망토",
@@ -394,7 +362,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Fairy Wings": {
       "id": "ck12_3",
@@ -420,9 +387,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Cloak Everflowing": {
       "id": "ck13_1",
@@ -447,7 +411,6 @@
       "천상": 1.25
     },
 
-
     "Coastal Towel": {
       "id": "ck13_2",
       "name_ko": "해변용 수건",
@@ -471,7 +434,6 @@
       "천상": 1.25
     },
 
-
     "Dragon Emperor's Cloak": {
       "id": "ck13_3",
       "name_ko": "용 황제의 망토",
@@ -494,7 +456,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Banner of Nilea": {
       "id": "ck13_4",
@@ -520,9 +481,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Elysium Mantle": {
       "id": "ck14_1",
@@ -547,7 +505,6 @@
       "천상": 1.25
     },
 
-
     "Giant Moth Wings": {
       "id": "ck14_2",
       "name_ko": "거대한 나방 날개",
@@ -570,7 +527,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Donovan's Cloak": {
       "id": "ck14_3",
@@ -596,9 +552,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Lord of the Wildwoods": {
       "id": "ck15_1",
@@ -623,7 +576,6 @@
       "천상": 1.25
     },
 
-
     "Sia's Royal Mantle": {
       "id": "ck15_2",
       "name_ko": "시아의 왕실 망토",
@@ -647,7 +599,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Cloak": {
       "id": "ck15_3",
       "name_ko": "플래티넘 망토",
@@ -670,7 +621,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Budget Cloak": {
       "id": "ck15_4",
@@ -696,29 +646,28 @@
     }
   },
 
+  "16티어": {
+    "Mantled Galaxica": {
+      "id": "ck16_1",
+      "name_ko": "뒤덮인 갤럭시아",
+      "image_key": "mantled_galaxica",
+      "이미지_경로": "/images/equipment/accessory/cloak/mantled_galaxica.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 980,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1176,
+      "장비_에어쉽파워보너스": 1,
 
-"16티어": {
-  "Mantled Galaxica": {
-    "id": "ck16_1",
-    "name_ko": "뒤덮인 갤럭시아",
-    "image_key": "mantled_galaxica",
-    "이미지_경로": "/images/equipment/accessory/cloak/mantled_galaxica.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 980,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1176,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }
