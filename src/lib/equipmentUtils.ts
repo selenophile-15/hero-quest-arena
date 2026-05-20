@@ -106,6 +106,7 @@ export interface EquipmentItem {
 
 // Level → max equippable tier
 export function getMaxTierForLevel(level: number): number {
+  if (level >= 40) return 16;
   if (level >= 38) return 15;
   if (level >= 36) return 14;
   if (level >= 34) return 13;
