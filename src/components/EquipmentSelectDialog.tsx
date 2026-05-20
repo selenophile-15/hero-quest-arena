@@ -256,7 +256,7 @@ export default function EquipmentSelectDialog({
   useEffect(() => {
     if (!open || !jobName) return;
     const load = async () => {
-      setLoading(true);
+      if (allItems.length === 0) setLoading(true);
       setLoadingProgress(0);
       setLoadingTotal(0);
       const [sid, nameMap] = await Promise.all([loadSID(), loadEquipNameMap()]);
