@@ -66,12 +66,10 @@ export function useMobileGestures(desktopMode: boolean) {
     }
 
     if (portalRoot) {
-      portalRoot.style.position = "absolute";
-      portalRoot.style.top = "0";
-      portalRoot.style.left = "0";
-      portalRoot.style.right = "0";
-      portalRoot.style.bottom = "0";
-      portalRoot.style.width = `${DESKTOP_WIDTH}px`;
+      // portal-root는 app-scale-root 바깥(transform 없음)에 있으므로
+      // fixed 포지셔닝이 뷰포트 기준으로 정상 동작함
+      portalRoot.style.position = "fixed";
+      portalRoot.style.inset = "0";
       portalRoot.style.pointerEvents = "none";
       portalRoot.style.zIndex = "9999";
     }
