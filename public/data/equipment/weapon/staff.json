@@ -1230,5 +1230,56 @@
       "유물": null,
       "천상": 1.25
     }
+  },
+
+
+
+
+"16티어": {
+  "Dimensional Anchor": {
+    "id": "st16_1",
+    "name_ko": "차원 닻",
+    "image_key": "dimensional_anchor",
+    "이미지_경로": "/images/equipment/weapon/staff/dimensional_anchor.webp",
+
+    "장비_공격력": 1420,
+    "장비_방어력": 0,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 1136,
+    "장비_에어쉽파워보너스": 1,
+
+    "원소친밀감": null,
+    "영혼친밀감": null,
+    "고유원소종류": null,
+    "고유원소티어": null,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
+  },
+
+
+  "Fragment of Apocal": {
+    "id": "st16_2",
+    "name_ko": "아포칼의 파편",
+    "image_key": "fragment_of_apocal",
+    "이미지_경로": "/images/equipment/weapon/staff/fragment_of_apocal.webp",
+
+    "장비_공격력": 1666,
+    "장비_방어력": 0,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 1333,
+    "장비_에어쉽파워보너스": 1,
+
+    "원소친밀감": null,
+    "영혼친밀감": ["Bahamut"],
+    "고유원소종류": ["Fire"],
+    "고유원소티어": 14,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
   }
 }
