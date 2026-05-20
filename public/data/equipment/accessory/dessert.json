@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Shaved Ice": {
       "id": "ds4_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "5티어": {
     "Taiyaki": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Cheesecake": {
       "id": "ds6_1",
@@ -106,7 +97,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Chocolate Box": {
       "id": "ds6_2",
@@ -132,9 +122,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Macaron Set": {
       "id": "ds7_1",
@@ -159,7 +146,6 @@
       "천상": 1
     },
 
-
     "Prickly Ice Cream": {
       "id": "ds7_2",
       "name_ko": "꺼끌꺼끌한 아이스크림",
@@ -183,9 +169,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "8티어": {
     "Strawberry Mochi": {
@@ -212,9 +195,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Matcha Swiss Roll": {
       "id": "ds9_1",
@@ -239,9 +219,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "10티어": {
     "Pineapple Cake": {
@@ -268,9 +245,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Tuxedo Cake": {
       "id": "ds11_1",
@@ -296,9 +270,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Halo-Halo": {
       "id": "ds12_1",
@@ -323,7 +294,6 @@
       "천상": 1.25
     },
 
-
     "Coconut Cream Cake": {
       "id": "ds12_2",
       "name_ko": "코코넛 크림 케이크",
@@ -347,7 +317,6 @@
       "천상": 1.25
     },
 
-
     "Opulent Churros": {
       "id": "ds12_3",
       "name_ko": "호화로운 츄러스",
@@ -370,7 +339,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Glazed Mirror Cake": {
       "id": "ds12_4",
@@ -396,9 +364,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Ultimate Fruit Salad": {
       "id": "ds13_1",
@@ -423,7 +388,6 @@
       "천상": 1.25
     },
 
-
     "Summer S'mores": {
       "id": "ds13_2",
       "name_ko": "여름 스모어",
@@ -446,7 +410,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Eversweet Cornucopia": {
       "id": "ds13_3",
@@ -472,9 +435,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Princely Baklava": {
       "id": "ds14_1",
@@ -499,7 +459,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Strudel": {
       "id": "ds14_2",
       "name_ko": "플래티넘 스트루들",
@@ -522,7 +481,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Starberry Pie": {
       "id": "ds14_3",
@@ -548,9 +506,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Chocodragon Summit": {
       "id": "ds15_1",
@@ -575,7 +530,6 @@
       "천상": 1.25
     },
 
-
     "Obsidian Lava Cake": {
       "id": "ds15_2",
       "name_ko": "흑요석 라바 케이크",
@@ -598,7 +552,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Krampus Cookies": {
       "id": "ds15_3",
@@ -624,30 +577,28 @@
     }
   },
 
+  "16티어": {
+    "Glörkberry Parfait": {
+      "id": "ds16_1",
+      "name_ko": "글록베리 파르페",
+      "image_key": "glörkberry_parfait",
+      "이미지_경로": "/images/equipment/accessory/dessert/glörkberry_parfait.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 0,
+      "장비_체력": 222,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1110,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Glörkberry Parfait": {
-    "id": "ds16_1",
-    "name_ko": "글록베리 파르페",
-    "image_key": "glörkberry_parfait",
-    "이미지_경로": "/images/equipment/accessory/dessert/glörkberry_parfait.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 0,
-    "장비_체력": 222,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1110,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": ["Earth"],
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": ["Earth"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

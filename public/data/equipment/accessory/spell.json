@@ -23,7 +23,6 @@
       "천상": 1
     },
 
-
     "Scroll of Cleansing": {
       "id": "sl1_2",
       "name_ko": "정화의 두루마리",
@@ -47,9 +46,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "2티어": {
     "Scroll of Armor": {
@@ -76,9 +72,6 @@
     }
   },
 
-
-
-
   "3티어": {
     "Scroll of Storms": {
       "id": "sl3_1",
@@ -104,9 +97,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Song of Valor": {
       "id": "sl4_1",
@@ -130,7 +120,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Correspondence": {
       "id": "sl4_2",
@@ -156,9 +145,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Monster Manual": {
       "id": "sl5_1",
@@ -183,7 +169,6 @@
       "천상": 1
     },
 
-
     "Tome of the Night": {
       "id": "sl5_2",
       "name_ko": "밤을 위한 책",
@@ -207,7 +192,6 @@
       "천상": 1
     },
 
-
     "Tome of Knowledge": {
       "id": "sl5_3",
       "name_ko": "지식의 서적",
@@ -230,7 +214,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Jumanji Map": {
       "id": "sl5_4",
@@ -256,9 +239,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Tome of Secrets": {
       "id": "sl6_1",
@@ -283,7 +263,6 @@
       "천상": 1
     },
 
-
     "Naughty or Nice List": {
       "id": "sl6_2",
       "name_ko": "나쁜 아이, 착한 아이 목록",
@@ -307,7 +286,6 @@
       "천상": 1
     },
 
-
     "Spells Vol III": {
       "id": "sl6_3",
       "name_ko": "주문 제3권",
@@ -330,7 +308,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Dark Oath": {
       "id": "sl6_4",
@@ -356,9 +333,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Bagua Board": {
       "id": "sl7_1",
@@ -383,7 +357,6 @@
       "천상": 1.25
     },
 
-
     "Firework Bundle": {
       "id": "sl7_2",
       "name_ko": "불꽃놀이 번들",
@@ -406,7 +379,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Tale of the Unicorn": {
       "id": "sl7_3",
@@ -432,9 +404,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Tarot Deck": {
       "id": "sl8_1",
@@ -459,7 +428,6 @@
       "천상": 1.25
     },
 
-
     "Scroll of Fortune": {
       "id": "sl8_2",
       "name_ko": "행운의 두루마리",
@@ -483,7 +451,6 @@
       "천상": 1.25
     },
 
-
     "Rolled Up Leather": {
       "id": "sl8_3",
       "name_ko": "둘둘 만 가족",
@@ -506,7 +473,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Grimar's Collection": {
       "id": "sl8_4",
@@ -534,9 +500,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Grimoire Aeternum": {
       "id": "sl9_1",
@@ -561,7 +524,6 @@
       "천상": 1.25
     },
 
-
     "Imperial Decree": {
       "id": "sl9_2",
       "name_ko": "황제의 법령",
@@ -585,7 +547,6 @@
       "천상": 1.25
     },
 
-
     "Luxurious Tablet": {
       "id": "sl9_3",
       "name_ko": "고급 석판",
@@ -608,7 +569,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Binder of Memories": {
       "id": "sl9_4",
@@ -636,9 +596,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Ancestral Atlas": {
       "id": "sl10_1",
@@ -663,7 +620,6 @@
       "천상": 1.25
     },
 
-
     "Prayer Book": {
       "id": "sl10_2",
       "name_ko": "기도서",
@@ -687,7 +643,6 @@
       "천상": 1.25
     },
 
-
     "Curse of the Night": {
       "id": "sl10_3",
       "name_ko": "밤의 저주",
@@ -710,7 +665,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Druidic Grimoire": {
       "id": "sl10_4",
@@ -736,9 +690,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Celestial Choir": {
       "id": "sl11_1",
@@ -763,7 +714,6 @@
       "천상": 1.25
     },
 
-
     "Phoenix Litany": {
       "id": "sl11_2",
       "name_ko": "불사조 기도문",
@@ -786,7 +736,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Sealed Declaration": {
       "id": "sl11_3",
@@ -811,7 +760,6 @@
       "천상": 1.25
     },
 
-
     "Tiger Emperor's Edict": {
       "id": "sl11_4",
       "name_ko": "호랑이 황제의 칙령",
@@ -834,7 +782,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Tome of All-Knowledge": {
       "id": "sl11_5",
@@ -860,9 +807,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "The Bound Beast": {
       "id": "sl12_1",
@@ -887,7 +831,6 @@
       "천상": 1.25
     },
 
-
     "Pharaoh's Pact": {
       "id": "sl12_2",
       "name_ko": "파라오의 약속",
@@ -910,7 +853,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Lost Star Chart": {
       "id": "sl12_3",
@@ -935,7 +877,6 @@
       "천상": 1.25
     },
 
-
     "Love Declaration": {
       "id": "sl12_4",
       "name_ko": "사랑 선언문",
@@ -958,7 +899,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Opulent Incantation": {
       "id": "sl12_5",
@@ -984,9 +924,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Pandora's Box": {
       "id": "sl13_1",
@@ -1011,7 +948,6 @@
       "천상": 1.25
     },
 
-
     "Sealed Hurricane": {
       "id": "sl13_2",
       "name_ko": "봉인된 허리케인",
@@ -1034,7 +970,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Platinum Secret Map": {
       "id": "sl13_3",
@@ -1059,7 +994,6 @@
       "천상": 1
     },
 
-
     "Tales of Yule": {
       "id": "sl13_4",
       "name_ko": "크리스마스 이야기",
@@ -1082,7 +1016,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Darkness Millennium": {
       "id": "sl13_5",
@@ -1108,9 +1041,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Seal of Gaia": {
       "id": "sl14_1",
@@ -1135,7 +1065,6 @@
       "천상": 1.25
     },
 
-
     "Chronomancer's Timetable": {
       "id": "sl14_2",
       "name_ko": "크로노맨서의 시간표",
@@ -1158,7 +1087,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Lilu's Starfall": {
       "id": "sl14_3",
@@ -1184,9 +1112,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Tribal Scribbles": {
       "id": "sl15_1",
@@ -1211,7 +1136,6 @@
       "천상": 1.25
     },
 
-
     "Mundra's Decree": {
       "id": "sl15_2",
       "name_ko": "문드라의 법령",
@@ -1235,7 +1159,6 @@
       "천상": 1.25
     },
 
-
     "Ghost Trap": {
       "id": "sl15_3",
       "name_ko": "유령용 함정",
@@ -1258,7 +1181,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Chapter Cauchemar": {
       "id": "sl15_4",
@@ -1284,54 +1206,51 @@
     }
   },
 
+  "16티어": {
+    "Offworld Plaque": {
+      "id": "sl16_1",
+      "name_ko": "외계 역병",
+      "image_key": "offworld_plaque",
+      "이미지_경로": "/images/equipment/accessory/spell/offworld_plaque.webp",
 
+      "장비_공격력": 2250,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1800,
+      "장비_에어쉽파워보너스": 1,
 
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-"16티어": {
-  "Offworld Plaque": {
-    "id": "sl16_1",
-    "name_ko": "외계 역병",
-    "image_key": "offworld_plaque",
-    "이미지_경로": "/images/equipment/accessory/spell/offworld_plaque.webp",
+    "Precursor's Ultimatum": {
+      "id": "sl16_2",
+      "name_ko": "선조의 최후통첩",
+      "image_key": "precursor's_ultimatum",
+      "이미지_경로": "/images/equipment/accessory/spell/precursor's_ultimatum.webp",
 
-    "장비_공격력": 2250,
-    "장비_방어력": 0,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1800,
-    "장비_에어쉽파워보너스": 1,
+      "장비_공격력": 2496,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1997,
+      "장비_에어쉽파워보너스": 1,
 
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
-  },
-
-
-  "Precursor's Ultimatum": {
-    "id": "sl16_2",
-    "name_ko": "선조의 최후통첩",
-    "image_key": "precursor's_ultimatum",
-    "이미지_경로": "/images/equipment/accessory/spell/precursor's_ultimatum.webp",
-
-    "장비_공격력": 2496,
-    "장비_방어력": 0,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1997,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": ["Ouroboros"],
-    "고유원소종류": ["Dark"],
-    "고유원소티어": 14,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": ["Ouroboros"],
+      "고유원소종류": ["Dark"],
+      "고유원소티어": 14,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Healing Potion": {
       "id": "pt2_1",
@@ -52,9 +49,6 @@
     }
   },
 
-
-
-
   "3티어": {
     "Magic Potion": {
       "id": "pt3_1",
@@ -78,7 +72,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Science Project": {
       "id": "pt3_2",
@@ -104,9 +97,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "XL Healing Potion": {
       "id": "pt4_1",
@@ -131,7 +121,6 @@
       "천상": 1
     },
 
-
     "Elegant Tea Set": {
       "id": "pt4_2",
       "name_ko": "우아한 다기 세트",
@@ -154,7 +143,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Vial of Slime": {
       "id": "pt4_3",
@@ -180,9 +168,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "XL Magic Potion": {
       "id": "pt5_1",
@@ -207,7 +192,6 @@
       "천상": 1
     },
 
-
     "Titan Potion": {
       "id": "pt5_2",
       "name_ko": "명인 물약",
@@ -230,7 +214,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Old Salt's Brew": {
       "id": "pt5_3",
@@ -256,9 +239,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Phoenix Tonic": {
       "id": "pt6_1",
@@ -283,7 +263,6 @@
       "천상": 1
     },
 
-
     "Zesty Granita": {
       "id": "pt6_2",
       "name_ko": "자극적인 그라니타",
@@ -306,7 +285,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Stardust Sample": {
       "id": "pt6_3",
@@ -332,9 +310,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Potion of Renewal": {
       "id": "pt7_1",
@@ -359,7 +334,6 @@
       "천상": 1.25
     },
 
-
     "Bottled Mirth": {
       "id": "pt7_2",
       "name_ko": "병에 든 웃음",
@@ -383,7 +357,6 @@
       "천상": 1.25
     },
 
-
     "Fizzy Guzzle Bottle": {
       "id": "pt7_3",
       "name_ko": "부글거리는 병",
@@ -406,7 +379,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Canopic Jar": {
       "id": "pt7_4",
@@ -432,9 +404,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Purple Bomb": {
       "id": "pt8_1",
@@ -459,7 +428,6 @@
       "천상": 1.25
     },
 
-
     "Gourd Elixir": {
       "id": "pt8_2",
       "name_ko": "고드 엘릭서",
@@ -482,7 +450,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Naya's Special": {
       "id": "pt8_3",
@@ -507,7 +474,6 @@
       "천상": 1.25
     },
 
-
     "Special Sazonado": {
       "id": "pt8_4",
       "name_ko": "특별 사소나도",
@@ -530,7 +496,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Elixir of the Wyrm": {
       "id": "pt8_5",
@@ -556,9 +521,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Soulfire Extract": {
       "id": "pt9_1",
@@ -583,7 +545,6 @@
       "천상": 1.25
     },
 
-
     "Tangy Decoction": {
       "id": "pt9_2",
       "name_ko": "짜릿한 즙",
@@ -606,7 +567,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Oak Essence": {
       "id": "pt9_3",
@@ -632,9 +592,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Gaia Tonic": {
       "id": "pt10_1",
@@ -659,7 +616,6 @@
       "천상": 1.25
     },
 
-
     "Midnight Oil": {
       "id": "pt10_2",
       "name_ko": "한밤의 기름",
@@ -682,7 +638,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Opulent Elixir": {
       "id": "pt10_3",
@@ -707,7 +662,6 @@
       "천상": 1
     },
 
-
     "Sip o' the Sea": {
       "id": "pt10_4",
       "name_ko": "바다 한 모금",
@@ -730,7 +684,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Ninja Smoke Bomb": {
       "id": "pt10_5",
@@ -756,9 +709,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Distilled Nebula": {
       "id": "pt11_1",
@@ -783,7 +733,6 @@
       "천상": 1.25
     },
 
-
     "Aurora Springwater": {
       "id": "pt11_2",
       "name_ko": "오로라 용수",
@@ -806,7 +755,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Nectar Pitcher": {
       "id": "pt11_3",
@@ -832,9 +780,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Ambrosia": {
       "id": "pt12_1",
@@ -859,7 +804,6 @@
       "천상": 1.25
     },
 
-
     "Mundra's Remedy": {
       "id": "pt12_2",
       "name_ko": "문드라의 치료법",
@@ -882,7 +826,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Quintessence Purity": {
       "id": "pt12_3",
@@ -907,7 +850,6 @@
       "천상": 1.25
     },
 
-
     "Supreme Sunscreen": {
       "id": "pt12_4",
       "name_ko": "최상급 선스크린",
@@ -930,7 +872,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Maple Holy Grail": {
       "id": "pt12_5",
@@ -956,9 +897,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Conqueror's Blood": {
       "id": "pt13_1",
@@ -983,7 +921,6 @@
       "천상": 1.25
     },
 
-
     "Satchel of Essentials": {
       "id": "pt13_2",
       "name_ko": "필수품이 든 작은 가방",
@@ -1007,7 +944,6 @@
       "천상": 1.25
     },
 
-
     "Billionaire Brew": {
       "id": "pt13_3",
       "name_ko": "억만장자의 커피",
@@ -1030,7 +966,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Fragrant Moisturizer": {
       "id": "pt13_4",
@@ -1056,9 +991,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Tincture of Finality": {
       "id": "pt14_1",
@@ -1083,7 +1015,6 @@
       "천상": 1.25
     },
 
-
     "Protein Shake": {
       "id": "pt14_2",
       "name_ko": "단백질 쉐이크",
@@ -1106,7 +1037,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Divine Contained": {
       "id": "pt14_3",
@@ -1131,7 +1061,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Tankard": {
       "id": "pt14_4",
       "name_ko": "플래티넘 맥주잔",
@@ -1154,7 +1083,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Grandma's Teapot": {
       "id": "pt14_5",
@@ -1180,9 +1108,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Primal Fire": {
       "id": "pt15_1",
@@ -1207,7 +1132,6 @@
       "천상": 1.25
     },
 
-
     "Ancient Waters": {
       "id": "pt15_2",
       "name_ko": "고대의 물",
@@ -1231,7 +1155,6 @@
       "천상": 1.25
     },
 
-
     "Bubbling Cauldron": {
       "id": "pt15_3",
       "name_ko": "보글거리는 가마솥",
@@ -1254,7 +1177,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Elemental Conflux": {
       "id": "pt15_4",
@@ -1280,30 +1202,28 @@
     }
   },
 
+  "16티어": {
+    "Microcosmos Infusion": {
+      "id": "pt16_1",
+      "name_ko": "소우주 주입",
+      "image_key": "microcosmos_infusion",
+      "이미지_경로": "/images/equipment/accessory/potion/microcosmos_infusion.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 0,
+      "장비_체력": 167,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 835,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Microcosmos Infusion": {
-    "id": "pt16_1",
-    "name_ko": "소우주 주입",
-    "image_key": "microcosmos_infusion",
-    "이미지_경로": "/images/equipment/accessory/potion/microcosmos_infusion.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 0,
-    "장비_체력": 167,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 835,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": ["Dark"],
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": ["Dark"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Heavy Buckler": {
       "id": "sh2_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "3티어": {
     "Oaken Shield": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Iron Shield": {
       "id": "sh4_1",
@@ -106,7 +97,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Aurum Ward": {
       "id": "sh4_2",
@@ -132,9 +122,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Teardrop Shield": {
       "id": "sh5_1",
@@ -159,7 +146,6 @@
       "천상": 1
     },
 
-
     "Imperial Scutum": {
       "id": "sh5_2",
       "name_ko": "황제의 뼛조각",
@@ -183,7 +169,6 @@
       "천상": 1
     },
 
-
     "Champion Vigil": {
       "id": "sh5_3",
       "name_ko": "챔피언 비질",
@@ -206,7 +191,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Ol' Grogwood": {
       "id": "sh5_4",
@@ -232,9 +216,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Mythril Aspis": {
       "id": "sh6_1",
@@ -259,7 +240,6 @@
       "천상": 1
     },
 
-
     "Raider Buckler": {
       "id": "sh6_2",
       "name_ko": "약탈자 버클러",
@@ -282,7 +262,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Gaia Aegis": {
       "id": "sh6_3",
@@ -308,9 +287,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Wyrmguard": {
       "id": "sh7_1",
@@ -335,7 +311,6 @@
       "천상": 1
     },
 
-
     "Vanguard Buckler": {
       "id": "sh7_2",
       "name_ko": "선봉대 버클러",
@@ -358,7 +333,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Neku Shield": {
       "id": "sh7_3",
@@ -384,9 +358,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Ancestor Totem": {
       "id": "sh8_1",
@@ -411,7 +382,6 @@
       "천상": 1
     },
 
-
     "Goreboar Targe": {
       "id": "sh8_2",
       "name_ko": "멧돼지 원형 방패",
@@ -434,7 +404,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Painted Palette": {
       "id": "sh8_3",
@@ -460,9 +429,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Angelic Pavise": {
       "id": "sh9_1",
@@ -487,7 +453,6 @@
       "천상": 1
     },
 
-
     "Prometheon": {
       "id": "sh9_2",
       "name_ko": "프로메테온",
@@ -510,7 +475,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Milesian Shield": {
       "id": "sh9_3",
@@ -535,7 +499,6 @@
       "천상": 1
     },
 
-
     "Bunbun Buckler": {
       "id": "sh9_4",
       "name_ko": "버니버니 버클러",
@@ -558,7 +521,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Luxurious Aegis": {
       "id": "sh9_5",
@@ -584,9 +546,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Goldmane Guard": {
       "id": "sh10_1",
@@ -611,7 +570,6 @@
       "천상": 1.25
     },
 
-
     "Emperor Wyrmguard": {
       "id": "sh10_2",
       "name_ko": "웜가드 황제",
@@ -634,7 +592,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Tricera Targe": {
       "id": "sh10_3",
@@ -660,9 +617,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Bearded Paragon": {
       "id": "sh11_1",
@@ -687,7 +641,6 @@
       "천상": 1.25
     },
 
-
     "Honeycomb Defender": {
       "id": "sh11_2",
       "name_ko": "벌집 방호자",
@@ -710,7 +663,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Crystalice Targe": {
       "id": "sh11_3",
@@ -736,9 +688,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Abyssal Artifact": {
       "id": "sh12_1",
@@ -763,7 +712,6 @@
       "천상": 1.25
     },
 
-
     "Titan Shield": {
       "id": "sh12_2",
       "name_ko": "명인 방패",
@@ -786,7 +734,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Opulent Buckler": {
       "id": "sh12_3",
@@ -811,7 +758,6 @@
       "천상": 1
     },
 
-
     "Bastion of Dawn": {
       "id": "sh12_4",
       "name_ko": "새벽의 보루",
@@ -834,7 +780,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Elongo Shield": {
       "id": "sh12_5",
@@ -860,9 +805,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Chloroshield": {
       "id": "sh13_1",
@@ -887,7 +829,6 @@
       "천상": 1.25
     },
 
-
     "Radical Waverider": {
       "id": "sh13_2",
       "name_ko": "래디컬 웨이브라이더",
@@ -910,7 +851,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Mundra's Aegis": {
       "id": "sh13_3",
@@ -935,7 +875,6 @@
       "천상": 1.25
     },
 
-
     "CM-73 Shield": {
       "id": "sh13_4",
       "name_ko": "CM-73 방패",
@@ -958,7 +897,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Dragon Sacred Gem": {
       "id": "sh13_5",
@@ -984,9 +922,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Hell's Gate": {
       "id": "sh14_1",
@@ -1011,7 +946,6 @@
       "천상": 1.25
     },
 
-
     "Xolimnul's Fortress": {
       "id": "sh14_2",
       "name_ko": "졸림눌 요새",
@@ -1034,7 +968,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Cursed King's Aegis": {
       "id": "sh14_3",
@@ -1059,7 +992,6 @@
       "천상": 1.25
     },
 
-
     "Pizza Pavise": {
       "id": "sh14_4",
       "name_ko": "피자 방패",
@@ -1082,7 +1014,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Argon's Shield": {
       "id": "sh14_5",
@@ -1108,9 +1039,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Seraphim Gaze": {
       "id": "sh15_1",
@@ -1135,7 +1063,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Ward": {
       "id": "sh15_2",
       "name_ko": "플래티넘 방패",
@@ -1159,7 +1086,6 @@
       "천상": 1
     },
 
-
     "Collector's Piece": {
       "id": "sh15_3",
       "name_ko": "수집가의 조각",
@@ -1182,7 +1108,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Cardboard Guard": {
       "id": "sh15_4",
@@ -1208,30 +1133,28 @@
     }
   },
 
+  "16티어": {
+    "Ultima Deflector": {
+      "id": "sh16_1",
+      "name_ko": "울티마 디플렉터",
+      "image_key": "ultima_deflector",
+      "이미지_경로": "/images/equipment/accessory/shield/ultima_deflector.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 755,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 906,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Ultima Deflector": {
-    "id": "sh16_1",
-    "name_ko": "울티마 디플렉터",
-    "image_key": "ultima_deflector",
-    "이미지_경로": "/images/equipment/accessory/shield/ultima_deflector.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 755,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 906,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

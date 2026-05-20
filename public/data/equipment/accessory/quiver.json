@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Wasterlander's Quiver": {
       "id": "qv6_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "7티어": {
     "Pharaoh's Arsenal": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Arrows of Ruin": {
       "id": "qv8_1",
@@ -107,9 +98,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "9티어": {
     "Knightly Quiver": {
@@ -136,9 +124,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Quiver of Shoals": {
       "id": "qv10_1",
@@ -163,9 +148,6 @@
       "천상": 1.25
     }
   },
-
-
-
 
   "11티어": {
     "Bleakspire Bundle": {
@@ -192,9 +174,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Volcanic Pocket": {
       "id": "qv12_1",
@@ -219,9 +198,6 @@
       "천상": 1.25
     }
   },
-
-
-
 
   "13티어": {
     "Elsewhere Arrows": {
@@ -248,9 +224,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Quiver of the Avatar": {
       "id": "qv14_1",
@@ -274,7 +247,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Santa's Present Bag": {
       "id": "qv14_2",
@@ -300,9 +272,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Rex Backpack": {
       "id": "qv15_1",
@@ -327,7 +296,6 @@
       "천상": 1.25
     },
 
-
     "Biting Bolts": {
       "id": "qv15_2",
       "name_ko": "송곳 볼트",
@@ -350,7 +318,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Platinum Quiver": {
       "id": "qv15_3",
@@ -376,30 +343,28 @@
     }
   },
 
+  "16티어": {
+    "Baryon Battlebolts": {
+      "id": "qv16_1",
+      "name_ko": "바이론 전투 볼트",
+      "image_key": "baryon_battlebolts",
+      "이미지_경로": "/images/equipment/accessory/quiver/baryon_battlebolts.webp",
 
+      "장비_공격력": 515,
+      "장비_방어력": 515,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1030,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Baryon Battlebolts": {
-    "id": "qv16_1",
-    "name_ko": "바이론 전투 볼트",
-    "image_key": "baryon_battlebolts",
-    "이미지_경로": "/images/equipment/accessory/quiver/baryon_battlebolts.webp",
-
-    "장비_공격력": 515,
-    "장비_방어력": 515,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1030,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

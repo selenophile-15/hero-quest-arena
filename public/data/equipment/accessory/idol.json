@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Portable Totem Pole": {
       "id": "id6_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "7티어": {
     "Guardian Effigy": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Timeworn Pillar": {
       "id": "id8_1",
@@ -107,9 +98,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "9티어": {
     "Ghostly Mockery": {
@@ -136,9 +124,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Idol from the Deep": {
       "id": "id10_1",
@@ -164,9 +149,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Harpy Totem": {
       "id": "id11_1",
@@ -191,7 +173,6 @@
       "천상": 1.25
     },
 
-
     "Shattered Totem": {
       "id": "id11_2",
       "name_ko": "흩어진 토템",
@@ -215,9 +196,6 @@
       "천상": 1.25
     }
   },
-
-
-
 
   "12티어": {
     "Obsidian Devourer": {
@@ -244,9 +222,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Tower of Void": {
       "id": "id13_1",
@@ -271,7 +246,6 @@
       "천상": 1.25
     },
 
-
     "Pure Heart Receptacle": {
       "id": "id13_2",
       "name_ko": "순수 하트 그릇",
@@ -295,9 +269,6 @@
       "천상": 1.25
     }
   },
-
-
-
 
   "14티어": {
     "Avatar Core": {
@@ -324,9 +295,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Ancient Statuette": {
       "id": "id15_1",
@@ -351,7 +319,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Ancestor": {
       "id": "id15_2",
       "name_ko": "플래티넘 조상",
@@ -375,7 +342,6 @@
       "천상": 1
     },
 
-
     "Jaguar Statuette": {
       "id": "id15_3",
       "name_ko": "재규어 소형 조각상",
@@ -398,7 +364,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Avatar of Magic": {
       "id": "id15_4",
@@ -424,30 +389,28 @@
     }
   },
 
+  "16티어": {
+    "Envoy of the Eternitree": {
+      "id": "id16_1",
+      "name_ko": "영원수의 사절",
+      "image_key": "envoy_of_the_eternitree",
+      "이미지_경로": "/images/equipment/accessory/idol/envoy_of_the_eternitree.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 423,
+      "장비_체력": 105,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1033,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Envoy of the Eternitree": {
-    "id": "id16_1",
-    "name_ko": "영원수의 사절",
-    "image_key": "envoy_of_the_eternitree",
-    "이미지_경로": "/images/equipment/accessory/idol/envoy_of_the_eternitree.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 423,
-    "장비_체력": 105,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1033,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": ["Light", "Dark"],
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": ["Light", "Dark"],
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }
