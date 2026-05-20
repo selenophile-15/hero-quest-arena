@@ -283,7 +283,7 @@ export default function ChampionForm({
   const [championSkillsData, setChampionSkillsData] = useState<Record<string, any>>({});
   const [familiarItems, setFamiliarItems] = useState<EquipmentItem[]>([]);
   const [aurasongItems, setAurasongItems] = useState<EquipmentItem[]>([]);
-  const [equipImagesReady, setEquipImagesReady] = useState(false);
+  const [equipImagesReady, setEquipImagesReady] = useState(true);
   const [equipDialogType, setEquipDialogType] = useState<"familiar" | "aurasong" | null>(null);
   const [equipSlotsSnapshot, setEquipSlotsSnapshot] = useState<typeof equipmentSlots | null>(null);
   const [enchantDialogOpen, setEnchantDialogOpen] = useState(false);
