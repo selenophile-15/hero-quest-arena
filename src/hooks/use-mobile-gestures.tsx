@@ -9,21 +9,21 @@ const DEFAULT_VIEWPORT = "width=device-width, initial-scale=1.0, user-scalable=y
 export function useMobileGestures(desktopMode: boolean) {
   const currentZoomRef = useRef(1);
   const fitScaleRef = useRef(1);
+
+  // 핀치 줌
   const pinchStartDistRef = useRef(0);
   const pinchStartZoomRef = useRef(1);
-  const lastTapRef = useRef(0);
   const pinchStartCenterRef = useRef({ x: 0, y: 0 });
   const pinchStartScrollRef = useRef({ x: 0, y: 0 });
 
-  /**
-   * applyScale: app-scale-root만 scale 적용
-   *
-   * 핵심 변경:
-   * - portal-root는 app-scale-root 안에 있으므로 transform을 따로 적용하지 않음
-   * - portal-root는 CSS로만 제어 (아래 useEffect에서 position:absolute+inset-0 설정)
-   * - 다이얼로그의 fixed 포지션은 portal-root가 같은 transform 컨텍스트 안에
-   *   있으므로 portal-root 기준 fixed로 동작 → 배경과 함께 확대됨
-   */
+  // 더블탭
+  const lastTapRef = useRef(0);
+
+  // 단일 손가락 pan (확대 상태에서 드래그로 이동)
+  const panStartRef = useRef<{ x: number; y: number } | null>(null);
+  const panScrollStartRef = useRef({ x: 0, y: 0 });
+  const isPanningRef = useRef(false);
+
   const applyScale = useCallback((zoom: number) => {
     currentZoomRef.current = zoom;
     const totalScale = fitScaleRef.current * zoom;
@@ -49,10 +49,7 @@ export function useMobileGestures(desktopMode: boolean) {
         scaleRoot.style.width = "";
         scaleRoot.style.minWidth = "";
       }
-      if (portalRoot) {
-        // 모바일 일반 모드: portal-root는 기본 상태로
-        portalRoot.style.cssText = "";
-      }
+      if (portalRoot) portalRoot.style.cssText = "";
       if (viewport) viewport.setAttribute("content", DEFAULT_VIEWPORT);
       document.documentElement.removeAttribute("data-desktop");
       return;
@@ -68,9 +65,6 @@ export function useMobileGestures(desktopMode: boolean) {
       );
     }
 
-    // portal-root를 app-scale-root 안에서 전체 영역을 덮는 레이어로 설정
-    // position: absolute + inset-0 → 부모(app-scale-root)의 transform에 종속됨
-    // 이로써 다이얼로그가 배경과 정확히 같은 좌표계에서 확대/축소됨
     if (portalRoot) {
       portalRoot.style.position = "absolute";
       portalRoot.style.top = "0";
@@ -94,7 +88,31 @@ export function useMobileGestures(desktopMode: boolean) {
 
     scheduleRecalc();
 
-    // 더블탭 줌 — 탭한 위치를 중심으로 확대
+    // ── 헬퍼 ──────────────────────────────────────────────
+    const getDistance = (t1: Touch, t2: Touch) => {
+      const dx = t1.clientX - t2.clientX;
+      const dy = t1.clientY - t2.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    /**
+     * 터치 시작 지점에서 내부 스크롤 가능한 요소인지 확인
+     * - 다이얼로그 내부 스크롤 영역은 pan이 아닌 내부 스크롤로 처리해야 함
+     */
+    const isScrollableElement = (el: Element | null): boolean => {
+      if (!el) return false;
+      const style = window.getComputedStyle(el);
+      const overflowY = style.overflowY;
+      const overflowX = style.overflowX;
+      const scrollable =
+        overflowY === "auto" || overflowY === "scroll" || overflowX === "auto" || overflowX === "scroll";
+      if (scrollable && (el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)) {
+        return true;
+      }
+      return isScrollableElement(el.parentElement);
+    };
+
+    // ── 더블탭 줌 ─────────────────────────────────────────
     const handleDoubleTap = (e: TouchEvent) => {
       if (e.touches.length !== 1) return;
       const now = Date.now();
@@ -105,45 +123,48 @@ export function useMobileGestures(desktopMode: boolean) {
 
         const tapX = e.touches[0].clientX;
         const tapY = e.touches[0].clientY;
-
         const oldTotalScale = fitScaleRef.current * currentZoomRef.current;
         const next = currentZoomRef.current < 1.4 ? 1.5 : currentZoomRef.current < 2.4 ? 2.5 : 1;
         const newTotalScale = fitScaleRef.current * next;
 
-        // 탭 위치의 콘텐츠 좌표를 보존하도록 스크롤 보정
         const contentX = (window.scrollX + tapX) / oldTotalScale;
         const contentY = (window.scrollY + tapY) / oldTotalScale;
 
         applyScale(next);
-
         window.scrollTo(contentX * newTotalScale - tapX, contentY * newTotalScale - tapY);
       }
     };
 
-    // 핀치 줌
-    const getDistance = (t1: Touch, t2: Touch) => {
-      const dx = t1.clientX - t2.clientX;
-      const dy = t1.clientY - t2.clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    };
-
+    // ── 터치 시작 ─────────────────────────────────────────
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
+        // 핀치 시작
+        isPanningRef.current = false;
+        panStartRef.current = null;
+
         pinchStartDistRef.current = getDistance(e.touches[0], e.touches[1]);
         pinchStartZoomRef.current = currentZoomRef.current;
         pinchStartCenterRef.current = {
           x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
           y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
         };
-        pinchStartScrollRef.current = {
-          x: window.scrollX,
-          y: window.scrollY,
-        };
+        pinchStartScrollRef.current = { x: window.scrollX, y: window.scrollY };
+      } else if (e.touches.length === 1 && currentZoomRef.current > 1) {
+        // 확대 상태에서 단일 손가락 → pan 준비
+        // 단, 내부 스크롤 가능한 요소 위에서는 pan 하지 않음
+        const target = e.target as Element;
+        if (!isScrollableElement(target)) {
+          panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+          panScrollStartRef.current = { x: window.scrollX, y: window.scrollY };
+          isPanningRef.current = false; // 실제 이동 감지 후 true로
+        }
       }
     };
 
+    // ── 터치 이동 ─────────────────────────────────────────
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches.length === 2) {
+        // 핀치 줌
         e.preventDefault();
         const dist = getDistance(e.touches[0], e.touches[1]);
         const ratio = dist / pinchStartDistRef.current;
@@ -152,21 +173,34 @@ export function useMobileGestures(desktopMode: boolean) {
         const oldTotalScale = fitScaleRef.current * pinchStartZoomRef.current;
         const newTotalScale = fitScaleRef.current * newZoom;
 
-        // 핀치 중심점이 가리키는 콘텐츠 좌표
         const cx = pinchStartCenterRef.current.x;
         const cy = pinchStartCenterRef.current.y;
         const contentX = (pinchStartScrollRef.current.x + cx) / oldTotalScale;
         const contentY = (pinchStartScrollRef.current.y + cy) / oldTotalScale;
 
         applyScale(newZoom);
-
-        // 핀치 중심이 같은 콘텐츠 위치를 가리키도록 스크롤 보정
         window.scrollTo(contentX * newTotalScale - cx, contentY * newTotalScale - cy);
+      } else if (e.touches.length === 1 && panStartRef.current && currentZoomRef.current > 1) {
+        // 단일 손가락 pan
+        const dx = e.touches[0].clientX - panStartRef.current.x;
+        const dy = e.touches[0].clientY - panStartRef.current.y;
+
+        // 5px 이상 움직여야 pan으로 확정 (탭과 구분)
+        if (!isPanningRef.current && Math.sqrt(dx * dx + dy * dy) < 5) return;
+        isPanningRef.current = true;
+
+        e.preventDefault();
+        window.scrollTo(panScrollStartRef.current.x - dx, panScrollStartRef.current.y - dy);
       }
     };
 
+    // ── 터치 끝 ───────────────────────────────────────────
     const handleTouchEnd = (e: TouchEvent) => {
       if (e.touches.length < 2) pinchStartDistRef.current = 0;
+      if (e.touches.length === 0) {
+        panStartRef.current = null;
+        isPanningRef.current = false;
+      }
     };
 
     document.addEventListener("touchstart", handleDoubleTap, { passive: false });
