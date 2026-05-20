@@ -694,5 +694,31 @@
       "유물": null,
       "천상": 1.25
     }
+  },
+
+
+
+"16티어": {
+  "Mantled Galaxica": {
+    "id": "ck16_1",
+    "name_ko": "뒤덮인 갤럭시아",
+    "image_key": "mantled_galaxica",
+    "이미지_경로": "/images/equipment/accessory/cloak/mantled_galaxica.webp",
+
+    "장비_공격력": 0,
+    "장비_방어력": 980,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 1176,
+    "장비_에어쉽파워보너스": 1,
+
+    "원소친밀감": null,
+    "영혼친밀감": null,
+    "고유원소종류": null,
+    "고유원소티어": null,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
   }
 }
