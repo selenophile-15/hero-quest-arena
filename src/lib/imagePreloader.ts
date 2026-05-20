@@ -3,7 +3,7 @@ const imageCache = new Map<string, HTMLImageElement>();
 export function preloadImage(src: string): void {
   if (!src || imageCache.has(src)) return;
   const img = new Image();
-  img.decoding = "async";
+  img.decoding = "sync";
   img.loading = "eager";
   img.onerror = () => {
     imageCache.delete(src);
@@ -26,6 +26,7 @@ export function preloadImagesAndWait(srcs: (string | undefined | null)[]): Promi
       if (imageCache.has(src)) return Promise.resolve(); // 이미 캐시됨
       return new Promise<void>((resolve) => {
         const img = new Image();
+        img.decoding = "sync";
         img.onload = () => {
           imageCache.set(src, img);
           resolve();
