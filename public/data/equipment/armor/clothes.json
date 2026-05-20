@@ -1187,12 +1187,12 @@
 
 
 
-"16티어": {
-  "Worldshaper Robe": {
-    "id": "cl16_1",
-    "name_ko": "세계 빚는 로브",
-    "image_key": "worldshaper_robe",
-    "이미지_경로": "/images/equipment/armor/clothes/worldshaper_robe.webp",
+  "16티어": {
+    "Worldshaper Robe": {
+      "id": "cl16_1",
+      "name_ko": "세계 빚는 로브",
+      "image_key": "worldshaper_robe",
+      "이미지_경로": "/images/equipment/armor/clothes/worldshaper_robe.webp",
 
     "장비_공격력": 0,
     "장비_방어력": 665,
