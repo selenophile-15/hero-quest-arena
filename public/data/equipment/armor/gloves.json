@@ -1134,5 +1134,56 @@
       "유물": null,
       "천상": 1.25
     }
+  },
+
+
+
+
+"16티어": {
+  "Voyager Dexteroses": {
+    "id": "gl16_1",
+    "name_ko": "항해자 덱스테로세스",
+    "image_key": "voyager_dexteroses",
+    "이미지_경로": "/images/equipment/armor/gloves/voyager_dexteroses.webp",
+
+    "장비_공격력": 0,
+    "장비_방어력": 580,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 696,
+    "장비_에어쉽파워보너스": 1,
+
+    "원소친밀감": null,
+    "영혼친밀감": null,
+    "고유원소종류": null,
+    "고유원소티어": null,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
+  },
+
+
+  "Hands of Purpose": {
+    "id": "gl16_2",
+    "name_ko": "목적의 손",
+    "image_key": "hands_of_purpose",
+    "이미지_경로": "/images/equipment/armor/gloves/hands_of_purpose.webp",
+
+    "장비_공격력": 0,
+    "장비_방어력": 743,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 892,
+    "장비_에어쉽파워보너스": 1,
+
+    "원소친밀감": null,
+    "영혼친밀감": ["Titan"],
+    "고유원소종류": ["Light"],
+    "고유원소티어": 14,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
   }
 }
