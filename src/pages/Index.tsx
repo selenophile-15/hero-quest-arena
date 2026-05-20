@@ -8,9 +8,7 @@ import { JOB_NAME_MAP, CHAMPION_NAME_MAP, SPIRIT_NAME_MAP } from "@/lib/nameMap"
 import { getSkillImagePath } from "@/lib/skillUtils";
 import { getHeroes } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
-import { Monitor } from "lucide-react";
 import { useMobileGestures } from "@/hooks/use-mobile-gestures";
-import { useDesktopModeState } from "@/hooks/use-desktop-mode";
 
 import landingBg from "@/assets/landing-bg.jpg";
 import titleLogo from "@/assets/title-logo.png";
@@ -20,13 +18,12 @@ const SPONSORS = ["Dogpyo", "거지왕"];
 
 const Index = () => {
   const navigate = useNavigate();
-  const { desktopMode, setDesktopMode } = useDesktopModeState();
   const starsRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
   const shootingStarsRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
 
-  useMobileGestures(desktopMode);
+  useMobileGestures(false);
 
   // 백그라운드 프리로드: 저장된 영웅들이 실제로 쓰는 이미지만 미리 로드
   useEffect(() => {
@@ -143,18 +140,6 @@ const Index = () => {
 
   return (
     <div className="min-h-[200vh] bg-background relative overflow-hidden">
-      <div className="fixed top-4 right-4 z-20">
-        <button
-          onClick={() => setDesktopMode((value) => !value)}
-          title={desktopMode ? "모바일 모드로 전환" : "데스크탑 모드로 전환"}
-          className={`flex items-center justify-center w-8 h-8 rounded-md border border-border/70 backdrop-blur-sm transition-colors ${
-            desktopMode ? "bg-primary text-primary-foreground" : "bg-card/80 text-foreground hover:bg-card"
-          }`}
-        >
-          <Monitor className="w-4 h-4" />
-        </button>
-      </div>
-
       <link rel="preload" href={titleLogo} as="image" />
       <link rel="preload" href={sponsorFrame} as="image" />
       <style>{`
