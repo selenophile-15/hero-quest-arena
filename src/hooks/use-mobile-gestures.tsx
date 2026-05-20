@@ -15,6 +15,15 @@ export function useMobileGestures(desktopMode: boolean) {
   const pinchStartCenterRef = useRef({ x: 0, y: 0 });
   const pinchStartScrollRef = useRef({ x: 0, y: 0 });
 
+  /**
+   * applyScale: zoom 값을 받아 app-scale-root와 portal-root에 적용
+   *
+   * 핵심 수정:
+   * - app-scale-root: transformOrigin을 "top left"로 고정하되,
+   *   스크롤 보정은 호출부(handleTouchMove, handleDoubleTap)에서 수행
+   * - portal-root: 항상 현재 스크롤 위치와 scale을 반영하여
+   *   다이얼로그가 실제 뷰포트 중앙에 보이도록 역변환(counter-transform) 적용
+   */
   const applyScale = useCallback((zoom: number) => {
     currentZoomRef.current = zoom;
     const totalScale = fitScaleRef.current * zoom;
@@ -24,24 +33,50 @@ export function useMobileGestures(desktopMode: boolean) {
 
     if (!scaleRoot) return;
 
+    // app-scale-root: top-left 기준으로 scale (스크롤 보정은 호출부에서)
     scaleRoot.style.transform = `scale(${totalScale})`;
     scaleRoot.style.transformOrigin = "top left";
     scaleRoot.style.width = `${DESKTOP_WIDTH}px`;
     scaleRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
 
-    // portal-root: scale과 동일한 변환 적용 + fixed 포지션으로 좌상단 고정
+    // portal-root: 뷰포트 기준으로 배치 — scale의 역변환을 적용해
+    // 다이얼로그가 항상 실제 화면 중앙에 뜨도록 함
     if (portalRoot) {
+      // 현재 스크롤 위치 (scale 적용 후 기준)
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+
+      // 역변환: portal-root 자체를 scale의 반대로 축소하면
+      // 내부의 fixed 다이얼로그가 뷰포트 좌표 그대로 동작함
       portalRoot.style.position = "fixed";
       portalRoot.style.top = "0";
       portalRoot.style.left = "0";
-      portalRoot.style.width = `${DESKTOP_WIDTH}px`;
-      portalRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
+      // 역스케일로 실제 뷰포트 크기와 동일한 논리 영역 확보
+      portalRoot.style.width = `${window.innerWidth / totalScale}px`;
       portalRoot.style.height = `${window.innerHeight / totalScale}px`;
-      portalRoot.style.transform = `scale(${totalScale})`;
+      // 스크롤 오프셋을 역산하여 고정 위치 보정
+      portalRoot.style.transform = `scale(${totalScale}) translate(${scrollX / totalScale}px, ${scrollY / totalScale}px)`;
       portalRoot.style.transformOrigin = "top left";
       portalRoot.style.zIndex = "9999";
-      portalRoot.style.pointerEvents = "none"; // 배경 터치 통과
+      portalRoot.style.pointerEvents = "none";
     }
+  }, []);
+
+  /**
+   * portal-root의 scroll offset 보정을 스크롤 이벤트마다 갱신
+   * (스크롤할 때 다이얼로그가 따라 움직이지 않도록)
+   */
+  const syncPortalScroll = useCallback(() => {
+    const portalRoot = document.getElementById("portal-root") as HTMLElement | null;
+    if (!portalRoot || !portalRoot.style.transform) return;
+
+    const totalScale = fitScaleRef.current * currentZoomRef.current;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+
+    portalRoot.style.width = `${window.innerWidth / totalScale}px`;
+    portalRoot.style.height = `${window.innerHeight / totalScale}px`;
+    portalRoot.style.transform = `scale(${totalScale}) translate(${scrollX / totalScale}px, ${scrollY / totalScale}px)`;
   }, []);
 
   useEffect(() => {
@@ -86,7 +121,7 @@ export function useMobileGestures(desktopMode: boolean) {
 
     scheduleRecalc();
 
-    // 더블탭 줌
+    // 더블탭 줌 — 탭한 위치를 중심으로 확대
     const handleDoubleTap = (e: TouchEvent) => {
       if (e.touches.length !== 1) return;
       const now = Date.now();
@@ -94,8 +129,21 @@ export function useMobileGestures(desktopMode: boolean) {
       lastTapRef.current = now;
       if (delta < DOUBLE_TAP_DELAY && delta > 0) {
         e.preventDefault();
+
+        const tapX = e.touches[0].clientX;
+        const tapY = e.touches[0].clientY;
+
+        const oldTotalScale = fitScaleRef.current * currentZoomRef.current;
         const next = currentZoomRef.current < 1.4 ? 1.5 : currentZoomRef.current < 2.4 ? 2.5 : 1;
+        const newTotalScale = fitScaleRef.current * next;
+
+        // 탭 위치의 콘텐츠 좌표를 보존하도록 스크롤 보정
+        const contentX = (window.scrollX + tapX) / oldTotalScale;
+        const contentY = (window.scrollY + tapY) / oldTotalScale;
+
         applyScale(next);
+
+        window.scrollTo(contentX * newTotalScale - tapX, contentY * newTotalScale - tapY);
       }
     };
 
@@ -154,6 +202,8 @@ export function useMobileGestures(desktopMode: boolean) {
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("resize", scheduleRecalc);
     window.visualViewport?.addEventListener("resize", scheduleRecalc);
+    // 스크롤 시 portal-root(다이얼로그) 위치 동기화
+    window.addEventListener("scroll", syncPortalScroll, { passive: true });
 
     return () => {
       document.removeEventListener("touchstart", handleDoubleTap);
@@ -162,6 +212,7 @@ export function useMobileGestures(desktopMode: boolean) {
       document.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", scheduleRecalc);
       window.visualViewport?.removeEventListener("resize", scheduleRecalc);
+      window.removeEventListener("scroll", syncPortalScroll);
       if (scaleRoot) {
         scaleRoot.style.transform = "";
         scaleRoot.style.transformOrigin = "";
@@ -172,5 +223,5 @@ export function useMobileGestures(desktopMode: boolean) {
       if (viewport) viewport.setAttribute("content", DEFAULT_VIEWPORT);
       document.documentElement.removeAttribute("data-desktop");
     };
-  }, [desktopMode, applyScale]);
+  }, [desktopMode, applyScale, syncPortalScroll]);
 }
