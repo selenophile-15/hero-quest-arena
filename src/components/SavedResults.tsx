@@ -667,7 +667,7 @@ export default function SavedResults({ onLoadSimulation, refreshKey }: Props) {
                                 <div className="flex items-center gap-1 shrink-0">
                                   {heroElements.filter(e => e.value > 0).map(e => (
                                     <span key={e.element} className="flex items-center gap-0.5">
-                                      {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-[22px] h-[22px]" onError={ev => { ev.currentTarget.style.display = 'none'; }} />}
+                                      {e.iconPath && <img src={e.iconPath} alt={e.element} className="w-[22px] h-[22px]" onError={ev => { if (!ev.currentTarget.src.endsWith('/images/fallback.svg')) ev.currentTarget.src = '/images/fallback.svg'; }} />}
                                       <span className={`text-[13px] font-mono font-bold tabular-nums text-black dark:text-white`}>{formatNumber(e.value)}</span>
                                     </span>
                                   ))}
