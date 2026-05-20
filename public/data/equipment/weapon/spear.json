@@ -1158,5 +1158,56 @@
       "유물": null,
       "천상": 1.25
     }
+  },
+
+
+
+
+"16티어": {
+  "Paradox Entity": {
+    "id": "sp16_1",
+    "name_ko": "역설 존재",
+    "image_key": "paradox_entity",
+    "이미지_경로": "/images/equipment/weapon/spear/paradox_entity.webp",
+      
+    "장비_공격력": 1330,
+    "장비_방어력": 0,
+    "장비_체력": 0,
+    "장비_치명타확률%": 0,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 1064,
+    "장비_에어쉽파워보너스": 1,
+      
+    "원소친밀감": null,
+    "영혼친밀감": null,
+    "고유원소종류": null,
+    "고유원소티어": null,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
+  },
+
+
+  "Mundra's Crystal Spear": {
+    "id": "sp16_2",
+    "name_ko": "문드라의 수정 창",
+    "image_key": "mundras_crystal_spear",
+    "이미지_경로": "/images/equipment/weapon/spear/mundras_crystal_spear.webp",
+      
+    "장비_공격력": 1405,
+    "장비_방어력": 0,
+    "장비_체력": 0,
+    "장비_치명타확률%": 5,
+    "장비_회피%": 0,
+    "장비_에어쉽파워": 1686,
+    "장비_에어쉽파워보너스": 1,
+      
+    "원소친밀감": null,
+    "영혼친밀감": ["Mundra"],
+    "고유원소종류": null,
+    "고유원소티어": null,
+    "고유영혼": null,
+    "유물": null,
+    "천상": 1.25
   }
 }
