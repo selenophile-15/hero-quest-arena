@@ -18,10 +18,12 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <div id="app-scale-root">
+            {/* portal-root를 app-scale-root 안에 배치해야
+                다이얼로그가 배경과 같은 transform 좌표계를 공유함 */}
+            <div id="portal-root" />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
-
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

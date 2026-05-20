@@ -2091,3 +2091,19 @@ a.bg-accent *,
 [data-desktop] .sm\:flex-row {
   flex-direction: row !important;
 }
+
+/* portal-root: 데스크탑 모드에서 app-scale-root 전체를 덮는 레이어 */
+#portal-root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* portal-root 안의 직접 자식(Radix overlay/content)은 pointer-events 허용 */
+#portal-root > * {
+  pointer-events: auto;
+}

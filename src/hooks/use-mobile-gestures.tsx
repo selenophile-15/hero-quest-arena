@@ -16,67 +16,25 @@ export function useMobileGestures(desktopMode: boolean) {
   const pinchStartScrollRef = useRef({ x: 0, y: 0 });
 
   /**
-   * applyScale: zoom 값을 받아 app-scale-root와 portal-root에 적용
+   * applyScale: app-scale-root만 scale 적용
    *
-   * 핵심 수정:
-   * - app-scale-root: transformOrigin을 "top left"로 고정하되,
-   *   스크롤 보정은 호출부(handleTouchMove, handleDoubleTap)에서 수행
-   * - portal-root: 항상 현재 스크롤 위치와 scale을 반영하여
-   *   다이얼로그가 실제 뷰포트 중앙에 보이도록 역변환(counter-transform) 적용
+   * 핵심 변경:
+   * - portal-root는 app-scale-root 안에 있으므로 transform을 따로 적용하지 않음
+   * - portal-root는 CSS로만 제어 (아래 useEffect에서 position:absolute+inset-0 설정)
+   * - 다이얼로그의 fixed 포지션은 portal-root가 같은 transform 컨텍스트 안에
+   *   있으므로 portal-root 기준 fixed로 동작 → 배경과 함께 확대됨
    */
   const applyScale = useCallback((zoom: number) => {
     currentZoomRef.current = zoom;
     const totalScale = fitScaleRef.current * zoom;
 
     const scaleRoot = document.getElementById("app-scale-root") as HTMLElement | null;
-    const portalRoot = document.getElementById("portal-root") as HTMLElement | null;
-
     if (!scaleRoot) return;
 
-    // app-scale-root: top-left 기준으로 scale (스크롤 보정은 호출부에서)
     scaleRoot.style.transform = `scale(${totalScale})`;
     scaleRoot.style.transformOrigin = "top left";
     scaleRoot.style.width = `${DESKTOP_WIDTH}px`;
     scaleRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-
-    // portal-root: 뷰포트 기준으로 배치 — scale의 역변환을 적용해
-    // 다이얼로그가 항상 실제 화면 중앙에 뜨도록 함
-    if (portalRoot) {
-      // 현재 스크롤 위치 (scale 적용 후 기준)
-      const scrollX = window.scrollX;
-      const scrollY = window.scrollY;
-
-      // 역변환: portal-root 자체를 scale의 반대로 축소하면
-      // 내부의 fixed 다이얼로그가 뷰포트 좌표 그대로 동작함
-      portalRoot.style.position = "fixed";
-      portalRoot.style.top = "0";
-      portalRoot.style.left = "0";
-      // 역스케일로 실제 뷰포트 크기와 동일한 논리 영역 확보
-      portalRoot.style.width = `${window.innerWidth / totalScale}px`;
-      portalRoot.style.height = `${window.innerHeight / totalScale}px`;
-      // 스크롤 오프셋을 역산하여 고정 위치 보정
-      portalRoot.style.transform = `scale(${totalScale}) translate(${scrollX / totalScale}px, ${scrollY / totalScale}px)`;
-      portalRoot.style.transformOrigin = "top left";
-      portalRoot.style.zIndex = "9999";
-      portalRoot.style.pointerEvents = "none";
-    }
-  }, []);
-
-  /**
-   * portal-root의 scroll offset 보정을 스크롤 이벤트마다 갱신
-   * (스크롤할 때 다이얼로그가 따라 움직이지 않도록)
-   */
-  const syncPortalScroll = useCallback(() => {
-    const portalRoot = document.getElementById("portal-root") as HTMLElement | null;
-    if (!portalRoot || !portalRoot.style.transform) return;
-
-    const totalScale = fitScaleRef.current * currentZoomRef.current;
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-
-    portalRoot.style.width = `${window.innerWidth / totalScale}px`;
-    portalRoot.style.height = `${window.innerHeight / totalScale}px`;
-    portalRoot.style.transform = `scale(${totalScale}) translate(${scrollX / totalScale}px, ${scrollY / totalScale}px)`;
   }, []);
 
   useEffect(() => {
@@ -92,6 +50,7 @@ export function useMobileGestures(desktopMode: boolean) {
         scaleRoot.style.minWidth = "";
       }
       if (portalRoot) {
+        // 모바일 일반 모드: portal-root는 기본 상태로
         portalRoot.style.cssText = "";
       }
       if (viewport) viewport.setAttribute("content", DEFAULT_VIEWPORT);
@@ -107,6 +66,20 @@ export function useMobileGestures(desktopMode: boolean) {
         "content",
         `width=${DESKTOP_WIDTH}, initial-scale=1, maximum-scale=10, user-scalable=no, viewport-fit=cover`,
       );
+    }
+
+    // portal-root를 app-scale-root 안에서 전체 영역을 덮는 레이어로 설정
+    // position: absolute + inset-0 → 부모(app-scale-root)의 transform에 종속됨
+    // 이로써 다이얼로그가 배경과 정확히 같은 좌표계에서 확대/축소됨
+    if (portalRoot) {
+      portalRoot.style.position = "absolute";
+      portalRoot.style.top = "0";
+      portalRoot.style.left = "0";
+      portalRoot.style.right = "0";
+      portalRoot.style.bottom = "0";
+      portalRoot.style.width = `${DESKTOP_WIDTH}px`;
+      portalRoot.style.pointerEvents = "none";
+      portalRoot.style.zIndex = "9999";
     }
 
     const recalcFitScale = () => {
@@ -202,8 +175,6 @@ export function useMobileGestures(desktopMode: boolean) {
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("resize", scheduleRecalc);
     window.visualViewport?.addEventListener("resize", scheduleRecalc);
-    // 스크롤 시 portal-root(다이얼로그) 위치 동기화
-    window.addEventListener("scroll", syncPortalScroll, { passive: true });
 
     return () => {
       document.removeEventListener("touchstart", handleDoubleTap);
@@ -212,7 +183,6 @@ export function useMobileGestures(desktopMode: boolean) {
       document.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", scheduleRecalc);
       window.visualViewport?.removeEventListener("resize", scheduleRecalc);
-      window.removeEventListener("scroll", syncPortalScroll);
       if (scaleRoot) {
         scaleRoot.style.transform = "";
         scaleRoot.style.transformOrigin = "";
@@ -223,5 +193,5 @@ export function useMobileGestures(desktopMode: boolean) {
       if (viewport) viewport.setAttribute("content", DEFAULT_VIEWPORT);
       document.documentElement.removeAttribute("data-desktop");
     };
-  }, [desktopMode, applyScale, syncPortalScroll]);
+  }, [desktopMode, applyScale]);
 }
