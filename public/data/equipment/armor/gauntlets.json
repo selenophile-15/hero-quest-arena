@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Plated Gauntlets": {
       "id": "gt2_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "3티어": {
     "Warrior Gauntlets": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Demi Gauntlets": {
       "id": "gt4_1",
@@ -107,7 +98,6 @@
       "천상": 1
     },
 
-
     "Pumpkin Gauntlets": {
       "id": "gt4_2",
       "name_ko": "호박 건틀렛",
@@ -130,7 +120,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "CM-73 Manipulators": {
       "id": "gt4_3",
@@ -156,9 +145,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Knight Gauntlets": {
       "id": "gt5_1",
@@ -183,7 +169,6 @@
       "천상": 1
     },
 
-
     "Santa's Guard Gauntlets": {
       "id": "gt5_2",
       "name_ko": "산타의 지킴이 건틀렛",
@@ -207,7 +192,6 @@
       "천상": 1
     },
 
-
     "Teddy Bear Paws": {
       "id": "gt5_3",
       "name_ko": "테디베어 발바닥",
@@ -230,7 +214,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Hands of the Fifth": {
       "id": "gt5_4",
@@ -256,9 +239,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Paladin Gauntlets": {
       "id": "gt6_1",
@@ -283,7 +263,6 @@
       "천상": 1
     },
 
-
     "Sungrasp Gauntlets": {
       "id": "gt6_2",
       "name_ko": "해잡이 건틀렛",
@@ -306,7 +285,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Landsknecht Gauntlets": {
       "id": "gt6_3",
@@ -332,9 +310,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Samurai Kote": {
       "id": "gt7_1",
@@ -359,7 +334,6 @@
       "천상": 1.25
     },
 
-
     "Republic Gauntlets": {
       "id": "gt7_2",
       "name_ko": "공화국 건틀렛",
@@ -382,7 +356,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Fruity Gauntlets": {
       "id": "gt7_3",
@@ -408,9 +381,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "General Gauntlets": {
       "id": "gt8_1",
@@ -434,7 +404,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Hands of the Avatar": {
       "id": "gt8_2",
@@ -460,9 +429,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Berserker Gauntlets": {
       "id": "gt9_1",
@@ -487,7 +453,6 @@
       "천상": 1.25
     },
 
-
     "Luxurious Gauntlets": {
       "id": "gt9_2",
       "name_ko": "럭셔리한 건틀렛",
@@ -510,7 +475,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Lost Warrior's Gauntlets": {
       "id": "gt9_3",
@@ -536,9 +500,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Juggernaut Grip": {
       "id": "gt10_1",
@@ -562,7 +523,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Winter's Touch": {
       "id": "gt10_2",
@@ -588,9 +548,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Celesteel Gauntlets": {
       "id": "gt11_1",
@@ -615,7 +572,6 @@
       "천상": 1.25
     },
 
-
     "Gaia's Hold": {
       "id": "gt11_2",
       "name_ko": "가이아의 손길",
@@ -639,7 +595,6 @@
       "천상": 1.25
     },
 
-
     "Vanguard Gauntlets": {
       "id": "gt11_3",
       "name_ko": "선봉대 건틀렛",
@@ -662,7 +617,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Huscarl Gauntlets": {
       "id": "gt11_4",
@@ -688,9 +642,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Vermilion Guard Might": {
       "id": "gt12_1",
@@ -715,7 +666,6 @@
       "천상": 1.25
     },
 
-
     "Goon's Facesmackers": {
       "id": "gt12_2",
       "name_ko": "폭한의 페이스스매커",
@@ -739,7 +689,6 @@
       "천상": 1.25
     },
 
-
     "Opulent Dracofists": {
       "id": "gt12_3",
       "name_ko": "호화로운 용틀렛",
@@ -762,7 +711,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Tyrant Fists": {
       "id": "gt12_4",
@@ -788,9 +736,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Balefire Gauntlets": {
       "id": "gt13_1",
@@ -815,7 +760,6 @@
       "천상": 1.25
     },
 
-
     "Power Gauntlet": {
       "id": "gt13_2",
       "name_ko": "파워 건틀렛",
@@ -839,7 +783,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Gauntlets": {
       "id": "gt13_3",
       "name_ko": "플래티넘 건틀렛",
@@ -862,7 +805,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Dragonfang Fists": {
       "id": "gt13_4",
@@ -888,9 +830,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Cobalt Gauntlets": {
       "id": "gt14_1",
@@ -915,7 +854,6 @@
       "천상": 1.25
     },
 
-
     "Eternity Gauntlets": {
       "id": "gt14_2",
       "name_ko": "영원의 건틀렛",
@@ -938,7 +876,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Chitinous Claws": {
       "id": "gt14_3",
@@ -963,7 +900,6 @@
       "천상": 1.25
     },
 
-
     "Mighty Mint Mitts": {
       "id": "gt14_4",
       "name_ko": "강력 민트 장갑",
@@ -986,7 +922,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Titan Gauntlets": {
       "id": "gt14_5",
@@ -1012,9 +947,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Behemoth Claws": {
       "id": "gt15_1",
@@ -1039,7 +971,6 @@
       "천상": 1.25
     },
 
-
     "Pneumatic Gauntlets": {
       "id": "gt15_2",
       "name_ko": "공압 건틀렛",
@@ -1062,7 +993,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Cursed King's Might": {
       "id": "gt15_3",
@@ -1087,7 +1017,6 @@
       "천상": 1.25
     },
 
-
     "Xenotype Forelimbs": {
       "id": "gt15_4",
       "name_ko": "제노타입 완갑",
@@ -1110,7 +1039,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Stone Jaguar Gauntlets": {
       "id": "gt15_5",
@@ -1136,30 +1064,28 @@
     }
   },
 
+  "16티어": {
+    "Darkmatter Shells": {
+      "id": "gt16_1",
+      "name_ko": "암흑물질 탄환",
+      "image_key": "darkmatter_shells",
+      "이미지_경로": "/images/equipment/armor/gauntlets/darkmatter_shells.webp",
 
+      "장비_공격력": 0,
+      "장비_방어력": 665,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 798,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Darkmatter Shells": {
-    "id": "gt16_1",
-    "name_ko": "암흑물질 탄환",
-    "image_key": "darkmatter_shells",
-    "이미지_경로": "/images/equipment/armor/gauntlets/darkmatter_shells.webp",
-
-    "장비_공격력": 0,
-    "장비_방어력": 665,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 798,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }
