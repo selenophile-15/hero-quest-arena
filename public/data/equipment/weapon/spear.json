@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Hunting Spear": {
       "id": "sp2_1",
@@ -52,9 +49,6 @@
     }
   },
 
-
-
-
   "3티어": {
     "Bladed Spear": {
       "id": "sp3_1",
@@ -79,7 +73,6 @@
       "천상": 1
     },
 
-
     "Sturdy Pitchfork": {
       "id": "sp3_2",
       "name_ko": "튼튼한 쇠스랑",
@@ -103,9 +96,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "4티어": {
     "Ranseur": {
@@ -132,9 +122,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Trishula": {
       "id": "sp5_1",
@@ -159,7 +146,6 @@
       "천상": 1
     },
 
-
     "Bunbun Lance": {
       "id": "sp5_2",
       "name_ko": "버니버니 창",
@@ -182,7 +168,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Warlord Halberd": {
       "id": "sp5_3",
@@ -208,9 +193,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Spetum": {
       "id": "sp6_1",
@@ -235,7 +217,6 @@
       "천상": 1
     },
 
-
     "Triton Lance": {
       "id": "sp6_2",
       "name_ko": "트리톤 창",
@@ -258,7 +239,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Cu Chulainn's Lance": {
       "id": "sp6_3",
@@ -284,9 +264,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Royal Halberd": {
       "id": "sp7_1",
@@ -311,7 +288,6 @@
       "천상": 1
     },
 
-
     "Fangtian Huaji": {
       "id": "sp7_2",
       "name_ko": "방천화극",
@@ -335,7 +311,6 @@
       "천상": 1
     },
 
-
     "Twicicle Javelin": {
       "id": "sp7_3",
       "name_ko": "고드름 투창",
@@ -358,7 +333,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Warrior Assegai": {
       "id": "sp7_4",
@@ -384,9 +358,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Champion Lance": {
       "id": "sp8_1",
@@ -411,7 +382,6 @@
       "천상": 1
     },
 
-
     "Sunset Yari": {
       "id": "sp8_2",
       "name_ko": "일몰의 창",
@@ -435,7 +405,6 @@
       "천상": 1
     },
 
-
     "Star Lancer": {
       "id": "sp8_3",
       "name_ko": "별 창",
@@ -458,7 +427,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Olympian Javelin": {
       "id": "sp8_4",
@@ -484,9 +452,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Wyvern Glaive": {
       "id": "sp9_1",
@@ -511,7 +476,6 @@
       "천상": 1
     },
 
-
     "Hoartooth Lance": {
       "id": "sp9_2",
       "name_ko": "호어투스 창",
@@ -534,7 +498,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Luxurious Spear": {
       "id": "sp9_3",
@@ -559,7 +522,6 @@
       "천상": 1
     },
 
-
     "Blackthorn Razor": {
       "id": "sp9_4",
       "name_ko": "가시나무 레이저",
@@ -582,7 +544,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Glade Lance": {
       "id": "sp9_5",
@@ -608,9 +569,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Stellaria": {
       "id": "sp10_1",
@@ -635,7 +593,6 @@
       "천상": 1.25
     },
 
-
     "Longinus": {
       "id": "sp10_2",
       "name_ko": "롱기누스",
@@ -659,7 +616,6 @@
       "천상": 1.25
     },
 
-
     "Birdbane Halberd": {
       "id": "sp10_3",
       "name_ko": "버드베인 미늘창",
@@ -682,7 +638,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Scream Amplifier": {
       "id": "sp10_4",
@@ -708,9 +663,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Titania's Gift": {
       "id": "sp11_1",
@@ -735,7 +687,6 @@
       "천상": 1.25
     },
 
-
     "Jester Jouster": {
       "id": "sp11_2",
       "name_ko": "광대 창기사",
@@ -758,7 +709,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Holy Night Lance": {
       "id": "sp11_3",
@@ -784,9 +734,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Heaven's Wrath": {
       "id": "sp12_1",
@@ -811,7 +758,6 @@
       "천상": 1.25
     },
 
-
     "Propeller-Pike": {
       "id": "sp12_2",
       "name_ko": "프로펠러 창",
@@ -835,7 +781,6 @@
       "천상": 1.25
     },
 
-
     "Pokey Parasol": {
       "id": "sp12_3",
       "name_ko": "뾰족한 파라솔",
@@ -858,7 +803,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Opulent Halberd": {
       "id": "sp12_4",
@@ -884,9 +828,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Blackened Bardiche": {
       "id": "sp13_1",
@@ -911,7 +852,6 @@
       "천상": 1.25
     },
 
-
     "Riptide": {
       "id": "sp13_2",
       "name_ko": "격랑",
@@ -935,7 +875,6 @@
       "천상": 1.25
     },
 
-
     "Dire Kakivak": {
       "id": "sp13_3",
       "name_ko": "살벌한 작살",
@@ -958,7 +897,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Tianlong Lance": {
       "id": "sp13_4",
@@ -984,9 +922,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Neptune's Authority": {
       "id": "sp14_1",
@@ -1011,7 +946,6 @@
       "천상": 1.25
     },
 
-
     "One-Winged Halberd": {
       "id": "sp14_2",
       "name_ko": "외날개 미늘창",
@@ -1034,7 +968,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Blaze of Glory": {
       "id": "sp14_3",
@@ -1060,9 +993,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Blossomblade": {
       "id": "sp15_1",
@@ -1087,7 +1017,6 @@
       "천상": 1.25
     },
 
-
     "Twilight Brionac": {
       "id": "sp15_2",
       "name_ko": "석양 브리오나크",
@@ -1111,7 +1040,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Lance": {
       "id": "sp15_3",
       "name_ko": "플래티넘 창",
@@ -1134,7 +1062,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Papertape Poker": {
       "id": "sp15_4",
@@ -1160,54 +1087,51 @@
     }
   },
 
+  "16티어": {
+    "Paradox Entity": {
+      "id": "sp16_1",
+      "name_ko": "역설 존재",
+      "image_key": "paradox_entity",
+      "이미지_경로": "/images/equipment/weapon/spear/paradox_entity.webp",
 
+      "장비_공격력": 1330,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1064,
+      "장비_에어쉽파워보너스": 1,
 
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-"16티어": {
-  "Paradox Entity": {
-    "id": "sp16_1",
-    "name_ko": "역설 존재",
-    "image_key": "paradox_entity",
-    "이미지_경로": "/images/equipment/weapon/spear/paradox_entity.webp",
-      
-    "장비_공격력": 1330,
-    "장비_방어력": 0,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1064,
-    "장비_에어쉽파워보너스": 1,
-      
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
-  },
+    "Mundra's Crystal Spear": {
+      "id": "sp16_2",
+      "name_ko": "문드라의 수정 창",
+      "image_key": "mundras_crystal_spear",
+      "이미지_경로": "/images/equipment/weapon/spear/mundras_crystal_spear.webp",
 
+      "장비_공격력": 1405,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1686,
+      "장비_에어쉽파워보너스": 1,
 
-  "Mundra's Crystal Spear": {
-    "id": "sp16_2",
-    "name_ko": "문드라의 수정 창",
-    "image_key": "mundras_crystal_spear",
-    "이미지_경로": "/images/equipment/weapon/spear/mundras_crystal_spear.webp",
-      
-    "장비_공격력": 1405,
-    "장비_방어력": 0,
-    "장비_체력": 0,
-    "장비_치명타확률%": 5,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1686,
-    "장비_에어쉽파워보너스": 1,
-      
-    "원소친밀감": null,
-    "영혼친밀감": ["Mundra"],
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": ["Mundra"],
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

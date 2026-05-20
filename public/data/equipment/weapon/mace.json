@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Spiked Cudgel": {
       "id": "mc2_1",
@@ -50,7 +47,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Darkwood Branch": {
       "id": "mc2_2",
@@ -76,9 +72,6 @@
     }
   },
 
-
-
-
   "3티어": {
     "Warhammer": {
       "id": "mc3_1",
@@ -102,7 +95,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Liberty Mace": {
       "id": "mc3_2",
@@ -128,9 +120,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Morning Star": {
       "id": "mc4_1",
@@ -154,7 +143,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Inflatable Maul": {
       "id": "mc4_2",
@@ -180,9 +168,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Flanged Mace": {
       "id": "mc5_1",
@@ -207,7 +192,6 @@
       "천상": 1
     },
 
-
     "First Morning Star": {
       "id": "mc5_2",
       "name_ko": "첫 모닝스타",
@@ -230,7 +214,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "The Dead Weight": {
       "id": "mc5_3",
@@ -256,9 +239,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Skull Crusher": {
       "id": "mc6_1",
@@ -283,7 +263,6 @@
       "천상": 1
     },
 
-
     "Troublin Bludgeon": {
       "id": "mc6_2",
       "name_ko": "트러블린 몽동이",
@@ -306,7 +285,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Titan Scepter": {
       "id": "mc6_3",
@@ -332,9 +310,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Evening Star": {
       "id": "mc7_1",
@@ -359,7 +334,6 @@
       "천상": 1
     },
 
-
     "Meteor Hammer": {
       "id": "mc7_2",
       "name_ko": "유성 해머",
@@ -382,7 +356,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Button Masher": {
       "id": "mc7_3",
@@ -408,9 +381,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Powder Keg": {
       "id": "mc8_1",
@@ -435,7 +405,6 @@
       "천상": 1
     },
 
-
     "Whack-O'-Lantern": {
       "id": "mc8_2",
       "name_ko": "왝 오 랜턴",
@@ -459,7 +428,6 @@
       "천상": 1
     },
 
-
     "Peppermint Mallet": {
       "id": "mc8_3",
       "name_ko": "페퍼민트 망치",
@@ -482,7 +450,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Mouse's Torch": {
       "id": "mc8_4",
@@ -508,9 +475,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Tenderizer": {
       "id": "mc9_1",
@@ -535,7 +499,6 @@
       "천상": 1
     },
 
-
     "Wallace Mallet": {
       "id": "mc9_2",
       "name_ko": "월리스 망치",
@@ -559,7 +522,6 @@
       "천상": 1
     },
 
-
     "Striped Star": {
       "id": "mc9_3",
       "name_ko": "줄무늬 별",
@@ -582,7 +544,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Tower of Thorns": {
       "id": "mc9_4",
@@ -608,9 +569,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Nautilus": {
       "id": "mc10_1",
@@ -635,7 +593,6 @@
       "천상": 1.25
     },
 
-
     "Opulent Maul": {
       "id": "mc10_2",
       "name_ko": "호화로운 해머",
@@ -659,7 +616,6 @@
       "천상": 1
     },
 
-
     "Mundra's Masher": {
       "id": "mc10_3",
       "name_ko": "문드라의 매셔",
@@ -682,7 +638,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Plumber's Hammer": {
       "id": "mc10_4",
@@ -708,9 +663,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Thorium Hammer": {
       "id": "mc11_1",
@@ -735,7 +687,6 @@
       "천상": 1.25
     },
 
-
     "Sunglow Impact": {
       "id": "mc11_2",
       "name_ko": "백광 충격 해머",
@@ -759,7 +710,6 @@
       "천상": 1.25
     },
 
-
     "Gaia Maul": {
       "id": "mc11_3",
       "name_ko": "가이아 해머",
@@ -782,7 +732,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Sokka's Club": {
       "id": "mc11_4",
@@ -808,9 +757,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Mjolnir": {
       "id": "mc12_1",
@@ -835,7 +781,6 @@
       "천상": 1.25
     },
 
-
     "Eggshell Smasher": {
       "id": "mc12_2",
       "name_ko": "껍질 분쇄기",
@@ -858,7 +803,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Merry Christmace": {
       "id": "mc12_3",
@@ -884,9 +828,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Crag Guardian": {
       "id": "mc13_1",
@@ -911,7 +852,6 @@
       "천상": 1.25
     },
 
-
     "Smash Hit": {
       "id": "mc13_2",
       "name_ko": "스매시 히트",
@@ -934,7 +874,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Platinum Maul": {
       "id": "mc13_3",
@@ -959,7 +898,6 @@
       "천상": 1
     },
 
-
     "The M.A.U.L.": {
       "id": "mc13_4",
       "name_ko": "망치",
@@ -982,7 +920,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Leathermaster's Mallet": {
       "id": "mc13_5",
@@ -1008,9 +945,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Ogre Lord Club": {
       "id": "mc14_1",
@@ -1035,7 +969,6 @@
       "천상": 1.25
     },
 
-
     "Forsaken Censer": {
       "id": "mc14_2",
       "name_ko": "고독한 향로",
@@ -1058,7 +991,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Lordly Scepter": {
       "id": "mc14_3",
@@ -1083,7 +1015,6 @@
       "천상": 1.25
     },
 
-
     "Heart Thumper": {
       "id": "mc14_4",
       "name_ko": "심장 쿵쿵이",
@@ -1106,7 +1037,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Backfire Hammer": {
       "id": "mc14_5",
@@ -1134,9 +1064,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "The Coconaught": {
       "id": "mc15_1",
@@ -1161,7 +1088,6 @@
       "천상": 1.25
     },
 
-
     "Hot Coconaught": {
       "id": "mc15_2",
       "name_ko": "핫한 코코저거넛",
@@ -1185,7 +1111,6 @@
       "천상": 1.25
     },
 
-
     "Four Wyrms Mace": {
       "id": "mc15_3",
       "name_ko": "네 와이번의 철퇴",
@@ -1208,7 +1133,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Gilded Horsepower": {
       "id": "mc15_4",
@@ -1234,30 +1158,28 @@
     }
   },
 
+  "16티어": {
+    "Megaton Assimilator": {
+      "id": "mc16_1",
+      "name_ko": "메가톤 동화기",
+      "image_key": "megaton_assimilator",
+      "이미지_경로": "/images/equipment/weapon/mace/megaton_assimilator.webp",
 
+      "장비_공격력": 1330,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1064,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Megaton Assimilator": {
-    "id": "mc16_1",
-    "name_ko": "메가톤 동화기",
-    "image_key": "megaton_assimilator",
-    "이미지_경로": "/images/equipment/weapon/mace/megaton_assimilator.webp",
-
-    "장비_공격력": 1330,
-    "장비_방어력": 0,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1064,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

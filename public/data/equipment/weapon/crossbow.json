@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Hand Crossbow": {
       "id": "cb2_1",
@@ -51,9 +48,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "3티어": {
     "Arbalest": {
@@ -80,9 +74,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Heavy Crossbow": {
       "id": "cb4_1",
@@ -107,7 +98,6 @@
       "천상": 1
     },
 
-
     "Cluckthrower": {
       "id": "cb4_2",
       "name_ko": "꼬꼬 활",
@@ -131,9 +121,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "5티어": {
     "Hunter's Crossbow": {
@@ -160,9 +147,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Scorpio": {
       "id": "cb6_1",
@@ -187,7 +171,6 @@
       "천상": 1
     },
 
-
     "Primitech Slingshot": {
       "id": "cb6_2",
       "name_ko": "원시 기술 새총",
@@ -211,9 +194,6 @@
       "천상": 1
     }
   },
-
-
-
 
   "7티어": {
     "Double Crossbow": {
@@ -240,9 +220,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Chu-Ko-Nu": {
       "id": "cb8_1",
@@ -267,7 +244,6 @@
       "천상": 1.25
     },
 
-
     "Dra-Ko-Nu": {
       "id": "cb8_2",
       "name_ko": "드라-코-누",
@@ -291,9 +267,6 @@
       "천상": 1.25
     }
   },
-
-
-
 
   "9티어": {
     "Triple Crossbow": {
@@ -320,9 +293,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Super Repeater": {
       "id": "cb10_1",
@@ -346,7 +316,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Nightwing Caster": {
       "id": "cb10_2",
@@ -372,9 +341,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Leviathan": {
       "id": "cb11_1",
@@ -399,7 +365,6 @@
       "천상": 1.25
     },
 
-
     "Opulent Crossbow": {
       "id": "cb11_2",
       "name_ko": "호화로운 석궁",
@@ -422,7 +387,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Titan Crossbow": {
       "id": "cb11_3",
@@ -448,9 +412,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Godslayer Arbalest": {
       "id": "cb12_1",
@@ -474,7 +435,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Baross' Backup": {
       "id": "cb12_2",
@@ -500,9 +460,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Primarosa": {
       "id": "cb13_1",
@@ -526,7 +483,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Somnus Boltcaster": {
       "id": "cb13_2",
@@ -552,9 +508,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "The Watcher": {
       "id": "cb14_1",
@@ -578,7 +531,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Ironclad Grapple": {
       "id": "cb14_2",
@@ -604,9 +556,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Seventh Wonder": {
       "id": "cb15_1",
@@ -631,7 +580,6 @@
       "천상": 1.25
     },
 
-
     "Dinosaur Hunter": {
       "id": "cb15_2",
       "name_ko": "공룡 사냥꾼",
@@ -654,7 +602,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Platinum Crossbow": {
       "id": "cb15_3",
@@ -680,30 +627,28 @@
     }
   },
 
+  "16티어": {
+    "Supernova Launcher": {
+      "id": "cb16_1",
+      "name_ko": "초신성 발사기",
+      "image_key": "supernova_launcher",
+      "이미지_경로": "/images/equipment/weapon/crossbow/supernova_launcher.webp",
 
+      "장비_공격력": 1600,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1280,
+      "장비_에어쉽파워보너스": 1,
 
-
-"16티어": {
-  "Supernova Launcher": {
-    "id": "cb16_1",
-    "name_ko": "초신성 발사기",
-    "image_key": "supernova_launcher",
-    "이미지_경로": "/images/equipment/weapon/crossbow/supernova_launcher.webp",
-
-    "장비_공격력": 1600,
-    "장비_방어력": 0,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1280,
-    "장비_에어쉽파워보너스": 1,
-
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }

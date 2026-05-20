@@ -24,9 +24,6 @@
     }
   },
 
-
-
-
   "2티어": {
     "Arming Sword": {
       "id": "sw2_1",
@@ -52,9 +49,6 @@
     }
   },
 
-
-
-
   "3티어": {
     "Gladius": {
       "id": "sw3_1",
@@ -79,7 +73,6 @@
       "천상": 1
     },
 
-
     "Arboreal Blade": {
       "id": "sw3_2",
       "name_ko": "수목의 검",
@@ -102,7 +95,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Zweihander": {
       "id": "sw3_3",
@@ -128,9 +120,6 @@
     }
   },
 
-
-
-
   "4티어": {
     "Cutlass": {
       "id": "sw4_1",
@@ -154,7 +143,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Imbued Blade": {
       "id": "sw4_2",
@@ -180,9 +168,6 @@
     }
   },
 
-
-
-
   "5티어": {
     "Espada": {
       "id": "sw5_1",
@@ -207,7 +192,6 @@
       "천상": 1
     },
 
-
     "Hero's Sword": {
       "id": "sw5_2",
       "name_ko": "영웅의 검",
@@ -230,7 +214,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Chocolicious Blade": {
       "id": "sw5_3",
@@ -256,9 +239,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Katana": {
       "id": "sw6_1",
@@ -283,7 +263,6 @@
       "천상": 1
     },
 
-
     "Serrated Cinquedea": {
       "id": "sw6_2",
       "name_ko": "톱날 단검",
@@ -306,7 +285,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Ruler of Rulers": {
       "id": "sw6_3",
@@ -332,9 +310,6 @@
     }
   },
 
-
-
-
   "7티어": {
     "Regal Blade": {
       "id": "sw7_1",
@@ -359,7 +334,6 @@
       "천상": 1
     },
 
-
     "Chronos Runeblade": {
       "id": "sw7_2",
       "name_ko": "크로노스 룬블레이드",
@@ -383,7 +357,6 @@
       "천상": 1
     },
 
-
     "Bitterblack Blade": {
       "id": "sw7_3",
       "name_ko": "칠흑 검",
@@ -406,7 +379,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Hackrazor Edge": {
       "id": "sw7_4",
@@ -432,9 +404,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Celesteel Blade": {
       "id": "sw8_1",
@@ -459,7 +428,6 @@
       "천상": 1
     },
 
-
     "Damocles": {
       "id": "sw8_2",
       "name_ko": "다모클레스",
@@ -483,7 +451,6 @@
       "천상": 1
     },
 
-
     "Luxurious Macuahuitl": {
       "id": "sw8_3",
       "name_ko": "고급 마쿠아후이틀",
@@ -506,7 +473,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Crystalline Rapier": {
       "id": "sw8_4",
@@ -532,9 +498,6 @@
     }
   },
 
-
-
-
   "9티어": {
     "Mythril Edge": {
       "id": "sw9_1",
@@ -559,7 +522,6 @@
       "천상": 1
     },
 
-
     "Seafarer Blade": {
       "id": "sw9_2",
       "name_ko": "항해자의 검",
@@ -582,7 +544,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Gentleman Blade": {
       "id": "sw9_3",
@@ -608,9 +569,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Oversized Cleaver": {
       "id": "sw10_1",
@@ -635,7 +593,6 @@
       "천상": 1.25
     },
 
-
     "Caladbolg": {
       "id": "sw10_2",
       "name_ko": "칼라드볼그",
@@ -659,7 +616,6 @@
       "천상": 1.25
     },
 
-
     "Dragon Dao": {
       "id": "sw10_3",
       "name_ko": "드래곤 다오",
@@ -682,7 +638,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Tiger Blade": {
       "id": "sw10_4",
@@ -708,9 +663,6 @@
     }
   },
 
-
-
-
   "11티어": {
     "Vorpal Sword": {
       "id": "sw11_1",
@@ -735,7 +687,6 @@
       "천상": 1.25
     },
 
-
     "Elegant Rapier": {
       "id": "sw11_2",
       "name_ko": "우아한 양날 검",
@@ -758,7 +709,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Tsukuyomi": {
       "id": "sw11_3",
@@ -784,9 +734,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Excalibur": {
       "id": "sw12_1",
@@ -811,7 +758,6 @@
       "천상": 1.25
     },
 
-
     "Titan Sword": {
       "id": "sw12_2",
       "name_ko": "명인 검",
@@ -834,7 +780,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Opulent Brand": {
       "id": "sw12_3",
@@ -859,7 +804,6 @@
       "천상": 1
     },
 
-
     "Épée d'Artagnan": {
       "id": "sw12_4",
       "name_ko": "에페 다르타냥",
@@ -882,7 +826,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Thorn of Scorn": {
       "id": "sw12_5",
@@ -908,9 +851,6 @@
     }
   },
 
-
-
-
   "13티어": {
     "Djinn Pyre": {
       "id": "sw13_1",
@@ -935,7 +875,6 @@
       "천상": 1.25
     },
 
-
     "Plasma Saber": {
       "id": "sw13_2",
       "name_ko": "플라스마 검",
@@ -959,7 +898,6 @@
       "천상": 1.25
     },
 
-
     "T-Rex Buster": {
       "id": "sw13_3",
       "name_ko": "티라노 살해자",
@@ -982,7 +920,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Zeus Thunderblade": {
       "id": "sw13_4",
@@ -1008,9 +945,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Durandal": {
       "id": "sw14_1",
@@ -1035,7 +969,6 @@
       "천상": 1.25
     },
 
-
     "Platinum Greatsword": {
       "id": "sw14_2",
       "name_ko": "플래티넘 위대검",
@@ -1058,7 +991,6 @@
       "유물": null,
       "천상": 1
     },
-
 
     "Materia Blade": {
       "id": "sw14_3",
@@ -1083,7 +1015,6 @@
       "천상": 1.25
     },
 
-
     "Twin Fangs": {
       "id": "sw14_4",
       "name_ko": "송곳니 한 쌍",
@@ -1106,7 +1037,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Kiku-Ichimonji": {
       "id": "sw14_5",
@@ -1134,9 +1064,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Siren's Song": {
       "id": "sw15_1",
@@ -1161,7 +1088,6 @@
       "천상": 1.25
     },
 
-
     "Succubus Martyr": {
       "id": "sw15_2",
       "name_ko": "서큐버스 순교자",
@@ -1185,7 +1111,6 @@
       "천상": 1.25
     },
 
-
     "Sword of the Sightless": {
       "id": "sw15_3",
       "name_ko": "볼 수 없는 자의 검",
@@ -1208,7 +1133,6 @@
       "유물": null,
       "천상": 1.25
     },
-
 
     "Twice Cursed": {
       "id": "sw15_4",
@@ -1234,55 +1158,51 @@
     }
   },
 
+  "16티어": {
+    "Plutonium Blade": {
+      "id": "sw16_1",
+      "name_ko": "플루토늄 검",
+      "image_key": "plutonium_blade",
+      "이미지_경로": "/images/equipment/weapon/sword/plutonium_blade.webp",
 
+      "장비_공격력": 1420,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 0,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1136,
+      "장비_에어쉽파워보너스": 1,
 
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    },
 
-"16티어": {
-  "Plutonium Blade": {
-    "id": "sw16_1",
-    "name_ko": "플루토늄 검",
-    "image_key": "plutonium_blade",
-    "이미지_경로": "/images/equipment/weapon/sword/plutonium_blade.webp",
-      
-    "장비_공격력": 1420,
-    "장비_방어력": 0,
-    "장비_체력": 0,
-    "장비_치명타확률%": 0,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1136,
-    "장비_에어쉽파워보너스": 1,
-      
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
-  },
-  
+    "Wolfbane Scissors": {
+      "id": "sw16_2",
+      "name_ko": "투구꽃 가위",
+      "image_key": "wolfbane_scissors",
+      "이미지_경로": "/images/equipment/weapon/sword/wolfbane_scissors.webp",
 
-  "Wolfbane Scissors": {
-    "id": "sw16_2",
-    "name_ko": "투구꽃 가위",
-    "image_key": "wolfbane_scissors",
-    "이미지_경로": "/images/equipment/weapon/sword/wolfbane_scissors.webp",
-      
-    "장비_공격력": 1420,
-    "장비_방어력": 0,
-    "장비_체력": 0,
-    "장비_치명타확률%": 5,
-    "장비_회피%": 0,
-    "장비_에어쉽파워": 1704,
-    "장비_에어쉽파워보너스": 1,
-      
-    "원소친밀감": null,
-    "영혼친밀감": null,
-    "고유원소종류": null,
-    "고유원소티어": null,
-    "고유영혼": null,
-    "유물": null,
-    "천상": 1.25
+      "장비_공격력": 1420,
+      "장비_방어력": 0,
+      "장비_체력": 0,
+      "장비_치명타확률%": 5,
+      "장비_회피%": 0,
+      "장비_에어쉽파워": 1704,
+      "장비_에어쉽파워보너스": 1,
+
+      "원소친밀감": null,
+      "영혼친밀감": null,
+      "고유원소종류": null,
+      "고유원소티어": null,
+      "고유영혼": null,
+      "유물": null,
+      "천상": 1.25
+    }
   }
 }
-
