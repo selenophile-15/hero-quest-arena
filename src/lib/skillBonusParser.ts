@@ -20,6 +20,7 @@ export interface DetailStatsSummary {
   berserkerAtkPct: number;       // 광전사) 체력 비례 공격력 증가% (per threshold)
   berserkerEvaPct: number;       // 광전사) 체력 비례 회피 증가% (per threshold)
   mundraBosPct: number;          // 문드라) 보스 상대 공격력/방어력 증가%
+  expPct: number;                // 경험치 증가%
 }
 
 export interface SkillBonusSummary {
@@ -123,7 +124,7 @@ function getSpiritBonusStats(
 export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<SkillBonusSummary, 'sources'>, sources: SkillBonusSource[] } {
   const sources: SkillBonusSource[] = [];
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
-  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0 };
+  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0, expPct: 0 };
 
   for (const skill of skills) {
     const src = emptySource(skill.name, skill.type);
@@ -152,6 +153,7 @@ export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<Sk
         case '스킬_휴식시간감소%': detail.restReduction += val; break;
         case '스킬_체력비례스킬_공격력%': detail.berserkerAtkPct += val; break;
         case '스킬_체력비례회피%': detail.berserkerEvaPct += val; break;
+        case '스킬_경험치%': detail.expPct += val; break;
       }
     }
 
@@ -170,7 +172,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
   const spiritData = await loadSpiritStats();
   const sources: SkillBonusSource[] = [];
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
-  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0 };
+  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0, expPct: 0 };
 
   const noDupCandidates: Map<string, { src: SkillBonusSource; mult: number }[]> = new Map();
   const normalSources: SkillBonusSource[] = [];
@@ -206,6 +208,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
         case '조건부공격력%': detail.sharkAtkPct += adjusted; break;
         case '영혼_첫라공격력%': detail.dinoAtkPct += adjusted; break;
         case '영혼_보스공격력%': detail.mundraBosPct += adjusted; break;
+        case '영혼_경험치%': detail.expPct += adjusted; break;
         // 영혼_보스방어력% is same value as mundraBosPct, don't double count
       }
     }
@@ -276,6 +279,7 @@ export function combineBonuses(
       berserkerAtkPct: sd.berserkerAtkPct + sod.berserkerAtkPct,
       berserkerEvaPct: sd.berserkerEvaPct + sod.berserkerEvaPct,
       mundraBosPct: sd.mundraBosPct + sod.mundraBosPct,
+      expPct: sd.expPct + sod.expPct,
     },
     sources: [...skillResult.sources, ...soulResult.sources],
   };
