@@ -25,9 +25,6 @@
     }
   },
 
-
-
-
   "6티어": {
     "Tonfas": {
       "id": "dw6_1",
@@ -53,9 +50,6 @@
       "판정타입": ["Mace"]
     }
   },
-
-
-
 
   "7티어": {
     "The Murder Two": {
@@ -83,9 +77,6 @@
     }
   },
 
-
-
-
   "8티어": {
     "Roland's Own": {
       "id": "dw8_1",
@@ -111,7 +102,6 @@
       "판정타입": ["Sword", "Axe"]
     },
 
-
     "Magnet Mallets": {
       "id": "dw8_2",
       "name_ko": "자석 망치",
@@ -136,9 +126,6 @@
       "판정타입": ["Mace"]
     }
   },
-
-
-
 
   "9티어": {
     "Radiant & Midnight": {
@@ -166,9 +153,6 @@
     }
   },
 
-
-
-
   "10티어": {
     "Jagged Duo": {
       "id": "dw10_1",
@@ -194,9 +178,6 @@
       "판정타입": ["Mace"]
     }
   },
-
-
-
 
   "11티어": {
     "Silken Assailants": {
@@ -224,9 +205,6 @@
     }
   },
 
-
-
-
   "12티어": {
     "Slice & Dice": {
       "id": "dw12_1",
@@ -252,9 +230,6 @@
       "판정타입": ["Sword", "Dagger"]
     }
   },
-
-
-
 
   "13티어": {
     "Crystal Destroyers": {
@@ -282,9 +257,6 @@
     }
   },
 
-
-
-
   "14티어": {
     "Elysium Reavers": {
       "id": "dw14_1",
@@ -309,7 +281,6 @@
       "천상": 1.25,
       "판정타입": ["Axe", "Dagger"]
     },
-
 
     "Platinum Pair": {
       "id": "dw14_2",
@@ -336,9 +307,6 @@
     }
   },
 
-
-
-
   "15티어": {
     "Nook & Cranny": {
       "id": "dw15_1",
@@ -364,7 +332,6 @@
       "판정타입": ["Axe", "Dagger"]
     },
 
-
     "Titan Admiral Arms": {
       "id": "dw15_2",
       "name_ko": "명인 제독 무기",
@@ -389,7 +356,6 @@
       "판정타입": ["Sword", "Dagger"]
     },
 
-
     "Crushtacean Pincers": {
       "id": "dw15_3",
       "name_ko": "크러쉬타션 집게발",
@@ -413,7 +379,6 @@
       "천상": 1.25,
       "판정타입": ["Axe", "Mace"]
     },
-
 
     "Twin Terroreyes": {
       "id": "dw15_4",
@@ -440,16 +405,13 @@
     }
   },
 
-
-
-
   "16티어": {
     "Dying Stars": {
       "id": "dw16_1",
       "name_ko": "스러져가는 별들",
       "image_key": "dying_stars",
       "이미지_경로": "/images/equipment/weapon/dual_wield/dying_stars.webp",
-  
+
       "장비_공격력": 1780,
       "장비_방어력": 0,
       "장비_체력": 0,
@@ -457,14 +419,14 @@
       "장비_회피%": 0,
       "장비_에어쉽파워": 1424,
       "장비_에어쉽파워보너스": 1,
-  
+
       "원소친밀감": ["Water", "Fire"],
       "영혼친밀감": null,
       "고유원소종류": null,
       "고유원소티어": null,
       "고유영혼": null,
       "유물": null,
-      "천상": 1.25
+      "천상": 1.25,
       "판정타입": ["Dagger"]
     }
   }
