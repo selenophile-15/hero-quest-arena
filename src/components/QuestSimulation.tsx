@@ -1931,6 +1931,94 @@ export default function QuestSimulation() {
                       </div>
                     )}
                   </div>
+                  </div>
+                  {/* BACK FACE: 외부 설정 */}
+                  <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+                    <div
+                      className="card-fantasy p-4 pb-8 relative min-h-[440px] h-full"
+                      onDoubleClick={(e) => { if (e.target === e.currentTarget) setMonsterCardFlipped(false); }}
+                    >
+                      <div className="flex items-center gap-2 mb-4">
+                        <Settings className="w-4 h-4 text-primary" />
+                        <h4 className="text-sm font-bold text-foreground">외부 설정</h4>
+                        <button
+                          onClick={() => setMonsterCardFlipped(false)}
+                          className="ml-auto text-xs px-2 py-1 rounded-md bg-secondary/50 border border-border/50 text-muted-foreground hover:text-foreground"
+                          title="앞면으로"
+                        >
+                          ← 돌아가기
+                        </button>
+                      </div>
+
+                      {/* 경험치 그룹 */}
+                      <div className="space-y-3">
+                        <div className="text-xs font-bold text-primary/80 uppercase tracking-wider">경험치</div>
+
+                        {/* 지역 레벨 경험치 */}
+                        <div className="space-y-2 p-3 rounded-md bg-secondary/30 border border-border/40">
+                          <label className="flex items-center justify-between gap-2 cursor-pointer">
+                            <span className="text-sm text-foreground">지역 레벨 경험치 적용</span>
+                            <input
+                              type="checkbox"
+                              checked={expBoosters.regionLevelEnabled}
+                              onChange={(e) => setExpBoosters((p) => ({ ...p, regionLevelEnabled: e.target.checked }))}
+                              className="w-4 h-4 accent-primary"
+                            />
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground w-14">수치</span>
+                            <input
+                              type="number"
+                              min={0}
+                              step={5}
+                              disabled={!expBoosters.regionLevelEnabled}
+                              value={expBoosters.regionLevelValue}
+                              onChange={(e) => setExpBoosters((p) => ({ ...p, regionLevelValue: Math.max(0, Number(e.target.value) || 0) }))}
+                              className="flex-1 h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50"
+                            />
+                            <span className="text-xs text-muted-foreground">%</span>
+                          </div>
+                        </div>
+
+                        {/* 길드 경험치 부스터 */}
+                        <div className="space-y-2 p-3 rounded-md bg-secondary/30 border border-border/40">
+                          <label className="flex items-center justify-between gap-2 cursor-pointer">
+                            <span className="text-sm text-foreground">길드 경험치 부스터 적용</span>
+                            <input
+                              type="checkbox"
+                              checked={expBoosters.guildBoosterEnabled}
+                              onChange={(e) => setExpBoosters((p) => ({ ...p, guildBoosterEnabled: e.target.checked }))}
+                              className="w-4 h-4 accent-primary"
+                            />
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground w-14">수치</span>
+                            <input
+                              type="number"
+                              min={0}
+                              step={5}
+                              disabled={!expBoosters.guildBoosterEnabled}
+                              value={expBoosters.guildBoosterValue}
+                              onChange={(e) => setExpBoosters((p) => ({ ...p, guildBoosterValue: Math.max(0, Number(e.target.value) || 0) }))}
+                              className="flex-1 h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50"
+                            />
+                            <span className="text-xs text-muted-foreground">%</span>
+                          </div>
+                        </div>
+
+                        <div className="pt-1">
+                          <div className="text-[11px] text-muted-foreground/80 leading-relaxed">
+                            합산 경험치% × ½ 만큼 외부 공격력%에 더해집니다 (생각하는 모자 유물 장착 시).
+                          </div>
+                        </div>
+
+                        {/* 향후 다른 그룹용 구분선 */}
+                        <div className="border-t border-border/40 my-2" />
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  </div>
                 </div>
 
                 {/* CENTER: Hero Slots */}
