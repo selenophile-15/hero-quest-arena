@@ -208,6 +208,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
         case '조건부공격력%': detail.sharkAtkPct += adjusted; break;
         case '영혼_첫라공격력%': detail.dinoAtkPct += adjusted; break;
         case '영혼_보스공격력%': detail.mundraBosPct += adjusted; break;
+        case '영혼_경험치%': detail.expPct += adjusted; break;
         // 영혼_보스방어력% is same value as mundraBosPct, don't double count
       }
     }
