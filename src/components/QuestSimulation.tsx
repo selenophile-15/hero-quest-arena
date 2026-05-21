@@ -404,6 +404,24 @@ export default function QuestSimulation() {
   const [retryOnly, setRetryOnly] = useState(false);
   const [boosterOpen, setBoosterOpen] = useState(false);
 
+  // Monster info card flip + 외부 경험치 부스터 설정 (생각하는 모자 외부 단계용)
+  const [monsterCardFlipped, setMonsterCardFlipped] = useState(false);
+  const [expBoosters, setExpBoosters] = useState<{
+    regionLevelEnabled: boolean;
+    regionLevelValue: number;
+    guildBoosterEnabled: boolean;
+    guildBoosterValue: number;
+  }>(() => {
+    try {
+      const raw = localStorage.getItem('questExpBoosters');
+      if (raw) return { regionLevelEnabled: false, regionLevelValue: 20, guildBoosterEnabled: false, guildBoosterValue: 25, ...JSON.parse(raw) };
+    } catch {}
+    return { regionLevelEnabled: false, regionLevelValue: 20, guildBoosterEnabled: false, guildBoosterValue: 25 };
+  });
+  useEffect(() => {
+    try { localStorage.setItem('questExpBoosters', JSON.stringify(expBoosters)); } catch {}
+  }, [expBoosters]);
+
   // Temporary per-party hero overrides (apply only to current sim; not persisted)
   const [tempOverrides, setTempOverrides] = useState<Record<string, Hero>>({});
   // Hero currently being edited via the gear (temp-edit) button
