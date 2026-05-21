@@ -2208,7 +2208,7 @@ export default function QuestSimulation() {
                                     <div
                                       className={`sim-result-number text-3xl font-black font-mono tracking-tight ${winColor}`}
                                     >
-                                      {winRate.toFixed(1)}%
+                                      {(winRate >= 100 ? 100 : Math.floor(winRate * 10) / 10).toFixed(1)}%
                                     </div>
                                     {(() => {
                                       const total = dispSim!.totalSimulations || 0;
@@ -3248,7 +3248,7 @@ export default function QuestSimulation() {
                                           : "text-red-400"
                                   }`}
                                 >
-                                  {mbr.winRate.toFixed(1)}%
+                                  {(mbr.winRate >= 100 ? 100 : Math.floor(mbr.winRate * 10) / 10).toFixed(1)}%
                                 </div>
                                 <div className="text-[11px] text-muted-foreground mt-0.5">
                                   평균 {Math.round(mbr.avgRounds)}R
