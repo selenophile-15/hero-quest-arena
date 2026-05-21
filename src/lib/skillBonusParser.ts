@@ -20,6 +20,7 @@ export interface DetailStatsSummary {
   berserkerAtkPct: number;       // 광전사) 체력 비례 공격력 증가% (per threshold)
   berserkerEvaPct: number;       // 광전사) 체력 비례 회피 증가% (per threshold)
   mundraBosPct: number;          // 문드라) 보스 상대 공격력/방어력 증가%
+  expPct: number;                // 경험치 증가%
 }
 
 export interface SkillBonusSummary {
