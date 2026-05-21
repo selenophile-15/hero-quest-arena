@@ -322,6 +322,7 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
   detailStats['공격력 상수'] = atkConstant;
   detailStats['방어력 상수'] = defConstant;
   if (d.hpRegenPerTurn) detailStats['매 턴 체력 재생'] = d.hpRegenPerTurn;
+  if (d.expPct) detailStats['경험치%'] = d.expPct;
   // 치명타 생존 확률 — 비숍/성직자는 무조건 100%, 합산 후 100% 클램프
   const isClericOrBishop = jobName === '비숍' || jobName === '성직자';
   const survival = Math.min(100, isClericOrBishop ? 100 : (d.survivalChance || 0));
