@@ -279,6 +279,7 @@ export function combineBonuses(
       berserkerAtkPct: sd.berserkerAtkPct + sod.berserkerAtkPct,
       berserkerEvaPct: sd.berserkerEvaPct + sod.berserkerEvaPct,
       mundraBosPct: sd.mundraBosPct + sod.mundraBosPct,
+      expPct: sd.expPct + sod.expPct,
     },
     sources: [...skillResult.sources, ...soulResult.sources],
   };
