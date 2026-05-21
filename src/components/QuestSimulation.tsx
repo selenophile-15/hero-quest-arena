@@ -413,13 +413,22 @@ export default function QuestSimulation() {
     guildBoosterValue: number;
   }>(() => {
     try {
-      const raw = localStorage.getItem('questExpBoosters');
-      if (raw) return { regionLevelEnabled: false, regionLevelValue: 20, guildBoosterEnabled: false, guildBoosterValue: 25, ...JSON.parse(raw) };
+      const raw = localStorage.getItem("questExpBoosters");
+      if (raw)
+        return {
+          regionLevelEnabled: false,
+          regionLevelValue: 20,
+          guildBoosterEnabled: false,
+          guildBoosterValue: 25,
+          ...JSON.parse(raw),
+        };
     } catch {}
     return { regionLevelEnabled: false, regionLevelValue: 20, guildBoosterEnabled: false, guildBoosterValue: 25 };
   });
   useEffect(() => {
-    try { localStorage.setItem('questExpBoosters', JSON.stringify(expBoosters)); } catch {}
+    try {
+      localStorage.setItem("questExpBoosters", JSON.stringify(expBoosters));
+    } catch {}
   }, [expBoosters]);
 
   // Temporary per-party hero overrides (apply only to current sim; not persisted)
@@ -708,7 +717,10 @@ export default function QuestSimulation() {
     // NOTE: do NOT add selectedBooster / selectedHeroes here — they already trigger
     // a buffedStats recompute, and listing them again would cause the simulation
     // effect to fire twice (once with stale buffedStats, once with fresh).
-  }, [buffedStats, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss]);
+    // selectedQuestType and selectedRegionIdx ARE needed: changing the dungeon does
+    // not affect buffedStats (party is unchanged), so without them the simulation
+    // would never re-run after switching dungeons.
+  }, [buffedStats, selectedQuestIdx, selectedSubAreaIdx, selectedMiniBoss, selectedQuestType, selectedRegionIdx]);
 
   const getSubAreaBarrierElement = (barrier: QuestBarrier | null) => {
     if (!barrier) return null;
@@ -1289,7 +1301,7 @@ export default function QuestSimulation() {
                     <h3 className="text-lg text-foreground font-bold">몬스터 정보</h3>
                     <button
                       onClick={() => setMonsterCardFlipped((v) => !v)}
-                      className={`p-1.5 rounded-md border transition-colors ${monsterCardFlipped ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-secondary/40 border-border/50 text-muted-foreground hover:text-foreground hover:border-border'}`}
+                      className={`p-1.5 rounded-md border transition-colors ${monsterCardFlipped ? "bg-primary/20 border-primary/50 text-primary" : "bg-secondary/40 border-border/50 text-muted-foreground hover:text-foreground hover:border-border"}`}
                       title="외부 설정 (경험치 부스터 등)"
                     >
                       <Settings className="w-3.5 h-3.5" />
@@ -1312,712 +1324,757 @@ export default function QuestSimulation() {
                       </button>
                     )}
                   </div>
-                  <div className="relative" style={{ perspective: '1600px' }}>
-                  <div className="relative transition-transform duration-500" style={{ transformStyle: 'preserve-3d', transform: monsterCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
-                  <div style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
-                  <div className="card-fantasy p-4 pb-8 relative min-h-[440px]" onDoubleClick={(e) => { if (e.target === e.currentTarget) setMonsterCardFlipped(true); }}>
-                    {/* Region icon - top left, bigger */}
-                    {currentRegion && (
-                      <button
-                        onClick={() => openConfigAtStep("region")}
-                        className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 hover:border-primary/70 transition-all cursor-pointer"
-                        title="지역 변경"
-                      >
-                        <img
-                          src={currentRegion.areaImage}
-                          alt={currentRegion.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                  <div className="relative" style={{ perspective: "1600px" }}>
+                    <div
+                      className="relative transition-transform duration-500"
+                      style={{
+                        transformStyle: "preserve-3d",
+                        transform: monsterCardFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                      }}
+                    >
+                      <div style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}>
+                        <div
+                          className="card-fantasy p-4 pb-8 relative min-h-[440px]"
+                          onDoubleClick={(e) => {
+                            if (e.target === e.currentTarget) setMonsterCardFlipped(true);
                           }}
-                        />
-                      </button>
-                    )}
-
-                    {/* Booster slot - top right, symmetric with region icon */}
-                    <Popover open={boosterOpen} onOpenChange={setBoosterOpen}>
-                      <PopoverTrigger asChild>
-                        <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
-                          {selectedBooster !== "none" && commonData?.boosters ? (
-                            (() => {
-                              const boosterKeys: Record<string, string> = {
-                                normal: "전투력 부스터",
-                                super: "슈퍼 전투력 부스터",
-                                mega: "메가 전투력 부스터",
-                              };
-                              const boosterEntry = commonData.boosters[boosterKeys[selectedBooster]];
-                              return boosterEntry ? (
-                                <img src={boosterEntry.image} alt="" className="w-full h-full object-cover" />
-                              ) : (
-                                <span className="text-lg">⚡</span>
-                              );
-                            })()
-                          ) : (
-                            <Plus className="w-5 h-5 text-muted-foreground/40" />
-                          )}
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-96 p-2.5" align="end">
-                        <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
-                        <div className="space-y-1.5">
-                          <button
-                            onClick={() => {
-                              setSelectedBooster("none");
-                              setBoosterOpen(false);
-                            }}
-                            className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === "none" ? "bg-primary/20 text-primary" : "text-foreground hover:bg-secondary"}`}
-                          >
-                            <span className="w-8 h-8 rounded flex items-center justify-center bg-secondary/50 text-muted-foreground shrink-0">
-                              ✕
-                            </span>
-                            <span className="font-medium">부스터 없음</span>
-                          </button>
-                          {(["normal", "super", "mega"] as const).map((bType) => {
-                            const names: Record<string, string> = {
-                              normal: "전투력 부스터",
-                              super: "슈퍼 전투력 부스터",
-                              mega: "메가 전투력 부스터",
-                            };
-                            const descs: Record<string, string> = {
-                              normal: "공/방 +20%",
-                              super: "공/방 +40% / 치확 +10%",
-                              mega: "공/방 +80% / 치확 +25% / 치명타 대미지 +50%",
-                            };
-                            const bEntry = commonData?.boosters?.[names[bType]];
-                            return (
-                              <button
-                                key={bType}
-                                onClick={() => {
-                                  setSelectedBooster(bType);
-                                  setBoosterOpen(false);
+                        >
+                          {/* Region icon - top left, bigger */}
+                          {currentRegion && (
+                            <button
+                              onClick={() => openConfigAtStep("region")}
+                              className="absolute top-3 left-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 hover:border-primary/70 transition-all cursor-pointer"
+                              title="지역 변경"
+                            >
+                              <img
+                                src={currentRegion.areaImage}
+                                alt={currentRegion.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                    e.currentTarget.src = "/images/fallback.svg";
                                 }}
-                                className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? "bg-primary/20 text-primary" : "text-foreground hover:bg-secondary"}`}
-                              >
-                                {bEntry && <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />}
-                                <div className="text-left min-w-0">
-                                  <div className="font-medium">{names[bType]}</div>
-                                  <div className="text-xs text-foreground/60 dark:text-foreground/50 whitespace-nowrap">
-                                    {descs[bType]}
-                                  </div>
-                                </div>
+                              />
+                            </button>
+                          )}
+
+                          {/* Booster slot - top right, symmetric with region icon */}
+                          <Popover open={boosterOpen} onOpenChange={setBoosterOpen}>
+                            <PopoverTrigger asChild>
+                              <button className="absolute top-3 right-3 w-16 h-16 rounded-full border-2 border-primary/40 overflow-hidden bg-secondary/50 z-10 flex items-center justify-center hover:border-primary/60 transition-all">
+                                {selectedBooster !== "none" && commonData?.boosters ? (
+                                  (() => {
+                                    const boosterKeys: Record<string, string> = {
+                                      normal: "전투력 부스터",
+                                      super: "슈퍼 전투력 부스터",
+                                      mega: "메가 전투력 부스터",
+                                    };
+                                    const boosterEntry = commonData.boosters[boosterKeys[selectedBooster]];
+                                    return boosterEntry ? (
+                                      <img src={boosterEntry.image} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                      <span className="text-lg">⚡</span>
+                                    );
+                                  })()
+                                ) : (
+                                  <Plus className="w-5 h-5 text-muted-foreground/40" />
+                                )}
                               </button>
-                            );
-                          })}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-96 p-2.5" align="end">
+                              <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
+                              <div className="space-y-1.5">
+                                <button
+                                  onClick={() => {
+                                    setSelectedBooster("none");
+                                    setBoosterOpen(false);
+                                  }}
+                                  className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === "none" ? "bg-primary/20 text-primary" : "text-foreground hover:bg-secondary"}`}
+                                >
+                                  <span className="w-8 h-8 rounded flex items-center justify-center bg-secondary/50 text-muted-foreground shrink-0">
+                                    ✕
+                                  </span>
+                                  <span className="font-medium">부스터 없음</span>
+                                </button>
+                                {(["normal", "super", "mega"] as const).map((bType) => {
+                                  const names: Record<string, string> = {
+                                    normal: "전투력 부스터",
+                                    super: "슈퍼 전투력 부스터",
+                                    mega: "메가 전투력 부스터",
+                                  };
+                                  const descs: Record<string, string> = {
+                                    normal: "공/방 +20%",
+                                    super: "공/방 +40% / 치확 +10%",
+                                    mega: "공/방 +80% / 치확 +25% / 치명타 대미지 +50%",
+                                  };
+                                  const bEntry = commonData?.boosters?.[names[bType]];
+                                  return (
+                                    <button
+                                      key={bType}
+                                      onClick={() => {
+                                        setSelectedBooster(bType);
+                                        setBoosterOpen(false);
+                                      }}
+                                      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? "bg-primary/20 text-primary" : "text-foreground hover:bg-secondary"}`}
+                                    >
+                                      {bEntry && <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />}
+                                      <div className="text-left min-w-0">
+                                        <div className="font-medium">{names[bType]}</div>
+                                        <div className="text-xs text-foreground/60 dark:text-foreground/50 whitespace-nowrap">
+                                          {descs[bType]}
+                                        </div>
+                                      </div>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </PopoverContent>
+                          </Popover>
 
-                    {/* Quest select button - centered, larger with less cropping */}
-                    <div className="flex justify-center pt-2 mb-4">
-                      <button
-                        onClick={() => {
-                          if (!currentQuest) {
-                            // 아무것도 선택 안 된 상태: 처음부터
-                            setConfigInitialStep(undefined);
-                            setConfigInitialState(undefined);
-                            setConfigOpen(true);
-                          } else {
-                            // 이미 선택된 상태: 세부 지역 & 난이도부터
-                            openConfigAtStep("subarea");
-                          }
-                        }}
-                        className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
-                          currentQuest
-                            ? `border-primary/60 ${colorMode === "dark" ? "shadow-[0_0_20px_hsla(var(--primary)/0.4)]" : "shadow-[0_0_20px_hsla(var(--primary)/0.3)]"}`
-                            : "border-dashed border-muted-foreground/40 hover:border-primary/50"
-                        }`}
-                      >
-                        {currentQuest && centerImage ? (
-                          <>
-                            <img src={centerImage} alt="" className="w-full h-full object-cover scale-90" />
-                            <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <span className="text-[10px] text-foreground font-medium">변경</span>
-                            </div>
-                          </>
-                        ) : (
-                          <Plus className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
-                        )}
-                      </button>
-                    </div>
-
-                    {currentQuest ? (
-                      <div className="space-y-2">
-                        {/* Line 1: Region (parent) + Location */}
-                        {currentRegion && currentRegion.name && currentRegion.name !== locationName && (
-                          <div className="text-center">
-                            <span className="text-sm text-foreground/80 font-medium">{currentRegion.name}</span>
-                          </div>
-                        )}
-                        <div className="text-center">
-                          <span className="text-sm text-foreground font-medium">{locationName}</span>
-                        </div>
-
-                        {/* Line 2: Difficulty - display only, no click to change */}
-                        {currentQuest.difficulty !== "없음" && (
-                          <div className="text-center text-sm">
-                            <span
-                              className={`font-medium ${
-                                currentQuest.difficulty === "쉬움"
-                                  ? "text-lime-400"
-                                  : currentQuest.difficulty === "보통"
-                                    ? "text-blue-400"
-                                    : currentQuest.difficulty === "어려움"
-                                      ? "text-orange-400"
-                                      : currentQuest.difficulty === "익스트림"
-                                        ? "text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]"
-                                        : "text-muted-foreground"
+                          {/* Quest select button - centered, larger with less cropping */}
+                          <div className="flex justify-center pt-2 mb-4">
+                            <button
+                              onClick={() => {
+                                if (!currentQuest) {
+                                  // 아무것도 선택 안 된 상태: 처음부터
+                                  setConfigInitialStep(undefined);
+                                  setConfigInitialState(undefined);
+                                  setConfigOpen(true);
+                                } else {
+                                  // 이미 선택된 상태: 세부 지역 & 난이도부터
+                                  openConfigAtStep("subarea");
+                                }
+                              }}
+                              className={`relative w-32 h-32 rounded-full border-2 transition-all flex items-center justify-center overflow-hidden group ${
+                                currentQuest
+                                  ? `border-primary/60 ${colorMode === "dark" ? "shadow-[0_0_20px_hsla(var(--primary)/0.4)]" : "shadow-[0_0_20px_hsla(var(--primary)/0.3)]"}`
+                                  : "border-dashed border-muted-foreground/40 hover:border-primary/50"
                               }`}
                             >
-                              {currentQuest.difficulty}
-                            </span>
+                              {currentQuest && centerImage ? (
+                                <>
+                                  <img src={centerImage} alt="" className="w-full h-full object-cover scale-90" />
+                                  <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <span className="text-[10px] text-foreground font-medium">변경</span>
+                                  </div>
+                                </>
+                              ) : (
+                                <Plus className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
+                              )}
+                            </button>
                           </div>
-                        )}
 
-                        {/* Line 3: Boss or Mini Boss selector */}
-                        {currentQuest.isBoss ? (
-                          <div className="text-center text-sm">
-                            <span className="text-red-400">
-                              <Crown className="w-3.5 h-3.5 inline mr-0.5" />
-                              보스
-                            </span>
-                          </div>
-                        ) : (
-                          !currentQuest.isBoss &&
-                          selectedSubAreaIdx !== 99 && (
-                            <div className="text-center">
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <button
-                                    className={`text-xs px-2 py-0.5 rounded border transition-all ${
-                                      selectedMiniBoss !== "random"
-                                        ? selectedMiniBoss === "huge"
-                                          ? "border-lime-500/40 bg-lime-500/10 text-lime-400"
-                                          : selectedMiniBoss === "agile"
-                                            ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
-                                            : selectedMiniBoss === "dire"
-                                              ? "border-red-500/40 bg-red-500/10 text-red-400"
-                                              : selectedMiniBoss === "wealthy"
-                                                ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
-                                                : selectedMiniBoss === "legendary"
-                                                  ? "border-purple-500/40 bg-purple-500/10 text-purple-400"
-                                                  : "border-border/40 text-muted-foreground hover:border-primary/40"
-                                        : "border-primary/40 bg-primary/10 text-primary"
+                          {currentQuest ? (
+                            <div className="space-y-2">
+                              {/* Line 1: Region (parent) + Location */}
+                              {currentRegion && currentRegion.name && currentRegion.name !== locationName && (
+                                <div className="text-center">
+                                  <span className="text-sm text-foreground/80 font-medium">{currentRegion.name}</span>
+                                </div>
+                              )}
+                              <div className="text-center">
+                                <span className="text-sm text-foreground font-medium">{locationName}</span>
+                              </div>
+
+                              {/* Line 2: Difficulty - display only, no click to change */}
+                              {currentQuest.difficulty !== "없음" && (
+                                <div className="text-center text-sm">
+                                  <span
+                                    className={`font-medium ${
+                                      currentQuest.difficulty === "쉬움"
+                                        ? "text-lime-400"
+                                        : currentQuest.difficulty === "보통"
+                                          ? "text-blue-400"
+                                          : currentQuest.difficulty === "어려움"
+                                            ? "text-orange-400"
+                                            : currentQuest.difficulty === "익스트림"
+                                              ? "text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.6)]"
+                                              : "text-muted-foreground"
                                     }`}
                                   >
-                                    {selectedMiniBoss === "random"
-                                      ? "랜덤 (2%)"
-                                      : selectedMiniBoss === "none"
-                                        ? "미니보스 없음"
-                                        : selectedMiniBoss === "huge"
-                                          ? "거대한"
-                                          : selectedMiniBoss === "agile"
-                                            ? "민첩한"
-                                            : selectedMiniBoss === "dire"
-                                              ? "흉포한"
-                                              : selectedMiniBoss === "wealthy"
-                                                ? "부유한"
-                                                : selectedMiniBoss === "legendary"
-                                                  ? "전설의"
-                                                  : "미니보스"}
-                                  </button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-52 p-2" align="center">
-                                  <div className="text-xs font-medium text-foreground mb-2">미니보스 수식어</div>
-                                  <div className="space-y-1">
-                                    {(
-                                      [
-                                        {
-                                          id: "random",
-                                          label: "랜덤",
-                                          desc: "2% 확률로 미니보스 등장",
-                                          color: "text-primary",
-                                        },
-                                        { id: "none", label: "없음 (항상)", desc: "미니보스 없음 고정", color: "" },
-                                        {
-                                          id: "huge",
-                                          label: "거대한 (항상)",
-                                          desc: "HP ×2, 광역 확률 ×3",
-                                          color: "text-lime-400",
-                                        },
-                                        {
-                                          id: "agile",
-                                          label: "민첩한 (항상)",
-                                          desc: "회피 40%",
-                                          color: "text-blue-400",
-                                        },
-                                        {
-                                          id: "dire",
-                                          label: "흉포한 (항상)",
-                                          desc: "HP ×1.5, 치확 30%",
-                                          color: "text-red-400",
-                                        },
-                                        {
-                                          id: "wealthy",
-                                          label: "부유한 (항상)",
-                                          desc: "보상 증가",
-                                          color: "text-yellow-400",
-                                        },
-                                        {
-                                          id: "legendary",
-                                          label: "전설의 (항상)",
-                                          desc: "HP ×1.5, ATK ×1.25, 치확 15%, 회피 10%",
-                                          color: "text-purple-400",
-                                        },
-                                      ] as const
-                                    ).map((mb) => (
-                                      <button
-                                        key={mb.id}
-                                        onClick={() => setSelectedMiniBoss(mb.id as MiniBossType)}
-                                        className={`w-full text-left px-2 py-1.5 rounded text-xs transition-colors ${
-                                          selectedMiniBoss === mb.id
-                                            ? "bg-primary/20 text-primary"
-                                            : "text-foreground hover:bg-secondary"
-                                        }`}
-                                      >
-                                        <span className={`font-medium ${mb.color}`}>{mb.label}</span>
-                                        <span className="text-[10px] text-muted-foreground ml-1">{mb.desc}</span>
-                                      </button>
-                                    ))}
+                                    {currentQuest.difficulty}
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Line 3: Boss or Mini Boss selector */}
+                              {currentQuest.isBoss ? (
+                                <div className="text-center text-sm">
+                                  <span className="text-red-400">
+                                    <Crown className="w-3.5 h-3.5 inline mr-0.5" />
+                                    보스
+                                  </span>
+                                </div>
+                              ) : (
+                                !currentQuest.isBoss &&
+                                selectedSubAreaIdx !== 99 && (
+                                  <div className="text-center">
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <button
+                                          className={`text-xs px-2 py-0.5 rounded border transition-all ${
+                                            selectedMiniBoss !== "random"
+                                              ? selectedMiniBoss === "huge"
+                                                ? "border-lime-500/40 bg-lime-500/10 text-lime-400"
+                                                : selectedMiniBoss === "agile"
+                                                  ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
+                                                  : selectedMiniBoss === "dire"
+                                                    ? "border-red-500/40 bg-red-500/10 text-red-400"
+                                                    : selectedMiniBoss === "wealthy"
+                                                      ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
+                                                      : selectedMiniBoss === "legendary"
+                                                        ? "border-purple-500/40 bg-purple-500/10 text-purple-400"
+                                                        : "border-border/40 text-muted-foreground hover:border-primary/40"
+                                              : "border-primary/40 bg-primary/10 text-primary"
+                                          }`}
+                                        >
+                                          {selectedMiniBoss === "random"
+                                            ? "랜덤 (2%)"
+                                            : selectedMiniBoss === "none"
+                                              ? "미니보스 없음"
+                                              : selectedMiniBoss === "huge"
+                                                ? "거대한"
+                                                : selectedMiniBoss === "agile"
+                                                  ? "민첩한"
+                                                  : selectedMiniBoss === "dire"
+                                                    ? "흉포한"
+                                                    : selectedMiniBoss === "wealthy"
+                                                      ? "부유한"
+                                                      : selectedMiniBoss === "legendary"
+                                                        ? "전설의"
+                                                        : "미니보스"}
+                                        </button>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-52 p-2" align="center">
+                                        <div className="text-xs font-medium text-foreground mb-2">미니보스 수식어</div>
+                                        <div className="space-y-1">
+                                          {(
+                                            [
+                                              {
+                                                id: "random",
+                                                label: "랜덤",
+                                                desc: "2% 확률로 미니보스 등장",
+                                                color: "text-primary",
+                                              },
+                                              {
+                                                id: "none",
+                                                label: "없음 (항상)",
+                                                desc: "미니보스 없음 고정",
+                                                color: "",
+                                              },
+                                              {
+                                                id: "huge",
+                                                label: "거대한 (항상)",
+                                                desc: "HP ×2, 광역 확률 ×3",
+                                                color: "text-lime-400",
+                                              },
+                                              {
+                                                id: "agile",
+                                                label: "민첩한 (항상)",
+                                                desc: "회피 40%",
+                                                color: "text-blue-400",
+                                              },
+                                              {
+                                                id: "dire",
+                                                label: "흉포한 (항상)",
+                                                desc: "HP ×1.5, 치확 30%",
+                                                color: "text-red-400",
+                                              },
+                                              {
+                                                id: "wealthy",
+                                                label: "부유한 (항상)",
+                                                desc: "보상 증가",
+                                                color: "text-yellow-400",
+                                              },
+                                              {
+                                                id: "legendary",
+                                                label: "전설의 (항상)",
+                                                desc: "HP ×1.5, ATK ×1.25, 치확 15%, 회피 10%",
+                                                color: "text-purple-400",
+                                              },
+                                            ] as const
+                                          ).map((mb) => (
+                                            <button
+                                              key={mb.id}
+                                              onClick={() => setSelectedMiniBoss(mb.id as MiniBossType)}
+                                              className={`w-full text-left px-2 py-1.5 rounded text-xs transition-colors ${
+                                                selectedMiniBoss === mb.id
+                                                  ? "bg-primary/20 text-primary"
+                                                  : "text-foreground hover:bg-secondary"
+                                              }`}
+                                            >
+                                              <span className={`font-medium ${mb.color}`}>{mb.label}</span>
+                                              <span className="text-[10px] text-muted-foreground ml-1">{mb.desc}</span>
+                                            </button>
+                                          ))}
+                                        </div>
+                                      </PopoverContent>
+                                    </Popover>
                                   </div>
-                                </PopoverContent>
-                              </Popover>
-                            </div>
-                          )
-                        )}
+                                )
+                              )}
 
-                        {/* (time display removed) */}
+                              {/* (time display removed) */}
 
-                        {/* Line 4: Element Barrier */}
-                        {barrierElements.length > 0 && currentQuest.barrier && (
-                          <div className="space-y-1">
-                            <div className="flex items-center justify-center gap-4">
-                              {barrierElements.map((el, i) => {
-                                const iconPath = commonData?.elementalBarriers?.[el]?.image;
-                                const heroSum = getPartyElementSum(el);
-                                const required = currentQuest.barrier!.hp;
-                                const isMet = heroSum >= required;
-                                return (
-                                  <div
-                                    key={i}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? "border-lime-500/40 bg-lime-500/10" : "border-red-500/30 bg-red-500/10"}`}
-                                  >
-                                    {iconPath && (
-                                      <img
-                                        src={iconPath}
-                                        alt=""
-                                        className="w-7 h-7"
-                                        onError={(e) => {
-                                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
-                                        }}
-                                      />
-                                    )}
-                                    <span
-                                      className={`text-sm font-mono font-bold ${isMet ? "text-lime-400" : "text-red-400"}`}
-                                    >
-                                      {formatNumber(heroSum)} / {formatNumber(required)}
-                                    </span>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                            {!barrierBrokenGlobal && selectedHeroes.length > 0 && (
-                              <div className="text-center">
-                                <span className="text-[10px] text-red-400 font-medium">
-                                  ⚠ 배리어 미충족: 대미지 20%로 감소
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Stats: vertical list */}
-                        {(() => {
-                          // Calculate modified values based on mini-boss
-                          const hpMod =
-                            selectedMiniBoss === "huge"
-                              ? 2.0
-                              : selectedMiniBoss === "dire"
-                                ? 1.5
-                                : selectedMiniBoss === "legendary"
-                                  ? 1.5
-                                  : 1.0;
-                          const atkMod = selectedMiniBoss === "legendary" ? 1.25 : 1.0;
-                          const aoeMod = selectedMiniBoss === "huge" ? 3.0 : 1.0;
-                          const displayHp = Math.round(currentQuest.hp * hpMod);
-                          const displayAtk = Math.round(currentQuest.atk * atkMod);
-                          const displayAoeChance = Math.min(currentQuest.aoeChance * aoeMod, 100);
-                          const displayAoe = Math.round(currentQuest.aoe * atkMod);
-                          const finalCrit =
-                            selectedMiniBoss === "dire" ? 30 : selectedMiniBoss === "legendary" ? 15 : 10;
-                          const mobEva = selectedMiniBoss === "agile" ? 40 : selectedMiniBoss === "legendary" ? 10 : 0;
-                          const isHpMod = hpMod !== 1.0;
-                          const isAtkMod = atkMod !== 1.0;
-                          const isAoeMod = aoeMod !== 1.0;
-                          const isCritMod = selectedMiniBoss === "dire" || selectedMiniBoss === "legendary";
-                          return (
-                            <div className="space-y-1.5 pt-2 border-t border-border/30">
-                              <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5">
-                                  <Heart className="w-3.5 h-3.5 text-orange-400" />
-                                  <span className="text-xs text-foreground">체력</span>
-                                </div>
-                                <span
-                                  className={`text-sm font-bold font-mono ${isHpMod ? "text-lime-400" : "text-foreground"}`}
-                                >
-                                  {formatNumber(displayHp)}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5">
-                                  <Swords className="w-3.5 h-3.5 text-red-400" />
-                                  <span className="text-xs text-foreground">공격력</span>
-                                </div>
-                                <span
-                                  className={`text-sm font-bold font-mono ${isAtkMod ? "text-orange-400" : "text-foreground"}`}
-                                >
-                                  {formatNumber(displayAtk)}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5">
-                                  <Zap className="w-3.5 h-3.5 text-yellow-400" />
-                                  <span className="text-xs text-foreground">광역 공격 확률</span>
-                                </div>
-                                <span
-                                  className={`text-sm font-bold font-mono ${isAoeMod ? "text-yellow-400" : "text-foreground"}`}
-                                >
-                                  {displayAoeChance}%
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5">
-                                  <Swords className="w-3.5 h-3.5 text-yellow-400" />
-                                  <span className="text-xs text-foreground">광역 대미지</span>
-                                </div>
-                                <span
-                                  className={`text-sm font-bold font-mono ${isAtkMod ? "text-orange-400" : "text-foreground"}`}
-                                >
-                                  {formatNumber(displayAoe)}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5">
-                                  <Crosshair className="w-3.5 h-3.5 text-yellow-400" />
-                                  <span className="text-xs text-foreground">치명타 확률</span>
-                                </div>
-                                <span
-                                  className={`text-sm font-bold font-mono ${isCritMod ? "text-red-400" : "text-foreground"}`}
-                                >
-                                  {finalCrit}%
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5">
-                                  <Wind className="w-3.5 h-3.5 text-teal-400" />
-                                  <span className="text-xs text-foreground">회피</span>
-                                </div>
-                                <span
-                                  className={`text-sm font-bold font-mono ${mobEva > 0 ? "text-teal-400" : "text-foreground"}`}
-                                >
-                                  {mobEva}%
-                                </span>
-                              </div>
-                              {/* Defense reference label row (with right-aligned helper) */}
-                              <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5">
-                                  <Shield className="w-3.5 h-3.5 text-blue-400" />
-                                  <span className="text-xs text-foreground">방어력 기준치</span>
-                                </div>
-                                <span className="text-xs text-muted-foreground">[ 기준 (받는 대미지%) ]</span>
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {/* Defense Reference - inside monster info (show even without party) */}
-                        {(() => {
-                          const hasHeroes = selectedHeroes.length > 0 && buffedStats.length > 0;
-                          const defToBarPct = (def: number) => {
-                            for (let i = defThresholds.length - 1; i >= 1; i--) {
-                              const upper = defThresholds[i];
-                              const lower = defThresholds[i - 1];
-                              if (def >= lower.value) {
-                                const range = upper.value - lower.value;
-                                const segPct = range > 0 ? Math.min(1, (def - lower.value) / range) : 0;
-                                const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
-                                const upperPos = (i / (defThresholds.length - 1)) * 100;
-                                return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
-                              }
-                            }
-                            return 0;
-                          };
-
-                          const barH = 260;
-                          const reductions = [-50, 0, 50, 70, 75];
-                          const rows = defThresholds.map((t, i) => ({
-                            key: t.key,
-                            label: t.label,
-                            value: t.value,
-                            color: t.color,
-                            textClass: t.textClass,
-                            pct: (i / (defThresholds.length - 1)) * 100,
-                            applied: Math.round(100 - reductions[i]),
-                          }));
-
-                          const getHeroColor = (heroDef: number): string => {
-                            let color = defThresholds[0].color;
-                            for (const t of defThresholds) {
-                              if (heroDef >= t.value) color = t.color;
-                            }
-                            return color;
-                          };
-
-                          const heroEntries = hasHeroes
-                            ? selectedHeroes.map((h, hi) => {
-                                const bs = buffedStats[hi];
-                                const heroDef = bs ? bs.def : h.def || 0;
-                                const pinPct = defToBarPct(heroDef);
-                                const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
-                                const color = getHeroColor(heroDef);
-                                return { id: h.id, name: h.name, heroDef, pinPct, dmgApplied, color };
-                              })
-                            : [];
-
-                          const n = heroEntries.length;
-                          const labelPcts = n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
-                          const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
-                          const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
-
-                          return (
-                            <div className="mt-3 pt-6 border-t border-border/30" style={{ marginBottom: "8px" }}>
-                              {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — bar group left-aligned with stat icons */}
-                              <div
-                                className="relative grid gap-x-1 px-1"
-                                style={{ height: `${barH}px`, gridTemplateColumns: "52px 18px 44px 1fr 120px" }}
-                              >
-                                {/* Column 1: threshold values (aligned with monster info icons on left) */}
-                                <div className="relative">
-                                  {rows.map((r) => (
-                                    <div
-                                      key={`thrv-${r.key}`}
-                                      className="absolute right-0 flex items-center"
-                                      style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 1 }}
-                                    >
-                                      <span
-                                        className={`text-[13px] font-mono font-semibold tabular-nums ${r.textClass}`}
-                                      >
-                                        {formatNumber(r.value)}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                                {/* Column 2: bar */}
-                                <div className="relative">
-                                  <div
-                                    className="absolute inset-0 rounded-full overflow-hidden border border-border/50"
-                                    style={{
-                                      background:
-                                        "linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)",
-                                    }}
-                                  />
-                                  {rows.map((r) => (
-                                    <div
-                                      key={`tick-${r.key}`}
-                                      className="absolute left-0 right-0 flex items-center pointer-events-none"
-                                      style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 2 }}
-                                    >
-                                      <div
-                                        className="h-[2px] w-full"
-                                        style={{ backgroundColor: r.color, opacity: 0.9 }}
-                                      />
-                                    </div>
-                                  ))}
-                                  {heroEntries.map((h) => (
-                                    <div
-                                      key={`pin-${h.id}`}
-                                      className="absolute"
-                                      style={{
-                                        bottom: `${Math.min(100, h.pinPct)}%`,
-                                        left: "50%",
-                                        transform: "translate(-50%, 50%)",
-                                        zIndex: 10,
-                                      }}
-                                    >
-                                      <div
-                                        className="w-4 h-4 rounded-full border-[2.5px] shadow-[0_0_8px_rgba(255,255,255,0.6)]"
-                                        style={{ borderColor: "#fff", backgroundColor: h.color }}
-                                      />
-                                    </div>
-                                  ))}
-                                </div>
-                                {/* Column 3: applied % (right next to bar) */}
-                                <div className="relative pl-1">
-                                  {rows.map((r) => (
-                                    <div
-                                      key={`thrp-${r.key}`}
-                                      className="absolute left-1 flex items-center"
-                                      style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 1 }}
-                                    >
-                                      <span className={`text-[12px] font-mono tabular-nums opacity-70 ${r.textClass}`}>
-                                        ({r.applied}%)
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                                {/* Spacer column — halved */}
-                                <div aria-hidden="true" />
-                                {/* Column 5: connectors + hero name labels */}
-                                <div className="relative ml-1.5">
-                                  <svg
-                                    className="absolute inset-0 pointer-events-none"
-                                    width="100%"
-                                    height="100%"
-                                    style={{ overflow: "visible" }}
-                                  >
-                                    {heroLayout.map((h) => {
-                                      const clamped = Math.min(100, h.pinPct);
-                                      const yPin = (1 - clamped / 100) * barH;
-                                      const yLabel = (1 - h.labelPct / 100) * barH;
-                                      const x1 = 0;
-                                      const x2 = 28;
-                                      const cx = (x1 + x2) / 2;
+                              {/* Line 4: Element Barrier */}
+                              {barrierElements.length > 0 && currentQuest.barrier && (
+                                <div className="space-y-1">
+                                  <div className="flex items-center justify-center gap-4">
+                                    {barrierElements.map((el, i) => {
+                                      const iconPath = commonData?.elementalBarriers?.[el]?.image;
+                                      const heroSum = getPartyElementSum(el);
+                                      const required = currentQuest.barrier!.hp;
+                                      const isMet = heroSum >= required;
                                       return (
-                                        <path
-                                          key={`line-${h.id}`}
-                                          d={`M ${x1} ${yPin} C ${cx} ${yPin}, ${cx} ${yLabel}, ${x2} ${yLabel}`}
-                                          fill="none"
-                                          stroke={h.color}
-                                          strokeWidth="1.5"
-                                          opacity="0.8"
-                                        />
+                                        <div
+                                          key={i}
+                                          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isMet ? "border-lime-500/40 bg-lime-500/10" : "border-red-500/30 bg-red-500/10"}`}
+                                        >
+                                          {iconPath && (
+                                            <img
+                                              src={iconPath}
+                                              alt=""
+                                              className="w-7 h-7"
+                                              onError={(e) => {
+                                                if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                                  e.currentTarget.src = "/images/fallback.svg";
+                                              }}
+                                            />
+                                          )}
+                                          <span
+                                            className={`text-sm font-mono font-bold ${isMet ? "text-lime-400" : "text-red-400"}`}
+                                          >
+                                            {formatNumber(heroSum)} / {formatNumber(required)}
+                                          </span>
+                                        </div>
                                       );
                                     })}
-                                  </svg>
-                                  {heroLayout.map((h) => (
-                                    <div
-                                      key={`label-${h.id}`}
-                                      className="absolute flex flex-col items-start whitespace-nowrap text-left"
-                                      style={{
-                                        bottom: `${h.labelPct}%`,
-                                        right: "0",
-                                        transform: "translateY(50%)",
-                                        zIndex: 5,
-                                      }}
-                                    >
-                                      <span
-                                        className="text-[13px] font-semibold truncate max-w-[110px] leading-tight"
-                                        style={{ color: h.color }}
-                                      >
-                                        {h.name}
-                                      </span>
-                                      <span
-                                        className="text-[12px] font-mono font-semibold tabular-nums leading-tight"
-                                        style={{ color: h.color }}
-                                      >
-                                        {formatNumber(h.heroDef)} ({h.dmgApplied}%)
+                                  </div>
+                                  {!barrierBrokenGlobal && selectedHeroes.length > 0 && (
+                                    <div className="text-center">
+                                      <span className="text-[10px] text-red-400 font-medium">
+                                        ⚠ 배리어 미충족: 대미지 20%로 감소
                                       </span>
                                     </div>
-                                  ))}
+                                  )}
                                 </div>
+                              )}
+
+                              {/* Stats: vertical list */}
+                              {(() => {
+                                // Calculate modified values based on mini-boss
+                                const hpMod =
+                                  selectedMiniBoss === "huge"
+                                    ? 2.0
+                                    : selectedMiniBoss === "dire"
+                                      ? 1.5
+                                      : selectedMiniBoss === "legendary"
+                                        ? 1.5
+                                        : 1.0;
+                                const atkMod = selectedMiniBoss === "legendary" ? 1.25 : 1.0;
+                                const aoeMod = selectedMiniBoss === "huge" ? 3.0 : 1.0;
+                                const displayHp = Math.round(currentQuest.hp * hpMod);
+                                const displayAtk = Math.round(currentQuest.atk * atkMod);
+                                const displayAoeChance = Math.min(currentQuest.aoeChance * aoeMod, 100);
+                                const displayAoe = Math.round(currentQuest.aoe * atkMod);
+                                const finalCrit =
+                                  selectedMiniBoss === "dire" ? 30 : selectedMiniBoss === "legendary" ? 15 : 10;
+                                const mobEva =
+                                  selectedMiniBoss === "agile" ? 40 : selectedMiniBoss === "legendary" ? 10 : 0;
+                                const isHpMod = hpMod !== 1.0;
+                                const isAtkMod = atkMod !== 1.0;
+                                const isAoeMod = aoeMod !== 1.0;
+                                const isCritMod = selectedMiniBoss === "dire" || selectedMiniBoss === "legendary";
+                                return (
+                                  <div className="space-y-1.5 pt-2 border-t border-border/30">
+                                    <div className="flex items-center justify-between px-1">
+                                      <div className="flex items-center gap-1.5">
+                                        <Heart className="w-3.5 h-3.5 text-orange-400" />
+                                        <span className="text-xs text-foreground">체력</span>
+                                      </div>
+                                      <span
+                                        className={`text-sm font-bold font-mono ${isHpMod ? "text-lime-400" : "text-foreground"}`}
+                                      >
+                                        {formatNumber(displayHp)}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between px-1">
+                                      <div className="flex items-center gap-1.5">
+                                        <Swords className="w-3.5 h-3.5 text-red-400" />
+                                        <span className="text-xs text-foreground">공격력</span>
+                                      </div>
+                                      <span
+                                        className={`text-sm font-bold font-mono ${isAtkMod ? "text-orange-400" : "text-foreground"}`}
+                                      >
+                                        {formatNumber(displayAtk)}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between px-1">
+                                      <div className="flex items-center gap-1.5">
+                                        <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                                        <span className="text-xs text-foreground">광역 공격 확률</span>
+                                      </div>
+                                      <span
+                                        className={`text-sm font-bold font-mono ${isAoeMod ? "text-yellow-400" : "text-foreground"}`}
+                                      >
+                                        {displayAoeChance}%
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between px-1">
+                                      <div className="flex items-center gap-1.5">
+                                        <Swords className="w-3.5 h-3.5 text-yellow-400" />
+                                        <span className="text-xs text-foreground">광역 대미지</span>
+                                      </div>
+                                      <span
+                                        className={`text-sm font-bold font-mono ${isAtkMod ? "text-orange-400" : "text-foreground"}`}
+                                      >
+                                        {formatNumber(displayAoe)}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between px-1">
+                                      <div className="flex items-center gap-1.5">
+                                        <Crosshair className="w-3.5 h-3.5 text-yellow-400" />
+                                        <span className="text-xs text-foreground">치명타 확률</span>
+                                      </div>
+                                      <span
+                                        className={`text-sm font-bold font-mono ${isCritMod ? "text-red-400" : "text-foreground"}`}
+                                      >
+                                        {finalCrit}%
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between px-1">
+                                      <div className="flex items-center gap-1.5">
+                                        <Wind className="w-3.5 h-3.5 text-teal-400" />
+                                        <span className="text-xs text-foreground">회피</span>
+                                      </div>
+                                      <span
+                                        className={`text-sm font-bold font-mono ${mobEva > 0 ? "text-teal-400" : "text-foreground"}`}
+                                      >
+                                        {mobEva}%
+                                      </span>
+                                    </div>
+                                    {/* Defense reference label row (with right-aligned helper) */}
+                                    <div className="flex items-center justify-between px-1">
+                                      <div className="flex items-center gap-1.5">
+                                        <Shield className="w-3.5 h-3.5 text-blue-400" />
+                                        <span className="text-xs text-foreground">방어력 기준치</span>
+                                      </div>
+                                      <span className="text-xs text-muted-foreground">[ 기준 (받는 대미지%) ]</span>
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+
+                              {/* Defense Reference - inside monster info (show even without party) */}
+                              {(() => {
+                                const hasHeroes = selectedHeroes.length > 0 && buffedStats.length > 0;
+                                const defToBarPct = (def: number) => {
+                                  for (let i = defThresholds.length - 1; i >= 1; i--) {
+                                    const upper = defThresholds[i];
+                                    const lower = defThresholds[i - 1];
+                                    if (def >= lower.value) {
+                                      const range = upper.value - lower.value;
+                                      const segPct = range > 0 ? Math.min(1, (def - lower.value) / range) : 0;
+                                      const lowerPos = ((i - 1) / (defThresholds.length - 1)) * 100;
+                                      const upperPos = (i / (defThresholds.length - 1)) * 100;
+                                      return Math.min(100, lowerPos + segPct * (upperPos - lowerPos));
+                                    }
+                                  }
+                                  return 0;
+                                };
+
+                                const barH = 260;
+                                const reductions = [-50, 0, 50, 70, 75];
+                                const rows = defThresholds.map((t, i) => ({
+                                  key: t.key,
+                                  label: t.label,
+                                  value: t.value,
+                                  color: t.color,
+                                  textClass: t.textClass,
+                                  pct: (i / (defThresholds.length - 1)) * 100,
+                                  applied: Math.round(100 - reductions[i]),
+                                }));
+
+                                const getHeroColor = (heroDef: number): string => {
+                                  let color = defThresholds[0].color;
+                                  for (const t of defThresholds) {
+                                    if (heroDef >= t.value) color = t.color;
+                                  }
+                                  return color;
+                                };
+
+                                const heroEntries = hasHeroes
+                                  ? selectedHeroes.map((h, hi) => {
+                                      const bs = buffedStats[hi];
+                                      const heroDef = bs ? bs.def : h.def || 0;
+                                      const pinPct = defToBarPct(heroDef);
+                                      const dmgApplied = Math.round(100 - getDamageReductionForDef(heroDef));
+                                      const color = getHeroColor(heroDef);
+                                      return { id: h.id, name: h.name, heroDef, pinPct, dmgApplied, color };
+                                    })
+                                  : [];
+
+                                const n = heroEntries.length;
+                                const labelPcts =
+                                  n <= 1 ? [50] : Array.from({ length: n }, (_, i) => (i / (n - 1)) * 100);
+                                const sortedByPin = [...heroEntries].sort((a, b) => a.pinPct - b.pinPct);
+                                const heroLayout = sortedByPin.map((h, idx) => ({ ...h, labelPct: labelPcts[idx] }));
+
+                                return (
+                                  <div className="mt-3 pt-6 border-t border-border/30" style={{ marginBottom: "8px" }}>
+                                    {/* Layout: [threshold value | bar | applied% | spacer | connectors+names] — bar group left-aligned with stat icons */}
+                                    <div
+                                      className="relative grid gap-x-1 px-1"
+                                      style={{ height: `${barH}px`, gridTemplateColumns: "52px 18px 44px 1fr 120px" }}
+                                    >
+                                      {/* Column 1: threshold values (aligned with monster info icons on left) */}
+                                      <div className="relative">
+                                        {rows.map((r) => (
+                                          <div
+                                            key={`thrv-${r.key}`}
+                                            className="absolute right-0 flex items-center"
+                                            style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 1 }}
+                                          >
+                                            <span
+                                              className={`text-[13px] font-mono font-semibold tabular-nums ${r.textClass}`}
+                                            >
+                                              {formatNumber(r.value)}
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      {/* Column 2: bar */}
+                                      <div className="relative">
+                                        <div
+                                          className="absolute inset-0 rounded-full overflow-hidden border border-border/50"
+                                          style={{
+                                            background:
+                                              "linear-gradient(to top, #581c87 0%, #7f1d1d 15%, #a16207 35%, #854d0e 50%, #65a30d 75%, #e5e5e5 100%)",
+                                          }}
+                                        />
+                                        {rows.map((r) => (
+                                          <div
+                                            key={`tick-${r.key}`}
+                                            className="absolute left-0 right-0 flex items-center pointer-events-none"
+                                            style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 2 }}
+                                          >
+                                            <div
+                                              className="h-[2px] w-full"
+                                              style={{ backgroundColor: r.color, opacity: 0.9 }}
+                                            />
+                                          </div>
+                                        ))}
+                                        {heroEntries.map((h) => (
+                                          <div
+                                            key={`pin-${h.id}`}
+                                            className="absolute"
+                                            style={{
+                                              bottom: `${Math.min(100, h.pinPct)}%`,
+                                              left: "50%",
+                                              transform: "translate(-50%, 50%)",
+                                              zIndex: 10,
+                                            }}
+                                          >
+                                            <div
+                                              className="w-4 h-4 rounded-full border-[2.5px] shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+                                              style={{ borderColor: "#fff", backgroundColor: h.color }}
+                                            />
+                                          </div>
+                                        ))}
+                                      </div>
+                                      {/* Column 3: applied % (right next to bar) */}
+                                      <div className="relative pl-1">
+                                        {rows.map((r) => (
+                                          <div
+                                            key={`thrp-${r.key}`}
+                                            className="absolute left-1 flex items-center"
+                                            style={{ bottom: `${r.pct}%`, transform: "translateY(50%)", zIndex: 1 }}
+                                          >
+                                            <span
+                                              className={`text-[12px] font-mono tabular-nums opacity-70 ${r.textClass}`}
+                                            >
+                                              ({r.applied}%)
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      {/* Spacer column — halved */}
+                                      <div aria-hidden="true" />
+                                      {/* Column 5: connectors + hero name labels */}
+                                      <div className="relative ml-1.5">
+                                        <svg
+                                          className="absolute inset-0 pointer-events-none"
+                                          width="100%"
+                                          height="100%"
+                                          style={{ overflow: "visible" }}
+                                        >
+                                          {heroLayout.map((h) => {
+                                            const clamped = Math.min(100, h.pinPct);
+                                            const yPin = (1 - clamped / 100) * barH;
+                                            const yLabel = (1 - h.labelPct / 100) * barH;
+                                            const x1 = 0;
+                                            const x2 = 28;
+                                            const cx = (x1 + x2) / 2;
+                                            return (
+                                              <path
+                                                key={`line-${h.id}`}
+                                                d={`M ${x1} ${yPin} C ${cx} ${yPin}, ${cx} ${yLabel}, ${x2} ${yLabel}`}
+                                                fill="none"
+                                                stroke={h.color}
+                                                strokeWidth="1.5"
+                                                opacity="0.8"
+                                              />
+                                            );
+                                          })}
+                                        </svg>
+                                        {heroLayout.map((h) => (
+                                          <div
+                                            key={`label-${h.id}`}
+                                            className="absolute flex flex-col items-start whitespace-nowrap text-left"
+                                            style={{
+                                              bottom: `${h.labelPct}%`,
+                                              right: "0",
+                                              transform: "translateY(50%)",
+                                              zIndex: 5,
+                                            }}
+                                          >
+                                            <span
+                                              className="text-[13px] font-semibold truncate max-w-[110px] leading-tight"
+                                              style={{ color: h.color }}
+                                            >
+                                              {h.name}
+                                            </span>
+                                            <span
+                                              className="text-[12px] font-mono font-semibold tabular-nums leading-tight"
+                                              style={{ color: h.color }}
+                                            >
+                                              {formatNumber(h.heroDef)} ({h.dmgApplied}%)
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+                            </div>
+                          ) : (
+                            <div className="text-center py-4">
+                              <p className="text-muted-foreground text-sm">퀘스트를 선택하세요</p>
+                              <p className="text-muted-foreground/60 text-xs mt-1">위의 + 버튼을 눌러 설정</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {/* BACK FACE: 외부 설정 */}
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          backfaceVisibility: "hidden",
+                          WebkitBackfaceVisibility: "hidden",
+                          transform: "rotateY(180deg)",
+                        }}
+                      >
+                        <div
+                          className="card-fantasy p-4 pb-8 relative min-h-[440px] h-full"
+                          onDoubleClick={(e) => {
+                            if (e.target === e.currentTarget) setMonsterCardFlipped(false);
+                          }}
+                        >
+                          <div className="flex items-center gap-2 mb-4">
+                            <Settings className="w-4 h-4 text-primary" />
+                            <h4 className="text-sm font-bold text-foreground">외부 설정</h4>
+                            <button
+                              onClick={() => setMonsterCardFlipped(false)}
+                              className="ml-auto text-xs px-2 py-1 rounded-md bg-secondary/50 border border-border/50 text-muted-foreground hover:text-foreground"
+                              title="앞면으로"
+                            >
+                              ← 돌아가기
+                            </button>
+                          </div>
+
+                          {/* 경험치 그룹 */}
+                          <div className="space-y-3">
+                            <div className="text-xs font-bold text-primary/80 uppercase tracking-wider">경험치</div>
+
+                            {/* 지역 레벨 경험치 */}
+                            <div className="space-y-2 p-3 rounded-md bg-secondary/30 border border-border/40">
+                              <label className="flex items-center justify-between gap-2 cursor-pointer">
+                                <span className="text-sm text-foreground">지역 레벨 경험치 적용</span>
+                                <input
+                                  type="checkbox"
+                                  checked={expBoosters.regionLevelEnabled}
+                                  onChange={(e) =>
+                                    setExpBoosters((p) => ({ ...p, regionLevelEnabled: e.target.checked }))
+                                  }
+                                  className="w-4 h-4 accent-primary"
+                                />
+                              </label>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground w-14">수치</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step={5}
+                                  disabled={!expBoosters.regionLevelEnabled}
+                                  value={expBoosters.regionLevelValue}
+                                  onChange={(e) =>
+                                    setExpBoosters((p) => ({
+                                      ...p,
+                                      regionLevelValue: Math.max(0, Number(e.target.value) || 0),
+                                    }))
+                                  }
+                                  className="flex-1 h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50"
+                                />
+                                <span className="text-xs text-muted-foreground">%</span>
                               </div>
                             </div>
-                          );
-                        })()}
-                      </div>
-                    ) : (
-                      <div className="text-center py-4">
-                        <p className="text-muted-foreground text-sm">퀘스트를 선택하세요</p>
-                        <p className="text-muted-foreground/60 text-xs mt-1">위의 + 버튼을 눌러 설정</p>
-                      </div>
-                    )}
-                  </div>
-                  </div>
-                  {/* BACK FACE: 외부 설정 */}
-                  <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-                    <div
-                      className="card-fantasy p-4 pb-8 relative min-h-[440px] h-full"
-                      onDoubleClick={(e) => { if (e.target === e.currentTarget) setMonsterCardFlipped(false); }}
-                    >
-                      <div className="flex items-center gap-2 mb-4">
-                        <Settings className="w-4 h-4 text-primary" />
-                        <h4 className="text-sm font-bold text-foreground">외부 설정</h4>
-                        <button
-                          onClick={() => setMonsterCardFlipped(false)}
-                          className="ml-auto text-xs px-2 py-1 rounded-md bg-secondary/50 border border-border/50 text-muted-foreground hover:text-foreground"
-                          title="앞면으로"
-                        >
-                          ← 돌아가기
-                        </button>
-                      </div>
 
-                      {/* 경험치 그룹 */}
-                      <div className="space-y-3">
-                        <div className="text-xs font-bold text-primary/80 uppercase tracking-wider">경험치</div>
+                            {/* 길드 경험치 부스터 */}
+                            <div className="space-y-2 p-3 rounded-md bg-secondary/30 border border-border/40">
+                              <label className="flex items-center justify-between gap-2 cursor-pointer">
+                                <span className="text-sm text-foreground">길드 경험치 부스터 적용</span>
+                                <input
+                                  type="checkbox"
+                                  checked={expBoosters.guildBoosterEnabled}
+                                  onChange={(e) =>
+                                    setExpBoosters((p) => ({ ...p, guildBoosterEnabled: e.target.checked }))
+                                  }
+                                  className="w-4 h-4 accent-primary"
+                                />
+                              </label>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground w-14">수치</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step={5}
+                                  disabled={!expBoosters.guildBoosterEnabled}
+                                  value={expBoosters.guildBoosterValue}
+                                  onChange={(e) =>
+                                    setExpBoosters((p) => ({
+                                      ...p,
+                                      guildBoosterValue: Math.max(0, Number(e.target.value) || 0),
+                                    }))
+                                  }
+                                  className="flex-1 h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50"
+                                />
+                                <span className="text-xs text-muted-foreground">%</span>
+                              </div>
+                            </div>
 
-                        {/* 지역 레벨 경험치 */}
-                        <div className="space-y-2 p-3 rounded-md bg-secondary/30 border border-border/40">
-                          <label className="flex items-center justify-between gap-2 cursor-pointer">
-                            <span className="text-sm text-foreground">지역 레벨 경험치 적용</span>
-                            <input
-                              type="checkbox"
-                              checked={expBoosters.regionLevelEnabled}
-                              onChange={(e) => setExpBoosters((p) => ({ ...p, regionLevelEnabled: e.target.checked }))}
-                              className="w-4 h-4 accent-primary"
-                            />
-                          </label>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground w-14">수치</span>
-                            <input
-                              type="number"
-                              min={0}
-                              step={5}
-                              disabled={!expBoosters.regionLevelEnabled}
-                              value={expBoosters.regionLevelValue}
-                              onChange={(e) => setExpBoosters((p) => ({ ...p, regionLevelValue: Math.max(0, Number(e.target.value) || 0) }))}
-                              className="flex-1 h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50"
-                            />
-                            <span className="text-xs text-muted-foreground">%</span>
+                            <div className="pt-1">
+                              <div className="text-[11px] text-muted-foreground/80 leading-relaxed">
+                                합산 경험치% × ½ 만큼 외부 공격력%에 더해집니다 (생각하는 모자 유물 장착 시).
+                              </div>
+                            </div>
+
+                            {/* 향후 다른 그룹용 구분선 */}
+                            <div className="border-t border-border/40 my-2" />
                           </div>
                         </div>
-
-                        {/* 길드 경험치 부스터 */}
-                        <div className="space-y-2 p-3 rounded-md bg-secondary/30 border border-border/40">
-                          <label className="flex items-center justify-between gap-2 cursor-pointer">
-                            <span className="text-sm text-foreground">길드 경험치 부스터 적용</span>
-                            <input
-                              type="checkbox"
-                              checked={expBoosters.guildBoosterEnabled}
-                              onChange={(e) => setExpBoosters((p) => ({ ...p, guildBoosterEnabled: e.target.checked }))}
-                              className="w-4 h-4 accent-primary"
-                            />
-                          </label>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground w-14">수치</span>
-                            <input
-                              type="number"
-                              min={0}
-                              step={5}
-                              disabled={!expBoosters.guildBoosterEnabled}
-                              value={expBoosters.guildBoosterValue}
-                              onChange={(e) => setExpBoosters((p) => ({ ...p, guildBoosterValue: Math.max(0, Number(e.target.value) || 0) }))}
-                              className="flex-1 h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50"
-                            />
-                            <span className="text-xs text-muted-foreground">%</span>
-                          </div>
-                        </div>
-
-                        <div className="pt-1">
-                          <div className="text-[11px] text-muted-foreground/80 leading-relaxed">
-                            합산 경험치% × ½ 만큼 외부 공격력%에 더해집니다 (생각하는 모자 유물 장착 시).
-                          </div>
-                        </div>
-
-                        {/* 향후 다른 그룹용 구분선 */}
-                        <div className="border-t border-border/40 my-2" />
                       </div>
                     </div>
-                  </div>
-                  </div>
                   </div>
                 </div>
 
@@ -2439,7 +2496,8 @@ export default function QuestSimulation() {
                                           alt=""
                                           className="w-full h-full object-cover object-center"
                                           onError={(e) => {
-                                            if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                                            if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                              e.currentTarget.src = "/images/fallback.svg";
                                           }}
                                         />
                                       ) : (
@@ -2499,7 +2557,8 @@ export default function QuestSimulation() {
                                         alt=""
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
-                                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                                          if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                            e.currentTarget.src = "/images/fallback.svg";
                                         }}
                                       />
                                     ) : (
