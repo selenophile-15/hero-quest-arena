@@ -172,7 +172,7 @@ export async function parseSoulBonuses(souls: SoulBonusInput[]): Promise<{ summa
   const spiritData = await loadSpiritStats();
   const sources: SkillBonusSource[] = [];
   const totals = { flatAtk: 0, flatDef: 0, flatHp: 0, pctAtk: 0, pctDef: 0, pctHp: 0, critRate: 0, critDmg: 0, evasion: 0, threat: 0 };
-  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0 };
+  const detail: DetailStatsSummary = { hpRegenPerTurn: 0, survivalChance: 0, restReduction: 0, sharkAtkPct: 0, dinoAtkPct: 0, berserkerAtkPct: 0, berserkerEvaPct: 0, mundraBosPct: 0, expPct: 0 };
 
   const noDupCandidates: Map<string, { src: SkillBonusSource; mult: number }[]> = new Map();
   const normalSources: SkillBonusSource[] = [];
