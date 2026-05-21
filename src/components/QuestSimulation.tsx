@@ -945,6 +945,7 @@ export default function QuestSimulation() {
     setSelectedMiniBoss(sim.miniBoss as MiniBossType);
     setLoadedSimId(sim.id);
     setSubTab("simulation");
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   // Get barrier elements for display
