@@ -196,6 +196,20 @@ export async function calculateHeroStats(input: CalcInput): Promise<CalculatedSt
     }
   }
 
+  // 생각하는 모자 유물: 경험치% 합산값의 절반을 공통 공격력%에 추가
+  const hasThinkingCap = equipmentSlots.some(s => s?.item?.name === '생각하는 모자');
+  if (hasThinkingCap && bonusSummary.detail.expPct > 0) {
+    const expAtkPct = bonusSummary.detail.expPct / 2;
+    bonusSummary.pctAtk += expAtkPct;
+    bonusSummary.sources.push({
+      name: `생각하는 모자 (경험치 ${bonusSummary.detail.expPct}%의 절반)`,
+      type: 'relic' as const,
+      flatAtk: 0, flatDef: 0, flatHp: 0,
+      pctAtk: expAtkPct, pctDef: 0, pctHp: 0,
+      critRate: 0, critDmg: 0, evasion: 0, threat: 0,
+    });
+  }
+
   // === Special job mechanics ===
 
   // 경보병/근위병: shield's final defense → added to flat ATK
