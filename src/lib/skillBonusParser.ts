@@ -153,6 +153,7 @@ export function parseSkillBonuses(skills: SkillBonusInput[]): { summary: Omit<Sk
         case '스킬_휴식시간감소%': detail.restReduction += val; break;
         case '스킬_체력비례스킬_공격력%': detail.berserkerAtkPct += val; break;
         case '스킬_체력비례회피%': detail.berserkerEvaPct += val; break;
+        case '스킬_경험치%': detail.expPct += val; break;
       }
     }
 
