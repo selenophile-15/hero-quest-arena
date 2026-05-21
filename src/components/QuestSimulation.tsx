@@ -1287,6 +1287,13 @@ export default function QuestSimulation() {
                   <div className="flex items-center gap-2 mb-3">
                     <Info className="w-5 h-5 text-primary" />
                     <h3 className="text-lg text-foreground font-bold">몬스터 정보</h3>
+                    <button
+                      onClick={() => setMonsterCardFlipped((v) => !v)}
+                      className={`p-1.5 rounded-md border transition-colors ${monsterCardFlipped ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-secondary/40 border-border/50 text-muted-foreground hover:text-foreground hover:border-border'}`}
+                      title="외부 설정 (경험치 부스터 등)"
+                    >
+                      <Settings className="w-3.5 h-3.5" />
+                    </button>
                     {currentQuest && (
                       <button
                         onClick={() => {
@@ -1305,7 +1312,10 @@ export default function QuestSimulation() {
                       </button>
                     )}
                   </div>
-                  <div className="card-fantasy p-4 pb-8 relative min-h-[440px]">
+                  <div className="relative" style={{ perspective: '1600px' }}>
+                  <div className="relative transition-transform duration-500" style={{ transformStyle: 'preserve-3d', transform: monsterCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
+                  <div style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                  <div className="card-fantasy p-4 pb-8 relative min-h-[440px]" onDoubleClick={(e) => { if (e.target === e.currentTarget) setMonsterCardFlipped(true); }}>
                     {/* Region icon - top left, bigger */}
                     {currentRegion && (
                       <button
