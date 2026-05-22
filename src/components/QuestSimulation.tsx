@@ -1403,16 +1403,22 @@ export default function QuestSimulation() {
                                   </span>
                                   <span className="font-medium">부스터 없음</span>
                                 </button>
-                                {(["normal", "super", "mega"] as const).map((bType) => {
+                                {(["normal", "super", "mega", "xp_normal", "xp_super", "xp_mega"] as const).map((bType) => {
                                   const names: Record<string, string> = {
                                     normal: "전투력 부스터",
                                     super: "슈퍼 전투력 부스터",
                                     mega: "메가 전투력 부스터",
+                                    xp_normal: "경험치 부스터",
+                                    xp_super: "슈퍼 경험치 부스터",
+                                    xp_mega: "메가 경험치 부스터",
                                   };
                                   const descs: Record<string, string> = {
                                     normal: "공/방 +20%",
                                     super: "공/방 +40% / 치확 +10%",
                                     mega: "공/방 +80% / 치확 +25% / 치명타 대미지 +50%",
+                                    xp_normal: "경험치 +50%",
+                                    xp_super: "경험치 +100%",
+                                    xp_mega: "경험치 +200%",
                                   };
                                   const bEntry = commonData?.boosters?.[names[bType]];
                                   return (
