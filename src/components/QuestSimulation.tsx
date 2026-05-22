@@ -816,6 +816,9 @@ export default function QuestSimulation() {
       normal: "전투력 부스터",
       super: "슈퍼 전투력 부스터",
       mega: "메가 전투력 부스터",
+      xp_normal: "경험치 부스터",
+      xp_super: "슈퍼 경험치 부스터",
+      xp_mega: "메가 경험치 부스터",
     };
     const boosterImage =
       (selectedBooster !== "none" && commonData?.boosters?.[boosterKeysMap[selectedBooster]]?.image) || "";
