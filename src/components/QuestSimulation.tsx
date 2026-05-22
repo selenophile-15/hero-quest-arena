@@ -393,7 +393,7 @@ export default function QuestSimulation() {
   const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
   const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
-  const [selectedBooster, setSelectedBooster] = useState<"none" | "normal" | "super" | "mega">("none");
+  const [selectedBooster, setSelectedBooster] = useState<"none" | "normal" | "super" | "mega" | "xp_normal" | "xp_super" | "xp_mega">("none");
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
   const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>("random");
@@ -573,7 +573,7 @@ export default function QuestSimulation() {
     calculatePartyBuffs({ heroes: selectedHeroes, isBoss: isBossQuest, isFlashQuest }).then(
       ({ summary, buffedStats: bs }) => {
         // Apply booster on top of party buffs
-        if (selectedBooster !== "none") {
+        if (selectedBooster !== "none" && !selectedBooster.startsWith("xp_")) {
           const boosterAtkPct = selectedBooster === "mega" ? 0.8 : selectedBooster === "super" ? 0.4 : 0.2;
           const boosterDefPct = boosterAtkPct;
           const boosterCrit = selectedBooster === "mega" ? 25 : selectedBooster === "super" ? 10 : 0;
@@ -816,6 +816,9 @@ export default function QuestSimulation() {
       normal: "전투력 부스터",
       super: "슈퍼 전투력 부스터",
       mega: "메가 전투력 부스터",
+      xp_normal: "경험치 부스터",
+      xp_super: "슈퍼 경험치 부스터",
+      xp_mega: "메가 경험치 부스터",
     };
     const boosterImage =
       (selectedBooster !== "none" && commonData?.boosters?.[boosterKeysMap[selectedBooster]]?.image) || "";
@@ -1369,6 +1372,9 @@ export default function QuestSimulation() {
                                       normal: "전투력 부스터",
                                       super: "슈퍼 전투력 부스터",
                                       mega: "메가 전투력 부스터",
+                                      xp_normal: "경험치 부스터",
+                                      xp_super: "슈퍼 경험치 부스터",
+                                      xp_mega: "메가 경험치 부스터",
                                     };
                                     const boosterEntry = commonData.boosters[boosterKeys[selectedBooster]];
                                     return boosterEntry ? (
@@ -1383,7 +1389,7 @@ export default function QuestSimulation() {
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-96 p-2.5" align="end">
-                              <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
+                              <div className="text-sm font-bold text-foreground mb-2">부스터</div>
                               <div className="space-y-1.5">
                                 <button
                                   onClick={() => {
@@ -1397,16 +1403,22 @@ export default function QuestSimulation() {
                                   </span>
                                   <span className="font-medium">부스터 없음</span>
                                 </button>
-                                {(["normal", "super", "mega"] as const).map((bType) => {
+                                {(["normal", "super", "mega", "xp_normal", "xp_super", "xp_mega"] as const).map((bType) => {
                                   const names: Record<string, string> = {
                                     normal: "전투력 부스터",
                                     super: "슈퍼 전투력 부스터",
                                     mega: "메가 전투력 부스터",
+                                    xp_normal: "경험치 부스터",
+                                    xp_super: "슈퍼 경험치 부스터",
+                                    xp_mega: "메가 경험치 부스터",
                                   };
                                   const descs: Record<string, string> = {
                                     normal: "공/방 +20%",
                                     super: "공/방 +40% / 치확 +10%",
                                     mega: "공/방 +80% / 치확 +25% / 치명타 대미지 +50%",
+                                    xp_normal: "경험치 +50%",
+                                    xp_super: "경험치 +100%",
+                                    xp_mega: "경험치 +200%",
                                   };
                                   const bEntry = commonData?.boosters?.[names[bType]];
                                   return (

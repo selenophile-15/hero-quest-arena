@@ -34,7 +34,7 @@ export interface QuestMonster {
 export type MiniBossType = "random" | "none" | "agile" | "dire" | "huge" | "wealthy" | "legendary";
 
 export interface BoosterType {
-  type: "none" | "normal" | "super" | "mega";
+  type: "none" | "normal" | "super" | "mega" | "xp_normal" | "xp_super" | "xp_mega";
   // Extra flat bonuses stacked on top (e.g., Fateweaver retry adds +20%/+20%)
   extraAtkBonus?: number;
   extraDefBonus?: number;
