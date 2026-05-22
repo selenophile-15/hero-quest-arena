@@ -18,6 +18,9 @@
     "전투력 부스터": { "key": "atkbooster_normal", "image": "/images/quest/booster/atkbooster_normal.webp" },
     "슈퍼 전투력 부스터": { "key": "atkbooster_super", "image": "/images/quest/booster/atkbooster_super.webp" },
     "메가 전투력 부스터": { "key": "atkbooster_mega", "image": "/images/quest/booster/atkbooster_mega.webp" },
+    "경험치 부스터": { "key": "xpbooster_normal", "image": "/images/quest/booster/xpbooster_normal.webp" },
+    "슈퍼 경험치 부스터": { "key": "xpbooster_super", "image": "/images/quest/booster/xpbooster_super.webp" },
+    "메가 경험치 부스터": { "key": "xpbooster_mega", "image": "/images/quest/booster/xpbooster_mega.webp" },
     "청동 나침반": { "key": "compass_bronze", "image": "/images/quest/booster/compass_bronze.webp" },
     "은 나침반": { "key": "compass_silver", "image": "/images/quest/booster/compass_silver.webp" },
     "금 나침반": { "key": "compass_gold", "image": "/images/quest/booster/compass_gold.webp" }
