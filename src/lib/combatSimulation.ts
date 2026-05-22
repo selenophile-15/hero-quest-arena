@@ -34,7 +34,7 @@ export interface QuestMonster {
 export type MiniBossType = "random" | "none" | "agile" | "dire" | "huge" | "wealthy" | "legendary";
 
 export interface BoosterType {
-  type: "none" | "normal" | "super" | "mega";
+  type: "none" | "normal" | "super" | "mega" | "xp_normal" | "xp_super" | "xp_mega";
   // Extra flat bonuses stacked on top (e.g., Fateweaver retry adds +20%/+20%)
   extraAtkBonus?: number;
   extraDefBonus?: number;
@@ -322,14 +322,6 @@ export interface SimulationResult {
   totalSimulations: number;
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
   retryResult?: SimulationResult; // Full retry sim result (only on first-pass result)
-  /**
-   * Merged view for "모래시계 OFF" display when retry exists.
-   * Population:
-   *   전체 = 첫시도 성공 + 재시도 성공 + 재시도 실패  (첫시도 실패 판 제외)
-   *   성공 = 첫시도 성공 + 재시도 성공
-   *   실패 = 재시도 실패만
-   */
-  combinedResult?: SimulationResult;
   // Per mini-boss breakdown (only for random mode)
   miniBossResults?: MiniBossResult[];
   // Win/loss round breakdown
@@ -3100,7 +3092,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const loseHeroResults =
     loseCount > 0 ? heroResults.map((b, i) => buildBucketResult(i, b, loseCount, "lose")) : undefined;
 
-  const result: SimulationResult = {
+  return {
     winRate: loseCount > 0 ? Math.floor(winRate * 100) / 100 : Math.round(winRate * 100) / 100,
     rawWinRate: loseCount > 0 ? Math.floor(rawWinRate * 100) / 100 : Math.round(rawWinRate * 100) / 100,
     retryWinRate: retryWinRate !== undefined ? Math.round(retryWinRate * 100) / 100 : undefined,
@@ -3242,13 +3234,6 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       : undefined,
     eventLog: recordEvents ? eventLog : undefined,
   };
-
-  // combinedResult: 모래시계 OFF 시 올바른 모집단(첫시도 성공 + 재시도 전체)을 구성
-  if (retryResultFull && !config._isRetry) {
-    result.combinedResult = mergeSimResults(result, retryResultFull);
-  }
-
-  return result;
 }
 
 // ─── Random Mini-Boss Simulation ────────────────────────────────────────────
@@ -3495,7 +3480,7 @@ function runRandomMiniBossSimulation(
     finalWinRate = combinedWinRate + (100 - combinedWinRate) * (retryWinRate / 100);
   }
 
-  const randomResult: SimulationResult = {
+  return {
     winRate: loseAgg && loseAgg.count > 0 ? Math.floor(finalWinRate * 100) / 100 : Math.round(finalWinRate * 100) / 100,
     rawWinRate:
       loseAgg && loseAgg.count > 0 ? Math.floor(finalWinRate * 100) / 100 : Math.round(finalWinRate * 100) / 100,
@@ -3527,346 +3512,6 @@ function runRandomMiniBossSimulation(
     totalSimulations: totalSims,
     miniBossResults,
     retryResult: retryResultFull,
-  };
-
-  if (retryResultFull && !config._isRetry) {
-    randomResult.combinedResult = mergeSimResults(randomResult, retryResultFull);
-  }
-
-  return randomResult;
-}
-
-// ─── Merge first-attempt + retry results for "모래시계 OFF" display ──────────
-/**
- * 모래시계(retryOnly) OFF 상태에서 재시도가 있는 파티의 올바른 모집단을 구성한다.
- *
- * 요구 모집단:
- *   전체 = 첫시도 성공 + 재시도 성공 + 재시도 실패  (첫시도 실패 판은 제외)
- *   성공 = 첫시도 성공 + 재시도 성공
- *   실패 = 재시도 실패만
- *
- * 전략: first.winHeroResults(첫시도 성공)과 retry의 winHeroResults/loseHeroResults를
- * 가중평균으로 합쳐 heroResults/winHeroResults/loseHeroResults를 재구성한다.
- * PartyAggregate(min/avg/max)도 동일한 가중 방식으로 병합한다.
- */
-function mergeSimResults(first: SimulationResult, retry: SimulationResult): SimulationResult {
-  const firstWinN = first.winSimCount ?? 0;
-  const retryWinN = retry.winSimCount ?? 0;
-  const retryLoseN = retry.loseSimCount ?? 0;
-  const combinedTotalN = firstWinN + retryWinN + retryLoseN;
-  const combinedWinN = firstWinN + retryWinN;
-  const combinedLoseN = retryLoseN;
-
-  // ── HeroSimResult weighted merge helper ──
-  // 두 heroResult 배열을 각각의 시뮬 수(nA, nB)로 가중평균한다.
-  // min은 두 min 중 더 작은 값, max는 더 큰 값, avg는 가중평균.
-  const mergeHeroArrays = (
-    a: HeroSimResult[] | undefined,
-    nA: number,
-    b: HeroSimResult[] | undefined,
-    nB: number,
-  ): HeroSimResult[] | undefined => {
-    if (!a && !b) return undefined;
-    if (!a || nA === 0) return b;
-    if (!b || nB === 0) return a;
-    const total = nA + nB;
-    return a.map((ha, idx) => {
-      const hb = b[idx];
-      if (!hb) return ha;
-      const w = (vA: number, vB: number) => (vA * nA + vB * nB) / total;
-      const minV = (vA: number | undefined, vB: number | undefined) => {
-        if (vA == null) return vB;
-        if (vB == null) return vA;
-        return Math.min(vA, vB);
-      };
-      const maxV = (vA: number | undefined, vB: number | undefined) => {
-        if (vA == null) return vB;
-        if (vB == null) return vA;
-        return Math.max(vA, vB);
-      };
-      return {
-        ...ha,
-        survivalRate: w(ha.survivalRate, hb.survivalRate),
-        avgHpRemaining: w(ha.avgHpRemaining, hb.avgHpRemaining),
-        avgDamageDealt: w(ha.avgDamageDealt, hb.avgDamageDealt),
-        minDamageDealt: minV(ha.minDamageDealt, hb.minDamageDealt) ?? 0,
-        maxDamageDealt: maxV(ha.maxDamageDealt, hb.maxDamageDealt) ?? 0,
-        normalDmgDealtAvg: w(ha.normalDmgDealtAvg, hb.normalDmgDealtAvg),
-        critDmgDealtAvg: w(ha.critDmgDealtAvg, hb.critDmgDealtAvg),
-        avgDamagePerTurn: w(ha.avgDamagePerTurn, hb.avgDamagePerTurn),
-        minDamagePerTurn: minV(ha.minDamagePerTurn, hb.minDamagePerTurn),
-        maxDamagePerTurn: maxV(ha.maxDamagePerTurn, hb.maxDamagePerTurn),
-        totalDamageTakenAvg: Math.round(w(ha.totalDamageTakenAvg, hb.totalDamageTakenAvg)),
-        avgDamageTakenPerHit: Math.round(w(ha.avgDamageTakenPerHit, hb.avgDamageTakenPerHit)),
-        avgDamageTakenPerTurn: Math.round(w(ha.avgDamageTakenPerTurn, hb.avgDamageTakenPerTurn)),
-        minDamageTaken: minV(ha.minDamageTaken, hb.minDamageTaken),
-        maxDamageTaken: maxV(ha.maxDamageTaken, hb.maxDamageTaken),
-        minDamageTakenPerTurn: minV(ha.minDamageTakenPerTurn, hb.minDamageTakenPerTurn),
-        maxDamageTakenPerTurn: maxV(ha.maxDamageTakenPerTurn, hb.maxDamageTakenPerTurn),
-        singleDmgTakenAvg:
-          ha.singleDmgTakenAvg != null && hb.singleDmgTakenAvg != null
-            ? Math.round(w(ha.singleDmgTakenAvg, hb.singleDmgTakenAvg))
-            : ha.singleDmgTakenAvg,
-        singleDmgTakenMin: minV(ha.singleDmgTakenMin, hb.singleDmgTakenMin),
-        singleDmgTakenMax: maxV(ha.singleDmgTakenMax, hb.singleDmgTakenMax),
-        singleDmgTakenTotal:
-          ha.singleDmgTakenTotal != null && hb.singleDmgTakenTotal != null
-            ? w(ha.singleDmgTakenTotal, hb.singleDmgTakenTotal)
-            : ha.singleDmgTakenTotal,
-        aoeDmgTakenAvg:
-          ha.aoeDmgTakenAvg != null && hb.aoeDmgTakenAvg != null
-            ? Math.round(w(ha.aoeDmgTakenAvg, hb.aoeDmgTakenAvg))
-            : ha.aoeDmgTakenAvg,
-        aoeDmgTakenMin: minV(ha.aoeDmgTakenMin, hb.aoeDmgTakenMin),
-        aoeDmgTakenMax: maxV(ha.aoeDmgTakenMax, hb.aoeDmgTakenMax),
-        aoeDmgTakenTotal:
-          ha.aoeDmgTakenTotal != null && hb.aoeDmgTakenTotal != null
-            ? w(ha.aoeDmgTakenTotal, hb.aoeDmgTakenTotal)
-            : ha.aoeDmgTakenTotal,
-        evasionRate: w(ha.evasionRate, hb.evasionRate),
-        tankingRate: w(ha.tankingRate, hb.tankingRate),
-        singleTargetRate:
-          ha.singleTargetRate != null && hb.singleTargetRate != null
-            ? w(ha.singleTargetRate, hb.singleTargetRate)
-            : ha.singleTargetRate,
-        totalHealingAvg: w(ha.totalHealingAvg, hb.totalHealingAvg),
-        critSurvivalCount: w(ha.critSurvivalCount, hb.critSurvivalCount),
-        critSurvivalApplyRate:
-          ha.critSurvivalApplyRate != null && hb.critSurvivalApplyRate != null
-            ? w(ha.critSurvivalApplyRate, hb.critSurvivalApplyRate)
-            : ha.critSurvivalApplyRate,
-        hemmaAbsorbedDmg:
-          ha.hemmaAbsorbedDmg != null && hb.hemmaAbsorbedDmg != null
-            ? Math.round(w(ha.hemmaAbsorbedDmg, hb.hemmaAbsorbedDmg))
-            : ha.hemmaAbsorbedDmg,
-        hemmaAbsorbedCount:
-          ha.hemmaAbsorbedCount != null && hb.hemmaAbsorbedCount != null
-            ? Math.round(w(ha.hemmaAbsorbedCount, hb.hemmaAbsorbedCount))
-            : ha.hemmaAbsorbedCount,
-        hemmaAtkGainAvg:
-          ha.hemmaAtkGainAvg != null && hb.hemmaAtkGainAvg != null
-            ? Math.round(w(ha.hemmaAtkGainAvg, hb.hemmaAtkGainAvg))
-            : ha.hemmaAtkGainAvg,
-        rudoBonusDmgAvg:
-          ha.rudoBonusDmgAvg != null && hb.rudoBonusDmgAvg != null
-            ? Math.round(w(ha.rudoBonusDmgAvg, hb.rudoBonusDmgAvg))
-            : ha.rudoBonusDmgAvg,
-        lordProtectionAvg: w(ha.lordProtectionAvg, hb.lordProtectionAvg),
-        lordProtectionSimRate:
-          ha.lordProtectionSimRate != null && hb.lordProtectionSimRate != null
-            ? w(ha.lordProtectionSimRate, hb.lordProtectionSimRate)
-            : ha.lordProtectionSimRate,
-        lordProtectedSingleAvg:
-          ha.lordProtectedSingleAvg != null && hb.lordProtectedSingleAvg != null
-            ? w(ha.lordProtectedSingleAvg, hb.lordProtectedSingleAvg)
-            : ha.lordProtectedSingleAvg,
-        lordProtectedAoeAvg:
-          ha.lordProtectedAoeAvg != null && hb.lordProtectedAoeAvg != null
-            ? w(ha.lordProtectedAoeAvg, hb.lordProtectedAoeAvg)
-            : ha.lordProtectedAoeAvg,
-        lordAbsorbedSingleDmg:
-          ha.lordAbsorbedSingleDmg != null && hb.lordAbsorbedSingleDmg != null
-            ? w(ha.lordAbsorbedSingleDmg, hb.lordAbsorbedSingleDmg)
-            : ha.lordAbsorbedSingleDmg,
-        lordAbsorbedAoeDmg:
-          ha.lordAbsorbedAoeDmg != null && hb.lordAbsorbedAoeDmg != null
-            ? w(ha.lordAbsorbedAoeDmg, hb.lordAbsorbedAoeDmg)
-            : ha.lordAbsorbedAoeDmg,
-        lordSavedSingleAvgDmg:
-          ha.lordSavedSingleAvgDmg != null && hb.lordSavedSingleAvgDmg != null
-            ? w(ha.lordSavedSingleAvgDmg, hb.lordSavedSingleAvgDmg)
-            : ha.lordSavedSingleAvgDmg,
-        lordSavedAoeAvgDmg:
-          ha.lordSavedAoeAvgDmg != null && hb.lordSavedAoeAvgDmg != null
-            ? w(ha.lordSavedAoeAvgDmg, hb.lordSavedAoeAvgDmg)
-            : ha.lordSavedAoeAvgDmg,
-        aliveTurnsAvg:
-          ha.aliveTurnsAvg != null && hb.aliveTurnsAvg != null
-            ? w(ha.aliveTurnsAvg, hb.aliveTurnsAvg)
-            : ha.aliveTurnsAvg,
-        aliveTurnsMin: minV(ha.aliveTurnsMin, hb.aliveTurnsMin),
-        aliveTurnsMax: maxV(ha.aliveTurnsMax, hb.aliveTurnsMax),
-        overallHpRemainAvg:
-          ha.overallHpRemainAvg != null && hb.overallHpRemainAvg != null
-            ? w(ha.overallHpRemainAvg, hb.overallHpRemainAvg)
-            : ha.overallHpRemainAvg,
-        overallHpRemainMin: minV(ha.overallHpRemainMin, hb.overallHpRemainMin),
-        overallHpRemainMax: maxV(ha.overallHpRemainMax, hb.overallHpRemainMax),
-        roundLimitAliveRate:
-          ha.roundLimitAliveRate != null && hb.roundLimitAliveRate != null
-            ? w(ha.roundLimitAliveRate, hb.roundLimitAliveRate)
-            : ha.roundLimitAliveRate,
-        poloniaStolenAvg:
-          ha.poloniaStolenAvg != null && hb.poloniaStolenAvg != null
-            ? w(ha.poloniaStolenAvg, hb.poloniaStolenAvg)
-            : ha.poloniaStolenAvg,
-        innateLossCount:
-          ha.innateLossCount != null && hb.innateLossCount != null
-            ? w(ha.innateLossCount, hb.innateLossCount)
-            : ha.innateLossCount,
-        innateRegenCount:
-          ha.innateRegenCount != null && hb.innateRegenCount != null
-            ? w(ha.innateRegenCount, hb.innateRegenCount)
-            : ha.innateRegenCount,
-        withInnateAvgDmg:
-          ha.withInnateAvgDmg != null && hb.withInnateAvgDmg != null
-            ? w(ha.withInnateAvgDmg, hb.withInnateAvgDmg)
-            : ha.withInnateAvgDmg,
-        withoutInnateAvgDmg:
-          ha.withoutInnateAvgDmg != null && hb.withoutInnateAvgDmg != null
-            ? w(ha.withoutInnateAvgDmg, hb.withoutInnateAvgDmg)
-            : ha.withoutInnateAvgDmg,
-      } as HeroSimResult;
-    });
-  };
-
-  // ── PartyAggregate merge helper ──
-  const mergeParty = (
-    a: PartyAggregate | undefined,
-    nA: number,
-    b: PartyAggregate | undefined,
-    nB: number,
-  ): PartyAggregate | undefined => {
-    if (!a && !b) return undefined;
-    if (!a || nA === 0) return b;
-    if (!b || nB === 0) return a;
-    const total = nA + nB;
-    return {
-      min: Math.min(a.min, b.min),
-      avg: Math.round((a.avg * nA + b.avg * nB) / total),
-      max: Math.max(a.max, b.max),
-    };
-  };
-
-  // ── 모집단 구성 ──
-  // 전체 heroResults = 첫시도 성공(winHeroResults) + 재시도 전체(heroResults)
-  // 성공 winHeroResults = 첫시도 성공(winHeroResults) + 재시도 성공(winHeroResults)
-  // 실패 loseHeroResults = 재시도 실패(loseHeroResults)
-  const combinedHeroResults =
-    mergeHeroArrays(first.winHeroResults, firstWinN, retry.heroResults, retryWinN + retryLoseN) ?? first.heroResults;
-
-  const combinedWinHeroResults = mergeHeroArrays(first.winHeroResults, firstWinN, retry.winHeroResults, retryWinN);
-
-  const combinedLoseHeroResults = retry.loseHeroResults;
-
-  // ── 라운드 수치 ──
-  const firstWinAvgR = first.winRounds?.avg ?? first.avgRounds;
-  const retryAvgR = retry.avgRounds;
-  const combinedAvgRounds =
-    combinedTotalN > 0
-      ? Math.round(((firstWinAvgR * firstWinN + retryAvgR * (retryWinN + retryLoseN)) / combinedTotalN) * 100) / 100
-      : 0;
-  const combinedMinRounds = Math.min(first.winRounds?.min ?? first.minRounds, retry.minRounds);
-  const combinedMaxRounds = Math.max(first.winRounds?.max ?? first.maxRounds, retry.maxRounds);
-
-  // ── PartyAggregate 병합 ──
-  // 전체: 첫시도 성공 파티 집계 + 재시도 전체 파티 집계
-  const combinedPartyDmgDealt = mergeParty(
-    first.winPartyDmgDealt,
-    firstWinN,
-    retry.partyDmgDealt,
-    retryWinN + retryLoseN,
-  );
-  const combinedPartyDmgPerTurn = mergeParty(
-    first.winPartyDmgPerTurn,
-    firstWinN,
-    retry.partyDmgPerTurn,
-    retryWinN + retryLoseN,
-  );
-  const combinedPartyDmgTaken = mergeParty(
-    first.winPartyDmgTaken,
-    firstWinN,
-    retry.partyDmgTaken,
-    retryWinN + retryLoseN,
-  );
-  const combinedPartyDmgTakenPerTurn = mergeParty(
-    first.winPartyDmgTakenPerTurn,
-    firstWinN,
-    retry.partyDmgTakenPerTurn,
-    retryWinN + retryLoseN,
-  );
-
-  // 성공: 첫시도 성공 + 재시도 성공
-  const combinedWinPartyDmgDealt = mergeParty(first.winPartyDmgDealt, firstWinN, retry.winPartyDmgDealt, retryWinN);
-  const combinedWinPartyDmgPerTurn = mergeParty(
-    first.winPartyDmgPerTurn,
-    firstWinN,
-    retry.winPartyDmgPerTurn,
-    retryWinN,
-  );
-  const combinedWinPartyDmgTaken = mergeParty(first.winPartyDmgTaken, firstWinN, retry.winPartyDmgTaken, retryWinN);
-  const combinedWinPartyDmgTakenPerTurn = mergeParty(
-    first.winPartyDmgTakenPerTurn,
-    firstWinN,
-    retry.winPartyDmgTakenPerTurn,
-    retryWinN,
-  );
-
-  // 실패: 재시도 실패만
-  const combinedLosePartyDmgDealt = retry.losePartyDmgDealt;
-  const combinedLosePartyDmgPerTurn = retry.losePartyDmgPerTurn;
-  const combinedLosePartyDmgTaken = retry.losePartyDmgTaken;
-  const combinedLosePartyDmgTakenPerTurn = retry.losePartyDmgTakenPerTurn;
-
-  // ── winRounds / loseRounds ──
-  const combinedWinRounds: SimulationResult["winRounds"] =
-    combinedWinN > 0
-      ? {
-          avg:
-            firstWinN > 0 && retryWinN > 0
-              ? Math.round(
-                  (((first.winRounds?.avg ?? first.avgRounds) * firstWinN +
-                    (retry.winRounds?.avg ?? retry.avgRounds) * retryWinN) /
-                    combinedWinN) *
-                    100,
-                ) / 100
-              : firstWinN > 0
-                ? (first.winRounds?.avg ?? first.avgRounds)
-                : (retry.winRounds?.avg ?? retry.avgRounds),
-          min: Math.min(first.winRounds?.min ?? first.minRounds, retry.winRounds?.min ?? retry.minRounds),
-          max: Math.max(first.winRounds?.max ?? first.maxRounds, retry.winRounds?.max ?? retry.maxRounds),
-        }
-      : undefined;
-
-  const combinedLoseRounds: SimulationResult["loseRounds"] = combinedLoseN > 0 ? retry.loseRounds : undefined;
-
-  // ── roundLimitRate (전체 판수 기준 재계산) ──
-  // 재시도 실패 판에서 라운드 제한 비율만 반영 (첫시도 실패는 모집단 제외이므로)
-  const combinedRoundLimitRate =
-    combinedTotalN > 0 ? (((retry.roundLimitRate / 100) * (retryWinN + retryLoseN)) / combinedTotalN) * 100 : 0;
-
-  return {
-    // winRate: 최종 합산 승률 (first.winRate가 이미 합산된 값)
-    winRate: first.winRate,
-    rawWinRate: first.rawWinRate,
-    retryWinRate: first.retryWinRate,
-    avgRounds: combinedAvgRounds,
-    minRounds: combinedMinRounds,
-    maxRounds: combinedMaxRounds,
-    heroResults: combinedHeroResults,
-    winHeroResults: combinedWinHeroResults,
-    loseHeroResults: combinedLoseHeroResults,
-    winSimCount: combinedWinN,
-    loseSimCount: combinedLoseN,
-    totalSimulations: combinedTotalN,
-    roundLimitRate: combinedRoundLimitRate,
-    retrySimulations: first.retrySimulations,
-    // retryResult/combinedResult는 중첩하지 않음
-    winRounds: combinedWinRounds,
-    loseRounds: combinedLoseRounds,
-    partyDmgDealt: combinedPartyDmgDealt,
-    partyDmgPerTurn: combinedPartyDmgPerTurn,
-    partyDmgTaken: combinedPartyDmgTaken,
-    partyDmgTakenPerTurn: combinedPartyDmgTakenPerTurn,
-    winPartyDmgDealt: combinedWinPartyDmgDealt,
-    winPartyDmgPerTurn: combinedWinPartyDmgPerTurn,
-    winPartyDmgTaken: combinedWinPartyDmgTaken,
-    winPartyDmgTakenPerTurn: combinedWinPartyDmgTakenPerTurn,
-    losePartyDmgDealt: combinedLosePartyDmgDealt,
-    losePartyDmgPerTurn: combinedLosePartyDmgPerTurn,
-    losePartyDmgTaken: combinedLosePartyDmgTaken,
-    losePartyDmgTakenPerTurn: combinedLosePartyDmgTakenPerTurn,
-    poloniaLoot: first.poloniaLoot,
   };
 }
 
