@@ -573,7 +573,7 @@ export default function QuestSimulation() {
     calculatePartyBuffs({ heroes: selectedHeroes, isBoss: isBossQuest, isFlashQuest }).then(
       ({ summary, buffedStats: bs }) => {
         // Apply booster on top of party buffs
-        if (selectedBooster !== "none") {
+        if (selectedBooster !== "none" && !selectedBooster.startsWith("xp_")) {
           const boosterAtkPct = selectedBooster === "mega" ? 0.8 : selectedBooster === "super" ? 0.4 : 0.2;
           const boosterDefPct = boosterAtkPct;
           const boosterCrit = selectedBooster === "mega" ? 25 : selectedBooster === "super" ? 10 : 0;
