@@ -1389,7 +1389,7 @@ export default function QuestSimulation() {
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-96 p-2.5" align="end">
-                              <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
+                              <div className="text-sm font-bold text-foreground mb-2">부스터</div>
                               <div className="space-y-1.5">
                                 <button
                                   onClick={() => {
