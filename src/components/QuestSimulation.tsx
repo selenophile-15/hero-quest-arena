@@ -393,7 +393,7 @@ export default function QuestSimulation() {
   const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
   const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
-  const [selectedBooster, setSelectedBooster] = useState<"none" | "normal" | "super" | "mega" | "xp_normal" | "xp_super" | "xp_mega">("none");
+  const [selectedBooster, setSelectedBooster] = useState<"none" | "normal" | "super" | "mega">("none");
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
   const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>("random");
@@ -445,7 +445,10 @@ export default function QuestSimulation() {
 
   // Display source: when retry-only is active and retry data exists, swap the entire result.
   const hasRetry = !!simResult?.retryResult;
-  const dispSim = retryOnly && simResult?.retryResult ? simResult.retryResult : simResult;
+  // 모래시계 OFF: combinedResult(첫시도 성공 + 재시도 전체 병합)가 있으면 그것을 사용
+  // 모래시계 ON:  retryResult(재시도 판만)를 사용
+  const dispSim =
+    retryOnly && simResult?.retryResult ? simResult.retryResult : (simResult?.combinedResult ?? simResult);
   const retryBoosterActive = retryOnly && hasRetry;
   // Extra +20% atk/def from the implicit retry booster (stacked on top of partyAtkMult/partyDefMult)
   const RETRY_BOOSTER_EXTRA = 0.2;
@@ -573,7 +576,7 @@ export default function QuestSimulation() {
     calculatePartyBuffs({ heroes: selectedHeroes, isBoss: isBossQuest, isFlashQuest }).then(
       ({ summary, buffedStats: bs }) => {
         // Apply booster on top of party buffs
-        if (selectedBooster !== "none" && !selectedBooster.startsWith("xp_")) {
+        if (selectedBooster !== "none") {
           const boosterAtkPct = selectedBooster === "mega" ? 0.8 : selectedBooster === "super" ? 0.4 : 0.2;
           const boosterDefPct = boosterAtkPct;
           const boosterCrit = selectedBooster === "mega" ? 25 : selectedBooster === "super" ? 10 : 0;
@@ -1372,9 +1375,6 @@ export default function QuestSimulation() {
                                       normal: "전투력 부스터",
                                       super: "슈퍼 전투력 부스터",
                                       mega: "메가 전투력 부스터",
-                                      xp_normal: "경험치 부스터",
-                                      xp_super: "슈퍼 경험치 부스터",
-                                      xp_mega: "메가 경험치 부스터",
                                     };
                                     const boosterEntry = commonData.boosters[boosterKeys[selectedBooster]];
                                     return boosterEntry ? (
@@ -1389,7 +1389,7 @@ export default function QuestSimulation() {
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-96 p-2.5" align="end">
-                              <div className="text-sm font-bold text-foreground mb-2">부스터</div>
+                              <div className="text-sm font-bold text-foreground mb-2">전투력 부스터</div>
                               <div className="space-y-1.5">
                                 <button
                                   onClick={() => {
@@ -1403,22 +1403,16 @@ export default function QuestSimulation() {
                                   </span>
                                   <span className="font-medium">부스터 없음</span>
                                 </button>
-                                {(["normal", "super", "mega", "xp_normal", "xp_super", "xp_mega"] as const).map((bType) => {
+                                {(["normal", "super", "mega"] as const).map((bType) => {
                                   const names: Record<string, string> = {
                                     normal: "전투력 부스터",
                                     super: "슈퍼 전투력 부스터",
                                     mega: "메가 전투력 부스터",
-                                    xp_normal: "경험치 부스터",
-                                    xp_super: "슈퍼 경험치 부스터",
-                                    xp_mega: "메가 경험치 부스터",
                                   };
                                   const descs: Record<string, string> = {
                                     normal: "공/방 +20%",
                                     super: "공/방 +40% / 치확 +10%",
                                     mega: "공/방 +80% / 치확 +25% / 치명타 대미지 +50%",
-                                    xp_normal: "경험치 +50%",
-                                    xp_super: "경험치 +100%",
-                                    xp_mega: "경험치 +200%",
                                   };
                                   const bEntry = commonData?.boosters?.[names[bType]];
                                   return (
@@ -1997,61 +1991,89 @@ export default function QuestSimulation() {
                           <div className="flex items-center gap-2 mb-4">
                             <Settings className="w-4 h-4 text-primary" />
                             <h4 className="text-sm font-bold text-foreground">외부 설정</h4>
+                            <button
+                              onClick={() => setMonsterCardFlipped(false)}
+                              className="ml-auto text-xs px-2 py-1 rounded-md bg-secondary/50 border border-border/50 text-muted-foreground hover:text-foreground"
+                              title="앞면으로"
+                            >
+                              ← 돌아가기
+                            </button>
                           </div>
 
                           {/* 경험치 그룹 */}
                           <div className="space-y-3">
                             <div className="text-xs font-bold text-primary/80 uppercase tracking-wider">경험치</div>
 
-                            {/* 지역 레벨 효과 */}
-                            <div className="p-3 rounded-md bg-secondary/30 border border-border/40">
-                              <label className="flex items-center gap-2 cursor-pointer">
+                            {/* 지역 레벨 경험치 */}
+                            <div className="space-y-2 p-3 rounded-md bg-secondary/30 border border-border/40">
+                              <label className="flex items-center justify-between gap-2 cursor-pointer">
+                                <span className="text-sm text-foreground">지역 레벨 경험치 적용</span>
                                 <input
                                   type="checkbox"
                                   checked={expBoosters.regionLevelEnabled}
                                   onChange={(e) =>
                                     setExpBoosters((p) => ({ ...p, regionLevelEnabled: e.target.checked }))
                                   }
-                                  className="w-4 h-4 accent-primary shrink-0"
+                                  className="w-4 h-4 accent-primary"
                                 />
-                                <span className="text-sm text-foreground flex-1">지역 레벨 효과</span>
-                                <div className="h-8 px-2 inline-flex items-center justify-end rounded-md bg-background border border-border/50 text-sm font-mono text-foreground min-w-[88px]">
-                                  20%
-                                </div>
                               </label>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground w-14">수치</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step={5}
+                                  disabled={!expBoosters.regionLevelEnabled}
+                                  value={expBoosters.regionLevelValue}
+                                  onChange={(e) =>
+                                    setExpBoosters((p) => ({
+                                      ...p,
+                                      regionLevelValue: Math.max(0, Number(e.target.value) || 0),
+                                    }))
+                                  }
+                                  className="flex-1 h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50"
+                                />
+                                <span className="text-xs text-muted-foreground">%</span>
+                              </div>
                             </div>
 
                             {/* 길드 경험치 부스터 */}
-                            <div className="p-3 rounded-md bg-secondary/30 border border-border/40">
-                              <label className="flex items-center gap-2 cursor-pointer">
+                            <div className="space-y-2 p-3 rounded-md bg-secondary/30 border border-border/40">
+                              <label className="flex items-center justify-between gap-2 cursor-pointer">
+                                <span className="text-sm text-foreground">길드 경험치 부스터 적용</span>
                                 <input
                                   type="checkbox"
                                   checked={expBoosters.guildBoosterEnabled}
                                   onChange={(e) =>
                                     setExpBoosters((p) => ({ ...p, guildBoosterEnabled: e.target.checked }))
                                   }
-                                  className="w-4 h-4 accent-primary shrink-0"
+                                  className="w-4 h-4 accent-primary"
                                 />
-                                <span className="text-sm text-foreground flex-1">길드 경험치 부스터</span>
-                                <select
+                              </label>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground w-14">수치</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step={5}
                                   disabled={!expBoosters.guildBoosterEnabled}
                                   value={expBoosters.guildBoosterValue}
                                   onChange={(e) =>
                                     setExpBoosters((p) => ({
                                       ...p,
-                                      guildBoosterValue: Number(e.target.value),
+                                      guildBoosterValue: Math.max(0, Number(e.target.value) || 0),
                                     }))
                                   }
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50 min-w-[88px] text-right"
-                                >
-                                  {[5, 10, 15, 20, 25].map((v) => (
-                                    <option key={v} value={v}>
-                                      {v}%
-                                    </option>
-                                  ))}
-                                </select>
-                              </label>
+                                  className="flex-1 h-8 px-2 rounded-md bg-background border border-border/50 text-sm font-mono text-foreground disabled:opacity-50"
+                                />
+                                <span className="text-xs text-muted-foreground">%</span>
+                              </div>
+                            </div>
+
+                            <div className="pt-1">
+                              <div className="text-[11px] text-muted-foreground/80 leading-relaxed">
+                                합산 경험치% × ½ 만큼 외부 공격력%에 더해집니다 (생각하는 모자 유물 장착 시).
+                              </div>
                             </div>
 
                             {/* 향후 다른 그룹용 구분선 */}
