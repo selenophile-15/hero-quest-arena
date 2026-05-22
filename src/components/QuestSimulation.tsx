@@ -393,7 +393,7 @@ export default function QuestSimulation() {
   const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
   const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
-  const [selectedBooster, setSelectedBooster] = useState<"none" | "normal" | "super" | "mega">("none");
+  const [selectedBooster, setSelectedBooster] = useState<"none" | "normal" | "super" | "mega" | "xp_normal" | "xp_super" | "xp_mega">("none");
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
   const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>("random");
