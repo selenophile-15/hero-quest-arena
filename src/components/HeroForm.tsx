@@ -929,7 +929,8 @@ export default function HeroForm({
                   loading="eager"
                   decoding="sync"
                   onError={(e) => {
-                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                    if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                      e.currentTarget.src = "/images/fallback.svg";
                   }}
                 />
               ) : (
@@ -968,7 +969,8 @@ export default function HeroForm({
                     loading="eager"
                     decoding="sync"
                     onError={(e) => {
-                      if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                      if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                        e.currentTarget.src = "/images/fallback.svg";
                     }}
                   />
                 </div>
@@ -1281,7 +1283,8 @@ export default function HeroForm({
                         loading="eager"
                         decoding="sync"
                         onError={(e) => {
-                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                          if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                            e.currentTarget.src = "/images/fallback.svg";
                         }}
                       />
                     ) : null}
@@ -1313,11 +1316,11 @@ export default function HeroForm({
               const grade = skillData?.["희귀도"] || "";
               const gradeClass =
                 grade === "에픽"
-                  ? "bg-yellow-600/60 text-yellow-100"
+                  ? "bg-yellow-600 text-yellow-100"
                   : grade === "희귀"
-                    ? "bg-cyan-700/60 text-cyan-100"
+                    ? "bg-cyan-700 text-cyan-100"
                     : grade === "일반"
-                      ? "bg-amber-800/40 text-foreground"
+                      ? "bg-amber-800 text-amber-100"
                       : "";
 
               const commonThresholds: number[] =
@@ -1359,7 +1362,8 @@ export default function HeroForm({
                         loading="eager"
                         decoding="sync"
                         onError={(e) => {
-                          if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                          if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                            e.currentTarget.src = "/images/fallback.svg";
                         }}
                       />
                     ) : null}
@@ -1468,7 +1472,8 @@ export default function HeroForm({
                             loading="eager"
                             decoding="sync"
                             onError={(e) => {
-                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                              if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                e.currentTarget.src = "/images/fallback.svg";
                             }}
                           />
                         )}
@@ -1484,7 +1489,8 @@ export default function HeroForm({
                           loading="eager"
                           decoding="sync"
                           onError={(e) => {
-                            if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                            if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                              e.currentTarget.src = "/images/fallback.svg";
                           }}
                         />
                       ) : (
@@ -1510,7 +1516,8 @@ export default function HeroForm({
                             loading="eager"
                             decoding="sync"
                             onError={(e) => {
-                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                              if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                e.currentTarget.src = "/images/fallback.svg";
                             }}
                           />
                         ) : (
@@ -1538,7 +1545,8 @@ export default function HeroForm({
                                   loading="eager"
                                   decoding="sync"
                                   onError={(e) => {
-                                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                                    if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                      e.currentTarget.src = "/images/fallback.svg";
                                   }}
                                 />
                               );
@@ -1551,7 +1559,8 @@ export default function HeroForm({
                                 loading="eager"
                                 decoding="sync"
                                 onError={(e) => {
-                                  if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                                  if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                    e.currentTarget.src = "/images/fallback.svg";
                                 }}
                               />
                             ) : (
@@ -1573,7 +1582,8 @@ export default function HeroForm({
                             loading="eager"
                             decoding="sync"
                             onError={(e) => {
-                              if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                              if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                                e.currentTarget.src = "/images/fallback.svg";
                             }}
                           />
                         ) : (
@@ -1637,7 +1647,8 @@ export default function HeroForm({
                   alt="유물"
                   className="w-4 h-4 inline"
                   onError={(e) => {
-                    if (!e.currentTarget.src.endsWith('/images/fallback.svg')) e.currentTarget.src = '/images/fallback.svg';
+                    if (!e.currentTarget.src.endsWith("/images/fallback.svg"))
+                      e.currentTarget.src = "/images/fallback.svg";
                   }}
                 />
                 유물 효과
