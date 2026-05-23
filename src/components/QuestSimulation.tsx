@@ -2993,7 +2993,11 @@ export default function QuestSimulation() {
                               ? dispSim!.winHeroResults
                               : mainResultsTab === "lose" && dispSim!.loseHeroResults
                                 ? dispSim!.loseHeroResults
-                                : dispSim!.heroResults;
+                                : mainResultsTab === "lose"
+                                  ? null
+                                  : dispSim!.heroResults;
+                          if (!bucketResults)
+                            return <div className="text-center text-xs text-muted-foreground py-4">실패한 판 없음</div>;
                           const sorted = [...bucketResults].sort((a, b) => b.tankingRate - a.tankingRate);
                           const getBarColor = (pct: number) =>
                             pct >= 81
