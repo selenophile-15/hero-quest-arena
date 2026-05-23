@@ -342,8 +342,11 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       if (entry.type !== "retry") currentRound = entry.round;
       lastAction = entry;
       if (entry.type === "retry") {
-        // Reset mob HP for the retry battle — will be updated by the next "전투 시작" event
+        // Reset mob HP and all hero HP to full for the retry battle
         mobHpCurrent = initialMobHp;
+        activeHeroes.forEach((h) => {
+          heroHp[h.name] = heroMaxHp[h.name];
+        });
         continue;
       }
       // "전투 시작" event carries the actual total HP (including mini-boss multiplier)
@@ -847,11 +850,16 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Heroes */}
-            <div className="flex-1 space-y-2">
-              {activeHeroes.map((h) => {
-                const hp = state.heroHp[h.name] || 0;
-                const maxHp = state.heroMaxHp[h.name] || 1;
+            {/* Heroes — always reserve space for 5 slots */}
+            <div className="flex-1">
+              {Array.from({ length: 5 }).map((_, slotIdx) => {
+                const h = activeHeroes[slotIdx];
+                if (!h) {
+                  return <div key={`empty-${slotIdx}`} className="h-[52px]" />;
+                }
+
+                const hp = state.heroHp[h.name] ?? h.hp ?? 0;
+                const maxHp = state.heroMaxHp[h.name] || h.hp || 1;
                 const hpPct = Math.max(0, (hp / maxHp) * 100);
                 const isDead = hp <= 0;
                 const effect = state.actionEffects.find((e) => e.target === h.name);
@@ -866,7 +874,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                 return (
                   <div
                     key={h.id}
-                    className={`flex items-center gap-1.5 p-1 rounded cursor-pointer transition-all ${isDead ? "opacity-30" : ""} ${isFiltered ? "ring-2 ring-primary bg-primary/10" : "hover:bg-secondary/20"}`}
+                    className={`flex items-center gap-1.5 p-1 rounded cursor-pointer transition-all h-[52px] ${isDead ? "opacity-30" : ""} ${isFiltered ? "ring-2 ring-primary bg-primary/10" : "hover:bg-secondary/20"}`}
                     onClick={() => handleFilterClick(h.name)}
                   >
                     <div
@@ -876,12 +884,20 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
+                        {/* HP value — shifts left when effect is showing */}
                         <span className="text-xs font-bold truncate" style={{ color: getNameColor(h.name) }}>
                           {h.name}
                         </span>
-                        <span className="text-xs font-bold font-mono" style={{ color: hpColor(hpPct) }}>
-                          {Math.round(hp).toLocaleString()}
-                        </span>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {effect && (
+                            <span className={`text-[11px] font-bold font-mono ${effect.color} animate-bounce`}>
+                              {effect.value}
+                            </span>
+                          )}
+                          <span className="text-xs font-bold font-mono" style={{ color: hpColor(hpPct) }}>
+                            {Math.round(hp).toLocaleString()}
+                          </span>
+                        </div>
                       </div>
                       <div className="h-2 bg-secondary rounded-full overflow-hidden">
                         <div
@@ -890,29 +906,27 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                         />
                       </div>
                     </div>
-                    {effect && (
-                      <span className={`text-xs font-bold font-mono ${effect.color} animate-bounce shrink-0`}>
-                        {effect.value}
-                      </span>
-                    )}
                     {isFiltered && <span className="text-[10px] text-primary shrink-0">🔍</span>}
                   </div>
                 );
               })}
             </div>
 
-            {/* VS */}
-            <div className="flex flex-col items-center justify-center py-2 shrink-0">
+            {/* VS — vertically centered against 5-slot hero area */}
+            <div className="flex items-center justify-center shrink-0" style={{ height: `${5 * 52}px` }}>
               <span className="text-lg text-muted-foreground/30">⚔</span>
             </div>
 
-            {/* Monster */}
+            {/* Monster — fixed height matching 5-slot hero area, centered */}
             <div
-              className={`w-36 shrink-0 cursor-pointer transition-all ${filter?.name === monsterName ? "ring-2 ring-primary rounded-lg" : ""}`}
+              className={`w-36 shrink-0 cursor-pointer transition-all flex items-center justify-center ${filter?.name === monsterName ? "ring-2 ring-primary rounded-lg" : ""}`}
+              style={{ height: `${5 * 52}px` }}
               onClick={() => handleFilterClick(monsterName)}
             >
+              {/* Fixed-size inner box — pre-reserves space for damage readout to prevent resize */}
               <div
-                className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? "border-primary" : "border-yellow-500/20"} ${state.mobHpCurrent <= 0 ? "opacity-30" : ""}`}
+                className={`w-full p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? "border-primary" : "border-yellow-500/20"} ${state.mobHpCurrent <= 0 ? "opacity-30" : ""}`}
+                style={{ minHeight: "140px" }}
               >
                 <div className="flex justify-center mb-1">
                   {monsterImage ? (
@@ -928,29 +942,29 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     {monsterName}
                   </span>
                 </div>
-                <div className="text-center text-xs font-bold font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
-                  {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
+                {/* HP value row — effect number appears inline to the left, no layout shift */}
+                <div className="flex items-center justify-center gap-1 mb-1" style={{ minHeight: "20px" }}>
+                  {state.actionEffects.find((e) => e.target === "__monster__") && (
+                    <span
+                      className={`text-xs font-bold font-mono ${state.actionEffects.find((e) => e.target === "__monster__")!.color} animate-bounce`}
+                    >
+                      {state.actionEffects.find((e) => e.target === "__monster__")!.value}
+                    </span>
+                  )}
+                  <span className="text-xs font-bold font-mono" style={{ color: hpColor(mobHpPct) }}>
+                    {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
+                  </span>
                 </div>
-                <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
+                {/* Reserve a fixed line for the filter badge so it never causes resize */}
+                <div className="h-2.5 bg-secondary rounded-full overflow-hidden mb-1">
                   <div
                     className="h-full rounded-full transition-all duration-300"
                     style={{ width: `${mobHpPct}%`, backgroundColor: hpColor(mobHpPct) }}
                   />
                 </div>
-                {state.actionEffects.find((e) => e.target === "__monster__") && (
-                  <div className="text-center mt-1">
-                    <span
-                      className={`text-sm font-bold font-mono ${state.actionEffects.find((e) => e.target === "__monster__")!.color} animate-bounce`}
-                    >
-                      {state.actionEffects.find((e) => e.target === "__monster__")!.value}
-                    </span>
-                  </div>
-                )}
-                {filter?.name === monsterName && (
-                  <div className="text-center mt-1">
-                    <span className="text-[10px] text-primary">🔍 필터</span>
-                  </div>
-                )}
+                <div style={{ minHeight: "16px" }} className="flex items-center justify-center">
+                  {filter?.name === monsterName && <span className="text-[10px] text-primary">🔍 필터</span>}
+                </div>
               </div>
             </div>
           </div>
