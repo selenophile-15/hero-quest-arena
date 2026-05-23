@@ -393,7 +393,9 @@ export default function QuestSimulation() {
   const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
   const [buffSummary, setBuffSummary] = useState<PartyBuffSummary | null>(null);
   const [buffBreakdownOpen, setBuffBreakdownOpen] = useState(false);
-  const [selectedBooster, setSelectedBooster] = useState<"none" | "normal" | "super" | "mega" | "xp_normal" | "xp_super" | "xp_mega">("none");
+  const [selectedBooster, setSelectedBooster] = useState<
+    "none" | "normal" | "super" | "mega" | "xp_normal" | "xp_super" | "xp_mega"
+  >("none");
   const [combatLog, setCombatLog] = useState<CombatLogEntry[] | null>(null);
   const [combatLogDialogOpen, setCombatLogDialogOpen] = useState(false);
   const [selectedMiniBoss, setSelectedMiniBoss] = useState<MiniBossType>("random");
@@ -445,7 +447,8 @@ export default function QuestSimulation() {
 
   // Display source: when retry-only is active and retry data exists, swap the entire result.
   const hasRetry = !!simResult?.retryResult;
-  const dispSim = retryOnly && simResult?.retryResult ? simResult.retryResult : simResult;
+  const dispSim =
+    retryOnly && simResult?.retryResult ? simResult.retryResult : (simResult?.combinedResult ?? simResult);
   const retryBoosterActive = retryOnly && hasRetry;
   // Extra +20% atk/def from the implicit retry booster (stacked on top of partyAtkMult/partyDefMult)
   const RETRY_BOOSTER_EXTRA = 0.2;
@@ -1403,43 +1406,47 @@ export default function QuestSimulation() {
                                   </span>
                                   <span className="font-medium">부스터 없음</span>
                                 </button>
-                                {(["normal", "super", "mega", "xp_normal", "xp_super", "xp_mega"] as const).map((bType) => {
-                                  const names: Record<string, string> = {
-                                    normal: "전투력 부스터",
-                                    super: "슈퍼 전투력 부스터",
-                                    mega: "메가 전투력 부스터",
-                                    xp_normal: "경험치 부스터",
-                                    xp_super: "슈퍼 경험치 부스터",
-                                    xp_mega: "메가 경험치 부스터",
-                                  };
-                                  const descs: Record<string, string> = {
-                                    normal: "공/방 +20%",
-                                    super: "공/방 +40% / 치확 +10%",
-                                    mega: "공/방 +80% / 치확 +25% / 치명타 대미지 +50%",
-                                    xp_normal: "경험치 +50%",
-                                    xp_super: "경험치 +100%",
-                                    xp_mega: "경험치 +200%",
-                                  };
-                                  const bEntry = commonData?.boosters?.[names[bType]];
-                                  return (
-                                    <button
-                                      key={bType}
-                                      onClick={() => {
-                                        setSelectedBooster(bType);
-                                        setBoosterOpen(false);
-                                      }}
-                                      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? "bg-primary/20 text-primary" : "text-foreground hover:bg-secondary"}`}
-                                    >
-                                      {bEntry && <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />}
-                                      <div className="text-left min-w-0">
-                                        <div className="font-medium">{names[bType]}</div>
-                                        <div className="text-xs text-foreground/60 dark:text-foreground/50 whitespace-nowrap">
-                                          {descs[bType]}
+                                {(["normal", "super", "mega", "xp_normal", "xp_super", "xp_mega"] as const).map(
+                                  (bType) => {
+                                    const names: Record<string, string> = {
+                                      normal: "전투력 부스터",
+                                      super: "슈퍼 전투력 부스터",
+                                      mega: "메가 전투력 부스터",
+                                      xp_normal: "경험치 부스터",
+                                      xp_super: "슈퍼 경험치 부스터",
+                                      xp_mega: "메가 경험치 부스터",
+                                    };
+                                    const descs: Record<string, string> = {
+                                      normal: "공/방 +20%",
+                                      super: "공/방 +40% / 치확 +10%",
+                                      mega: "공/방 +80% / 치확 +25% / 치명타 대미지 +50%",
+                                      xp_normal: "경험치 +50%",
+                                      xp_super: "경험치 +100%",
+                                      xp_mega: "경험치 +200%",
+                                    };
+                                    const bEntry = commonData?.boosters?.[names[bType]];
+                                    return (
+                                      <button
+                                        key={bType}
+                                        onClick={() => {
+                                          setSelectedBooster(bType);
+                                          setBoosterOpen(false);
+                                        }}
+                                        className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${selectedBooster === bType ? "bg-primary/20 text-primary" : "text-foreground hover:bg-secondary"}`}
+                                      >
+                                        {bEntry && (
+                                          <img src={bEntry.image} alt="" className="w-8 h-8 rounded shrink-0" />
+                                        )}
+                                        <div className="text-left min-w-0">
+                                          <div className="font-medium">{names[bType]}</div>
+                                          <div className="text-xs text-foreground/60 dark:text-foreground/50 whitespace-nowrap">
+                                            {descs[bType]}
+                                          </div>
                                         </div>
-                                      </div>
-                                    </button>
-                                  );
-                                })}
+                                      </button>
+                                    );
+                                  },
+                                )}
                               </div>
                             </PopoverContent>
                           </Popover>
