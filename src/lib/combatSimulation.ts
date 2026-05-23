@@ -3961,8 +3961,10 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     heroTier.push(tier);
 
     if (ps) {
-      heroAtkVal.push(ps.atk);
-      heroDefVal.push(ps.def);
+      const extraAtk = booster.extraAtkBonus || 0;
+      const extraDef = booster.extraDefBonus || 0;
+      heroAtkVal.push(Math.round(ps.atk * (1 + extraAtk)));
+      heroDefVal.push(Math.round(ps.def * (1 + extraDef)));
       heroMaxHp.push(ps.hp);
       heroHp.push(ps.hp);
       heroCrit.push(Math.min(ps.crit / 100, 1.0));
