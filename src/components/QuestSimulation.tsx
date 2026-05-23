@@ -57,6 +57,7 @@ import {
   type MiniBossType,
   type BoosterType,
   type CombatLogEntry,
+  type PrecomputedHeroStats,
 } from "@/lib/combatSimulation";
 import HeroForm from "@/components/HeroForm";
 import ChampionForm from "@/components/ChampionForm";
@@ -388,6 +389,7 @@ export default function QuestSimulation() {
   // Simulation state
   const [simRunning, setSimRunning] = useState(false);
   const [simResult, setSimResult] = useState<CombatSimResult | null>(null);
+  const [precomputedStats, setPrecomputedStats] = useState<PrecomputedHeroStats[]>([]);
 
   // Party buff state
   const [buffedStats, setBuffedStats] = useState<BuffedHeroStats[]>([]);
@@ -710,6 +712,7 @@ export default function QuestSimulation() {
         isTerrorTower,
         precomputedStats: precomputed,
       });
+      setPrecomputedStats(precomputed);
       setSimResult(result);
       setSimRunning(false);
     }, 150);
@@ -1196,6 +1199,7 @@ export default function QuestSimulation() {
                   questTypeKey: selectedQuestType,
                   regionName: currentRegion.name,
                   isTerrorTower,
+                  precomputedStats,
                 });
                 setCombatLog(entries);
                 setCombatLogDialogOpen(true);
@@ -5371,6 +5375,7 @@ export default function QuestSimulation() {
                         questTypeKey: selectedQuestType,
                         regionName: currentRegion.name,
                         isTerrorTower: isTerrorTower2,
+                        precomputedStats,
                       });
                       setCombatLog(entries);
                     }}
