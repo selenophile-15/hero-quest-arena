@@ -2172,20 +2172,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         const isCrit = Math.random() < totalCritChance || guaranteedCrit[jj];
 
-        // Snapshot conqueror stack for this attack (0..4)
+        // Snapshot conqueror stack for this attack (0..4) — non-crit 리셋 추적용
         const preStacks = heroIsConquistador[jj] ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25)) : 0;
 
         let damage: number;
         if (isCrit) {
+          // 정복자: 스택을 먼저 올리고 올라간 스택 보너스로 대미지 계산
+          if (heroIsConquistador[jj]) {
+            consecutiveCritBonus[jj] = Math.min(consecutiveCritBonus[jj] + 0.25, 1);
+          }
           const critMult = heroCritMult[jj] + consecutiveCritBonus[jj];
           // Samurai/Daimyo round 1: ignore barrier
           if (round === 1 && (heroIsSamurai[jj] || heroIsDaimyo[jj])) {
             damage = baseHeroDmg * critMult;
           } else {
             damage = baseHeroDmg * critMult * barrierMod;
-            if (heroIsConquistador[jj]) {
-              consecutiveCritBonus[jj] = Math.min(consecutiveCritBonus[jj] + 0.25, 1);
-            }
           }
         } else {
           damage = baseHeroDmg * barrierMod;
@@ -2212,13 +2213,15 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
 
         // Conqueror per-stack tracking
+        // 치명타 → 스택 증가 후 값(post-increment)으로 기록, 일반 공격 → 항상 스택 0
         if (heroIsConquistador[jj]) {
-          simConqStackTurns[preStacks][jj]++;
-          simConqStackAttackCount[preStacks][jj]++;
-          simConqStackTotalDmgAccum[preStacks][jj] += damage;
+          const effectiveStacks = isCrit ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25)) : 0;
+          simConqStackTurns[effectiveStacks][jj]++;
+          simConqStackAttackCount[effectiveStacks][jj]++;
+          simConqStackTotalDmgAccum[effectiveStacks][jj] += damage;
           if (isCrit) {
-            simConqStackCritDmgAccum[preStacks][jj] += damage;
-            simConqStackCritCount[preStacks][jj]++;
+            simConqStackCritDmgAccum[effectiveStacks][jj] += damage;
+            simConqStackCritCount[effectiveStacks][jj]++;
           }
         }
 
@@ -2889,7 +2892,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       conquerorStackCritDmg: heroIsConquistador[i]
         ? (() => {
             const avgBaseAtk = attackCountTotal[i] > 0 ? baseAtkSumTotal[i] / attackCountTotal[i] : 0;
-            return [0, 1, 2, 3, 4].map((s) => Math.round(avgBaseAtk * (heroCritMult[i] + s * 0.25)));
+            return [0, 1, 2, 3, 4].map((s) =>
+              s === 0 ? Math.round(avgBaseAtk) : Math.round(avgBaseAtk * (heroCritMult[i] + s * 0.25)),
+            );
           })()
         : undefined,
       conquerorStackAvgDmg: heroIsConquistador[i]
