@@ -2876,8 +2876,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       rudoBonusDmgAvg: actualSimCount > 0 ? Math.round(rudoBonusDmgAccum[i] / actualSimCount) : 0,
       isRudoInParty: rudoBonusBase > 0,
       // Lord saved damage (when this hero was protected)
-      lordSavedSingleAvgDmg: actualSimCount > 0 ? Math.round(lordSavedSingleDmgAccum[i] / actualSimCount) : 0,
-      lordSavedAoeAvgDmg: actualSimCount > 0 ? Math.round(lordSavedAoeDmgAccum[i] / actualSimCount) : 0,
+      lordSavedSingleAvgDmg:
+        lordProtectedSingle[i] > 0 ? Math.round(lordSavedSingleDmgAccum[i] / lordProtectedSingle[i]) : 0,
+      lordSavedAoeAvgDmg: lordProtectedAoe[i] > 0 ? Math.round(lordSavedAoeDmgAccum[i] / lordProtectedAoe[i]) : 0,
       // Conqueror per-stack metrics
       conquerorStackTurnRate: heroIsConquistador[i]
         ? (() => {
