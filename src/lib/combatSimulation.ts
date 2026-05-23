@@ -3542,13 +3542,31 @@ function runRandomMiniBossSimulation(
  * 판이므로 실패 bucket을 오염시키기 때문이다.
  */
 function mergeSimResults(first: SimulationResult, retry: SimulationResult): SimulationResult {
-  const firstWin = first.winSimCount ?? 0;
-  const retryWin = retry.winSimCount ?? 0;
-  const retryLose = retry.loseSimCount ?? 0;
+  // retry.totalSimulations = 첫 시도에서 실패해서 재시도한 판 수.
+  // combinedResult는 추가 판수가 아니라 원래 시뮬레이션 전체 판수 기준이어야 함.
+  // 예: 전체 50,000판 / 첫 실패 144판 / 재시도 성공 144판이면
+  // 최종 성공 50,000판 / 최종 실패 0판이어야 함.
+  const firstTotal = first.totalSimulations ?? 0;
+  const retryTotal = retry.totalSimulations ?? 0;
 
-  const totalAll = firstWin + retryWin + retryLose;
-  const totalWin = firstWin + retryWin;
-  const totalLose = retryLose;
+  // 첫 시도 성공 판 = 전체 원판수 - 재시도 대상 판수
+  const firstWin = Math.max(0, firstTotal - retryTotal);
+
+  const retryWin = Math.max(
+    0,
+    retry.winSimCount ?? Math.round(((retry.rawWinRate ?? retry.winRate ?? 0) / 100) * retryTotal),
+  );
+
+  const retryLose = Math.max(0, retry.loseSimCount ?? retryTotal - retryWin);
+
+  // 전체 판수는 원래 시뮬레이션 판수 그대로 유지
+  const totalAll = firstTotal;
+
+  // 최종 성공 = 첫 시도 성공 + 재시도 성공
+  const totalWin = Math.min(totalAll, firstWin + retryWin);
+
+  // 최종 실패 = 재시도까지 했는데도 실패한 판
+  const totalLose = Math.max(0, totalAll - totalWin);
 
   const wAvg = (aVal: number, aW: number, bVal: number, bW: number): number => {
     const w = aW + bW;
