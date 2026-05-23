@@ -970,6 +970,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   let lordPresent = false;
   let lordHero = -1;
   let fateweaverPresent = false;
+  let chronoRetryPresent = false; // 재시도만, 보너스 없음
   // Polonia loot state
   let poloniaActive = false;
   let poloniaBaseChance = 0;
@@ -983,8 +984,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       lordPresent = true;
       lordHero = i;
     }
-    if (isClass(activeHeroes[i], "크로노맨서", "페이트위버", "Chronomancer", "Fateweaver")) {
+    if (isClass(activeHeroes[i], "페이트위버", "Fateweaver")) {
       fateweaverPresent = true;
+    } else if (isClass(activeHeroes[i], "크로노맨서", "Chronomancer")) {
+      chronoRetryPresent = true;
     }
   }
 
@@ -1019,13 +1022,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     }
 
     // Use precomputed ATK/DEF/HP directly (already includes champion+aurasong+booster)
-    // Extra retry bonuses (e.g. Fateweaver +20%) must still be applied on top
-    let extraAtkBonus = 0;
-    let extraDefBonus = 0;
-    if (booster.extraAtkBonus) extraAtkBonus += booster.extraAtkBonus;
-    if (booster.extraDefBonus) extraDefBonus += booster.extraDefBonus;
-    var finalAtk: number[] = heroAtk.map((v) => v * (1 + extraAtkBonus));
-    var finalDef: number[] = heroDef.map((v) => v * (1 + extraDefBonus));
+    var finalAtk: number[] = heroAtk.map((v) => v);
+    var finalDef: number[] = heroDef.map((v) => v);
     var finalHp: number[] = heroHpMax.map((v) => v);
   } else {
     // ─── Full champion bonus computation (fallback when no precomputed stats) ───
@@ -2641,10 +2639,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // Fateweaver/Chronomancer retry: re-simulate ONLY the actually-failed plays
   // with the +20%/+20% retry booster stacked. Same miniBoss config is inherited via spread.
   const failedCount = actualSimCount - timesQuestWon;
-  if (fateweaverPresent && rawWinRate < 100 && failedCount > 0 && !config._isRetry && !config._disableRetry) {
+  if (
+    (fateweaverPresent || chronoRetryPresent) &&
+    rawWinRate < 100 &&
+    failedCount > 0 &&
+    !config._isRetry &&
+    !config._disableRetry
+  ) {
     const retryResult = runCombatSimulation({
       ...config,
-      booster: getRetryBooster(booster),
+      booster: fateweaverPresent ? getRetryBooster(booster) : booster,
       simulationCount: failedCount,
       _isRetry: true,
     });
@@ -2778,7 +2782,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       berserkerAtkBonus,
       berserkerEvaBonus,
       chronomancerRetries:
-        fateweaverPresent && isClass(h, "크로노맨서", "페이트위버", "운명직공", "Chronomancer", "Fateweaver")
+        (fateweaverPresent || chronoRetryPresent) &&
+        isClass(h, "크로노맨서", "페이트위버", "운명직공", "Chronomancer", "Fateweaver")
           ? Math.round(((actualSimCount - timesQuestWon) / actualSimCount) * 100 * 10) / 10
           : undefined,
       chronomancerRetrySuccessRate: retryWinRate,
@@ -3494,14 +3499,13 @@ function runRandomMiniBossSimulation(
   // ─── Fateweaver/Chronomancer retry on aggregated random-miniboss runs ───
   let finalWinRate = combinedWinRate;
   let retryResultFull: SimulationResult | undefined;
-  const fateweaverPresent = activeHeroes.some((h) =>
-    isClass(h, "크로노맨서", "페이트위버", "운명직공", "Chronomancer", "Fateweaver"),
-  );
+  const fateweaverPresent = activeHeroes.some((h) => isClass(h, "페이트위버", "운명직공", "Fateweaver"));
+  const chronoRetryPresent = !fateweaverPresent && activeHeroes.some((h) => isClass(h, "크로노맨서", "Chronomancer"));
   const failedCount = totalSims - totalWins;
-  if (fateweaverPresent && failedCount > 0 && !config._isRetry && !config._disableRetry) {
+  if ((fateweaverPresent || chronoRetryPresent) && failedCount > 0 && !config._isRetry && !config._disableRetry) {
     const retryResult = runCombatSimulation({
       ...config,
-      booster: getRetryBooster(config.booster),
+      booster: fateweaverPresent ? getRetryBooster(config.booster) : config.booster,
       simulationCount: failedCount,
       _isRetry: true,
     });
@@ -3963,8 +3967,24 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     if (ps) {
       const extraAtk = booster.extraAtkBonus || 0;
       const extraDef = booster.extraDefBonus || 0;
-      heroAtkVal.push(Math.round(ps.atk * (1 + extraAtk)));
-      heroDefVal.push(Math.round(ps.def * (1 + extraDef)));
+      const auraFlatAtk =
+        ps.atkConstant != null && ps.commonAtkPct != null && ps.partyAtkMult != null
+          ? ps.atk - ps.atkConstant * (1 + ps.commonAtkPct) * ps.partyAtkMult
+          : 0;
+      const auraFlatDef =
+        ps.defConstant != null && ps.commonDefPct != null && ps.partyDefMult != null
+          ? ps.def - ps.defConstant * (1 + ps.commonDefPct) * ps.partyDefMult
+          : 0;
+      const retryAtk =
+        extraAtk > 0 && ps.atkConstant != null && ps.commonAtkPct != null && ps.partyAtkMult != null
+          ? Math.round(ps.atkConstant * (1 + ps.commonAtkPct + extraAtk) * ps.partyAtkMult + auraFlatAtk)
+          : ps.atk;
+      const retryDef =
+        extraDef > 0 && ps.defConstant != null && ps.commonDefPct != null && ps.partyDefMult != null
+          ? Math.round(ps.defConstant * (1 + ps.commonDefPct + extraDef) * ps.partyDefMult + auraFlatDef)
+          : ps.def;
+      heroAtkVal.push(retryAtk);
+      heroDefVal.push(retryDef);
       heroMaxHp.push(ps.hp);
       heroHp.push(ps.hp);
       heroCrit.push(Math.min(ps.crit / 100, 1.0));
@@ -4708,11 +4728,13 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   // If the battle was lost (monster still alive or round limit) and a
   // Chronomancer / Fateweaver is in the party, run a second combat and append
   // it to the log with a "시간 되감기" separator entry.
+  const hasFateweaver =
+    !config._isRetry && activeHeroes.some((h) => isClass(h, "페이트위버", "운명직공", "Fateweaver"));
   const hasChrono =
-    !config._isRetry &&
-    activeHeroes.some((h) => isClass(h, "크로노맨서", "페이트위버", "운명직공", "Chronomancer", "Fateweaver"));
+    !config._isRetry && !hasFateweaver && activeHeroes.some((h) => isClass(h, "크로노맨서", "Chronomancer"));
   const lastEntry = log[log.length - 1];
-  const firstAttemptLost = hasChrono && lastEntry && lastEntry.type === "result" && !lastEntry.detail.includes("승리");
+  const firstAttemptLost =
+    (hasFateweaver || hasChrono) && lastEntry && lastEntry.type === "result" && !lastEntry.detail.includes("승리");
 
   if (firstAttemptLost) {
     // Determine the retry mini-boss (if original was "random", re-roll randomly)
@@ -4723,7 +4745,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     }
 
     // Separator — "시간 되감기!"
-    const retryBooster = getRetryBooster(booster);
+    const retryBooster = hasFateweaver ? getRetryBooster(booster) : booster;
     const boosterLabel =
       retryBooster.type === "mega"
         ? "메가 부스터"
