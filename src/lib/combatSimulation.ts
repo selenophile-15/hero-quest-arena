@@ -3703,29 +3703,18 @@ function mergeSimResults(first: SimulationResult, retry: SimulationResult): Simu
     };
   };
 
-  // 전체 모집단 = 첫승판 + 재시도 전체. 첫 시도 패배 판은 재시도 판으로 대체되므로 제외.
-  // → 첫 시도 측 턴 통계는 first.winRounds(첫승만)를 사용해야 함.
-  const firstWinAvgRounds = first.winRounds?.avg ?? 0;
-  const firstWinMinRounds = first.winRounds?.min;
-  const firstWinMaxRounds = first.winRounds?.max ?? 0;
-
   const mergedAvgRounds =
     totalAll > 0
-      ? Math.round(((firstWinAvgRounds * firstWin + retry.avgRounds * (retryWin + retryLose)) / totalAll) * 100) / 100
+      ? Math.round(((first.avgRounds * firstWin + retry.avgRounds * (retryWin + retryLose)) / totalAll) * 100) / 100
       : 0;
-  const mergedMinRounds =
-    firstWin > 0 && firstWinMinRounds !== undefined
-      ? Math.min(firstWinMinRounds, retry.minRounds || Infinity)
-      : retry.minRounds;
-  const mergedMaxRounds = Math.max(firstWin > 0 ? firstWinMaxRounds : 0, retry.maxRounds);
 
   return {
     winRate: first.winRate,
     rawWinRate: first.rawWinRate,
     retryWinRate: first.retryWinRate,
     avgRounds: mergedAvgRounds,
-    minRounds: mergedMinRounds === Infinity ? 0 : mergedMinRounds,
-    maxRounds: mergedMaxRounds,
+    minRounds: Math.min(first.minRounds, retry.minRounds),
+    maxRounds: Math.max(first.maxRounds, retry.maxRounds),
     heroResults: mergedHeroResults,
     winHeroResults: mergedWinHeroResults,
     loseHeroResults: mergedLoseHeroResults,
@@ -3733,7 +3722,9 @@ function mergeSimResults(first: SimulationResult, retry: SimulationResult): Simu
     loseSimCount: totalLose,
     roundLimitRate:
       totalAll > 0
-        ? ((retry.roundLimitRate / 100) * (retryWin + retryLose) / totalAll) * 100
+        ? (((first.roundLimitRate / 100) * firstWin + (retry.roundLimitRate / 100) * (retryWin + retryLose)) /
+            totalAll) *
+          100
         : 0,
     totalSimulations: totalAll,
     retrySimulations: first.retrySimulations,
