@@ -1019,8 +1019,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     }
 
     // Use precomputed ATK/DEF/HP directly (already includes champion+aurasong+booster)
-    var finalAtk: number[] = heroAtk.map((v) => v);
-    var finalDef: number[] = heroDef.map((v) => v);
+    // Extra retry bonuses (e.g. Fateweaver +20%) must still be applied on top
+    let extraAtkBonus = 0;
+    let extraDefBonus = 0;
+    if (booster.extraAtkBonus) extraAtkBonus += booster.extraAtkBonus;
+    if (booster.extraDefBonus) extraDefBonus += booster.extraDefBonus;
+    var finalAtk: number[] = heroAtk.map((v) => v * (1 + extraAtkBonus));
+    var finalDef: number[] = heroDef.map((v) => v * (1 + extraDefBonus));
     var finalHp: number[] = heroHpMax.map((v) => v);
   } else {
     // ─── Full champion bonus computation (fallback when no precomputed stats) ───
