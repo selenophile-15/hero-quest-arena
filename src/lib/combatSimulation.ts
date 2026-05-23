@@ -4749,13 +4749,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       _isRetry: true,
     });
 
-    // Offset retry round numbers to continue from where the first attempt ended
-    // so the log viewer keeps round numbers monotonically increasing.
-    const maxFirstRound = lastEntry.round;
+    // Retry rounds start fresh from 1 (setup entries stay at round 0).
     for (const entry of retryLog) {
-      // round 0 = setup entries, keep as 0; combat rounds offset
-      const offsetRound = entry.round > 0 ? entry.round + maxFirstRound : 0;
-      log.push({ ...entry, round: offsetRound });
+      log.push({ ...entry });
     }
   }
 

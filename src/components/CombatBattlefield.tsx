@@ -131,6 +131,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
   // Classify a log entry into a category for the gear-icon filter
   const classifyEntry = useCallback((entry: CombatLogEntry): CategoryKey => {
+    if (entry.type === "retry") return "retry";
     if (entry.type === "hero_attack" || entry.type === "monster_attack") return "attacks";
     if (entry.type === "result") return "result";
     if (entry.type === "heal") return "heal";
@@ -243,13 +244,26 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     return name === monsterName || name.includes(baseMonsterName) || name.includes("몬스터");
   };
 
-  // Group log entries by round
+  // Group log entries by round, with retry separator as standalone groups
   const roundGroups = useMemo(() => {
-    const groups: { round: number; entries: { entry: CombatLogEntry; idx: number }[] }[] = [];
+    const groups: {
+      round: number;
+      entries: { entry: CombatLogEntry; idx: number }[];
+      isRetry?: boolean;
+      isAfterRetry?: boolean;
+    }[] = [];
     let currentGroup: (typeof groups)[0] | null = null;
+    let afterRetry = false;
     log.forEach((entry, idx) => {
-      if (!currentGroup || currentGroup.round !== entry.round) {
-        currentGroup = { round: entry.round, entries: [] };
+      // retry separator → its own standalone group
+      if (entry.type === "retry") {
+        afterRetry = true;
+        currentGroup = null;
+        groups.push({ round: entry.round, entries: [{ entry, idx }], isRetry: true });
+        return;
+      }
+      if (!currentGroup || currentGroup.round !== entry.round || currentGroup.isRetry) {
+        currentGroup = { round: entry.round, entries: [], isAfterRetry: afterRetry };
         groups.push(currentGroup);
       }
       currentGroup.entries.push({ entry, idx });
@@ -306,15 +320,37 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       heroHp[h.name] = h.hp || 0;
       heroMaxHp[h.name] = h.hp || 0;
     });
-    let mobHpCurrent = monsterHp;
+    // Use the first "전투 시작" entry in the log to get the actual total HP
+    // (which includes mini-boss multipliers), falling back to the prop.
+    let initialMobHp = monsterHp;
+    for (let i = 0; i < log.length; i++) {
+      if (log[i].type === "event" && log[i].detail.includes("전투 시작!")) {
+        const m = log[i].detail.match(/HP:\s*([\d,]+)/);
+        if (m) {
+          initialMobHp = parseInt(m[1].replace(/,/g, ""));
+          break;
+        }
+      }
+    }
+    let mobHpCurrent = initialMobHp;
     let currentRound = 0;
     let lastAction: CombatLogEntry | null = null;
     const actionEffects: { target: string; value: string; color: string; key: number }[] = [];
 
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
       const entry = log[i];
-      currentRound = entry.round;
+      if (entry.type !== "retry") currentRound = entry.round;
       lastAction = entry;
+      if (entry.type === "retry") {
+        // Reset mob HP for the retry battle — will be updated by the next "전투 시작" event
+        mobHpCurrent = initialMobHp;
+        continue;
+      }
+      // "전투 시작" event carries the actual total HP (including mini-boss multiplier)
+      if (entry.type === "event" && entry.detail.includes("전투 시작!")) {
+        const m = entry.detail.match(/HP:\s*([\d,]+)/);
+        if (m) mobHpCurrent = parseInt(m[1].replace(/,/g, ""));
+      }
 
       if (entry.type === "monster_attack" && entry.target) {
         const hpMatch = entry.detail.match(/HP: ([\d,\-]+)/);
@@ -381,6 +417,22 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
   const state = getState();
 
+  // Derive actual total monster HP from the log (accounts for mini-boss multipliers).
+  // The log always contains a "전투 시작! ... HP: X" event at round 0.
+  // For retry battles there may be a second such entry — use the one that corresponds
+  // to whichever attempt is currently being viewed (before or after the retry separator).
+  const actualMonsterHp = useMemo(() => {
+    // Find the last "전투 시작" entry at or before currentIdx
+    let hp = monsterHp;
+    for (let i = 0; i <= currentIdx && i < log.length; i++) {
+      if (log[i].type === "event" && log[i].detail.includes("전투 시작!")) {
+        const m = log[i].detail.match(/HP:\s*([\d,]+)/);
+        if (m) hp = parseInt(m[1].replace(/,/g, ""));
+      }
+    }
+    return hp > 0 ? hp : monsterHp;
+  }, [log, currentIdx, monsterHp]);
+
   useEffect(() => {
     if (playing) {
       timerRef.current = setInterval(() => {
@@ -398,16 +450,29 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     };
   }, [playing, speed, log.length]);
 
+  // Scroll the active log entry into view.
+  // Use 'auto' (instant) instead of 'smooth' so high-speed playback
+  // doesn't queue up animations that lag behind the current index.
   useEffect(() => {
     if (logScrollRef.current) {
       const el = logScrollRef.current.querySelector(`[data-idx="${currentIdx}"]`);
-      el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      el?.scrollIntoView({ block: "nearest", behavior: speed <= 250 ? "smooth" : "auto" });
     }
-  }, [currentIdx]);
+  }, [currentIdx, speed]);
 
-  const mobHpPct = monsterHp > 0 ? Math.max(0, (state.mobHpCurrent / monsterHp) * 100) : 0;
+  const mobHpPct = actualMonsterHp > 0 ? Math.max(0, (state.mobHpCurrent / actualMonsterHp) * 100) : 0;
   const isResult = state.lastAction?.type === "result";
   const isWin = isResult && state.lastAction?.detail.includes("승리");
+  // After a retry the lastAction might be the retry banner itself momentarily —
+  // fall back to scanning the log for the last result entry.
+  const lastResultEntry = useMemo(() => {
+    for (let i = currentIdx; i >= 0; i--) {
+      if (log[i].type === "result") return log[i];
+    }
+    return null;
+  }, [log, currentIdx]);
+  const effectiveIsResult = lastResultEntry !== null && currentIdx >= log.findIndex((e) => e === lastResultEntry);
+  const effectiveIsWin = effectiveIsResult && lastResultEntry?.detail.includes("승리");
 
   // Single toggle filter: click once = filter, click again = clear
   const handleFilterClick = (name: string) => {
@@ -440,6 +505,58 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
   // Parse log entry into structured display
   const renderLogEntry = (entry: CombatLogEntry, idx: number) => {
+    // ── Retry separator banner ──────────────────────────────────────────────
+    if (entry.type === "retry") {
+      const isPast = idx <= currentIdx;
+      const isCurrent = idx === currentIdx;
+      return (
+        <div
+          key={idx}
+          data-idx={idx}
+          onClick={() => {
+            setCurrentIdx(idx);
+            setPlaying(false);
+          }}
+          className={`cursor-pointer transition-opacity ${!isPast ? "opacity-30" : ""}`}
+        >
+          {/* Top divider line */}
+          <div className={`mx-3 my-1 h-px ${isLight ? "bg-violet-400/60" : "bg-violet-500/50"}`} />
+          <div
+            className={`mx-2 mb-1 rounded-lg px-3 py-2 flex items-center gap-2.5
+            ${
+              isLight
+                ? "bg-violet-100 border border-violet-300 text-violet-800"
+                : "bg-violet-950/60 border border-violet-500/50 text-violet-200"
+            }
+            ${isCurrent ? "ring-2 ring-violet-400" : ""}
+          `}
+          >
+            {/* Clockwise-rewind icon via inline SVG */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`w-5 h-5 shrink-0 ${isLight ? "text-violet-600" : "text-violet-400"}`}
+            >
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+            <div className="flex flex-col min-w-0">
+              <span className={`text-sm font-bold ${isLight ? "text-violet-700" : "text-violet-300"}`}>
+                ⏪ 시간 되감기!
+              </span>
+              <span className={`text-xs mt-0.5 ${isLight ? "text-violet-600" : "text-violet-400/80"}`}>
+                {entry.detail.replace(/^시간 되감기! /, "")}
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    }
     const isPast = idx <= currentIdx;
     const isCurrent = idx === currentIdx;
     const isFuture = idx > currentIdx;
@@ -713,9 +830,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           <div className="text-center mb-2">
             <span className="text-xs text-muted-foreground">라운드</span>
             <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
-            {isResult && (
-              <span className={`ml-3 text-sm font-bold ${isWin ? "text-lime-400" : "text-red-400"}`}>
-                {isWin ? "승리!" : "패배"}
+            {effectiveIsResult && (
+              <span className={`ml-3 text-sm font-bold ${effectiveIsWin ? "text-lime-400" : "text-red-400"}`}>
+                {effectiveIsWin ? "승리!" : "패배"}
               </span>
             )}
           </div>
@@ -1068,18 +1185,43 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             </Button>
           </div>
 
-          {roundGroups.map((group) => {
+          {roundGroups.map((group, gIdx) => {
+            // ── Retry separator group ──────────────────────────────────────
+            if (group.isRetry) {
+              const { entry, idx } = group.entries[0];
+              if (!isCategoryVisible(entry)) return null;
+              return <div key={`retry-${gIdx}`}>{renderLogEntry(entry, idx)}</div>;
+            }
+
             if (filter && !isRoundRelevant(group)) return null;
             const visibleEntries = group.entries.filter(({ entry }) => isCategoryVisible(entry));
             if (visibleEntries.length === 0) return null;
 
             return (
-              <div key={group.round} className="border-b border-border/20">
-                {/* Round header - non-collapsible, just a divider */}
+              <div key={`${group.round}-${gIdx}`} className="border-b border-border/20">
+                {/* Round header */}
                 <div
-                  className={`flex items-center gap-2 px-3 py-1.5 border-b ${isLight ? "bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20" : "bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-primary/30"}`}
+                  className={`flex items-center gap-2 px-3 py-1.5 border-b ${
+                    group.isAfterRetry
+                      ? isLight
+                        ? "bg-gradient-to-r from-red-500/15 via-red-500/8 to-transparent border-red-400/30"
+                        : "bg-gradient-to-r from-red-500/25 via-red-500/12 to-transparent border-red-500/30"
+                      : isLight
+                        ? "bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20"
+                        : "bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-primary/30"
+                  }`}
                 >
-                  <span className={`text-sm font-bold ${isLight ? "text-primary" : "text-foreground"}`}>
+                  <span
+                    className={`text-sm font-bold ${
+                      group.isAfterRetry
+                        ? isLight
+                          ? "text-red-600"
+                          : "text-red-400"
+                        : isLight
+                          ? "text-primary"
+                          : "text-foreground"
+                    }`}
+                  >
                     라운드 {group.round}
                   </span>
                   <span className="text-xs text-muted-foreground ml-auto">{visibleEntries.length}건</span>
