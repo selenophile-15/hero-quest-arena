@@ -441,7 +441,17 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             setPlaying(false);
             return prev;
           }
-          return prev + 1;
+          const next = prev + 1;
+          // Scroll directly inside the callback so it fires synchronously
+          // at every tick, even at 4x speed (100ms) where React state batching
+          // would otherwise cause the useEffect below to miss frames.
+          requestAnimationFrame(() => {
+            if (logScrollRef.current) {
+              const el = logScrollRef.current.querySelector(`[data-idx="${next}"]`);
+              el?.scrollIntoView({ block: "nearest", behavior: "auto" });
+            }
+          });
+          return next;
         });
       }, speed);
     }
@@ -450,15 +460,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     };
   }, [playing, speed, log.length]);
 
-  // Scroll the active log entry into view.
-  // Use 'auto' (instant) instead of 'smooth' so high-speed playback
-  // doesn't queue up animations that lag behind the current index.
+  // Manual seek (click / prev / next buttons) — smooth scroll is fine here.
   useEffect(() => {
+    if (playing) return; // handled above during playback
     if (logScrollRef.current) {
       const el = logScrollRef.current.querySelector(`[data-idx="${currentIdx}"]`);
       el?.scrollIntoView({ block: "nearest", behavior: speed <= 250 ? "smooth" : "auto" });
     }
-  }, [currentIdx, speed]);
+  }, [currentIdx, speed, playing]);
 
   const mobHpPct = actualMonsterHp > 0 ? Math.max(0, (state.mobHpCurrent / actualMonsterHp) * 100) : 0;
   const isResult = state.lastAction?.type === "result";
