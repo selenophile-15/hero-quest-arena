@@ -1022,8 +1022,11 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     }
 
     // Use precomputed ATK/DEF/HP directly (already includes champion+aurasong+booster)
-    var finalAtk: number[] = heroAtk.map((v) => v);
-    var finalDef: number[] = heroDef.map((v) => v);
+    // Extra retry bonuses (e.g. Fateweaver +20%) must still be applied on top
+    const _extraAtk = booster.extraAtkBonus || 0;
+    const _extraDef = booster.extraDefBonus || 0;
+    var finalAtk: number[] = heroAtk.map((v) => (_extraAtk > 0 ? v * (1 + _extraAtk) : v));
+    var finalDef: number[] = heroDef.map((v) => (_extraDef > 0 ? v * (1 + _extraDef) : v));
     var finalHp: number[] = heroHpMax.map((v) => v);
   } else {
     // ─── Full champion bonus computation (fallback when no precomputed stats) ───
@@ -4334,9 +4337,9 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
         }
         // Lord protection (single target only, skip for AOE)
         const negEvaBonus = heroEva[i] < 0 && isExtreme ? -0.25 * heroEva[i] : 0;
-        const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + negEvaBonus;
+        // AoE has NO crit
         const normalDmg = calcDamageTaken(heroDefVal[i], aoeDmgBase, mobCap);
-        const dmg = isCrit ? calcCritDamageTaken(normalDmg, aoeDmgBase) : normalDmg;
+        const dmg = normalDmg;
         heroHp[i] -= dmg;
         // Fatal blow survival check (cleric/bishop, armadillo) — ignores the damage entirely
         // Strict: each hero can trigger survival at most once per combat
@@ -4368,7 +4371,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
           type: "monster_attack",
           actor: mobDisplayName,
           target: activeHeroes[i].name,
-          detail: `${isCrit ? "치명타 " : ""}${formatNum(dmg)} 피해 (${activeHeroes[i].name} HP: ${formatNum(Math.max(0, heroHp[i]))} (${hpPct.toFixed(0)}%))`,
+          detail: `${formatNum(dmg)} 피해 (${activeHeroes[i].name} HP: ${formatNum(Math.max(0, heroHp[i]))} (${hpPct.toFixed(0)}%))`,
         });
         if (heroHp[i] <= 0) {
           heroesAlive--;
