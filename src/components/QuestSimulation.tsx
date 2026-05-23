@@ -2930,7 +2930,11 @@ export default function QuestSimulation() {
                               ? dispSim!.winHeroResults
                               : mainResultsTab === "lose" && dispSim!.loseHeroResults
                                 ? dispSim!.loseHeroResults
-                                : dispSim!.heroResults;
+                                : mainResultsTab === "lose"
+                                  ? null
+                                  : dispSim!.heroResults;
+                          if (!bucketResults)
+                            return <div className="text-center text-xs text-muted-foreground py-4">실패한 판 없음</div>;
                           const totalDmg = bucketResults.reduce((s, hr) => s + hr.avgDamageDealt, 0);
                           const sorted = [...bucketResults].sort((a, b) => b.avgDamageDealt - a.avgDamageDealt);
                           const getBarColor = (pct: number) =>
