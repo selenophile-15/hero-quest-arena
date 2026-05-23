@@ -3090,6 +3090,19 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         (bucket === "win" ? winRudoBonusDmgAccum[i] : loseRudoBonusDmgAccum[i]) / bucketCount,
       ),
       isRudoInParty: rudoBonusBase > 0,
+      aliveTurnsMin:
+        bucket === "win"
+          ? winAliveTurnsMin[i] < 1e9
+            ? Math.round(winAliveTurnsMin[i])
+            : 0
+          : loseAliveTurnsMin[i] < 1e9
+            ? Math.round(loseAliveTurnsMin[i])
+            : 0,
+      aliveTurnsAvg:
+        bucket === "win"
+          ? Math.round((winAliveTurnsSum[i] / bucketCount) * 10) / 10
+          : Math.round((loseAliveTurnsSum[i] / bucketCount) * 10) / 10,
+      aliveTurnsMax: bucket === "win" ? Math.round(winAliveTurnsMax[i]) : Math.round(loseAliveTurnsMax[i]),
     };
   };
 
