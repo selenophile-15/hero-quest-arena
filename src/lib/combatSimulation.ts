@@ -3488,7 +3488,7 @@ function runRandomMiniBossSimulation(
     finalWinRate = combinedWinRate + (100 - combinedWinRate) * (retryWinRate / 100);
   }
 
-  return {
+  const randomResult: SimulationResult = {
     winRate: loseAgg && loseAgg.count > 0 ? Math.floor(finalWinRate * 100) / 100 : Math.round(finalWinRate * 100) / 100,
     rawWinRate:
       loseAgg && loseAgg.count > 0 ? Math.floor(finalWinRate * 100) / 100 : Math.round(finalWinRate * 100) / 100,
@@ -3520,7 +3520,14 @@ function runRandomMiniBossSimulation(
     totalSimulations: totalSims,
     miniBossResults,
     retryResult: retryResultFull,
+    combinedResult: undefined,
   };
+
+  if (retryResultFull) {
+    randomResult.combinedResult = mergeSimResults(randomResult, retryResultFull);
+  }
+
+  return randomResult;
 }
 
 /**
