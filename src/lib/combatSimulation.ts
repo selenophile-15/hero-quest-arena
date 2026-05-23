@@ -322,6 +322,7 @@ export interface SimulationResult {
   totalSimulations: number;
   retrySimulations?: number; // Number of retry sims (if Fateweaver)
   retryResult?: SimulationResult; // Full retry sim result (only on first-pass result)
+  combinedResult?: SimulationResult; // 모래시계 OFF 전용: firstWin + retry(win+lose) 병합 결과
   // Per mini-boss breakdown (only for random mode)
   miniBossResults?: MiniBossResult[];
   // Win/loss round breakdown
@@ -3092,7 +3093,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   const loseHeroResults =
     loseCount > 0 ? heroResults.map((b, i) => buildBucketResult(i, b, loseCount, "lose")) : undefined;
 
-  return {
+  const result: SimulationResult = {
     winRate: loseCount > 0 ? Math.floor(winRate * 100) / 100 : Math.round(winRate * 100) / 100,
     rawWinRate: loseCount > 0 ? Math.floor(rawWinRate * 100) / 100 : Math.round(rawWinRate * 100) / 100,
     retryWinRate: retryWinRate !== undefined ? Math.round(retryWinRate * 100) / 100 : undefined,
@@ -3233,7 +3234,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
       : undefined,
     eventLog: recordEvents ? eventLog : undefined,
+    combinedResult: undefined,
   };
+
+  if (retryResultFull) {
+    result.combinedResult = mergeSimResults(result, retryResultFull);
+  }
+
+  return result;
 }
 
 // ─── Random Mini-Boss Simulation ────────────────────────────────────────────
@@ -3512,6 +3520,230 @@ function runRandomMiniBossSimulation(
     totalSimulations: totalSims,
     miniBossResults,
     retryResult: retryResultFull,
+  };
+}
+
+/**
+ * mergeSimResults — 모래시계 OFF 상태의 "올바른 전체 결과"를 만든다.
+ *
+ * 모집단 정의:
+ *   전체(heroResults)      = firstWin판 + retry 전체(성공+실패)
+ *   성공(winHeroResults)   = firstWin판 + retry 성공
+ *   실패(loseHeroResults)  = retry 실패만
+ *
+ * "첫 시도 실패 판(첫판x)"은 의도적으로 제외한다 — 재시도로 성공할 수 있는
+ * 판이므로 실패 bucket을 오염시키기 때문이다.
+ */
+function mergeSimResults(first: SimulationResult, retry: SimulationResult): SimulationResult {
+  const firstWin = first.winSimCount ?? 0;
+  const retryWin = retry.winSimCount ?? 0;
+  const retryLose = retry.loseSimCount ?? 0;
+
+  const totalAll = firstWin + retryWin + retryLose;
+  const totalWin = firstWin + retryWin;
+  const totalLose = retryLose;
+
+  const wAvg = (aVal: number, aW: number, bVal: number, bW: number): number => {
+    const w = aW + bW;
+    return w > 0 ? (aVal * aW + bVal * bW) / w : 0;
+  };
+  const safeMin = (a: number | undefined, b: number | undefined): number | undefined => {
+    if (a === undefined && b === undefined) return undefined;
+    const m = Math.min(a ?? Infinity, b ?? Infinity);
+    return m === Infinity ? 0 : m;
+  };
+  const safeMax = (a: number | undefined, b: number | undefined): number | undefined => {
+    if (a === undefined && b === undefined) return undefined;
+    return Math.max(a ?? 0, b ?? 0);
+  };
+
+  const mergeHero = (a: HeroSimResult, nA: number, b: HeroSimResult, nB: number): HeroSimResult => {
+    const w = (av: number, bv: number) => wAvg(av, nA, bv, nB);
+    return {
+      ...a,
+      survivalRate: nA + nB > 0 ? (((a.survivalRate / 100) * nA + (b.survivalRate / 100) * nB) / (nA + nB)) * 100 : 0,
+      avgHpRemaining: w(a.avgHpRemaining, b.avgHpRemaining),
+      avgDamageDealt: w(a.avgDamageDealt, b.avgDamageDealt),
+      normalDmgDealtAvg: w(a.normalDmgDealtAvg, b.normalDmgDealtAvg),
+      critDmgDealtAvg: w(a.critDmgDealtAvg, b.critDmgDealtAvg),
+      avgDamagePerTurn: w(a.avgDamagePerTurn, b.avgDamagePerTurn),
+      minDamageDealt: Math.min(a.minDamageDealt, b.minDamageDealt),
+      maxDamageDealt: Math.max(a.maxDamageDealt, b.maxDamageDealt),
+      minDamagePerTurn: safeMin(a.minDamagePerTurn, b.minDamagePerTurn),
+      maxDamagePerTurn: safeMax(a.maxDamagePerTurn, b.maxDamagePerTurn),
+      totalDamageTakenAvg: Math.round(w(a.totalDamageTakenAvg, b.totalDamageTakenAvg)),
+      avgDamageTakenPerHit: Math.round(w(a.avgDamageTakenPerHit, b.avgDamageTakenPerHit)),
+      avgDamageTakenPerTurn: Math.round(w(a.avgDamageTakenPerTurn, b.avgDamageTakenPerTurn)),
+      totalDamageTakenAvgWhenHit: Math.round(w(a.totalDamageTakenAvgWhenHit ?? 0, b.totalDamageTakenAvgWhenHit ?? 0)),
+      minDamageTaken: safeMin(a.minDamageTaken, b.minDamageTaken),
+      maxDamageTaken: safeMax(a.maxDamageTaken, b.maxDamageTaken),
+      minDamageTakenPerTurn: safeMin(a.minDamageTakenPerTurn, b.minDamageTakenPerTurn),
+      maxDamageTakenPerTurn: safeMax(a.maxDamageTakenPerTurn, b.maxDamageTakenPerTurn),
+      singleDmgTakenAvg: Math.round(w(a.singleDmgTakenAvg ?? 0, b.singleDmgTakenAvg ?? 0)),
+      singleDmgTakenMin: safeMin(a.singleDmgTakenMin, b.singleDmgTakenMin),
+      singleDmgTakenMax: safeMax(a.singleDmgTakenMax, b.singleDmgTakenMax),
+      singleDmgTakenTotal: w(a.singleDmgTakenTotal ?? 0, b.singleDmgTakenTotal ?? 0),
+      singleDmgTakenAvgWhenHit: Math.round(w(a.singleDmgTakenAvgWhenHit ?? 0, b.singleDmgTakenAvgWhenHit ?? 0)),
+      aoeDmgTakenAvg: Math.round(w(a.aoeDmgTakenAvg ?? 0, b.aoeDmgTakenAvg ?? 0)),
+      aoeDmgTakenMin: safeMin(a.aoeDmgTakenMin, b.aoeDmgTakenMin),
+      aoeDmgTakenMax: safeMax(a.aoeDmgTakenMax, b.aoeDmgTakenMax),
+      aoeDmgTakenTotal: w(a.aoeDmgTakenTotal ?? 0, b.aoeDmgTakenTotal ?? 0),
+      aoeDmgTakenAvgWhenHit: Math.round(w(a.aoeDmgTakenAvgWhenHit ?? 0, b.aoeDmgTakenAvgWhenHit ?? 0)),
+      evasionRate: w(a.evasionRate, b.evasionRate),
+      tankingRate: w(a.tankingRate, b.tankingRate),
+      singleTargetRate: w(a.singleTargetRate ?? 0, b.singleTargetRate ?? 0),
+      aliveTurnsAvg: w(a.aliveTurnsAvg ?? 0, b.aliveTurnsAvg ?? 0),
+      aliveTurnsMin: safeMin(a.aliveTurnsMin, b.aliveTurnsMin),
+      aliveTurnsMax: safeMax(a.aliveTurnsMax, b.aliveTurnsMax),
+      overallHpRemainAvg: Math.round(w(a.overallHpRemainAvg ?? 0, b.overallHpRemainAvg ?? 0)),
+      overallHpRemainMin: safeMin(a.overallHpRemainMin, b.overallHpRemainMin),
+      overallHpRemainMax: safeMax(a.overallHpRemainMax, b.overallHpRemainMax),
+      totalHealingAvg: w(a.totalHealingAvg, b.totalHealingAvg),
+      lordProtectionAvg: w(a.lordProtectionAvg, b.lordProtectionAvg),
+      lordProtectionSimRate: w(a.lordProtectionSimRate ?? 0, b.lordProtectionSimRate ?? 0),
+      lordProtectedSingleAvg: w(a.lordProtectedSingleAvg ?? 0, b.lordProtectedSingleAvg ?? 0),
+      lordProtectedAoeAvg: w(a.lordProtectedAoeAvg ?? 0, b.lordProtectedAoeAvg ?? 0),
+      lordAbsorbedSingleDmg: w(a.lordAbsorbedSingleDmg ?? 0, b.lordAbsorbedSingleDmg ?? 0),
+      lordAbsorbedAoeDmg: w(a.lordAbsorbedAoeDmg ?? 0, b.lordAbsorbedAoeDmg ?? 0),
+      critSurvivalCount: w(a.critSurvivalCount, b.critSurvivalCount),
+      critSurvivalApplyRate: w(a.critSurvivalApplyRate ?? 0, b.critSurvivalApplyRate ?? 0),
+      roundLimitAliveRate: w(a.roundLimitAliveRate ?? 0, b.roundLimitAliveRate ?? 0),
+      hemmaAbsorbedDmg: Math.round(w(a.hemmaAbsorbedDmg ?? 0, b.hemmaAbsorbedDmg ?? 0)),
+      hemmaAbsorbedCount: Math.round(w(a.hemmaAbsorbedCount ?? 0, b.hemmaAbsorbedCount ?? 0)),
+      hemmaAtkGainAvg: Math.round(w(a.hemmaAtkGainAvg ?? 0, b.hemmaAtkGainAvg ?? 0)),
+      rudoBonusDmgAvg: Math.round(w(a.rudoBonusDmgAvg ?? 0, b.rudoBonusDmgAvg ?? 0)),
+      lordSavedSingleAvgDmg: Math.round(w(a.lordSavedSingleAvgDmg ?? 0, b.lordSavedSingleAvgDmg ?? 0)),
+      lordSavedAoeAvgDmg: Math.round(w(a.lordSavedAoeAvgDmg ?? 0, b.lordSavedAoeAvgDmg ?? 0)),
+      poloniaStolenAvg: w(a.poloniaStolenAvg ?? 0, b.poloniaStolenAvg ?? 0),
+      innateLossCount:
+        a.innateLossCount !== undefined || b.innateLossCount !== undefined
+          ? w(a.innateLossCount ?? 0, b.innateLossCount ?? 0)
+          : undefined,
+      innateRegenCount:
+        a.innateRegenCount !== undefined || b.innateRegenCount !== undefined
+          ? w(a.innateRegenCount ?? 0, b.innateRegenCount ?? 0)
+          : undefined,
+      withInnateAvgDmg:
+        a.withInnateAvgDmg !== undefined || b.withInnateAvgDmg !== undefined
+          ? Math.round(w(a.withInnateAvgDmg ?? 0, b.withInnateAvgDmg ?? 0))
+          : undefined,
+      withoutInnateAvgDmg:
+        a.withoutInnateAvgDmg !== undefined || b.withoutInnateAvgDmg !== undefined
+          ? Math.round(w(a.withoutInnateAvgDmg ?? 0, b.withoutInnateAvgDmg ?? 0))
+          : undefined,
+    };
+  };
+
+  const firstWinHeroes = first.winHeroResults ?? first.heroResults;
+  const retryAllHeroes = retry.heroResults;
+  const retryWinHeroes = retry.winHeroResults;
+  const retryLoseHeroes = retry.loseHeroResults;
+
+  const mergedHeroResults: HeroSimResult[] = firstWinHeroes.map((fh, i) =>
+    mergeHero(fh, firstWin, retryAllHeroes[i] ?? fh, retryWin + retryLose),
+  );
+
+  const mergedWinHeroResults: HeroSimResult[] | undefined =
+    totalWin > 0 && retryWinHeroes
+      ? firstWinHeroes.map((fh, i) => {
+          const merged = mergeHero(fh, firstWin, retryWinHeroes[i] ?? fh, retryWin);
+          const rw = retryWinHeroes[i];
+          merged.winHpRemainAvg =
+            firstWin + retryWin > 0
+              ? Math.round(
+                  ((fh.winHpRemainAvg ?? 0) * firstWin + (rw?.winHpRemainAvg ?? 0) * retryWin) / (firstWin + retryWin),
+                )
+              : 0;
+          merged.winHpRemainMin = safeMin(fh.winHpRemainMin, rw?.winHpRemainMin);
+          merged.winHpRemainMax = safeMax(fh.winHpRemainMax, rw?.winHpRemainMax);
+          return merged;
+        })
+      : totalWin > 0
+        ? firstWinHeroes
+        : undefined;
+
+  const mergedLoseHeroResults: HeroSimResult[] | undefined = totalLose > 0 ? retryLoseHeroes : undefined;
+
+  const mergeAgg = (
+    a: PartyAggregate | undefined,
+    nA: number,
+    b: PartyAggregate | undefined,
+    nB: number,
+  ): PartyAggregate | undefined => {
+    if (!a && !b) return undefined;
+    const w = nA + nB;
+    const mn = Math.min(a?.min ?? Infinity, b?.min ?? Infinity);
+    return {
+      min: mn === Infinity ? 0 : mn,
+      avg: w > 0 ? Math.round(((a?.avg ?? 0) * nA + (b?.avg ?? 0) * nB) / w) : 0,
+      max: Math.max(a?.max ?? 0, b?.max ?? 0),
+    };
+  };
+
+  const mergeRounds = (
+    a: { avg: number; min: number; max: number } | undefined,
+    nA: number,
+    b: { avg: number; min: number; max: number } | undefined,
+    nB: number,
+  ) => {
+    if (!a && !b) return undefined;
+    const w = nA + nB;
+    const mn = Math.min(a?.min ?? Infinity, b?.min ?? Infinity);
+    return {
+      avg: w > 0 ? Math.round((((a?.avg ?? 0) * nA + (b?.avg ?? 0) * nB) / w) * 100) / 100 : 0,
+      min: mn === Infinity ? 0 : mn,
+      max: Math.max(a?.max ?? 0, b?.max ?? 0),
+    };
+  };
+
+  const mergedAvgRounds =
+    totalAll > 0
+      ? Math.round(((first.avgRounds * firstWin + retry.avgRounds * (retryWin + retryLose)) / totalAll) * 100) / 100
+      : 0;
+
+  return {
+    winRate: first.winRate,
+    rawWinRate: first.rawWinRate,
+    retryWinRate: first.retryWinRate,
+    avgRounds: mergedAvgRounds,
+    minRounds: Math.min(first.minRounds, retry.minRounds),
+    maxRounds: Math.max(first.maxRounds, retry.maxRounds),
+    heroResults: mergedHeroResults,
+    winHeroResults: mergedWinHeroResults,
+    loseHeroResults: mergedLoseHeroResults,
+    winSimCount: totalWin,
+    loseSimCount: totalLose,
+    roundLimitRate:
+      totalAll > 0
+        ? (((first.roundLimitRate / 100) * firstWin + (retry.roundLimitRate / 100) * (retryWin + retryLose)) /
+            totalAll) *
+          100
+        : 0,
+    totalSimulations: totalAll,
+    retrySimulations: first.retrySimulations,
+    retryResult: undefined,
+    combinedResult: undefined,
+    winRounds: mergeRounds(first.winRounds, firstWin, retry.winRounds, retryWin),
+    loseRounds: totalLose > 0 ? retry.loseRounds : undefined,
+    partyDmgDealt: mergeAgg(first.winPartyDmgDealt, firstWin, retry.partyDmgDealt, retryWin + retryLose),
+    partyDmgPerTurn: mergeAgg(first.winPartyDmgPerTurn, firstWin, retry.partyDmgPerTurn, retryWin + retryLose),
+    partyDmgTaken: mergeAgg(first.winPartyDmgTaken, firstWin, retry.partyDmgTaken, retryWin + retryLose),
+    partyDmgTakenPerTurn: mergeAgg(
+      first.winPartyDmgTakenPerTurn,
+      firstWin,
+      retry.partyDmgTakenPerTurn,
+      retryWin + retryLose,
+    ),
+    winPartyDmgDealt: mergeAgg(first.winPartyDmgDealt, firstWin, retry.winPartyDmgDealt, retryWin),
+    winPartyDmgPerTurn: mergeAgg(first.winPartyDmgPerTurn, firstWin, retry.winPartyDmgPerTurn, retryWin),
+    winPartyDmgTaken: mergeAgg(first.winPartyDmgTaken, firstWin, retry.winPartyDmgTaken, retryWin),
+    winPartyDmgTakenPerTurn: mergeAgg(first.winPartyDmgTakenPerTurn, firstWin, retry.winPartyDmgTakenPerTurn, retryWin),
+    losePartyDmgDealt: retry.losePartyDmgDealt,
+    losePartyDmgPerTurn: retry.losePartyDmgPerTurn,
+    losePartyDmgTaken: retry.losePartyDmgTaken,
+    losePartyDmgTakenPerTurn: retry.losePartyDmgTakenPerTurn,
+    poloniaLoot: first.poloniaLoot,
+    eventLog: undefined,
   };
 }
 
