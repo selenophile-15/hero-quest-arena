@@ -1,12 +1,37 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { CombatLogEntry } from '@/lib/combatSimulation';
-import { Hero } from '@/types/game';
-import { getJobImagePath, getChampionImagePath } from '@/lib/nameMap';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Dices, Settings, Zap, Wind, Skull, Eye, Flame, FastForward, BarChart3, Heart, Plus, Trophy, Shield, Sparkles, UserX, Bug, Sword, BowArrow, WandSparkles } from 'lucide-react';
-import { formatNumber } from '@/lib/format';
-import { useTheme } from '@/hooks/use-theme';
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { CombatLogEntry } from "@/lib/combatSimulation";
+import { Hero } from "@/types/game";
+import { getJobImagePath, getChampionImagePath } from "@/lib/nameMap";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Play,
+  Pause,
+  SkipForward,
+  SkipBack,
+  RotateCcw,
+  Dices,
+  Settings,
+  Zap,
+  Wind,
+  Skull,
+  Eye,
+  Flame,
+  FastForward,
+  BarChart3,
+  Heart,
+  Plus,
+  Trophy,
+  Shield,
+  Sparkles,
+  UserX,
+  Bug,
+  Sword,
+  BowArrow,
+  WandSparkles,
+} from "lucide-react";
+import { formatNumber } from "@/lib/format";
+import { useTheme } from "@/hooks/use-theme";
 
 interface Props {
   log: CombatLogEntry[];
@@ -17,36 +42,40 @@ interface Props {
   onNewBattle?: () => void;
 }
 
-const MONSTER_COLOR = '#facc15'; // yellow
+const MONSTER_COLOR = "#facc15"; // yellow
 
 // Class-line based colors
 const CLASS_LINE_COLORS: Record<string, string> = {
-  '전사': '#f87171',   // red-400
-  '로그': '#a3e635',   // lime-400
-  '주문술사': '#60a5fa', // blue-400
+  전사: "#f87171", // red-400
+  로그: "#a3e635", // lime-400
+  주문술사: "#60a5fa", // blue-400
 };
-const CHAMPION_COLOR = '#c4b5fd'; // violet-300
+const CHAMPION_COLOR = "#c4b5fd"; // violet-300
 
 // Darken colors for light mode visibility
 function adjustColorForLight(hex: string): string {
   const colorMap: Record<string, string> = {
-    '#f87171': '#b91c1c', '#a3e635': '#4d7c0f', '#60a5fa': '#1d4ed8', '#c4b5fd': '#6d28d9', '#d1d5db': '#374151',
+    "#f87171": "#b91c1c",
+    "#a3e635": "#4d7c0f",
+    "#60a5fa": "#1d4ed8",
+    "#c4b5fd": "#6d28d9",
+    "#d1d5db": "#374151",
   };
   return colorMap[hex] || hex;
 }
 
 // 5-tier HP color
 function hpColor(pct: number): string {
-  if (pct > 80) return '#84cc16';
-  if (pct > 60) return '#eab308';
-  if (pct > 40) return '#f97316';
-  if (pct > 20) return '#ef4444';
-  return '#a855f7';
+  if (pct > 80) return "#84cc16";
+  if (pct > 60) return "#eab308";
+  if (pct > 40) return "#f97316";
+  if (pct > 20) return "#ef4444";
+  return "#a855f7";
 }
 
 export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, monsterImage, onNewBattle }: Props) {
   const { colorMode } = useTheme();
-  const isLight = colorMode === 'light';
+  const isLight = colorMode === "light";
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -58,84 +87,122 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
   // Category visibility toggles (gear-icon menu)
   type CategoryKey =
-    | 'attacks' | 'evasion' | 'death' | 'heal' | 'result'
-    | 'classBonus' | 'spiritBonus' | 'leaderBonus' | 'protection' | 'retry' | 'execute' | 'survival' | 'stack' | 'system';
+    | "attacks"
+    | "evasion"
+    | "death"
+    | "heal"
+    | "result"
+    | "classBonus"
+    | "spiritBonus"
+    | "leaderBonus"
+    | "protection"
+    | "retry"
+    | "execute"
+    | "survival"
+    | "stack"
+    | "system";
   const ALL_CATEGORIES: { key: CategoryKey; label: string }[] = [
-    { key: 'attacks', label: '공격 (피해/치명타/광역)' },
-    { key: 'evasion', label: '회피' },
-    { key: 'death', label: '사망' },
-    { key: 'heal', label: '회복/재생' },
-    { key: 'result', label: '전투 결과' },
-    { key: 'classBonus', label: '직업 보너스 (닌자/무희/광전사/사무라이 등)' },
-    { key: 'spiritBonus', label: '영혼 보너스 (상어/공룡)' },
-    { key: 'leaderBonus', label: '챔피언 리더 스킬 (헴마/루도 등)' },
-    { key: 'protection', label: '군주 보호' },
-    { key: 'retry', label: '크로노맨서/페이트위버 재시도' },
-    { key: 'execute', label: '어둠의 기사 처형' },
-    { key: 'survival', label: '치명타 생존' },
-    { key: 'stack', label: '정복자 스택' },
-    { key: 'system', label: '시스템/기타' },
+    { key: "attacks", label: "공격 (피해/치명타/광역)" },
+    { key: "evasion", label: "회피" },
+    { key: "death", label: "사망" },
+    { key: "heal", label: "회복/재생" },
+    { key: "result", label: "전투 결과" },
+    { key: "classBonus", label: "직업 보너스 (닌자/무희/광전사/사무라이 등)" },
+    { key: "spiritBonus", label: "영혼 보너스 (상어/공룡)" },
+    { key: "leaderBonus", label: "챔피언 리더 스킬 (헴마/루도 등)" },
+    { key: "protection", label: "군주 보호" },
+    { key: "retry", label: "크로노맨서/페이트위버 재시도" },
+    { key: "execute", label: "어둠의 기사 처형" },
+    { key: "survival", label: "치명타 생존" },
+    { key: "stack", label: "정복자 스택" },
+    { key: "system", label: "시스템/기타" },
   ];
   const [visibleCategories, setVisibleCategories] = useState<Set<CategoryKey>>(
-    () => new Set(ALL_CATEGORIES.map(c => c.key))
+    () => new Set(ALL_CATEGORIES.map((c) => c.key)),
   );
   const toggleCategory = (k: CategoryKey) => {
-    setVisibleCategories(prev => {
+    setVisibleCategories((prev) => {
       const next = new Set(prev);
-      if (next.has(k)) next.delete(k); else next.add(k);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
       return next;
     });
   };
 
   // Classify a log entry into a category for the gear-icon filter
   const classifyEntry = useCallback((entry: CombatLogEntry): CategoryKey => {
-    if (entry.type === 'hero_attack' || entry.type === 'monster_attack') return 'attacks';
-    if (entry.type === 'result') return 'result';
-    if (entry.type === 'heal') return 'heal';
-    if (entry.type === 'event') {
-      const d = entry.detail || '';
-      if (d.includes('재생') || d.includes('회복')) return 'heal';
-      if (d.includes('다이묘 확정 회피') || d.includes('회피')) return d.includes('다이묘') ? 'classBonus' : 'evasion';
-      if (d.includes('사망')) return 'death';
-      if (d.includes('재시도') || d.includes('크로노') || d.includes('페이트')) return 'retry';
-      if (d.includes('처형')) return 'execute';
-      if (d.includes('치명타 생존') || d.includes('생존')) return 'survival';
-      if (d.includes('정복자') || d.includes('스택') || d.includes('중첩')) return 'stack';
-      if (d.includes('군주') || d.includes('보호') || d.includes('대신')) return 'protection';
-      if (d.includes('헴마') || d.includes('루도') || d.includes('폴로니아') || d.includes('훔치') || d.includes('리더')) return 'leaderBonus';
-      if (d.includes('상어') || d.includes('공룡') || d.includes('영혼')) return 'spiritBonus';
-      if (d.includes('닌자') || d.includes('센세') || d.includes('무희') || d.includes('곡예') || d.includes('광전사') || d.includes('잘') || d.includes('사무라이') || d.includes('다이묘') || d.includes('어둠의 기사') || d.includes('죽음의 기사') || d.includes('첫 턴')) return 'classBonus';
-      return 'system';
+    if (entry.type === "hero_attack" || entry.type === "monster_attack") return "attacks";
+    if (entry.type === "result") return "result";
+    if (entry.type === "heal") return "heal";
+    if (entry.type === "event") {
+      const d = entry.detail || "";
+      if (d.includes("재생") || d.includes("회복")) return "heal";
+      if (d.includes("다이묘 확정 회피") || d.includes("회피")) return d.includes("다이묘") ? "classBonus" : "evasion";
+      if (d.includes("사망")) return "death";
+      if (d.includes("재시도") || d.includes("크로노") || d.includes("페이트")) return "retry";
+      if (d.includes("처형")) return "execute";
+      if (d.includes("치명타 생존") || d.includes("생존")) return "survival";
+      if (d.includes("정복자") || d.includes("스택") || d.includes("중첩")) return "stack";
+      if (d.includes("군주") || d.includes("보호") || d.includes("대신")) return "protection";
+      if (
+        d.includes("헴마") ||
+        d.includes("루도") ||
+        d.includes("폴로니아") ||
+        d.includes("훔치") ||
+        d.includes("리더")
+      )
+        return "leaderBonus";
+      if (d.includes("상어") || d.includes("공룡") || d.includes("영혼")) return "spiritBonus";
+      if (
+        d.includes("닌자") ||
+        d.includes("센세") ||
+        d.includes("무희") ||
+        d.includes("곡예") ||
+        d.includes("광전사") ||
+        d.includes("잘") ||
+        d.includes("사무라이") ||
+        d.includes("다이묘") ||
+        d.includes("어둠의 기사") ||
+        d.includes("죽음의 기사") ||
+        d.includes("첫 턴")
+      )
+        return "classBonus";
+      return "system";
     }
-    return 'system';
+    return "system";
   }, []);
 
-  const isCategoryVisible = useCallback((entry: CombatLogEntry) => {
-    return visibleCategories.has(classifyEntry(entry));
-  }, [visibleCategories, classifyEntry]);
-
+  const isCategoryVisible = useCallback(
+    (entry: CombatLogEntry) => {
+      return visibleCategories.has(classifyEntry(entry));
+    },
+    [visibleCategories, classifyEntry],
+  );
 
   // Adaptive colors for light/dark mode
-  const C = useMemo(() => ({
-    yellow: '#facc15', // pure yellow for crit (consistent across modes)
-    white: isLight ? '#374151' : '#e5e7eb',
-    red: isLight ? '#b91c1c' : '#f87171',
-    teal: isLight ? '#0f766e' : '#2dd4bf',
-    green: isLight ? '#166534' : '#84cc16',
-    heal: isLight ? '#c2410c' : '#fb923c', // orange
-    monster: isLight ? '#a16207' : '#facc15',
-  }), [isLight]);
+  const C = useMemo(
+    () => ({
+      yellow: "#facc15", // pure yellow for crit (consistent across modes)
+      white: isLight ? "#374151" : "#e5e7eb",
+      red: isLight ? "#b91c1c" : "#f87171",
+      teal: isLight ? "#0f766e" : "#2dd4bf",
+      green: isLight ? "#166534" : "#84cc16",
+      heal: isLight ? "#c2410c" : "#fb923c", // orange
+      monster: isLight ? "#a16207" : "#facc15",
+    }),
+    [isLight],
+  );
 
-  const activeHeroes = heroes.filter(h => h.hp > 0);
+  const activeHeroes = heroes.filter((h) => h.hp > 0);
 
   // Build name→color map from hero data
   const nameColorMap = useMemo(() => {
     const map: Record<string, string> = {};
-    activeHeroes.forEach(h => {
-      if (h.type === 'champion') {
+    activeHeroes.forEach((h) => {
+      if (h.type === "champion") {
         map[h.name] = CHAMPION_COLOR;
       } else {
-        map[h.name] = CLASS_LINE_COLORS[h.classLine || ''] || '#d1d5db';
+        map[h.name] = CLASS_LINE_COLORS[h.classLine || ""] || "#d1d5db";
       }
     });
     return map;
@@ -144,18 +211,18 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   // Build name→classLine map for hero attack icons
   const nameClassLineMap = useMemo(() => {
     const map: Record<string, string> = {};
-    activeHeroes.forEach(h => {
-      map[h.name] = h.classLine || '';
+    activeHeroes.forEach((h) => {
+      map[h.name] = h.classLine || "";
     });
     return map;
   }, [activeHeroes]);
 
   // Extract the base monster name (without mini-boss prefix) for matching
   const baseMonsterName = useMemo(() => {
-    const prefixes = ['거대한', '민첩한', '흉포한', '부유한', '전설적인'];
+    const prefixes = ["거대한", "민첩한", "흉포한", "부유한", "전설적인"];
     let name = monsterName;
     for (const p of prefixes) {
-      if (name.startsWith(p + ' ')) {
+      if (name.startsWith(p + " ")) {
         name = name.slice(p.length + 1);
         break;
       }
@@ -164,22 +231,22 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   }, [monsterName]);
 
   const getNameColor = (name: string | undefined): string => {
-    if (!name) return isLight ? '#374151' : '#d1d5db';
-    if (name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터')) return C.monster;
-    if (name === '시스템') return isLight ? '#374151' : '#d1d5db';
-    const raw = nameColorMap[name] || '#d1d5db';
+    if (!name) return isLight ? "#374151" : "#d1d5db";
+    if (name === monsterName || name.includes(baseMonsterName) || name.includes("몬스터")) return C.monster;
+    if (name === "시스템") return isLight ? "#374151" : "#d1d5db";
+    const raw = nameColorMap[name] || "#d1d5db";
     return isLight ? adjustColorForLight(raw) : raw;
   };
 
   const isMonsterName = (name: string | undefined): boolean => {
     if (!name) return false;
-    return name === monsterName || name.includes(baseMonsterName) || name.includes('몬스터');
+    return name === monsterName || name.includes(baseMonsterName) || name.includes("몬스터");
   };
 
   // Group log entries by round
   const roundGroups = useMemo(() => {
     const groups: { round: number; entries: { entry: CombatLogEntry; idx: number }[] }[] = [];
-    let currentGroup: typeof groups[0] | null = null;
+    let currentGroup: (typeof groups)[0] | null = null;
     log.forEach((entry, idx) => {
       if (!currentGroup || currentGroup.round !== entry.round) {
         currentGroup = { round: entry.round, entries: [] };
@@ -192,26 +259,28 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
   const heroStatsData = useMemo(() => {
     const stats: Record<string, { dmg: number; targeted: number; dodged: number; singleHits: number }> = {};
-    activeHeroes.forEach(h => { stats[h.name] = { dmg: 0, targeted: 0, dodged: 0, singleHits: 0 }; });
+    activeHeroes.forEach((h) => {
+      stats[h.name] = { dmg: 0, targeted: 0, dodged: 0, singleHits: 0 };
+    });
 
     // Track AOE rounds
     const aoeRounds = new Set<number>();
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
       const entry = log[i];
-      if (entry.type === 'monster_attack' && entry.detail.includes('광역 공격')) aoeRounds.add(entry.round);
+      if (entry.type === "monster_attack" && entry.detail.includes("광역 공격")) aoeRounds.add(entry.round);
     }
 
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
       const entry = log[i];
-      if (entry.type === 'hero_attack') {
+      if (entry.type === "hero_attack") {
         const dmgMatch = entry.detail.match(/([\d,]+)\s*피해/);
-        if (dmgMatch && stats[entry.actor]) stats[entry.actor].dmg += parseInt(dmgMatch[1].replace(/,/g, ''));
+        if (dmgMatch && stats[entry.actor]) stats[entry.actor].dmg += parseInt(dmgMatch[1].replace(/,/g, ""));
       }
-      if (entry.type === 'monster_attack' && entry.target && stats[entry.target]) {
+      if (entry.type === "monster_attack" && entry.target && stats[entry.target]) {
         stats[entry.target].targeted++;
         if (!aoeRounds.has(entry.round)) stats[entry.target].singleHits++;
       }
-      if (entry.type === 'event' && entry.detail === '회피' && entry.target && stats[entry.target]) {
+      if (entry.type === "event" && entry.detail === "회피" && entry.target && stats[entry.target]) {
         stats[entry.target].dodged++;
         stats[entry.target].targeted++;
       }
@@ -220,18 +289,23 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     const totalDmg = Object.values(stats).reduce((s, v) => s + v.dmg, 0);
     const totalSingleHits = Object.values(stats).reduce((s, v) => s + v.singleHits, 0);
 
-    return activeHeroes.map(h => ({
-      name: h.name,
-      ...stats[h.name],
-      dmgPct: totalDmg > 0 ? (stats[h.name].dmg / totalDmg) * 100 : 0,
-      tankPct: totalSingleHits > 0 ? (stats[h.name].singleHits / totalSingleHits) * 100 : 0,
-    })).sort((a, b) => b.dmg - a.dmg);
+    return activeHeroes
+      .map((h) => ({
+        name: h.name,
+        ...stats[h.name],
+        dmgPct: totalDmg > 0 ? (stats[h.name].dmg / totalDmg) * 100 : 0,
+        tankPct: totalSingleHits > 0 ? (stats[h.name].singleHits / totalSingleHits) * 100 : 0,
+      }))
+      .sort((a, b) => b.dmg - a.dmg);
   }, [log, currentIdx]);
 
   const getState = () => {
     const heroHp: Record<string, number> = {};
     const heroMaxHp: Record<string, number> = {};
-    activeHeroes.forEach(h => { heroHp[h.name] = h.hp || 0; heroMaxHp[h.name] = h.hp || 0; });
+    activeHeroes.forEach((h) => {
+      heroHp[h.name] = h.hp || 0;
+      heroMaxHp[h.name] = h.hp || 0;
+    });
     let mobHpCurrent = monsterHp;
     let currentRound = 0;
     let lastAction: CombatLogEntry | null = null;
@@ -242,51 +316,61 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       currentRound = entry.round;
       lastAction = entry;
 
-      if (entry.type === 'monster_attack' && entry.target) {
+      if (entry.type === "monster_attack" && entry.target) {
         const hpMatch = entry.detail.match(/HP: ([\d,\-]+)/);
-        if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, '')));
+        if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
         const dmgMatch = entry.detail.match(/([\d,]+) 피해/);
         if (dmgMatch && i === currentIdx) {
-          actionEffects.push({ target: entry.target, value: `-${dmgMatch[1]}`, color: entry.detail.includes('치명타') ? 'text-yellow-400' : 'text-red-400', key: i });
+          actionEffects.push({
+            target: entry.target,
+            value: `-${dmgMatch[1]}`,
+            color: entry.detail.includes("치명타") ? "text-yellow-400" : "text-red-400",
+            key: i,
+          });
         }
       }
-      if (entry.type === 'hero_attack') {
+      if (entry.type === "hero_attack") {
         const mobMatch = entry.detail.match(/HP: ([\d,\-]+)/);
-        if (mobMatch) mobHpCurrent = Math.max(0, parseInt(mobMatch[1].replace(/,/g, '')));
+        if (mobMatch) mobHpCurrent = Math.max(0, parseInt(mobMatch[1].replace(/,/g, "")));
         const dmgMatch = entry.detail.match(/([\d,]+)\s*피해/);
         if (dmgMatch && i === currentIdx) {
-          actionEffects.push({ target: '__monster__', value: `-${dmgMatch[1]}`, color: entry.detail.includes('치명타') ? 'text-yellow-400' : 'text-blue-400', key: i });
+          actionEffects.push({
+            target: "__monster__",
+            value: `-${dmgMatch[1]}`,
+            color: entry.detail.includes("치명타") ? "text-yellow-400" : "text-blue-400",
+            key: i,
+          });
         }
       }
-      if (entry.type === 'event' && entry.detail.includes('사망')) heroHp[entry.actor] = 0;
-      if (entry.type === 'event' && entry.detail === '회피' && entry.target && i === currentIdx) {
-        actionEffects.push({ target: entry.target, value: 'MISS', color: 'text-teal-400', key: i });
+      if (entry.type === "event" && entry.detail.includes("사망")) heroHp[entry.actor] = 0;
+      if (entry.type === "event" && entry.detail === "회피" && entry.target && i === currentIdx) {
+        actionEffects.push({ target: entry.target, value: "MISS", color: "text-teal-400", key: i });
       }
       // Heal entries: extract HP info to keep visualization in sync
-      if (entry.type === 'heal') {
+      if (entry.type === "heal") {
         const hpMatch = entry.detail.match(/HP: ([\d,]+)/);
         if (hpMatch && entry.actor && entry.actor in heroHp) {
-          heroHp[entry.actor] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, '')));
+          heroHp[entry.actor] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
         }
         const healMatch = entry.detail.match(/체력 ([\d,]+) 회복/);
         if (healMatch && entry.actor && i === currentIdx) {
-          actionEffects.push({ target: entry.actor, value: `+${healMatch[1]}`, color: 'text-emerald-400', key: i });
+          actionEffects.push({ target: entry.actor, value: `+${healMatch[1]}`, color: "text-emerald-400", key: i });
         }
       }
       // Hemma drain: parse the drained party member's remaining HP and the drain amount
-      if (entry.type === 'event' && entry.detail.includes('헴마 스킬 발동')) {
+      if (entry.type === "event" && entry.detail.includes("헴마 스킬 발동")) {
         // Last HP block in the detail belongs to the drain target
         const hpBlocks = [...entry.detail.matchAll(/(\S+?)\s*HP:\s*([\d,]+)/g)];
         const last = hpBlocks[hpBlocks.length - 1];
         if (last) {
           const targetName = last[1].trim();
           if (targetName in heroHp) {
-            heroHp[targetName] = Math.max(0, parseInt(last[2].replace(/,/g, '')));
+            heroHp[targetName] = Math.max(0, parseInt(last[2].replace(/,/g, "")));
           }
           if (i === currentIdx) {
             const drainMatch = entry.detail.match(/HP -([\d,]+)/);
             if (drainMatch) {
-              actionEffects.push({ target: targetName, value: `-${drainMatch[1]}`, color: 'text-purple-400', key: i });
+              actionEffects.push({ target: targetName, value: `-${drainMatch[1]}`, color: "text-purple-400", key: i });
             }
           }
         }
@@ -300,25 +384,30 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   useEffect(() => {
     if (playing) {
       timerRef.current = setInterval(() => {
-        setCurrentIdx(prev => {
-          if (prev >= log.length - 1) { setPlaying(false); return prev; }
+        setCurrentIdx((prev) => {
+          if (prev >= log.length - 1) {
+            setPlaying(false);
+            return prev;
+          }
           return prev + 1;
         });
       }, speed);
     }
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [playing, speed, log.length]);
 
   useEffect(() => {
     if (logScrollRef.current) {
       const el = logScrollRef.current.querySelector(`[data-idx="${currentIdx}"]`);
-      el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
   }, [currentIdx]);
 
   const mobHpPct = monsterHp > 0 ? Math.max(0, (state.mobHpCurrent / monsterHp) * 100) : 0;
-  const isResult = state.lastAction?.type === 'result';
-  const isWin = isResult && state.lastAction?.detail.includes('승리');
+  const isResult = state.lastAction?.type === "result";
+  const isWin = isResult && state.lastAction?.detail.includes("승리");
 
   // Single toggle filter: click once = filter, click again = clear
   const handleFilterClick = (name: string) => {
@@ -330,17 +419,24 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   };
 
   // Match filter: show entries where actor OR target matches the filter name
-  const entryMatchesFilter = useCallback((entry: CombatLogEntry) => {
-    if (!filter) return true;
-    const { name } = filter;
-    return entry.actor === name || entry.target === name
-      || entry.actor?.includes(name) || entry.detail.includes(name);
-  }, [filter]);
+  const entryMatchesFilter = useCallback(
+    (entry: CombatLogEntry) => {
+      if (!filter) return true;
+      const { name } = filter;
+      return (
+        entry.actor === name || entry.target === name || entry.actor?.includes(name) || entry.detail.includes(name)
+      );
+    },
+    [filter],
+  );
 
-  const isRoundRelevant = useCallback((group: { entries: { entry: CombatLogEntry }[] }) => {
-    if (!filter) return true;
-    return group.entries.some(({ entry }) => entryMatchesFilter(entry));
-  }, [filter, entryMatchesFilter]);
+  const isRoundRelevant = useCallback(
+    (group: { entries: { entry: CombatLogEntry }[] }) => {
+      if (!filter) return true;
+      return group.entries.some(({ entry }) => entryMatchesFilter(entry));
+    },
+    [filter, entryMatchesFilter],
+  );
 
   // Parse log entry into structured display
   const renderLogEntry = (entry: CombatLogEntry, idx: number) => {
@@ -350,40 +446,42 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     const matchesFilter = entryMatchesFilter(entry);
     const shouldBright = showAllBright || (filter && matchesFilter);
 
-    const isCrit = entry.detail.includes('치명타');
-    const isEvasion = entry.detail === '회피';
-    const isDeath = entry.detail.includes('사망');
-    const isSetup = entry.type === 'event' && !isEvasion && !isDeath;
-    const isAoe = entry.detail.includes('광역 공격');
+    const isCrit = entry.detail.includes("치명타");
+    const isEvasion = entry.detail === "회피";
+    const isDeath = entry.detail.includes("사망");
+    const isSetup = entry.type === "event" && !isEvasion && !isDeath;
+    const isAoe = entry.detail.includes("광역 공격");
 
     // Icon selection
     let icon: React.ReactNode;
-    if (entry.type === 'result') {
-      icon = entry.detail.includes('승리')
-        ? <Trophy className="w-4 h-4 text-lime-400" />
-        : <Skull className="w-4 h-4 text-red-400" />;
+    if (entry.type === "result") {
+      icon = entry.detail.includes("승리") ? (
+        <Trophy className="w-4 h-4 text-lime-400" />
+      ) : (
+        <Skull className="w-4 h-4 text-red-400" />
+      );
     } else if (isDeath) {
       icon = <UserX className="w-4 h-4 text-red-400" />;
     } else if (isEvasion) {
       icon = <Wind className="w-4 h-4 text-teal-400" />;
     } else if (isSetup) {
       icon = <Settings className="w-4 h-4 text-muted-foreground" />;
-    } else if (entry.type === 'monster_attack' && isAoe) {
+    } else if (entry.type === "monster_attack" && isAoe) {
       icon = <Bug className="w-4 h-4 text-red-500" />;
-    } else if (entry.type === 'monster_attack' && isCrit) {
+    } else if (entry.type === "monster_attack" && isCrit) {
       icon = <Bug className="w-4 h-4 text-yellow-400" />;
-    } else if (entry.type === 'monster_attack' && entry.target) {
+    } else if (entry.type === "monster_attack" && entry.target) {
       icon = <Bug className="w-4 h-4 text-foreground/60" />;
-    } else if (entry.type === 'monster_attack') {
+    } else if (entry.type === "monster_attack") {
       icon = <Bug className="w-4 h-4 text-red-500" />;
-    } else if (entry.type === 'hero_attack') {
-      const cl = nameClassLineMap[entry.actor || ''] || '';
-      const color = isCrit ? 'text-yellow-400' : 'text-foreground/60';
-      if (cl === '전사') icon = <Sword className={`w-4 h-4 ${color}`} />;
-      else if (cl === '로그') icon = <BowArrow className={`w-4 h-4 ${color}`} />;
-      else if (cl === '주문술사') icon = <WandSparkles className={`w-4 h-4 ${color}`} />;
+    } else if (entry.type === "hero_attack") {
+      const cl = nameClassLineMap[entry.actor || ""] || "";
+      const color = isCrit ? "text-yellow-400" : "text-foreground/60";
+      if (cl === "전사") icon = <Sword className={`w-4 h-4 ${color}`} />;
+      else if (cl === "로그") icon = <BowArrow className={`w-4 h-4 ${color}`} />;
+      else if (cl === "주문술사") icon = <WandSparkles className={`w-4 h-4 ${color}`} />;
       else icon = <Zap className={`w-4 h-4 ${color}`} />;
-    } else if (entry.type === 'heal') {
+    } else if (entry.type === "heal") {
       icon = (
         <span className="relative inline-flex items-center justify-center w-4 h-4">
           <Heart className="w-4 h-4 text-orange-400" />
@@ -395,28 +493,28 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     }
 
     // Determine opacity
-    let opacityClass = '';
-    if (isFuture && !shouldBright) opacityClass = 'opacity-20';
-    else if (filter && !matchesFilter && !showAllBright) opacityClass = 'opacity-15';
+    let opacityClass = "";
+    if (isFuture && !shouldBright) opacityClass = "opacity-20";
+    else if (filter && !matchesFilter && !showAllBright) opacityClass = "opacity-15";
 
     // Border left color
-    let borderLeftColor = 'transparent';
-    if (entry.type === 'monster_attack') borderLeftColor = C.monster;
-    else if (entry.type === 'hero_attack') borderLeftColor = getNameColor(entry.actor);
-    else if (entry.type === 'heal') borderLeftColor = C.green;
-    else if (entry.type === 'result') borderLeftColor = entry.detail.includes('승리') ? '#84cc16' : '#ef4444';
+    let borderLeftColor = "transparent";
+    if (entry.type === "monster_attack") borderLeftColor = C.monster;
+    else if (entry.type === "hero_attack") borderLeftColor = getNameColor(entry.actor);
+    else if (entry.type === "heal") borderLeftColor = C.green;
+    else if (entry.type === "result") borderLeftColor = entry.detail.includes("승리") ? "#84cc16" : "#ef4444";
     else if (isEvasion) borderLeftColor = C.teal;
-    else borderLeftColor = isLight ? '#6b7280' : '#a3a3a3';
+    else borderLeftColor = isLight ? "#6b7280" : "#a3a3a3";
 
     // Background
-    let bgClass = '';
-    if (isCurrent) bgClass = 'bg-primary/10 ring-1 ring-primary/40';
+    let bgClass = "";
+    if (isCurrent) bgClass = "bg-primary/10 ring-1 ring-primary/40";
 
     // Build structured content
-    let damageText = '';
-    let hpText = '';
+    let damageText = "";
+    let hpText = "";
 
-    if (entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) {
+    if (entry.type === "hero_attack" || (entry.type === "monster_attack" && entry.target)) {
       const dmgMatch = entry.detail.match(/([\d,]+)\s*피해/);
       if (dmgMatch) damageText = `${dmgMatch[1]} 피해`;
 
@@ -438,10 +536,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
     // Damage text color logic
     const getDamageColor = (): string => {
-      if (entry.type === 'hero_attack') {
+      if (entry.type === "hero_attack") {
         return isCrit ? C.yellow : C.white;
       }
-      if (entry.type === 'monster_attack') {
+      if (entry.type === "monster_attack") {
         if (isCrit) return C.yellow;
         if (isAoe) return C.red;
         return C.white;
@@ -453,115 +551,151 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       <div
         key={idx}
         data-idx={idx}
-        onClick={() => { setCurrentIdx(idx); setPlaying(false); }}
+        onClick={() => {
+          setCurrentIdx(idx);
+          setPlaying(false);
+        }}
         className={`flex items-center gap-2 px-3 py-1.5 cursor-pointer transition-colors text-sm leading-relaxed ${bgClass} ${opacityClass} hover:bg-secondary/30`}
-        style={{ borderLeft: `3px solid ${(isFuture && !shouldBright) ? 'transparent' : borderLeftColor}` }}
+        style={{ borderLeft: `3px solid ${isFuture && !shouldBright ? "transparent" : borderLeftColor}` }}
       >
         <span className="shrink-0 w-5 flex items-center justify-center">{icon}</span>
 
         <div className="flex-1 min-w-0 flex items-center gap-1">
           {/* Actor → Target */}
-          {entry.actor && entry.actor !== '시스템' && (
-            <span className="font-bold text-sm" style={{ color: getNameColor(entry.actor) }}>{entry.actor}</span>
+          {entry.actor && entry.actor !== "시스템" && (
+            <span className="font-bold text-sm" style={{ color: getNameColor(entry.actor) }}>
+              {entry.actor}
+            </span>
           )}
           {entry.target && (
             <>
               <span className="text-muted-foreground mx-0.5">→</span>
-              <span className="font-bold text-sm" style={{ color: getNameColor(entry.target) }}>{entry.target}</span>
+              <span className="font-bold text-sm" style={{ color: getNameColor(entry.target) }}>
+                {entry.target}
+              </span>
             </>
           )}
 
           {/* Attack entries: structured format */}
-          {(entry.type === 'hero_attack' || (entry.type === 'monster_attack' && entry.target)) ? (
+          {entry.type === "hero_attack" || (entry.type === "monster_attack" && entry.target) ? (
             <>
               {damageText && (
                 <span className="ml-4 inline-flex items-baseline gap-1 shrink-0">
                   {isCrit && (
-                    <span className="font-body font-bold text-sm" style={{ color: C.yellow }}>치명타!</span>
+                    <span className="font-body font-bold text-sm" style={{ color: C.yellow }}>
+                      치명타!
+                    </span>
                   )}
-                  <span className="font-mono font-bold text-sm text-foreground/80">{damageText.replace(/\s*피해$/, '')}</span>
+                  <span className="font-mono font-bold text-sm text-foreground/80">
+                    {damageText.replace(/\s*피해$/, "")}
+                  </span>
                   <span className="font-body font-bold text-sm text-foreground/80">피해</span>
                 </span>
               )}
 
-              {hpText && (() => {
-                const m = hpText.match(/^\((.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)\)$/);
-                if (m) {
-                  const [, who, hpNum, pct] = m;
+              {hpText &&
+                (() => {
+                  const m = hpText.match(/^\((.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)\)$/);
+                  if (m) {
+                    const [, who, hpNum, pct] = m;
+                    return (
+                      <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
+                        <span className="font-body">(</span>
+                        <span className="font-body font-bold" style={{ color: getNameColor(who) }}>
+                          {who}
+                        </span>
+                        <span className="font-body">HP:</span>
+                        <span className="font-mono font-bold">{hpNum}</span>
+                        <span className="font-mono">({pct}%)</span>
+                        <span className="font-body">)</span>
+                      </span>
+                    );
+                  }
                   return (
+                    <span className="font-mono font-bold text-sm ml-auto text-foreground/80 shrink-0">{hpText}</span>
+                  );
+                })()}
+            </>
+          ) : entry.type === "heal" ? (
+            (() => {
+              const healMatch = entry.detail.match(/체력 ([\d,]+) 회복/);
+              const hpInfoMatch = entry.detail.match(/\((.+?HP: [\d,\-]+ \(\d+%\))\)/);
+              const m = hpInfoMatch ? hpInfoMatch[1].match(/^(.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)$/) : null;
+              return (
+                <>
+                  {healMatch && (
+                    <span className="ml-4 inline-flex items-baseline gap-1 shrink-0">
+                      <span className="font-body font-bold text-sm" style={{ color: C.heal }}>
+                        체력
+                      </span>
+                      <span className="font-mono font-bold text-sm" style={{ color: C.heal }}>
+                        {healMatch[1]}
+                      </span>
+                      <span className="font-body font-bold text-sm" style={{ color: C.heal }}>
+                        회복
+                      </span>
+                    </span>
+                  )}
+                  {m && (
                     <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
                       <span className="font-body">(</span>
-                      <span className="font-body font-bold" style={{ color: getNameColor(who) }}>{who}</span>
+                      <span className="font-body font-bold" style={{ color: getNameColor(m[1]) }}>
+                        {m[1]}
+                      </span>
                       <span className="font-body">HP:</span>
-                      <span className="font-mono font-bold">{hpNum}</span>
-                      <span className="font-mono">({pct}%)</span>
+                      <span className="font-mono font-bold">{m[2]}</span>
+                      <span className="font-mono">({m[3]}%)</span>
                       <span className="font-body">)</span>
                     </span>
-                  );
-                }
-                return (
-                  <span className="font-mono font-bold text-sm ml-auto text-foreground/80 shrink-0">{hpText}</span>
-                );
-              })()}
-            </>
-          ) : entry.type === 'heal' ? (() => {
-            const healMatch = entry.detail.match(/체력 ([\d,]+) 회복/);
-            const hpInfoMatch = entry.detail.match(/\((.+?HP: [\d,\-]+ \(\d+%\))\)/);
-            const m = hpInfoMatch ? hpInfoMatch[1].match(/^(.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)$/) : null;
-            return (
-              <>
-                {healMatch && (
-                  <span className="ml-4 inline-flex items-baseline gap-1 shrink-0">
-                    <span className="font-body font-bold text-sm" style={{ color: C.heal }}>체력</span>
-                    <span className="font-mono font-bold text-sm" style={{ color: C.heal }}>{healMatch[1]}</span>
-                    <span className="font-body font-bold text-sm" style={{ color: C.heal }}>회복</span>
-                  </span>
-                )}
-                {m && (
-                  <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
-                    <span className="font-body">(</span>
-                    <span className="font-body font-bold" style={{ color: getNameColor(m[1]) }}>{m[1]}</span>
-                    <span className="font-body">HP:</span>
-                    <span className="font-mono font-bold">{m[2]}</span>
-                    <span className="font-mono">({m[3]}%)</span>
-                    <span className="font-body">)</span>
-                  </span>
-                )}
-              </>
-            );
-          })() : entry.type === 'event' && entry.detail.includes('헴마 스킬 발동') ? (() => {
-            // Hemma drain — split into prefix + HP block tail
-            const tailMatch = entry.detail.match(/^(.*?)\s*\(([^()]+?HP:\s*[\d,\-]+\s*\(\d+%\))\)\s*$/);
-            const prefix = tailMatch ? tailMatch[1] : entry.detail;
-            const hpBlock = tailMatch ? tailMatch[2] : '';
-            const hpM = hpBlock.match(/^(.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)$/);
-            return (
-              <>
-                <span className="ml-1 text-sm font-body text-foreground/80">{prefix}</span>
-                {hpM && (
-                  <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
-                    <span className="font-body">(</span>
-                    <span className="font-body font-bold" style={{ color: getNameColor(hpM[1]) }}>{hpM[1]}</span>
-                    <span className="font-body">HP:</span>
-                    <span className="font-mono font-bold">{hpM[2]}</span>
-                    <span className="font-mono">({hpM[3]}%)</span>
-                    <span className="font-body">)</span>
-                  </span>
-                )}
-              </>
-            );
-          })() : entry.type === 'monster_attack' && !entry.target ? (
+                  )}
+                </>
+              );
+            })()
+          ) : entry.type === "event" && entry.detail.includes("헴마 스킬 발동") ? (
+            (() => {
+              // Hemma drain — split into prefix + HP block tail
+              const tailMatch = entry.detail.match(/^(.*?)\s*\(([^()]+?HP:\s*[\d,\-]+\s*\(\d+%\))\)\s*$/);
+              const prefix = tailMatch ? tailMatch[1] : entry.detail;
+              const hpBlock = tailMatch ? tailMatch[2] : "";
+              const hpM = hpBlock.match(/^(.+?)\s+HP:\s*([\d,\-]+)\s*\((\d+)%\)$/);
+              return (
+                <>
+                  <span className="ml-1 text-sm font-body text-foreground/80">{prefix}</span>
+                  {hpM && (
+                    <span className="ml-auto inline-flex items-baseline gap-1 shrink-0 text-sm text-foreground/80">
+                      <span className="font-body">(</span>
+                      <span className="font-body font-bold" style={{ color: getNameColor(hpM[1]) }}>
+                        {hpM[1]}
+                      </span>
+                      <span className="font-body">HP:</span>
+                      <span className="font-mono font-bold">{hpM[2]}</span>
+                      <span className="font-mono">({hpM[3]}%)</span>
+                      <span className="font-body">)</span>
+                    </span>
+                  )}
+                </>
+              );
+            })()
+          ) : entry.type === "monster_attack" && !entry.target ? (
             <span className="ml-1 text-sm font-body font-bold" style={{ color: C.red }}>
-              {entry.detail.replace(/\s*\(.*?\)\s*$/, '')}
+              {entry.detail.replace(/\s*\(.*?\)\s*$/, "")}
             </span>
           ) : isEvasion ? (
-            <span className="font-body font-bold text-sm ml-4" style={{ color: C.teal }}>회피!</span>
+            <span className="font-body font-bold text-sm ml-4" style={{ color: C.teal }}>
+              회피!
+            </span>
           ) : (
-            <span className={`ml-1 text-sm font-body ${
-              isDeath ? 'text-red-400 font-bold' :
-              entry.type === 'result' ? (entry.detail.includes('승리') ? 'text-lime-400 font-bold' : 'text-red-400 font-bold') :
-              'text-foreground/70'
-            }`}>
+            <span
+              className={`ml-1 text-sm font-body ${
+                isDeath
+                  ? "text-red-400 font-bold"
+                  : entry.type === "result"
+                    ? entry.detail.includes("승리")
+                      ? "text-lime-400 font-bold"
+                      : "text-red-400 font-bold"
+                    : "text-foreground/70"
+              }`}
+            >
               {entry.detail}
             </span>
           )}
@@ -580,8 +714,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <span className="text-xs text-muted-foreground">라운드</span>
             <span className="ml-1 text-lg font-bold font-mono text-foreground">{state.currentRound}</span>
             {isResult && (
-              <span className={`ml-3 text-sm font-bold ${isWin ? 'text-lime-400' : 'text-red-400'}`}>
-                {isWin ? '승리!' : '패배'}
+              <span className={`ml-3 text-sm font-bold ${isWin ? "text-lime-400" : "text-red-400"}`}>
+                {isWin ? "승리!" : "패배"}
               </span>
             )}
           </div>
@@ -589,29 +723,36 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           <div className="flex items-center gap-3">
             {/* Heroes */}
             <div className="flex-1 space-y-2">
-              {activeHeroes.map(h => {
+              {activeHeroes.map((h) => {
                 const hp = state.heroHp[h.name] || 0;
                 const maxHp = state.heroMaxHp[h.name] || 1;
                 const hpPct = Math.max(0, (hp / maxHp) * 100);
                 const isDead = hp <= 0;
-                const effect = state.actionEffects.find(e => e.target === h.name);
-                const heroImg = h.type === 'champion'
-                  ? getChampionImagePath(h.championName || h.name)
-                  : h.heroClass ? getJobImagePath(h.heroClass) : null;
+                const effect = state.actionEffects.find((e) => e.target === h.name);
+                const heroImg =
+                  h.type === "champion"
+                    ? getChampionImagePath(h.championName || h.name)
+                    : h.heroClass
+                      ? getJobImagePath(h.heroClass)
+                      : null;
                 const isFiltered = filter?.name === h.name;
 
                 return (
                   <div
                     key={h.id}
-                    className={`flex items-center gap-1.5 p-1 rounded cursor-pointer transition-all ${isDead ? 'opacity-30' : ''} ${isFiltered ? 'ring-2 ring-primary bg-primary/10' : 'hover:bg-secondary/20'}`}
+                    className={`flex items-center gap-1.5 p-1 rounded cursor-pointer transition-all ${isDead ? "opacity-30" : ""} ${isFiltered ? "ring-2 ring-primary bg-primary/10" : "hover:bg-secondary/20"}`}
                     onClick={() => handleFilterClick(h.name)}
                   >
-                    <div className={`w-8 h-8 rounded-full overflow-hidden bg-secondary/50 shrink-0 ${isFiltered ? 'ring-2 ring-primary' : 'border border-border/50'}`}>
+                    <div
+                      className={`w-8 h-8 rounded-full overflow-hidden bg-secondary/50 shrink-0 ${isFiltered ? "ring-2 ring-primary" : "border border-border/50"}`}
+                    >
                       {heroImg && <img src={heroImg} alt="" className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-xs font-bold truncate" style={{ color: getNameColor(h.name) }}>{h.name}</span>
+                        <span className="text-xs font-bold truncate" style={{ color: getNameColor(h.name) }}>
+                          {h.name}
+                        </span>
                         <span className="text-xs font-bold font-mono" style={{ color: hpColor(hpPct) }}>
                           {Math.round(hp).toLocaleString()}
                         </span>
@@ -624,11 +765,11 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                       </div>
                     </div>
                     {effect && (
-                      <span className={`text-xs font-bold font-mono ${effect.color} animate-bounce shrink-0`}>{effect.value}</span>
+                      <span className={`text-xs font-bold font-mono ${effect.color} animate-bounce shrink-0`}>
+                        {effect.value}
+                      </span>
                     )}
-                    {isFiltered && (
-                      <span className="text-[10px] text-primary shrink-0">🔍</span>
-                    )}
+                    {isFiltered && <span className="text-[10px] text-primary shrink-0">🔍</span>}
                   </div>
                 );
               })}
@@ -641,10 +782,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
             {/* Monster */}
             <div
-              className={`w-36 shrink-0 cursor-pointer transition-all ${filter?.name === monsterName ? 'ring-2 ring-primary rounded-lg' : ''}`}
+              className={`w-36 shrink-0 cursor-pointer transition-all ${filter?.name === monsterName ? "ring-2 ring-primary rounded-lg" : ""}`}
               onClick={() => handleFilterClick(monsterName)}
             >
-              <div className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? 'border-primary' : 'border-yellow-500/20'} ${state.mobHpCurrent <= 0 ? 'opacity-30' : ''}`}>
+              <div
+                className={`p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? "border-primary" : "border-yellow-500/20"} ${state.mobHpCurrent <= 0 ? "opacity-30" : ""}`}
+              >
                 <div className="flex justify-center mb-1">
                   {monsterImage ? (
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-secondary/40 border border-yellow-500/30">
@@ -654,17 +797,26 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     <span className="text-2xl">👹</span>
                   )}
                 </div>
-                <div className="text-center mb-1.5"><span className="text-xs font-bold" style={{ color: C.monster }}>{monsterName}</span></div>
+                <div className="text-center mb-1.5">
+                  <span className="text-xs font-bold" style={{ color: C.monster }}>
+                    {monsterName}
+                  </span>
+                </div>
                 <div className="text-center text-xs font-bold font-mono mb-1" style={{ color: hpColor(mobHpPct) }}>
                   {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
                 </div>
                 <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full rounded-full transition-all duration-300" style={{ width: `${mobHpPct}%`, backgroundColor: hpColor(mobHpPct) }} />
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{ width: `${mobHpPct}%`, backgroundColor: hpColor(mobHpPct) }}
+                  />
                 </div>
-                {state.actionEffects.find(e => e.target === '__monster__') && (
+                {state.actionEffects.find((e) => e.target === "__monster__") && (
                   <div className="text-center mt-1">
-                    <span className={`text-sm font-bold font-mono ${state.actionEffects.find(e => e.target === '__monster__')!.color} animate-bounce`}>
-                      {state.actionEffects.find(e => e.target === '__monster__')!.value}
+                    <span
+                      className={`text-sm font-bold font-mono ${state.actionEffects.find((e) => e.target === "__monster__")!.color} animate-bounce`}
+                    >
+                      {state.actionEffects.find((e) => e.target === "__monster__")!.value}
                     </span>
                   </div>
                 )}
@@ -680,25 +832,53 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
         {/* Controls */}
         <div className="flex items-center justify-center gap-1.5 flex-wrap">
-          <Button variant="outline" size="sm" onClick={() => { setCurrentIdx(0); setPlaying(false); }}><RotateCcw className="w-3.5 h-3.5" /></Button>
-          <Button variant="outline" size="sm" onClick={() => setCurrentIdx(Math.max(0, currentIdx - 1))}><SkipBack className="w-3.5 h-3.5" /></Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setCurrentIdx(0);
+              setPlaying(false);
+            }}
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setCurrentIdx(Math.max(0, currentIdx - 1))}>
+            <SkipBack className="w-3.5 h-3.5" />
+          </Button>
           <Button variant="outline" size="sm" onClick={() => setPlaying(!playing)} className="w-20">
             {playing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            <span className="ml-1 text-xs">{playing ? '일시정지' : '재생'}</span>
+            <span className="ml-1 text-xs">{playing ? "일시정지" : "재생"}</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setCurrentIdx(Math.min(log.length - 1, currentIdx + 1))}><SkipForward className="w-3.5 h-3.5" /></Button>
-          <select value={speed} onChange={e => setSpeed(Number(e.target.value))} className="text-xs bg-secondary border border-border rounded px-1.5 py-1 text-foreground">
+          <Button variant="outline" size="sm" onClick={() => setCurrentIdx(Math.min(log.length - 1, currentIdx + 1))}>
+            <SkipForward className="w-3.5 h-3.5" />
+          </Button>
+          <select
+            value={speed}
+            onChange={(e) => setSpeed(Number(e.target.value))}
+            className="text-xs bg-secondary border border-border rounded px-1.5 py-1 text-foreground"
+          >
             <option value={1000}>0.5x</option>
             <option value={500}>1x</option>
             <option value={250}>2x</option>
             <option value={100}>4x</option>
           </select>
           {onNewBattle && (
-            <Button variant="outline" size="sm" className="text-xs gap-1 border-blue-500/40 text-blue-400 hover:bg-blue-500/10" onClick={() => { onNewBattle(); setCurrentIdx(0); setPlaying(false); }}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs gap-1 border-blue-500/40 text-blue-400 hover:bg-blue-500/10"
+              onClick={() => {
+                onNewBattle();
+                setCurrentIdx(0);
+                setPlaying(false);
+              }}
+            >
               <Dices className="w-3.5 h-3.5" /> 새 전투
             </Button>
           )}
-          <span className="text-[10px] text-muted-foreground">{currentIdx + 1}/{log.length}</span>
+          <span className="text-[10px] text-muted-foreground">
+            {currentIdx + 1}/{log.length}
+          </span>
         </div>
 
         {/* Combat Stats - premium */}
@@ -709,32 +889,83 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           </div>
           <table className="w-full text-xs">
             <thead>
-              <tr className={`border-b-2 border-primary/30 ${isLight ? 'bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10' : 'bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20'}`}>
-                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-slate-700' : 'text-muted-foreground'} font-bold w-[80px]`}>파티원</th>
-                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-red-700' : 'text-red-400'} font-bold`}>입힌 대미지</th>
-                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-orange-700' : 'text-orange-400'} font-bold`}>대미지 비율</th>
-                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-yellow-700' : 'text-yellow-400'} font-bold`}>타켓팅 수</th>
-                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-teal-700' : 'text-teal-400'} font-bold`}>회피 수</th>
-                <th className={`text-center py-1.5 px-1 ${isLight ? 'text-blue-700' : 'text-blue-400'} font-bold`}>탱킹 비율</th>
+              <tr
+                className={`border-b-2 border-primary/30 ${isLight ? "bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10" : "bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20"}`}
+              >
+                <th
+                  className={`text-center py-1.5 px-1 ${isLight ? "text-slate-700" : "text-muted-foreground"} font-bold w-[80px]`}
+                >
+                  파티원
+                </th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? "text-red-700" : "text-red-400"} font-bold`}>
+                  입힌 대미지
+                </th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? "text-orange-700" : "text-orange-400"} font-bold`}>
+                  대미지 비율
+                </th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? "text-yellow-700" : "text-yellow-400"} font-bold`}>
+                  타켓팅 수
+                </th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? "text-teal-700" : "text-teal-400"} font-bold`}>
+                  회피 수
+                </th>
+                <th className={`text-center py-1.5 px-1 ${isLight ? "text-blue-700" : "text-blue-400"} font-bold`}>
+                  탱킹 비율
+                </th>
               </tr>
             </thead>
             <tbody>
               {heroStatsData.map((hs, idx) => {
                 // Same color tiers as QuestSimulation contribution bars
                 const tierText = (pct: number) =>
-                  pct >= 81 ? (isLight ? 'text-lime-700' : 'text-lime-400')
-                  : pct >= 61 ? (isLight ? 'text-yellow-700' : 'text-yellow-400')
-                  : pct >= 41 ? (isLight ? 'text-orange-700' : 'text-orange-400')
-                  : pct >= 21 ? (isLight ? 'text-red-700' : 'text-red-400')
-                  : (isLight ? 'text-purple-700' : 'text-purple-400');
+                  pct >= 81
+                    ? isLight
+                      ? "text-lime-700"
+                      : "text-lime-400"
+                    : pct >= 61
+                      ? isLight
+                        ? "text-yellow-700"
+                        : "text-yellow-400"
+                      : pct >= 41
+                        ? isLight
+                          ? "text-orange-700"
+                          : "text-orange-400"
+                        : pct >= 21
+                          ? isLight
+                            ? "text-red-700"
+                            : "text-red-400"
+                          : isLight
+                            ? "text-purple-700"
+                            : "text-purple-400";
                 return (
-                  <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? 'bg-secondary/10' : ''}`}>
-                    <td className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-xs" style={{ color: getNameColor(hs.name) }}>{hs.name}</td>
-                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-red-700' : 'text-red-400'}`}>{formatNumber(hs.dmg)}</td>
-                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${tierText(hs.dmgPct)}`}>{hs.dmgPct.toFixed(1)}%</td>
-                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-yellow-700' : 'text-yellow-400'}`}>{hs.targeted}</td>
-                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? 'text-teal-700' : 'text-teal-400'}`}>{hs.dodged}</td>
-                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${tierText(hs.tankPct)}`}>{hs.tankPct.toFixed(1)}%</td>
+                  <tr key={hs.name} className={`border-b border-border/10 ${idx % 2 === 0 ? "bg-secondary/10" : ""}`}>
+                    <td
+                      className="py-1.5 px-1 font-bold truncate max-w-[80px] text-center text-xs"
+                      style={{ color: getNameColor(hs.name) }}
+                    >
+                      {hs.name}
+                    </td>
+                    <td
+                      className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? "text-red-700" : "text-red-400"}`}
+                    >
+                      {formatNumber(hs.dmg)}
+                    </td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${tierText(hs.dmgPct)}`}>
+                      {hs.dmgPct.toFixed(1)}%
+                    </td>
+                    <td
+                      className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? "text-yellow-700" : "text-yellow-400"}`}
+                    >
+                      {hs.targeted}
+                    </td>
+                    <td
+                      className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${isLight ? "text-teal-700" : "text-teal-400"}`}
+                    >
+                      {hs.dodged}
+                    </td>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold text-xs ${tierText(hs.tankPct)}`}>
+                      {hs.tankPct.toFixed(1)}%
+                    </td>
                   </tr>
                 );
               })}
@@ -749,21 +980,24 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         {filter && (
           <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-t text-xs text-primary mb-0.5">
             <span className="font-medium">🔍 {filter.name}</span>
-            <button onClick={() => setFilter(null)} className="ml-1 text-muted-foreground hover:text-foreground text-sm">✕</button>
+            <button
+              onClick={() => setFilter(null)}
+              className="ml-1 text-muted-foreground hover:text-foreground text-sm"
+            >
+              ✕
+            </button>
           </div>
         )}
 
-        <div ref={logScrollRef} className="overflow-y-auto rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/30 via-background/30 to-secondary/20 flex-1 min-h-0 shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
+        <div
+          ref={logScrollRef}
+          className="overflow-y-auto rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/30 via-background/30 to-secondary/20 flex-1 min-h-0 shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]"
+        >
           {/* Controls inside log box */}
           <div className="sticky top-0 z-20 flex items-center justify-end gap-1.5 px-2 py-1 bg-secondary/80 backdrop-blur-sm border-b border-primary/20">
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-xs gap-1 h-6 px-2"
-                  title="표시 항목 선택"
-                >
+                <Button variant="outline" size="sm" className="text-xs gap-1 h-6 px-2" title="표시 항목 선택">
                   <Settings className="w-3 h-3" />
                   표시 항목
                 </Button>
@@ -775,23 +1009,31 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     <button
                       type="button"
                       className="text-[10px] text-muted-foreground hover:text-foreground underline"
-                      onClick={() => setVisibleCategories(new Set(ALL_CATEGORIES.map(c => c.key)))}
-                    >전체</button>
+                      onClick={() => setVisibleCategories(new Set(ALL_CATEGORIES.map((c) => c.key)))}
+                    >
+                      전체
+                    </button>
                     <span className="text-[10px] text-muted-foreground">/</span>
                     <button
                       type="button"
                       className="text-[10px] text-muted-foreground hover:text-foreground underline"
                       onClick={() => setVisibleCategories(new Set())}
-                    >해제</button>
+                    >
+                      해제
+                    </button>
                   </div>
                 </div>
                 <div
                   className="max-h-72 overflow-y-auto py-1"
-                  onWheel={(e) => { e.stopPropagation(); }}
-                  onWheelCapture={(e) => { e.stopPropagation(); }}
+                  onWheel={(e) => {
+                    e.stopPropagation();
+                  }}
+                  onWheelCapture={(e) => {
+                    e.stopPropagation();
+                  }}
                   onPointerDown={(e) => e.stopPropagation()}
                 >
-                  {ALL_CATEGORIES.map(c => {
+                  {ALL_CATEGORIES.map((c) => {
                     const checked = visibleCategories.has(c.key);
                     return (
                       <label
@@ -815,7 +1057,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               variant="outline"
               size="sm"
               className="text-xs gap-1 h-6"
-              onClick={() => { setCurrentIdx(log.length - 1); setPlaying(false); }}
+              onClick={() => {
+                setCurrentIdx(log.length - 1);
+                setPlaying(false);
+              }}
               title="끝까지 진행"
             >
               <FastForward className="w-3 h-3" />
@@ -823,7 +1068,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             </Button>
           </div>
 
-          {roundGroups.map(group => {
+          {roundGroups.map((group) => {
             if (filter && !isRoundRelevant(group)) return null;
             const visibleEntries = group.entries.filter(({ entry }) => isCategoryVisible(entry));
             if (visibleEntries.length === 0) return null;
@@ -831,8 +1076,12 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             return (
               <div key={group.round} className="border-b border-border/20">
                 {/* Round header - non-collapsible, just a divider */}
-                <div className={`flex items-center gap-2 px-3 py-1.5 border-b ${isLight ? 'bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20' : 'bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-primary/30'}`}>
-                  <span className={`text-sm font-bold ${isLight ? 'text-primary' : 'text-foreground'}`}>라운드 {group.round}</span>
+                <div
+                  className={`flex items-center gap-2 px-3 py-1.5 border-b ${isLight ? "bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20" : "bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-primary/30"}`}
+                >
+                  <span className={`text-sm font-bold ${isLight ? "text-primary" : "text-foreground"}`}>
+                    라운드 {group.round}
+                  </span>
                   <span className="text-xs text-muted-foreground ml-auto">{visibleEntries.length}건</span>
                 </div>
                 {visibleEntries.map(({ entry, idx }) => {

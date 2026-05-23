@@ -3791,7 +3791,7 @@ function getRetryBooster(original: BoosterType): BoosterType {
 
 export interface CombatLogEntry {
   round: number;
-  type: "monster_attack" | "hero_attack" | "heal" | "event" | "result";
+  type: "monster_attack" | "hero_attack" | "heal" | "event" | "result" | "retry";
   actor: string;
   target?: string;
   detail: string;
@@ -4694,6 +4694,68 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
     if (round >= MAX_ROUNDS) {
       log.push({ round, type: "result", actor: "시스템", detail: `라운드 제한 도달 (${MAX_ROUNDS}라운드)` });
+    }
+  }
+
+  // ─── Fateweaver / Chronomancer retry ────────────────────────────────────────
+  // If the battle was lost (monster still alive or round limit) and a
+  // Chronomancer / Fateweaver is in the party, run a second combat and append
+  // it to the log with a "시간 되감기" separator entry.
+  const hasChrono =
+    !config._isRetry &&
+    activeHeroes.some((h) => isClass(h, "크로노맨서", "페이트위버", "운명직공", "Chronomancer", "Fateweaver"));
+  const lastEntry = log[log.length - 1];
+  const firstAttemptLost = hasChrono && lastEntry && lastEntry.type === "result" && !lastEntry.detail.includes("승리");
+
+  if (firstAttemptLost) {
+    // Determine the retry mini-boss (if original was "random", re-roll randomly)
+    let retryMiniBoss = miniBoss;
+    if (miniBoss === "random") {
+      const types: MiniBossType[] = ["none", "agile", "dire", "huge", "wealthy", "legendary"];
+      retryMiniBoss = types[Math.floor(Math.random() * types.length)];
+    }
+
+    // Separator — "시간 되감기!"
+    const retryBooster = getRetryBooster(booster);
+    const boosterLabel =
+      retryBooster.type === "mega"
+        ? "메가 부스터"
+        : retryBooster.type === "super"
+          ? "슈퍼 부스터"
+          : retryBooster.type === "normal"
+            ? "노말 부스터"
+            : "부스터 없음";
+    const extraAtk = Math.round((retryBooster.extraAtkBonus || 0) * 100);
+    const extraDef = Math.round((retryBooster.extraDefBonus || 0) * 100);
+
+    log.push({
+      round: 0,
+      type: "retry",
+      actor: "크로노맨서",
+      detail: `시간 되감기! (${boosterLabel} +${extraAtk}% ATK / +${extraDef}% DEF${retryMiniBoss !== miniBoss ? ` / 미니보스 재추첨: ${retryMiniBoss === "none" ? "없음" : retryMiniBoss}` : ""})`,
+    });
+
+    // Run the retry battle log (recursion-safe: no further retry inside)
+    const retryLog = runSingleCombatLog({
+      heroes,
+      monster,
+      miniBoss: retryMiniBoss,
+      booster: retryBooster,
+      questTypeKey: config.questTypeKey,
+      regionName: config.regionName,
+      isTerrorTower: config.isTerrorTower,
+      precomputedStats: config.precomputedStats,
+      // _isRetry flag equivalent: strip any further chrono so we don't loop
+      _isRetry: true,
+    });
+
+    // Offset retry round numbers to continue from where the first attempt ended
+    // so the log viewer keeps round numbers monotonically increasing.
+    const maxFirstRound = lastEntry.round;
+    for (const entry of retryLog) {
+      // round 0 = setup entries, keep as 0; combat rounds offset
+      const offsetRound = entry.round > 0 ? entry.round + maxFirstRound : 0;
+      log.push({ ...entry, round: offsetRound });
     }
   }
 
