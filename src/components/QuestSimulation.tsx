@@ -2204,8 +2204,13 @@ export default function QuestSimulation() {
                                     </div>
                                     {(() => {
                                       const total = dispSim!.totalSimulations || 0;
-                                      const firstWins = dispSim!.winSimCount ?? Math.round((winRate / 100) * total);
-                                      const firstLosses = dispSim!.loseSimCount ?? total - firstWins;
+                                      // dispSim이 combinedResult이면 wins/losses가 이미 올바르게 합산되어 있으므로
+                                      // 그대로 사용. retryOnly면 retryResult 자체가 dispSim이므로 동일하게 직접 사용.
+                                      const isCombined = !retryOnly && !!simResult!.combinedResult;
+                                      const wins = dispSim!.winSimCount ?? Math.round((winRate / 100) * total);
+                                      const losses = dispSim!.loseSimCount ?? total - wins;
+
+                                      // 재시도 정보는 원본 simResult.retryResult에서만 가져온다 (중복 보정 없음)
                                       const retried =
                                         !retryOnly && simResult!.retryResult
                                           ? simResult!.retryResult.totalSimulations || 0
@@ -2215,9 +2220,7 @@ export default function QuestSimulation() {
                                           ? simResult!.retryResult.winSimCount || 0
                                           : 0;
                                       const retryLosses = retried - retryWins;
-                                      // Combined totals (first try + successful retries)
-                                      const wins = firstWins + retryWins;
-                                      const losses = firstLosses - retryWins;
+
                                       // Detect Fateweaver/Chronomancer in party (even when no failures occurred)
                                       const fateweaverInParty =
                                         !retryOnly &&
