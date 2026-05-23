@@ -3703,18 +3703,24 @@ function mergeSimResults(first: SimulationResult, retry: SimulationResult): Simu
     };
   };
 
+  // For 모래시계 OFF 전체: first-win sims contribute their win-rounds (not first.avgRounds which includes
+  // first-fail rounds that were superseded by retry). Retry sims contribute all their rounds (win + lose).
+  const firstWinAvgR = first.winRounds?.avg ?? 0;
+  const firstWinMinR = first.winRounds?.min ?? Infinity;
+  const firstWinMaxR = first.winRounds?.max ?? 0;
   const mergedAvgRounds =
     totalAll > 0
-      ? Math.round(((first.avgRounds * firstWin + retry.avgRounds * (retryWin + retryLose)) / totalAll) * 100) / 100
+      ? Math.round(((firstWinAvgR * firstWin + retry.avgRounds * (retryWin + retryLose)) / totalAll) * 100) / 100
       : 0;
+  const mergedMinR = Math.min(firstWinMinR, retry.minRounds ?? Infinity);
 
   return {
     winRate: first.winRate,
     rawWinRate: first.rawWinRate,
     retryWinRate: first.retryWinRate,
     avgRounds: mergedAvgRounds,
-    minRounds: Math.min(first.minRounds, retry.minRounds),
-    maxRounds: Math.max(first.maxRounds, retry.maxRounds),
+    minRounds: mergedMinR === Infinity ? 0 : mergedMinR,
+    maxRounds: Math.max(firstWinMaxR, retry.maxRounds ?? 0),
     heroResults: mergedHeroResults,
     winHeroResults: mergedWinHeroResults,
     loseHeroResults: mergedLoseHeroResults,
