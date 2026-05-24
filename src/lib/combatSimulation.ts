@@ -4021,12 +4021,180 @@ export interface CombatLogEntry {
   values?: Record<string, number | string>;
 }
 
+function toLegacyCombatLog(entries: CombatLogEntry[], config: SimulationConfig): CombatLogEntry[] {
+  const monsterName = "몬스터";
+
+  const pct = (hp: number, maxHp: number): number => {
+    if (!maxHp || maxHp <= 0) return 0;
+    return Math.max(0, Math.min(100, Math.round((hp / maxHp) * 100)));
+  };
+
+  const hpText = (name: string, hp: number, maxHp: number): string => {
+    return `${name} HP: ${formatNum(Math.max(0, hp))} (${pct(hp, maxHp)}%)`;
+  };
+
+  const legacy: CombatLogEntry[] = [];
+  let actualMonsterMaxHp = config.monster.hp;
+
+  for (const entry of entries) {
+    const values = entry.values ?? {};
+
+    // 새 엔진의 몬스터 스탯 이벤트를 원본 UI가 읽는 전투 시작 이벤트로 변환
+    if (entry.type === "stat" && entry.detail.includes("몬스터 스탯")) {
+      const hp = typeof values.hp === "number" ? values.hp : config.monster.hp;
+      actualMonsterMaxHp = hp;
+
+      legacy.push({
+        round: entry.round,
+        type: "event",
+        actor: "시스템",
+        detail: `전투 시작! ${monsterName} HP: ${formatNum(hp)}`,
+        values,
+      });
+      continue;
+    }
+
+    // 영웅 초기 스탯 등은 원본 UI의 일반 이벤트로 표시
+    if (entry.type === "stat") {
+      legacy.push({
+        ...entry,
+        type: "event",
+      });
+      continue;
+    }
+
+    // 영웅 공격: attack/crit → hero_attack
+    if (entry.type === "attack" || entry.type === "crit") {
+      const dmg = typeof values.dmg === "number" ? values.dmg : 0;
+      const mobHp =
+        typeof values.mobHp === "number"
+          ? values.mobHp
+          : typeof values.mobMaxHp === "number"
+            ? values.mobMaxHp
+            : actualMonsterMaxHp;
+      const mobMaxHp = typeof values.mobMaxHp === "number" ? values.mobMaxHp : actualMonsterMaxHp;
+
+      legacy.push({
+        round: entry.round,
+        type: "hero_attack",
+        actor: entry.actor,
+        target: monsterName,
+        detail: `${entry.type === "crit" ? "치명타" : "공격"} ${formatNum(dmg)} 피해 (${hpText(
+          monsterName,
+          mobHp,
+          mobMaxHp,
+        )})`,
+        values,
+      });
+      continue;
+    }
+
+    // 몬스터 피해: damage → monster_attack 또는 event
+    if (entry.type === "damage") {
+      const targetName = entry.target ?? entry.actor;
+      const dmg = typeof values.dmg === "number" ? values.dmg : 0;
+      const hp = typeof values.hp === "number" ? values.hp : 0;
+      const maxHp = typeof values.maxHp === "number" ? values.maxHp : 0;
+
+      // 헴마 드레인은 원본 UI가 파싱하던 "헴마 스킬 발동" 형식으로 변환
+      if (entry.detail.includes("헴마 드레인")) {
+        legacy.push({
+          round: entry.round,
+          type: "event",
+          actor: targetName,
+          detail: `헴마 스킬 발동: ${targetName} HP -${formatNum(dmg)} (${hpText(targetName, hp, maxHp)})`,
+          values,
+        });
+        continue;
+      }
+
+      // 군주 보호/치명타 생존처럼 실제 피해 표시보다 이벤트성이 강한 항목
+      if (entry.detail.includes("군주") || entry.detail.includes("치명타 생존")) {
+        legacy.push({
+          round: entry.round,
+          type: "event",
+          actor: targetName,
+          detail: entry.detail,
+          values,
+        });
+        continue;
+      }
+
+      const isAoe = entry.detail.includes("[광역]") || entry.detail.includes("광역");
+      const isCrit = entry.detail.includes("치명");
+
+      legacy.push({
+        round: entry.round,
+        type: "monster_attack",
+        actor: monsterName,
+        target: targetName,
+        detail: `${isAoe ? "광역 공격 " : ""}${isCrit ? "치명타 " : ""}${formatNum(dmg)} 피해 (${hpText(
+          targetName,
+          hp,
+          maxHp,
+        )})`,
+        values,
+      });
+      continue;
+    }
+
+    // 회피: dodge → event/detail 회피
+    if (entry.type === "dodge") {
+      const targetName = entry.target ?? entry.actor;
+
+      legacy.push({
+        round: entry.round,
+        type: "event",
+        actor: monsterName,
+        target: targetName,
+        detail: "회피",
+        values,
+      });
+      continue;
+    }
+
+    // 사망: death → event/detail 사망
+    if (entry.type === "death") {
+      legacy.push({
+        round: entry.round,
+        type: "event",
+        actor: entry.actor,
+        detail: "사망",
+        values,
+      });
+      continue;
+    }
+
+    // 회복: 원본 UI가 읽는 "체력 n 회복 (... HP: ...)" 형식으로 변환
+    if (entry.type === "heal") {
+      const heal = typeof values.heal === "number" ? values.heal : 0;
+      const hp = typeof values.hp === "number" ? values.hp : 0;
+      const maxHp = typeof values.maxHp === "number" ? values.maxHp : 0;
+
+      legacy.push({
+        round: entry.round,
+        type: "heal",
+        actor: entry.actor,
+        detail: `체력 ${formatNum(heal)} 회복 (${hpText(entry.actor, hp, maxHp)})`,
+        values,
+      });
+      continue;
+    }
+
+    // 이미 원본 UI 타입인 경우는 그대로 통과
+    legacy.push(entry);
+  }
+
+  return legacy;
+}
+
 export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
-  // 1회 전투 로그는 메인 시뮬레이션 엔진을 그대로 사용 (recordEvents=true).
-  // 이렇게 하면 상세 정보의 통계값(방어 임계값, 문드라 보정 등)과 완전히 동일한
-  // 엔진으로 실행되므로 별도 구현의 불일치 문제가 원천 제거됩니다.
+  // 1회 전투 로그는 메인 시뮬레이션 엔진을 그대로 사용한다.
+  // 단, UI는 원본 CombatBattlefield가 기대하는 legacy log 포맷을 유지한다.
   const result = runCombatSimulation({ ...config, recordEvents: true, simulationCount: 1 });
-  return result.eventLog ?? [{ round: 0, type: "result", actor: "시스템", detail: "이벤트 로그 없음" }];
+  const rawLog = result.eventLog ?? [{ round: 0, type: "result", actor: "시스템", detail: "이벤트 로그 없음" }];
+
+  return toLegacyCombatLog(rawLog, config);
 }
 
 function formatNum(n: number): string {
