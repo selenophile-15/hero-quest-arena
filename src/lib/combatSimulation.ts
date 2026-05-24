@@ -2474,14 +2474,58 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
 
         // Shark activates at 50% mob HP
-        if (mobHpCurrent < mobHp / 2) sharkActive = 1;
+        if (!sharkActive && mobHpCurrent < mobHp / 2 && mobHpCurrent > 0) {
+          sharkActive = 1;
+          // Emit only if there is any shark hero in the party
+          for (let s = 0; s < numHeroes; s++) {
+            if (heroShark[s] > 0 && hp[s] > 0) {
+              pushEv({
+                round,
+                type: "event",
+                actor: activeHeroes[s].name || `영웅 ${s + 1}`,
+                detail: `상어 영혼 활성화 (몬스터 HP 50% 이하, +${heroShark[s]}% 공격력)`,
+              });
+            }
+          }
+        } else if (mobHpCurrent < mobHp / 2) {
+          sharkActive = 1;
+        }
 
         // Polonia loot attempt — each hero attack is a chance to steal
         if (poloniaActive && Math.random() < poloniaLootChance) {
           simPoloniaStolen[jj]++;
+          pushEv({
+            round,
+            type: "event",
+            actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+            detail: `폴로니아: 전리품 약탈 성공!`,
+          });
+        }
+
+        // Conqueror stack change event
+        if (heroIsConquistador[jj]) {
+          const postStacks = Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25));
+          if (isCrit && postStacks > preStacks) {
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+              detail: `정복자 스택 +1 → ${postStacks}중첩 (치명타 대미지 +${postStacks * 25}%)`,
+            });
+          } else if (!isCrit && preStacks > 0) {
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+              detail: `정복자 스택 초기화 (${preStacks}중첩 → 0)`,
+            });
+          }
         }
 
         guaranteedCrit[jj] = 0;
+
+        // Stop further hero attacks once the monster is dead (e.g., Dark Knight execute)
+        if (mobHpCurrent <= 0) break;
       }
 
       dinosaurActive = 0; // Dinosaur only active round 1
