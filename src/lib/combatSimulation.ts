@@ -4217,7 +4217,7 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
 
   // 1회전 패배 + 페이트위버 or 크로노맨서 → retry 배틀 로그 추가
   const firstWon = firstRawLog.some((e) => e.type === "result" && e.detail.includes("승리"));
-  const activeHeroes = config.heroes.filter((h) => h.hp > 0 && h.include !== false);
+  const activeHeroes = config.heroes.filter((h) => h.hp > 0);
   const hasFateweaver = activeHeroes.some((h) => isClass(h, "페이트위버", "운명직공", "Fateweaver"));
   const hasChronos = !hasFateweaver && activeHeroes.some((h) => isClass(h, "크로노맨서", "Chronomancer"));
 
