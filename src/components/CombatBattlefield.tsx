@@ -33,46 +33,6 @@ import {
 import { formatNumber } from "@/lib/format";
 import { useTheme } from "@/hooks/use-theme";
 
-// ─── 새 엔진 타입 → 기존 렌더링 타입 정규화 ────────────────────────────────
-// runCombatSimulation(recordEvents=true)이 방출하는 새 타입들을
-// CombatBattlefield가 기존에 처리하던 타입 분류로 매핑합니다.
-function normalizeEntry(entry: CombatLogEntry): CombatLogEntry {
-  const t = entry.type;
-  // 영웅 공격 계열
-  if (t === "attack" || t === "crit") {
-    return { ...entry, type: "hero_attack" };
-  }
-  // 몬스터 공격 계열 (damage = 받는 피해, dodge = 회피, death = 사망)
-  if (t === "damage") {
-    // 헴마 드레인은 별도 이벤트로 분류 (detail에 "헴마" 포함)
-    if (entry.detail.includes("헴마")) return { ...entry, type: "event" };
-    // 군주 흡수는 보호 이벤트
-    if (entry.detail.includes("군주")) return { ...entry, type: "event" };
-    // 일반 피해/치명타 생존 → monster_attack
-    return {
-      ...entry,
-      type: "monster_attack",
-      // 기존 getState()는 entry.target 존재 여부로 HP 업데이트를 분기하므로 actor를 target으로 복사
-      target: entry.target ?? entry.actor,
-    };
-  }
-  if (t === "dodge") {
-    return {
-      ...entry,
-      type: "event",
-      detail: "회피",
-      target: entry.target ?? entry.actor,
-    };
-  }
-  if (t === "death") {
-    return { ...entry, type: "event", detail: `${entry.actor} 사망` };
-  }
-  if (t === "stat") {
-    return { ...entry, type: "event" };
-  }
-  return entry;
-}
-
 interface Props {
   log: CombatLogEntry[];
   heroes: Hero[];
@@ -113,19 +73,9 @@ function hpColor(pct: number): string {
   return "#a855f7";
 }
 
-export default function CombatBattlefield({
-  log: rawLog,
-  heroes,
-  monsterHp,
-  monsterName,
-  monsterImage,
-  onNewBattle,
-}: Props) {
+export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, monsterImage, onNewBattle }: Props) {
   const { colorMode } = useTheme();
   const isLight = colorMode === "light";
-
-  // 새 엔진(recordEvents=true)이 방출하는 타입을 기존 렌더링 타입으로 정규화
-  const log = useMemo(() => rawLog.map(normalizeEntry), [rawLog]);
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -331,8 +281,7 @@ export default function CombatBattlefield({
     const aoeRounds = new Set<number>();
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
       const entry = log[i];
-      if (entry.type === "monster_attack" && (entry.detail.includes("광역 공격") || entry.detail.includes("[광역]")))
-        aoeRounds.add(entry.round);
+      if (entry.type === "monster_attack" && entry.detail.includes("광역 공격")) aoeRounds.add(entry.round);
     }
 
     for (let i = 0; i <= currentIdx && i < log.length; i++) {
@@ -405,46 +354,28 @@ export default function CombatBattlefield({
         const m = entry.detail.match(/HP:\s*([\d,]+)/);
         if (m) mobHpCurrent = parseInt(m[1].replace(/,/g, ""));
       }
-      // 새 엔진: stat 이벤트에서 몬스터 HP 초기값 추출
-      if (entry.type === "event" && entry.detail.includes("몬스터 스탯:") && entry.values?.hp != null) {
-        mobHpCurrent = entry.values.hp as number;
-      }
 
       if (entry.type === "monster_attack" && entry.target) {
-        // 새 엔진은 values.hp에 직접 남은 HP를 담음 → 정규식보다 우선 사용
-        if (entry.values?.hp != null) {
-          heroHp[entry.target] = Math.max(0, entry.values.hp as number);
-        } else {
-          const hpMatch = entry.detail.match(/HP: ([\d,\-]+)/);
-          if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
-        }
-        const dmgVal = entry.values?.dmg != null ? String(Math.round(entry.values.dmg as number)) : null;
-        const dmgMatch = dmgVal ? null : entry.detail.match(/([\d,]+) 피해/);
-        const dmgStr = dmgVal ?? (dmgMatch ? dmgMatch[1] : null);
-        if (dmgStr && i === currentIdx) {
+        const hpMatch = entry.detail.match(/HP: ([\d,\-]+)/);
+        if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
+        const dmgMatch = entry.detail.match(/([\d,]+) 피해/);
+        if (dmgMatch && i === currentIdx) {
           actionEffects.push({
             target: entry.target,
-            value: `-${dmgStr}`,
+            value: `-${dmgMatch[1]}`,
             color: entry.detail.includes("치명타") ? "text-yellow-400" : "text-red-400",
             key: i,
           });
         }
       }
       if (entry.type === "hero_attack") {
-        // 새 엔진은 values.mobHp에 직접 남은 몬스터 HP를 담음
-        if (entry.values?.mobHp != null) {
-          mobHpCurrent = Math.max(0, entry.values.mobHp as number);
-        } else {
-          const mobMatch = entry.detail.match(/HP: ([\d,\-]+)/);
-          if (mobMatch) mobHpCurrent = Math.max(0, parseInt(mobMatch[1].replace(/,/g, "")));
-        }
-        const dmgVal = entry.values?.dmg != null ? String(Math.round(entry.values.dmg as number)) : null;
-        const dmgMatch = dmgVal ? null : entry.detail.match(/([\d,]+)\s*피해/);
-        const dmgStr = dmgVal ?? (dmgMatch ? dmgMatch[1] : null);
-        if (dmgStr && i === currentIdx) {
+        const mobMatch = entry.detail.match(/HP: ([\d,\-]+)/);
+        if (mobMatch) mobHpCurrent = Math.max(0, parseInt(mobMatch[1].replace(/,/g, "")));
+        const dmgMatch = entry.detail.match(/([\d,]+)\s*피해/);
+        if (dmgMatch && i === currentIdx) {
           actionEffects.push({
             target: "__monster__",
-            value: `-${dmgStr}`,
+            value: `-${dmgMatch[1]}`,
             color: entry.detail.includes("치명타") ? "text-yellow-400" : "text-blue-400",
             key: i,
           });
@@ -456,35 +387,16 @@ export default function CombatBattlefield({
       }
       // Heal entries: extract HP info to keep visualization in sync
       if (entry.type === "heal") {
-        // 새 엔진은 values.hp에 직접 남은 HP 담음
-        if (entry.values?.hp != null && entry.actor && entry.actor in heroHp) {
-          heroHp[entry.actor] = Math.max(0, entry.values.hp as number);
-        } else {
-          const hpMatch = entry.detail.match(/HP: ([\d,]+)/);
-          if (hpMatch && entry.actor && entry.actor in heroHp) {
-            heroHp[entry.actor] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
-          }
+        const hpMatch = entry.detail.match(/HP: ([\d,]+)/);
+        if (hpMatch && entry.actor && entry.actor in heroHp) {
+          heroHp[entry.actor] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
         }
-        const healVal = entry.values?.heal != null ? String(Math.round(entry.values.heal as number)) : null;
-        const healMatch = healVal ? null : entry.detail.match(/체력 ([\d,]+) 회복/);
-        const healStr = healVal ?? (healMatch ? healMatch[1] : null);
-        if (healStr && entry.actor && i === currentIdx) {
-          actionEffects.push({ target: entry.actor, value: `+${healStr}`, color: "text-emerald-400", key: i });
+        const healMatch = entry.detail.match(/체력 ([\d,]+) 회복/);
+        if (healMatch && entry.actor && i === currentIdx) {
+          actionEffects.push({ target: entry.actor, value: `+${healMatch[1]}`, color: "text-emerald-400", key: i });
         }
       }
-      // Hemma drain: 새 엔진은 "헴마 드레인" detail + values.hp로 HP 전달
-      if (entry.type === "event" && entry.detail.includes("헴마 드레인") && entry.actor && entry.values?.hp != null) {
-        if (entry.actor in heroHp) heroHp[entry.actor] = Math.max(0, entry.values.hp as number);
-        if (i === currentIdx && entry.values?.dmg != null) {
-          actionEffects.push({
-            target: entry.actor,
-            value: `-${Math.round(entry.values.dmg as number)}`,
-            color: "text-purple-400",
-            key: i,
-          });
-        }
-      }
-      // Hemma drain: parse the drained party member's remaining HP and the drain amount (legacy)
+      // Hemma drain: parse the drained party member's remaining HP and the drain amount
       if (entry.type === "event" && entry.detail.includes("헴마 스킬 발동")) {
         // Last HP block in the detail belongs to the drain target
         const hpBlocks = [...entry.detail.matchAll(/(\S+?)\s*HP:\s*([\d,]+)/g)];
@@ -667,7 +579,7 @@ export default function CombatBattlefield({
     const isEvasion = entry.detail === "회피";
     const isDeath = entry.detail.includes("사망");
     const isSetup = entry.type === "event" && !isEvasion && !isDeath;
-    const isAoe = entry.detail.includes("광역 공격") || entry.detail.includes("[광역]");
+    const isAoe = entry.detail.includes("광역 공격");
 
     // Icon selection
     let icon: React.ReactNode;
