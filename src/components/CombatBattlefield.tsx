@@ -29,7 +29,6 @@ import {
   Sword,
   BowArrow,
   WandSparkles,
-  Cross,
 } from "lucide-react";
 import { formatNumber } from "@/lib/format";
 import { useTheme } from "@/hooks/use-theme";
@@ -77,13 +76,6 @@ function hpColor(pct: number): string {
 export default function CombatBattlefield({ log, heroes, monsterHp, monsterName, monsterImage, onNewBattle }: Props) {
   const { colorMode } = useTheme();
   const isLight = colorMode === "light";
-
-  // 미니보스 레이블 추출 (setup 이벤트의 values.miniBossLabel에서)
-  const miniBossLabel = useMemo(() => {
-    const ev = log.find((e) => e.type === "event" && e.detail?.includes("미니보스:"));
-    if (!ev?.values?.miniBossLabel) return "";
-    return String(ev.values.miniBossLabel);
-  }, [log]);
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -358,14 +350,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         });
         continue;
       }
-      // 영웅 초기 스탯 이벤트: values.hp로 heroMaxHp 업데이트 (실제 전투 HP 기준)
-      if (entry.type === "event" && entry.detail.includes("초기 스탯:") && entry.actor && entry.values) {
-        const vals = entry.values as Record<string, number>;
-        if (typeof vals.hp === "number" && entry.actor in heroHp) {
-          heroMaxHp[entry.actor] = vals.hp;
-          heroHp[entry.actor] = vals.hp;
-        }
-      }
       // "전투 시작" event carries the actual total HP (including mini-boss multiplier)
       if (entry.type === "event" && entry.detail.includes("전투 시작!")) {
         const m = entry.detail.match(/HP:\s*([\d,]+)/);
@@ -398,15 +382,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           });
         }
       }
-      if (entry.type === "event" && (entry.detail.includes("사망!") || entry.detail.includes("사망")))
-        heroHp[entry.actor] = 0;
-      // 군주 보호: values.hp에 군주 남은 HP
-      if (entry.type === "event" && entry.detail.includes("군주") && entry.detail.includes("대신 맞음")) {
-        const vals = entry.values ?? {};
-        if (typeof vals.hp === "number" && entry.actor && entry.actor in heroHp) {
-          heroHp[entry.actor] = Math.max(0, vals.hp as number);
-        }
-      }
+      if (entry.type === "event" && entry.detail.includes("사망")) heroHp[entry.actor] = 0;
       if (entry.type === "event" && entry.detail === "회피" && entry.target && i === currentIdx) {
         actionEffects.push({ target: entry.target, value: "MISS", color: "text-teal-400", key: i });
       }
@@ -602,9 +578,9 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
 
     const isCrit = entry.detail.includes("치명타");
     const isEvasion = entry.detail === "회피";
-    const isDeath = entry.detail.includes("사망") || entry.detail === "사망!";
+    const isDeath = entry.detail.includes("사망");
     const isSetup = entry.type === "event" && !isEvasion && !isDeath;
-    const isAoe = entry.detail.includes("광역 공격"); // 광역 공격 발동! 또는 광역 공격 N 피해
+    const isAoe = entry.detail.includes("광역 공격");
 
     // Icon selection
     let icon: React.ReactNode;
@@ -618,8 +594,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       icon = <UserX className="w-4 h-4 text-red-400" />;
     } else if (isEvasion) {
       icon = <Wind className="w-4 h-4 text-teal-400" />;
-    } else if ((entry.type as string) === "survive") {
-      icon = <Cross className="w-4 h-4 text-cyan-400" />;
     } else if (isSetup) {
       icon = <Settings className="w-4 h-4 text-muted-foreground" />;
     } else if (entry.type === "monster_attack" && isAoe) {
@@ -660,8 +634,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     else if (entry.type === "heal") borderLeftColor = C.green;
     else if (entry.type === "result") borderLeftColor = entry.detail.includes("승리") ? "#84cc16" : "#ef4444";
     else if (isEvasion) borderLeftColor = C.teal;
-    else if ((entry.type as string) === "survive")
-      borderLeftColor = "#22d3ee"; // cyan-400
     else borderLeftColor = isLight ? "#6b7280" : "#a3a3a3";
 
     // Background
@@ -842,10 +814,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <span className="font-body font-bold text-sm ml-4" style={{ color: C.teal }}>
               회피!
             </span>
-          ) : (entry.type as string) === "survive" ? (
-            <span className="font-body font-bold text-sm ml-4" style={{ color: "#22d3ee" }}>
-              치명타 생존!
-            </span>
           ) : (
             <span
               className={`ml-1 text-sm font-body ${
@@ -959,7 +927,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
               {/* Fixed-size inner box — pre-reserves space for damage readout to prevent resize */}
               <div
                 className={`w-full p-2.5 rounded-lg border bg-yellow-500/5 ${filter?.name === monsterName ? "border-primary" : "border-yellow-500/20"} ${state.mobHpCurrent <= 0 ? "opacity-30" : ""}`}
-                style={{ minHeight: "160px" }}
+                style={{ minHeight: "140px" }}
               >
                 <div className="flex justify-center mb-1">
                   {monsterImage ? (
@@ -970,49 +938,33 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     <span className="text-2xl">👹</span>
                   )}
                 </div>
-                {miniBossLabel && (
-                  <div className="text-center mb-0.5">
-                    <span
-                      className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                      style={{
-                        background: "rgba(234,179,8,0.15)",
-                        color: C.monster,
-                        border: "1px solid rgba(234,179,8,0.4)",
-                      }}
-                    >
-                      {miniBossLabel}
-                    </span>
-                  </div>
-                )}
                 <div className="text-center mb-1.5">
                   <span className="text-xs font-bold" style={{ color: C.monster }}>
                     {monsterName}
                   </span>
                 </div>
-                {/* HP value row */}
-                <div className="flex items-center justify-center mb-1" style={{ minHeight: "20px" }}>
+                {/* HP value row — effect number appears inline to the left, no layout shift */}
+                <div className="flex items-center justify-center gap-1 mb-1" style={{ minHeight: "20px" }}>
+                  {state.actionEffects.find((e) => e.target === "__monster__") && (
+                    <span
+                      className={`text-xs font-bold font-mono ${state.actionEffects.find((e) => e.target === "__monster__")!.color} animate-bounce`}
+                    >
+                      {state.actionEffects.find((e) => e.target === "__monster__")!.value}
+                    </span>
+                  )}
                   <span className="text-xs font-bold font-mono" style={{ color: hpColor(mobHpPct) }}>
                     {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
                   </span>
                 </div>
-                {/* HP bar */}
+                {/* Reserve a fixed line for the filter badge so it never causes resize */}
                 <div className="h-2.5 bg-secondary rounded-full overflow-hidden mb-1">
                   <div
                     className="h-full rounded-full transition-all duration-300"
                     style={{ width: `${mobHpPct}%`, backgroundColor: hpColor(mobHpPct) }}
                   />
                 </div>
-                {/* Damage effect — fixed height row below bar */}
-                <div style={{ minHeight: "18px" }} className="flex items-center justify-center">
-                  {state.actionEffects.find((e) => e.target === "__monster__") ? (
-                    <span
-                      className={`text-xs font-bold font-mono ${state.actionEffects.find((e) => e.target === "__monster__")!.color} animate-bounce`}
-                    >
-                      {state.actionEffects.find((e) => e.target === "__monster__")!.value}
-                    </span>
-                  ) : (
-                    filter?.name === monsterName && <span className="text-[10px] text-primary">🔍 필터</span>
-                  )}
+                <div style={{ minHeight: "16px" }} className="flex items-center justify-center">
+                  {filter?.name === monsterName && <span className="text-[10px] text-primary">🔍 필터</span>}
                 </div>
               </div>
             </div>
