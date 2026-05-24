@@ -137,6 +137,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     if (entry.type === "heal") return "heal";
     if (entry.type === "event") {
       const d = entry.detail || "";
+      if (d.includes("광역 공격 발동")) return "attacks";
       if (d.includes("재생") || d.includes("회복")) return "heal";
       if (d.includes("다이묘 확정 회피") || d.includes("회피")) return d.includes("다이묘") ? "classBonus" : "evasion";
       if (d.includes("사망")) return "death";
