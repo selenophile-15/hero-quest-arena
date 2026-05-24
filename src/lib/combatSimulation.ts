@@ -2299,6 +2299,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
           // Count one round at this stage (for stage-time distribution)
           simBrkStageRounds[berserkerStage[i]][i]++;
+          // Emit event on stage transition (increase only)
+          if (berserkerStage[i] > prevBerserkerStage[i]) {
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+              detail: `광전사/잘 ${berserkerStage[i]}단계 진입 (ATK/EVA 보너스 증가)`,
+            });
+            prevBerserkerStage[i] = berserkerStage[i];
+          }
         }
 
         // Ninja loses innate when hit
@@ -2315,6 +2325,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (round === 1 && (heroIsSamurai[i] || heroIsDaimyo[i])) {
           guaranteedCrit[i] = 1;
           guaranteedEvade[i] = 0;
+          pushEv({
+            round,
+            type: "event",
+            actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+            detail: `사무라이/다이묘 첫 턴: 확정 치명타 + 확정 회피`,
+          });
+        }
+        // Dinosaur first-turn bonus
+        if (round === 1 && dinosaurActive && heroDinosaur[i] > 0 && hp[i] > 0) {
+          pushEv({
+            round,
+            type: "event",
+            actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+            detail: `공룡 영혼: 첫 턴 +${heroDinosaur[i]}% 공격력 보너스`,
+          });
         }
       }
 
