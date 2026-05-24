@@ -1895,6 +1895,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     let dinosaurActive = 1;
     let lordSave = true;
     let contFight = true;
+    // Track previous state for emitting transition events to the combat log
+    const prevBerserkerStage = new Int8Array(numHeroes);
 
     // Randomize attack order
     const attackOrder = Array.from({ length: numHeroes }, (_, i) => i);
@@ -1958,6 +1960,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       const isAoe = Math.random() < mobAoeChance && heroesAlive > 1;
 
       if (isAoe) {
+        pushEv({
+          round,
+          type: "event",
+          actor: "몬스터",
+          detail: `광역 공격 발동! (확률 ${Math.round(mobAoeChance * 100)}%)`,
+        });
         // AoE attack hits all alive heroes
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
@@ -2291,6 +2299,16 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
           // Count one round at this stage (for stage-time distribution)
           simBrkStageRounds[berserkerStage[i]][i]++;
+          // Emit event on stage transition (increase only)
+          if (berserkerStage[i] > prevBerserkerStage[i]) {
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+              detail: `광전사/잘 ${berserkerStage[i]}단계 진입 (ATK/EVA 보너스 증가)`,
+            });
+            prevBerserkerStage[i] = berserkerStage[i];
+          }
         }
 
         // Ninja loses innate when hit
@@ -2307,6 +2325,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (round === 1 && (heroIsSamurai[i] || heroIsDaimyo[i])) {
           guaranteedCrit[i] = 1;
           guaranteedEvade[i] = 0;
+          pushEv({
+            round,
+            type: "event",
+            actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+            detail: `사무라이/다이묘 첫 턴: 확정 치명타 + 확정 회피`,
+          });
+        }
+        // Dinosaur first-turn bonus
+        if (round === 1 && dinosaurActive && heroDinosaur[i] > 0 && hp[i] > 0) {
+          pushEv({
+            round,
+            type: "event",
+            actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+            detail: `공룡 영혼: 첫 턴 +${heroDinosaur[i]}% 공격력 보너스`,
+          });
         }
       }
 
@@ -2441,14 +2474,58 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
 
         // Shark activates at 50% mob HP
-        if (mobHpCurrent < mobHp / 2) sharkActive = 1;
+        if (!sharkActive && mobHpCurrent < mobHp / 2 && mobHpCurrent > 0) {
+          sharkActive = 1;
+          // Emit only if there is any shark hero in the party
+          for (let s = 0; s < numHeroes; s++) {
+            if (heroShark[s] > 0 && hp[s] > 0) {
+              pushEv({
+                round,
+                type: "event",
+                actor: activeHeroes[s].name || `영웅 ${s + 1}`,
+                detail: `상어 영혼 활성화 (몬스터 HP 50% 이하, +${heroShark[s]}% 공격력)`,
+              });
+            }
+          }
+        } else if (mobHpCurrent < mobHp / 2) {
+          sharkActive = 1;
+        }
 
         // Polonia loot attempt — each hero attack is a chance to steal
         if (poloniaActive && Math.random() < poloniaLootChance) {
           simPoloniaStolen[jj]++;
+          pushEv({
+            round,
+            type: "event",
+            actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+            detail: `폴로니아: 전리품 약탈 성공!`,
+          });
+        }
+
+        // Conqueror stack change event
+        if (heroIsConquistador[jj]) {
+          const postStacks = Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25));
+          if (isCrit && postStacks > preStacks) {
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+              detail: `정복자 스택 +1 → ${postStacks}중첩 (치명타 대미지 +${postStacks * 25}%)`,
+            });
+          } else if (!isCrit && preStacks > 0) {
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+              detail: `정복자 스택 초기화 (${preStacks}중첩 → 0)`,
+            });
+          }
         }
 
         guaranteedCrit[jj] = 0;
+
+        // Stop further hero attacks once the monster is dead (e.g., Dark Knight execute)
+        if (mobHpCurrent <= 0) break;
       }
 
       dinosaurActive = 0; // Dinosaur only active round 1
