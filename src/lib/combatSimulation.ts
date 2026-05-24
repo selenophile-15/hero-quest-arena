@@ -1895,6 +1895,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     let dinosaurActive = 1;
     let lordSave = true;
     let contFight = true;
+    // Track previous state for emitting transition events to the combat log
+    const prevBerserkerStage = new Int8Array(numHeroes);
 
     // Randomize attack order
     const attackOrder = Array.from({ length: numHeroes }, (_, i) => i);
