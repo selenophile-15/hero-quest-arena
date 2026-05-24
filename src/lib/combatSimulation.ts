@@ -1960,6 +1960,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       const isAoe = Math.random() < mobAoeChance && heroesAlive > 1;
 
       if (isAoe) {
+        pushEv({
+          round,
+          type: "event",
+          actor: "몬스터",
+          detail: `광역 공격 발동! (확률 ${Math.round(mobAoeChance * 100)}%)`,
+        });
         // AoE attack hits all alive heroes
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
