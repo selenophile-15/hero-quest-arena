@@ -1906,8 +1906,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     let dinosaurActive = 1;
     let lordSave = true;
     let contFight = true;
-    // Track previous state for emitting transition events to the combat log
-    const prevBerserkerStage = new Int8Array(numHeroes);
+    // prevBerserkerStage: only needed when recording events
+    const prevBerserkerStage = recordEvents ? new Int8Array(numHeroes) : null;
 
     // Randomize attack order
     const attackOrder = Array.from({ length: numHeroes }, (_, i) => i);
@@ -2149,9 +2149,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             // Sensei loses innate when hit
             if (heroIsSensei[i] && lostInnate[i] !== round - 1) {
               lostInnate[i] = round;
-              const nB = 0.1 + Math.min(heroTier[i], 4) * 0.1;
-              const nE = heroTier[i] >= 4 ? 0.25 : heroTier[i] >= 3 ? 0.2 : 0.15;
               if (recordEvents) {
+                const nB = 0.1 + Math.min(heroTier[i], 4) * 0.1;
+                const nE = heroTier[i] >= 4 ? 0.25 : heroTier[i] >= 3 ? 0.2 : 0.15;
                 pushEv({
                   round,
                   type: "event",
@@ -2161,9 +2161,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               }
             }
             if (heroIsNinja[i] && hp[i] < finalHp[i] && ninjaBonus[i] > 0) {
-              const nB = ninjaBonus[i];
-              const nE = ninjaEvasion[i];
               if (recordEvents) {
+                const nB = ninjaBonus[i];
+                const nE = ninjaEvasion[i];
                 pushEv({
                   round,
                   type: "event",
@@ -2328,9 +2328,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
           if (heroIsSensei[target] && lostInnate[target] !== round - 1) {
             lostInnate[target] = round;
-            const nB = 0.1 + Math.min(heroTier[target], 4) * 0.1;
-            const nE = heroTier[target] >= 4 ? 0.25 : heroTier[target] >= 3 ? 0.2 : 0.15;
             if (recordEvents) {
+              const nB = 0.1 + Math.min(heroTier[target], 4) * 0.1;
+              const nE = heroTier[target] >= 4 ? 0.25 : heroTier[target] >= 3 ? 0.2 : 0.15;
               pushEv({
                 round,
                 type: "event",
@@ -2340,9 +2340,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             }
           }
           if (heroIsNinja[target] && hp[target] < finalHp[target] && ninjaBonus[target] > 0) {
-            const nB = ninjaBonus[target];
-            const nE = ninjaEvasion[target];
             if (recordEvents) {
+              const nB = ninjaBonus[target];
+              const nE = ninjaEvasion[target];
               pushEv({
                 round,
                 type: "event",
@@ -2455,17 +2455,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
           // Count one round at this stage (for stage-time distribution)
           simBrkStageRounds[berserkerStage[i]][i]++;
-          // Emit event on stage transition (increase only)
-          if (berserkerStage[i] > prevBerserkerStage[i]) {
-            if (recordEvents) {
-              pushEv({
-                round,
-                type: "event",
-                actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                detail: `광전사/잘 ${berserkerStage[i]}단계 진입 (ATK/EVA 보너스 증가)`,
-              });
-            }
-
+          // Emit event on stage transition (increase only) — recordEvents only
+          if (recordEvents && prevBerserkerStage && berserkerStage[i] > prevBerserkerStage[i]) {
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+              detail: `광전사/잘 ${berserkerStage[i]}단계 진입 (ATK/EVA 보너스 증가)`,
+            });
             prevBerserkerStage[i] = berserkerStage[i];
           }
         }
@@ -2522,18 +2519,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         const isCrit = Math.random() < totalCritChance || guaranteedCrit[jj];
 
-        // Snapshot conqueror stack for this attack (0..4) — non-crit 리셋 추적용
-        const preStacks = heroIsConquistador[jj] ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25)) : 0;
-        // 정복자: 공격 전 현재 스택 표시
-        if (heroIsConquistador[jj] && preStacks > 0) {
-          if (recordEvents) {
-            pushEv({
-              round,
-              type: "event",
-              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-              detail: `정복자 현재 스택: ${preStacks}/4 (치명타 대미지 +${preStacks * 25}%)`,
-            });
-          }
+        // Snapshot conqueror stack for this attack (0..4) — recordEvents only
+        const preStacks =
+          recordEvents && heroIsConquistador[jj] ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25)) : 0;
+        // 정복자: 공격 전 현재 스택 표시 — recordEvents only
+        if (recordEvents && heroIsConquistador[jj] && preStacks > 0) {
+          pushEv({
+            round,
+            type: "event",
+            actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+            detail: `정복자 현재 스택: ${preStacks}/4 (치명타 대미지 +${preStacks * 25}%)`,
+          });
         }
 
         let damage: number;
@@ -2633,12 +2629,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         }
 
         // Shark activates at 50% mob HP
-        if (!sharkActive && mobHpCurrent < mobHp / 2 && mobHpCurrent > 0) {
-          sharkActive = 1;
-          // Emit only if there is any shark hero in the party
-          for (let s = 0; s < numHeroes; s++) {
-            if (heroShark[s] > 0 && hp[s] > 0) {
-              if (recordEvents) {
+        if (mobHpCurrent < mobHp / 2) {
+          if (recordEvents && !sharkActive) {
+            for (let s = 0; s < numHeroes; s++) {
+              if (heroShark[s] > 0 && hp[s] > 0) {
                 pushEv({
                   round,
                   type: "event",
@@ -2648,7 +2642,6 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               }
             }
           }
-        } else if (mobHpCurrent < mobHp / 2) {
           sharkActive = 1;
         }
 
@@ -2668,34 +2661,29 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           }
         }
 
-        // Conqueror stack change event (공격 후)
-        if (heroIsConquistador[jj]) {
+        // Conqueror stack change event (공격 후) — recordEvents only
+        if (recordEvents && heroIsConquistador[jj]) {
           const postStacks = Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25));
           if (isCrit && postStacks > preStacks) {
-            if (recordEvents) {
-              pushEv({
-                round,
-                type: "event",
-                actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-                detail: `정복자 치명타 중첩 ${postStacks}/4 (치명타 대미지 +${postStacks * 25}%)`,
-              });
-            }
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+              detail: `정복자 치명타 중첩 ${postStacks}/4 (치명타 대미지 +${postStacks * 25}%)`,
+            });
           } else if (!isCrit && preStacks > 0) {
-            if (recordEvents) {
-              pushEv({
-                round,
-                type: "event",
-                actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-                detail: `정복자 스택 초기화 (${preStacks}중첩 → 0)`,
-              });
-            }
+            pushEv({
+              round,
+              type: "event",
+              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+              detail: `정복자 스택 초기화 (${preStacks}중첩 → 0)`,
+            });
           }
         }
 
         guaranteedCrit[jj] = 0;
 
         // Stop further hero attacks once the monster is dead (e.g., Dark Knight execute)
-        if (mobHpCurrent <= 0) break;
       }
 
       if (dinosaurActive) {
