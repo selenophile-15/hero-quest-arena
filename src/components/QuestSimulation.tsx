@@ -51,7 +51,6 @@ import QuestConfigDialog from "@/components/QuestConfigDialog";
 import HeroSelectDialog from "@/components/HeroSelectDialog";
 import {
   runCombatSimulation,
-  runSingleCombatLog,
   type SimulationResult as CombatSimResult,
   type QuestMonster,
   type MiniBossType,
@@ -59,6 +58,7 @@ import {
   type CombatLogEntry,
   type PrecomputedHeroStats,
 } from "@/lib/combatSimulation";
+import { runSingleCombatLog } from "@/lib/combatLogRecorder";
 import HeroForm from "@/components/HeroForm";
 import ChampionForm from "@/components/ChampionForm";
 import SavePartyToListDialog from "@/components/SavePartyToListDialog";
