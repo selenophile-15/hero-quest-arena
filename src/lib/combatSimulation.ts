@@ -481,7 +481,7 @@ function getClassLine(hero: Hero): "fighter" | "rogue" | "spellcaster" | "none" 
   return "none";
 }
 
-function isClass(hero: Hero, ...names: string[]): boolean {
+export function isClass(hero: Hero, ...names: string[]): boolean {
   const cls = hero.heroClass || "";
   const champ = hero.championName || "";
   return names.some((n) => cls === n || cls.includes(n) || champ === n || champ.includes(n));
