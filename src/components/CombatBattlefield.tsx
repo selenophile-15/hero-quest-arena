@@ -966,8 +966,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     {monsterName}
                   </span>
                 </div>
-                {/* HP value row — effect number appears inline to the left, no layout shift */}
-                <div className="flex items-center justify-center gap-1 mb-1" style={{ minHeight: "20px" }}>
+                {/* HP value row */}
+                <div className="flex items-center justify-center mb-0.5" style={{ minHeight: "18px" }}>
+                  <span className="text-xs font-bold font-mono" style={{ color: hpColor(mobHpPct) }}>
+                    {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
+                  </span>
+                </div>
+                {/* Damage effect — below HP value, separate row, fixed-height to avoid layout shift */}
+                <div className="flex items-center justify-center mb-1" style={{ minHeight: "16px" }}>
                   {state.actionEffects.find((e) => e.target === "__monster__") && (
                     <span
                       className={`text-xs font-bold font-mono ${state.actionEffects.find((e) => e.target === "__monster__")!.color} animate-bounce`}
@@ -975,9 +981,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                       {state.actionEffects.find((e) => e.target === "__monster__")!.value}
                     </span>
                   )}
-                  <span className="text-xs font-bold font-mono" style={{ color: hpColor(mobHpPct) }}>
-                    {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
-                  </span>
                 </div>
                 {/* Reserve a fixed line for the filter badge so it never causes resize */}
                 <div className="h-2.5 bg-secondary rounded-full overflow-hidden mb-1">
