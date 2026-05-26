@@ -25,10 +25,11 @@ function formatNum(n: number): string {
 function toLegacyCombatLog(
   entries: CombatLogEntry[],
   config: SimulationConfig,
-  mobDisplayName?: string,
+  _mobDisplayName?: string,
 ): CombatLogEntry[] {
-  let monsterName =
-    mobDisplayName ?? entries.find((e) => e.type === "stat" && e.detail.includes("몬스터 스탯"))?.actor ?? "몬스터";
+  // 로그 표기상의 몬스터 이름은 미니보스 접두어와 무관하게 항상 "몬스터"로 통일.
+  // (엔진 내부의 실제 스탯/계산은 그대로 유지)
+  const monsterName = "몬스터";
 
   const pct = (hp: number, maxHp: number): number => {
     if (!maxHp || maxHp <= 0) return 0;
