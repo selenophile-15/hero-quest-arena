@@ -321,6 +321,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       heroHp[h.name] = h.hp || 0;
       heroMaxHp[h.name] = h.hp || 0;
     });
+    // 엔진이 보낸 values.maxHp 가 있으면 그것을 진짜 max 로 채택 (파티 버프 등으로 prop hp 보다 클 수 있음)
+    const updateMax = (name: string, v: number | undefined) => {
+      if (typeof v === "number" && v > 0 && v > (heroMaxHp[name] ?? 0)) heroMaxHp[name] = v;
+    };
     // Use the first "전투 시작" entry in the log to get the actual total HP
     // (which includes mini-boss multipliers), falling back to the prop.
     let initialMobHp = monsterHp;
