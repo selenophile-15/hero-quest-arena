@@ -361,14 +361,33 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       }
 
       if (entry.type === "monster_attack" && entry.target) {
-        const hpMatch = entry.detail.match(/HP: ([\d,\-]+)/);
-        if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
+        const v = entry.values ?? {};
+        updateMax(entry.target, typeof v.maxHp === "number" ? v.maxHp : undefined);
+        if (typeof v.hp === "number") heroHp[entry.target] = Math.max(0, v.hp);
+        else {
+          const hpMatch = entry.detail.match(/HP: ([\d,\-]+)/);
+          if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
+        }
         const dmgMatch = entry.detail.match(/([\d,]+) 피해/);
         if (dmgMatch && i === currentIdx) {
           actionEffects.push({
             target: entry.target,
             value: `-${dmgMatch[1]}`,
             color: entry.detail.includes("치명타") ? "text-yellow-400" : "text-red-400",
+            key: i,
+          });
+        }
+      }
+      // damage 이벤트(사망 직전 포함): HP/maxHp 동기화 + 액션 이펙트 표시
+      if (entry.type === "damage" && entry.actor) {
+        const v = entry.values ?? {};
+        updateMax(entry.actor, typeof v.maxHp === "number" ? v.maxHp : undefined);
+        if (typeof v.hp === "number") heroHp[entry.actor] = Math.max(0, v.hp);
+        if (typeof v.dmg === "number" && i === currentIdx) {
+          actionEffects.push({
+            target: entry.actor,
+            value: `-${v.dmg.toLocaleString()}`,
+            color: entry.detail.includes("치명") ? "text-yellow-400" : "text-red-400",
             key: i,
           });
         }
