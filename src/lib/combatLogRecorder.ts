@@ -173,6 +173,18 @@ function toLegacyCombatLog(
       continue;
     }
 
+    // AoE 광역 공격 배너: monster_attack(no target) 로 변환해 빨간 볼드 + 몬스터 아이콘으로 렌더
+    if (entry.type === "event" && entry.actor === "몬스터" && entry.detail === "광역 공격") {
+      legacy.push({
+        round: entry.round,
+        type: "monster_attack",
+        actor: monsterName,
+        detail: "광역 공격",
+        values,
+      });
+      continue;
+    }
+
     legacy.push(entry);
   }
 
