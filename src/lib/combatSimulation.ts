@@ -2309,7 +2309,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 hp[target] = 0;
                 heroesAlive--;
                 updateTarget = true;
-                if (recordEvents)
+                if (recordEvents) {
+                  pushEv({
+                    round,
+                    type: "damage",
+                    actor: activeHeroes[target].name || `영웅 ${target + 1}`,
+                    detail: `[단일${isCrit ? " 치명" : ""}] ${dmg} 피해`,
+                    values: { dmg, hp: 0, maxHp: Math.round(finalHp[target]) },
+                  });
                   pushEv({
                     round,
                     type: "death",
@@ -2317,6 +2324,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                     detail: `사망`,
                     values: { dmg, hp: 0, maxHp: Math.round(finalHp[target]) },
                   });
+                }
               }
             }
           } else {
