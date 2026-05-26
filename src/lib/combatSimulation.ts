@@ -1365,25 +1365,36 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
     }
     // Mini boss label
     if (miniBoss && miniBoss !== "none") {
-      if (recordEvents)
+      if (recordEvents) {
+        const bonusList: string[] = [];
+        if (mobHpMod !== 1) bonusList.push(`HP ×${mobHpMod}`);
+        if (mobDamageMod !== 1) bonusList.push(`ATK ×${mobDamageMod}`);
+        if (mobCritChanceMod !== 1) bonusList.push(`치확 ×${mobCritChanceMod}`);
+        if (mobAoeChanceMod !== 1) bonusList.push(`광역확 ×${mobAoeChanceMod}`);
+        if (mobEvasion > 0) bonusList.push(`회피 ${Math.round(mobEvasion * 100)}%`);
         pushEv({
           round: 0,
           type: "event",
           actor: "시스템",
-          detail: `미니보스: ${miniBossLabel} (HP ×${mobHpMod}, ATK ×${mobDamageMod}, 치확 ×${mobCritChanceMod})`,
+          detail: `미니보스: ${miniBossLabel}${bonusList.length ? ` (${bonusList.join(", ")})` : ""}`,
         });
+      }
     }
     // Hero initial stats
     for (let i = 0; i < numHeroes; i++) {
       const h = activeHeroes[i];
-      if (recordEvents)
+      if (recordEvents) {
+        const fmt = (n: number) => Math.round(n).toLocaleString();
+        const atk = Math.round(finalAtk[i]);
+        const critDmg = Math.round(finalAtk[i] * heroCritMult[i]);
         pushEv({
           round: 0,
           type: "stat",
           actor: h.name || `영웅 ${i + 1}`,
-          detail: `초기 스탯: ATK ${Math.round(finalAtk[i])}, DEF ${Math.round(finalDef[i])}, HP ${Math.round(finalHp[i])}, 치확 ${Math.round(heroCritChance[i] * 100)}%, 치댐 ${Math.round(heroCritMult[i] * 100)}%, 회피 ${Math.round(heroEvasion[i] * 100)}%`,
-          values: { atk: Math.round(finalAtk[i]), def: Math.round(finalDef[i]), hp: Math.round(finalHp[i]) },
+          detail: `ATK ${fmt(atk)} / DEF ${fmt(finalDef[i])} / HP ${fmt(finalHp[i])} / 치확 ${Math.round(heroCritChance[i] * 100)}% / 치댐 ${fmt(critDmg)} / 회피 ${Math.round(heroEvasion[i] * 100)}%`,
+          values: { atk, def: Math.round(finalDef[i]), hp: Math.round(finalHp[i]) },
         });
+      }
     }
     // Rudo leader skill start
     if (rudoRounds > 0) {
@@ -2017,7 +2028,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             round,
             type: "event",
             actor: "몬스터",
-            detail: `광역 공격 발동! (확률 ${Math.round(mobAoeChance * 100)}%)`,
+            detail: `광역 공격`,
           });
         // AoE attack hits all alive heroes
         for (let i = 0; i < numHeroes; i++) {
@@ -2132,7 +2143,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   hp[i] = 0;
                   heroesAlive--;
                   updateTarget = true;
-                  if (recordEvents)
+                  if (recordEvents) {
+                    pushEv({
+                      round,
+                      type: "damage",
+                      actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+                      detail: `[광역] ${dmg} 피해`,
+                      values: { dmg, hp: 0, maxHp: Math.round(finalHp[i]) },
+                    });
                     pushEv({
                       round,
                       type: "death",
@@ -2140,6 +2158,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                       detail: `사망 [광역]`,
                       values: { dmg, hp: 0, maxHp: Math.round(finalHp[i]) },
                     });
+                  }
                 }
               }
             } else {
@@ -2290,7 +2309,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 hp[target] = 0;
                 heroesAlive--;
                 updateTarget = true;
-                if (recordEvents)
+                if (recordEvents) {
+                  pushEv({
+                    round,
+                    type: "damage",
+                    actor: activeHeroes[target].name || `영웅 ${target + 1}`,
+                    detail: `[단일${isCrit ? " 치명" : ""}] ${dmg} 피해`,
+                    values: { dmg, hp: 0, maxHp: Math.round(finalHp[target]) },
+                  });
                   pushEv({
                     round,
                     type: "death",
@@ -2298,6 +2324,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                     detail: `사망`,
                     values: { dmg, hp: 0, maxHp: Math.round(finalHp[target]) },
                   });
+                }
               }
             }
           } else {
@@ -2475,7 +2502,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             round,
             type: "conqueror_pre",
             actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-            detail: `정복자 공격 전 스택: ${preStack}단계`,
+            detail: `정복자 고유 스킬 스택: ${preStack}중첩`,
             values: { stack: preStack, stackBefore: preStack, critBonusPct: preStack * 25 },
           });
         }
@@ -2621,7 +2648,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (poloniaActive && Math.random() < poloniaLootChance) {
           simPoloniaStolen[jj]++;
           const stolenSoFar = simPoloniaStolen.reduce((s, v) => s + v, 0);
-          if (recordEvents)
+          // Log only while we are still within the cap (the engine totals are capped at end of fight)
+          if (recordEvents && stolenSoFar <= poloniaLootCap)
             pushEv({
               round,
               type: "event",

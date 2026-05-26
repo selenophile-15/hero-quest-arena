@@ -321,6 +321,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       heroHp[h.name] = h.hp || 0;
       heroMaxHp[h.name] = h.hp || 0;
     });
+    // 엔진이 보낸 values.maxHp 가 있으면 그것을 진짜 max 로 채택 (파티 버프 등으로 prop hp 보다 클 수 있음)
+    const updateMax = (name: string, v: number | undefined) => {
+      if (typeof v === "number" && v > 0 && v > (heroMaxHp[name] ?? 0)) heroMaxHp[name] = v;
+    };
     // Use the first "전투 시작" entry in the log to get the actual total HP
     // (which includes mini-boss multipliers), falling back to the prop.
     let initialMobHp = monsterHp;
@@ -357,14 +361,33 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
       }
 
       if (entry.type === "monster_attack" && entry.target) {
-        const hpMatch = entry.detail.match(/HP: ([\d,\-]+)/);
-        if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
+        const v = entry.values ?? {};
+        updateMax(entry.target, typeof v.maxHp === "number" ? v.maxHp : undefined);
+        if (typeof v.hp === "number") heroHp[entry.target] = Math.max(0, v.hp);
+        else {
+          const hpMatch = entry.detail.match(/HP: ([\d,\-]+)/);
+          if (hpMatch) heroHp[entry.target] = Math.max(0, parseInt(hpMatch[1].replace(/,/g, "")));
+        }
         const dmgMatch = entry.detail.match(/([\d,]+) 피해/);
         if (dmgMatch && i === currentIdx) {
           actionEffects.push({
             target: entry.target,
             value: `-${dmgMatch[1]}`,
             color: entry.detail.includes("치명타") ? "text-yellow-400" : "text-red-400",
+            key: i,
+          });
+        }
+      }
+      // damage 이벤트(사망 직전 포함): HP/maxHp 동기화 + 액션 이펙트 표시
+      if (entry.type === "damage" && entry.actor) {
+        const v = entry.values ?? {};
+        updateMax(entry.actor, typeof v.maxHp === "number" ? v.maxHp : undefined);
+        if (typeof v.hp === "number") heroHp[entry.actor] = Math.max(0, v.hp);
+        if (typeof v.dmg === "number" && i === currentIdx) {
+          actionEffects.push({
+            target: entry.actor,
+            value: `-${v.dmg.toLocaleString()}`,
+            color: entry.detail.includes("치명") ? "text-yellow-400" : "text-red-400",
             key: i,
           });
         }
@@ -943,8 +966,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                     {monsterName}
                   </span>
                 </div>
-                {/* HP value row — effect number appears inline to the left, no layout shift */}
-                <div className="flex items-center justify-center gap-1 mb-1" style={{ minHeight: "20px" }}>
+                {/* HP value row */}
+                <div className="flex items-center justify-center mb-0.5" style={{ minHeight: "18px" }}>
+                  <span className="text-xs font-bold font-mono" style={{ color: hpColor(mobHpPct) }}>
+                    {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
+                  </span>
+                </div>
+                {/* Damage effect — below HP value, separate row, fixed-height to avoid layout shift */}
+                <div className="flex items-center justify-center mb-1" style={{ minHeight: "16px" }}>
                   {state.actionEffects.find((e) => e.target === "__monster__") && (
                     <span
                       className={`text-xs font-bold font-mono ${state.actionEffects.find((e) => e.target === "__monster__")!.color} animate-bounce`}
@@ -952,9 +981,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                       {state.actionEffects.find((e) => e.target === "__monster__")!.value}
                     </span>
                   )}
-                  <span className="text-xs font-bold font-mono" style={{ color: hpColor(mobHpPct) }}>
-                    {Math.max(0, Math.round(state.mobHpCurrent)).toLocaleString()}
-                  </span>
                 </div>
                 {/* Reserve a fixed line for the filter badge so it never causes resize */}
                 <div className="h-2.5 bg-secondary rounded-full overflow-hidden mb-1">
