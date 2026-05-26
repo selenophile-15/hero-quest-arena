@@ -2648,7 +2648,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         if (poloniaActive && Math.random() < poloniaLootChance) {
           simPoloniaStolen[jj]++;
           const stolenSoFar = simPoloniaStolen.reduce((s, v) => s + v, 0);
-          if (recordEvents)
+          // Log only while we are still within the cap (the engine totals are capped at end of fight)
+          if (recordEvents && stolenSoFar <= poloniaLootCap)
             pushEv({
               round,
               type: "event",
