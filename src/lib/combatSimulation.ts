@@ -2502,7 +2502,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             round,
             type: "conqueror_pre",
             actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-            detail: `정복자 공격 전 스택: ${preStack}단계`,
+            detail: `정복자 고유 스킬 스택: ${preStack}중첩`,
             values: { stack: preStack, stackBefore: preStack, critBonusPct: preStack * 25 },
           });
         }
