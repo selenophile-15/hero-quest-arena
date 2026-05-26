@@ -2028,7 +2028,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             round,
             type: "event",
             actor: "몬스터",
-            detail: `광역 공격 발동! (확률 ${Math.round(mobAoeChance * 100)}%)`,
+            detail: `광역 공격`,
           });
         // AoE attack hits all alive heroes
         for (let i = 0; i < numHeroes; i++) {
