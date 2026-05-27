@@ -2439,7 +2439,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 round,
                 type: "event",
                 actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                detail: `광전사/잘 ${bStageNow}단계 진입 (ATK/EVA 보너스 증가)`,
+                detail: `광전사/잘 ${bStageNow}단계 진입 (+ATK ${bAtkBonus}%, +EVA ${bEvaBonus}%)`,
                 values: { stage: bStageNow, atkBonus: bAtkBonus, evaBonus: bEvaBonus },
               });
             prevBerserkerStage[i] = bStageNow;
