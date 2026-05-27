@@ -2097,7 +2097,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   simAoeDmgTaken[i] -= dmg;
                   // New lord absorb: random pick between monster raw aoe atk and ally's actual taken (non-crit) dmg, never below monster raw
                   const monRaw = Math.round(mobDamage * mobAoeDmgRatio);
-                  const allyDmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio); // ally non-crit (AoE has no crit)
+                  const allyDmg = Math.round(damageTaken[i] * mobAoeDmgRatio); // ally non-crit (AoE has no crit)
                   const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
                   const lordDmg = Math.max(monRaw, randPick);
                   simLordAbsorbedAoe[lordHero] += lordDmg;
