@@ -53,7 +53,7 @@ function toLegacyCombatLog(
         round: entry.round,
         type: "event",
         actor: "시스템",
-        detail: `전투 시작! ${monsterName} HP: ${formatNum(hp)}`,
+        detail: `전투 시작!`,
         values,
       });
       continue;
