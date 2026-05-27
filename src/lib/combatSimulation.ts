@@ -2517,19 +2517,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         const jj = attackOrder[ii];
         if (hp[jj] <= 0) continue;
 
-        // Track ninja/sensei innate loss event (state transition active→inactive)
-        if ((heroIsNinja[jj] || heroIsSensei[jj]) && prevInnateActive[jj] === 1 && ninjaBonus[jj] === 0) {
-          simInnateLossCount[jj]++;
-          prevInnateActive[jj] = 0;
-          if (recordEvents)
-            pushEv({
-              round,
-              type: "ninja_loss",
-              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-              detail: heroIsSensei[jj] ? "센세 보너스 상실" : "닌자 보너스 상실",
-              values: { bonusPct: Math.round((0.1 + Math.min(heroTier[jj], 4) * 0.1) * 100) },
-            });
-        }
+        // Innate loss event is now emitted inline at the time of the hit (see monster attack section).
+
 
         // Mob evasion check
         if (mobEvasion >= 0 && Math.random() < mobEvasion) continue;
