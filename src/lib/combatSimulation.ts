@@ -1364,13 +1364,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
     }
     // Mini boss label
-    if (miniBoss && miniBoss !== "none") {
+    if (miniBoss && miniBoss !== "none" && miniBossLabel) {
       if (recordEvents) {
         const bonusList: string[] = [];
         if (mobHpMod !== 1) bonusList.push(`HP ×${mobHpMod}`);
         if (mobDamageMod !== 1) bonusList.push(`ATK ×${mobDamageMod}`);
         if (mobCritChanceMod !== 1) bonusList.push(`치확 ×${mobCritChanceMod}`);
-        if (mobAoeChanceMod !== 1) bonusList.push(`광역확 ×${mobAoeChanceMod}`);
+        if (mobAoeChanceMod !== 1) bonusList.push(`광역 공격 확률 ×${mobAoeChanceMod}`);
         if (mobEvasion > 0) bonusList.push(`회피 ${Math.round(mobEvasion * 100)}%`);
         pushEv({
           round: 0,
@@ -1403,7 +1403,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           round: 0,
           type: "rudo_start",
           actor: champName.includes("루도") ? champion?.name || "루도" : "루도",
-          detail: `루도 리더 스킬`,
+          detail: `루도 보너스 발동 (${rudoRounds}라운드 지속, +치명타 확률 ${Math.round(rudoBonusBase * 1000) / 10}%)`,
           values: {
             bonusPct: Math.round(rudoBonusBase * 1000) / 10,
             rounds: rudoRounds,
@@ -1962,14 +1962,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           ninjaBonus[i] = 0.1 + Math.min(heroTier[i], 4) * 0.1;
           ninjaEvasion[i] = heroTier[i] >= 4 ? 0.25 : heroTier[i] >= 3 ? 0.2 : 0.15;
           simInnateRegenCount[i]++;
-          if (recordEvents)
+          if (recordEvents) {
+            const pct = Math.round(ninjaBonus[i] * 100);
+            const evaPct = Math.round(ninjaEvasion[i] * 100);
             pushEv({
               round,
               type: "sensei_recovery",
               actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-              detail: "센세 보너스 회복",
-              values: { bonusPct: Math.round(ninjaBonus[i] * 100) },
+              detail: `센세 보너스 회복 (+치명타 확률 ${pct}%, +회피 ${evaPct}%)`,
+              values: { bonusPct: pct, evaPct },
             });
+          }
         }
       }
       // Snapshot innate state for hero-attack damage attribution
@@ -2012,10 +2015,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (rudoBonus > 0 && round === rudoRounds + 1) {
         if (recordEvents)
           pushEv({
-            round,
+            round: round - 1,
             type: "rudo_end",
             actor: champName.includes("루도") ? champion?.name || "루도" : "루도",
-            detail: "루도 보너스 종료",
+            detail: `루도 보너스 종료 (-치명타 확률 ${Math.round(rudoBonusBase * 1000) / 10}%)`,
           });
       }
 
@@ -2065,7 +2068,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               });
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
-            const dmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio);
+            const dmg = Math.round(damageTaken[i] * mobAoeDmgRatio);
             hp[i] -= dmg;
             simDmgTaken[i] += dmg;
             simAoeDmgTaken[i] += dmg;
@@ -2097,7 +2100,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   simAoeDmgTaken[i] -= dmg;
                   // New lord absorb: random pick between monster raw aoe atk and ally's actual taken (non-crit) dmg, never below monster raw
                   const monRaw = Math.round(mobDamage * mobAoeDmgRatio);
-                  const allyDmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio); // ally non-crit (AoE has no crit)
+                  const allyDmg = Math.round(damageTaken[i] * mobAoeDmgRatio); // ally non-crit (AoE has no crit)
                   const randPick = Math.random() < 0.5 ? monRaw : allyDmg;
                   const lordDmg = Math.max(monRaw, randPick);
                   simLordAbsorbedAoe[lordHero] += lordDmg;
@@ -2109,7 +2112,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                       type: "lord_protect",
                       actor: activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`,
                       target: activeHeroes[i].name || `영웅 ${i + 1}`,
-                      detail: `군주 보호`,
+                      detail: `군주 보호: ${Math.round(lordDmg).toLocaleString()} 피해 대신 받음 (${activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`} HP: ${Math.round(Math.max(hp[lordHero], 0)).toLocaleString()} (${Math.max(0, Math.min(100, Math.round((Math.max(hp[lordHero], 0) / Math.round(finalHp[lordHero])) * 100)))}%))`,
                       values: {
                         dmg,
                         lordDmg,
@@ -2171,8 +2174,22 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   values: { dmg, hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) },
                 });
             }
-            // Sensei loses innate when hit
-            if (heroIsSensei[i] && lostInnate[i] !== round - 1) lostInnate[i] = round;
+            // Sensei/Ninja loses innate when hit — emit loss event right after the damage line
+            if ((heroIsSensei[i] || heroIsNinja[i]) && prevInnateActive[i] === 1) {
+              if (heroIsSensei[i] && lostInnate[i] !== round - 1) lostInnate[i] = round;
+              const pct = Math.round((0.1 + Math.min(heroTier[i], 4) * 0.1) * 100);
+              const evaPct = Math.round((heroTier[i] >= 4 ? 25 : heroTier[i] >= 3 ? 20 : 15));
+              simInnateLossCount[i]++;
+              prevInnateActive[i] = 0;
+              if (recordEvents)
+                pushEv({
+                  round,
+                  type: "ninja_loss",
+                  actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+                  detail: `${heroIsSensei[i] ? "센세" : "닌자"} 보너스 상실 (-치명타 확률 ${pct}%, -회피 ${evaPct}%)`,
+                  values: { bonusPct: pct, evaPct },
+                });
+            }
           }
         }
       } else {
@@ -2275,7 +2292,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                     type: "lord_protect",
                     actor: activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`,
                     target: activeHeroes[target].name || `영웅 ${target + 1}`,
-                    detail: `군주 보호`,
+                    detail: `군주 보호: ${Math.round(lordDmg).toLocaleString()} 피해 대신 받음 (${activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`} HP: ${Math.round(Math.max(hp[lordHero], 0)).toLocaleString()} (${Math.max(0, Math.min(100, Math.round((Math.max(hp[lordHero], 0) / Math.round(finalHp[lordHero])) * 100)))}%))`,
                     values: {
                       dmg,
                       lordDmg,
@@ -2337,7 +2354,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 values: { dmg, hp: Math.round(hp[target]), maxHp: Math.round(finalHp[target]) },
               });
           }
-          if (heroIsSensei[target] && lostInnate[target] !== round - 1) lostInnate[target] = round;
+          if ((heroIsSensei[target] || heroIsNinja[target]) && prevInnateActive[target] === 1) {
+            if (heroIsSensei[target] && lostInnate[target] !== round - 1) lostInnate[target] = round;
+            const pct = Math.round((0.1 + Math.min(heroTier[target], 4) * 0.1) * 100);
+            const evaPct = Math.round((heroTier[target] >= 4 ? 25 : heroTier[target] >= 3 ? 20 : 15));
+            simInnateLossCount[target]++;
+            prevInnateActive[target] = 0;
+            if (recordEvents)
+              pushEv({
+                round,
+                type: "ninja_loss",
+                actor: activeHeroes[target].name || `영웅 ${target + 1}`,
+                detail: `${heroIsSensei[target] ? "센세" : "닌자"} 보너스 상실 (-치명타 확률 ${pct}%, -회피 ${evaPct}%)`,
+                values: { bonusPct: pct, evaPct },
+              });
+          }
         }
       }
 
@@ -2395,7 +2426,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 round,
                 type: "hemma_atk_gain",
                 actor: activeHeroes[hemmaWho].name || `영웅 ${hemmaWho + 1}`,
-                detail: `헴마 공격력 증가`,
+                detail: `헴마 공격력 +${Math.round(gain).toLocaleString()} (+누적 ${Math.round(hemmaBonus[hemmaWho]).toLocaleString()})`,
                 values: { gain: Math.round(gain), total: Math.round(hemmaBonus[hemmaWho]) },
               });
           }
@@ -2405,6 +2436,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             const hemmaHealed = hp[hemmaWho] - hemmaHpBefore;
             totalHealing[hemmaWho] += hemmaHealed;
             simHealing[hemmaWho] += hemmaHealed;
+            if (recordEvents && hemmaHealed > 0)
+              pushEv({
+                round,
+                type: "heal",
+                actor: activeHeroes[hemmaWho].name || `영웅 ${hemmaWho + 1}`,
+                detail: `헴마 리더 스킬 자가 회복 +${Math.round(hemmaHealed).toLocaleString()} HP`,
+                values: { heal: Math.round(hemmaHealed), hp: Math.round(hp[hemmaWho]), maxHp: Math.round(finalHp[hemmaWho]) },
+              });
           }
         }
       }
@@ -2439,7 +2478,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 round,
                 type: "event",
                 actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                detail: `광전사/잘 ${bStageNow}단계 진입 (ATK/EVA 보너스 증가)`,
+                detail: `광전사/잘 ${bStageNow}단계 진입 (+ATK ${bAtkBonus}%, +EVA ${bEvaBonus}%)`,
                 values: { stage: bStageNow, atkBonus: bAtkBonus, evaBonus: bEvaBonus },
               });
             prevBerserkerStage[i] = bStageNow;
@@ -2478,19 +2517,8 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         const jj = attackOrder[ii];
         if (hp[jj] <= 0) continue;
 
-        // Track ninja/sensei innate loss event (state transition active→inactive)
-        if ((heroIsNinja[jj] || heroIsSensei[jj]) && prevInnateActive[jj] === 1 && ninjaBonus[jj] === 0) {
-          simInnateLossCount[jj]++;
-          prevInnateActive[jj] = 0;
-          if (recordEvents)
-            pushEv({
-              round,
-              type: "ninja_loss",
-              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-              detail: heroIsSensei[jj] ? "센세 보너스 상실" : "닌자 보너스 상실",
-              values: { bonusPct: Math.round((0.1 + Math.min(heroTier[jj], 4) * 0.1) * 100) },
-            });
-        }
+        // Innate loss event is now emitted inline at the time of the hit (see monster attack section).
+
 
         // Mob evasion check
         if (mobEvasion >= 0 && Math.random() < mobEvasion) continue;
@@ -2502,7 +2530,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             round,
             type: "conqueror_pre",
             actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-            detail: `정복자 고유 스킬 스택: ${preStack}중첩`,
+            detail: `정복자 고유 스킬 스택: ${preStack}중첩${preStack >= 4 ? "(최대)" : ""}`,
             values: { stack: preStack, stackBefore: preStack, critBonusPct: preStack * 25 },
           });
         }
@@ -2528,15 +2556,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         const isCrit = Math.random() < totalCritChance || guaranteedCrit[jj];
 
-        // Snapshot conqueror stack for this attack (0..4) — non-crit 리셋 추적용
+        // Snapshot conqueror stack for this attack (0..4) — used for both stat tracking and reset detection
         const preStacks = heroIsConquistador[jj] ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25)) : 0;
 
         let damage: number;
         if (isCrit) {
-          // 정복자: 스택을 먼저 올리고 올라간 스택 보너스로 대미지 계산
-          if (heroIsConquistador[jj]) {
-            consecutiveCritBonus[jj] = Math.min(consecutiveCritBonus[jj] + 0.25, 1);
-          }
+          // 정복자: 현재 스택 보너스로 대미지 계산한 뒤, 다음 공격을 위해 스택 증가
+          // (첫 치명타는 스택 0 → 보너스 없음, 두 번째 연속 치명타부터 스택 1 → +25% 등)
           const critMult = heroCritMult[jj] + consecutiveCritBonus[jj];
           // Samurai/Daimyo round 1: ignore barrier
           if (round === 1 && (heroIsSamurai[jj] || heroIsDaimyo[jj])) {
@@ -2544,11 +2570,25 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           } else {
             damage = baseHeroDmg * critMult * barrierMod;
           }
+          if (heroIsConquistador[jj]) {
+            consecutiveCritBonus[jj] = Math.min(consecutiveCritBonus[jj] + 0.25, 1);
+          }
         } else {
           damage = baseHeroDmg * barrierMod;
           if (heroIsConquistador[jj]) {
             // Reset event at this stack
-            if (preStacks > 0) simConqStackResetCount[preStacks][jj]++;
+            if (preStacks > 0) {
+              simConqStackResetCount[preStacks][jj]++;
+              if (recordEvents) {
+                pushEv({
+                  round,
+                  type: "event",
+                  actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+                  detail: `정복자 스택 리셋 (${preStacks}중첩 → 0중첩)`,
+                  values: { from: preStacks, to: 0 },
+                });
+              }
+            }
             consecutiveCritBonus[jj] = 0;
           }
         }
@@ -2577,9 +2617,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           });
 
         // Conqueror per-stack tracking
-        // 치명타 → 스택 증가 후 값(post-increment)으로 기록, 일반 공격 → 항상 스택 0
+        // 치명타 → 그 공격에 사용된 스택(preStacks) 으로 기록, 일반 공격 → 항상 스택 0
         if (heroIsConquistador[jj]) {
-          const effectiveStacks = isCrit ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25)) : 0;
+          const effectiveStacks = isCrit ? preStacks : 0;
           simConqStackTurns[effectiveStacks][jj]++;
           simConqStackAttackCount[effectiveStacks][jj]++;
           simConqStackTotalDmgAccum[effectiveStacks][jj] += damage;
@@ -2588,6 +2628,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             simConqStackCritCount[effectiveStacks][jj]++;
           }
         }
+
 
         // Berserker per-stage damage tracking (stage 0..3)
         const bSt = berserkerStage[jj];
