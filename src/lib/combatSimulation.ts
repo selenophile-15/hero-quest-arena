@@ -2171,8 +2171,22 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   values: { dmg, hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) },
                 });
             }
-            // Sensei loses innate when hit
-            if (heroIsSensei[i] && lostInnate[i] !== round - 1) lostInnate[i] = round;
+            // Sensei/Ninja loses innate when hit — emit loss event right after the damage line
+            if ((heroIsSensei[i] || heroIsNinja[i]) && prevInnateActive[i] === 1) {
+              if (heroIsSensei[i] && lostInnate[i] !== round - 1) lostInnate[i] = round;
+              const pct = Math.round((0.1 + Math.min(heroTier[i], 4) * 0.1) * 100);
+              const evaPct = Math.round((heroTier[i] >= 4 ? 25 : heroTier[i] >= 3 ? 20 : 15));
+              simInnateLossCount[i]++;
+              prevInnateActive[i] = 0;
+              if (recordEvents)
+                pushEv({
+                  round,
+                  type: "ninja_loss",
+                  actor: activeHeroes[i].name || `영웅 ${i + 1}`,
+                  detail: `${heroIsSensei[i] ? "센세" : "닌자"} 보너스 상실 (-치명타 확률 ${pct}%, -회피 ${evaPct}%)`,
+                  values: { bonusPct: pct, evaPct },
+                });
+            }
           }
         }
       } else {
