@@ -2351,7 +2351,21 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 values: { dmg, hp: Math.round(hp[target]), maxHp: Math.round(finalHp[target]) },
               });
           }
-          if (heroIsSensei[target] && lostInnate[target] !== round - 1) lostInnate[target] = round;
+          if ((heroIsSensei[target] || heroIsNinja[target]) && prevInnateActive[target] === 1) {
+            if (heroIsSensei[target] && lostInnate[target] !== round - 1) lostInnate[target] = round;
+            const pct = Math.round((0.1 + Math.min(heroTier[target], 4) * 0.1) * 100);
+            const evaPct = Math.round((heroTier[target] >= 4 ? 25 : heroTier[target] >= 3 ? 20 : 15));
+            simInnateLossCount[target]++;
+            prevInnateActive[target] = 0;
+            if (recordEvents)
+              pushEv({
+                round,
+                type: "ninja_loss",
+                actor: activeHeroes[target].name || `영웅 ${target + 1}`,
+                detail: `${heroIsSensei[target] ? "센세" : "닌자"} 보너스 상실 (-치명타 확률 ${pct}%, -회피 ${evaPct}%)`,
+                values: { bonusPct: pct, evaPct },
+              });
+          }
         }
       }
 
