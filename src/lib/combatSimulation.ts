@@ -1364,13 +1364,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       }
     }
     // Mini boss label
-    if (miniBoss && miniBoss !== "none") {
+    if (miniBoss && miniBoss !== "none" && miniBossLabel) {
       if (recordEvents) {
         const bonusList: string[] = [];
         if (mobHpMod !== 1) bonusList.push(`HP ×${mobHpMod}`);
         if (mobDamageMod !== 1) bonusList.push(`ATK ×${mobDamageMod}`);
         if (mobCritChanceMod !== 1) bonusList.push(`치확 ×${mobCritChanceMod}`);
-        if (mobAoeChanceMod !== 1) bonusList.push(`광역확 ×${mobAoeChanceMod}`);
+        if (mobAoeChanceMod !== 1) bonusList.push(`광역 공격 확률 ×${mobAoeChanceMod}`);
         if (mobEvasion > 0) bonusList.push(`회피 ${Math.round(mobEvasion * 100)}%`);
         pushEv({
           round: 0,
