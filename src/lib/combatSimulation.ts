@@ -2065,7 +2065,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               });
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
-            const dmg = Math.ceil(damageTaken[i] * mobAoeDmgRatio);
+            const dmg = Math.round(damageTaken[i] * mobAoeDmgRatio);
             hp[i] -= dmg;
             simDmgTaken[i] += dmg;
             simAoeDmgTaken[i] += dmg;
