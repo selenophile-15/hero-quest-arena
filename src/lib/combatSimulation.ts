@@ -2012,10 +2012,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       if (rudoBonus > 0 && round === rudoRounds + 1) {
         if (recordEvents)
           pushEv({
-            round,
+            round: round - 1,
             type: "rudo_end",
             actor: champName.includes("루도") ? champion?.name || "루도" : "루도",
-            detail: "루도 보너스 종료",
+            detail: `루도 보너스 종료 (-치명타 확률 ${Math.round(rudoBonusBase * 1000) / 10}%)`,
           });
       }
 
