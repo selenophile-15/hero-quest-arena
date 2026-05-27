@@ -2502,7 +2502,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             round,
             type: "conqueror_pre",
             actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-            detail: `정복자 고유 스킬 스택: ${preStack}중첩`,
+            detail: `정복자 고유 스킬 스택: ${preStack}중첩${preStack >= 4 ? "(최대)" : ""}`,
             values: { stack: preStack, stackBefore: preStack, critBonusPct: preStack * 25 },
           });
         }
@@ -2528,15 +2528,13 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
         const isCrit = Math.random() < totalCritChance || guaranteedCrit[jj];
 
-        // Snapshot conqueror stack for this attack (0..4) — non-crit 리셋 추적용
+        // Snapshot conqueror stack for this attack (0..4) — used for both stat tracking and reset detection
         const preStacks = heroIsConquistador[jj] ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25)) : 0;
 
         let damage: number;
         if (isCrit) {
-          // 정복자: 스택을 먼저 올리고 올라간 스택 보너스로 대미지 계산
-          if (heroIsConquistador[jj]) {
-            consecutiveCritBonus[jj] = Math.min(consecutiveCritBonus[jj] + 0.25, 1);
-          }
+          // 정복자: 현재 스택 보너스로 대미지 계산한 뒤, 다음 공격을 위해 스택 증가
+          // (첫 치명타는 스택 0 → 보너스 없음, 두 번째 연속 치명타부터 스택 1 → +25% 등)
           const critMult = heroCritMult[jj] + consecutiveCritBonus[jj];
           // Samurai/Daimyo round 1: ignore barrier
           if (round === 1 && (heroIsSamurai[jj] || heroIsDaimyo[jj])) {
@@ -2544,11 +2542,25 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           } else {
             damage = baseHeroDmg * critMult * barrierMod;
           }
+          if (heroIsConquistador[jj]) {
+            consecutiveCritBonus[jj] = Math.min(consecutiveCritBonus[jj] + 0.25, 1);
+          }
         } else {
           damage = baseHeroDmg * barrierMod;
           if (heroIsConquistador[jj]) {
             // Reset event at this stack
-            if (preStacks > 0) simConqStackResetCount[preStacks][jj]++;
+            if (preStacks > 0) {
+              simConqStackResetCount[preStacks][jj]++;
+              if (recordEvents) {
+                pushEv({
+                  round,
+                  type: "event",
+                  actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
+                  detail: `정복자 스택 리셋 (${preStacks}중첩 → 0중첩)`,
+                  values: { from: preStacks, to: 0 },
+                });
+              }
+            }
             consecutiveCritBonus[jj] = 0;
           }
         }
@@ -2577,9 +2589,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           });
 
         // Conqueror per-stack tracking
-        // 치명타 → 스택 증가 후 값(post-increment)으로 기록, 일반 공격 → 항상 스택 0
+        // 치명타 → 그 공격에 사용된 스택(preStacks) 으로 기록, 일반 공격 → 항상 스택 0
         if (heroIsConquistador[jj]) {
-          const effectiveStacks = isCrit ? Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25)) : 0;
+          const effectiveStacks = isCrit ? preStacks : 0;
           simConqStackTurns[effectiveStacks][jj]++;
           simConqStackAttackCount[effectiveStacks][jj]++;
           simConqStackTotalDmgAccum[effectiveStacks][jj] += damage;
@@ -2588,6 +2600,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             simConqStackCritCount[effectiveStacks][jj]++;
           }
         }
+
 
         // Berserker per-stage damage tracking (stage 0..3)
         const bSt = berserkerStage[jj];
