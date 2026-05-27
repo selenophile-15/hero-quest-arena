@@ -1403,7 +1403,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           round: 0,
           type: "rudo_start",
           actor: champName.includes("루도") ? champion?.name || "루도" : "루도",
-          detail: `루도 리더 스킬`,
+          detail: `루도 보너스 발동 (${rudoRounds}라운드 지속, +치명타 확률 ${Math.round(rudoBonusBase * 1000) / 10}%)`,
           values: {
             bonusPct: Math.round(rudoBonusBase * 1000) / 10,
             rounds: rudoRounds,
