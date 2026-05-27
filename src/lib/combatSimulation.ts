@@ -2292,7 +2292,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                     type: "lord_protect",
                     actor: activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`,
                     target: activeHeroes[target].name || `영웅 ${target + 1}`,
-                    detail: `군주 보호`,
+                    detail: `군주 보호: ${Math.round(lordDmg).toLocaleString()} 피해 대신 받음 (${activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`} HP: ${Math.round(Math.max(hp[lordHero], 0)).toLocaleString()} (${Math.max(0, Math.min(100, Math.round((Math.max(hp[lordHero], 0) / Math.round(finalHp[lordHero])) * 100)))}%))`,
                     values: {
                       dmg,
                       lordDmg,
