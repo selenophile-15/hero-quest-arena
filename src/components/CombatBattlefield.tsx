@@ -330,6 +330,11 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
     let initialMobHp = monsterHp;
     for (let i = 0; i < log.length; i++) {
       if (log[i].type === "event" && log[i].detail.includes("전투 시작!")) {
+        const v = log[i].values ?? {};
+        if (typeof v.hp === "number" && v.hp > 0) {
+          initialMobHp = v.hp;
+          break;
+        }
         const m = log[i].detail.match(/HP:\s*([\d,]+)/);
         if (m) {
           initialMobHp = parseInt(m[1].replace(/,/g, ""));
