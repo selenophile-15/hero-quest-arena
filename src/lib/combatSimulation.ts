@@ -1962,14 +1962,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           ninjaBonus[i] = 0.1 + Math.min(heroTier[i], 4) * 0.1;
           ninjaEvasion[i] = heroTier[i] >= 4 ? 0.25 : heroTier[i] >= 3 ? 0.2 : 0.15;
           simInnateRegenCount[i]++;
-          if (recordEvents)
+          if (recordEvents) {
+            const pct = Math.round(ninjaBonus[i] * 100);
+            const evaPct = Math.round(ninjaEvasion[i] * 100);
             pushEv({
               round,
               type: "sensei_recovery",
               actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-              detail: "센세 보너스 회복",
-              values: { bonusPct: Math.round(ninjaBonus[i] * 100) },
+              detail: `센세 보너스 회복 (+치명타 확률 ${pct}%, +회피 ${evaPct}%)`,
+              values: { bonusPct: pct, evaPct },
             });
+          }
         }
       }
       // Snapshot innate state for hero-attack damage attribution
