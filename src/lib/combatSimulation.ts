@@ -2395,7 +2395,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 round,
                 type: "hemma_atk_gain",
                 actor: activeHeroes[hemmaWho].name || `영웅 ${hemmaWho + 1}`,
-                detail: `헴마 공격력 증가`,
+                detail: `헴마 공격력 +${Math.round(gain).toLocaleString()} (+누적 ${Math.round(hemmaBonus[hemmaWho]).toLocaleString()})`,
                 values: { gain: Math.round(gain), total: Math.round(hemmaBonus[hemmaWho]) },
               });
           }
@@ -2405,6 +2405,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             const hemmaHealed = hp[hemmaWho] - hemmaHpBefore;
             totalHealing[hemmaWho] += hemmaHealed;
             simHealing[hemmaWho] += hemmaHealed;
+            if (recordEvents && hemmaHealed > 0)
+              pushEv({
+                round,
+                type: "heal",
+                actor: activeHeroes[hemmaWho].name || `영웅 ${hemmaWho + 1}`,
+                detail: `헴마 리더 스킬 자가 회복 +${Math.round(hemmaHealed).toLocaleString()} HP`,
+                values: { heal: Math.round(hemmaHealed), hp: Math.round(hp[hemmaWho]), maxHp: Math.round(finalHp[hemmaWho]) },
+              });
           }
         }
       }
