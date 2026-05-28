@@ -625,7 +625,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         <Skull className="w-4 h-4 text-red-400" />
       );
     } else if (isDeath) {
-      icon = <UserX className="w-4 h-4 text-red-400" />;
+      icon = <UserX className="w-4 h-4 text-red-300" />;
+
     } else if (isEvasion) {
       icon = <Wind className="w-4 h-4 text-teal-400" />;
     } else if (isSetup) {
@@ -855,13 +856,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <span
               className={`ml-1 text-sm font-body ${
                 isDeath
-                  ? "text-red-400 font-bold"
+                  ? "text-red-300 font-bold"
                   : entry.type === "result"
                     ? entry.detail.includes("승리")
                       ? "text-lime-400 font-bold"
-                      : "text-red-400 font-bold"
+                      : "text-red-300 font-bold"
                     : "text-foreground/70"
               }`}
+
             >
               {entry.detail}
             </span>
