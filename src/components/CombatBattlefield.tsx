@@ -625,7 +625,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         <Skull className="w-4 h-4 text-red-400" />
       );
     } else if (isDeath) {
-      icon = <UserX className="w-4 h-4 text-red-400" />;
+      icon = <UserX className="w-4 h-4 text-red-300" />;
+
     } else if (isEvasion) {
       icon = <Wind className="w-4 h-4 text-teal-400" />;
     } else if (isSetup) {
@@ -855,13 +856,14 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <span
               className={`ml-1 text-sm font-body ${
                 isDeath
-                  ? "text-red-400 font-bold"
+                  ? "text-red-300 font-bold"
                   : entry.type === "result"
                     ? entry.detail.includes("승리")
                       ? "text-lime-400 font-bold"
-                      : "text-red-400 font-bold"
+                      : "text-red-300 font-bold"
                     : "text-foreground/70"
               }`}
+
             >
               {entry.detail}
             </span>
@@ -872,7 +874,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4 h-[78vh]">
+    <div className="grid grid-cols-[1.2fr_1fr] gap-4 h-[88vh]">
       {/* LEFT: Battlefield + Stats */}
       <div className="flex flex-col gap-2 overflow-hidden min-h-0">
         {/* Compact Battlefield */}
@@ -1043,31 +1045,33 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
             <option value={250}>2x</option>
             <option value={100}>4x</option>
           </select>
-          {onNewBattle && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs gap-1 border-blue-500/40 text-blue-400 hover:bg-blue-500/10"
-              onClick={() => {
-                onNewBattle();
-                setCurrentIdx(0);
-                setPlaying(false);
-              }}
-            >
-              <Dices className="w-3.5 h-3.5" /> 새 전투
-            </Button>
-          )}
           <span className="text-[10px] text-muted-foreground">
             {currentIdx + 1}/{log.length}
           </span>
+
         </div>
 
         {/* Combat Stats - premium */}
         <div className="mt-4 rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/40 via-background/40 to-secondary/30 p-2.5 flex-1 overflow-y-auto min-h-0 shrink shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
           <div className="text-sm font-bold text-foreground mb-1.5 flex items-center gap-1.5">
+            {onNewBattle && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1 border-blue-500/40 text-blue-400 hover:bg-blue-500/10 h-7 px-2 mr-2"
+                onClick={() => {
+                  onNewBattle();
+                  setCurrentIdx(0);
+                  setPlaying(false);
+                }}
+              >
+                <Dices className="w-3.5 h-3.5" /> 새 전투
+              </Button>
+            )}
             <BarChart3 className="w-4 h-4 text-primary" />
             <span>전투 통계</span>
           </div>
+
           <table className="w-full text-xs">
             <thead>
               <tr

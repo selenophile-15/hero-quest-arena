@@ -5321,7 +5321,7 @@ export default function QuestSimulation() {
             {/* end data-quest-screenshot */}
             {/* Combat Log Dialog */}
             <Dialog open={combatLogDialogOpen} onOpenChange={setCombatLogDialogOpen}>
-              <DialogContent className="max-w-[92vw] h-[85vh] flex flex-col overflow-hidden p-4">
+              <DialogContent className="max-w-[94vw] h-[95vh] flex flex-col overflow-hidden p-4 [&>button.absolute>svg]:h-6 [&>button.absolute>svg]:w-6 [&>button.absolute]:opacity-100">
                 <DialogHeader>
                   <DialogTitle className="sr-only">1회 추적 로그</DialogTitle>
                 </DialogHeader>
