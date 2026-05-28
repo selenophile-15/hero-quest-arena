@@ -132,6 +132,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   // Classify a log entry into a category for the gear-icon filter
   const classifyEntry = useCallback((entry: CombatLogEntry): CategoryKey => {
     if (entry.type === "retry") return "retry";
+    if ((entry.type as string) === "lord_protect") return "protection";
+
     if (entry.type === "hero_attack" || entry.type === "monster_attack") return "attacks";
     if (entry.type === "result") return "result";
     if (entry.type === "heal") return "heal";
