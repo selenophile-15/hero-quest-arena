@@ -1941,6 +1941,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
     while (contFight) {
       round++;
+      let hemmaSelfHealPending = 0;
+
+
 
       // ─── Update targeting ───
       if (updateTarget) {
@@ -2431,20 +2434,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               });
           }
           if (hemmaSelfHealFlat > 0) {
-            const hemmaHpBefore = hp[hemmaWho];
-            hp[hemmaWho] = Math.min(hp[hemmaWho] + hemmaSelfHealFlat, finalHp[hemmaWho]);
-            const hemmaHealed = hp[hemmaWho] - hemmaHpBefore;
-            totalHealing[hemmaWho] += hemmaHealed;
-            simHealing[hemmaWho] += hemmaHealed;
-            if (recordEvents && hemmaHealed > 0)
-              pushEv({
-                round,
-                type: "heal",
-                actor: activeHeroes[hemmaWho].name || `영웅 ${hemmaWho + 1}`,
-                detail: `헴마 리더 스킬 자가 회복 +${Math.round(hemmaHealed).toLocaleString()} HP`,
-                values: { heal: Math.round(hemmaHealed), hp: Math.round(hp[hemmaWho]), maxHp: Math.round(finalHp[hemmaWho]) },
-              });
+            // Defer self-heal to turn-end regen step so it merges into a single "회복" event
+            hemmaSelfHealPending += hemmaSelfHealFlat;
           }
+
         }
       }
 
@@ -3074,6 +3067,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (liluHealFlat > 0) {
             hp[i] = Math.min(hp[i] + liluHealFlat * heroArtChampionMod[i], finalHp[i]);
           }
+          if (i === hemmaWho && hemmaSelfHealPending > 0) {
+            hp[i] = Math.min(hp[i] + hemmaSelfHealPending, finalHp[i]);
+          }
           {
             const healed = hp[i] - hpBefore;
             totalHealing[i] += healed;
@@ -3084,13 +3080,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   round,
                   type: "heal",
                   actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                  detail: `회복 ${Math.round(healed)} HP`,
+                  detail: `체력 ${Math.round(healed).toLocaleString()} 회복`,
                   values: { heal: Math.round(healed), hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) },
                 });
             }
           }
         }
       }
+
 
       // After 5000 sims, check if avg rounds > 200 → cap at 5000
       if (sim === 4999 && roundsAvg / 5000 > 200) {
