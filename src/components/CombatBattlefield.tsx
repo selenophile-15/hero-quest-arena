@@ -132,6 +132,8 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
   // Classify a log entry into a category for the gear-icon filter
   const classifyEntry = useCallback((entry: CombatLogEntry): CategoryKey => {
     if (entry.type === "retry") return "retry";
+    if ((entry.type as string) === "lord_protect") return "protection";
+
     if (entry.type === "hero_attack" || entry.type === "monster_attack") return "attacks";
     if (entry.type === "result") return "result";
     if (entry.type === "heal") return "heal";
@@ -813,7 +815,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                 </>
               );
             })()
-          ) : entry.type === "event" && entry.detail.includes("헴마 스킬 발동") ? (
+          ) : (entry.type === "event" && entry.detail.includes("헴마 스킬 발동")) ||
+            entry.type === "lord_protect" ||
+            (entry.type === "event" && entry.detail.includes("군주 보호")) ? (
+
             (() => {
               // Hemma drain — split into prefix + HP block tail
               const tailMatch = entry.detail.match(/^(.*?)\s*\(([^()]+?HP:\s*[\d,\-]+\s*\(\d+%\))\)\s*$/);
