@@ -813,7 +813,10 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
                 </>
               );
             })()
-          ) : entry.type === "event" && entry.detail.includes("헴마 스킬 발동") ? (
+          ) : (entry.type === "event" && entry.detail.includes("헴마 스킬 발동")) ||
+            entry.type === "lord_protect" ||
+            (entry.type === "event" && entry.detail.includes("군주 보호")) ? (
+
             (() => {
               // Hemma drain — split into prefix + HP block tail
               const tailMatch = entry.detail.match(/^(.*?)\s*\(([^()]+?HP:\s*[\d,\-]+\s*\(\d+%\))\)\s*$/);
