@@ -702,6 +702,9 @@ export default function QuestSimulation() {
           partyDefMult,
         };
       });
+      // [BENCH] Measure full statistics simulation duration (includes mini-boss random sub-runs and retries).
+      // Open browser DevTools → Console to see "[BENCH] stats sim: XXX ms".
+      const __benchT0 = performance.now();
       const result = runCombatSimulation({
         heroes: selectedHeroes,
         monster: questMonster,
@@ -712,6 +715,8 @@ export default function QuestSimulation() {
         isTerrorTower,
         precomputedStats: precomputed,
       });
+      // eslint-disable-next-line no-console
+      console.log(`[BENCH] stats sim: ${(performance.now() - __benchT0).toFixed(1)} ms (heroes=${selectedHeroes.length}, miniBoss=${effectiveMiniBoss})`);
       setPrecomputedStats(precomputed);
       setSimResult(result);
       setSimRunning(false);
