@@ -700,9 +700,6 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
   // existing call site (which leaves recordEvents undefined).
   const recordEvents = config.recordEvents === true;
   const simCount = recordEvents ? 1 : (config.simulationCount ?? 50000);
-  // [BENCH] entry-level timing label (only when not recording — i.e. statistics mode)
-  const __benchLabel = !recordEvents ? `runCombatSimulation[stats x${simCount}]` : null;
-  if (__benchLabel) console.time(__benchLabel);
   const eventLog: CombatLogEntry[] = [];
   const pushEv = recordEvents
     ? (entry: CombatLogEntry) => {
