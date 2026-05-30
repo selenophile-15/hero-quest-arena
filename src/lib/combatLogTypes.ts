@@ -35,6 +35,7 @@ export type RawCombatEventKind = CombatLogEntry["type"] | "empty_party";
 export interface RawCombatEvent {
   kind: RawCombatEventKind;
   round: number;
+  code?: string;
   actor?: string;
   target?: string;
   detail?: string;
