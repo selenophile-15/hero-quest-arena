@@ -324,15 +324,14 @@ function toLegacyCombatLog(
 }
 
 export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
-  const firstResult = runCombatSimulation({
+  const firstRawLog: RawCombatEvent[] = [];
+  runCombatSimulation({
     ...config,
-    recordEvents: true,
     simulationCount: 1,
     _disableRetry: true,
+    onEvent: (event) => firstRawLog.push(event),
   });
-  const firstRawLog = firstResult.eventLog ?? [
-    { round: 0, kind: "result" as const, detail: "이벤트 로그 없음" },
-  ];
+  if (firstRawLog.length === 0) firstRawLog.push({ round: 0, kind: "result", detail: "이벤트 로그 없음" });
 
   const mobDisplayName = firstRawLog.find((e) => e.kind === "stat" && e.code === "monster_stat")?.actor;
   const firstLegacy = toLegacyCombatLog(firstRawLog, config, mobDisplayName);
@@ -351,8 +350,12 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
       _disableRetry: true,
       booster: hasFateweaver ? getRetryBooster(config.booster) : config.booster,
     };
-    const retryResult = runCombatSimulation(retryConfig);
-    const retryRawLog = retryResult.eventLog ?? [];
+    const retryRawLog: RawCombatEvent[] = [];
+    runCombatSimulation({
+      ...retryConfig,
+      recordEvents: false,
+      onEvent: (event) => retryRawLog.push(event),
+    });
 
     const lastRound = firstRawLog.length > 0 ? firstRawLog[firstRawLog.length - 1].round : 0;
     const retryBanner: CombatLogEntry = {
