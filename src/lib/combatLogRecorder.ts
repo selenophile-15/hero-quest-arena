@@ -49,6 +49,7 @@ function toLegacyCombatLog(
     typeof values[key] === "number" ? (values[key] as number) : fallback;
   const str = (values: Record<string, number | string>, key: string, fallback = ""): string =>
     typeof values[key] === "string" ? (values[key] as string) : fallback;
+  const hasHeroIndex = (values: Record<string, number | string>): boolean => typeof values.heroIndex === "number";
 
   for (const entry of entries) {
     const values = entry.values ?? {};
@@ -227,7 +228,7 @@ function toLegacyCombatLog(
     }
 
     const heroIndex = num(values, "heroIndex");
-    const actor = entry.actor || (Number.isFinite(heroIndex) ? heroName(heroIndex) : "시스템");
+    const actor = entry.actor || (hasHeroIndex(values) ? heroName(heroIndex) : "시스템");
     const eventDetail = (() => {
       switch (entry.code) {
         case "barrier_fail":
@@ -344,7 +345,6 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
   if (!firstWon && (hasFateweaver || hasChronos)) {
     const retryConfig: SimulationConfig = {
       ...config,
-      recordEvents: true,
       simulationCount: 1,
       _isRetry: true,
       _disableRetry: true,
