@@ -17,13 +17,14 @@ import {
   type CombatLogEntry,
   type SimulationConfig,
 } from "@/lib/combatSimulation";
+import type { RawCombatEvent } from "@/lib/combatLogTypes";
 
 function formatNum(n: number): string {
   return Math.round(n).toLocaleString();
 }
 
 function toLegacyCombatLog(
-  entries: CombatLogEntry[],
+  entries: RawCombatEvent[],
   config: SimulationConfig,
   _mobDisplayName?: string,
 ): CombatLogEntry[] {
@@ -42,11 +43,22 @@ function toLegacyCombatLog(
 
   const legacy: CombatLogEntry[] = [];
   let actualMonsterMaxHp = config.monster.hp;
+  const activeHeroes = config.heroes.filter((h) => h.hp > 0);
+  const heroName = (idx: number): string => activeHeroes[idx]?.name || `영웅 ${idx + 1}`;
+  const num = (values: Record<string, number | string>, key: string, fallback = 0): number =>
+    typeof values[key] === "number" ? (values[key] as number) : fallback;
+  const str = (values: Record<string, number | string>, key: string, fallback = ""): string =>
+    typeof values[key] === "string" ? (values[key] as string) : fallback;
 
   for (const entry of entries) {
     const values = entry.values ?? {};
 
-    if (entry.type === "stat" && entry.detail.includes("몬스터 스탯")) {
+    if (entry.kind === "empty_party") {
+      legacy.push({ round: entry.round, type: "result", actor: "시스템", detail: "활성 영웅 없음" });
+      continue;
+    }
+
+    if (entry.kind === "stat" && entry.code === "monster_stat") {
       const hp = typeof values.hp === "number" ? values.hp : config.monster.hp;
       actualMonsterMaxHp = hp;
       legacy.push({
@@ -59,12 +71,22 @@ function toLegacyCombatLog(
       continue;
     }
 
-    if (entry.type === "stat") {
-      legacy.push({ ...entry, type: "event" });
+    if (entry.kind === "stat" && entry.code === "hero_stat") {
+      const heroIndex = num(values, "heroIndex");
+      const atk = num(values, "atk");
+      const def = num(values, "def");
+      const hp = num(values, "hp");
+      legacy.push({
+        round: entry.round,
+        type: "event",
+        actor: heroName(heroIndex),
+        detail: `ATK ${formatNum(atk)} / DEF ${formatNum(def)} / HP ${formatNum(hp)} / 치확 ${num(values, "critPct")}% / 치댐 ${formatNum(num(values, "critDmg"))} / 회피 ${num(values, "evasionPct")}%`,
+        values: { atk, def, hp },
+      });
       continue;
     }
 
-    if (entry.type === "attack" || entry.type === "crit") {
+    if (entry.kind === "attack" || entry.kind === "crit") {
       const dmg = typeof values.dmg === "number" ? values.dmg : 0;
       const mobHp =
         typeof values.mobHp === "number"
@@ -77,9 +99,9 @@ function toLegacyCombatLog(
       legacy.push({
         round: entry.round,
         type: "hero_attack",
-        actor: entry.actor,
+        actor: heroName(num(values, "heroIndex")),
         target: monsterName,
-        detail: `${entry.type === "crit" ? "치명타" : "공격"} ${formatNum(dmg)} 피해 (${hpText(
+        detail: `${entry.kind === "crit" ? "치명타" : "공격"} ${formatNum(dmg)} 피해 (${hpText(
           monsterName,
           mobHp,
           mobMaxHp,
@@ -89,13 +111,13 @@ function toLegacyCombatLog(
       continue;
     }
 
-    if (entry.type === "damage") {
-      const targetName = entry.target ?? entry.actor;
+    if (entry.kind === "damage") {
+      const targetName = heroName(num(values, "heroIndex"));
       const dmg = typeof values.dmg === "number" ? values.dmg : 0;
       const hp = typeof values.hp === "number" ? values.hp : 0;
       const maxHp = typeof values.maxHp === "number" ? values.maxHp : 0;
 
-      if (entry.detail.includes("헴마 드레인")) {
+      if (entry.code === "hemma_drain") {
         legacy.push({
           round: entry.round,
           type: "event",
@@ -106,19 +128,21 @@ function toLegacyCombatLog(
         continue;
       }
 
-      if (entry.detail.includes("군주") || entry.detail.includes("치명타 생존")) {
+      if (entry.code === "crit_survival") {
+        const isAoe = num(values, "isAoe") === 1;
+        const isCrit = num(values, "isCrit") === 1;
         legacy.push({
           round: entry.round,
           type: "event",
           actor: targetName,
-          detail: entry.detail,
+          detail: `[${isAoe ? "광역" : `단일${isCrit ? " 치명" : ""}`}] 치명타 생존 (${formatNum(dmg)} 무효화)`,
           values,
         });
         continue;
       }
 
-      const isAoe = entry.detail.includes("[광역]") || entry.detail.includes("광역");
-      const isCrit = entry.detail.includes("치명");
+      const isAoe = num(values, "isAoe") === 1;
+      const isCrit = num(values, "isCrit") === 1;
 
       legacy.push({
         round: entry.round,
@@ -135,8 +159,8 @@ function toLegacyCombatLog(
       continue;
     }
 
-    if (entry.type === "dodge") {
-      const targetName = entry.target ?? entry.actor;
+    if (entry.kind === "dodge") {
+      const targetName = heroName(num(values, "heroIndex"));
       legacy.push({
         round: entry.round,
         type: "event",
@@ -148,33 +172,50 @@ function toLegacyCombatLog(
       continue;
     }
 
-    if (entry.type === "death") {
+    if (entry.kind === "death") {
       legacy.push({
         round: entry.round,
         type: "event",
-        actor: entry.actor,
+        actor: heroName(num(values, "heroIndex")),
         detail: "사망",
         values,
       });
       continue;
     }
 
-    if (entry.type === "heal") {
+    if (entry.kind === "heal") {
+      const actor = heroName(num(values, "heroIndex"));
       const heal = typeof values.heal === "number" ? values.heal : 0;
       const hp = typeof values.hp === "number" ? values.hp : 0;
       const maxHp = typeof values.maxHp === "number" ? values.maxHp : 0;
       legacy.push({
         round: entry.round,
         type: "heal",
-        actor: entry.actor,
-        detail: `체력 ${formatNum(heal)} 회복 (${hpText(entry.actor, hp, maxHp)})`,
+        actor,
+        detail: `체력 ${formatNum(heal)} 회복 (${hpText(actor, hp, maxHp)})`,
         values,
       });
       continue;
     }
 
-    // AoE 광역 공격 배너: monster_attack(no target) 로 변환해 빨간 볼드 + 몬스터 아이콘으로 렌더
-    if (entry.type === "event" && entry.actor === "몬스터" && entry.detail === "광역 공격") {
+    if (entry.kind === "lord_protect") {
+      const actor = heroName(num(values, "heroIndex"));
+      legacy.push({
+        round: entry.round,
+        type: "lord_protect",
+        actor,
+        target: heroName(num(values, "targetIndex")),
+        detail: `군주 보호: ${formatNum(num(values, "lordDmg"))} 피해 대신 받음 (${hpText(
+          actor,
+          num(values, "lordHp"),
+          num(values, "lordMaxHp"),
+        )})`,
+        values,
+      });
+      continue;
+    }
+
+    if (entry.kind === "event" && entry.code === "monster_aoe") {
       legacy.push({
         round: entry.round,
         type: "monster_attack",
@@ -185,7 +226,98 @@ function toLegacyCombatLog(
       continue;
     }
 
-    legacy.push(entry);
+    const heroIndex = num(values, "heroIndex");
+    const actor = entry.actor || (Number.isFinite(heroIndex) ? heroName(heroIndex) : "시스템");
+    const eventDetail = (() => {
+      switch (entry.code) {
+        case "barrier_fail":
+          return `원소 배리어 미돌파! 대미지 ${num(values, "barrierModPct")}%로 제한`;
+        case "barrier_success":
+          return `원소 배리어 돌파! (${num(values, "heroSum")} ≥ ${num(values, "required")})`;
+        case "mini_boss": {
+          const bonusList: string[] = [];
+          if (num(values, "hpMod", 1) !== 1) bonusList.push(`HP ×${num(values, "hpMod", 1)}`);
+          if (num(values, "damageMod", 1) !== 1) bonusList.push(`ATK ×${num(values, "damageMod", 1)}`);
+          if (num(values, "critChanceMod", 1) !== 1) bonusList.push(`치확 ×${num(values, "critChanceMod", 1)}`);
+          if (num(values, "aoeChanceMod", 1) !== 1) bonusList.push(`광역 공격 확률 ×${num(values, "aoeChanceMod", 1)}`);
+          if (num(values, "evasionPct") > 0) bonusList.push(`회피 ${num(values, "evasionPct")}%`);
+          return `미니보스: ${str(values, "label")}${bonusList.length ? ` (${bonusList.join(", ")})` : ""}`;
+        }
+        case "daimyo_first_turn":
+          return "다이묘 첫 턴 보너스: 첫 공격 치명타 확정 / 첫 피격 회피 확정";
+        case "berserker_stage":
+          return `광전사/잘 ${num(values, "stage")}단계 진입 (+ATK ${num(values, "atkBonus")}%, +EVA ${num(values, "evaBonus")}%)`;
+        case "dino_start":
+          return `공룡 영혼: 첫 턴 +${num(values, "bonusPct")}% 공격력 보너스`;
+        case "conqueror_reset":
+          return `정복자 스택 리셋 (${num(values, "from")}중첩 → 0중첩)`;
+        case "shark_start":
+          return `상어 영혼 활성화 (몬스터 HP 50% 이하, +${num(values, "bonusPct")}% 공격력)`;
+        case "polonia_steal":
+          return `폴로니아 훔치기 성공: ${num(values, "stolen")} / ${num(values, "cap")}개`;
+        default:
+          return entry.detail || "";
+      }
+    })();
+
+    if (entry.kind === "event") {
+      legacy.push({ round: entry.round, type: "event", actor, detail: eventDetail, values });
+      continue;
+    }
+
+    if (entry.kind === "result") {
+      const outcome = str(values, "outcome");
+      const detail =
+        outcome === "win"
+          ? `승리! (${num(values, "round", entry.round)}턴)`
+          : outcome === "lose_limit"
+            ? `패배 — 턴 한도 초과 (${num(values, "round", entry.round)}턴)`
+            : `패배 — 전원 사망 (${num(values, "round", entry.round)}턴)`;
+      legacy.push({ round: entry.round, type: "result", actor: "시스템", detail, values });
+      continue;
+    }
+
+    if (entry.kind === "rudo_start") {
+      legacy.push({
+        round: entry.round,
+        type: "rudo_start",
+        actor,
+        detail: `루도 보너스 발동 (${num(values, "rounds")}라운드 지속, +치명타 확률 ${num(values, "bonusPct")}%)`,
+        values,
+      });
+      continue;
+    }
+    if (entry.kind === "rudo_end") {
+      legacy.push({ round: entry.round, type: "rudo_end", actor, detail: `루도 보너스 종료 (-치명타 확률 ${num(values, "bonusPct")}%)`, values });
+      continue;
+    }
+    if (entry.kind === "sensei_recovery") {
+      legacy.push({ round: entry.round, type: "sensei_recovery", actor, detail: `센세 보너스 회복 (+치명타 확률 ${num(values, "bonusPct")}%, +회피 ${num(values, "evaPct")}%)`, values });
+      continue;
+    }
+    if (entry.kind === "ninja_loss") {
+      legacy.push({ round: entry.round, type: "ninja_loss", actor, detail: `${num(values, "isSensei") === 1 ? "센세" : "닌자"} 보너스 상실 (-치명타 확률 ${num(values, "bonusPct")}%, -회피 ${num(values, "evaPct")}%)`, values });
+      continue;
+    }
+    if (entry.kind === "acrobat_crit") {
+      legacy.push({ round: entry.round, type: "acrobat_crit", actor, detail: "곡예가 보너스 발동: 다음 공격 치명타 확정", values });
+      continue;
+    }
+    if (entry.kind === "conqueror_pre") {
+      const stack = num(values, "stack");
+      legacy.push({ round: entry.round, type: "conqueror_pre", actor, detail: `정복자 고유 스킬 스택: ${stack}중첩${stack >= 4 ? "(최대)" : ""}`, values });
+      continue;
+    }
+    if (entry.kind === "hemma_atk_gain") {
+      legacy.push({ round: entry.round, type: "hemma_atk_gain", actor, detail: `헴마 공격력 +${formatNum(num(values, "gain"))} (+누적 ${formatNum(num(values, "total"))})`, values });
+      continue;
+    }
+    if (entry.kind === "dino_end") {
+      legacy.push({ round: entry.round, type: "dino_end", actor, detail: "공룡 영혼 종료", values });
+      continue;
+    }
+
+    legacy.push({ round: entry.round, type: "event", actor, detail: entry.detail || "", values });
   }
 
   return legacy;
