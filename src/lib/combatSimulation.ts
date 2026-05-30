@@ -11,6 +11,8 @@
 import { Hero } from "@/types/game";
 import { getChampionLeaderSkillTier, getCombatSkillTier } from "@/lib/championTier";
 import { getAurasongBonusStatsSync } from "@/lib/championEquipUtils";
+import type { RawCombatEvent } from "@/lib/combatLogTypes";
+export type { CombatLogEntry } from "@/lib/combatLogTypes";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -76,6 +78,7 @@ export interface SimulationConfig {
   // When true: forces simulationCount=1 and attaches an eventLog to the result.
   // Existing callers leave this undefined → behavior is identical to before.
   recordEvents?: boolean;
+  onEvent?: (event: RawCombatEvent) => void;
 }
 
 export interface HeroSimResult {
@@ -345,7 +348,7 @@ export interface SimulationResult {
   // Polonia loot summary
   poloniaLoot?: PoloniaLootInfo;
   // Populated only when SimulationConfig.recordEvents === true
-  eventLog?: CombatLogEntry[];
+  eventLog?: RawCombatEvent[];
 }
 
 // ─── Class/Job mapping (Korean → English equivalent for logic) ───────────────
@@ -695,25 +698,22 @@ function getDamageReductionForDef(def: number, mobCap: number): number {
 
 export function runCombatSimulation(config: SimulationConfig): SimulationResult {
   const { heroes, monster, miniBoss, booster, questTypeKey, isTerrorTower, precomputedStats } = config;
-  // When recordEvents=true: force exactly one simulation and prepare an event log buffer.
-  // pushEv() is a no-op unless recordEvents=true, so this addition does not affect any
-  // existing call site (which leaves recordEvents undefined).
-  const recordEvents = config.recordEvents === true;
+  // When onEvent/recordEvents is enabled: force exactly one simulation and emit raw events.
+  // Statistics callers do not pass onEvent, so the hot loop does no log formatting work.
+  const eventLog: RawCombatEvent[] = [];
+  const emitEvent = config.onEvent ?? (config.recordEvents === true ? (event: RawCombatEvent) => eventLog.push(event) : undefined);
+  const recordEvents = typeof emitEvent === "function";
   const simCount = recordEvents ? 1 : (config.simulationCount ?? 50000);
-  const eventLog: CombatLogEntry[] = [];
-  const pushEv = recordEvents
-    ? (entry: CombatLogEntry) => {
-        eventLog.push(entry);
-      }
-    : (_entry: CombatLogEntry) => {
-        /* no-op */
-      };
 
   // Filter out heroes with 0 HP (empty slots)
   const activeHeroes = heroes.filter((h) => h.hp > 0);
   if (activeHeroes.length === 0) {
     const r = emptyResult(simCount);
-    if (recordEvents) r.eventLog = [{ round: 0, type: "result", actor: "시스템", detail: "활성 영웅 없음" }];
+    if (recordEvents) {
+      const emptyLogEvent: RawCombatEvent = { kind: "empty_party", round: 0 };
+      emitEvent?.(emptyLogEvent);
+      if (config.recordEvents === true) r.eventLog = eventLog.length ? eventLog : [emptyLogEvent];
+    }
     return r;
   }
 
@@ -1345,81 +1345,75 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
       });
       if ((champName.includes("루도") || champName === "Rudo") && champTier >= 3) totalEl = Math.round(totalEl * 1.5);
       if (totalEl < monster.barrier.hp) {
-        if (recordEvents)
-          recordEvents && pushEv({
-            round: 0,
-            type: "event",
-            actor: "시스템",
-            detail: `원소 배리어 미돌파! 대미지 ${barrierMod * 100}%로 제한`,
-            values: { heroSum: totalEl, required: monster.barrier.hp },
-          });
+        emitEvent?.({
+          round: 0,
+          kind: "event",
+          code: "barrier_fail",
+          values: { heroSum: totalEl, required: monster.barrier.hp, barrierModPct: barrierMod * 100 },
+        });
       } else {
-        if (recordEvents)
-          recordEvents && pushEv({
-            round: 0,
-            type: "event",
-            actor: "시스템",
-            detail: `원소 배리어 돌파! (${totalEl} ≥ ${monster.barrier.hp})`,
-          });
+        emitEvent?.({
+          round: 0,
+          kind: "event",
+          code: "barrier_success",
+          values: { heroSum: totalEl, required: monster.barrier.hp },
+        });
       }
     }
     // Mini boss label
     if (miniBoss && miniBoss !== "none" && miniBossLabel) {
-      if (recordEvents) {
-        const bonusList: string[] = [];
-        if (mobHpMod !== 1) bonusList.push(`HP ×${mobHpMod}`);
-        if (mobDamageMod !== 1) bonusList.push(`ATK ×${mobDamageMod}`);
-        if (mobCritChanceMod !== 1) bonusList.push(`치확 ×${mobCritChanceMod}`);
-        if (mobAoeChanceMod !== 1) bonusList.push(`광역 공격 확률 ×${mobAoeChanceMod}`);
-        if (mobEvasion > 0) bonusList.push(`회피 ${Math.round(mobEvasion * 100)}%`);
-        recordEvents && pushEv({
-          round: 0,
-          type: "event",
-          actor: "시스템",
-          detail: `미니보스: ${miniBossLabel}${bonusList.length ? ` (${bonusList.join(", ")})` : ""}`,
-        });
-      }
+      emitEvent?.({
+        round: 0,
+        kind: "event",
+        code: "mini_boss",
+        values: {
+          label: miniBossLabel,
+          hpMod: mobHpMod,
+          damageMod: mobDamageMod,
+          critChanceMod: mobCritChanceMod,
+          aoeChanceMod: mobAoeChanceMod,
+          evasionPct: Math.round(mobEvasion * 100),
+        },
+      });
     }
     // Hero initial stats
     for (let i = 0; i < numHeroes; i++) {
-      const h = activeHeroes[i];
-      if (recordEvents) {
-        const fmt = (n: number) => Math.round(n).toLocaleString();
-        const atk = Math.round(finalAtk[i]);
-        const critDmg = Math.round(finalAtk[i] * heroCritMult[i]);
-        recordEvents && pushEv({
-          round: 0,
-          type: "stat",
-          actor: h.name || `영웅 ${i + 1}`,
-          detail: `ATK ${fmt(atk)} / DEF ${fmt(finalDef[i])} / HP ${fmt(finalHp[i])} / 치확 ${Math.round(heroCritChance[i] * 100)}% / 치댐 ${fmt(critDmg)} / 회피 ${Math.round(heroEvasion[i] * 100)}%`,
-          values: { atk, def: Math.round(finalDef[i]), hp: Math.round(finalHp[i]) },
-        });
-      }
+      emitEvent?.({
+        round: 0,
+        kind: "stat",
+        code: "hero_stat",
+        values: {
+          heroIndex: i,
+          atk: Math.round(finalAtk[i]),
+          def: Math.round(finalDef[i]),
+          hp: Math.round(finalHp[i]),
+          critPct: Math.round(heroCritChance[i] * 100),
+          critDmg: Math.round(finalAtk[i] * heroCritMult[i]),
+          evasionPct: Math.round(heroEvasion[i] * 100),
+        },
+      });
     }
     // Rudo leader skill start
     if (rudoRounds > 0) {
-      if (recordEvents)
-        recordEvents && pushEv({
-          round: 0,
-          type: "rudo_start",
-          actor: champName.includes("루도") ? champion?.name || "루도" : "루도",
-          detail: `루도 보너스 발동 (${rudoRounds}라운드 지속, +치명타 확률 ${Math.round(rudoBonusBase * 1000) / 10}%)`,
-          values: {
-            bonusPct: Math.round(rudoBonusBase * 1000) / 10,
-            rounds: rudoRounds,
-          },
-        });
+      emitEvent?.({
+        round: 0,
+        kind: "rudo_start",
+        actor: champName.includes("루도") ? champion?.name || "루도" : "루도",
+        values: {
+          bonusPct: Math.round(rudoBonusBase * 1000) / 10,
+          rounds: rudoRounds,
+        },
+      });
     }
 
     // Monster stats
-    if (recordEvents)
-      recordEvents && pushEv({
-        round: 0,
-        type: "stat",
-        actor: mobDisplayName,
-        detail: `몬스터 스탯: HP ${mobHp}, ATK ${mobDamage}, 치확 ${Math.round(baseMobCritChance * mobCritChanceMod * 100)}%, AoE확 ${Math.round(mobAoeChance * 100)}%`,
-        values: { hp: mobHp, atk: mobDamage },
-      });
+    emitEvent?.({
+      round: 0,
+      kind: "stat",
+      code: "monster_stat",
+      actor: mobDisplayName,
+      values: { hp: mobHp, atk: mobDamage, critPct: Math.round(baseMobCritChance * mobCritChanceMod * 100), aoePct: Math.round(mobAoeChance * 100) },
+    });
   }
 
   let timesQuestWon = 0;
@@ -1968,12 +1962,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (recordEvents) {
             const pct = Math.round(ninjaBonus[i] * 100);
             const evaPct = Math.round(ninjaEvasion[i] * 100);
-            recordEvents && pushEv({
+            emitEvent?.({
               round,
-              type: "sensei_recovery",
-              actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-              detail: `센세 보너스 회복 (+치명타 확률 ${pct}%, +회피 ${evaPct}%)`,
-              values: { bonusPct: pct, evaPct },
+              kind: "sensei_recovery",
+              values: { heroIndex: i, bonusPct: pct, evaPct },
             });
           }
         }
@@ -2006,22 +1998,17 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] > 0 && (heroIsSamurai[i] || heroIsDaimyo[i])) {
             if (recordEvents)
-              recordEvents && pushEv({
-                round,
-                type: "event",
-                actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                detail: `다이묘 첫 턴 보너스: 첫 공격 치명타 확정 / 첫 피격 회피 확정`,
-              });
+              emitEvent?.({ round, kind: "event", code: "daimyo_first_turn", values: { heroIndex: i } });
           }
         }
       }
       if (rudoBonus > 0 && round === rudoRounds + 1) {
         if (recordEvents)
-          recordEvents && pushEv({
+          emitEvent?.({
             round: round - 1,
-            type: "rudo_end",
+            kind: "rudo_end",
             actor: champName.includes("루도") ? champion?.name || "루도" : "루도",
-            detail: `루도 보너스 종료 (-치명타 확률 ${Math.round(rudoBonusBase * 1000) / 10}%)`,
+            values: { bonusPct: Math.round(rudoBonusBase * 1000) / 10 },
           });
       }
 
@@ -2030,12 +2017,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
 
       if (isAoe) {
         if (recordEvents)
-          recordEvents && pushEv({
-            round,
-            type: "event",
-            actor: "몬스터",
-            detail: `광역 공격`,
-          });
+          emitEvent?.({ round, kind: "event", code: "monster_aoe" });
         // AoE attack hits all alive heroes
         for (let i = 0; i < numHeroes; i++) {
           if (hp[i] <= 0) continue;
@@ -2055,20 +2037,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (heroBerserkerLevel[i] > 0) simBrkStageEvaded[bStage][i]++;
             if (heroIsDancer[i]) guaranteedCrit[i] = 1;
             if (recordEvents)
-              recordEvents && pushEv({
-                round,
-                type: "dodge",
-                actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                detail: `[광역] 회피`,
-                values: { hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) },
-              });
+              emitEvent?.({ round, kind: "dodge", values: { heroIndex: i, isAoe: 1, hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) } });
             if (heroIsDancer[i] && recordEvents)
-              recordEvents && pushEv({
-                round,
-                type: "acrobat_crit",
-                actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                detail: `곡예가 보너스 발동: 다음 공격 치명타 확정`,
-              });
+              emitEvent?.({ round, kind: "acrobat_crit", values: { heroIndex: i } });
           } else {
             // Hit - AoE uses normal damage × aoe ratio (AoE has NO crit)
             const dmg = Math.round(damageTaken[i] * mobAoeDmgRatio);
@@ -2084,13 +2055,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 simDmgTaken[i] -= dmg;
                 simAoeDmgTaken[i] -= dmg;
                 if (recordEvents)
-                  recordEvents && pushEv({
-                    round,
-                    type: "damage",
-                    actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                    detail: `[광역] 치명타 생존 (${dmg} 무효화)`,
-                    values: { dmg, hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) },
-                  });
+                  emitEvent?.({ round, kind: "damage", code: "crit_survival", values: { heroIndex: i, isAoe: 1, dmg, hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) } });
               } else {
                 // Lord save check (lords cannot protect lords)
                 if (lordPresent && lordSave && !heroIsLord[i] && hp[lordHero] > 0) {
@@ -2110,13 +2075,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   simLordSavedAoeDmg[i] += lordDmg;
                   hp[lordHero] -= lordDmg;
                   if (recordEvents)
-                    recordEvents && pushEv({
+                    emitEvent?.({
                       round,
-                      type: "lord_protect",
-                      actor: activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`,
-                      target: activeHeroes[i].name || `영웅 ${i + 1}`,
-                      detail: `군주 보호: ${Math.round(lordDmg).toLocaleString()} 피해 대신 받음 (${activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`} HP: ${Math.round(Math.max(hp[lordHero], 0)).toLocaleString()} (${Math.max(0, Math.min(100, Math.round((Math.max(hp[lordHero], 0) / Math.round(finalHp[lordHero])) * 100)))}%))`,
+                      kind: "lord_protect",
                       values: {
+                        heroIndex: lordHero,
+                        targetIndex: i,
                         dmg,
                         lordDmg,
                         lordHp: Math.round(hp[lordHero]),
@@ -2130,13 +2094,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                       heroesAlive--;
                       updateTarget = true;
                       if (recordEvents)
-                        recordEvents && pushEv({
-                          round,
-                          type: "death",
-                          actor: activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`,
-                          detail: `사망 (군주 희생)`,
-                          values: { hp: 0, maxHp: Math.round(finalHp[lordHero]) },
-                        });
+                        emitEvent?.({ round, kind: "death", values: { heroIndex: lordHero, lordSacrifice: 1, hp: 0, maxHp: Math.round(finalHp[lordHero]) } });
                     }
                   }
                 } else {
@@ -2150,32 +2108,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                   heroesAlive--;
                   updateTarget = true;
                   if (recordEvents) {
-                    recordEvents && pushEv({
-                      round,
-                      type: "damage",
-                      actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                      detail: `[광역] ${dmg} 피해`,
-                      values: { dmg, hp: 0, maxHp: Math.round(finalHp[i]) },
-                    });
-                    recordEvents && pushEv({
-                      round,
-                      type: "death",
-                      actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                      detail: `사망 [광역]`,
-                      values: { dmg, hp: 0, maxHp: Math.round(finalHp[i]) },
-                    });
+                    emitEvent?.({ round, kind: "damage", values: { heroIndex: i, isAoe: 1, dmg, hp: 0, maxHp: Math.round(finalHp[i]) } });
+                    emitEvent?.({ round, kind: "death", values: { heroIndex: i, isAoe: 1, dmg, hp: 0, maxHp: Math.round(finalHp[i]) } });
                   }
                 }
               }
             } else {
               if (recordEvents)
-                recordEvents && pushEv({
-                  round,
-                  type: "damage",
-                  actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                  detail: `[광역] ${dmg} 피해`,
-                  values: { dmg, hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) },
-                });
+                emitEvent?.({ round, kind: "damage", values: { heroIndex: i, isAoe: 1, dmg, hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) } });
             }
             // Sensei/Ninja loses innate when hit — emit loss event right after the damage line
             if ((heroIsSensei[i] || heroIsNinja[i]) && prevInnateActive[i] === 1) {
@@ -2185,13 +2125,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               simInnateLossCount[i]++;
               prevInnateActive[i] = 0;
               if (recordEvents)
-                recordEvents && pushEv({
-                  round,
-                  type: "ninja_loss",
-                  actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                  detail: `${heroIsSensei[i] ? "센세" : "닌자"} 보너스 상실 (-치명타 확률 ${pct}%, -회피 ${evaPct}%)`,
-                  values: { bonusPct: pct, evaPct },
-                });
+                emitEvent?.({ round, kind: "ninja_loss", values: { heroIndex: i, isSensei: heroIsSensei[i] ? 1 : 0, bonusPct: pct, evaPct } });
             }
           }
         }
@@ -2230,20 +2164,9 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (heroBerserkerLevel[target] > 0) simBrkStageEvaded[bStageT][target]++;
           if (heroIsDancer[target]) guaranteedCrit[target] = 1;
           if (recordEvents)
-            recordEvents && pushEv({
-              round,
-              type: "dodge",
-              actor: activeHeroes[target].name || `영웅 ${target + 1}`,
-              detail: `[단일] 회피`,
-              values: { hp: Math.round(hp[target]), maxHp: Math.round(finalHp[target]) },
-            });
+            emitEvent?.({ round, kind: "dodge", values: { heroIndex: target, isAoe: 0, hp: Math.round(hp[target]), maxHp: Math.round(finalHp[target]) } });
           if (heroIsDancer[target] && recordEvents)
-            recordEvents && pushEv({
-              round,
-              type: "acrobat_crit",
-              actor: activeHeroes[target].name || `영웅 ${target + 1}`,
-              detail: `곡예가 보너스 발동: 다음 공격 치명타 확정`,
-            });
+            emitEvent?.({ round, kind: "acrobat_crit", values: { heroIndex: target } });
         } else {
           const isCrit = Math.random() < baseMobCritChance * mobCritChanceMod + extremeCritBonus[target];
           const dmg = isCrit ? critDamageTaken[target] : damageTaken[target];
@@ -2263,13 +2186,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
               simDmgTaken[target] -= dmg;
               simSingleDmgTaken[target] -= dmg;
               if (recordEvents)
-                recordEvents && pushEv({
-                  round,
-                  type: "damage",
-                  actor: activeHeroes[target].name || `영웅 ${target + 1}`,
-                  detail: `[단일${isCrit ? " 치명" : ""}] 치명타 생존 (${dmg} 무효화)`,
-                  values: { dmg, hp: Math.round(hp[target]), maxHp: Math.round(finalHp[target]) },
-                });
+                emitEvent?.({ round, kind: "damage", code: "crit_survival", values: { heroIndex: target, isAoe: 0, isCrit: isCrit ? 1 : 0, dmg, hp: Math.round(hp[target]), maxHp: Math.round(finalHp[target]) } });
             } else {
               if (lordPresent && lordSave && !heroIsLord[target] && hp[lordHero] > 0) {
                 lordSave = false;
@@ -2290,13 +2207,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 simLordSavedSingleDmg[target] += lordDmg;
                 hp[lordHero] -= lordDmg;
                 if (recordEvents)
-                  recordEvents && pushEv({
+                  emitEvent?.({
                     round,
-                    type: "lord_protect",
-                    actor: activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`,
-                    target: activeHeroes[target].name || `영웅 ${target + 1}`,
-                    detail: `군주 보호: ${Math.round(lordDmg).toLocaleString()} 피해 대신 받음 (${activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`} HP: ${Math.round(Math.max(hp[lordHero], 0)).toLocaleString()} (${Math.max(0, Math.min(100, Math.round((Math.max(hp[lordHero], 0) / Math.round(finalHp[lordHero])) * 100)))}%))`,
+                    kind: "lord_protect",
                     values: {
+                      heroIndex: lordHero,
+                      targetIndex: target,
                       dmg,
                       lordDmg,
                       lordHp: Math.round(hp[lordHero]),
@@ -2310,13 +2226,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                     heroesAlive--;
                     updateTarget = true;
                     if (recordEvents)
-                      recordEvents && pushEv({
-                        round,
-                        type: "death",
-                        actor: activeHeroes[lordHero].name || `영웅 ${lordHero + 1}`,
-                        detail: `사망 (군주 희생)`,
-                        values: { hp: 0, maxHp: Math.round(finalHp[lordHero]) },
-                      });
+                      emitEvent?.({ round, kind: "death", values: { heroIndex: lordHero, lordSacrifice: 1, hp: 0, maxHp: Math.round(finalHp[lordHero]) } });
                   }
                 }
               } else {
@@ -2330,32 +2240,14 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
                 heroesAlive--;
                 updateTarget = true;
                 if (recordEvents) {
-                  recordEvents && pushEv({
-                    round,
-                    type: "damage",
-                    actor: activeHeroes[target].name || `영웅 ${target + 1}`,
-                    detail: `[단일${isCrit ? " 치명" : ""}] ${dmg} 피해`,
-                    values: { dmg, hp: 0, maxHp: Math.round(finalHp[target]) },
-                  });
-                  recordEvents && pushEv({
-                    round,
-                    type: "death",
-                    actor: activeHeroes[target].name || `영웅 ${target + 1}`,
-                    detail: `사망`,
-                    values: { dmg, hp: 0, maxHp: Math.round(finalHp[target]) },
-                  });
+                  emitEvent?.({ round, kind: "damage", values: { heroIndex: target, isAoe: 0, isCrit: isCrit ? 1 : 0, dmg, hp: 0, maxHp: Math.round(finalHp[target]) } });
+                  emitEvent?.({ round, kind: "death", values: { heroIndex: target, isAoe: 0, dmg, hp: 0, maxHp: Math.round(finalHp[target]) } });
                 }
               }
             }
           } else {
             if (recordEvents)
-              recordEvents && pushEv({
-                round,
-                type: "damage",
-                actor: activeHeroes[target].name || `영웅 ${target + 1}`,
-                detail: `[단일${isCrit ? " 치명" : ""}] ${dmg} 피해`,
-                values: { dmg, hp: Math.round(hp[target]), maxHp: Math.round(finalHp[target]) },
-              });
+              emitEvent?.({ round, kind: "damage", values: { heroIndex: target, isAoe: 0, isCrit: isCrit ? 1 : 0, dmg, hp: Math.round(hp[target]), maxHp: Math.round(finalHp[target]) } });
           }
           if ((heroIsSensei[target] || heroIsNinja[target]) && prevInnateActive[target] === 1) {
             if (heroIsSensei[target] && lostInnate[target] !== round - 1) lostInnate[target] = round;
@@ -2364,13 +2256,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             simInnateLossCount[target]++;
             prevInnateActive[target] = 0;
             if (recordEvents)
-              recordEvents && pushEv({
-                round,
-                type: "ninja_loss",
-                actor: activeHeroes[target].name || `영웅 ${target + 1}`,
-                detail: `${heroIsSensei[target] ? "센세" : "닌자"} 보너스 상실 (-치명타 확률 ${pct}%, -회피 ${evaPct}%)`,
-                values: { bonusPct: pct, evaPct },
-              });
+              emitEvent?.({ round, kind: "ninja_loss", values: { heroIndex: target, isSensei: heroIsSensei[target] ? 1 : 0, bonusPct: pct, evaPct } });
           }
         }
       }
@@ -2393,12 +2279,12 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           simHemmaAbsorbedDmg[drainTarget] += drainAmt;
           simHemmaAbsorbedCount[drainTarget]++;
           if (recordEvents)
-            recordEvents && pushEv({
+            emitEvent?.({
               round,
-              type: "damage",
-              actor: activeHeroes[drainTarget].name || `영웅 ${drainTarget + 1}`,
-              detail: `헴마 드레인 ${Math.round(drainAmt)} HP 흡수`,
+              kind: "damage",
+              code: "hemma_drain",
               values: {
+                heroIndex: drainTarget,
                 dmg: Math.round(drainAmt),
                 hp: Math.round(hp[drainTarget]),
                 maxHp: Math.round(finalHp[drainTarget]),
@@ -2425,12 +2311,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             hemmaBonus[hemmaWho] += gain;
             simHemmaAtkGain[hemmaWho] += gain;
             if (recordEvents)
-              recordEvents && pushEv({
+              emitEvent?.({
                 round,
-                type: "hemma_atk_gain",
-                actor: activeHeroes[hemmaWho].name || `영웅 ${hemmaWho + 1}`,
-                detail: `헴마 공격력 +${Math.round(gain).toLocaleString()} (+누적 ${Math.round(hemmaBonus[hemmaWho]).toLocaleString()})`,
-                values: { gain: Math.round(gain), total: Math.round(hemmaBonus[hemmaWho]) },
+                kind: "hemma_atk_gain",
+                values: { heroIndex: hemmaWho, gain: Math.round(gain), total: Math.round(hemmaBonus[hemmaWho]) },
               });
           }
           if (hemmaSelfHealFlat > 0) {
@@ -2467,13 +2351,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             const bAtkBonus = Math.round(0.1 * (1 + bLvl) * bStageNow * 100);
             const bEvaBonus = bStageNow * 10;
             if (recordEvents)
-              recordEvents && pushEv({
-                round,
-                type: "event",
-                actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                detail: `광전사/잘 ${bStageNow}단계 진입 (+ATK ${bAtkBonus}%, +EVA ${bEvaBonus}%)`,
-                values: { stage: bStageNow, atkBonus: bAtkBonus, evaBonus: bEvaBonus },
-              });
+              emitEvent?.({ round, kind: "event", code: "berserker_stage", values: { heroIndex: i, stage: bStageNow, atkBonus: bAtkBonus, evaBonus: bEvaBonus } });
             prevBerserkerStage[i] = bStageNow;
           }
         }
@@ -2496,12 +2374,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // Dinosaur first-turn bonus
         if (round === 1 && dinosaurActive && heroDinosaur[i] > 0 && hp[i] > 0) {
           if (recordEvents)
-            recordEvents && pushEv({
-              round,
-              type: "event",
-              actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-              detail: `공룡 영혼: 첫 턴 +${heroDinosaur[i]}% 공격력 보너스`,
-            });
+            emitEvent?.({ round, kind: "event", code: "dino_start", values: { heroIndex: i, bonusPct: heroDinosaur[i] } });
         }
       }
 
@@ -2519,12 +2392,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         // Conqueror: announce current stack before this attack
         if (heroIsConquistador[jj] && recordEvents) {
           const preStack = Math.min(4, Math.round(consecutiveCritBonus[jj] / 0.25));
-          recordEvents && pushEv({
+          emitEvent?.({
             round,
-            type: "conqueror_pre",
-            actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-            detail: `정복자 고유 스킬 스택: ${preStack}중첩${preStack >= 4 ? "(최대)" : ""}`,
-            values: { stack: preStack, stackBefore: preStack, critBonusPct: preStack * 25 },
+            kind: "conqueror_pre",
+            values: { heroIndex: jj, stack: preStack, stackBefore: preStack, critBonusPct: preStack * 25 },
           });
         }
 
@@ -2573,13 +2444,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             if (preStacks > 0) {
               simConqStackResetCount[preStacks][jj]++;
               if (recordEvents) {
-                recordEvents && pushEv({
-                  round,
-                  type: "event",
-                  actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-                  detail: `정복자 스택 리셋 (${preStacks}중첩 → 0중첩)`,
-                  values: { from: preStacks, to: 0 },
-                });
+                emitEvent?.({ round, kind: "event", code: "conqueror_reset", values: { heroIndex: jj, from: preStacks, to: 0 } });
               }
             }
             consecutiveCritBonus[jj] = 0;
@@ -2601,12 +2466,10 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (damage > simHitMax[jj]) simHitMax[jj] = damage;
         }
         if (recordEvents)
-          recordEvents && pushEv({
+          emitEvent?.({
             round,
-            type: isCrit ? "crit" : "attack",
-            actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-            detail: `${isCrit ? "치명타" : "공격"} ${Math.round(damage)} 피해 (몬스터 잔여 HP: ${Math.round(Math.max(mobHpCurrent, 0))})`,
-            values: { dmg: Math.round(damage), mobHp: Math.round(Math.max(mobHpCurrent, 0)), mobMaxHp: mobHp },
+            kind: isCrit ? "crit" : "attack",
+            values: { heroIndex: jj, dmg: Math.round(damage), mobHp: Math.round(Math.max(mobHpCurrent, 0)), mobMaxHp: mobHp },
           });
 
         // Conqueror per-stack tracking
@@ -2650,13 +2513,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (isCrit) critDmgFight[jj] += execBonus;
           else normalDmgFight[jj] += execBonus;
           if (recordEvents)
-            recordEvents && pushEv({
-              round,
-              type: "attack",
-              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-              detail: `처형! 잔여 HP ${Math.round(execBonus)} 즉시 제거`,
-              values: { dmg: Math.round(execBonus), mobHp: 0, mobMaxHp: mobHp },
-            });
+            emitEvent?.({ round, kind: "attack", code: "execute", values: { heroIndex: jj, dmg: Math.round(execBonus), mobHp: 0, mobMaxHp: mobHp } });
         }
 
         // Shark activates at 50% mob HP
@@ -2666,12 +2523,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           for (let s = 0; s < numHeroes; s++) {
             if (heroShark[s] > 0 && hp[s] > 0) {
               if (recordEvents)
-                recordEvents && pushEv({
-                  round,
-                  type: "event",
-                  actor: activeHeroes[s].name || `영웅 ${s + 1}`,
-                  detail: `상어 영혼 활성화 (몬스터 HP 50% 이하, +${heroShark[s]}% 공격력)`,
-                });
+                emitEvent?.({ round, kind: "event", code: "shark_start", values: { heroIndex: s, bonusPct: heroShark[s] } });
             }
           }
         } else if (mobHpCurrent < mobHp / 2) {
@@ -2684,13 +2536,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           const stolenSoFar = simPoloniaStolen.reduce((s, v) => s + v, 0);
           // Log only while we are still within the cap (the engine totals are capped at end of fight)
           if (recordEvents && stolenSoFar <= poloniaLootCap)
-            recordEvents && pushEv({
-              round,
-              type: "event",
-              actor: activeHeroes[jj].name || `영웅 ${jj + 1}`,
-              detail: `폴로니아 훔치기 성공: ${stolenSoFar} / ${poloniaLootCap}개`,
-              values: { stolen: stolenSoFar, cap: poloniaLootCap },
-            });
+            emitEvent?.({ round, kind: "event", code: "polonia_steal", values: { heroIndex: jj, stolen: stolenSoFar, cap: poloniaLootCap } });
         }
 
         // (정복자 스택 변화는 다음 공격 직전의 conqueror_pre 이벤트로 표시)
@@ -2705,12 +2551,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
         for (let i = 0; i < numHeroes; i++) {
           if (heroDinosaur[i] > 0 && hp[i] > 0) {
             if (recordEvents)
-              recordEvents && pushEv({
-                round,
-                type: "dino_end",
-                actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                detail: `공룡 영혼 종료`,
-              });
+              emitEvent?.({ round, kind: "dino_end", values: { heroIndex: i } });
           }
         }
       }
@@ -2734,7 +2575,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           winHpRemain[i] += Math.max(hp[i], 0);
         }
         if (recordEvents)
-          recordEvents && pushEv({ round, type: "result", actor: "시스템", detail: `승리! (${round}턴)`, values: { round } });
+          emitEvent?.({ round, kind: "result", values: { outcome: "win", round } });
         roundsAvg += round;
         roundsMax = Math.max(roundsMax, round);
         roundsMin = Math.min(roundsMin, round);
@@ -2758,13 +2599,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           loseHpRemain[i] += Math.max(hp[i], 0);
         }
         if (recordEvents)
-          recordEvents && pushEv({
-            round,
-            type: "result",
-            actor: "시스템",
-            detail: `패배 — 전원 사망 (${round}턴)`,
-            values: { round },
-          });
+          emitEvent?.({ round, kind: "result", values: { outcome: "lose_all", round } });
       }
 
       let wasRoundLimit = false;
@@ -2787,13 +2622,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
           if (hp[i] > 0) roundLimitAliveCount[i]++;
         }
         if (recordEvents)
-          recordEvents && pushEv({
-            round,
-            type: "result",
-            actor: "시스템",
-            detail: `패배 — 턴 한도 초과 (${round}턴)`,
-            values: { round },
-          });
+          emitEvent?.({ round, kind: "result", values: { outcome: "lose_limit", round } });
       }
 
       if (!contFight) {
@@ -3076,13 +2905,7 @@ export function runCombatSimulation(config: SimulationConfig): SimulationResult 
             simHealing[i] += healed;
             if (healed > 0) {
               if (recordEvents)
-                recordEvents && pushEv({
-                  round,
-                  type: "heal",
-                  actor: activeHeroes[i].name || `영웅 ${i + 1}`,
-                  detail: `체력 ${Math.round(healed).toLocaleString()} 회복`,
-                  values: { heal: Math.round(healed), hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) },
-                });
+                emitEvent?.({ round, kind: "heal", values: { heroIndex: i, heal: Math.round(healed), hp: Math.round(hp[i]), maxHp: Math.round(finalHp[i]) } });
             }
           }
         }
@@ -4275,41 +4098,7 @@ export function getRetryBooster(original: BoosterType): BoosterType {
   };
 }
 
-// ─── Combat Log Entry (emitted by engine when recordEvents=true) ─────────────
-// Display formatting and the single-battle-log driver live in combatLogRecorder.ts.
-
-export interface CombatLogEntry {
-  round: number;
-  type:
-    | "attack"
-    | "crit"
-    | "damage"
-    | "dodge"
-    | "heal"
-    | "death"
-    | "stat"
-    | "event"
-    | "result"
-    | "retry"
-    | "monster_attack"
-    | "hero_attack"
-    | "execute"
-    | "lord_protect"
-    | "crit_survival"
-    | "conqueror_pre"
-    | "hemma_atk_gain"
-    | "rudo_start"
-    | "rudo_end"
-    | "ninja_loss"
-    | "sensei_recovery"
-    | "acrobat_crit"
-    | "dino_end";
-  actor: string;
-  target?: string;
-  detail: string;
-  values?: Record<string, number | string>;
-}
-
+// ─── Combat Log Entry types live in combatLogTypes.ts ─────────────────────────
 function emptyResult(simCount: number): SimulationResult {
   return {
     winRate: 0,
