@@ -331,13 +331,13 @@ export function runSingleCombatLog(config: SimulationConfig): CombatLogEntry[] {
     _disableRetry: true,
   });
   const firstRawLog = firstResult.eventLog ?? [
-    { round: 0, type: "result" as const, actor: "시스템", detail: "이벤트 로그 없음" },
+    { round: 0, kind: "result" as const, detail: "이벤트 로그 없음" },
   ];
 
-  const mobDisplayName = firstRawLog.find((e) => e.type === "stat" && e.detail.includes("몬스터 스탯"))?.actor;
+  const mobDisplayName = firstRawLog.find((e) => e.kind === "stat" && e.code === "monster_stat")?.actor;
   const firstLegacy = toLegacyCombatLog(firstRawLog, config, mobDisplayName);
 
-  const firstWon = firstRawLog.some((e) => e.type === "result" && e.detail.includes("승리"));
+  const firstWon = firstRawLog.some((e) => e.kind === "result" && e.values?.outcome === "win");
   const activeHeroes = config.heroes.filter((h) => h.hp > 0);
   const hasFateweaver = activeHeroes.some((h) => isClass(h, "페이트위버", "운명직공", "Fateweaver"));
   const hasChronos = !hasFateweaver && activeHeroes.some((h) => isClass(h, "크로노맨서", "Chronomancer"));
