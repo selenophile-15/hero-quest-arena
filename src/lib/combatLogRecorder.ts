@@ -268,6 +268,10 @@ function toLegacyCombatLog(
 
     if (entry.kind === "result") {
       const outcome = str(values, "outcome");
+      if (!outcome && entry.detail) {
+        legacy.push({ round: entry.round, type: "result", actor: "시스템", detail: entry.detail, values });
+        continue;
+      }
       const detail =
         outcome === "win"
           ? `승리! (${num(values, "round", entry.round)}턴)`
