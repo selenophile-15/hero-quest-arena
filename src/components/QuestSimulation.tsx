@@ -4073,7 +4073,7 @@ export default function QuestSimulation() {
                                                     >
                                                       {dar > 0 ? `${dar}%` : blank}
                                                     </td>
-                                                    {/* 단일 일반 = 원래 단일 대미지 × 보정%, 단일 치명 = 단일 일반 × 1.5, 광역 일반 = 원래 광역 대미지 × 보정% */}
+                                                    {/* 단일 일반 = 원래 단일 대미지 × 보정%, 단일 치명 = max(단일 일반, 원본) × 1.5 (엔진과 동일), 광역 일반 = 원래 광역 대미지 × 보정% */}
                                                     <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
                                                       {monAtk > 0 && dar > 0
                                                         ? formatNumber(Math.round((monAtk * dar) / 100))
@@ -4081,7 +4081,7 @@ export default function QuestSimulation() {
                                                     </td>
                                                     <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
                                                       {monAtk > 0 && dar > 0
-                                                        ? formatNumber(Math.round(((monAtk * dar) / 100) * 1.5))
+                                                        ? formatNumber(Math.round(Math.max((monAtk * dar) / 100, monAtk) * 1.5))
                                                         : blank}
                                                     </td>
                                                     <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
