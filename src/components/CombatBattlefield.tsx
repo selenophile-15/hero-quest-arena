@@ -1013,43 +1013,7 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-center gap-1.5 flex-wrap">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setCurrentIdx(0);
-              setPlaying(false);
-            }}
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setCurrentIdx(Math.max(0, currentIdx - 1))}>
-            <SkipBack className="w-3.5 h-3.5" />
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setPlaying(!playing)} className="w-20">
-            {playing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            <span className="ml-1 text-xs">{playing ? "일시정지" : "재생"}</span>
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setCurrentIdx(Math.min(log.length - 1, currentIdx + 1))}>
-            <SkipForward className="w-3.5 h-3.5" />
-          </Button>
-          <select
-            value={speed}
-            onChange={(e) => setSpeed(Number(e.target.value))}
-            className="text-xs bg-secondary border border-border rounded px-1.5 py-1 text-foreground"
-          >
-            <option value={1000}>0.5x</option>
-            <option value={500}>1x</option>
-            <option value={250}>2x</option>
-            <option value={100}>4x</option>
-          </select>
-          <span className="text-[10px] text-muted-foreground">
-            {currentIdx + 1}/{log.length}
-          </span>
-
-        </div>
+        {/* Controls moved into log header (right column) */}
 
         {/* Combat Stats - premium */}
         <div className="mt-4 rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/40 via-background/40 to-secondary/30 p-2.5 flex-1 overflow-y-auto min-h-0 shrink shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
