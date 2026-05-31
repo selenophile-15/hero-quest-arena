@@ -1018,20 +1018,6 @@ export default function CombatBattlefield({ log, heroes, monsterHp, monsterName,
         {/* Combat Stats - premium */}
         <div className="mt-4 rounded-lg border border-primary/20 bg-gradient-to-br from-secondary/40 via-background/40 to-secondary/30 p-2.5 flex-1 overflow-y-auto min-h-0 shrink shadow-[0_4px_20px_-12px_hsl(var(--primary)/0.4)]">
           <div className="text-sm font-bold text-foreground mb-1.5 flex items-center gap-1.5">
-            {onNewBattle && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs gap-1 border-blue-500/40 text-blue-400 hover:bg-blue-500/10 h-7 px-2 mr-2"
-                onClick={() => {
-                  onNewBattle();
-                  setCurrentIdx(0);
-                  setPlaying(false);
-                }}
-              >
-                <Dices className="w-3.5 h-3.5" /> 새 전투
-              </Button>
-            )}
             <BarChart3 className="w-4 h-4 text-primary" />
             <span>전투 통계</span>
           </div>
