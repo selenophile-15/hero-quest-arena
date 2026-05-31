@@ -2725,24 +2725,40 @@ export default function QuestSimulation() {
                                           : (hero as any)[stat.key] || 0;
                                       }
 
-                                      // Retry-booster (+20% atk/def) display override
-                                      if (retryBoosterActive && bs && (stat.key === "atk" || stat.key === "def")) {
-                                        const isAtk = stat.key === "atk";
-                                        const cPct =
-                                          (hero.detailStats?.[isAtk ? "공통 공격력 계수" : "공통 방어력 계수"] ?? 0) /
-                                          100;
-                                        const baseStat = isAtk ? hero.atk || 0 : hero.def || 0;
-                                        const constant =
-                                          hero.detailStats?.[isAtk ? "공격력 상수" : "방어력 상수"] ??
-                                          (1 + cPct > 0 ? baseStat / (1 + cPct) : baseStat);
-                                        const auraFlat = isAtk ? buffSummary?.flatAtk || 0 : buffSummary?.flatDef || 0;
-                                        const bsVal = isAtk ? bs.atk : bs.def;
-                                        const partyMult = baseStat > 0 ? (bsVal - auraFlat) / baseStat : 1;
-                                        const boosted = Math.round(
-                                          constant * (1 + cPct + RETRY_BOOSTER_EXTRA) * partyMult + auraFlat,
-                                        );
-                                        delta += boosted - val;
-                                        val = boosted;
+                                      // Retry-booster (+20% atk/def) display override — also recompute crit damage from boosted ATK
+                                      if (
+                                        retryBoosterActive &&
+                                        bs &&
+                                        (stat.key === "atk" || stat.key === "def" || (stat as any).computed)
+                                      ) {
+                                        const computeBoosted = (isAtk: boolean) => {
+                                          const cPct =
+                                            (hero.detailStats?.[isAtk ? "공통 공격력 계수" : "공통 방어력 계수"] ??
+                                              0) / 100;
+                                          const baseStat = isAtk ? hero.atk || 0 : hero.def || 0;
+                                          const constant =
+                                            hero.detailStats?.[isAtk ? "공격력 상수" : "방어력 상수"] ??
+                                            (1 + cPct > 0 ? baseStat / (1 + cPct) : baseStat);
+                                          const auraFlat = isAtk
+                                            ? buffSummary?.flatAtk || 0
+                                            : buffSummary?.flatDef || 0;
+                                          const bsVal = isAtk ? bs.atk : bs.def;
+                                          const partyMult = baseStat > 0 ? (bsVal - auraFlat) / baseStat : 1;
+                                          return Math.round(
+                                            constant * (1 + cPct + RETRY_BOOSTER_EXTRA) * partyMult + auraFlat,
+                                          );
+                                        };
+                                        if ((stat as any).computed) {
+                                          const boostedAtk = computeBoosted(true);
+                                          const boosted = Math.floor((boostedAtk * bs.critDmg) / 100);
+                                          delta += boosted - val;
+                                          val = boosted;
+                                        } else {
+                                          const isAtk = stat.key === "atk";
+                                          const boosted = computeBoosted(isAtk);
+                                          delta += boosted - val;
+                                          val = boosted;
+                                        }
                                       }
 
                                       // Evasion special handling
@@ -4073,7 +4089,7 @@ export default function QuestSimulation() {
                                                     >
                                                       {dar > 0 ? `${dar}%` : blank}
                                                     </td>
-                                                    {/* 단일 일반 = 원래 단일 대미지 × 보정%, 단일 치명 = 단일 일반 × 1.5, 광역 일반 = 원래 광역 대미지 × 보정% */}
+                                                    {/* 단일 일반 = 원래 단일 대미지 × 보정%, 단일 치명 = max(단일 일반, 원본) × 1.5 (엔진과 동일), 광역 일반 = 원래 광역 대미지 × 보정% */}
                                                     <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
                                                       {monAtk > 0 && dar > 0
                                                         ? formatNumber(Math.round((monAtk * dar) / 100))
@@ -4081,7 +4097,7 @@ export default function QuestSimulation() {
                                                     </td>
                                                     <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
                                                       {monAtk > 0 && dar > 0
-                                                        ? formatNumber(Math.round(((monAtk * dar) / 100) * 1.5))
+                                                        ? formatNumber(Math.round(Math.max((monAtk * dar) / 100, monAtk) * 1.5))
                                                         : blank}
                                                     </td>
                                                     <td className="py-1 px-2 text-center font-mono text-muted-foreground whitespace-nowrap">
