@@ -177,12 +177,21 @@ export function useMobileGestures(desktopMode: boolean) {
       y: (t1.clientY + t2.clientY) / 2,
     });
 
+    const panStartRef = { x: 0, y: 0, tx: 0, ty: 0, active: false };
+
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
         pinchStartDistRef.current = getDistance(e.touches[0], e.touches[1]);
         pinchStartZoomRef.current = currentZoomRef.current;
         pinchStartMidRef.current = getMid(e.touches[0], e.touches[1]);
         pinchStartTranslateRef.current = { x: translateXRef.current, y: translateYRef.current };
+        panStartRef.active = false;
+      } else if (e.touches.length === 1 && currentZoomRef.current > 1.0001) {
+        panStartRef.x = e.touches[0].clientX;
+        panStartRef.y = e.touches[0].clientY;
+        panStartRef.tx = translateXRef.current;
+        panStartRef.ty = translateYRef.current;
+        panStartRef.active = true;
       }
     };
 
@@ -199,11 +208,25 @@ export function useMobileGestures(desktopMode: boolean) {
           prevTranslate: pinchStartTranslateRef.current,
           prevZoom: pinchStartZoomRef.current,
         });
+      } else if (e.touches.length === 1 && panStartRef.active) {
+        const dx = e.touches[0].clientX - panStartRef.x;
+        const dy = e.touches[0].clientY - panStartRef.y;
+        const total = fitScaleRef.current * currentZoomRef.current;
+        const clamped = clampTranslate(panStartRef.tx + dx, panStartRef.ty + dy, total);
+        translateXRef.current = clamped.x;
+        translateYRef.current = clamped.y;
+        const transform = `translate(${clamped.x}px, ${clamped.y}px) scale(${total})`;
+        const scaleRootEl = document.getElementById("app-scale-root") as HTMLElement | null;
+        const portalRootEl = document.getElementById("portal-root") as HTMLElement | null;
+        if (scaleRootEl) scaleRootEl.style.transform = transform;
+        if (portalRootEl) portalRootEl.style.transform = transform;
+        e.preventDefault();
       }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
       if (e.touches.length < 2) pinchStartDistRef.current = 0;
+      if (e.touches.length === 0) panStartRef.active = false;
     };
 
     document.addEventListener("touchstart", handleDoubleTap, { passive: false });
