@@ -21,13 +21,14 @@ export function useMobileGestures(desktopMode: boolean) {
   const clampTranslate = useCallback((tx: number, ty: number, totalScale: number) => {
     const vw = window.visualViewport?.width ?? window.innerWidth;
     const vh = window.visualViewport?.height ?? window.innerHeight;
+    const scaleRoot = document.getElementById("app-scale-root") as HTMLElement | null;
+    const contentH = (scaleRoot?.scrollHeight ?? window.innerHeight) * totalScale;
     const contentW = DESKTOP_WIDTH * totalScale;
-    const contentH = window.innerHeight * totalScale;
-    // Allow some pan slack but keep content from disappearing
+    // 콘텐츠가 뷰포트보다 크면 음수~0 범위로 팬 허용, 작으면 0 고정
     const minTx = Math.min(0, vw - contentW);
-    const maxTx = Math.max(0, vw - contentW);
+    const maxTx = 0;
     const minTy = Math.min(0, vh - contentH);
-    const maxTy = Math.max(0, vh - contentH);
+    const maxTy = 0;
     return {
       x: Math.max(minTx, Math.min(maxTx, tx)),
       y: Math.max(minTy, Math.min(maxTy, ty)),
@@ -74,23 +75,24 @@ export function useMobileGestures(desktopMode: boolean) {
       if (!scaleRoot) return;
 
       const transform = `translate(${tx}px, ${ty}px) scale(${newTotal})`;
-      const logicalHeight = newTotal > 0 ? window.innerHeight / newTotal : window.innerHeight;
+      const vvHeight = window.visualViewport?.height ?? window.innerHeight;
+      // scaleRoot: 콘텐츠가 레이아웃 뷰포트(innerHeight)는 채우도록
+      const contentMinH = newTotal > 0 ? window.innerHeight / newTotal : window.innerHeight;
+      // portal-root: 시각 뷰포트 높이를 기준으로 잡아야 top:50%가 실제 화면 중앙에 옴
+      const portalH = newTotal > 0 ? vvHeight / newTotal : vvHeight;
       scaleRoot.style.transform = transform;
       scaleRoot.style.transformOrigin = "top left";
       scaleRoot.style.width = `${DESKTOP_WIDTH}px`;
       scaleRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-      scaleRoot.style.minHeight = `${logicalHeight}px`;
+      scaleRoot.style.minHeight = `${contentMinH}px`;
 
-      // portal-root: mirror transform so fixed dialogs sit in the same scaled coordinate space.
-      // Height MUST equal innerHeight / totalScale so that `top:50%` of portal-root, once
-      // scaled by totalScale, equals innerHeight/2 — the visual center of the screen.
       if (portalRoot) {
         portalRoot.style.position = "fixed";
         portalRoot.style.top = "0";
         portalRoot.style.left = "0";
         portalRoot.style.width = `${DESKTOP_WIDTH}px`;
         portalRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-        portalRoot.style.height = `${logicalHeight}px`;
+        portalRoot.style.height = `${portalH}px`;
         portalRoot.style.transform = transform;
         portalRoot.style.transformOrigin = "top left";
         portalRoot.style.zIndex = "9999";
@@ -175,12 +177,21 @@ export function useMobileGestures(desktopMode: boolean) {
       y: (t1.clientY + t2.clientY) / 2,
     });
 
+    const panStartRef = { x: 0, y: 0, tx: 0, ty: 0, active: false };
+
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
         pinchStartDistRef.current = getDistance(e.touches[0], e.touches[1]);
         pinchStartZoomRef.current = currentZoomRef.current;
         pinchStartMidRef.current = getMid(e.touches[0], e.touches[1]);
         pinchStartTranslateRef.current = { x: translateXRef.current, y: translateYRef.current };
+        panStartRef.active = false;
+      } else if (e.touches.length === 1 && currentZoomRef.current > 1.0001) {
+        panStartRef.x = e.touches[0].clientX;
+        panStartRef.y = e.touches[0].clientY;
+        panStartRef.tx = translateXRef.current;
+        panStartRef.ty = translateYRef.current;
+        panStartRef.active = true;
       }
     };
 
@@ -197,11 +208,25 @@ export function useMobileGestures(desktopMode: boolean) {
           prevTranslate: pinchStartTranslateRef.current,
           prevZoom: pinchStartZoomRef.current,
         });
+      } else if (e.touches.length === 1 && panStartRef.active) {
+        const dx = e.touches[0].clientX - panStartRef.x;
+        const dy = e.touches[0].clientY - panStartRef.y;
+        const total = fitScaleRef.current * currentZoomRef.current;
+        const clamped = clampTranslate(panStartRef.tx + dx, panStartRef.ty + dy, total);
+        translateXRef.current = clamped.x;
+        translateYRef.current = clamped.y;
+        const transform = `translate(${clamped.x}px, ${clamped.y}px) scale(${total})`;
+        const scaleRootEl = document.getElementById("app-scale-root") as HTMLElement | null;
+        const portalRootEl = document.getElementById("portal-root") as HTMLElement | null;
+        if (scaleRootEl) scaleRootEl.style.transform = transform;
+        if (portalRootEl) portalRootEl.style.transform = transform;
+        e.preventDefault();
       }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
       if (e.touches.length < 2) pinchStartDistRef.current = 0;
+      if (e.touches.length === 0) panStartRef.active = false;
     };
 
     document.addEventListener("touchstart", handleDoubleTap, { passive: false });
