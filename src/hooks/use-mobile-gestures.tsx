@@ -75,23 +75,24 @@ export function useMobileGestures(desktopMode: boolean) {
       if (!scaleRoot) return;
 
       const transform = `translate(${tx}px, ${ty}px) scale(${newTotal})`;
-      const logicalHeight = newTotal > 0 ? window.innerHeight / newTotal : window.innerHeight;
+      const vvHeight = window.visualViewport?.height ?? window.innerHeight;
+      // scaleRoot: 콘텐츠가 레이아웃 뷰포트(innerHeight)는 채우도록
+      const contentMinH = newTotal > 0 ? window.innerHeight / newTotal : window.innerHeight;
+      // portal-root: 시각 뷰포트 높이를 기준으로 잡아야 top:50%가 실제 화면 중앙에 옴
+      const portalH = newTotal > 0 ? vvHeight / newTotal : vvHeight;
       scaleRoot.style.transform = transform;
       scaleRoot.style.transformOrigin = "top left";
       scaleRoot.style.width = `${DESKTOP_WIDTH}px`;
       scaleRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-      scaleRoot.style.minHeight = `${logicalHeight}px`;
+      scaleRoot.style.minHeight = `${contentMinH}px`;
 
-      // portal-root: mirror transform so fixed dialogs sit in the same scaled coordinate space.
-      // Height MUST equal innerHeight / totalScale so that `top:50%` of portal-root, once
-      // scaled by totalScale, equals innerHeight/2 — the visual center of the screen.
       if (portalRoot) {
         portalRoot.style.position = "fixed";
         portalRoot.style.top = "0";
         portalRoot.style.left = "0";
         portalRoot.style.width = `${DESKTOP_WIDTH}px`;
         portalRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-        portalRoot.style.height = `${logicalHeight}px`;
+        portalRoot.style.height = `${portalH}px`;
         portalRoot.style.transform = transform;
         portalRoot.style.transformOrigin = "top left";
         portalRoot.style.zIndex = "9999";
