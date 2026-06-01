@@ -21,13 +21,14 @@ export function useMobileGestures(desktopMode: boolean) {
   const clampTranslate = useCallback((tx: number, ty: number, totalScale: number) => {
     const vw = window.visualViewport?.width ?? window.innerWidth;
     const vh = window.visualViewport?.height ?? window.innerHeight;
+    const scaleRoot = document.getElementById("app-scale-root") as HTMLElement | null;
+    const contentH = (scaleRoot?.scrollHeight ?? window.innerHeight) * totalScale;
     const contentW = DESKTOP_WIDTH * totalScale;
-    const contentH = window.innerHeight * totalScale;
-    // Allow some pan slack but keep content from disappearing
+    // 콘텐츠가 뷰포트보다 크면 음수~0 범위로 팬 허용, 작으면 0 고정
     const minTx = Math.min(0, vw - contentW);
-    const maxTx = Math.max(0, vw - contentW);
+    const maxTx = 0;
     const minTy = Math.min(0, vh - contentH);
-    const maxTy = Math.max(0, vh - contentH);
+    const maxTy = 0;
     return {
       x: Math.max(minTx, Math.min(maxTx, tx)),
       y: Math.max(minTy, Math.min(maxTy, ty)),
