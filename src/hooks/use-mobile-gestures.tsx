@@ -74,22 +74,23 @@ export function useMobileGestures(desktopMode: boolean) {
       if (!scaleRoot) return;
 
       const transform = `translate(${tx}px, ${ty}px) scale(${newTotal})`;
+      const logicalHeight = newTotal > 0 ? window.innerHeight / newTotal : window.innerHeight;
       scaleRoot.style.transform = transform;
       scaleRoot.style.transformOrigin = "top left";
       scaleRoot.style.width = `${DESKTOP_WIDTH}px`;
       scaleRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
+      scaleRoot.style.minHeight = `${logicalHeight}px`;
 
       // portal-root: mirror transform so fixed dialogs sit in the same scaled coordinate space.
-      // Height MUST equal layout viewport height (window.innerHeight) so that `top:50%`
-      // of portal-root equals 50% of the layout viewport — i.e. center of the visible screen
-      // after scaling.
+      // Height MUST equal innerHeight / totalScale so that `top:50%` of portal-root, once
+      // scaled by totalScale, equals innerHeight/2 — the visual center of the screen.
       if (portalRoot) {
         portalRoot.style.position = "fixed";
         portalRoot.style.top = "0";
         portalRoot.style.left = "0";
         portalRoot.style.width = `${DESKTOP_WIDTH}px`;
         portalRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-        portalRoot.style.height = `${window.innerHeight}px`;
+        portalRoot.style.height = `${logicalHeight}px`;
         portalRoot.style.transform = transform;
         portalRoot.style.transformOrigin = "top left";
         portalRoot.style.zIndex = "9999";
