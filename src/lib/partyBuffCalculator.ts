@@ -161,6 +161,7 @@ async function getAurasongBonuses(champion: Hero): Promise<AurasongBonuses> {
         if (bonuses['오라_깡공격력']) result.flatAtk += bonuses['오라_깡공격력'];
         if (bonuses['오라_깡방어력']) result.flatDef += bonuses['오라_깡방어력'];
         if (bonuses['오라_깡체력']) result.flatHp += bonuses['오라_깡체력'];
+        if (bonuses['오라_경험치%']) result.expPct += bonuses['오라_경험치%'];
         return result;
       }
     }
