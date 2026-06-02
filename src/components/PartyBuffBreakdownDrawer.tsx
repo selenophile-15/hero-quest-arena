@@ -201,9 +201,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   {relevantSources.map((src, srcIdx) => {
                     const isChamp = src.type === 'champion';
                     const isBooster = isBoosterSource(src);
-                    const icon = isBooster ? '⚡' : isChamp ? '👑' : '🎵';
-                    const tagClass = isBooster ? 'bg-green-600/60' : isChamp ? 'bg-yellow-600/60' : 'bg-purple-600/60';
-                    const tagLabel = isBooster ? '부스터' : isChamp ? '챔피언' : '오라';
+                    const isRelic = src.type === 'relic';
+                    const icon = isRelic ? '🎩' : isBooster ? '⚡' : isChamp ? '👑' : '🎵';
+                    const tagClass = isRelic ? 'bg-amber-600/60' : isBooster ? 'bg-green-600/60' : isChamp ? 'bg-yellow-600/60' : 'bg-purple-600/60';
+                    const tagLabel = isRelic ? '유물' : isBooster ? '부스터' : isChamp ? '챔피언' : '오라';
                     const pctVal = getSourcePctForStat(src, activeTab);
                     const flatVal = getSourceFlatForStat(src, activeTab);
 
@@ -221,13 +222,17 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         {heroes.map((h) => {
                           const hasLW = hasLoneWolfCowl(h);
                           const champMod = hasLW ? 0 : 1;
-                          const effectivePct = isChamp ? pctVal * champMod : pctVal;
+                          const inTarget = !src.targetHeroIds || src.targetHeroIds.includes(h.id);
+                          const effectivePct = inTarget ? (isChamp ? pctVal * champMod : pctVal) : 0;
+                          const effectiveFlat = inTarget ? flatVal : 0;
 
                           if (isMultStat) {
                             return (
                               <td key={h.id} className="py-2 px-2 text-center">
                                 {hasLW && isChamp ? (
                                   <span className="text-red-400 text-xs">무효</span>
+                                ) : !inTarget ? (
+                                  <span className="text-muted-foreground text-xs">-</span>
                                 ) : (
                                   <div className="space-y-0.5">
                                     {effectivePct !== 0 && (
@@ -235,12 +240,12 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                                         +{effectivePct.toFixed(1)}%
                                       </div>
                                     )}
-                                    {flatVal !== 0 && (
+                                    {effectiveFlat !== 0 && (
                                       <div className="text-lime-700/80 dark:text-lime-400/70 text-xs font-mono">
-                                        +{formatNumber(flatVal)} (깡)
+                                        +{formatNumber(effectiveFlat)} (깡)
                                       </div>
                                     )}
-                                    {effectivePct === 0 && flatVal === 0 && (
+                                    {effectivePct === 0 && effectiveFlat === 0 && (
                                       <span className="text-muted-foreground text-xs">-</span>
                                     )}
                                   </div>
@@ -252,7 +257,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                               <td key={h.id} className="py-2 px-2 text-center">
                                 {hasLW && isChamp ? (
                                   <span className="text-red-400 text-xs">무효</span>
-                                ) : effectivePct !== 0 ? (
+                                ) : inTarget && effectivePct !== 0 ? (
                                   <div className="text-lime-700 dark:text-lime-400/90 text-sm font-mono">
                                     +{effectivePct.toFixed(1)}%
                                   </div>
@@ -282,18 +287,22 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
                         let champAuraPct = 0;
                         let boosterPct = 0;
+                        let relicPct = 0;
                         let totalFlat = 0;
                         relevantSources.forEach(src => {
+                          if (src.targetHeroIds && !src.targetHeroIds.includes(h.id)) return;
                           const pct = getSourcePctForStat(src, activeTab);
                           const flat = getSourceFlatForStat(src, activeTab);
-                          if (isBoosterSource(src)) {
+                          if (src.type === 'relic') {
+                            relicPct += pct;
+                          } else if (isBoosterSource(src)) {
                             boosterPct += pct;
                           } else {
                             champAuraPct += src.type === 'champion' ? pct * champMod : pct;
                           }
                           totalFlat += flat;
                         });
-                        const effectiveTotalPct = champAuraPct * mercMult + boosterPct;
+                        const effectiveTotalPct = champAuraPct * mercMult + boosterPct + relicPct;
                         const baseVal = getBaseVal(h);
                         const addedFromPct = Math.floor(baseVal * effectiveTotalPct / 100);
 
@@ -333,15 +342,19 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
                         let champAuraPct = 0;
                         let boosterPct = 0;
+                        let relicPct = 0;
                         relevantSources.forEach(src => {
+                          if (src.targetHeroIds && !src.targetHeroIds.includes(h.id)) return;
                           const pct = getSourcePctForStat(src, activeTab);
-                          if (isBoosterSource(src)) {
+                          if (src.type === 'relic') {
+                            relicPct += pct;
+                          } else if (isBoosterSource(src)) {
                             boosterPct += pct;
                           } else {
                             champAuraPct += src.type === 'champion' ? pct * champMod : pct;
                           }
                         });
-                        const effectiveTotal = champAuraPct * mercMult + boosterPct;
+                        const effectiveTotal = champAuraPct * mercMult + boosterPct + relicPct;
 
                         return (
                           <td key={h.id} className="py-2 px-2 text-center">

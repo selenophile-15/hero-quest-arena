@@ -31,13 +31,15 @@ export interface PartyBuffSummary {
   flatAtk: number;
   flatDef: number;
   flatHp: number;
+  // Aurasong XP% from champion's 오라의 노래 (외부 경험치 소스 - 생각하는 모자용)
+  auraExpPct: number;
   // Sources for display
   sources: PartyBuffSource[];
 }
 
 export interface PartyBuffSource {
   name: string;
-  type: 'champion' | 'aurasong';
+  type: 'champion' | 'aurasong' | 'relic';
   atkPct?: number;
   defPct?: number;
   hpPct?: number;
@@ -48,6 +50,8 @@ export interface PartyBuffSource {
   flatDef?: number;
   flatHp?: number;
   note?: string; // e.g. "보스 2배", "깜짝 퀘스트 2배"
+  /** When set, this source only applies to the listed hero IDs (e.g. 생각하는 모자 외부 단계). */
+  targetHeroIds?: string[];
 }
 
 export interface BuffedHeroStats {
@@ -103,10 +107,11 @@ interface AurasongBonuses {
   flatAtk: number;
   flatDef: number;
   flatHp: number;
+  expPct: number; // 오라_경험치%
 }
 
 async function getAurasongBonuses(champion: Hero): Promise<AurasongBonuses> {
-  const result: AurasongBonuses = { atkPct: 0, defPct: 0, hpPct: 0, critPct: 0, evaPct: 0, critDmgPct: 0, flatAtk: 0, flatDef: 0, flatHp: 0 };
+  const result: AurasongBonuses = { atkPct: 0, defPct: 0, hpPct: 0, critPct: 0, evaPct: 0, critDmgPct: 0, flatAtk: 0, flatDef: 0, flatHp: 0, expPct: 0 };
   
   // Aurasong is in equipmentSlots[1] for champions
   const aurasongSlot = champion.equipmentSlots?.[1];
@@ -128,6 +133,7 @@ async function getAurasongBonuses(champion: Hero): Promise<AurasongBonuses> {
         case '오라_깡공격력': result.flatAtk += val; break;
         case '오라_깡방어력': result.flatDef += val; break;
         case '오라_깡체력': result.flatHp += val; break;
+        case '오라_경험치%': result.expPct += val; break;
       }
     }
     return result;
@@ -155,6 +161,7 @@ async function getAurasongBonuses(champion: Hero): Promise<AurasongBonuses> {
         if (bonuses['오라_깡공격력']) result.flatAtk += bonuses['오라_깡공격력'];
         if (bonuses['오라_깡방어력']) result.flatDef += bonuses['오라_깡방어력'];
         if (bonuses['오라_깡체력']) result.flatHp += bonuses['오라_깡체력'];
+        if (bonuses['오라_경험치%']) result.expPct += bonuses['오라_경험치%'];
         return result;
       }
     }
@@ -184,6 +191,7 @@ export async function calculatePartyBuffs(input: PartyBuffInput): Promise<{
     perHeroEvaPct: new Array(n).fill(0),
     perHeroCritDmgPct: new Array(n).fill(0),
     flatAtk: 0, flatDef: 0, flatHp: 0,
+    auraExpPct: 0,
     sources: [],
   };
   
@@ -339,6 +347,7 @@ export async function calculatePartyBuffs(input: PartyBuffInput): Promise<{
   summary.flatAtk += aura.flatAtk;
   summary.flatDef += aura.flatDef;
   summary.flatHp += aura.flatHp;
+  summary.auraExpPct = aura.expPct;
   
   // Compute per-hero buffed stats
   const buffedStats: BuffedHeroStats[] = heroes.map((h, i) => {
