@@ -341,15 +341,19 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
 
                         let champAuraPct = 0;
                         let boosterPct = 0;
+                        let relicPct = 0;
                         relevantSources.forEach(src => {
+                          if (src.targetHeroIds && !src.targetHeroIds.includes(h.id)) return;
                           const pct = getSourcePctForStat(src, activeTab);
-                          if (isBoosterSource(src)) {
+                          if (src.type === 'relic') {
+                            relicPct += pct;
+                          } else if (isBoosterSource(src)) {
                             boosterPct += pct;
                           } else {
                             champAuraPct += src.type === 'champion' ? pct * champMod : pct;
                           }
                         });
-                        const effectiveTotal = champAuraPct * mercMult + boosterPct;
+                        const effectiveTotal = champAuraPct * mercMult + boosterPct + relicPct;
 
                         return (
                           <td key={h.id} className="py-2 px-2 text-center">
