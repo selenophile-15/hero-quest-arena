@@ -133,6 +133,7 @@ async function getAurasongBonuses(champion: Hero): Promise<AurasongBonuses> {
         case '오라_깡공격력': result.flatAtk += val; break;
         case '오라_깡방어력': result.flatDef += val; break;
         case '오라_깡체력': result.flatHp += val; break;
+        case '오라_경험치%': result.expPct += val; break;
       }
     }
     return result;
