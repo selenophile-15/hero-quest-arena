@@ -107,6 +107,7 @@ interface AurasongBonuses {
   flatAtk: number;
   flatDef: number;
   flatHp: number;
+  expPct: number; // 오라_경험치%
 }
 
 async function getAurasongBonuses(champion: Hero): Promise<AurasongBonuses> {
