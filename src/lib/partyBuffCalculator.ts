@@ -347,6 +347,7 @@ export async function calculatePartyBuffs(input: PartyBuffInput): Promise<{
   summary.flatAtk += aura.flatAtk;
   summary.flatDef += aura.flatDef;
   summary.flatHp += aura.flatHp;
+  summary.auraExpPct = aura.expPct;
   
   // Compute per-hero buffed stats
   const buffedStats: BuffedHeroStats[] = heroes.map((h, i) => {
