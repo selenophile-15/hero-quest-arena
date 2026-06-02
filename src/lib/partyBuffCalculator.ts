@@ -111,7 +111,7 @@ interface AurasongBonuses {
 }
 
 async function getAurasongBonuses(champion: Hero): Promise<AurasongBonuses> {
-  const result: AurasongBonuses = { atkPct: 0, defPct: 0, hpPct: 0, critPct: 0, evaPct: 0, critDmgPct: 0, flatAtk: 0, flatDef: 0, flatHp: 0 };
+  const result: AurasongBonuses = { atkPct: 0, defPct: 0, hpPct: 0, critPct: 0, evaPct: 0, critDmgPct: 0, flatAtk: 0, flatDef: 0, flatHp: 0, expPct: 0 };
   
   // Aurasong is in equipmentSlots[1] for champions
   const aurasongSlot = champion.equipmentSlots?.[1];
