@@ -37,7 +37,7 @@ export interface PartyBuffSummary {
 
 export interface PartyBuffSource {
   name: string;
-  type: 'champion' | 'aurasong';
+  type: 'champion' | 'aurasong' | 'relic';
   atkPct?: number;
   defPct?: number;
   hpPct?: number;
@@ -48,6 +48,8 @@ export interface PartyBuffSource {
   flatDef?: number;
   flatHp?: number;
   note?: string; // e.g. "보스 2배", "깜짝 퀘스트 2배"
+  /** When set, this source only applies to the listed hero IDs (e.g. 생각하는 모자 외부 단계). */
+  targetHeroIds?: string[];
 }
 
 export interface BuffedHeroStats {
