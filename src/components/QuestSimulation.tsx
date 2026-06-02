@@ -614,11 +614,49 @@ export default function QuestSimulation() {
           });
         }
 
+        // ─── 생각하는 모자 외부 단계 ───
+        // 외부 경험치% = 오라_경험치% + 지역 레벨% + 길드 경험치 부스터% + 경험치 부스터 아이템%
+        // 그 절반을 모자 착용 영웅의 파티 외부 ATK%에 추가
+        const xpBoosterMap: Record<string, number> = { xp_normal: 50, xp_super: 100, xp_mega: 200 };
+        const externalXpPct =
+          (summary.auraExpPct || 0) +
+          (expBoosters.regionLevelEnabled ? expBoosters.regionLevelValue : 0) +
+          (expBoosters.guildBoosterEnabled ? expBoosters.guildBoosterValue : 0) +
+          (xpBoosterMap[selectedBooster] || 0);
+
+        if (externalXpPct > 0) {
+          const hatAtkPct = externalXpPct / 2; // %
+          const hatWearerIds: string[] = [];
+          bs.forEach((stat, i) => {
+            const hero = selectedHeroes[i];
+            const hasHat = hero.equipmentSlots?.some((s) => s?.item?.name === "생각하는 모자");
+            if (!hasHat) return;
+            hatWearerIds.push(hero.id);
+            const atkAdd = Math.floor((hero.atk || 0) * (hatAtkPct / 100));
+            stat.atk += atkAdd;
+            stat.deltaAtk += atkAdd;
+          });
+          if (hatWearerIds.length > 0) {
+            const parts: string[] = [];
+            if (summary.auraExpPct) parts.push(`오라 +${summary.auraExpPct}%`);
+            if (expBoosters.regionLevelEnabled) parts.push(`지역 +${expBoosters.regionLevelValue}%`);
+            if (expBoosters.guildBoosterEnabled) parts.push(`길드 +${expBoosters.guildBoosterValue}%`);
+            if (xpBoosterMap[selectedBooster]) parts.push(`부스터 +${xpBoosterMap[selectedBooster]}%`);
+            summary.sources.push({
+              name: `생각하는 모자 외부 (경험치 ${externalXpPct}%의 절반)`,
+              type: "relic",
+              atkPct: hatAtkPct,
+              note: parts.join(" + "),
+              targetHeroIds: hatWearerIds,
+            });
+          }
+        }
+
         setBuffedStats(bs);
         setBuffSummary(summary);
       },
     );
-  }, [selectedHeroes, isBossQuest, isFlashQuest, selectedBooster]);
+  }, [selectedHeroes, isBossQuest, isFlashQuest, selectedBooster, expBoosters]);
 
   // Auto-run simulation when party or booster changes
   // IMPORTANT: Only run when buffedStats is ready (prevents fallback path with wrong aurasong values)
