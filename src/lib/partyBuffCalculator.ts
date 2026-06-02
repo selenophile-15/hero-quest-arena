@@ -31,6 +31,8 @@ export interface PartyBuffSummary {
   flatAtk: number;
   flatDef: number;
   flatHp: number;
+  // Aurasong XP% from champion's 오라의 노래 (외부 경험치 소스 - 생각하는 모자용)
+  auraExpPct: number;
   // Sources for display
   sources: PartyBuffSource[];
 }
