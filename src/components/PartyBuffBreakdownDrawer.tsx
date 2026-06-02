@@ -201,9 +201,10 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                   {relevantSources.map((src, srcIdx) => {
                     const isChamp = src.type === 'champion';
                     const isBooster = isBoosterSource(src);
-                    const icon = isBooster ? '⚡' : isChamp ? '👑' : '🎵';
-                    const tagClass = isBooster ? 'bg-green-600/60' : isChamp ? 'bg-yellow-600/60' : 'bg-purple-600/60';
-                    const tagLabel = isBooster ? '부스터' : isChamp ? '챔피언' : '오라';
+                    const isRelic = src.type === 'relic';
+                    const icon = isRelic ? '🎩' : isBooster ? '⚡' : isChamp ? '👑' : '🎵';
+                    const tagClass = isRelic ? 'bg-amber-600/60' : isBooster ? 'bg-green-600/60' : isChamp ? 'bg-yellow-600/60' : 'bg-purple-600/60';
+                    const tagLabel = isRelic ? '유물' : isBooster ? '부스터' : isChamp ? '챔피언' : '오라';
                     const pctVal = getSourcePctForStat(src, activeTab);
                     const flatVal = getSourceFlatForStat(src, activeTab);
 
