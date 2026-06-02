@@ -70,34 +70,18 @@ export function useMobileGestures(desktopMode: boolean) {
       translateYRef.current = ty;
 
       const scaleRoot = document.getElementById("app-scale-root") as HTMLElement | null;
-      const portalRoot = document.getElementById("portal-root") as HTMLElement | null;
 
       if (!scaleRoot) return;
 
       const transform = `translate(${tx}px, ${ty}px) scale(${newTotal})`;
-      const vvHeight = window.visualViewport?.height ?? window.innerHeight;
       // scaleRoot: 콘텐츠가 레이아웃 뷰포트(innerHeight)는 채우도록
       const contentMinH = newTotal > 0 ? window.innerHeight / newTotal : window.innerHeight;
-      // portal-root: 시각 뷰포트 높이를 기준으로 잡아야 top:50%가 실제 화면 중앙에 옴
-      const portalH = newTotal > 0 ? vvHeight / newTotal : vvHeight;
       scaleRoot.style.transform = transform;
       scaleRoot.style.transformOrigin = "top left";
       scaleRoot.style.width = `${DESKTOP_WIDTH}px`;
       scaleRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
       scaleRoot.style.minHeight = `${contentMinH}px`;
-
-      if (portalRoot) {
-        portalRoot.style.position = "fixed";
-        portalRoot.style.top = "0";
-        portalRoot.style.left = "0";
-        portalRoot.style.width = `${DESKTOP_WIDTH}px`;
-        portalRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-        portalRoot.style.height = `${portalH}px`;
-        portalRoot.style.transform = transform;
-        portalRoot.style.transformOrigin = "top left";
-        portalRoot.style.zIndex = "9999";
-        portalRoot.style.pointerEvents = "none";
-      }
+      // portal-root에는 transform을 적용하지 않음 (Dialog/Sheet/Popover가 실제 viewport 기준으로 동작해야 함)
     },
     [clampTranslate],
   );
@@ -179,6 +163,13 @@ export function useMobileGestures(desktopMode: boolean) {
 
     const panStartRef = { x: 0, y: 0, tx: 0, ty: 0, active: false };
 
+    const isInsideOverlay = (target: EventTarget | null) => {
+      if (!(target instanceof Element)) return false;
+      return !!target.closest(
+        '[data-radix-dialog-content],[data-radix-dialog-overlay],[data-radix-popper-content-wrapper],[data-radix-popover-content],[data-radix-dropdown-menu-content],[data-radix-select-content],[data-radix-menu-content],[role="dialog"],[role="menu"],[role="listbox"],[data-overlay-scroll-lock],#portal-root'
+      );
+    };
+
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
         pinchStartDistRef.current = getDistance(e.touches[0], e.touches[1]);
@@ -186,7 +177,7 @@ export function useMobileGestures(desktopMode: boolean) {
         pinchStartMidRef.current = getMid(e.touches[0], e.touches[1]);
         pinchStartTranslateRef.current = { x: translateXRef.current, y: translateYRef.current };
         panStartRef.active = false;
-      } else if (e.touches.length === 1 && currentZoomRef.current > 1.0001) {
+      } else if (e.touches.length === 1 && currentZoomRef.current > 1.0001 && !isInsideOverlay(e.target)) {
         panStartRef.x = e.touches[0].clientX;
         panStartRef.y = e.touches[0].clientY;
         panStartRef.tx = translateXRef.current;
@@ -197,6 +188,7 @@ export function useMobileGestures(desktopMode: boolean) {
 
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches.length === 2) {
+        if (isInsideOverlay(e.target)) return;
         e.preventDefault();
         const dist = getDistance(e.touches[0], e.touches[1]);
         const ratio = dist / (pinchStartDistRef.current || 1);
@@ -217,9 +209,7 @@ export function useMobileGestures(desktopMode: boolean) {
         translateYRef.current = clamped.y;
         const transform = `translate(${clamped.x}px, ${clamped.y}px) scale(${total})`;
         const scaleRootEl = document.getElementById("app-scale-root") as HTMLElement | null;
-        const portalRootEl = document.getElementById("portal-root") as HTMLElement | null;
         if (scaleRootEl) scaleRootEl.style.transform = transform;
-        if (portalRootEl) portalRootEl.style.transform = transform;
         e.preventDefault();
       }
     };
