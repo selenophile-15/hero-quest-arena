@@ -221,13 +221,17 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                         {heroes.map((h) => {
                           const hasLW = hasLoneWolfCowl(h);
                           const champMod = hasLW ? 0 : 1;
-                          const effectivePct = isChamp ? pctVal * champMod : pctVal;
+                          const inTarget = !src.targetHeroIds || src.targetHeroIds.includes(h.id);
+                          const effectivePct = inTarget ? (isChamp ? pctVal * champMod : pctVal) : 0;
+                          const effectiveFlat = inTarget ? flatVal : 0;
 
                           if (isMultStat) {
                             return (
                               <td key={h.id} className="py-2 px-2 text-center">
                                 {hasLW && isChamp ? (
                                   <span className="text-red-400 text-xs">무효</span>
+                                ) : !inTarget ? (
+                                  <span className="text-muted-foreground text-xs">-</span>
                                 ) : (
                                   <div className="space-y-0.5">
                                     {effectivePct !== 0 && (
@@ -235,12 +239,12 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                                         +{effectivePct.toFixed(1)}%
                                       </div>
                                     )}
-                                    {flatVal !== 0 && (
+                                    {effectiveFlat !== 0 && (
                                       <div className="text-lime-700/80 dark:text-lime-400/70 text-xs font-mono">
-                                        +{formatNumber(flatVal)} (깡)
+                                        +{formatNumber(effectiveFlat)} (깡)
                                       </div>
                                     )}
-                                    {effectivePct === 0 && flatVal === 0 && (
+                                    {effectivePct === 0 && effectiveFlat === 0 && (
                                       <span className="text-muted-foreground text-xs">-</span>
                                     )}
                                   </div>
@@ -252,7 +256,7 @@ export default function PartyBuffBreakdownDrawer({ open, onOpenChange, heroes, b
                               <td key={h.id} className="py-2 px-2 text-center">
                                 {hasLW && isChamp ? (
                                   <span className="text-red-400 text-xs">무효</span>
-                                ) : effectivePct !== 0 ? (
+                                ) : inTarget && effectivePct !== 0 ? (
                                   <div className="text-lime-700 dark:text-lime-400/90 text-sm font-mono">
                                     +{effectivePct.toFixed(1)}%
                                   </div>
