@@ -191,6 +191,7 @@ export async function calculatePartyBuffs(input: PartyBuffInput): Promise<{
     perHeroEvaPct: new Array(n).fill(0),
     perHeroCritDmgPct: new Array(n).fill(0),
     flatAtk: 0, flatDef: 0, flatHp: 0,
+    auraExpPct: 0,
     sources: [],
   };
   
