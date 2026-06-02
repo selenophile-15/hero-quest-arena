@@ -70,34 +70,18 @@ export function useMobileGestures(desktopMode: boolean) {
       translateYRef.current = ty;
 
       const scaleRoot = document.getElementById("app-scale-root") as HTMLElement | null;
-      const portalRoot = document.getElementById("portal-root") as HTMLElement | null;
 
       if (!scaleRoot) return;
 
       const transform = `translate(${tx}px, ${ty}px) scale(${newTotal})`;
-      const vvHeight = window.visualViewport?.height ?? window.innerHeight;
       // scaleRoot: 콘텐츠가 레이아웃 뷰포트(innerHeight)는 채우도록
       const contentMinH = newTotal > 0 ? window.innerHeight / newTotal : window.innerHeight;
-      // portal-root: 시각 뷰포트 높이를 기준으로 잡아야 top:50%가 실제 화면 중앙에 옴
-      const portalH = newTotal > 0 ? vvHeight / newTotal : vvHeight;
       scaleRoot.style.transform = transform;
       scaleRoot.style.transformOrigin = "top left";
       scaleRoot.style.width = `${DESKTOP_WIDTH}px`;
       scaleRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
       scaleRoot.style.minHeight = `${contentMinH}px`;
-
-      if (portalRoot) {
-        portalRoot.style.position = "fixed";
-        portalRoot.style.top = "0";
-        portalRoot.style.left = "0";
-        portalRoot.style.width = `${DESKTOP_WIDTH}px`;
-        portalRoot.style.minWidth = `${DESKTOP_WIDTH}px`;
-        portalRoot.style.height = `${portalH}px`;
-        portalRoot.style.transform = transform;
-        portalRoot.style.transformOrigin = "top left";
-        portalRoot.style.zIndex = "9999";
-        portalRoot.style.pointerEvents = "none";
-      }
+      // portal-root에는 transform을 적용하지 않음 (Dialog/Sheet/Popover가 실제 viewport 기준으로 동작해야 함)
     },
     [clampTranslate],
   );
