@@ -637,6 +637,7 @@ export default function HeroForm({
       heroClass,
       type: "hero",
       promoted,
+      roland,
       level: Number(level) || 1,
       power: Number(power) || 0,
       hp,
