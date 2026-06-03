@@ -824,7 +824,7 @@ export default function HeroForm({
               </Select>
             </div>
             <div>
-              <Label className="text-foreground/80 text-xs mb-1 block text-center">&nbsp;</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block text-center">승급</Label>
               <div className="flex items-center justify-center h-9">
                 <Switch checked={promoted} onCheckedChange={(p) => setPromoted(p)} />
               </div>
