@@ -889,7 +889,7 @@ export default function HeroList() {
     const iconPath = STAT_ICON_MAP[col.key as keyof typeof STAT_ICON_MAP];
     if (iconPath) {
       return (
-        <StableImage src={iconPath} alt={col.label} title={col.label} width={20} height={20} className="inline-block" />
+        <StableImage src={iconPath} alt={col.label} title={col.label} width={20} height={20} className="inline-block h-5 w-5 object-contain" />
       );
     }
     return <span>{col.label}</span>;
@@ -1287,7 +1287,7 @@ export default function HeroList() {
         </div>
       );
     }
-    if (colKey === "roland") return <span className={lh}>{hero.roland ? "○" : ""}</span>;
+    if (colKey === "roland") return <span className={`${lh} font-bold`}>{hero.roland ? "○" : ""}</span>;
     if (colKey === "position") return <span className={lh}>{hero.position || "-"}</span>;
     if (colKey === "promoted") return <span className={lh}>{hero.promoted ? "✓" : "-"}</span>;
     if (colKey === "airshipPower") return <span className={`text-foreground/20 ${lh}`}>-</span>;

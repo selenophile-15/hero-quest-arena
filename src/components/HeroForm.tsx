@@ -1223,15 +1223,17 @@ export default function HeroForm({
             <h3 className="text-sm font-semibold text-primary" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
               스킬
             </h3>
-            <div className="flex items-center gap-2">
-              <img
-                src="/images/heroes/roland.webp"
-                alt="롤랑"
-                title="롤랑"
-                className="h-9 w-9 object-contain rounded-full"
-              />
-              <div className="flex items-center justify-center h-9">
-                <Switch checked={roland} onCheckedChange={setRoland} />
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-1">
+                <img
+                  src="/images/heroes/roland.webp"
+                  alt="롤랑"
+                  title="롤랑"
+                  className="h-[34px] w-[34px] object-contain rounded-full"
+                />
+                <div className="flex items-center justify-center h-9">
+                  <Switch checked={roland} onCheckedChange={setRoland} />
+                </div>
               </div>
               <Button
                 size="sm"
