@@ -1287,6 +1287,7 @@ export default function HeroList() {
         </div>
       );
     }
+    if (colKey === "roland") return <span className={lh}>{hero.roland ? "○" : ""}</span>;
     if (colKey === "position") return <span className={lh}>{hero.position || "-"}</span>;
     if (colKey === "promoted") return <span className={lh}>{hero.promoted ? "✓" : "-"}</span>;
     if (colKey === "airshipPower") return <span className={`text-foreground/20 ${lh}`}>-</span>;
