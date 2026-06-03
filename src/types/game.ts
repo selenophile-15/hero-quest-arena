@@ -104,6 +104,7 @@ export const HERO_STAT_COLUMNS = [
   { key: 'threat' as const, label: 'THREAT', icon: true },
   { key: 'seeds' as const, label: '씨앗' },
   { key: 'position' as const, label: '포지션' },
+  { key: 'roland' as const, label: '롤랑', icon: true },
   { key: 'label' as const, label: '상태' },
 ];
 
