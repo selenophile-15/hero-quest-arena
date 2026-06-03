@@ -81,6 +81,7 @@ export const STAT_ICON_MAP: Record<string, string> = {
   evasion: '/images/stats/evasion.webp',
   threat: '/images/stats/threat.webp',
   power: '/images/stats/power.webp',
+  roland: '/images/heroes/roland.webp',
   airshipPower: '/images/stats/icon_global_dragoninvasion_airshippower.webp',
 };
 
