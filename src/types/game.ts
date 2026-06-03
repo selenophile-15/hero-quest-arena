@@ -41,6 +41,7 @@ export interface Hero {
     spirit: any | null;
   }>;
   detailStats?: Record<string, number>; // 기타 상세 스탯 (광전사, 공룡, 상어, 문드라 등)
+  roland?: boolean; // 롤랑 적용 여부 (영웅 전용)
 }
 
 export interface Quest {
