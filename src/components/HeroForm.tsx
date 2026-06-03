@@ -1224,6 +1224,15 @@ export default function HeroForm({
               스킬
             </h3>
             <div className="flex items-center gap-2">
+              <img
+                src="/images/heroes/roland.webp"
+                alt="롤랑"
+                title="롤랑"
+                className="h-9 w-9 object-contain rounded-full"
+              />
+              <div className="flex items-center justify-center h-9">
+                <Switch checked={roland} onCheckedChange={setRoland} />
+              </div>
               <Button
                 size="sm"
                 className="h-7 text-xs gap-1 btn-force-white"
