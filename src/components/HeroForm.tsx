@@ -232,6 +232,7 @@ export default function HeroForm({
   const [name, setName] = useState(hero?.name || "");
   const [classLine, setClassLine] = useState<HeroClassLine | "">((hero?.classLine as HeroClassLine) || "");
   const [promoted, setPromoted] = useState(getInitialPromotion());
+  const [roland, setRoland] = useState<boolean>(hero?.roland || false);
   const [heroClass, setHeroClass] = useState(hero?.heroClass || "");
   const [level, setLevel] = useState<number | "">(hero?.level || "");
   const [levelInput, setLevelInput] = useState<string>(hero?.level ? String(hero.level) : "");
