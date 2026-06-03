@@ -1923,7 +1923,7 @@ export default function ChampionForm({
               {nameError && <p className="text-red-500 text-xs mt-0.5">이름을 입력해주세요</p>}
             </div>
             <div>
-              <Label className="text-foreground/80 text-xs mb-1 block text-center">&nbsp;</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block text-center">승급</Label>
               <div className="flex items-center justify-center h-9">
                 <Switch checked={promoted} onCheckedChange={setPromoted} />
               </div>
