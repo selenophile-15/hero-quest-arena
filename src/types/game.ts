@@ -41,6 +41,7 @@ export interface Hero {
     spirit: any | null;
   }>;
   detailStats?: Record<string, number>; // 기타 상세 스탯 (광전사, 공룡, 상어, 문드라 등)
+  roland?: boolean; // 롤랑 적용 여부 (영웅 전용)
 }
 
 export interface Quest {
@@ -80,6 +81,7 @@ export const STAT_ICON_MAP: Record<string, string> = {
   evasion: '/images/stats/evasion.webp',
   threat: '/images/stats/threat.webp',
   power: '/images/stats/power.webp',
+  roland: '/images/heroes/roland.webp',
   airshipPower: '/images/stats/icon_global_dragoninvasion_airshippower.webp',
 };
 
@@ -102,6 +104,7 @@ export const HERO_STAT_COLUMNS = [
   { key: 'threat' as const, label: 'THREAT', icon: true },
   { key: 'seeds' as const, label: '씨앗' },
   { key: 'position' as const, label: '포지션' },
+  { key: 'roland' as const, label: '롤랑', icon: true },
   { key: 'label' as const, label: '상태' },
 ];
 

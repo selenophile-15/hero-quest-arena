@@ -232,6 +232,7 @@ export default function HeroForm({
   const [name, setName] = useState(hero?.name || "");
   const [classLine, setClassLine] = useState<HeroClassLine | "">((hero?.classLine as HeroClassLine) || "");
   const [promoted, setPromoted] = useState(getInitialPromotion());
+  const [roland, setRoland] = useState<boolean>(hero?.roland || false);
   const [heroClass, setHeroClass] = useState(hero?.heroClass || "");
   const [level, setLevel] = useState<number | "">(hero?.level || "");
   const [levelInput, setLevelInput] = useState<string>(hero?.level ? String(hero.level) : "");
@@ -636,6 +637,7 @@ export default function HeroForm({
       heroClass,
       type: "hero",
       promoted,
+      roland,
       level: Number(level) || 1,
       power: Number(power) || 0,
       hp,
@@ -671,6 +673,7 @@ export default function HeroForm({
       heroClass,
       type: "hero",
       promoted,
+      roland,
       level: Number(level) || 1,
       power: Number(power) || 0,
       hp,
@@ -824,7 +827,7 @@ export default function HeroForm({
               </Select>
             </div>
             <div>
-              <Label className="text-foreground/80 text-xs mb-1 block text-center">&nbsp;</Label>
+              <Label className="text-foreground/80 text-xs mb-1 block text-center">승급</Label>
               <div className="flex items-center justify-center h-9">
                 <Switch checked={promoted} onCheckedChange={(p) => setPromoted(p)} />
               </div>
@@ -1221,6 +1224,15 @@ export default function HeroForm({
               스킬
             </h3>
             <div className="flex items-center gap-2">
+              <img
+                src="/images/heroes/roland.webp"
+                alt="롤랑"
+                title="롤랑"
+                className="h-9 w-9 object-contain rounded-full"
+              />
+              <div className="flex items-center justify-center h-9">
+                <Switch checked={roland} onCheckedChange={setRoland} />
+              </div>
               <Button
                 size="sm"
                 className="h-7 text-xs gap-1 btn-force-white"
