@@ -326,7 +326,7 @@ const Index = () => {
 
           <Button
             size="lg"
-            onClick={() => navigate("/dashboard")}
+            onClick={handleStart}
             className="btn-shine text-base px-14 py-7 font-display tracking-wider relative group
               transition-all duration-300 ease-out
               hover:scale-105 hover:shadow-[0_0_36px_rgba(180,150,255,0.5),0_0_72px_rgba(140,100,255,0.25)]
