@@ -14,7 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      banned_google_subs: {
+        Row: {
+          banned_at: string
+          google_sub: string
+          reason: string | null
+        }
+        Insert: {
+          banned_at?: string
+          google_sub: string
+          reason?: string | null
+        }
+        Update: {
+          banned_at?: string
+          google_sub?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          agreed_at: string
+          created_at: string
+          email: string | null
+          google_sub: string | null
+          last_seen_at: string
+          nickname: string
+          user_id: string
+        }
+        Insert: {
+          agreed_at?: string
+          created_at?: string
+          email?: string | null
+          google_sub?: string | null
+          last_seen_at?: string
+          nickname: string
+          user_id: string
+        }
+        Update: {
+          agreed_at?: string
+          created_at?: string
+          email?: string | null
+          google_sub?: string | null
+          last_seen_at?: string
+          nickname?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ranking_simulations: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          nickname: string
+          user_id: string
+          win_rate: number
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          nickname: string
+          user_id: string
+          win_rate: number
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          nickname?: string
+          user_id?: string
+          win_rate?: number
+        }
+        Relationships: []
+      }
+      user_heroes: {
+        Row: {
+          data: Json
+          id: string
+          kind: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          data: Json
+          id?: string
+          kind: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          data?: Json
+          id?: string
+          kind?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_simulations: {
+        Row: {
+          data: Json
+          id: string
+          updated_at: string
+          user_id: string
+          win_rate: number
+        }
+        Insert: {
+          data: Json
+          id?: string
+          updated_at?: string
+          user_id: string
+          win_rate?: number
+        }
+        Update: {
+          data?: Json
+          id?: string
+          updated_at?: string
+          user_id?: string
+          win_rate?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
