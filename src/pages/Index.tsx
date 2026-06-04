@@ -9,6 +9,7 @@ import { getSkillImagePath } from "@/lib/skillUtils";
 import { getHeroes } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
 import { useMobileGestures } from "@/hooks/use-mobile-gestures";
+import { useAuth } from "@/hooks/use-auth";
 
 import landingBg from "@/assets/landing-bg.jpg";
 import titleLogo from "@/assets/title-logo.png";
@@ -18,12 +19,19 @@ const SPONSORS = ["Dogpyo", "거지왕"];
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, profile, needsOnboarding, signInWithGoogle } = useAuth();
   const starsRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
   const shootingStarsRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
 
   useMobileGestures(false);
+
+  const handleStart = () => {
+    if (!user) { signInWithGoogle(); return; }
+    if (needsOnboarding || !profile) return; // OnboardingDialog will be shown
+    navigate("/dashboard");
+  };
 
   // 백그라운드 프리로드: 저장된 영웅들이 실제로 쓰는 이미지만 미리 로드
   useEffect(() => {
