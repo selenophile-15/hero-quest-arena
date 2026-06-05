@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { toast } from "@/hooks/use-toast";
 
 export interface Profile {
@@ -59,23 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // Check ban + get google_sub via edge function
-    try {
-      const { data: banData, error: banErr } = await supabase.functions.invoke("check-ban");
-      if (banErr) console.error("check-ban error", banErr);
-      if (banData?.banned) {
-        toast({
-          title: "로그인 차단됨",
-          description: banData.reason || "이 계정은 운영자에 의해 차단되었습니다.",
-          variant: "destructive",
-        });
-        await supabase.auth.signOut();
-        return;
-      }
-      if (banData?.google_sub) setPendingGoogleSub(banData.google_sub);
-    } catch (e) {
-      console.error("check-ban invoke failed", e);
-    }
+    const googleSub = sess.user.identities?.find((identity) => identity.provider === "google")?.id
+      ?? (sess.user.user_metadata?.sub as string | undefined)
+      ?? null;
+    setPendingGoogleSub(googleSub);
 
     const p = await loadProfile(sess.user.id);
     if (p) {
@@ -100,11 +86,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [handleSession]);
 
   const signInWithGoogle = useCallback(async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/dashboard",
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+        queryParams: { prompt: "select_account" },
+      },
     });
-    if (result.error) {
-      toast({ title: "로그인 실패", description: String(result.error.message || result.error), variant: "destructive" });
+    if (error) {
+      toast({ title: "로그인 실패", description: error.message, variant: "destructive" });
     }
   }, []);
 
