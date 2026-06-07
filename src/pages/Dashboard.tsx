@@ -14,7 +14,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import ProfileMenu from '@/components/ProfileMenu';
 
 const TABS = [
   { id: 'list', label: '리스트 관리', icon: List },
@@ -127,9 +126,6 @@ export default function Dashboard() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Profile / Login */}
-            <ProfileMenu />
           </div>
         </div>
       </header>
